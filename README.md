@@ -1,17 +1,22 @@
 # Unit/System Gap Core Tasks
 
-Strict core package with three confirmed tasks:
+Strict core package with three confirmed tasks.
 
-- `tasks/sqlite-utils`
-- `tasks/zk`
-- `tasks/miniurlutils`
+Each task directory keeps the core task definition at the top level:
 
-Each task keeps only the necessary benchmark files:
+- `prd.md`
+- `rubric.json`
+
+Supporting review materials live under each task's `doc/` directory:
 
 - `source_repo.md`
-- `candidate_task_unit_system/`
-- `scoring/`
-- `solution-reference/`
-- `score_report_*_unit_system_v1.json`
+- `requirement_map.md`
+- `score_reports/`
+
+## Tasks
+
+- `task/sqlite-utils-realrepo-001`
+- `task/zk-realrepo-001`
+- `task/miniurlutils-realrepo-001`
 
 Scores are summarized in `score_summary.csv`.

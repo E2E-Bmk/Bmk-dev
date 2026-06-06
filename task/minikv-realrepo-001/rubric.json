@@ -1,0 +1,611 @@
+[
+  {
+    "id": "MKVU001",
+    "layer": "unit",
+    "category": "string_kv",
+    "requirement_refs": ["REQ-string-kv"],
+    "description": "SET stores a value and GET retrieves it exactly.",
+    "weight": 4,
+    "commands": [
+      ["SET", "name", "Alice"],
+      ["GET", "name"]
+    ],
+    "checks": {
+      "step_stdout": {"0": ["OK"], "1": ["Alice"]}
+    }
+  },
+  {
+    "id": "MKVU002",
+    "layer": "unit",
+    "category": "string_kv",
+    "requirement_refs": ["REQ-string-kv"],
+    "description": "EXISTS returns 1 for existing keys and 0 for missing keys.",
+    "weight": 4,
+    "commands": [
+      ["SET", "k1", "v1"],
+      ["EXISTS", "k1"],
+      ["EXISTS", "no-such-key"]
+    ],
+    "checks": {
+      "step_stdout": {"1": ["1"], "2": ["0"]}
+    }
+  },
+  {
+    "id": "MKVU003",
+    "layer": "unit",
+    "category": "string_kv",
+    "requirement_refs": ["REQ-string-kv"],
+    "description": "DELETE removes keys and returns the count of actually deleted keys.",
+    "weight": 4,
+    "commands": [
+      ["SET", "a", "1"],
+      ["SET", "b", "2"],
+      ["DELETE", "a", "c", "b"],
+      ["EXISTS", "a"],
+      ["EXISTS", "b"]
+    ],
+    "checks": {
+      "step_stdout": {"2": ["2"], "3": ["0"], "4": ["0"]}
+    }
+  },
+  {
+    "id": "MKVU004",
+    "layer": "unit",
+    "category": "bulk_ops",
+    "requirement_refs": ["REQ-bulk-ops"],
+    "description": "MSET stores multiple keys and MGET returns values as a JSON array with null for missing keys.",
+    "weight": 4,
+    "commands": [
+      ["MSET", "x", "10", "y", "hello", "z", "world"],
+      ["MGET", "x", "missing", "y", "z"]
+    ],
+    "checks": {
+      "step_stdout": {"0": ["OK"]},
+      "step_stdout_json": {"1": ["10", null, "hello", "world"]}
+    }
+  },
+  {
+    "id": "MKVU005",
+    "layer": "unit",
+    "category": "integer_ops",
+    "requirement_refs": ["REQ-integer-ops"],
+    "description": "INCR on a non-existent key creates it at 0 then increments; INCR on an integer increments it.",
+    "weight": 4,
+    "commands": [
+      ["INCR", "counter"],
+      ["INCR", "counter"],
+      ["GET", "counter"]
+    ],
+    "checks": {
+      "step_stdout": {"0": ["1"], "1": ["2"], "2": ["2"]}
+    }
+  },
+  {
+    "id": "MKVU006",
+    "layer": "unit",
+    "category": "integer_ops",
+    "requirement_refs": ["REQ-integer-ops"],
+    "description": "DECR on a non-existent key creates it at 0 then decrements; DECR on an integer decrements it.",
+    "weight": 4,
+    "commands": [
+      ["DECR", "score"],
+      ["DECR", "score"],
+      ["GET", "score"]
+    ],
+    "checks": {
+      "step_stdout": {"0": ["-1"], "1": ["-2"], "2": ["-2"]}
+    }
+  },
+  {
+    "id": "MKVU007",
+    "layer": "unit",
+    "category": "expiry",
+    "requirement_refs": ["REQ-expiry"],
+    "description": "EXPIRE sets a TTL that TTL can read back; TTL returns -2 for missing key and -1 for persistent key.",
+    "weight": 4,
+    "commands": [
+      ["SET", "temp", "data"],
+      ["EXPIRE", "temp", "300"],
+      ["TTL", "temp"],
+      ["TTL", "no-such-key"],
+      ["SET", "perm", "forever"],
+      ["TTL", "perm"]
+    ],
+    "checks": {
+      "step_stdout": {"1": ["1"], "3": ["-2"], "5": ["-1"]},
+      "step_stdout_in_range": {"2": [1, 300]}
+    }
+  },
+  {
+    "id": "MKVU008",
+    "layer": "unit",
+    "category": "expiry",
+    "requirement_refs": ["REQ-expiry"],
+    "description": "PERSIST removes expiry from a key; PERSIST on non-existent or persistent key returns 0.",
+    "weight": 4,
+    "commands": [
+      ["SET", "temp", "data", "EX", "300"],
+      ["TTL", "temp"],
+      ["PERSIST", "temp"],
+      ["TTL", "temp"],
+      ["PERSIST", "no-key"]
+    ],
+    "checks": {
+      "step_stdout": {"2": ["1"], "3": ["-1"], "4": ["0"]},
+      "step_stdout_in_range": {"1": [1, 300]}
+    }
+  },
+  {
+    "id": "MKVU009",
+    "layer": "unit",
+    "category": "key_enum",
+    "requirement_refs": ["REQ-key-enum"],
+    "description": "KEYS without pattern returns all keys as JSON; KEYS with pattern filters by glob.",
+    "weight": 4,
+    "commands": [
+      ["SET", "user:1", "Alice"],
+      ["SET", "user:2", "Bob"],
+      ["SET", "item:1", "Hammer"],
+      ["KEYS"],
+      ["KEYS", "user:*"]
+    ],
+    "checks": {
+      "step_stdout_json_contains": {"3": ["user:1", "user:2", "item:1"]},
+      "step_stdout_json": {"4": ["user:1", "user:2"]}
+    }
+  },
+  {
+    "id": "MKVU010",
+    "layer": "unit",
+    "category": "key_enum",
+    "requirement_refs": ["REQ-key-enum"],
+    "description": "TYPE returns correct type for string, integer, and missing keys.",
+    "weight": 4,
+    "commands": [
+      ["SET", "s", "hello"],
+      ["INCR", "i"],
+      ["TYPE", "s"],
+      ["TYPE", "i"],
+      ["TYPE", "nope"]
+    ],
+    "checks": {
+      "step_stdout": {"2": ["string"], "3": ["integer"], "4": ["none"]}
+    }
+  },
+  {
+    "id": "MKVU011",
+    "layer": "unit",
+    "category": "key_enum",
+    "requirement_refs": ["REQ-key-enum"],
+    "description": "DBSIZE returns the exact number of live keys after SET, DELETE, and FLUSH.",
+    "weight": 4,
+    "commands": [
+      ["DBSIZE"],
+      ["SET", "a", "1"],
+      ["SET", "b", "2"],
+      ["DBSIZE"],
+      ["DELETE", "a"],
+      ["DBSIZE"],
+      ["FLUSH"],
+      ["DBSIZE"]
+    ],
+    "checks": {
+      "step_stdout": {"0": ["0"], "3": ["2"], "5": ["1"], "7": ["0"]}
+    }
+  },
+  {
+    "id": "MKVU012",
+    "layer": "unit",
+    "category": "persistence",
+    "requirement_refs": ["REQ-persistence"],
+    "description": "SAVE creates a JSON file; LOAD restores all key state including string and integer types.",
+    "weight": 4,
+    "commands": [
+      ["SET", "name", "Alice"],
+      ["INCR", "count"],
+      ["INCR", "count"],
+      ["SAVE", "{tmp}/db.json"],
+      ["FLUSH"],
+      ["DBSIZE"],
+      ["LOAD", "{tmp}/db.json"],
+      ["GET", "name"],
+      ["GET", "count"],
+      ["TYPE", "count"]
+    ],
+    "checks": {
+      "step_stdout": {"3": ["OK"], "5": ["0"], "6": ["OK"], "7": ["Alice"], "8": ["2"], "9": ["integer"]},
+      "files_exist": ["{tmp}/db.json"]
+    }
+  },
+  {
+    "id": "MKVU013",
+    "layer": "unit",
+    "category": "persistence",
+    "requirement_refs": ["REQ-persistence"],
+    "description": "FLUSH removes all keys; subsequent GET returns nil and KEYS returns empty.",
+    "weight": 4,
+    "commands": [
+      ["SET", "x", "1"],
+      ["SET", "y", "2"],
+      ["FLUSH"],
+      ["GET", "x"],
+      ["KEYS"]
+    ],
+    "checks": {
+      "step_stdout": {"2": ["OK"], "3": ["(nil)"]},
+      "step_stdout_json": {"4": []}
+    }
+  },
+  {
+    "id": "MKVU014",
+    "layer": "unit",
+    "category": "errors",
+    "requirement_refs": ["REQ-integer-ops", "REQ-errors"],
+    "description": "INCR on a non-integer string value fails and preserves the original value.",
+    "weight": 4,
+    "commands": [
+      ["SET", "name", "Alice"],
+      {"args": ["INCR", "name"], "expect_error": true},
+      ["GET", "name"]
+    ],
+    "checks": {
+      "step_expect_error": ["1"],
+      "step_stderr_contains_any": {"1": ["integer", "number", "string", "type"]},
+      "step_stdout": {"2": ["Alice"]}
+    }
+  },
+  {
+    "id": "MKVU015",
+    "layer": "unit",
+    "category": "errors",
+    "requirement_refs": ["REQ-persistence", "REQ-errors"],
+    "description": "LOAD from a non-existent file fails non-zero with useful stderr.",
+    "weight": 4,
+    "commands": [
+      {"args": ["LOAD", "{tmp}/no_such_file.json"], "expect_error": true}
+    ],
+    "checks": {
+      "step_expect_error": ["0"],
+      "step_stderr_contains_any": {"0": ["file", "exist", "found", "open", "read"]}
+    }
+  },
+  {
+    "id": "MKVU016",
+    "layer": "unit",
+    "category": "errors",
+    "requirement_refs": ["REQ-errors"],
+    "description": "Invalid command syntax fails non-zero with useful stderr.",
+    "weight": 4,
+    "commands": [
+      {"args": ["SET"], "expect_error": true},
+      {"args": ["UNKNOWN_CMD"], "expect_error": true}
+    ],
+    "checks": {
+      "step_expect_error": ["0", "1"],
+      "step_stderr_contains_any": {"0": ["usage", "syntax", "argument", "required", "missing", "invalid"]}
+    }
+  },
+  {
+    "id": "MKVU017",
+    "layer": "unit",
+    "category": "expiry",
+    "requirement_refs": ["REQ-expiry", "REQ-string-kv"],
+    "description": "SET with EX flag creates a key whose TTL is readable; the key is still accessible before expiry.",
+    "weight": 4,
+    "commands": [
+      ["SET", "session", "token123", "EX", "600"],
+      ["EXISTS", "session"],
+      ["GET", "session"]
+    ],
+    "checks": {
+      "step_stdout": {"1": ["1"], "2": ["token123"]}
+    }
+  },
+  {
+    "id": "MKVU018",
+    "layer": "unit",
+    "category": "key_enum",
+    "requirement_refs": ["REQ-key-enum"],
+    "description": "KEYS with ? single-character wildcard matches correctly.",
+    "weight": 4,
+    "commands": [
+      ["SET", "ab", "1"],
+      ["SET", "ac", "2"],
+      ["SET", "abc", "3"],
+      ["KEYS", "a?"]
+    ],
+    "checks": {
+      "step_stdout_json": {"3": ["ab", "ac"]}
+    }
+  },
+  {
+    "id": "MKVS001",
+    "layer": "system",
+    "system_dimension": "cross_feature_dataflow",
+    "category": "set_expire_ttl_get",
+    "requirement_refs": ["REQ-string-kv", "REQ-expiry"],
+    "description": "SET → EXPIRE → TTL and SET with EX → TTL both produce coherent expiry state.",
+    "weight": 8,
+    "commands": [
+      ["SET", "k1", "v1"],
+      ["EXPIRE", "k1", "100"],
+      ["TTL", "k1"],
+      ["SET", "k2", "v2", "EX", "200"],
+      ["TTL", "k2"],
+      ["GET", "k1"],
+      ["GET", "k2"]
+    ],
+    "checks": {
+      "step_stdout_in_range": {"2": [1, 100], "4": [1, 200]},
+      "step_stdout": {"5": ["v1"], "6": ["v2"]}
+    }
+  },
+  {
+    "id": "MKVS002",
+    "layer": "system",
+    "system_dimension": "cross_feature_dataflow",
+    "category": "set_incr_type_keys",
+    "requirement_refs": ["REQ-string-kv", "REQ-integer-ops", "REQ-key-enum", "REQ-bulk-ops"],
+    "description": "Values created by SET and INCR flow through TYPE, MGET, and KEYS consistently.",
+    "weight": 8,
+    "commands": [
+      ["SET", "str1", "hello"],
+      ["SET", "str2", "world"],
+      ["INCR", "int1"],
+      ["INCR", "int1"],
+      ["TYPE", "str1"],
+      ["TYPE", "int1"],
+      ["MGET", "str1", "int1", "str2", "missing"],
+      ["KEYS"]
+    ],
+    "checks": {
+      "step_stdout": {"4": ["string"], "5": ["integer"]},
+      "step_stdout_json": {"6": ["hello", "2", "world", null]},
+      "step_stdout_json_contains": {"7": ["str1", "str2", "int1"]}
+    }
+  },
+  {
+    "id": "MKVS003",
+    "layer": "system",
+    "system_dimension": "state_accumulation",
+    "category": "set_overwrite_mset_mget",
+    "requirement_refs": ["REQ-string-kv", "REQ-bulk-ops"],
+    "description": "SET overwrites, MSET overwrites, DELETE removes, and MGET reflects the accumulated state.",
+    "weight": 8,
+    "commands": [
+      ["SET", "a", "1"],
+      ["SET", "a", "updated"],
+      ["MSET", "b", "beta", "a", "overwritten", "c", "gamma"],
+      ["DELETE", "b"],
+      ["MGET", "a", "b", "c"],
+      ["DBSIZE"]
+    ],
+    "checks": {
+      "step_stdout_json": {"4": ["overwritten", null, "gamma"]},
+      "step_stdout": {"5": ["2"]}
+    }
+  },
+  {
+    "id": "MKVS004",
+    "layer": "system",
+    "system_dimension": "state_accumulation",
+    "category": "save_flush_load",
+    "requirement_refs": ["REQ-string-kv", "REQ-integer-ops", "REQ-persistence", "REQ-key-enum"],
+    "description": "After SAVE → FLUSH → LOAD, all key state including integer counters and types is restored.",
+    "weight": 8,
+    "commands": [
+      ["SET", "name", "Alice"],
+      ["INCR", "visits"],
+      ["INCR", "visits"],
+      ["INCR", "visits"],
+      ["SAVE", "{tmp}/snapshot.json"],
+      ["FLUSH"],
+      ["DBSIZE"],
+      ["LOAD", "{tmp}/snapshot.json"],
+      ["GET", "name"],
+      ["GET", "visits"],
+      ["TYPE", "visits"],
+      ["DBSIZE"]
+    ],
+    "checks": {
+      "step_stdout": {"6": ["0"], "8": ["Alice"], "9": ["3"], "10": ["integer"], "11": ["2"]}
+    }
+  },
+  {
+    "id": "MKVS005",
+    "layer": "system",
+    "system_dimension": "global_invariant",
+    "category": "dbsize_keys_consistency",
+    "requirement_refs": ["REQ-string-kv", "REQ-key-enum"],
+    "description": "DBSIZE and KEYS length agree after SET, DELETE, FLUSH, and LOAD operations.",
+    "weight": 8,
+    "commands": [
+      ["SET", "a", "1"],
+      ["SET", "b", "2"],
+      ["SET", "c", "3"],
+      ["DBSIZE"],
+      ["KEYS"],
+      ["DELETE", "a"],
+      ["DBSIZE"],
+      ["KEYS"],
+      ["FLUSH"],
+      ["DBSIZE"],
+      ["KEYS"]
+    ],
+    "checks": {
+      "step_stdout": {"3": ["3"], "6": ["2"], "9": ["0"]},
+      "step_stdout_json_len": {"4": 3, "7": 2, "10": 0}
+    }
+  },
+  {
+    "id": "MKVS006",
+    "layer": "system",
+    "system_dimension": "global_invariant",
+    "category": "type_consistency",
+    "requirement_refs": ["REQ-string-kv", "REQ-integer-ops", "REQ-key-enum"],
+    "description": "TYPE is consistent with how the value was set or modified, including after INCR/DECR chains.",
+    "weight": 8,
+    "commands": [
+      ["SET", "s", "hello"],
+      ["TYPE", "s"],
+      ["INCR", "n"],
+      ["TYPE", "n"],
+      ["DECR", "n"],
+      ["TYPE", "n"],
+      ["SET", "s", "world"],
+      ["TYPE", "s"],
+      ["DELETE", "n"],
+      ["TYPE", "n"]
+    ],
+    "checks": {
+      "step_stdout": {"1": ["string"], "3": ["integer"], "5": ["integer"], "7": ["string"], "9": ["none"]}
+    }
+  },
+  {
+    "id": "MKVS007",
+    "layer": "system",
+    "system_dimension": "error_atomicity",
+    "category": "load_atomicity",
+    "requirement_refs": ["REQ-persistence", "REQ-errors", "REQ-string-kv"],
+    "description": "Failed LOAD leaves existing key state and type metadata intact.",
+    "weight": 8,
+    "commands": [
+      ["SET", "a", "1"],
+      ["INCR", "b"],
+      ["TYPE", "b"],
+      {"args": ["LOAD", "{tmp}/nonexistent.json"], "expect_error": true},
+      ["GET", "a"],
+      ["GET", "b"],
+      ["TYPE", "b"],
+      ["DBSIZE"]
+    ],
+    "checks": {
+      "step_expect_error": ["3"],
+      "step_stdout": {"2": ["integer"], "4": ["1"], "5": ["1"], "6": ["integer"], "7": ["2"]}
+    }
+  },
+  {
+    "id": "MKVS008",
+    "layer": "system",
+    "system_dimension": "error_atomicity",
+    "category": "incr_atomicity",
+    "requirement_refs": ["REQ-string-kv", "REQ-integer-ops", "REQ-errors", "REQ-key-enum"],
+    "description": "Failed INCR on a string value does not corrupt value, type, expiry, or DBSIZE.",
+    "weight": 8,
+    "commands": [
+      ["SET", "key1", "Alice"],
+      ["EXPIRE", "key1", "300"],
+      ["SET", "key2", "Bob"],
+      {"args": ["INCR", "key1"], "expect_error": true},
+      ["GET", "key1"],
+      ["TYPE", "key1"],
+      ["TTL", "key1"],
+      ["GET", "key2"],
+      ["DBSIZE"]
+    ],
+    "checks": {
+      "step_expect_error": ["3"],
+      "step_stdout": {"4": ["Alice"], "5": ["string"], "7": ["Bob"], "8": ["2"]},
+      "step_stdout_in_range": {"6": [1, 300]}
+    }
+  },
+  {
+    "id": "MKVS009",
+    "layer": "system",
+    "system_dimension": "operation_order_sensitivity",
+    "category": "expire_set_ttl_order",
+    "requirement_refs": ["REQ-string-kv", "REQ-expiry"],
+    "description": "SET after EXPIRE removes the expiry (TTL becomes -1); EXPIRE after SET sets the expiry.",
+    "weight": 8,
+    "commands": [
+      ["SET", "k", "v1"],
+      ["EXPIRE", "k", "100"],
+      ["TTL", "k"],
+      ["SET", "k", "v2"],
+      ["TTL", "k"],
+      ["EXPIRE", "k", "200"],
+      ["TTL", "k"]
+    ],
+    "checks": {
+      "step_stdout": {"4": ["-1"]},
+      "step_stdout_in_range": {"2": [1, 100], "6": [1, 200]}
+    }
+  },
+  {
+    "id": "MKVS010",
+    "layer": "system",
+    "system_dimension": "operation_order_sensitivity",
+    "category": "save_mutate_load",
+    "requirement_refs": ["REQ-string-kv", "REQ-integer-ops", "REQ-persistence"],
+    "description": "SAVE → mutate → LOAD restores the saved snapshot, not the mutated state.",
+    "weight": 8,
+    "commands": [
+      ["SET", "x", "original"],
+      ["INCR", "y"],
+      ["SAVE", "{tmp}/backup.json"],
+      ["SET", "x", "modified"],
+      ["INCR", "y"],
+      ["DELETE", "y"],
+      ["LOAD", "{tmp}/backup.json"],
+      ["GET", "x"],
+      ["GET", "y"],
+      ["TYPE", "y"]
+    ],
+    "checks": {
+      "step_stdout": {"7": ["original"], "8": ["1"], "9": ["integer"]}
+    }
+  },
+  {
+    "id": "MKVS011",
+    "layer": "system",
+    "system_dimension": "boundary_crossing",
+    "category": "expire_persist_ttl_boundary",
+    "requirement_refs": ["REQ-string-kv", "REQ-expiry", "REQ-key-enum"],
+    "description": "SET with EX → PERSIST → TTL(-1) → KEYS includes key; EXPIRE → EXPIRE(again) → TTL updates.",
+    "weight": 8,
+    "commands": [
+      ["SET", "temp", "data", "EX", "50"],
+      ["PERSIST", "temp"],
+      ["TTL", "temp"],
+      ["KEYS"],
+      ["EXPIRE", "temp", "300"],
+      ["TTL", "temp"],
+      ["EXPIRE", "temp", "60"],
+      ["TTL", "temp"]
+    ],
+    "checks": {
+      "step_stdout": {"1": ["1"], "2": ["-1"], "4": ["1"]},
+      "step_stdout_json_contains": {"3": ["temp"]},
+      "step_stdout_in_range": {"5": [1, 300], "7": [1, 60]}
+    }
+  },
+  {
+    "id": "MKVS012",
+    "layer": "system",
+    "system_dimension": "boundary_crossing",
+    "category": "keys_type_dbsize_boundary",
+    "requirement_refs": ["REQ-string-kv", "REQ-integer-ops", "REQ-key-enum", "REQ-bulk-ops"],
+    "description": "KEYS pattern, TYPE, DBSIZE, and DELETE compose after mixed SET, INCR, and overwrites.",
+    "weight": 8,
+    "commands": [
+      ["SET", "user:1", "Alice"],
+      ["SET", "user:2", "Bob"],
+      ["INCR", "counter"],
+      ["INCR", "counter"],
+      ["INCR", "counter"],
+      ["KEYS", "user:*"],
+      ["TYPE", "counter"],
+      ["DBSIZE"],
+      ["DELETE", "user:1"],
+      ["KEYS"],
+      ["DBSIZE"]
+    ],
+    "checks": {
+      "step_stdout_json": {"5": ["user:1", "user:2"]},
+      "step_stdout": {"6": ["integer"], "7": ["3"]},
+      "step_stdout_json_contains": {"9": ["user:2", "counter"]},
+      "step_stdout_json_len": {"9": 2},
+      "step_stdout": {"10": ["2"]}
+    }
+  }
+]

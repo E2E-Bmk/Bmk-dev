@@ -1,0 +1,69 @@
+{
+  "suite": "unit_system_gap_core_strict",
+  "version": "2026-06-06",
+  "policy": {
+    "included_statuses": ["core strong"],
+    "excluded": [
+      {
+        "task": "MiniTofu",
+        "reason": "provisional core evidence only; excluded from strict package"
+      }
+    ],
+    "reference_gate": "unit 100%, system 100%",
+    "candidate_gate": "fresh run unit > system with gap >= 15pp",
+    "fairness_gate": "traceable but non-isomorphic hidden tests; no private-shape, exact-text, environment, or narrow-format traps"
+  },
+  "tasks": [
+    {
+      "id": "sqlite-utils",
+      "display_name": "SQLite",
+      "source_repo": "simonw/sqlite-utils",
+      "status": "core strong",
+      "scores": {
+        "reference": {"unit": 100.00, "system": 100.00},
+        "codex_subagent_001": {"unit": 87.50, "system": 41.67, "gap_pp": 45.83},
+        "openhands_deepseek_v4_pro_001": {"unit": 93.75, "system": 41.67, "gap_pp": 52.08}
+      },
+      "paths": {
+        "public_packet": "tasks/sqlite-utils/candidate_task_unit_system/public_packet.md",
+        "rubric": "tasks/sqlite-utils/scoring/rubrics_unit_system_v1.json",
+        "requirement_map": "tasks/sqlite-utils/scoring/requirement_map_unit_system_v1.md",
+        "scorer": "tasks/sqlite-utils/scoring/score_dbmini_unit_system.py"
+      }
+    },
+    {
+      "id": "zk",
+      "display_name": "ZK",
+      "source_repo": "zk-org/zk",
+      "status": "core strong",
+      "scores": {
+        "reference": {"unit": 100.00, "system": 100.00},
+        "codex_subagent_001": {"unit": 83.33, "system": 58.33, "gap_pp": 25.00},
+        "openhands_deepseek_v4_pro_001": {"unit": 83.33, "system": 41.67, "gap_pp": 41.66}
+      },
+      "paths": {
+        "public_packet": "tasks/zk/candidate_task_unit_system/public_packet.md",
+        "rubric": "tasks/zk/scoring/rubrics_unit_system_v1.json",
+        "requirement_map": "tasks/zk/scoring/requirement_map_unit_system_v1.md",
+        "scorer": "tasks/zk/scoring/score_zmini.py"
+      }
+    },
+    {
+      "id": "miniurlutils",
+      "display_name": "MiniURLUtils",
+      "source_repo": "mahmoud/boltons",
+      "status": "core strong",
+      "scores": {
+        "reference": {"unit": 100.00, "system": 100.00},
+        "codex_subagent_001": {"unit": 100.00, "system": 70.00, "gap_pp": 30.00},
+        "openhands_deepseek_v4_pro_001": {"unit": 100.00, "system": 60.00, "gap_pp": 40.00}
+      },
+      "paths": {
+        "public_packet": "tasks/miniurlutils/candidate_task_unit_system/public_packet.md",
+        "rubric": "tasks/miniurlutils/scoring/rubrics_unit_system_v1.json",
+        "requirement_map": "tasks/miniurlutils/scoring/requirement_map_unit_system_v1.md",
+        "scorer": "tasks/miniurlutils/scoring/score_miniurlutils_unit_system.py"
+      }
+    }
+  ]
+}

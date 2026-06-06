@@ -3,12 +3,7 @@
   "version": "2026-06-06",
   "policy": {
     "included_statuses": ["core strong"],
-    "excluded": [
-      {
-        "task": "MiniTofu",
-        "reason": "provisional core evidence only; excluded from strict package"
-      }
-    ],
+    "excluded": [{"task": "MiniTofu", "reason": "provisional only"}],
     "reference_gate": "unit 100%, system 100%",
     "candidate_gate": "fresh run unit > system with gap >= 15pp",
     "fairness_gate": "traceable but non-isomorphic hidden tests; no private-shape, exact-text, environment, or narrow-format traps"
@@ -28,7 +23,8 @@
         "public_packet": "tasks/sqlite-utils/candidate_task_unit_system/public_packet.md",
         "rubric": "tasks/sqlite-utils/scoring/rubrics_unit_system_v1.json",
         "requirement_map": "tasks/sqlite-utils/scoring/requirement_map_unit_system_v1.md",
-        "scorer": "tasks/sqlite-utils/scoring/score_dbmini_unit_system.py"
+        "scorer": "tasks/sqlite-utils/scoring/score_dbmini_unit_system.py",
+        "reference_solution": "tasks/sqlite-utils/solution-reference"
       }
     },
     {
@@ -45,7 +41,8 @@
         "public_packet": "tasks/zk/candidate_task_unit_system/public_packet.md",
         "rubric": "tasks/zk/scoring/rubrics_unit_system_v1.json",
         "requirement_map": "tasks/zk/scoring/requirement_map_unit_system_v1.md",
-        "scorer": "tasks/zk/scoring/score_zmini.py"
+        "scorer": "tasks/zk/scoring/score_zmini.py",
+        "reference_solution": "tasks/zk/solution-reference"
       }
     },
     {
@@ -62,7 +59,8 @@
         "public_packet": "tasks/miniurlutils/candidate_task_unit_system/public_packet.md",
         "rubric": "tasks/miniurlutils/scoring/rubrics_unit_system_v1.json",
         "requirement_map": "tasks/miniurlutils/scoring/requirement_map_unit_system_v1.md",
-        "scorer": "tasks/miniurlutils/scoring/score_miniurlutils_unit_system.py"
+        "scorer": "tasks/miniurlutils/scoring/score_miniurlutils_unit_system.py",
+        "reference_solution": "tasks/miniurlutils/solution-reference"
       }
     }
   ]

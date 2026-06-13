@@ -1,0 +1,2867 @@
+{
+  "task_id": "actual-budget-realrepo-001",
+  "task_name": "Actual Budget Mini Finance Task",
+  "version": "unit_system_v1",
+  "entrypoint": "budgetmini.py",
+  "total_cases": 30,
+  "passed_cases": 0,
+  "failed_cases": 30,
+  "total_weight": 176.0,
+  "passed_weight": 0.0,
+  "score": 0.0,
+  "unit_score": {
+    "cases": 16,
+    "passed_cases": 0,
+    "total_weight": 64.0,
+    "passed_weight": 0.0,
+    "score": 0.0
+  },
+  "system_score": {
+    "cases": 14,
+    "passed_cases": 0,
+    "total_weight": 112.0,
+    "passed_weight": 0.0,
+    "score": 0.0
+  },
+  "unit_system_gap": 0.0,
+  "case_results": [
+    {
+      "id": "SQU001",
+      "layer": "unit",
+      "category": "account",
+      "description": "Create a new account with zero initial balance.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU001_g1t12uyq\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU002",
+      "layer": "unit",
+      "category": "account",
+      "description": "Rename an account and keep account information available under the new name.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU002_es80t9dy\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU002_es80t9dy\\data.json",
+            "rename-account",
+            "--old",
+            "Cash",
+            "--new",
+            "Wallet"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU003",
+      "layer": "unit",
+      "category": "transaction",
+      "description": "Add an expense transaction and update the account balance.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU003_njvxipyb\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU003_njvxipyb\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU004",
+      "layer": "unit",
+      "category": "transaction",
+      "description": "Add an income transaction and update the account balance.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU004_dm98f6mk\\data.json",
+            "create-account",
+            "--name",
+            "Bank",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU004_dm98f6mk\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Bank",
+            "--payee",
+            "Family",
+            "--category",
+            "Income",
+            "--payment",
+            "0",
+            "--deposit",
+            "2000"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU005",
+      "layer": "unit",
+      "category": "transaction",
+      "description": "Edit a transaction amount and refresh account balance.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU005_h_iys8tp\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU005_h_iys8tp\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU005_h_iys8tp\\data.json",
+            "edit-transaction",
+            "--id",
+            "tx1",
+            "--payment",
+            "80"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU006",
+      "layer": "unit",
+      "category": "transaction",
+      "description": "Delete a transaction and remove its effect from account balance.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU006_ckxtgp1_\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU006_ckxtgp1_\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU006_ckxtgp1_\\data.json",
+            "delete-transaction",
+            "--id",
+            "tx1"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU007",
+      "layer": "unit",
+      "category": "category",
+      "description": "Create a category group and a category under the group.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU007_yb3oqqpa\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU007_yb3oqqpa\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU008",
+      "layer": "unit",
+      "category": "category",
+      "description": "Assign a transaction to a category.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU008_feh1wdvh\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU008_feh1wdvh\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU008_feh1wdvh\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU008_feh1wdvh\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU008_feh1wdvh\\data.json",
+            "assign-category",
+            "--transaction",
+            "tx1",
+            "--category",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU009",
+      "layer": "unit",
+      "category": "budget",
+      "description": "Set a monthly budget for a category.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU009_md4ru55g\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU009_md4ru55g\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU009_md4ru55g\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU010",
+      "layer": "unit",
+      "category": "budget",
+      "description": "Calculate category spent amount and budget balance.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU010_4h_a_p60\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU010_4h_a_p60\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU010_4h_a_p60\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU010_4h_a_p60\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU010_4h_a_p60\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU011",
+      "layer": "unit",
+      "category": "report",
+      "description": "Generate a simple monthly report with income and expense totals.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU011_2ssc2fua\\data.json",
+            "create-account",
+            "--name",
+            "Bank",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU011_2ssc2fua\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-01",
+            "--account",
+            "Bank",
+            "--payee",
+            "Family",
+            "--category",
+            "Income",
+            "--payment",
+            "0",
+            "--deposit",
+            "2000"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU011_2ssc2fua\\data.json",
+            "add-transaction",
+            "--id",
+            "tx2",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Bank",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU011_2ssc2fua\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU012",
+      "layer": "unit",
+      "category": "report",
+      "description": "Calculate net worth from account balances.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU012_fd0417mp\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU012_fd0417mp\\data.json",
+            "create-account",
+            "--name",
+            "Bank",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU012_fd0417mp\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-01",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU012_fd0417mp\\data.json",
+            "add-transaction",
+            "--id",
+            "tx2",
+            "--date",
+            "2026-06-02",
+            "--account",
+            "Bank",
+            "--payee",
+            "Family",
+            "--category",
+            "Income",
+            "--payment",
+            "0",
+            "--deposit",
+            "200"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU012_fd0417mp\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU013",
+      "layer": "unit",
+      "category": "schedule",
+      "description": "Create a scheduled transaction definition.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU013_fj35oby1\\data.json",
+            "create-account",
+            "--name",
+            "Bank",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU013_fj35oby1\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU013_fj35oby1\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Bills"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU013_fj35oby1\\data.json",
+            "create-schedule",
+            "--name",
+            "Phone Bill",
+            "--payee",
+            "China Mobile",
+            "--account",
+            "Bank",
+            "--category",
+            "Bills",
+            "--amount",
+            "30",
+            "--direction",
+            "payment",
+            "--repeat",
+            "monthly",
+            "--day",
+            "15"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU014",
+      "layer": "unit",
+      "category": "rule",
+      "description": "Create a rule that sets category based on payee.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU014_dwx82bsd\\data.json",
+            "create-rule",
+            "--name",
+            "Starbucks to Food",
+            "--field",
+            "payee",
+            "--equals",
+            "Starbucks",
+            "--set-category",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU015",
+      "layer": "unit",
+      "category": "payee_tag",
+      "description": "Reuse a payee and assign a tag to a transaction.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU015_j9rge89v\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU015_j9rge89v\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU015_j9rge89v\\data.json",
+            "assign-tag",
+            "--transaction",
+            "tx1",
+            "--tag",
+            "school"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQU016",
+      "layer": "unit",
+      "category": "error_atomicity",
+      "description": "Reject a transaction without an account and keep state unchanged.",
+      "weight": 4.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQU016_zy9t7utd\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--payee",
+            "Canteen",
+            "--payment",
+            "60"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": true,
+          "passed_exit_check": false
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS001",
+      "layer": "system",
+      "category": "account_transaction_balance",
+      "description": "Account balance updates after multiple linked transactions.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS001_oh1t20cf\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS001_oh1t20cf\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS001_oh1t20cf\\data.json",
+            "add-transaction",
+            "--id",
+            "tx2",
+            "--date",
+            "2026-06-11",
+            "--account",
+            "Cash",
+            "--payee",
+            "Family",
+            "--category",
+            "Income",
+            "--payment",
+            "0",
+            "--deposit",
+            "200"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS002",
+      "layer": "system",
+      "category": "transaction_category_budget",
+      "description": "A categorized transaction updates category spending and budget balance.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS002_tn5kgo_s\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS002_tn5kgo_s\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS002_tn5kgo_s\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS002_tn5kgo_s\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS002_tn5kgo_s\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS003",
+      "layer": "system",
+      "category": "transaction_report",
+      "description": "A transaction updates monthly report totals and net worth.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS003_kkbp4rc2\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS003_kkbp4rc2\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS003_kkbp4rc2\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS004",
+      "layer": "system",
+      "category": "multiple_transactions_budget_report",
+      "description": "Multiple expenses accumulate correctly in account, budget, and report.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS004_o3nocs8y\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS004_o3nocs8y\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS004_o3nocs8y\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS004_o3nocs8y\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "200"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS004_o3nocs8y\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Lunch",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS004_o3nocs8y\\data.json",
+            "add-transaction",
+            "--id",
+            "tx2",
+            "--date",
+            "2026-06-11",
+            "--account",
+            "Cash",
+            "--payee",
+            "Dinner",
+            "--category",
+            "Food",
+            "--payment",
+            "80",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS004_o3nocs8y\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS005",
+      "layer": "system",
+      "category": "monthly_filtering",
+      "description": "Monthly budget and report only count transactions from the selected month.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS005_t2pmvaan\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS005_t2pmvaan\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS005_t2pmvaan\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS005_t2pmvaan\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS005_t2pmvaan\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Lunch",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS005_t2pmvaan\\data.json",
+            "add-transaction",
+            "--id",
+            "tx2",
+            "--date",
+            "2026-07-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Dinner",
+            "--category",
+            "Food",
+            "--payment",
+            "80",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS005_t2pmvaan\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS006",
+      "layer": "system",
+      "category": "single_expense_global_consistency",
+      "description": "Account balance, category spending, budget balance, and report totals agree for one expense.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS006_okbltj4w\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS006_okbltj4w\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS006_okbltj4w\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS006_okbltj4w\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS006_okbltj4w\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS006_okbltj4w\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS007",
+      "layer": "system",
+      "category": "edit_transaction_refresh_all",
+      "description": "Editing a transaction refreshes account balance, budget values, and report values.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS007_b_dsj849\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS007_b_dsj849\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS007_b_dsj849\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS007_b_dsj849\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS007_b_dsj849\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS007_b_dsj849\\data.json",
+            "edit-transaction",
+            "--id",
+            "tx1",
+            "--payment",
+            "80"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS007_b_dsj849\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS008",
+      "layer": "system",
+      "category": "invalid_transaction_atomicity",
+      "description": "A failed transaction without account does not change existing state.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS008_m_z0dd3a\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS008_m_z0dd3a\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS008_m_z0dd3a\\data.json",
+            "add-transaction",
+            "--id",
+            "bad1",
+            "--date",
+            "2026-06-10",
+            "--payee",
+            "Store",
+            "--payment",
+            "20"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": true,
+          "passed_exit_check": false
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS009",
+      "layer": "system",
+      "category": "payment_deposit_atomicity",
+      "description": "A transaction with both payment and deposit greater than zero fails without changing state.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS009_5sgt5gnj\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS009_5sgt5gnj\\data.json",
+            "add-transaction",
+            "--id",
+            "bad1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Test",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "20"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": true,
+          "passed_exit_check": false
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS010",
+      "layer": "system",
+      "category": "rule_before_transaction",
+      "description": "A rule created before a matching transaction automatically categorizes it when rules are applied.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS010_8e3_yg9x\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS010_8e3_yg9x\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS010_8e3_yg9x\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS010_8e3_yg9x\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS010_8e3_yg9x\\data.json",
+            "create-rule",
+            "--name",
+            "Starbucks to Food",
+            "--field",
+            "payee",
+            "--equals",
+            "Starbucks",
+            "--set-category",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS010_8e3_yg9x\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Starbucks",
+            "--payment",
+            "30",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS010_8e3_yg9x\\data.json",
+            "apply-rules"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS011",
+      "layer": "system",
+      "category": "transaction_before_rule",
+      "description": "A rule created after an existing transaction can update that transaction when rules are applied.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS011_o1lk5nbq\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS011_o1lk5nbq\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS011_o1lk5nbq\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS011_o1lk5nbq\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS011_o1lk5nbq\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Starbucks",
+            "--payment",
+            "30",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS011_o1lk5nbq\\data.json",
+            "create-rule",
+            "--name",
+            "Starbucks to Food",
+            "--field",
+            "payee",
+            "--equals",
+            "Starbucks",
+            "--set-category",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS011_o1lk5nbq\\data.json",
+            "apply-rules"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS012",
+      "layer": "system",
+      "category": "schedule_to_transaction_report",
+      "description": "A schedule generates a real transaction that updates account balance and report values.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS012_g6xxm5s6\\data.json",
+            "create-account",
+            "--name",
+            "Bank",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS012_g6xxm5s6\\data.json",
+            "create-category-group",
+            "--name",
+            "Income"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS012_g6xxm5s6\\data.json",
+            "create-category",
+            "--group",
+            "Income",
+            "--name",
+            "Salary"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS012_g6xxm5s6\\data.json",
+            "create-schedule",
+            "--name",
+            "Monthly Salary",
+            "--payee",
+            "Company",
+            "--account",
+            "Bank",
+            "--category",
+            "Salary",
+            "--amount",
+            "3000",
+            "--direction",
+            "deposit",
+            "--repeat",
+            "monthly",
+            "--day",
+            "1"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS012_g6xxm5s6\\data.json",
+            "generate-scheduled-transaction",
+            "--schedule",
+            "Monthly Salary",
+            "--date",
+            "2026-06-01",
+            "--id",
+            "tx1"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS012_g6xxm5s6\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS013",
+      "layer": "system",
+      "category": "schedule_rule_budget_report",
+      "description": "A schedule-generated transaction can be categorized by a rule and then update budget and report values.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "create-account",
+            "--name",
+            "Bank",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Bills"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Bills",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "create-rule",
+            "--name",
+            "Mobile to Bills",
+            "--field",
+            "payee",
+            "--equals",
+            "China Mobile",
+            "--set-category",
+            "Bills"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "create-schedule",
+            "--name",
+            "Phone Bill",
+            "--payee",
+            "China Mobile",
+            "--account",
+            "Bank",
+            "--category",
+            "Bills",
+            "--amount",
+            "30",
+            "--direction",
+            "payment",
+            "--repeat",
+            "monthly",
+            "--day",
+            "15"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "generate-scheduled-transaction",
+            "--schedule",
+            "Phone Bill",
+            "--date",
+            "2026-06-15",
+            "--id",
+            "tx1"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "apply-rules"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS013_7bxqsfg6\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "SQS014",
+      "layer": "system",
+      "category": "rename_category_propagation",
+      "description": "Renaming a category preserves related transactions, budgets, and report consistency.",
+      "weight": 8.0,
+      "passed": false,
+      "earned_weight": 0.0,
+      "command_results": [
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS014_botjnfy5\\data.json",
+            "create-account",
+            "--name",
+            "Cash",
+            "--type",
+            "checking",
+            "--on-budget"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS014_botjnfy5\\data.json",
+            "create-category-group",
+            "--name",
+            "Usual Expenses"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS014_botjnfy5\\data.json",
+            "create-category",
+            "--group",
+            "Usual Expenses",
+            "--name",
+            "Food"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS014_botjnfy5\\data.json",
+            "set-budget",
+            "--month",
+            "2026-06",
+            "--category",
+            "Food",
+            "--amount",
+            "100"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS014_botjnfy5\\data.json",
+            "add-transaction",
+            "--id",
+            "tx1",
+            "--date",
+            "2026-06-10",
+            "--account",
+            "Cash",
+            "--payee",
+            "Canteen",
+            "--category",
+            "Food",
+            "--payment",
+            "60",
+            "--deposit",
+            "0"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS014_botjnfy5\\data.json",
+            "rename-category",
+            "--old",
+            "Food",
+            "--new",
+            "Meals"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        },
+        {
+          "args": [
+            "C:\\Users\\LCY\\AppData\\Local\\Temp\\eval_SQS014_botjnfy5\\data.json",
+            "report",
+            "--month",
+            "2026-06"
+          ],
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "",
+          "expected_error": false,
+          "passed_exit_check": true
+        }
+      ],
+      "check_results": [
+        {
+          "type": "state_command",
+          "passed": false,
+          "message": "`state` output invalid: stdout is empty",
+          "expected": "valid state JSON",
+          "actual": "",
+          "path": null
+        }
+      ],
+      "error": null
+    }
+  ]
+}

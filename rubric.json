@@ -1,0 +1,2976 @@
+{
+"task_id": "actual-budget-realrepo-001",
+"task_name": "Actual Budget Mini Finance Task",
+"version": "unit_system_v1",
+"entrypoint": "budgetmini.py",
+"data_file": "data.json",
+"total_cases": 30,
+"total_weight": 176,
+"unit_cases": 16,
+"unit_weight": 64,
+"system_cases": 14,
+"system_weight": 112,
+"requirements": [
+"REQ-account",
+"REQ-transaction",
+"REQ-category",
+"REQ-budget",
+"REQ-report",
+"REQ-schedule",
+"REQ-rule",
+"REQ-payee-tag",
+"REQ-atomic",
+"REQ-global-invariants"
+],
+"system_dimensions": [
+"cross_feature_dataflow",
+"state_accumulation",
+"global_invariant",
+"error_atomicity",
+"operation_order_sensitivity",
+"boundary_crossing"
+],
+"case_id_prefix": {
+"unit": "SQU",
+"system": "SQS"
+},
+"command_format": "python budgetmini.py <data_file> <command> [options]",
+"check_format_note": "The evaluator should run all commands in order on a fresh data file for each case. After commands are executed, the evaluator may call the state command and check the JSON state using the path arrays below.",
+"cases": [
+{
+"id": "SQU001",
+"layer": "unit",
+"category": "account",
+"requirement_refs": [
+"REQ-account"
+],
+"description": "Create a new account with zero initial balance.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"name"
+],
+"expected": "Cash"
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"type"
+],
+"expected": "checking"
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"on_budget"
+],
+"expected": true
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": 0
+}
+]
+},
+{
+"id": "SQU002",
+"layer": "unit",
+"category": "account",
+"requirement_refs": [
+"REQ-account"
+],
+"description": "Rename an account and keep account information available under the new name.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"rename-account",
+"--old",
+"Cash",
+"--new",
+"Wallet"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_path_missing",
+"path": [
+"accounts",
+"Cash"
+]
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Wallet",
+"name"
+],
+"expected": "Wallet"
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Wallet",
+"balance"
+],
+"expected": 0
+}
+]
+},
+{
+"id": "SQU003",
+"layer": "unit",
+"category": "transaction",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction"
+],
+"description": "Add an expense transaction and update the account balance.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"payment"
+],
+"expected": 60
+},
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"deposit"
+],
+"expected": 0
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": -60
+}
+]
+},
+{
+"id": "SQU004",
+"layer": "unit",
+"category": "transaction",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction"
+],
+"description": "Add an income transaction and update the account balance.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Bank",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Bank",
+"--payee",
+"Family",
+"--category",
+"Income",
+"--payment",
+"0",
+"--deposit",
+"2000"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"deposit"
+],
+"expected": 2000
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Bank",
+"balance"
+],
+"expected": 2000
+}
+]
+},
+{
+"id": "SQU005",
+"layer": "unit",
+"category": "transaction",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction"
+],
+"description": "Edit a transaction amount and refresh account balance.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"edit-transaction",
+"--id",
+"tx1",
+"--payment",
+"80"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"payment"
+],
+"expected": 80
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": -80
+}
+]
+},
+{
+"id": "SQU006",
+"layer": "unit",
+"category": "transaction",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction"
+],
+"description": "Delete a transaction and remove its effect from account balance.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"delete-transaction",
+"--id",
+"tx1"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_path_missing",
+"path": [
+"transactions",
+"tx1"
+]
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": 0
+}
+]
+},
+{
+"id": "SQU007",
+"layer": "unit",
+"category": "category",
+"requirement_refs": [
+"REQ-category"
+],
+"description": "Create a category group and a category under the group.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"category_groups",
+"Usual Expenses",
+"name"
+],
+"expected": "Usual Expenses"
+},
+{
+"type": "state_value_equals",
+"path": [
+"categories",
+"Food",
+"group"
+],
+"expected": "Usual Expenses"
+}
+]
+},
+{
+"id": "SQU008",
+"layer": "unit",
+"category": "category",
+"requirement_refs": [
+"REQ-transaction",
+"REQ-category"
+],
+"description": "Assign a transaction to a category.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"assign-category",
+"--transaction",
+"tx1",
+"--category",
+"Food"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"category"
+],
+"expected": "Food"
+}
+]
+},
+{
+"id": "SQU009",
+"layer": "unit",
+"category": "budget",
+"requirement_refs": [
+"REQ-category",
+"REQ-budget"
+],
+"description": "Set a monthly budget for a category.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"100"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"budgeted"
+],
+"expected": 100
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 0
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"balance"
+],
+"expected": 100
+}
+]
+},
+{
+"id": "SQU010",
+"layer": "unit",
+"category": "budget",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction",
+"REQ-category",
+"REQ-budget"
+],
+"description": "Calculate category spent amount and budget balance.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"100"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 60
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"balance"
+],
+"expected": 40
+}
+]
+},
+{
+"id": "SQU011",
+"layer": "unit",
+"category": "report",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction",
+"REQ-report"
+],
+"description": "Generate a simple monthly report with income and expense totals.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Bank",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-01",
+"--account",
+"Bank",
+"--payee",
+"Family",
+"--category",
+"Income",
+"--payment",
+"0",
+"--deposit",
+"2000"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx2",
+"--date",
+"2026-06-10",
+"--account",
+"Bank",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "stdout_json_value_equals",
+"command_index": 3,
+"path": [
+"total_income"
+],
+"expected": 2000
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 3,
+"path": [
+"total_expenses"
+],
+"expected": 60
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 3,
+"path": [
+"cash_flow"
+],
+"expected": 1940
+}
+]
+},
+{
+"id": "SQU012",
+"layer": "unit",
+"category": "report",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction",
+"REQ-report"
+],
+"description": "Calculate net worth from account balances.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Bank",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-01",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx2",
+"--date",
+"2026-06-02",
+"--account",
+"Bank",
+"--payee",
+"Family",
+"--category",
+"Income",
+"--payment",
+"0",
+"--deposit",
+"200"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "stdout_json_value_equals",
+"command_index": 4,
+"path": [
+"net_worth"
+],
+"expected": 140
+}
+]
+},
+{
+"id": "SQU013",
+"layer": "unit",
+"category": "schedule",
+"requirement_refs": [
+"REQ-schedule"
+],
+"description": "Create a scheduled transaction definition.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Bank",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Bills"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-schedule",
+"--name",
+"Phone Bill",
+"--payee",
+"China Mobile",
+"--account",
+"Bank",
+"--category",
+"Bills",
+"--amount",
+"30",
+"--direction",
+"payment",
+"--repeat",
+"monthly",
+"--day",
+"15"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"schedules",
+"Phone Bill",
+"payee"
+],
+"expected": "China Mobile"
+},
+{
+"type": "state_value_equals",
+"path": [
+"schedules",
+"Phone Bill",
+"amount"
+],
+"expected": 30
+},
+{
+"type": "state_value_equals",
+"path": [
+"schedules",
+"Phone Bill",
+"direction"
+],
+"expected": "payment"
+}
+]
+},
+{
+"id": "SQU014",
+"layer": "unit",
+"category": "rule",
+"requirement_refs": [
+"REQ-rule"
+],
+"description": "Create a rule that sets category based on payee.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-rule",
+"--name",
+"Starbucks to Food",
+"--field",
+"payee",
+"--equals",
+"Starbucks",
+"--set-category",
+"Food"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"rules",
+"Starbucks to Food",
+"field"
+],
+"expected": "payee"
+},
+{
+"type": "state_value_equals",
+"path": [
+"rules",
+"Starbucks to Food",
+"equals"
+],
+"expected": "Starbucks"
+},
+{
+"type": "state_value_equals",
+"path": [
+"rules",
+"Starbucks to Food",
+"set_category"
+],
+"expected": "Food"
+}
+]
+},
+{
+"id": "SQU015",
+"layer": "unit",
+"category": "payee_tag",
+"requirement_refs": [
+"REQ-payee-tag",
+"REQ-transaction"
+],
+"description": "Reuse a payee and assign a tag to a transaction.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"assign-tag",
+"--transaction",
+"tx1",
+"--tag",
+"school"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_path_exists",
+"path": [
+"payees",
+"Canteen"
+]
+},
+{
+"type": "state_array_contains",
+"path": [
+"transactions",
+"tx1",
+"tags"
+],
+"expected": "school"
+}
+]
+},
+{
+"id": "SQU016",
+"layer": "unit",
+"category": "error_atomicity",
+"requirement_refs": [
+"REQ-transaction",
+"REQ-atomic"
+],
+"description": "Reject a transaction without an account and keep state unchanged.",
+"weight": 4,
+"commands": [
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--payee",
+"Canteen",
+"--payment",
+"60"
+],
+"expect_error": true
+}
+],
+"checks": [
+{
+"type": "state_path_missing",
+"path": [
+"transactions",
+"tx1"
+]
+},
+{
+"type": "stderr_contains",
+"command_index": 0,
+"expected": "account"
+}
+]
+},
+{
+"id": "SQS001",
+"layer": "system",
+"system_dimension": "cross_feature_dataflow",
+"category": "account_transaction_balance",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction",
+"REQ-global-invariants"
+],
+"description": "Account balance updates after multiple linked transactions.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx2",
+"--date",
+"2026-06-11",
+"--account",
+"Cash",
+"--payee",
+"Family",
+"--category",
+"Income",
+"--payment",
+"0",
+"--deposit",
+"200"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": 140
+}
+]
+},
+{
+"id": "SQS002",
+"layer": "system",
+"system_dimension": "cross_feature_dataflow",
+"category": "transaction_category_budget",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction",
+"REQ-category",
+"REQ-budget",
+"REQ-global-invariants"
+],
+"description": "A categorized transaction updates category spending and budget balance.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"100"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 60
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"balance"
+],
+"expected": 40
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": -60
+}
+]
+},
+{
+"id": "SQS003",
+"layer": "system",
+"system_dimension": "cross_feature_dataflow",
+"category": "transaction_report",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction",
+"REQ-report"
+],
+"description": "A transaction updates monthly report totals and net worth.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "stdout_json_value_equals",
+"command_index": 2,
+"path": [
+"total_expenses"
+],
+"expected": 60
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 2,
+"path": [
+"net_worth"
+],
+"expected": -60
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 2,
+"path": [
+"cash_flow"
+],
+"expected": -60
+}
+]
+},
+{
+"id": "SQS004",
+"layer": "system",
+"system_dimension": "state_accumulation",
+"category": "multiple_transactions_budget_report",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction",
+"REQ-category",
+"REQ-budget",
+"REQ-report"
+],
+"description": "Multiple expenses accumulate correctly in account, budget, and report.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"200"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Lunch",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx2",
+"--date",
+"2026-06-11",
+"--account",
+"Cash",
+"--payee",
+"Dinner",
+"--category",
+"Food",
+"--payment",
+"80",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": -140
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 140
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"balance"
+],
+"expected": 60
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 6,
+"path": [
+"total_expenses"
+],
+"expected": 140
+}
+]
+},
+{
+"id": "SQS005",
+"layer": "system",
+"system_dimension": "state_accumulation",
+"category": "monthly_filtering",
+"requirement_refs": [
+"REQ-transaction",
+"REQ-budget",
+"REQ-report"
+],
+"description": "Monthly budget and report only count transactions from the selected month.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"100"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Lunch",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx2",
+"--date",
+"2026-07-10",
+"--account",
+"Cash",
+"--payee",
+"Dinner",
+"--category",
+"Food",
+"--payment",
+"80",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 60
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"balance"
+],
+"expected": 40
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 6,
+"path": [
+"total_expenses"
+],
+"expected": 60
+}
+]
+},
+{
+"id": "SQS006",
+"layer": "system",
+"system_dimension": "global_invariant",
+"category": "single_expense_global_consistency",
+"requirement_refs": [
+"REQ-account",
+"REQ-transaction",
+"REQ-category",
+"REQ-budget",
+"REQ-report",
+"REQ-global-invariants"
+],
+"description": "Account balance, category spending, budget balance, and report totals agree for one expense.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": -60
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 60
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"balance"
+],
+"expected": -60
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 5,
+"path": [
+"total_expenses"
+],
+"expected": 60
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 5,
+"path": [
+"net_worth"
+],
+"expected": -60
+}
+]
+},
+{
+"id": "SQS007",
+"layer": "system",
+"system_dimension": "global_invariant",
+"category": "edit_transaction_refresh_all",
+"requirement_refs": [
+"REQ-transaction",
+"REQ-budget",
+"REQ-report",
+"REQ-global-invariants"
+],
+"description": "Editing a transaction refreshes account balance, budget values, and report values.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"100"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"edit-transaction",
+"--id",
+"tx1",
+"--payment",
+"80"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": -80
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 80
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"balance"
+],
+"expected": 20
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 6,
+"path": [
+"total_expenses"
+],
+"expected": 80
+}
+]
+},
+{
+"id": "SQS008",
+"layer": "system",
+"system_dimension": "error_atomicity",
+"category": "invalid_transaction_atomicity",
+"requirement_refs": [
+"REQ-transaction",
+"REQ-atomic",
+"REQ-global-invariants"
+],
+"description": "A failed transaction without account does not change existing state.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"bad1",
+"--date",
+"2026-06-10",
+"--payee",
+"Store",
+"--payment",
+"20"
+],
+"expect_error": true
+}
+],
+"checks": [
+{
+"type": "state_path_missing",
+"path": [
+"transactions",
+"bad1"
+]
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": -60
+},
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"payment"
+],
+"expected": 60
+}
+]
+},
+{
+"id": "SQS009",
+"layer": "system",
+"system_dimension": "error_atomicity",
+"category": "payment_deposit_atomicity",
+"requirement_refs": [
+"REQ-transaction",
+"REQ-atomic"
+],
+"description": "A transaction with both payment and deposit greater than zero fails without changing state.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"bad1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Test",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"20"
+],
+"expect_error": true
+}
+],
+"checks": [
+{
+"type": "state_path_missing",
+"path": [
+"transactions",
+"bad1"
+]
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": 0
+},
+{
+"type": "stderr_contains",
+"command_index": 1,
+"expected": "payment"
+}
+]
+},
+{
+"id": "SQS010",
+"layer": "system",
+"system_dimension": "operation_order_sensitivity",
+"category": "rule_before_transaction",
+"requirement_refs": [
+"REQ-rule",
+"REQ-transaction",
+"REQ-budget",
+"REQ-report"
+],
+"description": "A rule created before a matching transaction automatically categorizes it when rules are applied.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"100"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-rule",
+"--name",
+"Starbucks to Food",
+"--field",
+"payee",
+"--equals",
+"Starbucks",
+"--set-category",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Starbucks",
+"--payment",
+"30",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"apply-rules"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"category"
+],
+"expected": "Food"
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 30
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"balance"
+],
+"expected": 70
+}
+]
+},
+{
+"id": "SQS011",
+"layer": "system",
+"system_dimension": "operation_order_sensitivity",
+"category": "transaction_before_rule",
+"requirement_refs": [
+"REQ-rule",
+"REQ-transaction",
+"REQ-budget",
+"REQ-report"
+],
+"description": "A rule created after an existing transaction can update that transaction when rules are applied.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"100"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Starbucks",
+"--payment",
+"30",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-rule",
+"--name",
+"Starbucks to Food",
+"--field",
+"payee",
+"--equals",
+"Starbucks",
+"--set-category",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"apply-rules"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"category"
+],
+"expected": "Food"
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Food",
+"spent"
+],
+"expected": 30
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Cash",
+"balance"
+],
+"expected": -30
+}
+]
+},
+{
+"id": "SQS012",
+"layer": "system",
+"system_dimension": "boundary_crossing",
+"category": "schedule_to_transaction_report",
+"requirement_refs": [
+"REQ-schedule",
+"REQ-account",
+"REQ-transaction",
+"REQ-report"
+],
+"description": "A schedule generates a real transaction that updates account balance and report values.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Bank",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Income"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Income",
+"--name",
+"Salary"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-schedule",
+"--name",
+"Monthly Salary",
+"--payee",
+"Company",
+"--account",
+"Bank",
+"--category",
+"Salary",
+"--amount",
+"3000",
+"--direction",
+"deposit",
+"--repeat",
+"monthly",
+"--day",
+"1"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"generate-scheduled-transaction",
+"--schedule",
+"Monthly Salary",
+"--date",
+"2026-06-01",
+"--id",
+"tx1"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"payee"
+],
+"expected": "Company"
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Bank",
+"balance"
+],
+"expected": 3000
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 5,
+"path": [
+"total_income"
+],
+"expected": 3000
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 5,
+"path": [
+"net_worth"
+],
+"expected": 3000
+}
+]
+},
+{
+"id": "SQS013",
+"layer": "system",
+"system_dimension": "boundary_crossing",
+"category": "schedule_rule_budget_report",
+"requirement_refs": [
+"REQ-schedule",
+"REQ-rule",
+"REQ-transaction",
+"REQ-budget",
+"REQ-report"
+],
+"description": "A schedule-generated transaction can be categorized by a rule and then update budget and report values.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Bank",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Bills"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Bills",
+"--amount",
+"100"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-rule",
+"--name",
+"Mobile to Bills",
+"--field",
+"payee",
+"--equals",
+"China Mobile",
+"--set-category",
+"Bills"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-schedule",
+"--name",
+"Phone Bill",
+"--payee",
+"China Mobile",
+"--account",
+"Bank",
+"--category",
+"Bills",
+"--amount",
+"30",
+"--direction",
+"payment",
+"--repeat",
+"monthly",
+"--day",
+"15"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"generate-scheduled-transaction",
+"--schedule",
+"Phone Bill",
+"--date",
+"2026-06-15",
+"--id",
+"tx1"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"apply-rules"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"category"
+],
+"expected": "Bills"
+},
+{
+"type": "state_value_equals",
+"path": [
+"accounts",
+"Bank",
+"balance"
+],
+"expected": -30
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Bills",
+"spent"
+],
+"expected": 30
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Bills",
+"balance"
+],
+"expected": 70
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 8,
+"path": [
+"total_expenses"
+],
+"expected": 30
+}
+]
+},
+{
+"id": "SQS014",
+"layer": "system",
+"system_dimension": "global_invariant",
+"category": "rename_category_propagation",
+"requirement_refs": [
+"REQ-category",
+"REQ-transaction",
+"REQ-budget",
+"REQ-report",
+"REQ-global-invariants"
+],
+"description": "Renaming a category preserves related transactions, budgets, and report consistency.",
+"weight": 8,
+"commands": [
+{
+"args": [
+"data.json",
+"create-account",
+"--name",
+"Cash",
+"--type",
+"checking",
+"--on-budget"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category-group",
+"--name",
+"Usual Expenses"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"create-category",
+"--group",
+"Usual Expenses",
+"--name",
+"Food"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"set-budget",
+"--month",
+"2026-06",
+"--category",
+"Food",
+"--amount",
+"100"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"add-transaction",
+"--id",
+"tx1",
+"--date",
+"2026-06-10",
+"--account",
+"Cash",
+"--payee",
+"Canteen",
+"--category",
+"Food",
+"--payment",
+"60",
+"--deposit",
+"0"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"rename-category",
+"--old",
+"Food",
+"--new",
+"Meals"
+],
+"expect_error": false
+},
+{
+"args": [
+"data.json",
+"report",
+"--month",
+"2026-06"
+],
+"expect_error": false
+}
+],
+"checks": [
+{
+"type": "state_path_missing",
+"path": [
+"categories",
+"Food"
+]
+},
+{
+"type": "state_value_equals",
+"path": [
+"categories",
+"Meals",
+"group"
+],
+"expected": "Usual Expenses"
+},
+{
+"type": "state_value_equals",
+"path": [
+"transactions",
+"tx1",
+"category"
+],
+"expected": "Meals"
+},
+{
+"type": "state_value_equals",
+"path": [
+"budgets",
+"2026-06",
+"Meals",
+"spent"
+],
+"expected": 60
+},
+{
+"type": "stdout_json_value_equals",
+"command_index": 6,
+"path": [
+"total_expenses"
+],
+"expected": 60
+}
+]
+}
+]
+}

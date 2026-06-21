@@ -1,0 +1,561 @@
+{
+  "total_cases": 28,
+  "passed_cases": 28,
+  "total_weight": 160,
+  "passed_weight": 160,
+  "score": 1.0,
+  "unit_score": {
+    "weight": 64,
+    "passed_weight": 64,
+    "score": 1.0,
+    "cases": 16,
+    "passed_cases": 16
+  },
+  "system_score": {
+    "weight": 96,
+    "passed_weight": 96,
+    "score": 1.0,
+    "cases": 12,
+    "passed_cases": 12
+  },
+  "unit_system_gap": 0.0,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 96,
+      "cases": 12,
+      "passed": 12
+    },
+    "unit": {
+      "weight": 64,
+      "passed_weight": 64,
+      "cases": 16,
+      "passed": 16
+    }
+  },
+  "categories": {
+    "basic_execution": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "cd_pwd_state": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "echo": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "environment": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "error_recovery": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "exit": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "exit_status": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "export_expand_pipeline": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "failed_cd_preserves_state": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "failed_export_preserves_environment": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "failure_status_stderr_recovery": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "grep_exit_status": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "pipeline": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "pipeline_exit_status": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "pipeline_input_redirection_precedence": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "pwd_cd": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "quote_expansion_rules": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "quoting": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "redir_replace_append_order": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "redir_scope_pipeline_scope": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "redir_then_external_read": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "redirection": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "syntax_error_recovery": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "unset_env_expansion": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "utility_commands": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "evaluator_version": "rubric-runner-2026-06-20",
+  "run_name": "reference",
+  "generated_at_utc": "2026-06-21T07:06:17.948685+00:00",
+  "task_dir": "C:\\Users\\zhang\\Desktop\\Bmk-dev-work\\task\\minishell-realrepo-001",
+  "solution_dir": "C:\\Users\\zhang\\Desktop\\benchmark\\reference_solutions\\minishell",
+  "rubric_path": "C:\\Users\\zhang\\Desktop\\Bmk-dev-work\\task\\minishell-realrepo-001\\rubric.json",
+  "failed_ids": [],
+  "results": [
+    {
+      "id": "MSU001",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "basic_execution",
+      "description": "The shell executes simple echo commands from stdin in sequence.",
+      "weight": 4,
+      "expected_output": "hello\nworld",
+      "actual_stdout": "hello\nworld",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU002",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "echo",
+      "description": "echo prints arguments with spaces and echo -n suppresses the trailing newline.",
+      "weight": 4,
+      "expected_output": "'a b c\\ntail'",
+      "actual_stdout": "'a b c\\ntail'",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU003",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "quoting",
+      "description": "Quoted strings preserve spaces while unquoted whitespace separates arguments.",
+      "weight": 4,
+      "expected_output": "one two three\nfour five six",
+      "actual_stdout": "one two three\nfour five six",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU004",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "pwd_cd",
+      "description": "cd changes the working directory and pwd reports the updated directory.",
+      "weight": 4,
+      "expected_output": "sub\nTrue",
+      "actual_stdout": "sub\nTrue",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU005",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "environment",
+      "description": "export sets an environment variable and later echo expands it.",
+      "weight": 4,
+      "expected_output": "alice",
+      "actual_stdout": "alice",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU006",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "environment",
+      "description": "unset removes an environment variable and undefined variables expand to an empty string.",
+      "weight": 4,
+      "expected_output": "before--after",
+      "actual_stdout": "before--after",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU007",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "environment",
+      "description": "env prints only managed shell variables in deterministic order.",
+      "weight": 4,
+      "expected_output": "A=1\nB=2",
+      "actual_stdout": "A=1\nB=2",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU008",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "pipeline",
+      "description": "A simple pipeline passes stdout from the left command to the right command.",
+      "weight": 4,
+      "expected_output": "hello",
+      "actual_stdout": "hello",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU009",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "redirection",
+      "description": "Output redirection writes to a file and input redirection reads from that file.",
+      "weight": 4,
+      "expected_output": "hello",
+      "actual_stdout": "hello",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU010",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "exit_status",
+      "description": "$? expands to the latest command exit status after a successful command.",
+      "weight": 4,
+      "expected_output": "ok\n0",
+      "actual_stdout": "ok\n0",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU011",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "exit",
+      "description": "exit terminates command processing and later commands are not executed.",
+      "weight": 4,
+      "expected_output": "before",
+      "actual_stdout": "before",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU012",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "error_recovery",
+      "description": "Unknown commands report diagnostics on stderr while later valid commands still write clean stdout.",
+      "weight": 4,
+      "expected_output": "stdout=after\nstderr_has_error=True",
+      "actual_stdout": "stdout=after\nstderr_has_error=True",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU013",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "utility_commands",
+      "description": "cat reads a named file and writes its contents to stdout.",
+      "weight": 4,
+      "expected_output": "one\ntwo",
+      "actual_stdout": "one\ntwo",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU014",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "quoting",
+      "description": "Pipeline and redirection characters inside quotes are treated as literal text.",
+      "weight": 4,
+      "expected_output": "a | b\nx > y",
+      "actual_stdout": "a | b\nx > y",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS001",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "cd_pwd_state",
+      "description": "Working-directory state persists across multiple commands and affects later pwd output.",
+      "weight": 8,
+      "expected_output": "['a', 'b']",
+      "actual_stdout": "['a', 'b']",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS002",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "export_expand_pipeline",
+      "description": "An exported variable expands before command execution and its output flows through a pipeline.",
+      "weight": 8,
+      "expected_output": "hello",
+      "actual_stdout": "hello",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS003",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "quote_expansion_rules",
+      "description": "Single quotes disable variable expansion while double quotes allow it in the same process.",
+      "weight": 8,
+      "expected_output": "$X\nabc",
+      "actual_stdout": "$X\nabc",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS004",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "redir_then_external_read",
+      "description": "Builtin output redirected to a file can later be read and passed through a pipeline.",
+      "weight": 8,
+      "expected_output": "alpha",
+      "actual_stdout": "alpha",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS005",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "redir_replace_append_order",
+      "description": "The order of replacement and append redirections determines final file contents.",
+      "weight": 8,
+      "expected_output": "reset\nthree",
+      "actual_stdout": "reset\nthree",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS006",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "failed_cd_preserves_state",
+      "description": "A failed cd does not change the current working directory and later valid commands still work.",
+      "weight": 8,
+      "expected_output": "ok\nstill-running",
+      "actual_stdout": "ok\nstill-running",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS007",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "failed_export_preserves_environment",
+      "description": "A failed export does not corrupt previously defined environment variables.",
+      "weight": 8,
+      "expected_output": "ok",
+      "actual_stdout": "ok",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS008",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "pipeline_exit_status",
+      "description": "Pipeline output and pipeline exit status are handled consistently.",
+      "weight": 8,
+      "expected_output": "hello\n0\n1",
+      "actual_stdout": "hello\n0\n1",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS009",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "unset_env_expansion",
+      "description": "unset updates both later variable expansion and environment listing.",
+      "weight": 8,
+      "expected_output": "x y\nFalse",
+      "actual_stdout": "x y\nFalse",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS010",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "redir_scope_pipeline_scope",
+      "description": "Redirection scope and pipeline dataflow remain separate when combined in one command line.",
+      "weight": 8,
+      "expected_output": "visible\nhidden",
+      "actual_stdout": "visible\nhidden",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS011",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "failure_status_stderr_recovery",
+      "description": "A failed command reports on stderr, updates $? to a nonzero value, and allows later commands to continue with clean stdout.",
+      "weight": 8,
+      "expected_output": "True\nTrue\nafter\nTrue",
+      "actual_stdout": "True\nTrue\nafter\nTrue",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU015",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "syntax_error_recovery",
+      "description": "An unmatched quote reports an error on stderr and later input lines still execute.",
+      "weight": 4,
+      "expected_output": "stdout=before\nafter\nstderr=True",
+      "actual_stdout": "stdout=before\nafter\nstderr=True",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSU016",
+      "layer": "unit",
+      "system_dimension": null,
+      "category": "grep_exit_status",
+      "description": "A grep miss in a simple pipeline sets the latest status to 1 for later $? expansion.",
+      "weight": 4,
+      "expected_output": "1",
+      "actual_stdout": "1",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "id": "MSS012",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "pipeline_input_redirection_precedence",
+      "description": "Input redirection on a later pipeline stage overrides that stage input without leaking the earlier pipe data.",
+      "weight": 8,
+      "expected_output": "right\n0",
+      "actual_stdout": "right\n0",
+      "test_stderr": "",
+      "returncode": 0,
+      "passed": true
+    }
+  ]
+}

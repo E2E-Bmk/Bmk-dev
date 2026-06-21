@@ -1,0 +1,405 @@
+[
+    {
+        "id": "MSU001",
+        "layer": "unit",
+        "category": "basic_execution",
+        "requirement_refs": [
+            "REQ-exec-sequence",
+            "REQ-echo-basic"
+        ],
+        "description": "The shell executes simple echo commands from stdin in sequence.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo hello\\necho world\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "hello\nworld"
+    },
+    {
+        "id": "MSU002",
+        "layer": "unit",
+        "category": "echo",
+        "requirement_refs": [
+            "REQ-echo-basic",
+            "REQ-echo-no-newline"
+        ],
+        "description": "echo prints arguments with spaces and echo -n suppresses the trailing newline.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo a b c\\necho -n tail\\n', text=True, capture_output=True, cwd=root)\nprint(repr(p.stdout))\n",
+        "expected_output": "'a b c\\ntail'"
+    },
+    {
+        "id": "MSU003",
+        "layer": "unit",
+        "category": "quoting",
+        "requirement_refs": [
+            "REQ-parse-whitespace",
+            "REQ-parse-single-quotes",
+            "REQ-parse-double-quotes"
+        ],
+        "description": "Quoted strings preserve spaces while unquoted whitespace separates arguments.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\ncmd = \"echo 'one two' three\\necho \\\"four five\\\" six\\n\"\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input=cmd, text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "one two three\nfour five six"
+    },
+    {
+        "id": "MSU004",
+        "layer": "unit",
+        "category": "pwd_cd",
+        "requirement_refs": [
+            "REQ-pwd-basic",
+            "REQ-cd-state"
+        ],
+        "description": "cd changes the working directory and pwd reports the updated directory.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    os.mkdir(os.path.join(td, 'sub'))\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='pwd\\ncd sub\\npwd\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(os.path.basename(lines[-1]))\n    print(lines[0] != lines[-1])\n",
+        "expected_output": "sub\nTrue"
+    },
+    {
+        "id": "MSU005",
+        "layer": "unit",
+        "category": "environment",
+        "requirement_refs": [
+            "REQ-export-set",
+            "REQ-var-expansion"
+        ],
+        "description": "export sets an environment variable and later echo expands it.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='export NAME=alice\\necho $NAME\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "alice"
+    },
+    {
+        "id": "MSU006",
+        "layer": "unit",
+        "category": "environment",
+        "requirement_refs": [
+            "REQ-unset-basic",
+            "REQ-var-undefined"
+        ],
+        "description": "unset removes an environment variable and undefined variables expand to an empty string.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='export NAME=alice\\nunset NAME\\necho before-$NAME-after\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "before--after"
+    },
+    {
+        "id": "MSU007",
+        "layer": "unit",
+        "category": "environment",
+        "requirement_refs": [
+            "REQ-export-set",
+            "REQ-env-managed",
+            "REQ-env-output"
+        ],
+        "description": "env prints only managed shell variables in deterministic order.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='export B=2\\nexport A=1\\nenv\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "A=1\nB=2"
+    },
+    {
+        "id": "MSU008",
+        "layer": "unit",
+        "category": "pipeline",
+        "requirement_refs": [
+            "REQ-pipe-dataflow",
+            "REQ-cat-stdin"
+        ],
+        "description": "A simple pipeline passes stdout from the left command to the right command.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo hello | cat\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "hello"
+    },
+    {
+        "id": "MSU009",
+        "layer": "unit",
+        "category": "redirection",
+        "requirement_refs": [
+            "REQ-redir-output",
+            "REQ-redir-input",
+            "REQ-cat-stdin"
+        ],
+        "description": "Output redirection writes to a file and input redirection reads from that file.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo hello > out.txt\\ncat < out.txt\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "hello"
+    },
+    {
+        "id": "MSU010",
+        "layer": "unit",
+        "category": "exit_status",
+        "requirement_refs": [
+            "REQ-exit-status-expansion"
+        ],
+        "description": "$? expands to the latest command exit status after a successful command.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo ok\\necho $?\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "ok\n0"
+    },
+    {
+        "id": "MSU011",
+        "layer": "unit",
+        "category": "exit",
+        "requirement_refs": [
+            "REQ-exit-basic"
+        ],
+        "description": "exit terminates command processing and later commands are not executed.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo before\\nexit\\necho after\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "before"
+    },
+    {
+        "id": "MSU012",
+        "layer": "unit",
+        "category": "error_recovery",
+        "requirement_refs": [
+            "REQ-error-deterministic",
+            "REQ-error-stderr",
+            "REQ-exec-sequence"
+        ],
+        "description": "Unknown commands report diagnostics on stderr while later valid commands still write clean stdout.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='unknown_cmd\\necho after\\n', text=True, capture_output=True, cwd=root)\nprint('stdout=' + p.stdout.strip())\nprint('stderr_has_error=' + str(bool(p.stderr.strip())))\n",
+        "expected_output": "stdout=after\nstderr_has_error=True"
+    },
+    {
+        "id": "MSU013",
+        "layer": "unit",
+        "category": "utility_commands",
+        "requirement_refs": [
+            "REQ-cat-file"
+        ],
+        "description": "cat reads a named file and writes its contents to stdout.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'data.txt'), 'w', encoding='utf-8') as f:\n        f.write('one\\ntwo\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='cat data.txt\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "one\ntwo"
+    },
+    {
+        "id": "MSU014",
+        "layer": "unit",
+        "category": "quoting",
+        "requirement_refs": [
+            "REQ-parse-operators",
+            "REQ-parse-single-quotes",
+            "REQ-parse-double-quotes"
+        ],
+        "description": "Pipeline and redirection characters inside quotes are treated as literal text.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo \"a | b\"\\necho \\'x > y\\'\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "a | b\nx > y"
+    },
+    {
+        "id": "MSS001",
+        "layer": "system",
+        "system_dimension": "state_accumulation",
+        "category": "cd_pwd_state",
+        "requirement_refs": [
+            "REQ-state-persistence",
+            "REQ-cd-state",
+            "REQ-pwd-basic"
+        ],
+        "description": "Working-directory state persists across multiple commands and affects later pwd output.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    os.makedirs(os.path.join(td, 'a', 'b'))\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='cd a\\npwd\\ncd b\\npwd\\n', text=True, capture_output=True, cwd=td)\n    lines = [os.path.basename(x) for x in p.stdout.strip().splitlines()]\n    print(lines)\n",
+        "expected_output": "['a', 'b']"
+    },
+    {
+        "id": "MSS002",
+        "layer": "system",
+        "system_dimension": "cross_feature_dataflow",
+        "category": "export_expand_pipeline",
+        "requirement_refs": [
+            "REQ-export-set",
+            "REQ-var-expansion",
+            "REQ-pipe-dataflow",
+            "REQ-cat-stdin"
+        ],
+        "description": "An exported variable expands before command execution and its output flows through a pipeline.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='export WORD=hello\\necho $WORD | cat\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "hello"
+    },
+    {
+        "id": "MSS003",
+        "layer": "system",
+        "system_dimension": "global_invariant",
+        "category": "quote_expansion_rules",
+        "requirement_refs": [
+            "REQ-parse-single-quotes",
+            "REQ-parse-double-quotes",
+            "REQ-var-expansion"
+        ],
+        "description": "Single quotes disable variable expansion while double quotes allow it in the same process.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\ncmd = \"export X=abc\\necho '$X'\\necho \\\"$X\\\"\\n\"\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input=cmd, text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "$X\nabc"
+    },
+    {
+        "id": "MSS004",
+        "layer": "system",
+        "system_dimension": "cross_feature_dataflow",
+        "category": "redir_then_external_read",
+        "requirement_refs": [
+            "REQ-redir-output",
+            "REQ-redir-input",
+            "REQ-pipe-dataflow",
+            "REQ-cat-stdin"
+        ],
+        "description": "Builtin output redirected to a file can later be read and passed through a pipeline.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo alpha > data.txt\\ncat < data.txt | cat\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "alpha"
+    },
+    {
+        "id": "MSS005",
+        "layer": "system",
+        "system_dimension": "operation_order_sensitivity",
+        "category": "redir_replace_append_order",
+        "requirement_refs": [
+            "REQ-redir-output",
+            "REQ-redir-append",
+            "REQ-cat-file"
+        ],
+        "description": "The order of replacement and append redirections determines final file contents.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo one > out.txt\\necho two >> out.txt\\necho reset > out.txt\\necho three >> out.txt\\ncat out.txt\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "reset\nthree"
+    },
+    {
+        "id": "MSS006",
+        "layer": "system",
+        "system_dimension": "error_atomicity",
+        "category": "failed_cd_preserves_state",
+        "requirement_refs": [
+            "REQ-cd-error-atomicity",
+            "REQ-pwd-basic",
+            "REQ-error-deterministic"
+        ],
+        "description": "A failed cd does not change the current working directory and later valid commands still work.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    os.mkdir(os.path.join(td, 'ok'))\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='cd ok\\ncd missing_dir\\npwd\\necho still-running\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(os.path.basename(lines[-2]))\n    print(lines[-1])\n",
+        "expected_output": "ok\nstill-running"
+    },
+    {
+        "id": "MSS007",
+        "layer": "system",
+        "system_dimension": "error_atomicity",
+        "category": "failed_export_preserves_environment",
+        "requirement_refs": [
+            "REQ-export-set",
+            "REQ-var-name",
+            "REQ-export-error-atomicity",
+            "REQ-var-expansion"
+        ],
+        "description": "A failed export does not corrupt previously defined environment variables.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='export GOOD=ok\\nexport 1BAD=broken\\necho $GOOD\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip().splitlines()[-1])\n",
+        "expected_output": "ok"
+    },
+    {
+        "id": "MSS008",
+        "layer": "system",
+        "system_dimension": "boundary_crossing",
+        "category": "pipeline_exit_status",
+        "requirement_refs": [
+            "REQ-pipe-dataflow",
+            "REQ-pipe-status",
+            "REQ-exit-status-expansion",
+            "REQ-grep-literal",
+            "REQ-grep-status"
+        ],
+        "description": "Pipeline output and pipeline exit status are handled consistently.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo hello | grep h\\necho $?\\necho hello | grep z\\necho $?\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "hello\n0\n1"
+    },
+    {
+        "id": "MSS009",
+        "layer": "system",
+        "system_dimension": "boundary_crossing",
+        "category": "unset_env_expansion",
+        "requirement_refs": [
+            "REQ-export-set",
+            "REQ-unset-basic",
+            "REQ-var-undefined",
+            "REQ-env-output"
+        ],
+        "description": "unset updates both later variable expansion and environment listing.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='export TEMPVAR=gone\\nunset TEMPVAR\\necho x$TEMPVAR y\\nenv\\n', text=True, capture_output=True, cwd=root)\nout = p.stdout\nprint(out.splitlines()[0])\nprint('TEMPVAR=gone' in out)\n",
+        "expected_output": "x y\nFalse"
+    },
+    {
+        "id": "MSS010",
+        "layer": "system",
+        "system_dimension": "global_invariant",
+        "category": "redir_scope_pipeline_scope",
+        "requirement_refs": [
+            "REQ-redir-output",
+            "REQ-redir-error-atomicity",
+            "REQ-pipe-dataflow",
+            "REQ-cat-stdin",
+            "REQ-cat-file"
+        ],
+        "description": "Redirection scope and pipeline dataflow remain separate when combined in one command line.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo hidden > file.txt | cat\\necho visible\\ncat file.txt\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "visible\nhidden"
+    },
+    {
+        "id": "MSS011",
+        "layer": "system",
+        "system_dimension": "boundary_crossing",
+        "category": "failure_status_stderr_recovery",
+        "requirement_refs": [
+            "REQ-error-deterministic",
+            "REQ-error-stderr",
+            "REQ-error-status",
+            "REQ-exit-status-expansion",
+            "REQ-exec-sequence"
+        ],
+        "description": "A failed command reports on stderr, updates $? to a nonzero value, and allows later commands to continue with clean stdout.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='unknown_cmd\\necho $?\\necho after\\n', text=True, capture_output=True, cwd=root)\nlines = p.stdout.strip().splitlines()\nprint(lines[0].isdigit())\nprint(lines[0] != '0')\nprint(lines[1])\nprint(bool(p.stderr.strip()))\n",
+        "expected_output": "True\nTrue\nafter\nTrue"
+    },
+    {
+        "id": "MSU015",
+        "layer": "unit",
+        "category": "syntax_error_recovery",
+        "requirement_refs": [
+            "REQ-parse-single-quotes",
+            "REQ-error-stderr",
+            "REQ-exec-sequence"
+        ],
+        "description": "An unmatched quote reports an error on stderr and later input lines still execute.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\ncmd = \"echo before\\necho 'broken\\necho after\\n\"\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input=cmd, text=True, capture_output=True, cwd=root)\nprint('stdout=' + p.stdout.strip())\nprint('stderr=' + str(bool(p.stderr.strip())))\n",
+        "expected_output": "stdout=before\nafter\nstderr=True"
+    },
+    {
+        "id": "MSU016",
+        "layer": "unit",
+        "category": "grep_exit_status",
+        "requirement_refs": [
+            "REQ-pipe-dataflow",
+            "REQ-grep-status",
+            "REQ-exit-status-expansion"
+        ],
+        "description": "A grep miss in a simple pipeline sets the latest status to 1 for later $? expansion.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='echo hello | grep z\\necho $?\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "1"
+    },
+    {
+        "id": "MSS012",
+        "layer": "system",
+        "system_dimension": "boundary_crossing",
+        "category": "pipeline_input_redirection_precedence",
+        "requirement_refs": [
+            "REQ-pipe-dataflow",
+            "REQ-redir-input",
+            "REQ-cat-stdin",
+            "REQ-exit-status-expansion"
+        ],
+        "description": "Input redirection on a later pipeline stage overrides that stage input without leaking the earlier pipe data.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'left.txt'), 'w', encoding='utf-8') as f:\n        f.write('left\\n')\n    with open(os.path.join(td, 'right.txt'), 'w', encoding='utf-8') as f:\n        f.write('right\\n')\n    cmd = 'cat left.txt | cat < right.txt\\necho $?\\n'\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input=cmd, text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "right\n0"
+    }
+]

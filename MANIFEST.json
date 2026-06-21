@@ -3,12 +3,26 @@
   "version": "2026-06-06",
   "layout": {
     "task_root": "task",
-    "core_files": ["prd.md", "rubric.json"],
-    "doc_files": ["source_repo.md", "requirement_map.md", "score_reports/"]
+    "core_files": [
+      "prd.md",
+      "rubric.json"
+    ],
+    "doc_files": [
+      "source_repo.md",
+      "requirement_map.md",
+      "score_reports/"
+    ]
   },
   "policy": {
-    "included_statuses": ["core strong"],
-    "excluded": [{"task": "MiniTofu", "reason": "provisional only"}],
+    "included_statuses": [
+      "core strong"
+    ],
+    "excluded": [
+      {
+        "task": "MiniTofu",
+        "reason": "provisional only"
+      }
+    ],
     "reference_gate": "unit 100%, system 100%",
     "candidate_gate": "fresh run unit > system with gap >= 15pp",
     "fairness_gate": "traceable but non-isomorphic hidden tests; no private-shape, exact-text, environment, or narrow-format traps"
@@ -20,9 +34,20 @@
       "source_repo": "simonw/sqlite-utils",
       "status": "core strong",
       "scores": {
-        "reference": {"unit": 100.00, "system": 100.00},
-        "codex_subagent_001": {"unit": 87.50, "system": 41.67, "gap_pp": 45.83},
-        "openhands_deepseek_v4_pro_001": {"unit": 93.75, "system": 41.67, "gap_pp": 52.08}
+        "reference": {
+          "unit": 100.0,
+          "system": 100.0
+        },
+        "codex_subagent_001": {
+          "unit": 87.5,
+          "system": 41.67,
+          "gap_pp": 45.83
+        },
+        "openhands_deepseek_v4_pro_001": {
+          "unit": 93.75,
+          "system": 41.67,
+          "gap_pp": 52.08
+        }
       },
       "paths": {
         "prd": "task/sqlite-utils-realrepo-001/prd.md",
@@ -38,9 +63,20 @@
       "source_repo": "zk-org/zk",
       "status": "core strong",
       "scores": {
-        "reference": {"unit": 100.00, "system": 100.00},
-        "codex_subagent_001": {"unit": 83.33, "system": 58.33, "gap_pp": 25.00},
-        "openhands_deepseek_v4_pro_001": {"unit": 83.33, "system": 41.67, "gap_pp": 41.66}
+        "reference": {
+          "unit": 100.0,
+          "system": 100.0
+        },
+        "codex_subagent_001": {
+          "unit": 83.33,
+          "system": 58.33,
+          "gap_pp": 25.0
+        },
+        "openhands_deepseek_v4_pro_001": {
+          "unit": 83.33,
+          "system": 41.67,
+          "gap_pp": 41.66
+        }
       },
       "paths": {
         "prd": "task/zk-realrepo-001/prd.md",
@@ -56,9 +92,20 @@
       "source_repo": "mahmoud/boltons",
       "status": "core strong",
       "scores": {
-        "reference": {"unit": 100.00, "system": 100.00},
-        "codex_subagent_001": {"unit": 100.00, "system": 70.00, "gap_pp": 30.00},
-        "openhands_deepseek_v4_pro_001": {"unit": 100.00, "system": 60.00, "gap_pp": 40.00}
+        "reference": {
+          "unit": 100.0,
+          "system": 100.0
+        },
+        "codex_subagent_001": {
+          "unit": 100.0,
+          "system": 70.0,
+          "gap_pp": 30.0
+        },
+        "openhands_deepseek_v4_pro_001": {
+          "unit": 100.0,
+          "system": 60.0,
+          "gap_pp": 40.0
+        }
       },
       "paths": {
         "prd": "task/miniurlutils-realrepo-001/prd.md",
@@ -66,6 +113,84 @@
         "source_repo": "task/miniurlutils-realrepo-001/doc/source_repo.md",
         "requirement_map": "task/miniurlutils-realrepo-001/doc/requirement_map.md",
         "score_reports": "task/miniurlutils-realrepo-001/doc/score_reports"
+      }
+    },
+    {
+      "id": "minishell-realrepo-001",
+      "display_name": "MiniShell",
+      "source_repo": "mcombeau/minishell",
+      "status": "core strong",
+      "scores": {
+        "reference": {
+          "unit": 100.0,
+          "system": 100.0
+        },
+        "codex_subagent_001": {
+          "unit": 100.0,
+          "system": 100.0,
+          "gap_pp": 0.0
+        },
+        "doubao_seed_2_0_001": {
+          "unit": 100.0,
+          "system": 100.0,
+          "gap_pp": 0.0
+        },
+        "deepseek_v4_pro_001": {
+          "unit": 93.75,
+          "system": 66.67,
+          "gap_pp": 27.08
+        },
+        "gpt_5_5_thinking_001": {
+          "unit": 93.75,
+          "system": 91.67,
+          "gap_pp": 2.08
+        }
+      },
+      "paths": {
+        "prd": "task/minishell-realrepo-001/prd.md",
+        "rubric": "task/minishell-realrepo-001/rubric.json",
+        "source_repo": "task/minishell-realrepo-001/doc/source_repo.md",
+        "requirement_map": "task/minishell-realrepo-001/doc/requirement_map.md",
+        "score_reports": "task/minishell-realrepo-001/doc/score_reports"
+      }
+    },
+    {
+      "id": "minibuildgraph-realrepo-001",
+      "display_name": "MiniBuildGraph",
+      "source_repo": "quarkslab/bgraph",
+      "status": "core strong",
+      "scores": {
+        "reference": {
+          "unit": 100.0,
+          "system": 100.0
+        },
+        "codex_subagent_001": {
+          "unit": 100.0,
+          "system": 93.75,
+          "gap_pp": 6.25
+        },
+        "doubao_seed_2_0_001": {
+          "unit": 87.5,
+          "system": 68.75,
+          "gap_pp": 18.75
+        },
+        "deepseek_v4_pro_001": {
+          "unit": 87.5,
+          "system": 68.75,
+          "gap_pp": 18.75
+        },
+        "gpt_5_5_thinking_001": {
+          "unit": 100.0,
+          "system": 93.75,
+          "gap_pp": 6.25
+        }
+      },
+      "paths": {
+        "prd": "task/minibuildgraph-realrepo-001/prd.md",
+        "rubric": "task/minibuildgraph-realrepo-001/rubric.json",
+        "source_repo": "task/minibuildgraph-realrepo-001/doc/source_repo.md",
+        "requirement_map": "task/minibuildgraph-realrepo-001/doc/requirement_map.md",
+        "score_reports": "task/minibuildgraph-realrepo-001/doc/score_reports"
       }
     }
   ]

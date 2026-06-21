@@ -1,0 +1,445 @@
+[
+    {
+        "id": "MBGU001",
+        "layer": "unit",
+        "category": "load_list",
+        "requirement_refs": [
+            "REQ-load-success",
+            "REQ-list-sorted"
+        ],
+        "description": "LOAD builds a graph and LIST prints loaded module names in lexicographic order.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\napp\nlib"
+    },
+    {
+        "id": "MBGU002",
+        "layer": "unit",
+        "category": "info",
+        "requirement_refs": [
+            "REQ-info-basic",
+            "REQ-deps-sorted"
+        ],
+        "description": "INFO prints name, type, and direct dependencies sorted lexicographically.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = util, lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\nmodule util {\\n  type = tool\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nINFO app\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nname=app\ntype=binary\ndeps=lib,util"
+    },
+    {
+        "id": "MBGU003",
+        "layer": "unit",
+        "category": "direct_dependencies",
+        "requirement_refs": [
+            "REQ-deps-basic",
+            "REQ-deps-sorted"
+        ],
+        "description": "DEPS prints direct dependencies, one per line, in lexicographic order.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = util, lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\nmodule util {\\n  type = tool\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nDEPS app\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nlib\nutil"
+    },
+    {
+        "id": "MBGU004",
+        "layer": "unit",
+        "category": "reverse_dependencies",
+        "requirement_refs": [
+            "REQ-rdeps-basic",
+            "REQ-rdeps-sorted"
+        ],
+        "description": "RDEPS prints modules that directly depend on the queried target.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule test {\\n  type = test\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nRDEPS lib\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\napp\ntest"
+    },
+    {
+        "id": "MBGU005",
+        "layer": "unit",
+        "category": "transitive_dependencies",
+        "requirement_refs": [
+            "REQ-transitive-basic",
+            "REQ-transitive-dedup"
+        ],
+        "description": "TRANSITIVE prints recursive dependencies without duplicates.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib, util\\n}\\nmodule lib {\\n  type = library\\n  deps = base\\n}\\nmodule util {\\n  type = tool\\n  deps = base\\n}\\nmodule base {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nTRANSITIVE app\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nbase\nlib\nutil"
+    },
+    {
+        "id": "MBGU006",
+        "layer": "unit",
+        "category": "transitive_reverse_dependencies",
+        "requirement_refs": [
+            "REQ-rtransitive-basic",
+            "REQ-transitive-dedup"
+        ],
+        "description": "RTRANSITIVE prints recursive reverse dependencies without duplicates.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib, util\\n}\\nmodule lib {\\n  type = library\\n  deps = base\\n}\\nmodule util {\\n  type = tool\\n  deps = base\\n}\\nmodule base {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nRTRANSITIVE base\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\napp\nlib\nutil"
+    },
+    {
+        "id": "MBGU007",
+        "layer": "unit",
+        "category": "unresolved_dependencies",
+        "requirement_refs": [
+            "REQ-unresolved-basic",
+            "REQ-load-unresolved-ok"
+        ],
+        "description": "Unresolved dependencies are tracked but do not prevent loading.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib, missing\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nUNRESOLVED\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nmissing"
+    },
+    {
+        "id": "MBGU008",
+        "layer": "unit",
+        "category": "cycle_detection",
+        "requirement_refs": [
+            "REQ-cycle-detect"
+        ],
+        "description": "CHECK_CYCLES reports CYCLE when the graph contains a dependency cycle.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module a {\\n  type = library\\n  deps = b\\n}\\nmodule b {\\n  type = library\\n  deps = a\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nCHECK_CYCLES\\n', text=True, capture_output=True, cwd=td, timeout=5)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nCYCLE"
+    },
+    {
+        "id": "MBGU009",
+        "layer": "unit",
+        "category": "remove",
+        "requirement_refs": [
+            "REQ-remove-basic",
+            "REQ-unresolved-after-remove"
+        ],
+        "description": "REMOVE deletes a module and turns remaining references to it into unresolved dependencies.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nREMOVE lib\\nLIST\\nUNRESOLVED\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nOK\napp\nlib"
+    },
+    {
+        "id": "MBGU010",
+        "layer": "unit",
+        "category": "load_error_atomicity",
+        "requirement_refs": [
+            "REQ-load-error-atomicity",
+            "REQ-list-sorted"
+        ],
+        "description": "A failed LOAD reports an error and preserves the previously loaded graph.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'good.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps =\\n}\\n')\n    with open(os.path.join(td, 'bad.txt'), 'w', encoding='utf-8') as f:\n        f.write('module broken {\\n  type = binary\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD good.txt\\nLOAD bad.txt\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0])\n    print(lines[1].startswith('ERR'))\n    print(lines[2])\n",
+        "expected_output": "OK\nTrue\napp"
+    },
+    {
+        "id": "MBGU011",
+        "layer": "unit",
+        "category": "duplicate_modules",
+        "requirement_refs": [
+            "REQ-load-duplicate-error"
+        ],
+        "description": "Duplicate module names make LOAD fail with a deterministic error.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'dup.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps =\\n}\\nmodule app {\\n  type = test\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD dup.txt\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0].startswith('ERR'))\n    print(len(lines))\n",
+        "expected_output": "True\n1"
+    },
+    {
+        "id": "MBGU012",
+        "layer": "unit",
+        "category": "errors",
+        "requirement_refs": [
+            "REQ-error-invalid-command",
+            "REQ-error-unknown-module"
+        ],
+        "description": "Invalid commands and unknown module queries emit stable error lines.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess\nroot = os.getcwd()\np = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='BAD\\nDEPS missing\\n', text=True, capture_output=True, cwd=root)\nprint(p.stdout.strip())\n",
+        "expected_output": "ERR invalid command\nERR unknown module"
+    },
+    {
+        "id": "MBGS001",
+        "layer": "system",
+        "system_dimension": "state_accumulation",
+        "category": "load_replaces_graph",
+        "requirement_refs": [
+            "REQ-load-success",
+            "REQ-load-replaces-graph",
+            "REQ-list-sorted"
+        ],
+        "description": "A second successful LOAD replaces the entire previous graph.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'g1.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps =\\n}\\n')\n    with open(os.path.join(td, 'g2.txt'), 'w', encoding='utf-8') as f:\n        f.write('module tool {\\n  type = tool\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD g1.txt\\nLIST\\nLOAD g2.txt\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\napp\nOK\ntool"
+    },
+    {
+        "id": "MBGS002",
+        "layer": "system",
+        "system_dimension": "global_invariant",
+        "category": "direct_reverse_info_consistency",
+        "requirement_refs": [
+            "REQ-info-basic",
+            "REQ-deps-basic",
+            "REQ-rdeps-basic",
+            "REQ-query-consistency"
+        ],
+        "description": "INFO, DEPS, and RDEPS expose consistent views of the same directed graph.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = util, lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\nmodule util {\\n  type = tool\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nDEPS app\\nRDEPS lib\\nINFO app\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nlib\nutil\napp\nname=app\ntype=binary\ndeps=lib,util"
+    },
+    {
+        "id": "MBGS003",
+        "layer": "system",
+        "system_dimension": "cross_feature_dataflow",
+        "category": "transitive_reverse_transitive",
+        "requirement_refs": [
+            "REQ-transitive-basic",
+            "REQ-rtransitive-basic",
+            "REQ-transitive-dedup"
+        ],
+        "description": "Direct edges feed both transitive and reverse-transitive traversal consistently.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module a {\\n  type = binary\\n  deps = b, c\\n}\\nmodule b {\\n  type = library\\n  deps = d\\n}\\nmodule c {\\n  type = library\\n  deps = d\\n}\\nmodule d {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nTRANSITIVE a\\nRTRANSITIVE d\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nb\nc\nd\na\nb\nc"
+    },
+    {
+        "id": "MBGS004",
+        "layer": "system",
+        "system_dimension": "boundary_crossing",
+        "category": "unresolved_reverse_queries",
+        "requirement_refs": [
+            "REQ-unresolved-basic",
+            "REQ-rdeps-unresolved-target",
+            "REQ-rtransitive-unresolved-target"
+        ],
+        "description": "Unresolved dependency names can be queried as reverse-dependency targets.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps = missing\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nUNRESOLVED\\nRDEPS missing\\nRTRANSITIVE missing\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nmissing\nlib\napp\nlib"
+    },
+    {
+        "id": "MBGS005",
+        "layer": "system",
+        "system_dimension": "error_atomicity",
+        "category": "remove_updates_unresolved_and_reverse",
+        "requirement_refs": [
+            "REQ-remove-basic",
+            "REQ-unresolved-after-remove",
+            "REQ-rdeps-unresolved-target"
+        ],
+        "description": "Removing a module updates unresolved and reverse-dependency views consistently.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib, util\\n}\\nmodule util {\\n  type = tool\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nREMOVE lib\\nUNRESOLVED\\nRDEPS lib\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nOK\nlib\napp\nutil"
+    },
+    {
+        "id": "MBGS006",
+        "layer": "system",
+        "system_dimension": "global_invariant",
+        "category": "cycle_traversal_termination",
+        "requirement_refs": [
+            "REQ-cycle-detect",
+            "REQ-transitive-cycle-safe",
+            "REQ-rtransitive-cycle-safe"
+        ],
+        "description": "Cycle detection and traversal terminate without printing the starting module as its own dependency.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module a {\\n  type = library\\n  deps = b\\n}\\nmodule b {\\n  type = library\\n  deps = a\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nCHECK_CYCLES\\nTRANSITIVE a\\nRTRANSITIVE a\\n', text=True, capture_output=True, cwd=td, timeout=5)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nCYCLE\nb\nb"
+    },
+    {
+        "id": "MBGS007",
+        "layer": "system",
+        "system_dimension": "error_atomicity",
+        "category": "failed_load_preserves_queries",
+        "requirement_refs": [
+            "REQ-load-error-atomicity",
+            "REQ-list-sorted"
+        ],
+        "description": "A failed LOAD does not poison later queries against the previous valid graph.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'good.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps =\\n}\\n')\n    with open(os.path.join(td, 'bad.txt'), 'w', encoding='utf-8') as f:\n        f.write('module broken {\\n  type = binary\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD good.txt\\nLOAD bad.txt\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0])\n    print(lines[1].startswith('ERR'))\n    print(lines[2])\n",
+        "expected_output": "OK\nTrue\napp"
+    },
+    {
+        "id": "MBGS008",
+        "layer": "system",
+        "system_dimension": "operation_order_sensitivity",
+        "category": "replacement_clears_removed_state",
+        "requirement_refs": [
+            "REQ-remove-basic",
+            "REQ-load-replaces-graph",
+            "REQ-unresolved-basic"
+        ],
+        "description": "A later successful LOAD replaces state created by an earlier REMOVE operation.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'g1.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    with open(os.path.join(td, 'g2.txt'), 'w', encoding='utf-8') as f:\n        f.write('module clean {\\n  type = tool\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD g1.txt\\nREMOVE lib\\nUNRESOLVED\\nLOAD g2.txt\\nUNRESOLVED\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nOK\nlib\nOK\nclean"
+    },
+    {
+        "id": "MBGS009",
+        "layer": "system",
+        "system_dimension": "operation_order_sensitivity",
+        "category": "lexicographic_outputs",
+        "requirement_refs": [
+            "REQ-list-sorted",
+            "REQ-deps-sorted",
+            "REQ-unresolved-sorted"
+        ],
+        "description": "LIST, DEPS, and UNRESOLVED outputs remain deterministic and lexicographic.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module z {\\n  type = binary\\n  deps = missing2, a, missing1\\n}\\nmodule a {\\n  type = library\\n  deps =\\n}\\nmodule m {\\n  type = tool\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nLIST\\nDEPS z\\nUNRESOLVED\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\na\nm\nz\na\nmissing1\nmissing2\nmissing1\nmissing2"
+    },
+    {
+        "id": "MBGS010",
+        "layer": "system",
+        "system_dimension": "error_atomicity",
+        "category": "failed_remove_preserves_graph",
+        "requirement_refs": [
+            "REQ-remove-error-atomicity",
+            "REQ-error-unknown-module",
+            "REQ-list-sorted"
+        ],
+        "description": "A failed REMOVE reports an error and preserves the graph.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nREMOVE missing\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nERR unknown module\napp"
+    },
+    {
+        "id": "MBGU013",
+        "layer": "unit",
+        "category": "cycle_detection_acyclic",
+        "requirement_refs": [
+            "REQ-cycle-detect"
+        ],
+        "description": "CHECK_CYCLES reports ACYCLIC for a graph with only one-way dependency edges.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nCHECK_CYCLES\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nACYCLIC"
+    },
+    {
+        "id": "MBGU014",
+        "layer": "unit",
+        "category": "forward_references",
+        "requirement_refs": [
+            "REQ-load-success",
+            "REQ-unresolved-basic"
+        ],
+        "description": "A dependency defined later in the same file is resolved and must not appear in UNRESOLVED.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nUNRESOLVED\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK"
+    },
+    {
+        "id": "MBGU015",
+        "layer": "unit",
+        "category": "remove_drops_outgoing_edges",
+        "requirement_refs": [
+            "REQ-remove-basic",
+            "REQ-unresolved-after-remove"
+        ],
+        "description": "Removing a module drops its outgoing dependencies while preserving references from remaining modules to the removed name.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps = missing\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD graph.txt\\nREMOVE lib\\nUNRESOLVED\\n', text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nOK\nlib"
+    },
+    {
+        "id": "MBGU016",
+        "layer": "unit",
+        "category": "malformed_dependency_list",
+        "requirement_refs": [
+            "REQ-load-error-atomicity"
+        ],
+        "description": "A malformed dependency list with a trailing comma makes LOAD fail deterministically.",
+        "weight": 4,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'bad.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib,\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD bad.txt\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0].startswith('ERR'))\n    print(len(lines))\n",
+        "expected_output": "True\n1"
+    },
+    {
+        "id": "MBGS011",
+        "layer": "system",
+        "system_dimension": "cross_feature_dataflow",
+        "category": "transitive_unresolved_reverse_consistency",
+        "requirement_refs": [
+            "REQ-transitive-basic",
+            "REQ-rtransitive-unresolved-target",
+            "REQ-unresolved-basic"
+        ],
+        "description": "A shared unresolved dependency participates consistently in TRANSITIVE, RDEPS, RTRANSITIVE, and UNRESOLVED queries.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'graph.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib, missing\\n}\\nmodule lib {\\n  type = library\\n  deps = missing\\n}\\n')\n    cmd = 'LOAD graph.txt\\nUNRESOLVED\\nTRANSITIVE app\\nRDEPS missing\\nRTRANSITIVE missing\\n'\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input=cmd, text=True, capture_output=True, cwd=td)\n    print(p.stdout.strip())\n",
+        "expected_output": "OK\nmissing\nlib\nmissing\napp\nlib\napp\nlib"
+    },
+    {
+        "id": "MBGS012",
+        "layer": "system",
+        "system_dimension": "error_atomicity",
+        "category": "duplicate_load_preserves_previous_graph",
+        "requirement_refs": [
+            "REQ-load-duplicate-error",
+            "REQ-load-error-atomicity",
+            "REQ-info-basic"
+        ],
+        "description": "A duplicate-module LOAD fails without replacing the previous valid graph used by later INFO queries.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'good.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps =\\n}\\n')\n    with open(os.path.join(td, 'dup.txt'), 'w', encoding='utf-8') as f:\n        f.write('module x {\\n  type = library\\n  deps =\\n}\\nmodule x {\\n  type = test\\n  deps =\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD good.txt\\nLOAD dup.txt\\nINFO app\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0])\n    print(lines[1].startswith('ERR'))\n    print('\\n'.join(lines[2:]))\n",
+        "expected_output": "OK\nTrue\nname=app\ntype=binary\ndeps="
+    },
+    {
+        "id": "MBGS013",
+        "layer": "system",
+        "system_dimension": "error_atomicity",
+        "category": "trailing_comma_load_preserves_graph",
+        "requirement_refs": [
+            "REQ-load-error-atomicity",
+            "REQ-load-success",
+            "REQ-info-basic"
+        ],
+        "description": "A LOAD with a trailing dependency comma fails and preserves the previous graph for later INFO queries.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'good.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    with open(os.path.join(td, 'bad.txt'), 'w', encoding='utf-8') as f:\n        f.write('module broken {\\n  type = binary\\n  deps = lib,\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD good.txt\\nLOAD bad.txt\\nINFO app\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0])\n    print(lines[1].startswith('ERR'))\n    print('\\n'.join(lines[2:]))\n",
+        "expected_output": "OK\nTrue\nname=app\ntype=binary\ndeps=lib"
+    },
+    {
+        "id": "MBGS014",
+        "layer": "system",
+        "system_dimension": "error_atomicity",
+        "category": "empty_load_preserves_graph",
+        "requirement_refs": [
+            "REQ-load-error-atomicity",
+            "REQ-list-sorted"
+        ],
+        "description": "An empty module file is a failed LOAD and does not replace the previous valid graph with an empty graph.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'good.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps =\\n}\\n')\n    open(os.path.join(td, 'empty.txt'), 'w', encoding='utf-8').close()\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD good.txt\\nLOAD empty.txt\\nLIST\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0])\n    print(lines[1].startswith('ERR'))\n    print(lines[2])\n",
+        "expected_output": "OK\nTrue\napp"
+    },
+    {
+        "id": "MBGS015",
+        "layer": "system",
+        "system_dimension": "global_invariant",
+        "category": "garbage_load_preserves_unresolved_state",
+        "requirement_refs": [
+            "REQ-load-error-atomicity",
+            "REQ-unresolved-basic",
+            "REQ-query-consistency"
+        ],
+        "description": "Top-level garbage after a module makes LOAD fail without clearing unresolved dependency state from the previous graph.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'good.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = missing\\n}\\n')\n    with open(os.path.join(td, 'bad.txt'), 'w', encoding='utf-8') as f:\n        f.write('module clean {\\n  type = tool\\n  deps =\\n}\\nnot_a_module_line\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD good.txt\\nLOAD bad.txt\\nUNRESOLVED\\nRDEPS missing\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0])\n    print(lines[1].startswith('ERR'))\n    print('\\n'.join(lines[2:]))\n",
+        "expected_output": "OK\nTrue\nmissing\napp"
+    },
+    {
+        "id": "MBGS016",
+        "layer": "system",
+        "system_dimension": "operation_order_sensitivity",
+        "category": "malformed_reload_after_remove_preserves_removed_state",
+        "requirement_refs": [
+            "REQ-load-error-atomicity",
+            "REQ-remove-basic",
+            "REQ-unresolved-after-remove"
+        ],
+        "description": "After REMOVE mutates the graph, a malformed reload must preserve that removed-module state rather than partially rebuilding.",
+        "weight": 8,
+        "test_code": "import os, sys, subprocess, tempfile\nroot = os.getcwd()\nwith tempfile.TemporaryDirectory() as td:\n    with open(os.path.join(td, 'good.txt'), 'w', encoding='utf-8') as f:\n        f.write('module app {\\n  type = binary\\n  deps = lib\\n}\\nmodule lib {\\n  type = library\\n  deps =\\n}\\n')\n    with open(os.path.join(td, 'bad.txt'), 'w', encoding='utf-8') as f:\n        f.write('module other {\\n  type = tool\\n  deps = dep,\\n}\\n')\n    p = subprocess.run([sys.executable, os.path.join(root, 'main.py')], input='LOAD good.txt\\nREMOVE lib\\nLOAD bad.txt\\nLIST\\nUNRESOLVED\\n', text=True, capture_output=True, cwd=td)\n    lines = p.stdout.strip().splitlines()\n    print(lines[0])\n    print(lines[1])\n    print(lines[2].startswith('ERR'))\n    print('\\n'.join(lines[3:]))\n",
+        "expected_output": "OK\nOK\nTrue\napp\nlib"
+    }
+]

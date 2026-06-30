@@ -1,0 +1,2183 @@
+{
+  "source_repo": "G:\\research\\01_agents\\swe-e2e\\repo-pool\\kevin1024__vcrpy",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution",
+  "nodeids": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\vcrpy-fullrepro-001\\filter\\kept_nodeids.txt",
+  "taxonomy": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\vcrpy-fullrepro-001\\filter\\test_taxonomy_score.csv",
+  "run_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5",
+  "grouped_results": {
+    "tests/integration/test_basic.py": {
+      "returncode": 0,
+      "stdout": "...                                                                      [100%]\n3 passed in 1.77s\n",
+      "stderr": "[2026-06-30 04:37:37,278] WARNING in core: flasgger is not installed; serving the static landing page at / and skipping the Swagger UI and /spec.json.\n",
+      "json_report": {
+        "created": 1782765459.2822256,
+        "duration": 1.1715703010559082,
+        "exitcode": 0,
+        "root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 3,
+          "total": 3,
+          "collected": 3
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/integration/test_basic.py::test_basic_json_use",
+                "type": "Function",
+                "lineno": 34
+              },
+              {
+                "nodeid": "tests/integration/test_basic.py::test_nonexistent_directory",
+                "type": "Function",
+                "lineno": 10
+              },
+              {
+                "nodeid": "tests/integration/test_basic.py::test_unpatch",
+                "type": "Function",
+                "lineno": 23
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/integration/test_basic.py::test_basic_json_use",
+            "lineno": 34,
+            "outcome": "passed",
+            "keywords": [
+              "test_basic_json_use",
+              "test_basic.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0636355000315234,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.33694670000113547,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:38] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.00025949999690055847,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_basic.py::test_nonexistent_directory",
+            "lineno": 10,
+            "outcome": "passed",
+            "keywords": [
+              "test_nonexistent_directory",
+              "test_basic.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0058250000001862645,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.018264600017573684,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:38] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.000305499997921288,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_basic.py::test_unpatch",
+            "lineno": 23,
+            "outcome": "passed",
+            "keywords": [
+              "test_unpatch",
+              "test_basic.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.005547500040847808,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01780440000584349,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:38] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:38] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.510511200001929,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    },
+    "tests/integration/test_config.py": {
+      "returncode": 1,
+      "stdout": ".F..F                                                                    [100%]\n================================== FAILURES ===================================\n________________________ test_dont_record_on_exception ________________________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-86\\\\test_dont_record_on_exception0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x00000256289B5E50>\n\n    @pytest.mark.online\n    def test_dont_record_on_exception(tmpdir, httpbin):\n        my_vcr = vcr.VCR(record_on_exception=False)\n    \n        @my_vcr.use_cassette(str(tmpdir.join(\"dontsave.yml\")))\n        def some_test():\n            assert b\"Not in content\" in urlopen(httpbin.url)\n    \n        with pytest.raises(AssertionError):\n>           some_test()\n\ntests\\integration\\test_config.py:78: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\solution\\vcr\\config.py:52: in wrapper\n    result = func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n    @my_vcr.use_cassette(str(tmpdir.join(\"dontsave.yml\")))\n    def some_test():\n>       assert b\"Not in content\" in urlopen(httpbin.url)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: argument of type 'StubHTTPResponse' is not iterable\n\ntests\\integration\\test_config.py:75: TypeError\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:37:42] \"GET / HTTP/1.1\" 200 13760\n________________________ test_set_drop_unused_requests ________________________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-86\\\\test_set_drop_unused_requests0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x00000256289B5E50>\n\n    def test_set_drop_unused_requests(tmpdir, httpbin):\n        my_vcr = vcr.VCR(drop_unused_requests=True)\n        file = str(tmpdir.join(\"test.yaml\"))\n    \n        with my_vcr.use_cassette(file):\n            urlopen(httpbin.url)\n            urlopen(httpbin.url + \"/get\")\n    \n>       cassette = Cassette.load(path=file)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: Cassette.load() got an unexpected keyword argument 'path'\n\ntests\\integration\\test_config.py:97: TypeError\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET /get HTTP/1.1\" 200 233\n=========================== short test summary info ===========================\nFAILED tests/integration/test_config.py::test_dont_record_on_exception - Type...\nFAILED tests/integration/test_config.py::test_set_drop_unused_requests - Type...\n2 failed, 3 passed in 2.59s\n",
+      "stderr": "[2026-06-30 04:37:41,476] WARNING in core: flasgger is not installed; serving the static landing page at / and skipping the Swagger UI and /spec.json.\n",
+      "json_report": {
+        "created": 1782765464.3653662,
+        "duration": 2.0634100437164307,
+        "exitcode": 1,
+        "root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 3,
+          "failed": 2,
+          "total": 5,
+          "collected": 5
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/integration/test_config.py::test_default_set_cassette_library_dir",
+                "type": "Function",
+                "lineno": 24
+              },
+              {
+                "nodeid": "tests/integration/test_config.py::test_dont_record_on_exception",
+                "type": "Function",
+                "lineno": 68
+              },
+              {
+                "nodeid": "tests/integration/test_config.py::test_override_match_on",
+                "type": "Function",
+                "lineno": 47
+              },
+              {
+                "nodeid": "tests/integration/test_config.py::test_override_set_cassette_library_dir",
+                "type": "Function",
+                "lineno": 34
+              },
+              {
+                "nodeid": "tests/integration/test_config.py::test_set_drop_unused_requests",
+                "type": "Function",
+                "lineno": 88
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/integration/test_config.py::test_default_set_cassette_library_dir",
+            "lineno": 24,
+            "outcome": "passed",
+            "keywords": [
+              "test_default_set_cassette_library_dir",
+              "online",
+              "pytestmark",
+              "test_config.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.06438679998973384,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.35093650000635535,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:42] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.0002364999963901937,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_config.py::test_dont_record_on_exception",
+            "lineno": 68,
+            "outcome": "failed",
+            "keywords": [
+              "test_dont_record_on_exception",
+              "online",
+              "pytestmark",
+              "test_config.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.004982799990102649,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0031039000023156404,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_config.py",
+                "lineno": 75,
+                "message": "TypeError: argument of type 'StubHTTPResponse' is not iterable"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_config.py",
+                  "lineno": 78,
+                  "message": ""
+                },
+                {
+                  "path": "..\\..\\solution\\vcr\\config.py",
+                  "lineno": 52,
+                  "message": "in wrapper"
+                },
+                {
+                  "path": "tests\\integration\\test_config.py",
+                  "lineno": 75,
+                  "message": "TypeError"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:42] \"GET / HTTP/1.1\" 200 13760\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-86\\\\test_dont_record_on_exception0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x00000256289B5E50>\n\n    @pytest.mark.online\n    def test_dont_record_on_exception(tmpdir, httpbin):\n        my_vcr = vcr.VCR(record_on_exception=False)\n    \n        @my_vcr.use_cassette(str(tmpdir.join(\"dontsave.yml\")))\n        def some_test():\n            assert b\"Not in content\" in urlopen(httpbin.url)\n    \n        with pytest.raises(AssertionError):\n>           some_test()\n\ntests\\integration\\test_config.py:78: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\solution\\vcr\\config.py:52: in wrapper\n    result = func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n    @my_vcr.use_cassette(str(tmpdir.join(\"dontsave.yml\")))\n    def some_test():\n>       assert b\"Not in content\" in urlopen(httpbin.url)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: argument of type 'StubHTTPResponse' is not iterable\n\ntests\\integration\\test_config.py:75: TypeError"
+            },
+            "teardown": {
+              "duration": 0.00026699999580159783,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_config.py::test_override_match_on",
+            "lineno": 47,
+            "outcome": "passed",
+            "keywords": [
+              "test_override_match_on",
+              "online",
+              "pytestmark",
+              "test_config.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.008561099995858967,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.04417379997903481,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.0002182999742217362,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_config.py::test_override_set_cassette_library_dir",
+            "lineno": 34,
+            "outcome": "passed",
+            "keywords": [
+              "test_override_set_cassette_library_dir",
+              "online",
+              "pytestmark",
+              "test_config.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00669250002829358,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.022093100007623434,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.0004262999864295125,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_config.py::test_set_drop_unused_requests",
+            "lineno": 88,
+            "outcome": "failed",
+            "keywords": [
+              "test_set_drop_unused_requests",
+              "test_config.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.008900400018319488,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.021892900054808706,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_config.py",
+                "lineno": 97,
+                "message": "TypeError: Cassette.load() got an unexpected keyword argument 'path'"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_config.py",
+                  "lineno": 97,
+                  "message": "TypeError"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET /get HTTP/1.1\" 200 233\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-86\\\\test_set_drop_unused_requests0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x00000256289B5E50>\n\n    def test_set_drop_unused_requests(tmpdir, httpbin):\n        my_vcr = vcr.VCR(drop_unused_requests=True)\n        file = str(tmpdir.join(\"test.yaml\"))\n    \n        with my_vcr.use_cassette(file):\n            urlopen(httpbin.url)\n            urlopen(httpbin.url + \"/get\")\n    \n>       cassette = Cassette.load(path=file)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: Cassette.load() got an unexpected keyword argument 'path'\n\ntests\\integration\\test_config.py:97: TypeError"
+            },
+            "teardown": {
+              "duration": 0.4668517999816686,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    },
+    "tests/integration/test_ignore.py": {
+      "returncode": 0,
+      "stdout": "....                                                                     [100%]\n4 passed in 2.11s\n",
+      "stderr": "[2026-06-30 04:37:47,349] WARNING in core: flasgger is not installed; serving the static landing page at / and skipping the Swagger UI and /spec.json.\n",
+      "json_report": {
+        "created": 1782765469.7070591,
+        "duration": 1.39613938331604,
+        "exitcode": 0,
+        "root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 4,
+          "total": 4,
+          "collected": 4
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/integration/test_ignore.py::test_ignore_httpbin",
+                "type": "Function",
+                "lineno": 36
+              },
+              {
+                "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost",
+                "type": "Function",
+                "lineno": 26
+              },
+              {
+                "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost_and_httpbin",
+                "type": "Function",
+                "lineno": 46
+              },
+              {
+                "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost_twice",
+                "type": "Function",
+                "lineno": 55
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/integration/test_ignore.py::test_ignore_httpbin",
+            "lineno": 36,
+            "outcome": "passed",
+            "keywords": [
+              "test_ignore_httpbin",
+              "test_ignore.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.05722369998693466,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.4944932999787852,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.00033190002432093024,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost",
+            "lineno": 26,
+            "outcome": "passed",
+            "keywords": [
+              "test_ignore_localhost",
+              "test_ignore.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.006908499985001981,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.02836519997799769,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.00024069997016340494,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost_and_httpbin",
+            "lineno": 46,
+            "outcome": "passed",
+            "keywords": [
+              "test_ignore_localhost_and_httpbin",
+              "test_ignore.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.007637400005478412,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.012688000046182424,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.00039840000681579113,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost_twice",
+            "lineno": 55,
+            "outcome": "passed",
+            "keywords": [
+              "test_ignore_localhost_twice",
+              "test_ignore.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00841410004068166,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.06485059997066855,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.48010540002724156,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    },
+    "tests/integration/test_register_matcher.py": {
+      "returncode": 1,
+      "stdout": ".F                                                                       [100%]\n================================== FAILURES ===================================\n________________________ test_registered_true_matcher _________________________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-88\\\\test_registered_true_matcher0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000029DB2967D50>\n\n    @pytest.mark.online\n    def test_registered_true_matcher(tmpdir, httpbin):\n        my_vcr = vcr.VCR()\n        my_vcr.register_matcher(\"true\", true_matcher)\n        testfile = str(tmpdir.join(\"test.yml\"))\n        with my_vcr.use_cassette(testfile, match_on=[\"true\"]):\n            # These 2 different urls are stored as the same request\n            urlopen(httpbin.url)\n            urlopen(httpbin.url + \"/get\")\n    \n        with my_vcr.use_cassette(testfile, match_on=[\"true\"]):\n            # I can get the response twice even though I only asked for it once\n            urlopen(httpbin.url)\n>           urlopen(httpbin.url)\n\ntests\\integration\\test_register_matcher.py:29: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nC:\\Users\\12547\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py:216: in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\solution\\vcr\\patch.py:81: in _handle_urllib_open\n    cassette.assert_can_record(request)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <vcr.cassette.Cassette object at 0x0000029DB2AED490>\nrequest = Request(method='GET', uri='http://127.0.0.1:51040', body=b'', headers={})\n\n    def assert_can_record(self, request: Request) -> None:\n        if not self.can_record():\n            error_class = CannotOverwriteExistingCassetteException if self.record_mode == \"once\" else UnhandledHTTPRequestError\n>           raise error_class(\n                \"No matching interaction found for {0} {1}, and record mode {2!r} forbids recording.\".format(\n                    request.method, request.uri, self.record_mode\n                )\n            )\nE           vcr.errors.CannotOverwriteExistingCassetteException: No matching interaction found for GET http://127.0.0.1:51040, and record mode 'once' forbids recording.\n\n..\\..\\solution\\vcr\\cassette.py:171: CannotOverwriteExistingCassetteException\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:37:53] \"GET / HTTP/1.1\" 200 13760\n=========================== short test summary info ===========================\nFAILED tests/integration/test_register_matcher.py::test_registered_true_matcher\n1 failed, 1 passed in 2.27s\n",
+      "stderr": "[2026-06-30 04:37:52,743] WARNING in core: flasgger is not installed; serving the static landing page at / and skipping the Swagger UI and /spec.json.\n",
+      "json_report": {
+        "created": 1782765474.951811,
+        "duration": 1.6744756698608398,
+        "exitcode": 1,
+        "root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "total": 2,
+          "collected": 2
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/integration/test_register_matcher.py::test_registered_false_matcher",
+                "type": "Function",
+                "lineno": 31
+              },
+              {
+                "nodeid": "tests/integration/test_register_matcher.py::test_registered_true_matcher",
+                "type": "Function",
+                "lineno": 15
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/integration/test_register_matcher.py::test_registered_false_matcher",
+            "lineno": 31,
+            "outcome": "passed",
+            "keywords": [
+              "test_registered_false_matcher",
+              "online",
+              "pytestmark",
+              "test_register_matcher.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.07640329998685047,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.37427470000693575,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:53] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:53] \"GET /get HTTP/1.1\" 200 233\n"
+            },
+            "teardown": {
+              "duration": 0.00025290000485256314,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_register_matcher.py::test_registered_true_matcher",
+            "lineno": 15,
+            "outcome": "failed",
+            "keywords": [
+              "test_registered_true_matcher",
+              "online",
+              "pytestmark",
+              "test_register_matcher.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.005268900014925748,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03450509998947382,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution\\vcr\\cassette.py",
+                "lineno": 171,
+                "message": "vcr.errors.CannotOverwriteExistingCassetteException: No matching interaction found for GET http://127.0.0.1:51040, and record mode 'once' forbids recording."
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_register_matcher.py",
+                  "lineno": 29,
+                  "message": ""
+                },
+                {
+                  "path": "C:\\Users\\12547\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py",
+                  "lineno": 216,
+                  "message": "in urlopen"
+                },
+                {
+                  "path": "..\\..\\solution\\vcr\\patch.py",
+                  "lineno": 81,
+                  "message": "in _handle_urllib_open"
+                },
+                {
+                  "path": "..\\..\\solution\\vcr\\cassette.py",
+                  "lineno": 171,
+                  "message": "CannotOverwriteExistingCassetteException"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:53] \"GET / HTTP/1.1\" 200 13760\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-88\\\\test_registered_true_matcher0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000029DB2967D50>\n\n    @pytest.mark.online\n    def test_registered_true_matcher(tmpdir, httpbin):\n        my_vcr = vcr.VCR()\n        my_vcr.register_matcher(\"true\", true_matcher)\n        testfile = str(tmpdir.join(\"test.yml\"))\n        with my_vcr.use_cassette(testfile, match_on=[\"true\"]):\n            # These 2 different urls are stored as the same request\n            urlopen(httpbin.url)\n            urlopen(httpbin.url + \"/get\")\n    \n        with my_vcr.use_cassette(testfile, match_on=[\"true\"]):\n            # I can get the response twice even though I only asked for it once\n            urlopen(httpbin.url)\n>           urlopen(httpbin.url)\n\ntests\\integration\\test_register_matcher.py:29: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nC:\\Users\\12547\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py:216: in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\solution\\vcr\\patch.py:81: in _handle_urllib_open\n    cassette.assert_can_record(request)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <vcr.cassette.Cassette object at 0x0000029DB2AED490>\nrequest = Request(method='GET', uri='http://127.0.0.1:51040', body=b'', headers={})\n\n    def assert_can_record(self, request: Request) -> None:\n        if not self.can_record():\n            error_class = CannotOverwriteExistingCassetteException if self.record_mode == \"once\" else UnhandledHTTPRequestError\n>           raise error_class(\n                \"No matching interaction found for {0} {1}, and record mode {2!r} forbids recording.\".format(\n                    request.method, request.uri, self.record_mode\n                )\n            )\nE           vcr.errors.CannotOverwriteExistingCassetteException: No matching interaction found for GET http://127.0.0.1:51040, and record mode 'once' forbids recording.\n\n..\\..\\solution\\vcr\\cassette.py:171: CannotOverwriteExistingCassetteException"
+            },
+            "teardown": {
+              "duration": 0.03117460000794381,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    },
+    "tests/integration/test_register_serializer.py": {
+      "returncode": 0,
+      "stdout": ".                                                                        [100%]\n1 passed in 0.98s\n",
+      "stderr": "[2026-06-30 04:37:57,892] WARNING in core: flasgger is not installed; serving the static landing page at / and skipping the Swagger UI and /spec.json.\n",
+      "json_report": {
+        "created": 1782765478.9162712,
+        "duration": 0.5903472900390625,
+        "exitcode": 0,
+        "root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 1,
+          "total": 1,
+          "collected": 1
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/integration/test_register_serializer.py::test_registered_serializer",
+                "type": "Function",
+                "lineno": 19
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/integration/test_register_serializer.py::test_registered_serializer",
+            "lineno": 19,
+            "outcome": "passed",
+            "keywords": [
+              "test_registered_serializer",
+              "test_register_serializer.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.025686000008136034,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.4016861999989487,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00027089996729046106,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    },
+    "tests/integration/test_request.py": {
+      "returncode": 1,
+      "stdout": "FF                                                                       [100%]\n================================== FAILURES ===================================\n______________ test_recorded_request_uri_with_redirected_request ______________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-90\\\\test_recorded_request_uri_with0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000023D7116FE10>\n\n    def test_recorded_request_uri_with_redirected_request(tmpdir, httpbin):\n        with vcr.use_cassette(str(tmpdir.join(\"test.yml\"))) as cass:\n            assert len(cass) == 0\n            urlopen(httpbin.url + \"/redirect/3\")\n>           assert cass.requests[0].uri == httpbin.url + \"/redirect/3\"\nE           AssertionError: assert 'http://127.0.0.1:52443/get' == 'http://127.0...43/redirect/3'\nE             \nE             - http://127.0.0.1:52443/redirect/3\nE             ?                        ^ ----- --\nE             + http://127.0.0.1:52443/get\nE             ?                        ^\n\ntests\\integration\\test_request.py:10: AssertionError\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /redirect/3 HTTP/1.1\" 302 227\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /relative-redirect/2 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /relative-redirect/1 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /get HTTP/1.1\" 200 233\n_____________________ test_records_multiple_header_values _____________________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-90\\\\test_records_multiple_header_v0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000023D7116FE10>\n\n    def test_records_multiple_header_values(tmpdir, httpbin):\n        with vcr.use_cassette(str(tmpdir.join(\"test.yml\"))) as cass:\n            assert len(cass) == 0\n            urlopen(httpbin.url + \"/response-headers?foo=bar&foo=baz\")\n            assert len(cass) == 1\n>           assert cass.responses[0][\"headers\"][\"foo\"] == [\"bar\", \"baz\"]\nE           AssertionError: assert 'baz' == ['bar', 'baz']\n\ntests\\integration\\test_request.py:20: AssertionError\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:38:03] \"GET /response-headers?foo=bar&foo=baz HTTP/1.1\" 200 105\n=========================== short test summary info ===========================\nFAILED tests/integration/test_request.py::test_recorded_request_uri_with_redirected_request\nFAILED tests/integration/test_request.py::test_records_multiple_header_values\n2 failed in 2.69s\n",
+      "stderr": "[2026-06-30 04:38:01,627] WARNING in core: flasgger is not installed; serving the static landing page at / and skipping the Swagger UI and /spec.json.\n",
+      "json_report": {
+        "created": 1782765484.2722578,
+        "duration": 2.112694025039673,
+        "exitcode": 1,
+        "root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree",
+        "environment": {},
+        "summary": {
+          "failed": 2,
+          "total": 2,
+          "collected": 2
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/integration/test_request.py::test_recorded_request_uri_with_redirected_request",
+                "type": "Function",
+                "lineno": 5
+              },
+              {
+                "nodeid": "tests/integration/test_request.py::test_records_multiple_header_values",
+                "type": "Function",
+                "lineno": 14
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/integration/test_request.py::test_recorded_request_uri_with_redirected_request",
+            "lineno": 5,
+            "outcome": "failed",
+            "keywords": [
+              "test_recorded_request_uri_with_redirected_request",
+              "test_request.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.048727699962910265,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.36624090000987053,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_request.py",
+                "lineno": 10,
+                "message": "AssertionError: assert 'http://127.0.0.1:52443/get' == 'http://127.0...43/redirect/3'\n  \n  - http://127.0.0.1:52443/redirect/3\n  ?                        ^ ----- --\n  + http://127.0.0.1:52443/get\n  ?                        ^"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_request.py",
+                  "lineno": 10,
+                  "message": "AssertionError"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /redirect/3 HTTP/1.1\" 302 227\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /relative-redirect/2 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /relative-redirect/1 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /get HTTP/1.1\" 200 233\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-90\\\\test_recorded_request_uri_with0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000023D7116FE10>\n\n    def test_recorded_request_uri_with_redirected_request(tmpdir, httpbin):\n        with vcr.use_cassette(str(tmpdir.join(\"test.yml\"))) as cass:\n            assert len(cass) == 0\n            urlopen(httpbin.url + \"/redirect/3\")\n>           assert cass.requests[0].uri == httpbin.url + \"/redirect/3\"\nE           AssertionError: assert 'http://127.0.0.1:52443/get' == 'http://127.0...43/redirect/3'\nE             \nE             - http://127.0.0.1:52443/redirect/3\nE             ?                        ^ ----- --\nE             + http://127.0.0.1:52443/get\nE             ?                        ^\n\ntests\\integration\\test_request.py:10: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0005366000114008784,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_request.py::test_records_multiple_header_values",
+            "lineno": 14,
+            "outcome": "failed",
+            "keywords": [
+              "test_records_multiple_header_values",
+              "test_request.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0075237000128254294,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.009281600010581315,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_request.py",
+                "lineno": 20,
+                "message": "AssertionError: assert 'baz' == ['bar', 'baz']"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_request.py",
+                  "lineno": 20,
+                  "message": "AssertionError"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:03] \"GET /response-headers?foo=bar&foo=baz HTTP/1.1\" 200 105\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-90\\\\test_records_multiple_header_v0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000023D7116FE10>\n\n    def test_records_multiple_header_values(tmpdir, httpbin):\n        with vcr.use_cassette(str(tmpdir.join(\"test.yml\"))) as cass:\n            assert len(cass) == 0\n            urlopen(httpbin.url + \"/response-headers?foo=bar&foo=baz\")\n            assert len(cass) == 1\n>           assert cass.responses[0][\"headers\"][\"foo\"] == [\"bar\", \"baz\"]\nE           AssertionError: assert 'baz' == ['bar', 'baz']\n\ntests\\integration\\test_request.py:20: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.48979740001959726,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    },
+    "tests/integration/test_requests.py": {
+      "returncode": 1,
+      "stdout": "....F..F.....F..F..                                                      [100%]\n================================== FAILURES ===================================\n______________ test_gzip__decode_compressed_response_true[http] _______________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_gzip__decode_compressed_r1')\nhttpbin_both = <pytest_httpbin.serve.Server object at 0x0000021A592310D0>\n\n    def test_gzip__decode_compressed_response_true(tmpdir, httpbin_both):\n        url = httpbin_both + \"/gzip\"\n    \n        expected_response = requests.get(url)\n        expected_content = expected_response.content\n        assert expected_response.headers[\"content-encoding\"] == \"gzip\"  # self-test\n    \n        with vcr.use_cassette(\n            str(tmpdir.join(\"decode_compressed.yaml\")),\n            decode_compressed_response=True,\n        ) as cassette:\n            r = requests.get(url)\n            assert r.headers[\"content-encoding\"] == \"gzip\"  # i.e. not removed\n            assert r.content == expected_content\n    \n        # Has the cassette body been decompressed?\n>       cassette_response_body = cassette.responses[0][\"body\"][\"string\"]\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: byte indices must be integers or slices, not str\n\ntests\\integration\\test_requests.py:183: TypeError\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /gzip HTTP/1.1\" 200 196\n127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /gzip HTTP/1.1\" 200 196\n____________________________ test_redirects[http] _____________________________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_redirects_http_0')\nhttpbin_both = <pytest_httpbin.serve.Server object at 0x0000021A592310D0>\n\n    def test_redirects(tmpdir, httpbin_both):\n        \"\"\"Ensure that we can handle redirects\"\"\"\n        url = httpbin_both + \"/redirect-to?url=bytes/1024\"\n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))):\n            content = requests.get(url).content\n    \n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))) as cass:\n            assert content == requests.get(url).content\n            # Ensure that we've now cached *two* responses. One for the redirect\n            # and one for the final fetch\n            assert len(cass) == 2\n>           assert cass.play_count == 2\nE           assert 1 == 2\nE            +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59213210>.play_count\n\ntests\\integration\\test_requests.py:129: AssertionError\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /redirect-to?url=bytes/1024 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n______________ test_gzip__decode_compressed_response_true[https] ______________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_gzip__decode_compressed_r3')\nhttpbin_both = <pytest_httpbin.serve.SecureServer object at 0x0000021A59231550>\n\n    def test_gzip__decode_compressed_response_true(tmpdir, httpbin_both):\n        url = httpbin_both + \"/gzip\"\n    \n        expected_response = requests.get(url)\n        expected_content = expected_response.content\n        assert expected_response.headers[\"content-encoding\"] == \"gzip\"  # self-test\n    \n        with vcr.use_cassette(\n            str(tmpdir.join(\"decode_compressed.yaml\")),\n            decode_compressed_response=True,\n        ) as cassette:\n            r = requests.get(url)\n            assert r.headers[\"content-encoding\"] == \"gzip\"  # i.e. not removed\n            assert r.content == expected_content\n    \n        # Has the cassette body been decompressed?\n>       cassette_response_body = cassette.responses[0][\"body\"][\"string\"]\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: byte indices must be integers or slices, not str\n\ntests\\integration\\test_requests.py:183: TypeError\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /gzip HTTP/1.1\" 200 196\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /gzip HTTP/1.1\" 200 196\n____________________________ test_redirects[https] ____________________________\n\ntmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_redirects_https_0')\nhttpbin_both = <pytest_httpbin.serve.SecureServer object at 0x0000021A59231550>\n\n    def test_redirects(tmpdir, httpbin_both):\n        \"\"\"Ensure that we can handle redirects\"\"\"\n        url = httpbin_both + \"/redirect-to?url=bytes/1024\"\n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))):\n            content = requests.get(url).content\n    \n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))) as cass:\n            assert content == requests.get(url).content\n            # Ensure that we've now cached *two* responses. One for the redirect\n            # and one for the final fetch\n            assert len(cass) == 2\n>           assert cass.play_count == 2\nE           assert 1 == 2\nE            +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59C90C10>.play_count\n\ntests\\integration\\test_requests.py:129: AssertionError\n---------------------------- Captured stderr call -----------------------------\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /redirect-to?url=bytes/1024 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n=========================== short test summary info ===========================\nFAILED tests/integration/test_requests.py::test_gzip__decode_compressed_response_true[http]\nFAILED tests/integration/test_requests.py::test_redirects[http] - assert 1 == 2\nFAILED tests/integration/test_requests.py::test_gzip__decode_compressed_response_true[https]\nFAILED tests/integration/test_requests.py::test_redirects[https] - assert 1 == 2\n4 failed, 15 passed in 3.82s\n",
+      "stderr": "[2026-06-30 04:38:07,177] WARNING in core: flasgger is not installed; serving the static landing page at / and skipping the Swagger UI and /spec.json.\n",
+      "json_report": {
+        "created": 1782765490.9453664,
+        "duration": 3.2635440826416016,
+        "exitcode": 1,
+        "root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 15,
+          "failed": 4,
+          "total": 19,
+          "collected": 19
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/integration/test_requests.py::test_body[http]",
+                "type": "Function",
+                "lineno": 31
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_body[https]",
+                "type": "Function",
+                "lineno": 31
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_cross_scheme",
+                "type": "Function",
+                "lineno": 142
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_filter_post_params[http]",
+                "type": "Function",
+                "lineno": 284
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_filter_post_params[https]",
+                "type": "Function",
+                "lineno": 284
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_get_empty_content_type_json[http]",
+                "type": "Function",
+                "lineno": 41
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_get_empty_content_type_json[https]",
+                "type": "Function",
+                "lineno": 41
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_false[http]",
+                "type": "Function",
+                "lineno": 154
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_false[https]",
+                "type": "Function",
+                "lineno": 154
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_true[http]",
+                "type": "Function",
+                "lineno": 166
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_true[https]",
+                "type": "Function",
+                "lineno": 166
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_headers[http]",
+                "type": "Function",
+                "lineno": 21
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_headers[https]",
+                "type": "Function",
+                "lineno": 21
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_post[http]",
+                "type": "Function",
+                "lineno": 90
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_post[https]",
+                "type": "Function",
+                "lineno": 90
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_redirects[http]",
+                "type": "Function",
+                "lineno": 117
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_redirects[https]",
+                "type": "Function",
+                "lineno": 117
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_status_code[http]",
+                "type": "Function",
+                "lineno": 11
+              },
+              {
+                "nodeid": "tests/integration/test_requests.py::test_status_code[https]",
+                "type": "Function",
+                "lineno": 11
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/integration/test_requests.py::test_body[http]",
+            "lineno": 31,
+            "outcome": "passed",
+            "keywords": [
+              "test_body[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.05567570001585409,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.02127269998891279,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n"
+            },
+            "teardown": {
+              "duration": 0.0002308000111952424,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_filter_post_params[http]",
+            "lineno": 284,
+            "outcome": "passed",
+            "keywords": [
+              "test_filter_post_params[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.004954000003635883,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.015347500040661544,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"POST /post HTTP/1.1\" 200 438\n"
+            },
+            "teardown": {
+              "duration": 0.00022440002067014575,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_get_empty_content_type_json[http]",
+            "lineno": 41,
+            "outcome": "passed",
+            "keywords": [
+              "test_get_empty_content_type_json[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.005122400005348027,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.014449300011619925,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /status/200 HTTP/1.1\" 200 0\n"
+            },
+            "teardown": {
+              "duration": 0.00022190000163391232,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_false[http]",
+            "lineno": 154,
+            "outcome": "passed",
+            "keywords": [
+              "test_gzip__decode_compressed_response_false[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.005043699988164008,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01739559997804463,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /gzip HTTP/1.1\" 200 196\n"
+            },
+            "teardown": {
+              "duration": 0.0003281999961473048,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_true[http]",
+            "lineno": 166,
+            "outcome": "failed",
+            "keywords": [
+              "test_gzip__decode_compressed_response_true[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0055210000136867166,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01278780004940927,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_requests.py",
+                "lineno": 183,
+                "message": "TypeError: byte indices must be integers or slices, not str"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_requests.py",
+                  "lineno": 183,
+                  "message": "TypeError"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /gzip HTTP/1.1\" 200 196\n127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /gzip HTTP/1.1\" 200 196\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_gzip__decode_compressed_r1')\nhttpbin_both = <pytest_httpbin.serve.Server object at 0x0000021A592310D0>\n\n    def test_gzip__decode_compressed_response_true(tmpdir, httpbin_both):\n        url = httpbin_both + \"/gzip\"\n    \n        expected_response = requests.get(url)\n        expected_content = expected_response.content\n        assert expected_response.headers[\"content-encoding\"] == \"gzip\"  # self-test\n    \n        with vcr.use_cassette(\n            str(tmpdir.join(\"decode_compressed.yaml\")),\n            decode_compressed_response=True,\n        ) as cassette:\n            r = requests.get(url)\n            assert r.headers[\"content-encoding\"] == \"gzip\"  # i.e. not removed\n            assert r.content == expected_content\n    \n        # Has the cassette body been decompressed?\n>       cassette_response_body = cassette.responses[0][\"body\"][\"string\"]\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: byte indices must be integers or slices, not str\n\ntests\\integration\\test_requests.py:183: TypeError"
+            },
+            "teardown": {
+              "duration": 0.00043890002416446805,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_headers[http]",
+            "lineno": 21,
+            "outcome": "passed",
+            "keywords": [
+              "test_headers[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.009159500012174249,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.08090830000583082,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.0002473000204190612,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_post[http]",
+            "lineno": 90,
+            "outcome": "passed",
+            "keywords": [
+              "test_post[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.007527300040237606,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.028500499960500747,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"POST /post HTTP/1.1\" 200 463\n"
+            },
+            "teardown": {
+              "duration": 0.000484699965454638,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_redirects[http]",
+            "lineno": 117,
+            "outcome": "failed",
+            "keywords": [
+              "test_redirects[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.010390300012659281,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03228739998303354,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_requests.py",
+                "lineno": 129,
+                "message": "assert 1 == 2\n +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59213210>.play_count"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_requests.py",
+                  "lineno": 129,
+                  "message": "AssertionError"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /redirect-to?url=bytes/1024 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_redirects_http_0')\nhttpbin_both = <pytest_httpbin.serve.Server object at 0x0000021A592310D0>\n\n    def test_redirects(tmpdir, httpbin_both):\n        \"\"\"Ensure that we can handle redirects\"\"\"\n        url = httpbin_both + \"/redirect-to?url=bytes/1024\"\n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))):\n            content = requests.get(url).content\n    \n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))) as cass:\n            assert content == requests.get(url).content\n            # Ensure that we've now cached *two* responses. One for the redirect\n            # and one for the final fetch\n            assert len(cass) == 2\n>           assert cass.play_count == 2\nE           assert 1 == 2\nE            +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59213210>.play_count\n\ntests\\integration\\test_requests.py:129: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.000546799972653389,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_status_code[http]",
+            "lineno": 11,
+            "outcome": "passed",
+            "keywords": [
+              "test_status_code[http]",
+              "http",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.007362800010014325,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.051588499976787716,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.0004095000331290066,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_body[https]",
+            "lineno": 31,
+            "outcome": "passed",
+            "keywords": [
+              "test_body[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.008530599996447563,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.037763800006359816,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n"
+            },
+            "teardown": {
+              "duration": 0.00041420001070946455,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_filter_post_params[https]",
+            "lineno": 284,
+            "outcome": "passed",
+            "keywords": [
+              "test_filter_post_params[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.009835899982135743,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03382660000352189,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"POST /post HTTP/1.1\" 200 439\n"
+            },
+            "teardown": {
+              "duration": 0.0004186999867670238,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_get_empty_content_type_json[https]",
+            "lineno": 41,
+            "outcome": "passed",
+            "keywords": [
+              "test_get_empty_content_type_json[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.011313700000755489,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03597649995936081,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /status/200 HTTP/1.1\" 200 0\n"
+            },
+            "teardown": {
+              "duration": 0.00030239997431635857,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_false[https]",
+            "lineno": 154,
+            "outcome": "passed",
+            "keywords": [
+              "test_gzip__decode_compressed_response_false[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.008801300020422786,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.034284900000784546,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /gzip HTTP/1.1\" 200 196\n"
+            },
+            "teardown": {
+              "duration": 0.00030159996822476387,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_true[https]",
+            "lineno": 166,
+            "outcome": "failed",
+            "keywords": [
+              "test_gzip__decode_compressed_response_true[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.009309399989433587,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.037408099975436926,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_requests.py",
+                "lineno": 183,
+                "message": "TypeError: byte indices must be integers or slices, not str"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_requests.py",
+                  "lineno": 183,
+                  "message": "TypeError"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /gzip HTTP/1.1\" 200 196\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /gzip HTTP/1.1\" 200 196\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_gzip__decode_compressed_r3')\nhttpbin_both = <pytest_httpbin.serve.SecureServer object at 0x0000021A59231550>\n\n    def test_gzip__decode_compressed_response_true(tmpdir, httpbin_both):\n        url = httpbin_both + \"/gzip\"\n    \n        expected_response = requests.get(url)\n        expected_content = expected_response.content\n        assert expected_response.headers[\"content-encoding\"] == \"gzip\"  # self-test\n    \n        with vcr.use_cassette(\n            str(tmpdir.join(\"decode_compressed.yaml\")),\n            decode_compressed_response=True,\n        ) as cassette:\n            r = requests.get(url)\n            assert r.headers[\"content-encoding\"] == \"gzip\"  # i.e. not removed\n            assert r.content == expected_content\n    \n        # Has the cassette body been decompressed?\n>       cassette_response_body = cassette.responses[0][\"body\"][\"string\"]\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: byte indices must be integers or slices, not str\n\ntests\\integration\\test_requests.py:183: TypeError"
+            },
+            "teardown": {
+              "duration": 0.0004722000448964536,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_headers[https]",
+            "lineno": 21,
+            "outcome": "passed",
+            "keywords": [
+              "test_headers[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.006729600019752979,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.07035569997970015,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.00034829997457563877,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_post[https]",
+            "lineno": 90,
+            "outcome": "passed",
+            "keywords": [
+              "test_post[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.009815400000661612,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03395090001868084,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"POST /post HTTP/1.1\" 200 464\n"
+            },
+            "teardown": {
+              "duration": 0.0006439000135287642,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_redirects[https]",
+            "lineno": 117,
+            "outcome": "failed",
+            "keywords": [
+              "test_redirects[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.009435300016775727,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.05751630000304431,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_requests.py",
+                "lineno": 129,
+                "message": "assert 1 == 2\n +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59C90C10>.play_count"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\integration\\test_requests.py",
+                  "lineno": 129,
+                  "message": "AssertionError"
+                }
+              ],
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /redirect-to?url=bytes/1024 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n",
+              "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_redirects_https_0')\nhttpbin_both = <pytest_httpbin.serve.SecureServer object at 0x0000021A59231550>\n\n    def test_redirects(tmpdir, httpbin_both):\n        \"\"\"Ensure that we can handle redirects\"\"\"\n        url = httpbin_both + \"/redirect-to?url=bytes/1024\"\n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))):\n            content = requests.get(url).content\n    \n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))) as cass:\n            assert content == requests.get(url).content\n            # Ensure that we've now cached *two* responses. One for the redirect\n            # and one for the final fetch\n            assert len(cass) == 2\n>           assert cass.play_count == 2\nE           assert 1 == 2\nE            +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59C90C10>.play_count\n\ntests\\integration\\test_requests.py:129: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00045769999269396067,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_status_code[https]",
+            "lineno": 11,
+            "outcome": "passed",
+            "keywords": [
+              "test_status_code[https]",
+              "https",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.011202000023331493,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.06953470001462847,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.00022749998606741428,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/integration/test_requests.py::test_cross_scheme",
+            "lineno": 142,
+            "outcome": "passed",
+            "keywords": [
+              "test_cross_scheme",
+              "test_requests.py",
+              "integration",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.007870500034186989,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.050719199993181974,
+              "outcome": "passed",
+              "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET / HTTP/1.1\" 200 13760\n"
+            },
+            "teardown": {
+              "duration": 0.4803149000508711,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    },
+    "tests/unit/test_unittest.py": {
+      "returncode": 1,
+      "stdout": ".F                                                                       [100%]\n================================== FAILURES ===================================\n___________________________ test_vcr_kwargs_passed ____________________________\n\n    def test_vcr_kwargs_passed():\n        class MyTest(VCRTestCase):\n            def test_foo(self):\n                pass\n    \n            def _get_vcr_kwargs(self):\n                return super()._get_vcr_kwargs(\n                    record_mode=\"new_episodes\",\n                )\n    \n        test = run_testcase(MyTest)[0][0]\n>       assert test.cassette.record_mode == \"new_episodes\"\n               ^^^^^^^^^^^^^\nE       AttributeError: 'MyTest' object has no attribute 'cassette'\n\ntests\\unit\\test_unittest.py:92: AttributeError\n---------------------------- Captured stderr call -----------------------------\nE\n======================================================================\nERROR: test_foo (test_unittest.test_vcr_kwargs_passed.<locals>.MyTest.test_foo)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution\\vcr\\unittest.py\", line 30, in setUp\n    self.vcr = self._get_vcr()\n               ^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution\\vcr\\unittest.py\", line 24, in _get_vcr\n    return VCR(**self._get_vcr_kwargs())\n                 ^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\unit\\test_unittest.py\", line 87, in _get_vcr_kwargs\n    return super()._get_vcr_kwargs(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: VCRMixin._get_vcr_kwargs() got an unexpected keyword argument 'record_mode'\n\n----------------------------------------------------------------------\nRan 1 test in 0.002s\n\nFAILED (errors=1)\n=========================== short test summary info ===========================\nFAILED tests/unit/test_unittest.py::test_vcr_kwargs_passed - AttributeError: ...\n1 failed, 1 passed in 2.06s\n",
+      "stderr": "[2026-06-30 04:38:13,740] WARNING in core: flasgger is not installed; serving the static landing page at / and skipping the Swagger UI and /spec.json.\n",
+      "json_report": {
+        "created": 1782765495.8037348,
+        "duration": 1.5709524154663086,
+        "exitcode": 1,
+        "root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "total": 2,
+          "collected": 2
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/unit/test_unittest.py::test_vcr_kwargs_overridden",
+                "type": "Function",
+                "lineno": 66
+              },
+              {
+                "nodeid": "tests/unit/test_unittest.py::test_vcr_kwargs_passed",
+                "type": "Function",
+                "lineno": 80
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/unit/test_unittest.py::test_vcr_kwargs_overridden",
+            "lineno": 66,
+            "outcome": "passed",
+            "keywords": [
+              "test_vcr_kwargs_overridden",
+              "test_unittest.py",
+              "unit",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.003981499990914017,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.42011700000148267,
+              "outcome": "passed",
+              "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.419s\n\nOK\n"
+            },
+            "teardown": {
+              "duration": 0.00023750000400468707,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/unit/test_unittest.py::test_vcr_kwargs_passed",
+            "lineno": 80,
+            "outcome": "failed",
+            "keywords": [
+              "test_vcr_kwargs_passed",
+              "test_unittest.py",
+              "unit",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021769996965304017,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0033170999959111214,
+              "outcome": "failed",
+              "crash": {
+                "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\unit\\test_unittest.py",
+                "lineno": 92,
+                "message": "AttributeError: 'MyTest' object has no attribute 'cassette'"
+              },
+              "traceback": [
+                {
+                  "path": "tests\\unit\\test_unittest.py",
+                  "lineno": 92,
+                  "message": "AttributeError"
+                }
+              ],
+              "stderr": "E\n======================================================================\nERROR: test_foo (test_unittest.test_vcr_kwargs_passed.<locals>.MyTest.test_foo)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution\\vcr\\unittest.py\", line 30, in setUp\n    self.vcr = self._get_vcr()\n               ^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution\\vcr\\unittest.py\", line 24, in _get_vcr\n    return VCR(**self._get_vcr_kwargs())\n                 ^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\unit\\test_unittest.py\", line 87, in _get_vcr_kwargs\n    return super()._get_vcr_kwargs(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: VCRMixin._get_vcr_kwargs() got an unexpected keyword argument 'record_mode'\n\n----------------------------------------------------------------------\nRan 1 test in 0.002s\n\nFAILED (errors=1)\n",
+              "longrepr": "def test_vcr_kwargs_passed():\n        class MyTest(VCRTestCase):\n            def test_foo(self):\n                pass\n    \n            def _get_vcr_kwargs(self):\n                return super()._get_vcr_kwargs(\n                    record_mode=\"new_episodes\",\n                )\n    \n        test = run_testcase(MyTest)[0][0]\n>       assert test.cassette.record_mode == \"new_episodes\"\n               ^^^^^^^^^^^^^\nE       AttributeError: 'MyTest' object has no attribute 'cassette'\n\ntests\\unit\\test_unittest.py:92: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.0006285000126808882,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 10,
+    "passed": 28,
+    "total": 38
+  },
+  "pass_rate_excluding_skips": 0.7368421052631579,
+  "by_layer": {
+    "integration": {
+      "failed": 6,
+      "passed": 10,
+      "total": 16
+    },
+    "system": {
+      "failed": 4,
+      "passed": 18,
+      "total": 22
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "tests/integration/test_basic.py::test_basic_json_use",
+      "base_nodeid": "tests/integration/test_basic.py::test_basic_json_use",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.33694670000113547,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:38] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_basic.py::test_nonexistent_directory",
+      "base_nodeid": "tests/integration/test_basic.py::test_nonexistent_directory",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.018264600017573684,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:38] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_basic.py::test_unpatch",
+      "base_nodeid": "tests/integration/test_basic.py::test_unpatch",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01780440000584349,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:38] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:38] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_config.py::test_default_set_cassette_library_dir",
+      "base_nodeid": "tests/integration/test_config.py::test_default_set_cassette_library_dir",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.35093650000635535,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:42] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_config.py::test_dont_record_on_exception",
+      "base_nodeid": "tests/integration/test_config.py::test_dont_record_on_exception",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0031039000023156404,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_config.py",
+          "lineno": 75,
+          "message": "TypeError: argument of type 'StubHTTPResponse' is not iterable"
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_config.py",
+            "lineno": 78,
+            "message": ""
+          },
+          {
+            "path": "..\\..\\solution\\vcr\\config.py",
+            "lineno": 52,
+            "message": "in wrapper"
+          },
+          {
+            "path": "tests\\integration\\test_config.py",
+            "lineno": 75,
+            "message": "TypeError"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:42] \"GET / HTTP/1.1\" 200 13760\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-86\\\\test_dont_record_on_exception0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x00000256289B5E50>\n\n    @pytest.mark.online\n    def test_dont_record_on_exception(tmpdir, httpbin):\n        my_vcr = vcr.VCR(record_on_exception=False)\n    \n        @my_vcr.use_cassette(str(tmpdir.join(\"dontsave.yml\")))\n        def some_test():\n            assert b\"Not in content\" in urlopen(httpbin.url)\n    \n        with pytest.raises(AssertionError):\n>           some_test()\n\ntests\\integration\\test_config.py:78: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\solution\\vcr\\config.py:52: in wrapper\n    result = func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n    @my_vcr.use_cassette(str(tmpdir.join(\"dontsave.yml\")))\n    def some_test():\n>       assert b\"Not in content\" in urlopen(httpbin.url)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: argument of type 'StubHTTPResponse' is not iterable\n\ntests\\integration\\test_config.py:75: TypeError"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_config.py::test_override_match_on",
+      "base_nodeid": "tests/integration/test_config.py::test_override_match_on",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.04417379997903481,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_config.py::test_override_set_cassette_library_dir",
+      "base_nodeid": "tests/integration/test_config.py::test_override_set_cassette_library_dir",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.022093100007623434,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_config.py::test_set_drop_unused_requests",
+      "base_nodeid": "tests/integration/test_config.py::test_set_drop_unused_requests",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.021892900054808706,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_config.py",
+          "lineno": 97,
+          "message": "TypeError: Cassette.load() got an unexpected keyword argument 'path'"
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_config.py",
+            "lineno": 97,
+            "message": "TypeError"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:43] \"GET /get HTTP/1.1\" 200 233\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-86\\\\test_set_drop_unused_requests0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x00000256289B5E50>\n\n    def test_set_drop_unused_requests(tmpdir, httpbin):\n        my_vcr = vcr.VCR(drop_unused_requests=True)\n        file = str(tmpdir.join(\"test.yaml\"))\n    \n        with my_vcr.use_cassette(file):\n            urlopen(httpbin.url)\n            urlopen(httpbin.url + \"/get\")\n    \n>       cassette = Cassette.load(path=file)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: Cassette.load() got an unexpected keyword argument 'path'\n\ntests\\integration\\test_config.py:97: TypeError"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_ignore.py::test_ignore_httpbin",
+      "base_nodeid": "tests/integration/test_ignore.py::test_ignore_httpbin",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.4944932999787852,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost",
+      "base_nodeid": "tests/integration/test_ignore.py::test_ignore_localhost",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.02836519997799769,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost_and_httpbin",
+      "base_nodeid": "tests/integration/test_ignore.py::test_ignore_localhost_and_httpbin",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.012688000046182424,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_ignore.py::test_ignore_localhost_twice",
+      "base_nodeid": "tests/integration/test_ignore.py::test_ignore_localhost_twice",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.06485059997066855,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:49] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_register_matcher.py::test_registered_false_matcher",
+      "base_nodeid": "tests/integration/test_register_matcher.py::test_registered_false_matcher",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.37427470000693575,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:53] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:37:53] \"GET /get HTTP/1.1\" 200 233\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_register_matcher.py::test_registered_true_matcher",
+      "base_nodeid": "tests/integration/test_register_matcher.py::test_registered_true_matcher",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.03450509998947382,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution\\vcr\\cassette.py",
+          "lineno": 171,
+          "message": "vcr.errors.CannotOverwriteExistingCassetteException: No matching interaction found for GET http://127.0.0.1:51040, and record mode 'once' forbids recording."
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_register_matcher.py",
+            "lineno": 29,
+            "message": ""
+          },
+          {
+            "path": "C:\\Users\\12547\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py",
+            "lineno": 216,
+            "message": "in urlopen"
+          },
+          {
+            "path": "..\\..\\solution\\vcr\\patch.py",
+            "lineno": 81,
+            "message": "in _handle_urllib_open"
+          },
+          {
+            "path": "..\\..\\solution\\vcr\\cassette.py",
+            "lineno": 171,
+            "message": "CannotOverwriteExistingCassetteException"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:37:53] \"GET / HTTP/1.1\" 200 13760\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-88\\\\test_registered_true_matcher0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000029DB2967D50>\n\n    @pytest.mark.online\n    def test_registered_true_matcher(tmpdir, httpbin):\n        my_vcr = vcr.VCR()\n        my_vcr.register_matcher(\"true\", true_matcher)\n        testfile = str(tmpdir.join(\"test.yml\"))\n        with my_vcr.use_cassette(testfile, match_on=[\"true\"]):\n            # These 2 different urls are stored as the same request\n            urlopen(httpbin.url)\n            urlopen(httpbin.url + \"/get\")\n    \n        with my_vcr.use_cassette(testfile, match_on=[\"true\"]):\n            # I can get the response twice even though I only asked for it once\n            urlopen(httpbin.url)\n>           urlopen(httpbin.url)\n\ntests\\integration\\test_register_matcher.py:29: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\nC:\\Users\\12547\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py:216: in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\solution\\vcr\\patch.py:81: in _handle_urllib_open\n    cassette.assert_can_record(request)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <vcr.cassette.Cassette object at 0x0000029DB2AED490>\nrequest = Request(method='GET', uri='http://127.0.0.1:51040', body=b'', headers={})\n\n    def assert_can_record(self, request: Request) -> None:\n        if not self.can_record():\n            error_class = CannotOverwriteExistingCassetteException if self.record_mode == \"once\" else UnhandledHTTPRequestError\n>           raise error_class(\n                \"No matching interaction found for {0} {1}, and record mode {2!r} forbids recording.\".format(\n                    request.method, request.uri, self.record_mode\n                )\n            )\nE           vcr.errors.CannotOverwriteExistingCassetteException: No matching interaction found for GET http://127.0.0.1:51040, and record mode 'once' forbids recording.\n\n..\\..\\solution\\vcr\\cassette.py:171: CannotOverwriteExistingCassetteException"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_register_serializer.py::test_registered_serializer",
+      "base_nodeid": "tests/integration/test_register_serializer.py::test_registered_serializer",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.4016861999989487,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_request.py::test_recorded_request_uri_with_redirected_request",
+      "base_nodeid": "tests/integration/test_request.py::test_recorded_request_uri_with_redirected_request",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.36624090000987053,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_request.py",
+          "lineno": 10,
+          "message": "AssertionError: assert 'http://127.0.0.1:52443/get' == 'http://127.0...43/redirect/3'\n  \n  - http://127.0.0.1:52443/redirect/3\n  ?                        ^ ----- --\n  + http://127.0.0.1:52443/get\n  ?                        ^"
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_request.py",
+            "lineno": 10,
+            "message": "AssertionError"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /redirect/3 HTTP/1.1\" 302 227\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /relative-redirect/2 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /relative-redirect/1 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:02] \"GET /get HTTP/1.1\" 200 233\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-90\\\\test_recorded_request_uri_with0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000023D7116FE10>\n\n    def test_recorded_request_uri_with_redirected_request(tmpdir, httpbin):\n        with vcr.use_cassette(str(tmpdir.join(\"test.yml\"))) as cass:\n            assert len(cass) == 0\n            urlopen(httpbin.url + \"/redirect/3\")\n>           assert cass.requests[0].uri == httpbin.url + \"/redirect/3\"\nE           AssertionError: assert 'http://127.0.0.1:52443/get' == 'http://127.0...43/redirect/3'\nE             \nE             - http://127.0.0.1:52443/redirect/3\nE             ?                        ^ ----- --\nE             + http://127.0.0.1:52443/get\nE             ?                        ^\n\ntests\\integration\\test_request.py:10: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_request.py::test_records_multiple_header_values",
+      "base_nodeid": "tests/integration/test_request.py::test_records_multiple_header_values",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.009281600010581315,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_request.py",
+          "lineno": 20,
+          "message": "AssertionError: assert 'baz' == ['bar', 'baz']"
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_request.py",
+            "lineno": 20,
+            "message": "AssertionError"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:03] \"GET /response-headers?foo=bar&foo=baz HTTP/1.1\" 200 105\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-90\\\\test_records_multiple_header_v0')\nhttpbin = <pytest_httpbin.serve.Server object at 0x0000023D7116FE10>\n\n    def test_records_multiple_header_values(tmpdir, httpbin):\n        with vcr.use_cassette(str(tmpdir.join(\"test.yml\"))) as cass:\n            assert len(cass) == 0\n            urlopen(httpbin.url + \"/response-headers?foo=bar&foo=baz\")\n            assert len(cass) == 1\n>           assert cass.responses[0][\"headers\"][\"foo\"] == [\"bar\", \"baz\"]\nE           AssertionError: assert 'baz' == ['bar', 'baz']\n\ntests\\integration\\test_request.py:20: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_body[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_body",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.02127269998891279,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_filter_post_params[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_filter_post_params",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.015347500040661544,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"POST /post HTTP/1.1\" 200 438\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_get_empty_content_type_json[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_get_empty_content_type_json",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.014449300011619925,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /status/200 HTTP/1.1\" 200 0\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_false[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_false",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01739559997804463,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /gzip HTTP/1.1\" 200 196\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_true[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_true",
+      "layer": "system",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.01278780004940927,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_requests.py",
+          "lineno": 183,
+          "message": "TypeError: byte indices must be integers or slices, not str"
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_requests.py",
+            "lineno": 183,
+            "message": "TypeError"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /gzip HTTP/1.1\" 200 196\n127.0.0.1 - - [30/Jun/2026 04:38:08] \"GET /gzip HTTP/1.1\" 200 196\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_gzip__decode_compressed_r1')\nhttpbin_both = <pytest_httpbin.serve.Server object at 0x0000021A592310D0>\n\n    def test_gzip__decode_compressed_response_true(tmpdir, httpbin_both):\n        url = httpbin_both + \"/gzip\"\n    \n        expected_response = requests.get(url)\n        expected_content = expected_response.content\n        assert expected_response.headers[\"content-encoding\"] == \"gzip\"  # self-test\n    \n        with vcr.use_cassette(\n            str(tmpdir.join(\"decode_compressed.yaml\")),\n            decode_compressed_response=True,\n        ) as cassette:\n            r = requests.get(url)\n            assert r.headers[\"content-encoding\"] == \"gzip\"  # i.e. not removed\n            assert r.content == expected_content\n    \n        # Has the cassette body been decompressed?\n>       cassette_response_body = cassette.responses[0][\"body\"][\"string\"]\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: byte indices must be integers or slices, not str\n\ntests\\integration\\test_requests.py:183: TypeError"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_headers[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_headers",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.08090830000583082,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_post[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_post",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.028500499960500747,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"POST /post HTTP/1.1\" 200 463\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_redirects[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_redirects",
+      "layer": "system",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.03228739998303354,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_requests.py",
+          "lineno": 129,
+          "message": "assert 1 == 2\n +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59213210>.play_count"
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_requests.py",
+            "lineno": 129,
+            "message": "AssertionError"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /redirect-to?url=bytes/1024 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_redirects_http_0')\nhttpbin_both = <pytest_httpbin.serve.Server object at 0x0000021A592310D0>\n\n    def test_redirects(tmpdir, httpbin_both):\n        \"\"\"Ensure that we can handle redirects\"\"\"\n        url = httpbin_both + \"/redirect-to?url=bytes/1024\"\n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))):\n            content = requests.get(url).content\n    \n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))) as cass:\n            assert content == requests.get(url).content\n            # Ensure that we've now cached *two* responses. One for the redirect\n            # and one for the final fetch\n            assert len(cass) == 2\n>           assert cass.play_count == 2\nE           assert 1 == 2\nE            +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59213210>.play_count\n\ntests\\integration\\test_requests.py:129: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_status_code[http]",
+      "base_nodeid": "tests/integration/test_requests.py::test_status_code",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.051588499976787716,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_body[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_body",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.037763800006359816,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_filter_post_params[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_filter_post_params",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.03382660000352189,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"POST /post HTTP/1.1\" 200 439\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_get_empty_content_type_json[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_get_empty_content_type_json",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.03597649995936081,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:09] \"GET /status/200 HTTP/1.1\" 200 0\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_false[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_false",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.034284900000784546,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /gzip HTTP/1.1\" 200 196\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_true[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_gzip__decode_compressed_response_true",
+      "layer": "system",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.037408099975436926,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_requests.py",
+          "lineno": 183,
+          "message": "TypeError: byte indices must be integers or slices, not str"
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_requests.py",
+            "lineno": 183,
+            "message": "TypeError"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /gzip HTTP/1.1\" 200 196\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /gzip HTTP/1.1\" 200 196\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_gzip__decode_compressed_r3')\nhttpbin_both = <pytest_httpbin.serve.SecureServer object at 0x0000021A59231550>\n\n    def test_gzip__decode_compressed_response_true(tmpdir, httpbin_both):\n        url = httpbin_both + \"/gzip\"\n    \n        expected_response = requests.get(url)\n        expected_content = expected_response.content\n        assert expected_response.headers[\"content-encoding\"] == \"gzip\"  # self-test\n    \n        with vcr.use_cassette(\n            str(tmpdir.join(\"decode_compressed.yaml\")),\n            decode_compressed_response=True,\n        ) as cassette:\n            r = requests.get(url)\n            assert r.headers[\"content-encoding\"] == \"gzip\"  # i.e. not removed\n            assert r.content == expected_content\n    \n        # Has the cassette body been decompressed?\n>       cassette_response_body = cassette.responses[0][\"body\"][\"string\"]\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: byte indices must be integers or slices, not str\n\ntests\\integration\\test_requests.py:183: TypeError"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_headers[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_headers",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.07035569997970015,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_post[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_post",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.03395090001868084,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"POST /post HTTP/1.1\" 200 464\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_redirects[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_redirects",
+      "layer": "system",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.05751630000304431,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\integration\\test_requests.py",
+          "lineno": 129,
+          "message": "assert 1 == 2\n +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59C90C10>.play_count"
+        },
+        "traceback": [
+          {
+            "path": "tests\\integration\\test_requests.py",
+            "lineno": 129,
+            "message": "AssertionError"
+          }
+        ],
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /redirect-to?url=bytes/1024 HTTP/1.1\" 302 0\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET /bytes/1024 HTTP/1.1\" 200 1024\n",
+        "longrepr": "tmpdir = local('C:\\\\Users\\\\12547\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-12547\\\\pytest-91\\\\test_redirects_https_0')\nhttpbin_both = <pytest_httpbin.serve.SecureServer object at 0x0000021A59231550>\n\n    def test_redirects(tmpdir, httpbin_both):\n        \"\"\"Ensure that we can handle redirects\"\"\"\n        url = httpbin_both + \"/redirect-to?url=bytes/1024\"\n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))):\n            content = requests.get(url).content\n    \n        with vcr.use_cassette(str(tmpdir.join(\"requests.yaml\"))) as cass:\n            assert content == requests.get(url).content\n            # Ensure that we've now cached *two* responses. One for the redirect\n            # and one for the final fetch\n            assert len(cass) == 2\n>           assert cass.play_count == 2\nE           assert 1 == 2\nE            +  where 1 = <vcr.cassette.Cassette object at 0x0000021A59C90C10>.play_count\n\ntests\\integration\\test_requests.py:129: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_status_code[https]",
+      "base_nodeid": "tests/integration/test_requests.py::test_status_code",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.06953470001462847,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/integration/test_requests.py::test_cross_scheme",
+      "base_nodeid": "tests/integration/test_requests.py::test_cross_scheme",
+      "layer": "system",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.050719199993181974,
+        "outcome": "passed",
+        "stderr": "127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET / HTTP/1.1\" 200 13760\n127.0.0.1 - - [30/Jun/2026 04:38:10] \"GET / HTTP/1.1\" 200 13760\n"
+      }
+    },
+    {
+      "nodeid": "tests/unit/test_unittest.py::test_vcr_kwargs_overridden",
+      "base_nodeid": "tests/unit/test_unittest.py::test_vcr_kwargs_overridden",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.42011700000148267,
+        "outcome": "passed",
+        "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.419s\n\nOK\n"
+      }
+    },
+    {
+      "nodeid": "tests/unit/test_unittest.py::test_vcr_kwargs_passed",
+      "base_nodeid": "tests/unit/test_unittest.py::test_vcr_kwargs_passed",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0033170999959111214,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\unit\\test_unittest.py",
+          "lineno": 92,
+          "message": "AttributeError: 'MyTest' object has no attribute 'cassette'"
+        },
+        "traceback": [
+          {
+            "path": "tests\\unit\\test_unittest.py",
+            "lineno": 92,
+            "message": "AttributeError"
+          }
+        ],
+        "stderr": "E\n======================================================================\nERROR: test_foo (test_unittest.test_vcr_kwargs_passed.<locals>.MyTest.test_foo)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution\\vcr\\unittest.py\", line 30, in setUp\n    self.vcr = self._get_vcr()\n               ^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\solution\\vcr\\unittest.py\", line 24, in _get_vcr\n    return VCR(**self._get_vcr_kwargs())\n                 ^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-vcrpy-specv3-20260630-001\\score_worktree_v5\\oracle_worktree\\tests\\unit\\test_unittest.py\", line 87, in _get_vcr_kwargs\n    return super()._get_vcr_kwargs(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: VCRMixin._get_vcr_kwargs() got an unexpected keyword argument 'record_mode'\n\n----------------------------------------------------------------------\nRan 1 test in 0.002s\n\nFAILED (errors=1)\n",
+        "longrepr": "def test_vcr_kwargs_passed():\n        class MyTest(VCRTestCase):\n            def test_foo(self):\n                pass\n    \n            def _get_vcr_kwargs(self):\n                return super()._get_vcr_kwargs(\n                    record_mode=\"new_episodes\",\n                )\n    \n        test = run_testcase(MyTest)[0][0]\n>       assert test.cassette.record_mode == \"new_episodes\"\n               ^^^^^^^^^^^^^\nE       AttributeError: 'MyTest' object has no attribute 'cassette'\n\ntests\\unit\\test_unittest.py:92: AttributeError"
+      }
+    }
+  ]
+}

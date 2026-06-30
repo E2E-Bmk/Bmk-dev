@@ -1,72 +1,131 @@
 {
-  "suite": "unit_system_gap_core_strict",
-  "version": "2026-06-06",
+  "suite": "swe_e2e_full_reconstruction",
+  "version": "2026-06-28",
+  "status": "restructured",
+  "active_direction": {
+    "summary": "Build full, multi-file SWE-E2E reconstruction tasks from real source repositories or benchmark cases backed by real repositories.",
+    "retired_direction": "The old mini-task and unit/system-gap line is archived and no longer maintained as the active design path.",
+    "candidate_visibility_rule": "Candidate agents may see only the public packet, dependency constraints, starter files if intentionally public, and output instructions.",
+    "candidate_must_not_see": [
+      "source repositories",
+      "hidden tests",
+      "oracle fixtures not described by the public packet",
+      "previous model attempts",
+      "trace logs",
+      "score reports"
+    ]
+  },
   "layout": {
-    "task_root": "task",
-    "core_files": ["prd.md", "rubric.json"],
-    "doc_files": ["source_repo.md", "requirement_map.md", "score_reports/"]
+    "task_root": "tasks",
+    "wip_root": "wip",
+    "harness_root": "harness",
+    "results_root": "results",
+    "logs_root": "logs",
+    "docs_root": "docs",
+    "skills_root": "skills",
+    "archive_root": "archive",
+    "workspace_repo_pool": "../repo-pool",
+    "workspace_benchmarks": "../benchmarks",
+    "workspace_archive": "../archive"
   },
-  "policy": {
-    "included_statuses": ["core strong"],
-    "excluded": [{"task": "MiniTofu", "reason": "provisional only"}],
-    "reference_gate": "unit 100%, system 100%",
-    "candidate_gate": "fresh run unit > system with gap >= 15pp",
-    "fairness_gate": "traceable but non-isomorphic hidden tests; no private-shape, exact-text, environment, or narrow-format traps"
+  "task_artifact_contract": {
+    "completed_task": [
+      "spec.md",
+      "oracle/",
+      "docker/",
+      "meta.json"
+    ],
+    "wip_task": [
+      "spec_draft.md",
+      "filter_notes.md",
+      "oracle_candidates/"
+    ],
+    "result_output": [
+      "output/",
+      "pytest_log.txt",
+      "score.json"
+    ]
   },
-  "tasks": [
-    {
-      "id": "sqlite-utils-realrepo-001",
-      "display_name": "SQLite",
-      "source_repo": "simonw/sqlite-utils",
-      "status": "core strong",
-      "scores": {
-        "reference": {"unit": 100.00, "system": 100.00},
-        "codex_subagent_001": {"unit": 87.50, "system": 41.67, "gap_pp": 45.83},
-        "openhands_deepseek_v4_pro_001": {"unit": 93.75, "system": 41.67, "gap_pp": 52.08}
+  "evaluation_policy": {
+    "primary_harness": "mini swe agent / OpenHands-backed candidate execution",
+    "oracle_policy": "Prefer filtered original tests and deterministic executable rubrics.",
+    "baseline_policy": "Every promoted task must be tested with at least one weak/contrast model and a fresh Codex subagent SOTA baseline, using isolated public-packet workspaces only.",
+    "required_candidate_baselines": [
+      {
+        "id": "qwen_siliconflow_openhands",
+        "role": "weak_or_contrast_baseline",
+        "runner": "OpenHands or mini-swe-agent"
       },
-      "paths": {
-        "prd": "task/sqlite-utils-realrepo-001/prd.md",
-        "rubric": "task/sqlite-utils-realrepo-001/rubric.json",
-        "source_repo": "task/sqlite-utils-realrepo-001/doc/source_repo.md",
-        "requirement_map": "task/sqlite-utils-realrepo-001/doc/requirement_map.md",
-        "score_reports": "task/sqlite-utils-realrepo-001/doc/score_reports"
-      }
-    },
-    {
-      "id": "zk-realrepo-001",
-      "display_name": "ZK",
-      "source_repo": "zk-org/zk",
-      "status": "core strong",
-      "scores": {
-        "reference": {"unit": 100.00, "system": 100.00},
-        "codex_subagent_001": {"unit": 83.33, "system": 58.33, "gap_pp": 25.00},
-        "openhands_deepseek_v4_pro_001": {"unit": 83.33, "system": 41.67, "gap_pp": 41.66}
+      {
+        "id": "deepseek_v4_openhands",
+        "role": "middle_strong_baseline",
+        "runner": "OpenHands or mini-swe-agent"
       },
-      "paths": {
-        "prd": "task/zk-realrepo-001/prd.md",
-        "rubric": "task/zk-realrepo-001/rubric.json",
-        "source_repo": "task/zk-realrepo-001/doc/source_repo.md",
-        "requirement_map": "task/zk-realrepo-001/doc/requirement_map.md",
-        "score_reports": "task/zk-realrepo-001/doc/score_reports"
+      {
+        "id": "codex_subagent",
+        "role": "sota_baseline",
+        "runner": "Codex subagent in a clean candidate workspace"
       }
-    },
-    {
-      "id": "miniurlutils-realrepo-001",
-      "display_name": "MiniURLUtils",
-      "source_repo": "mahmoud/boltons",
-      "status": "core strong",
-      "scores": {
-        "reference": {"unit": 100.00, "system": 100.00},
-        "codex_subagent_001": {"unit": 100.00, "system": 70.00, "gap_pp": 30.00},
-        "openhands_deepseek_v4_pro_001": {"unit": 100.00, "system": 60.00, "gap_pp": 40.00}
-      },
-      "paths": {
-        "prd": "task/miniurlutils-realrepo-001/prd.md",
-        "rubric": "task/miniurlutils-realrepo-001/rubric.json",
-        "source_repo": "task/miniurlutils-realrepo-001/doc/source_repo.md",
-        "requirement_map": "task/miniurlutils-realrepo-001/doc/requirement_map.md",
-        "score_reports": "task/miniurlutils-realrepo-001/doc/score_reports"
-      }
-    }
-  ]
+    ],
+    "test_taxonomy": [
+      "atomic",
+      "integration",
+      "system_e2e"
+    ],
+    "fairness_gate": [
+      "requirements are traceable to public packet and source evidence",
+      "hidden checks are non-isomorphic to public checklist bullets",
+      "no private implementation inspection",
+      "no brittle exact formatting unless public contract promises it",
+      "network and platform assumptions are mocked, removed, or made deterministic",
+      "repeated root causes are reported separately from raw score"
+    ]
+  },
+  "skills_policy": {
+    "status": "active",
+    "root": "skills",
+    "purpose": "Accumulate reusable procedures while building tasks so team members can repeat the workflow.",
+    "promotion_gate": "A workflow should become a skill only after it has been exercised on a real candidate and has clear inputs, outputs, gates, and failure modes.",
+    "stage_skill_discipline": "Before every pipeline stage, read the stage's specialist SKILL.md from skills/{stage-skill}/SKILL.md and treat it as the only workflow authority for that stage. Subagents must be instructed to read the same stage skill before inspecting artifacts.",
+    "deprecated_skill_policy": "Deprecated root-level and v1 workflow skills are archival only and must not be used as runtime authority.",
+    "active_skills": [
+      "task-synthesizer",
+      "candidate-selector",
+      "spec-writer",
+      "test-filter",
+      "task-judge"
+    ],
+    "archived_v1_skills": "archive/deprecated-skills/2026-06-30-old-bmkdev-flow"
+  },
+  "archive": {
+    "v1_tasks": "archive/v1-tasks",
+    "v1_skills": "archive/v1-skills",
+    "session_logs": "archive/session-logs",
+    "v1_runs": "archive/v1-runs",
+    "previous_manifest_copy": "archive/session-logs/MANIFEST.v1-before-restructure-2026-06-28.json"
+  },
+  "candidate_sources": {
+    "preferred": [
+      "ProgramBench",
+      "SWE-bench style real repositories",
+      "PRDBench",
+      "NL2RepoBench",
+      "GitHub repositories with clear docs and tests"
+    ],
+    "fit_gate": [
+      "reasonable LOC and file count for multi-file reconstruction",
+      "pilot exception: the first task may be below 3000 LOC only to validate the full workflow, but it must still be multi-file and backed by original tests",
+      "clear original tests or examples",
+      "multiple interacting subsystems",
+      "durable state or shared fact source with derived views",
+      "hermetic or mockable dependencies"
+    ],
+    "reject_gate": [
+      "can be solved as a single small file",
+      "pure closed-form parser or formatter with no lifecycle",
+      "hidden checks require private source details",
+      "tests are mostly network-bound, platform-bound, or unclear",
+      "task is dominated by famous standard memorization"
+    ]
+  }
 }

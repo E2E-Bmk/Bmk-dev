@@ -5,6 +5,16 @@ description: "Select a Python repository as a SWE-E2E benchmark task candidate. 
 
 # Candidate Selector
 
+## State Machine Interface
+
+**Entry:** Read `wip/{task}/PIPELINE_STATE.md`. Verify `state` is `S1_SCREENING`. If absent, copy from `wip/_template/PIPELINE_STATE.md` and initialize `{TASK_ID}`.
+
+**Exit (keep):** Set `state → S1_SELECTED`, update `todo` to S1_SELECTED catalogue todo, append History row.
+
+**Exit (reject):** Set `state → RETIRED`, append History row, stop.
+
+---
+
 ## Hard Gates (all must pass)
 
 Reject if any of the following:

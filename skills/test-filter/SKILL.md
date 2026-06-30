@@ -5,6 +5,18 @@ description: "Filter and classify a Python test suite for SWE-E2E benchmark scor
 
 # Test Filter
 
+## State Machine Interface
+
+**Entry:** Read `wip/{task}/PIPELINE_STATE.md`. Verify `state` is one of the S3 states. Do not begin work until state is confirmed. If `filter_iter > 2`, stop and escalate.
+
+**Forbidden transition (hard gate):** `S3B_TRIGGER` requires `filter/rewrite_audit.md` to exist. If it does not exist, set `state → S3A_REWRITE` and complete that state before proceeding. Never jump from any S3A state directly to `S3B_TRIGGER` without this file.
+
+**Exit each sub-state:** After completing a sub-state's todo list, set `state` to the next state per Catalogue, reset `todo` to that state's catalogue todo, append History row. Do not skip sub-states.
+
+**Exit (loop):** When looping back (e.g. `S3_REFERENCE_RUN → S3_ORACLE_MERGE`), set `state` to loop target, reset `todo`, increment `filter_iter`, append History row.
+
+---
+
 ## Core Criterion
 
 Every filtering decision reduces to two questions. Both must be true to keep a test.

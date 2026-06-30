@@ -5,6 +5,16 @@ description: "Write a behavioral specification (public packet) for a SWE-E2E rec
 
 # Spec Writer
 
+## State Machine Interface
+
+**Entry:** Read `wip/{task}/PIPELINE_STATE.md`. Verify `state` is `S2_SPEC_DRAFT` or `S2_SPEC_CHECK`. If `spec_iter > 3`, stop and escalate to orchestrator — do not proceed.
+
+**Exit (all 5 checks pass):** Set `state → S2_SPEC_DONE`, then `→ S3A_IMPORT_AUDIT`, append History row.
+
+**Exit (loop — any check fails):** Set `state → S2_SPEC_DRAFT`, increment `spec_iter`, reset `todo` to S2_SPEC_DRAFT catalogue todo, append History row.
+
+---
+
 ## Core Standard
 
 Two questions decide every inclusion decision. Both must be answered:

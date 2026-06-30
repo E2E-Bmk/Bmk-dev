@@ -5,6 +5,20 @@ description: "Orchestrate the full SWE-E2E benchmark task synthesis pipeline: ca
 
 # Task Synthesizer
 
+## State Machine
+
+每个任务在 `wip/{task}/PIPELINE_STATE.md` 维护一个运行中的状态机实例。
+
+**Stage 1 开始前（新任务）：** 从 `wip/_template/PIPELINE_STATE.md` 复制到 `wip/{task}/PIPELINE_STATE.md`，替换 `{TASK_ID}` 和 `{DATE}`。
+
+**每次分派子 agent 前：** 读 `PIPELINE_STATE.md`，确认 `state` 与即将运行的 stage 匹配。不匹配 → 不分派，先解决状态不一致。
+
+**每次子 agent 返回后：** 检查 `PIPELINE_STATE.md` 是否已更新（state 已转移，History 已追加）。未更新 → 子 agent 未正确退出，视为失败，重新运行。
+
+**循环终止：** `spec_iter > 2`、`filter_iter > 2` 或 `eval_iter > 2` 且未解决 → 直接设 `state → RETIRED`，不再继续循环。
+
+---
+
 ## Core Principles
 
 These three principles are the main thread's judgment criteria. Every subagent output is reviewed against them before the pipeline proceeds.

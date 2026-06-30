@@ -5,6 +5,22 @@ description: "Judge whether a SWE-E2E benchmark task and evaluation run are vali
 
 # Task Judge
 
+## State Machine Interface
+
+**Entry:** Read `wip/{task}/PIPELINE_STATE.md`. Verify `state` is `S5_JUDGE`. Verify `candidate-runs/.../score_result.json` exists — if not, set `state → S4_EVAL_RUN` and stop.
+
+**Exit (QUALIFIED):** Set `state → QUALIFIED`, append History row, execute QUALIFIED terminal todo.
+
+**Exit (loop — spec gap):** Set `state → S2_SPEC_DRAFT`, increment `spec_iter`, reset `todo`. If `spec_iter > 3`, set `state → RETIRED` instead.
+
+**Exit (loop — filter issue):** Set `state → S3_ORACLE_MERGE`, increment `filter_iter`, reset `todo`. If `filter_iter > 2`, set `state → RETIRED` instead.
+
+**Exit (loop — cheat/env):** Set `state → S4_SETUP`, increment `eval_iter`. If `eval_iter > 2`, set `state → RETIRED` instead.
+
+**Exit (RETIRED):** Set `state → RETIRED`, append History row, execute RETIRED terminal todo.
+
+---
+
 ## Core Principle
 
 > **Every test in the scoring set must be spec-driven and behavioral. Apply this before reading any score.**

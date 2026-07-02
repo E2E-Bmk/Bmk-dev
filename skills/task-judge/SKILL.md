@@ -100,6 +100,20 @@ If `spec_test_map.md` header contains `oracle_source: generated_only`, the tests
 
 If Gate C fails, return `filter_correction_request.md` to test-filter for regeneration.
 
+**Gate D — Coverage Gap Audit**
+
+For each H2/H3 section in the spec, check whether `spec_test_map.md` contains at least one `covered` row mapping to that section. List any uncovered sections:
+
+| spec section | uncovered behaviors | impact | recommendation |
+|---|---|---|---|
+
+Coverage verdict:
+- **FULL** — 0 spec sections with zero coverage
+- **PARTIAL** (acceptable) — 1–2 secondary sections uncovered; no core invariant section is empty
+- **GAP** (requires action) — any core invariant section (`Cross-View Invariants`, `Error Semantics`, state lifecycle sections) has zero coverage
+
+On a GAP verdict: issue a `filter_correction_request.md` routing back to test-filter with the list of uncovered sections. Test-filter must generate additional tests for each GAP section until per-section minimums are met (see test-filter SKILL). Do not issue QUALIFIED with an unresolved GAP. A GAP may only be accepted as a caveat (recorded in MANIFEST.json `coverage-gap` entry) if test-filter has already attempted generation and confirmed no further spec-derivable tests can be produced for those sections without introducing circular assertions — this exception must be explicitly stated in the diagnosis report.
+
 ---
 
 ## Task Labels
@@ -114,8 +128,12 @@ Examples of the kind of labels that carry signal:
 - `too-hard` — all models near floor; may indicate spec gap or task difficulty mismatch
 - `composition-signal` — at least one failure traceable to cross-component state drift, not primitive cascade
 - `cascade-dominated` — most integration/system failures explained by a small number of broken primitives
+- `saturated-candidate-score` — candidate pass rate = 100%; combine with `trivially-solved` when saturation is confirmed
+- `coverage-gap` — one or more core invariant spec sections have no oracle coverage (Gate D)
 
 These are examples, not an exhaustive set. If the evidence suggests a label not listed here, add it.
+
+**Saturation heuristic (mandatory check when candidate pass rate = 100%):** If the candidate consolidates the upstream package into significantly fewer files than the original (e.g. 4 files vs 20+) AND achieves 100% pass rate, apply both `trivially-solved` and `saturated-candidate-score`. Record in the diagnosis report that the run pattern is consistent with recall from training data rather than reconstruction from spec. This does not block QUALIFIED but must appear in MANIFEST caveats.
 
 ---
 
@@ -141,16 +159,27 @@ For every failure cluster that passed Pass 1:
 
 **Step 1 — Is this a protocol issue or a model issue?**
 
-Ask: if the model had correctly implemented the spec, would this test pass?
-- No, because the spec is ambiguous or incomplete -> spec gap
-- Yes, the model should have gotten this -> real model failure
+For each failure, ask two questions in sequence:
+
+**Q-A:** Does the candidate's output match what the spec says should happen?
+- Yes → the model implemented the spec correctly. Proceed to Q-B.
+- No → the model diverged from the spec. Mark as real model failure (Step 3).
+
+**Q-B (only when Q-A = Yes):** Does the reference implementation pass this test?
+- No → the test's expected value is wrong even for the reference; this is a verifier failure — return to test-filter, mark `excluded`.
+- Yes → the reference passes but the spec-compliant candidate fails. **The spec has a factual error** (it documents a behavior different from what the reference actually does). Issue `spec_patch_request.md` with `type: spec_error` and route to spec-writer.
+
+**Legacy branch (when Q-A cannot be answered — spec is silent or ambiguous):**
+- Spec is ambiguous or incomplete → spec gap; issue `spec_patch_request.md` with `type: spec_gap`.
+- Arbitrary format / internal name in test → mark `excluded` in spec_test_map.md.
 
 **Step 2 — Protocol issues**
 
-| Type | Action |
-|------|--------|
-| Spec is ambiguous about this behavior | Patch spec; re-run test-filter coverage check |
-| Arbitrary format / internal name in test | Mark `excluded` in spec_test_map.md |
+| Type | Detected by | Action |
+|------|-------------|--------|
+| Spec has a factual error (Q-A=Yes, Q-B=Yes) | Reference passes; spec-compliant candidate fails | `spec_patch_request.md` type=spec_error → spec-writer |
+| Spec is ambiguous or incomplete | Spec is silent; test is behaviorally valid | `spec_patch_request.md` type=spec_gap → spec-writer |
+| Arbitrary format / internal name in test | Q-A=Yes, Q-B=No | Mark `excluded` in spec_test_map.md |
 
 **Step 3 — Real model failures**
 

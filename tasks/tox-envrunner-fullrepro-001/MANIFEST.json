@@ -1,0 +1,61 @@
+{
+  "task_id": "tox-envrunner-fullrepro-001",
+  "repo": "tox-dev__tox",
+  "status": "QUALIFIED",
+  "spec": "spec_v1",
+  "filter": "upstream_and_generated_filter_iter1",
+  "oracle": {
+    "total": 31,
+    "atomic": 9,
+    "integration": 17,
+    "system_e2e": 5
+  },
+  "reference": {
+    "passed": 31,
+    "total": 31,
+    "pass_rate": 1.0
+  },
+  "candidate_run": "codex-tox-specv1-20260701-001",
+  "candidate": {
+    "passed": 4,
+    "total": 31,
+    "pass_rate": 0.12903225806451613
+  },
+  "scorer_isolation": "--remove-path tox",
+  "artifacts": {
+    "spec": "spec.md",
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "reference_score": "reference_score.json",
+    "diagnosis": "judge/diagnosis_report.md",
+    "score_result": "judge/score_result.json"
+  },
+  "caveat": "Track A rewritten upstream plus Track B generated oracle; Gate D coverage is PARTIAL because packaging is not directly asserted.; Retroactive Gate D audit found coverage gaps; see gate_d_audit.md.",
+  "coverage-gap": [
+    {
+      "section": "Product Overview",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Scope",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Packaging",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Representative Workflows",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Non-Goals",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Evaluation Notes",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "task_id": "dvc-fullrepro-001",
+  "repo": "iterative/dvc",
+  "status": "QUALIFIED",
+  "spec": "spec_v1",
+  "filter": "generated_only_repaired_43",
+  "oracle": {
+    "total": 50,
+    "atomic": 12,
+    "integration": 24,
+    "system_e2e": 7
+  },
+  "reference": {
+    "passed": 50,
+    "total": 50,
+    "pass_rate": 1.0
+  },
+  "candidate_run": "codex-dvc-specv1-20260701-002",
+  "candidate": {
+    "passed": 0,
+    "total": 43,
+    "pass_rate": 0.0
+  },
+  "artifacts": {
+    "spec": "spec.md",
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "reference_score": "reference_score.json",
+    "diagnosis": "judge/diagnosis_report.md",
+    "score_result": "judge/score_result.json"
+  },
+  "caveat": "Generated-only repaired oracle; Stage 5 applied generated-only fairness spot-check.; Retroactive Gate D audit found coverage gaps; see gate_d_audit.md.",
+  "coverage-gap": [
+    {
+      "section": "Product Overview",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Scope",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Installable Surface",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Cache And Run Cache",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Representative Workflows",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Non-Goals",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    },
+    {
+      "section": "Evaluation Notes",
+      "reason": "retroactive Gate D audit found zero covered rows mapped to this H2/H3 section"
+    }
+  ],
+  "retroactive_gate_d_reference": "wip/dvc-fullrepro-001/filter/reference_score_retro_gate_d.json"
+}

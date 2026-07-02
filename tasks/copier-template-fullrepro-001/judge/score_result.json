@@ -1,0 +1,1439 @@
+{
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.tmp/copier-public-oracle-carrier-iter2",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/solution",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/copier-template-fullrepro-001/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/copier-template-fullrepro-001/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2",
+  "grouped_results": {
+    "filter/generated_tests.py": {
+      "returncode": 1,
+      "stdout": "...F.............FFFFFF.F.....                                           [100%]\n=================================== FAILURES ===================================\n________ test_settings_defaults_are_used_when_defaults_mode_is_enabled _________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_settings_defaults_are_use0')\n\n    def test_settings_defaults_are_used_when_defaults_mode_is_enabled(tmp_path: Path):\n        from copier import Settings, run_copy\n    \n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"project:\\n  type: str\\n  default: Builtin\\n\",\n                src / \"name.txt.jinja\": \"{{ project }}\\n\",\n                src / \"{{ _copier_conf.answers_file }}.jinja\": answers_file_template(),\n            }\n        )\n    \n        run_copy(str(src), dst, defaults=True, settings=Settings(defaults={\"project\": \"FromSettings\"}))\n    \n>       assert (dst / \"name.txt\").read_text(encoding=\"utf-8\") == \"FromSettings\\n\"\nE       AssertionError: assert 'Builtin\\n' == 'FromSettings\\n'\nE         \nE         - FromSettings\nE         + Builtin\n\nfilter/generated_tests.py:102: AssertionError\n_________________ test_cli_copy_with_defaults_renders_template _________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_copy_with_defaults_re0')\n\n    def test_cli_copy_with_defaults_renders_template(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Cli\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n                src / \"{{ _copier_conf.answers_file }}.jinja\": answers_file_template(),\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:348: AssertionError\n_______________________ test_cli_data_overrides_default ________________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_overrides_defaul0')\n\n    def test_cli_data_overrides_default(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", \"--data=name=FromCli\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:369: AssertionError\n____________________ test_cli_data_file_is_used_for_answers ____________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_file_is_used_for0')\n\n    def test_cli_data_file_is_used_for_answers(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        data_file = tmp_path / \"answers.yml\"\n        data_file.write_text(\"name: FromFile\\n\", encoding=\"utf-8\")\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", f\"--data-file={data_file}\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:392: AssertionError\n________________ test_cli_data_takes_precedence_over_data_file _________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_takes_precedence0')\n\n    def test_cli_data_takes_precedence_over_data_file(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        data_file = tmp_path / \"answers.yml\"\n        data_file.write_text(\"name: FromFile\\n\", encoding=\"utf-8\")\n        build_tree({src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\", src / \"value.txt.jinja\": \"{{ name }}\\n\"})\n    \n        result = subprocess.run(\n            [\n                sys.executable,\n                \"-m\",\n                \"copier\",\n                \"copy\",\n                \"--defaults\",\n                f\"--data-file={data_file}\",\n                \"--data=name=FromCli\",\n                str(src),\n                str(dst),\n            ],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:420: AssertionError\n___________________ test_cli_force_overwrites_existing_file ____________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_force_overwrites_exis0')\n\n    def test_cli_force_overwrites_existing_file(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        dst.mkdir()\n        (dst / \"file.txt\").write_text(\"local\\n\", encoding=\"utf-8\")\n        build_tree({src / \"copier.yml\": \"\", src / \"file.txt\": \"template\\n\"})\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--force\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:438: AssertionError\n______________ test_cli_refuses_unsafe_task_without_trust_exit_4 _______________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_refuses_unsafe_task_w0')\n\n    def test_cli_refuses_unsafe_task_without_trust_exit_4(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"_tasks:\\n  - echo unsafe\\n\",\n                src / \"base.txt\": \"base\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 4\nE       assert 1 == 4\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:459: AssertionError\n___________________ test_question_type_bool_parses_cli_data ____________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_question_type_bool_parses0')\n\n    def test_question_type_bool_parses_cli_data(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree({src / \"copier.yml\": \"flag:\\n  type: bool\\n  default: false\\n\", src / \"value.txt.jinja\": \"{{ flag|tojson }}\\n\"})\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", \"--data=flag=true\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:487: AssertionError\n=========================== short test summary info ============================\nFAILED filter/generated_tests.py::test_settings_defaults_are_used_when_defaults_mode_is_enabled\nFAILED filter/generated_tests.py::test_cli_copy_with_defaults_renders_template\nFAILED filter/generated_tests.py::test_cli_data_overrides_default - Assertion...\nFAILED filter/generated_tests.py::test_cli_data_file_is_used_for_answers - As...\nFAILED filter/generated_tests.py::test_cli_data_takes_precedence_over_data_file\nFAILED filter/generated_tests.py::test_cli_force_overwrites_existing_file - A...\nFAILED filter/generated_tests.py::test_cli_refuses_unsafe_task_without_trust_exit_4\nFAILED filter/generated_tests.py::test_question_type_bool_parses_cli_data - A...\n8 failed, 22 passed in 13.96s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1782913685.816153,
+        "duration": 13.883596420288086,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 22,
+          "failed": 8,
+          "total": 30,
+          "collected": 30
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "filter/generated_tests.py::test_run_copy_renders_file_contents_and_paths",
+                "type": "Function",
+                "lineno": 25
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_defaults_mode_uses_question_defaults",
+                "type": "Function",
+                "lineno": 48
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_api_data_overrides_template_default",
+                "type": "Function",
+                "lineno": 67
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_settings_defaults_are_used_when_defaults_mode_is_enabled",
+                "type": "Function",
+                "lineno": 86
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_custom_answers_file_path_is_used_for_recorded_answers",
+                "type": "Function",
+                "lineno": 104
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_exclude_omits_matching_template_files",
+                "type": "Function",
+                "lineno": 123
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_skip_if_exists_preserves_existing_destination_file",
+                "type": "Function",
+                "lineno": 142
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_force_overwrites_existing_destination_file",
+                "type": "Function",
+                "lineno": 156
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_jinja_environment_settings_change_template_syntax",
+                "type": "Function",
+                "lineno": 170
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_multiple_config_files_raise_documented_error",
+                "type": "Function",
+                "lineno": 195
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_minimum_version_blocks_unsupported_template",
+                "type": "Function",
+                "lineno": 207
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_secret_answer_can_render_but_is_not_recorded",
+                "type": "Function",
+                "lineno": 219
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_subdirectory_template_root_only_copies_that_tree",
+                "type": "Function",
+                "lineno": 238
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_task_runs_when_template_is_trusted",
+                "type": "Function",
+                "lineno": 257
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_skip_tasks_avoids_running_trusted_tasks",
+                "type": "Function",
+                "lineno": 278
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_load_settings_reads_yaml_defaults_and_trust",
+                "type": "Function",
+                "lineno": 300
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_invalid_settings_yaml_raises_settings_error",
+                "type": "Function",
+                "lineno": 317
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_copy_with_defaults_renders_template",
+                "type": "Function",
+                "lineno": 329
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_data_overrides_default",
+                "type": "Function",
+                "lineno": 351
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_data_file_is_used_for_answers",
+                "type": "Function",
+                "lineno": 372
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_data_takes_precedence_over_data_file",
+                "type": "Function",
+                "lineno": 395
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_force_overwrites_existing_file",
+                "type": "Function",
+                "lineno": 423
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_refuses_unsafe_task_without_trust_exit_4",
+                "type": "Function",
+                "lineno": 441
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_question_type_int_parses_api_data",
+                "type": "Function",
+                "lineno": 462
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_question_type_bool_parses_cli_data",
+                "type": "Function",
+                "lineno": 474
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_question_type_float_parses_api_data",
+                "type": "Function",
+                "lineno": 490
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_question_type_yaml_preserves_list_value",
+                "type": "Function",
+                "lineno": 502
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_configuration_defaults_are_available_to_rendering",
+                "type": "Function",
+                "lineno": 514
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_phase_variable_is_render_during_file_render",
+                "type": "Function",
+                "lineno": 526
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_python_variable_points_to_current_interpreter",
+                "type": "Function",
+                "lineno": 538
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "filter/generated_tests.py::test_run_copy_renders_file_contents_and_paths",
+            "lineno": 25,
+            "outcome": "passed",
+            "keywords": [
+              "test_run_copy_renders_file_contents_and_paths",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00716409400001794,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.5257824810000784,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017806699997890973,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_defaults_mode_uses_question_defaults",
+            "lineno": 48,
+            "outcome": "passed",
+            "keywords": [
+              "test_defaults_mode_uses_question_defaults",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007523809999838704,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.005686318000016399,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018215700004020619,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_api_data_overrides_template_default",
+            "lineno": 67,
+            "outcome": "passed",
+            "keywords": [
+              "test_api_data_overrides_template_default",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007974869999998191,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.005618739999931677,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001479149999568108,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_settings_defaults_are_used_when_defaults_mode_is_enabled",
+            "lineno": 86,
+            "outcome": "failed",
+            "keywords": [
+              "test_settings_defaults_are_used_when_defaults_mode_is_enabled",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006177129999969111,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.005168363000052523,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+                "lineno": 102,
+                "message": "AssertionError: assert 'Builtin\\n' == 'FromSettings\\n'\n  \n  - FromSettings\n  + Builtin"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 102,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_settings_defaults_are_use0')\n\n    def test_settings_defaults_are_used_when_defaults_mode_is_enabled(tmp_path: Path):\n        from copier import Settings, run_copy\n    \n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"project:\\n  type: str\\n  default: Builtin\\n\",\n                src / \"name.txt.jinja\": \"{{ project }}\\n\",\n                src / \"{{ _copier_conf.answers_file }}.jinja\": answers_file_template(),\n            }\n        )\n    \n        run_copy(str(src), dst, defaults=True, settings=Settings(defaults={\"project\": \"FromSettings\"}))\n    \n>       assert (dst / \"name.txt\").read_text(encoding=\"utf-8\") == \"FromSettings\\n\"\nE       AssertionError: assert 'Builtin\\n' == 'FromSettings\\n'\nE         \nE         - FromSettings\nE         + Builtin\n\nfilter/generated_tests.py:102: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00023089699993761315,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_custom_answers_file_path_is_used_for_recorded_answers",
+            "lineno": 104,
+            "outcome": "passed",
+            "keywords": [
+              "test_custom_answers_file_path_is_used_for_recorded_answers",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006950490000008358,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.005281422000052771,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001290980000021591,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_exclude_omits_matching_template_files",
+            "lineno": 123,
+            "outcome": "passed",
+            "keywords": [
+              "test_exclude_omits_matching_template_files",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005581579999898167,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.004027899000107027,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014145800003007025,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_skip_if_exists_preserves_existing_destination_file",
+            "lineno": 142,
+            "outcome": "passed",
+            "keywords": [
+              "test_skip_if_exists_preserves_existing_destination_file",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005657980000250973,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0033010759999569927,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013264900007925462,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_force_overwrites_existing_destination_file",
+            "lineno": 156,
+            "outcome": "passed",
+            "keywords": [
+              "test_force_overwrites_existing_destination_file",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000568434999991041,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0028599600000234204,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001281869999729679,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_jinja_environment_settings_change_template_syntax",
+            "lineno": 170,
+            "outcome": "passed",
+            "keywords": [
+              "test_jinja_environment_settings_change_template_syntax",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005577089999633245,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0042226610000852816,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013055499994152342,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_multiple_config_files_raise_documented_error",
+            "lineno": 195,
+            "outcome": "passed",
+            "keywords": [
+              "test_multiple_config_files_raise_documented_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006104130000039731,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0017663329999777488,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000122738999948524,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_minimum_version_blocks_unsupported_template",
+            "lineno": 207,
+            "outcome": "passed",
+            "keywords": [
+              "test_minimum_version_blocks_unsupported_template",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005053079999015608,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0016958649999878617,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011718599989762879,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_secret_answer_can_render_but_is_not_recorded",
+            "lineno": 219,
+            "outcome": "passed",
+            "keywords": [
+              "test_secret_answer_can_render_but_is_not_recorded",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005330899999762551,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.004966926000065541,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012080900000910333,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_subdirectory_template_root_only_copies_that_tree",
+            "lineno": 238,
+            "outcome": "passed",
+            "keywords": [
+              "test_subdirectory_template_root_only_copies_that_tree",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005409520000512202,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0033283519999258715,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013677399999778572,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_task_runs_when_template_is_trusted",
+            "lineno": 257,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_runs_when_template_is_trusted",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006334390000120038,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.13538389999996525,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000149944000099822,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_skip_tasks_avoids_running_trusted_tasks",
+            "lineno": 278,
+            "outcome": "passed",
+            "keywords": [
+              "test_skip_tasks_avoids_running_trusted_tasks",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006905520000373144,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0035384650000196416,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012683600004947948,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_load_settings_reads_yaml_defaults_and_trust",
+            "lineno": 300,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_settings_reads_yaml_defaults_and_trust",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006092459999536004,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.07943113700002868,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015151999991758203,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_invalid_settings_yaml_raises_settings_error",
+            "lineno": 317,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_settings_yaml_raises_settings_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006737969999903726,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003830749999451655,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010649600005763205,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_copy_with_defaults_renders_template",
+            "lineno": 329,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_copy_with_defaults_renders_template",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000486366000018279,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.9673552000000427,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+                "lineno": 348,
+                "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 348,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_copy_with_defaults_re0')\n\n    def test_cli_copy_with_defaults_renders_template(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Cli\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n                src / \"{{ _copier_conf.answers_file }}.jinja\": answers_file_template(),\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:348: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00020050900002388516,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_data_overrides_default",
+            "lineno": 351,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_data_overrides_default",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007955329999731475,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.9844530920000807,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+                "lineno": 369,
+                "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 369,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_overrides_defaul0')\n\n    def test_cli_data_overrides_default(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", \"--data=name=FromCli\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:369: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00019496899994919659,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_data_file_is_used_for_answers",
+            "lineno": 372,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_data_file_is_used_for_answers",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007311629999549041,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.9980395610000414,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+                "lineno": 392,
+                "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 392,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_file_is_used_for0')\n\n    def test_cli_data_file_is_used_for_answers(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        data_file = tmp_path / \"answers.yml\"\n        data_file.write_text(\"name: FromFile\\n\", encoding=\"utf-8\")\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", f\"--data-file={data_file}\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:392: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00019602899999426882,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_data_takes_precedence_over_data_file",
+            "lineno": 395,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_data_takes_precedence_over_data_file",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007251979999409741,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.9723966090000431,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+                "lineno": 420,
+                "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 420,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_takes_precedence0')\n\n    def test_cli_data_takes_precedence_over_data_file(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        data_file = tmp_path / \"answers.yml\"\n        data_file.write_text(\"name: FromFile\\n\", encoding=\"utf-8\")\n        build_tree({src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\", src / \"value.txt.jinja\": \"{{ name }}\\n\"})\n    \n        result = subprocess.run(\n            [\n                sys.executable,\n                \"-m\",\n                \"copier\",\n                \"copy\",\n                \"--defaults\",\n                f\"--data-file={data_file}\",\n                \"--data=name=FromCli\",\n                str(src),\n                str(dst),\n            ],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:420: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00020071599999482714,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_force_overwrites_existing_file",
+            "lineno": 423,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_force_overwrites_existing_file",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007362640000110332,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.9788692220000712,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+                "lineno": 438,
+                "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 438,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_force_overwrites_exis0')\n\n    def test_cli_force_overwrites_existing_file(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        dst.mkdir()\n        (dst / \"file.txt\").write_text(\"local\\n\", encoding=\"utf-8\")\n        build_tree({src / \"copier.yml\": \"\", src / \"file.txt\": \"template\\n\"})\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--force\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:438: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00020546300004298246,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_refuses_unsafe_task_without_trust_exit_4",
+            "lineno": 441,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_refuses_unsafe_task_without_trust_exit_4",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006879899999603367,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.9718926290000809,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+                "lineno": 459,
+                "message": "assert 1 == 4\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 459,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_refuses_unsafe_task_w0')\n\n    def test_cli_refuses_unsafe_task_without_trust_exit_4(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"_tasks:\\n  - echo unsafe\\n\",\n                src / \"base.txt\": \"base\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 4\nE       assert 1 == 4\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:459: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.000195665000092049,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_question_type_int_parses_api_data",
+            "lineno": 462,
+            "outcome": "passed",
+            "keywords": [
+              "test_question_type_int_parses_api_data",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006806630000255609,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0035417009999036964,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012904800007618178,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_question_type_bool_parses_cli_data",
+            "lineno": 474,
+            "outcome": "failed",
+            "keywords": [
+              "test_question_type_bool_parses_cli_data",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005883229999881223,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.9147141180000062,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+                "lineno": 487,
+                "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 487,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_question_type_bool_parses0')\n\n    def test_question_type_bool_parses_cli_data(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree({src / \"copier.yml\": \"flag:\\n  type: bool\\n  default: false\\n\", src / \"value.txt.jinja\": \"{{ flag|tojson }}\\n\"})\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", \"--data=flag=true\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:487: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00018576899992694962,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_question_type_float_parses_api_data",
+            "lineno": 490,
+            "outcome": "passed",
+            "keywords": [
+              "test_question_type_float_parses_api_data",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006193279999706647,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00401934900003198,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000129204000018035,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_question_type_yaml_preserves_list_value",
+            "lineno": 502,
+            "outcome": "passed",
+            "keywords": [
+              "test_question_type_yaml_preserves_list_value",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000621184000010544,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.004218872000024021,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001681319999988773,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_configuration_defaults_are_available_to_rendering",
+            "lineno": 514,
+            "outcome": "passed",
+            "keywords": [
+              "test_configuration_defaults_are_available_to_rendering",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006056080000007569,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0032973649999803456,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013041399995472602,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_phase_variable_is_render_during_file_render",
+            "lineno": 526,
+            "outcome": "passed",
+            "keywords": [
+              "test_phase_variable_is_render_during_file_render",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000610153999900831,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0029622849999668688,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011758499999814376,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_python_variable_points_to_current_interpreter",
+            "lineno": 538,
+            "outcome": "passed",
+            "keywords": [
+              "test_python_variable_points_to_current_interpreter",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005181509999374612,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0030189739999286758,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020551599993723357,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 8,
+    "passed": 22,
+    "total": 30
+  },
+  "pass_rate_excluding_skips": 0.7333333333333333,
+  "by_layer": {
+    "atomic": {
+      "passed": 13,
+      "total": 13
+    },
+    "integration": {
+      "failed": 1,
+      "passed": 7,
+      "total": 8
+    },
+    "system_e2e": {
+      "failed": 7,
+      "passed": 2,
+      "total": 9
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "filter/generated_tests.py::test_run_copy_renders_file_contents_and_paths",
+      "base_nodeid": "filter/generated_tests.py::test_run_copy_renders_file_contents_and_paths",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.5257824810000784,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_defaults_mode_uses_question_defaults",
+      "base_nodeid": "filter/generated_tests.py::test_defaults_mode_uses_question_defaults",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.005686318000016399,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_api_data_overrides_template_default",
+      "base_nodeid": "filter/generated_tests.py::test_api_data_overrides_template_default",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.005618739999931677,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_settings_defaults_are_used_when_defaults_mode_is_enabled",
+      "base_nodeid": "filter/generated_tests.py::test_settings_defaults_are_used_when_defaults_mode_is_enabled",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.005168363000052523,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+          "lineno": 102,
+          "message": "AssertionError: assert 'Builtin\\n' == 'FromSettings\\n'\n  \n  - FromSettings\n  + Builtin"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 102,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_settings_defaults_are_use0')\n\n    def test_settings_defaults_are_used_when_defaults_mode_is_enabled(tmp_path: Path):\n        from copier import Settings, run_copy\n    \n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"project:\\n  type: str\\n  default: Builtin\\n\",\n                src / \"name.txt.jinja\": \"{{ project }}\\n\",\n                src / \"{{ _copier_conf.answers_file }}.jinja\": answers_file_template(),\n            }\n        )\n    \n        run_copy(str(src), dst, defaults=True, settings=Settings(defaults={\"project\": \"FromSettings\"}))\n    \n>       assert (dst / \"name.txt\").read_text(encoding=\"utf-8\") == \"FromSettings\\n\"\nE       AssertionError: assert 'Builtin\\n' == 'FromSettings\\n'\nE         \nE         - FromSettings\nE         + Builtin\n\nfilter/generated_tests.py:102: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_custom_answers_file_path_is_used_for_recorded_answers",
+      "base_nodeid": "filter/generated_tests.py::test_custom_answers_file_path_is_used_for_recorded_answers",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.005281422000052771,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_exclude_omits_matching_template_files",
+      "base_nodeid": "filter/generated_tests.py::test_exclude_omits_matching_template_files",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.004027899000107027,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_skip_if_exists_preserves_existing_destination_file",
+      "base_nodeid": "filter/generated_tests.py::test_skip_if_exists_preserves_existing_destination_file",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0033010759999569927,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_force_overwrites_existing_destination_file",
+      "base_nodeid": "filter/generated_tests.py::test_force_overwrites_existing_destination_file",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0028599600000234204,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_jinja_environment_settings_change_template_syntax",
+      "base_nodeid": "filter/generated_tests.py::test_jinja_environment_settings_change_template_syntax",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0042226610000852816,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_multiple_config_files_raise_documented_error",
+      "base_nodeid": "filter/generated_tests.py::test_multiple_config_files_raise_documented_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0017663329999777488,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_minimum_version_blocks_unsupported_template",
+      "base_nodeid": "filter/generated_tests.py::test_minimum_version_blocks_unsupported_template",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0016958649999878617,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_secret_answer_can_render_but_is_not_recorded",
+      "base_nodeid": "filter/generated_tests.py::test_secret_answer_can_render_but_is_not_recorded",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.004966926000065541,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_subdirectory_template_root_only_copies_that_tree",
+      "base_nodeid": "filter/generated_tests.py::test_subdirectory_template_root_only_copies_that_tree",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0033283519999258715,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_task_runs_when_template_is_trusted",
+      "base_nodeid": "filter/generated_tests.py::test_task_runs_when_template_is_trusted",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.13538389999996525,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_skip_tasks_avoids_running_trusted_tasks",
+      "base_nodeid": "filter/generated_tests.py::test_skip_tasks_avoids_running_trusted_tasks",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0035384650000196416,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_load_settings_reads_yaml_defaults_and_trust",
+      "base_nodeid": "filter/generated_tests.py::test_load_settings_reads_yaml_defaults_and_trust",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.07943113700002868,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invalid_settings_yaml_raises_settings_error",
+      "base_nodeid": "filter/generated_tests.py::test_invalid_settings_yaml_raises_settings_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003830749999451655,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_copy_with_defaults_renders_template",
+      "base_nodeid": "filter/generated_tests.py::test_cli_copy_with_defaults_renders_template",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.9673552000000427,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+          "lineno": 348,
+          "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 348,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_copy_with_defaults_re0')\n\n    def test_cli_copy_with_defaults_renders_template(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Cli\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n                src / \"{{ _copier_conf.answers_file }}.jinja\": answers_file_template(),\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:348: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_data_overrides_default",
+      "base_nodeid": "filter/generated_tests.py::test_cli_data_overrides_default",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.9844530920000807,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+          "lineno": 369,
+          "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 369,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_overrides_defaul0')\n\n    def test_cli_data_overrides_default(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", \"--data=name=FromCli\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:369: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_data_file_is_used_for_answers",
+      "base_nodeid": "filter/generated_tests.py::test_cli_data_file_is_used_for_answers",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.9980395610000414,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+          "lineno": 392,
+          "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 392,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_file_is_used_for0')\n\n    def test_cli_data_file_is_used_for_answers(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        data_file = tmp_path / \"answers.yml\"\n        data_file.write_text(\"name: FromFile\\n\", encoding=\"utf-8\")\n        build_tree(\n            {\n                src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\",\n                src / \"value.txt.jinja\": \"{{ name }}\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", f\"--data-file={data_file}\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:392: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_data_takes_precedence_over_data_file",
+      "base_nodeid": "filter/generated_tests.py::test_cli_data_takes_precedence_over_data_file",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.9723966090000431,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+          "lineno": 420,
+          "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 420,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_data_takes_precedence0')\n\n    def test_cli_data_takes_precedence_over_data_file(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        data_file = tmp_path / \"answers.yml\"\n        data_file.write_text(\"name: FromFile\\n\", encoding=\"utf-8\")\n        build_tree({src / \"copier.yml\": \"name:\\n  type: str\\n  default: Default\\n\", src / \"value.txt.jinja\": \"{{ name }}\\n\"})\n    \n        result = subprocess.run(\n            [\n                sys.executable,\n                \"-m\",\n                \"copier\",\n                \"copy\",\n                \"--defaults\",\n                f\"--data-file={data_file}\",\n                \"--data=name=FromCli\",\n                str(src),\n                str(dst),\n            ],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:420: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_force_overwrites_existing_file",
+      "base_nodeid": "filter/generated_tests.py::test_cli_force_overwrites_existing_file",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.9788692220000712,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+          "lineno": 438,
+          "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 438,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_force_overwrites_exis0')\n\n    def test_cli_force_overwrites_existing_file(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        dst.mkdir()\n        (dst / \"file.txt\").write_text(\"local\\n\", encoding=\"utf-8\")\n        build_tree({src / \"copier.yml\": \"\", src / \"file.txt\": \"template\\n\"})\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--force\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:438: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_refuses_unsafe_task_without_trust_exit_4",
+      "base_nodeid": "filter/generated_tests.py::test_cli_refuses_unsafe_task_without_trust_exit_4",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.9718926290000809,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+          "lineno": 459,
+          "message": "assert 1 == 4\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 459,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_refuses_unsafe_task_w0')\n\n    def test_cli_refuses_unsafe_task_without_trust_exit_4(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree(\n            {\n                src / \"copier.yml\": \"_tasks:\\n  - echo unsafe\\n\",\n                src / \"base.txt\": \"base\\n\",\n            }\n        )\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 4\nE       assert 1 == 4\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:459: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_question_type_int_parses_api_data",
+      "base_nodeid": "filter/generated_tests.py::test_question_type_int_parses_api_data",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0035417009999036964,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_question_type_bool_parses_cli_data",
+      "base_nodeid": "filter/generated_tests.py::test_question_type_bool_parses_cli_data",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.9147141180000062,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-copier-specv1-20260701-001/score-work-linux-public-iter2/oracle_worktree/filter/generated_tests.py",
+          "lineno": 487,
+          "message": "AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 487,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_question_type_bool_parses0')\n\n    def test_question_type_bool_parses_cli_data(tmp_path: Path):\n        src = tmp_path / \"template\"\n        dst = tmp_path / \"project\"\n        build_tree({src / \"copier.yml\": \"flag:\\n  type: bool\\n  default: false\\n\", src / \"value.txt.jinja\": \"{{ flag|tojson }}\\n\"})\n    \n        result = subprocess.run(\n            [sys.executable, \"-m\", \"copier\", \"copy\", \"--defaults\", \"--data=flag=true\", str(src), str(dst)],\n            text=True,\n            capture_output=True,\n            check=False,\n        )\n    \n>       assert result.returncode == 0, result.stdout + result.stderr\nE       AssertionError: /mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-candidate-linux/bin/python', '-m', 'c...-candidate-linux/bin/python: No module named copier.__main__; 'copier' is a package and cannot be directly executed\\n\").returncode\n\nfilter/generated_tests.py:487: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_question_type_float_parses_api_data",
+      "base_nodeid": "filter/generated_tests.py::test_question_type_float_parses_api_data",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00401934900003198,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_question_type_yaml_preserves_list_value",
+      "base_nodeid": "filter/generated_tests.py::test_question_type_yaml_preserves_list_value",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.004218872000024021,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_configuration_defaults_are_available_to_rendering",
+      "base_nodeid": "filter/generated_tests.py::test_configuration_defaults_are_available_to_rendering",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0032973649999803456,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_phase_variable_is_render_during_file_render",
+      "base_nodeid": "filter/generated_tests.py::test_phase_variable_is_render_during_file_render",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0029622849999668688,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_python_variable_points_to_current_interpreter",
+      "base_nodeid": "filter/generated_tests.py::test_python_variable_points_to_current_interpreter",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0030189739999286758,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

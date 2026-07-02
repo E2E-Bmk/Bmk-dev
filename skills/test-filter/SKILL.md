@@ -138,6 +138,8 @@ When a large share of nodeids come from parametrized expansion of few functions,
 
 `kept_nodeids.txt` - one nodeid per line, `covered` rows only
 
+**Scorer isolation requirement:** All evaluation runs against `kept_nodeids.txt` must use `--remove-path <pkg>` (or equivalent isolation flag) to prevent a system-installed copy of the target package from shadowing the candidate solution. Record the isolation method in the task's MANIFEST.json under `scorer_isolation`. Scores produced without this flag are invalid and must be discarded.
+
 `taxonomy.jsonl` - scorer-compatible. Key format must match `score_pytest_original.py` mapping `tests/path.py::test_name` -> `path_stem::test_name`. One JSON object per line:
 
 ```jsonl
@@ -190,9 +192,21 @@ For every test file, scan top-level imports for non-public dependencies. For eac
 | In-process runner | `from pkg.main import run` | Attempt rewrite using public CLI/API entry point; discard if runner is the behavior under test |
 | Out-of-scope module | `from pkg.other import X` (X not in spec scope) | Discard entire file — out-of-scope behavior cannot be rewritten into scope |
 
+**Shared fixture and helper file cleanup (mandatory before node-level work):** Before processing any test file, scan every shared fixture file (`tests/conftest.py`, `tests/helpers.py`, `tests/util.py`, and any file imported by multiple test files) for private imports. Remove or replace each private import with a public-API equivalent in-place. If a helper function cannot be expressed without private API, remove that function and mark any test that calls it as `excluded`. This step must complete before per-function work begins — a shared helper with an unresolved private import will cause cleanroom collection failure for every test that imports it, even if those tests are otherwise clean.
+
+**Per-function atomic extraction (unit test files):** When a unit test file has private module-level imports that cannot be removed at file level, do not discard the entire file. Instead, scan **every** test function in the file individually — not a sample, not a selection of easy ones:
+1. Does the function body reference any private symbol? If yes, mark `excluded` in `candidate_filter_map.md` with the specific private symbol.
+2. If the function body uses only public API names from the spec, extract it into `filter/rewritten_upstream_tests.py` with corrected imports (public paths only), and classify as `atomic` layer.
+
+This recovers atomic-layer coverage from otherwise-excluded unit test files. The extracted functions must satisfy the same rewrite criterion as file-level rewrites: behavioral intent preserved, setup uses only public API, test would still fail on a wrong implementation.
+
 **Rewrite criterion:** a rewrite is valid if (1) the resulting test exercises the same behavioral contract, (2) the setup uses only public API names listed in the spec, and (3) the test would still fail on a wrong implementation. A rewrite that changes what the test actually verifies is not a valid rewrite — discard instead.
 
+**Execution requirement:** the rewrite audit (`rewrite_audit.md`) records decisions; it does not constitute the rewrite. Actual rewritten test code must appear in `filter/rewritten_upstream_tests.py`. A file marked "retain with rewrite plan" in the audit that has no corresponding functions in `rewritten_upstream_tests.py` has not been rewritten. After Step 1 and Step 2 complete, every function in every retained file must appear either in `rewritten_upstream_tests.py` (kept) or in `candidate_filter_map.md` with status `excluded` (with reason). Functions that appear in neither are processing gaps — go back and handle them before proceeding.
+
 **Track B trigger (early):** If >50% of test files are discarded after rewrite attempts (not just before), start Track B immediately in parallel.
+
+**State update (required before leaving Step 1):** Count the total number of test functions across all retained files (sum from `rewrite_audit.md` summary row). Write this value to `PIPELINE_STATE.md` as `functions_in_scope`. This value is set once and becomes readonly — do not update it in later steps.
 
 ### Step 2: Fairness audit (nodeid level)
 
@@ -217,6 +231,8 @@ For each retained nodeid, compare assertion surface against public docs:
 Run the entire kept set against a dummy implementation (every public function `return None` / `raise NotImplementedError`). Discard any test that passes the dummy - these are structurally trivial, not difficulty evidence.
 
 **Output:** `filter/kept_upstream.txt`
+
+**State update (required before leaving Step 3):** Count functions in `filter/rewritten_upstream_tests.py` → write to `PIPELINE_STATE.md` as `functions_kept`. Count `excluded` rows in `candidate_filter_map.md` → write as `functions_excluded`. Verify `functions_kept + functions_excluded = functions_in_scope` before continuing. Mismatch → go back to Step 2 and account for the missing functions.
 
 **Track A termination:** if fewer than 30 nodeids remain, or all files were discarded -> proceed to Track B.
 
@@ -262,10 +278,24 @@ Give the agent:
 
 Task: exercise the missing branches by calling the reference with varied inputs, observe the actual outputs, then construct assertions from those observations.
 
+**Minimum coverage quota:** Before calling the agent, enumerate every H2/H3 section in `spec_vN.md`. For each section, count how many tests in `kept_upstream.txt` already cover it. Apply the following per-section minimums — any section below its floor is a mandatory generation target:
+
+| Section type | Minimum tests |
+|---|---|
+| `Cross-View Invariants` | ≥ 5 |
+| `Error Semantics` | ≥ 3 |
+| Main workflow / Representative Workflows | ≥ 3 |
+| All other sections | ≥ 3 |
+
+**Global floor:** the combined oracle (Track A + Track B) must contain at least **50 scoreable tests** before proceeding to Stage 4. If the merged oracle is below 50 after Track B, return to generation and expand coverage until the floor is met or all mandatory targets are saturated. A sub-50 oracle may still proceed only if every spec section is at or above its per-section minimum and no further test generation is possible without introducing circular assertions — record the shortfall as a caveat in `spec_test_map.md` header.
+
+A flat target of 12–30 total tests is insufficient for any library with more than 5 spec sections — the quota is per-section and subject to the global floor.
+
 Generation protocol:
 1. Call `reference_pkg.fn(input)` and record the real return value / side effect
 2. Write the test assertion from the observed result, not from spec inference
 3. For each generated test, verify: is this I/O relationship derivable from the spec? If not, discard the test — do not add spec content to compensate
+4. After generation, verify each mandatory target section meets its per-section minimum and total oracle ≥ 50. If either fails, return to generation.
 
 Enforce in prompt:
 - Execute reference to observe behavior; do not read reference source files
@@ -296,6 +326,8 @@ Write `filter/spec_test_map.md` listing all oracle tests with:
 - taxonomy: `atomic` / `integration` / `system_e2e`
 - the spec behavior it covers
 
-If oracle is Track-B-only (no upstream tests survived), mark `filter/oracle_source: generated_only` in spec_test_map.md header. task-judge will apply an additional spot-check gate. Target at least 30 nontrivial tests before Stage 5 qualification; if fewer than 30 are produced, the result is exploratory unless merged with fair upstream tests. Prefer lifecycle combinations that bind multiple public projections over single-behavior checklist rows.
+If oracle is Track-B-only (no upstream tests survived), mark `filter/oracle_source: generated_only` in spec_test_map.md header. task-judge will apply an additional spot-check gate. Prefer lifecycle combinations that bind multiple public projections over single-behavior checklist rows.
+
+**State update (required before leaving oracle merge):** Count all `covered` rows in `spec_test_map.md` → write to `PIPELINE_STATE.md` as `oracle_count`. If `oracle_count < 50`, do not proceed to S4_SETUP — return to Track B generation to expand coverage.
 
 ---

@@ -1,0 +1,47 @@
+{
+  "task_id": "alembic-migrations-fullrepro-001",
+  "spec_version": "spec_v3",
+  "run_id": "codex-alembic-specv3-20260630-001",
+  "oracle": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\alembic-migrations-fullrepro-001\\filter\\rewritten_upstream_tests.py",
+  "reference": {
+    "passed": 30,
+    "failed": 0,
+    "total": 30,
+    "pass_rate": 1.0,
+    "command_result": "30 passed in 2.08s"
+  },
+  "candidate": {
+    "passed": 29,
+    "failed": 1,
+    "total": 30,
+    "pass_rate": 0.9666666667,
+    "command_result": "1 failed, 29 passed in 2.41s"
+  },
+  "by_layer": {
+    "atomic": {
+      "passed": 14,
+      "failed": 0,
+      "total": 14
+    },
+    "integration": {
+      "passed": 10,
+      "failed": 1,
+      "total": 11
+    },
+    "system_e2e": {
+      "passed": 5,
+      "failed": 0,
+      "total": 5
+    }
+  },
+  "failures": [
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_offline_downgrade_range_writes_drop_sql",
+      "layer": "integration",
+      "spec_section": "Offline SQL",
+      "message": "ResolutionError: create_account:base",
+      "observed": "candidate did not parse downgrade range syntax create_account:base",
+      "expected": "offline downgrade range syntax emits SQL for the requested revision movement"
+    }
+  ]
+}

@@ -1,0 +1,1419 @@
+{
+  "task_id": "dvc-fullrepro-001",
+  "run_id": "codex-dvc-specv1-20260701-002",
+  "generated_tests": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+  "kept_nodeids": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\kept_nodeids.txt",
+  "taxonomy": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\taxonomy.jsonl",
+  "package_root": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-dvc-specv1-20260701-002\\solution",
+  "run_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-dvc-specv1-20260701-002\\score_generated",
+  "command": [
+    "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\.envs\\pytest-clean\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "--json-report",
+    "--json-report-file",
+    "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\candidate-runs\\codex-dvc-specv1-20260701-002\\score_generated\\pytest_report_kept.json",
+    "-p",
+    "no:cacheprovider",
+    "@kept_nodeids"
+  ],
+  "returncode": 1,
+  "summary": {
+    "error": 43,
+    "total": 43
+  },
+  "pass_rate": 0.0,
+  "by_layer": {
+    "atomic": {
+      "error": 12,
+      "total": 12
+    },
+    "integration": {
+      "error": 24,
+      "total": 24
+    },
+    "system_e2e": {
+      "error": 7,
+      "total": 7
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_stage_add_success_exit_code",
+      "base_nodeid": "generated_tests.py::test_stage_add_success_exit_code",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 3.8903195000020787,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.000348100031260401,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_stage_add_writes_named_stage_to_dvc_yaml",
+      "base_nodeid": "generated_tests.py::test_stage_add_writes_named_stage_to_dvc_yaml",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0004351999959908426,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0004553999751806259,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_stage_add_without_run_does_not_create_lockfile",
+      "base_nodeid": "generated_tests.py::test_stage_add_without_run_does_not_create_lockfile",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0005088000325486064,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0004889999981969595,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_stage_list_name_only_reports_created_stage",
+      "base_nodeid": "generated_tests.py::test_stage_list_name_only_reports_created_stage",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.000500400026794523,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0004566999850794673,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_repro_no_commit_executes_command_and_writes_output",
+      "base_nodeid": "generated_tests.py::test_repro_no_commit_executes_command_and_writes_output",
+      "layer": "system_e2e",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0004741000011563301,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0002816000487655401,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_repro_no_commit_writes_public_lock_stage",
+      "base_nodeid": "generated_tests.py::test_repro_no_commit_writes_public_lock_stage",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00026190001517534256,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00046900002053007483,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_status_json_reports_no_commit_output_not_in_cache",
+      "base_nodeid": "generated_tests.py::test_status_json_reports_no_commit_output_not_in_cache",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00047420000191777945,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00035340001340955496,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_status_quiet_is_nonzero_when_pipeline_has_reported_changes",
+      "base_nodeid": "generated_tests.py::test_status_quiet_is_nonzero_when_pipeline_has_reported_changes",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.000417000032030046,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0002509000478312373,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_status_json_changes_after_dependency_file_changes",
+      "base_nodeid": "generated_tests.py::test_status_json_changes_after_dependency_file_changes",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00025129999266937375,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0002549000200815499,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_dry_repro_does_not_modify_workspace_output",
+      "base_nodeid": "generated_tests.py::test_dry_repro_does_not_modify_workspace_output",
+      "layer": "system_e2e",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0002502999850548804,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0002904999419115484,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_force_repro_updates_workspace_output",
+      "base_nodeid": "generated_tests.py::test_force_repro_updates_workspace_output",
+      "layer": "system_e2e",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00029529997846111655,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00030259997583925724,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_repro_invalid_target_fails_nonzero",
+      "base_nodeid": "generated_tests.py::test_repro_invalid_target_fails_nonzero",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00034680002136155963,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 82,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def basic_repro(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"basic_repro\"))\n        (root / \"raw.txt\").write_text(\"alpha\\n\", encoding=\"utf-8\")\n        (root / \"copy_upper.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n    \n        add = run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"copy_upper.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"copy_upper.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n        yaml_after_add = load_yaml(root / \"dvc.yaml\")\n        lock_exists_after_add = (root / \"dvc.lock\").exists()\n        listed_names = run_dvc(root, \"stage\", \"list\", \"--name-only\").stdout.split()\n    \n>       first_repro = run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:82: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/basic_repro0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00041099998634308577,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_no_commit_repro_runs_stage_each_time_when_output_is_uncached",
+      "base_nodeid": "generated_tests.py::test_no_commit_repro_runs_stage_each_time_when_output_is_uncached",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 2.855890200007707,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 149,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def no_commit_runs(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"no_commit_runs\"))\n        (root / \"raw.txt\").write_text(\"one\\n\", encoding=\"utf-8\")\n        (root / \"counting.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"count = Path('run_count.txt')\\n\"\n            \"n = int(count.read_text() or '0') if count.exists() else 0\\n\"\n            \"count.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"counting.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"counting.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n    \n        counts = []\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n\ngenerated_tests.py:149: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/no_commit_runs0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0003776999656111002,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_no_commit_repro_runs_after_dependency_change",
+      "base_nodeid": "generated_tests.py::test_no_commit_repro_runs_after_dependency_change",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0002476000227034092,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 149,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def no_commit_runs(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"no_commit_runs\"))\n        (root / \"raw.txt\").write_text(\"one\\n\", encoding=\"utf-8\")\n        (root / \"counting.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"count = Path('run_count.txt')\\n\"\n            \"n = int(count.read_text() or '0') if count.exists() else 0\\n\"\n            \"count.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"counting.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"counting.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n    \n        counts = []\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n\ngenerated_tests.py:149: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/no_commit_runs0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00040330004412680864,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_no_commit_repro_runs_after_output_deletion",
+      "base_nodeid": "generated_tests.py::test_no_commit_repro_runs_after_output_deletion",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0004278999986127019,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 149,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def no_commit_runs(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"no_commit_runs\"))\n        (root / \"raw.txt\").write_text(\"one\\n\", encoding=\"utf-8\")\n        (root / \"counting.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"count = Path('run_count.txt')\\n\"\n            \"n = int(count.read_text() or '0') if count.exists() else 0\\n\"\n            \"count.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"counting.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"counting.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n    \n        counts = []\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n\ngenerated_tests.py:149: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/no_commit_runs0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00021620001643896103,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_no_commit_repro_recreates_deleted_output",
+      "base_nodeid": "generated_tests.py::test_no_commit_repro_recreates_deleted_output",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.000332399969920516,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 149,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def no_commit_runs(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"no_commit_runs\"))\n        (root / \"raw.txt\").write_text(\"one\\n\", encoding=\"utf-8\")\n        (root / \"counting.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"count = Path('run_count.txt')\\n\"\n            \"n = int(count.read_text() or '0') if count.exists() else 0\\n\"\n            \"count.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"counting.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"counting.py\",\n            \"raw.txt\",\n            \"prepared.txt\",\n        )\n    \n        counts = []\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\")\n\ngenerated_tests.py:149: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/no_commit_runs0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00026780000189319253,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_nonpersistent_outputs_are_removed_before_forced_rerun",
+      "base_nodeid": "generated_tests.py::test_nonpersistent_outputs_are_removed_before_forced_rerun",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 1.829268699977547,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 202,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def output_modes(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"output_modes\"))\n        (root / \"writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"mode = sys.argv[1]\\n\"\n            \"if mode == 'nonpersist':\\n\"\n            \"    Path('saw_existing.txt').write_text(str(Path('result.txt').exists()), encoding='utf-8')\\n\"\n            \"    Path('result.txt').write_text('fresh', encoding='utf-8')\\n\"\n            \"elif mode == 'persist':\\n\"\n            \"    p = Path('persist.txt')\\n\"\n            \"    p.write_text((p.read_text(encoding='utf-8') if p.exists() else '') + 'x', encoding='utf-8')\\n\"\n            \"elif mode == 'nocache':\\n\"\n            \"    Path('nocache.txt').write_text('tracked', encoding='utf-8')\\n\"\n            \"elif mode == 'metric':\\n\"\n            \"    Path('metrics.json').write_text('{\\\"score\\\": 7}', encoding='utf-8')\\n\"\n            \"elif mode == 'plot':\\n\"\n            \"    Path('plot.csv').write_text('x,y\\\\n1,2\\\\n', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"nonpersist\",\n            \"-d\",\n            \"writer.py\",\n            \"-o\",\n            \"result.txt\",\n            \"-o\",\n            \"saw_existing.txt\",\n            sys.executable,\n            \"writer.py\",\n            \"nonpersist\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"nonpersist\")\n\ngenerated_tests.py:202: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/output_modes0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'nonpersist')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00042479997500777245,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_persistent_outputs_remain_before_forced_rerun",
+      "base_nodeid": "generated_tests.py::test_persistent_outputs_remain_before_forced_rerun",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0005921000265516341,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 202,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def output_modes(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"output_modes\"))\n        (root / \"writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"mode = sys.argv[1]\\n\"\n            \"if mode == 'nonpersist':\\n\"\n            \"    Path('saw_existing.txt').write_text(str(Path('result.txt').exists()), encoding='utf-8')\\n\"\n            \"    Path('result.txt').write_text('fresh', encoding='utf-8')\\n\"\n            \"elif mode == 'persist':\\n\"\n            \"    p = Path('persist.txt')\\n\"\n            \"    p.write_text((p.read_text(encoding='utf-8') if p.exists() else '') + 'x', encoding='utf-8')\\n\"\n            \"elif mode == 'nocache':\\n\"\n            \"    Path('nocache.txt').write_text('tracked', encoding='utf-8')\\n\"\n            \"elif mode == 'metric':\\n\"\n            \"    Path('metrics.json').write_text('{\\\"score\\\": 7}', encoding='utf-8')\\n\"\n            \"elif mode == 'plot':\\n\"\n            \"    Path('plot.csv').write_text('x,y\\\\n1,2\\\\n', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"nonpersist\",\n            \"-d\",\n            \"writer.py\",\n            \"-o\",\n            \"result.txt\",\n            \"-o\",\n            \"saw_existing.txt\",\n            sys.executable,\n            \"writer.py\",\n            \"nonpersist\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"nonpersist\")\n\ngenerated_tests.py:202: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/output_modes0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'nonpersist')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00043830001959577203,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_outs_no_cache_is_serialized_with_cache_false",
+      "base_nodeid": "generated_tests.py::test_outs_no_cache_is_serialized_with_cache_false",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00047229998745024204,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 202,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def output_modes(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"output_modes\"))\n        (root / \"writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"mode = sys.argv[1]\\n\"\n            \"if mode == 'nonpersist':\\n\"\n            \"    Path('saw_existing.txt').write_text(str(Path('result.txt').exists()), encoding='utf-8')\\n\"\n            \"    Path('result.txt').write_text('fresh', encoding='utf-8')\\n\"\n            \"elif mode == 'persist':\\n\"\n            \"    p = Path('persist.txt')\\n\"\n            \"    p.write_text((p.read_text(encoding='utf-8') if p.exists() else '') + 'x', encoding='utf-8')\\n\"\n            \"elif mode == 'nocache':\\n\"\n            \"    Path('nocache.txt').write_text('tracked', encoding='utf-8')\\n\"\n            \"elif mode == 'metric':\\n\"\n            \"    Path('metrics.json').write_text('{\\\"score\\\": 7}', encoding='utf-8')\\n\"\n            \"elif mode == 'plot':\\n\"\n            \"    Path('plot.csv').write_text('x,y\\\\n1,2\\\\n', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"nonpersist\",\n            \"-d\",\n            \"writer.py\",\n            \"-o\",\n            \"result.txt\",\n            \"-o\",\n            \"saw_existing.txt\",\n            sys.executable,\n            \"writer.py\",\n            \"nonpersist\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"nonpersist\")\n\ngenerated_tests.py:202: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/output_modes0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'nonpersist')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0005674000130966306,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_missing_no_cache_output_reports_status_change",
+      "base_nodeid": "generated_tests.py::test_missing_no_cache_output_reports_status_change",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0014253000263124704,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 202,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def output_modes(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"output_modes\"))\n        (root / \"writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"mode = sys.argv[1]\\n\"\n            \"if mode == 'nonpersist':\\n\"\n            \"    Path('saw_existing.txt').write_text(str(Path('result.txt').exists()), encoding='utf-8')\\n\"\n            \"    Path('result.txt').write_text('fresh', encoding='utf-8')\\n\"\n            \"elif mode == 'persist':\\n\"\n            \"    p = Path('persist.txt')\\n\"\n            \"    p.write_text((p.read_text(encoding='utf-8') if p.exists() else '') + 'x', encoding='utf-8')\\n\"\n            \"elif mode == 'nocache':\\n\"\n            \"    Path('nocache.txt').write_text('tracked', encoding='utf-8')\\n\"\n            \"elif mode == 'metric':\\n\"\n            \"    Path('metrics.json').write_text('{\\\"score\\\": 7}', encoding='utf-8')\\n\"\n            \"elif mode == 'plot':\\n\"\n            \"    Path('plot.csv').write_text('x,y\\\\n1,2\\\\n', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"nonpersist\",\n            \"-d\",\n            \"writer.py\",\n            \"-o\",\n            \"result.txt\",\n            \"-o\",\n            \"saw_existing.txt\",\n            sys.executable,\n            \"writer.py\",\n            \"nonpersist\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"nonpersist\")\n\ngenerated_tests.py:202: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/output_modes0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'nonpersist')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0003266000421717763,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_metric_output_is_recorded_in_lockfile_outputs",
+      "base_nodeid": "generated_tests.py::test_metric_output_is_recorded_in_lockfile_outputs",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0003657999914139509,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 202,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def output_modes(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"output_modes\"))\n        (root / \"writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"mode = sys.argv[1]\\n\"\n            \"if mode == 'nonpersist':\\n\"\n            \"    Path('saw_existing.txt').write_text(str(Path('result.txt').exists()), encoding='utf-8')\\n\"\n            \"    Path('result.txt').write_text('fresh', encoding='utf-8')\\n\"\n            \"elif mode == 'persist':\\n\"\n            \"    p = Path('persist.txt')\\n\"\n            \"    p.write_text((p.read_text(encoding='utf-8') if p.exists() else '') + 'x', encoding='utf-8')\\n\"\n            \"elif mode == 'nocache':\\n\"\n            \"    Path('nocache.txt').write_text('tracked', encoding='utf-8')\\n\"\n            \"elif mode == 'metric':\\n\"\n            \"    Path('metrics.json').write_text('{\\\"score\\\": 7}', encoding='utf-8')\\n\"\n            \"elif mode == 'plot':\\n\"\n            \"    Path('plot.csv').write_text('x,y\\\\n1,2\\\\n', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"nonpersist\",\n            \"-d\",\n            \"writer.py\",\n            \"-o\",\n            \"result.txt\",\n            \"-o\",\n            \"saw_existing.txt\",\n            sys.executable,\n            \"writer.py\",\n            \"nonpersist\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"nonpersist\")\n\ngenerated_tests.py:202: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/output_modes0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'nonpersist')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0003443000023253262,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_plot_output_is_recorded_in_lockfile_outputs",
+      "base_nodeid": "generated_tests.py::test_plot_output_is_recorded_in_lockfile_outputs",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00041259999852627516,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 202,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def output_modes(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"output_modes\"))\n        (root / \"writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import sys\\n\"\n            \"mode = sys.argv[1]\\n\"\n            \"if mode == 'nonpersist':\\n\"\n            \"    Path('saw_existing.txt').write_text(str(Path('result.txt').exists()), encoding='utf-8')\\n\"\n            \"    Path('result.txt').write_text('fresh', encoding='utf-8')\\n\"\n            \"elif mode == 'persist':\\n\"\n            \"    p = Path('persist.txt')\\n\"\n            \"    p.write_text((p.read_text(encoding='utf-8') if p.exists() else '') + 'x', encoding='utf-8')\\n\"\n            \"elif mode == 'nocache':\\n\"\n            \"    Path('nocache.txt').write_text('tracked', encoding='utf-8')\\n\"\n            \"elif mode == 'metric':\\n\"\n            \"    Path('metrics.json').write_text('{\\\"score\\\": 7}', encoding='utf-8')\\n\"\n            \"elif mode == 'plot':\\n\"\n            \"    Path('plot.csv').write_text('x,y\\\\n1,2\\\\n', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"nonpersist\",\n            \"-d\",\n            \"writer.py\",\n            \"-o\",\n            \"result.txt\",\n            \"-o\",\n            \"saw_existing.txt\",\n            sys.executable,\n            \"writer.py\",\n            \"nonpersist\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"nonpersist\")\n\ngenerated_tests.py:202: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/output_modes0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'nonpersist')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'nonpersist'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'nonpersist'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00026510003954172134,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_stage_wdir_runs_command_from_declared_directory",
+      "base_nodeid": "generated_tests.py::test_stage_wdir_runs_command_from_declared_directory",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 2.4371191000100225,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 311,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def wdir_and_commands(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"wdir_and_commands\"))\n        (root / \"sub\").mkdir()\n        (root / \"sub\" / \"input.txt\").write_text(\"hi\", encoding=\"utf-8\")\n        (root / \"sub\" / \"env_stage.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import os\\n\"\n            \"Path('env.txt').write_text(os.environ.get('DVC_ROOT', '') + '\\\\n' + os.environ.get('DVC_STAGE', ''), encoding='utf-8')\\n\"\n            \"Path('output.txt').write_text(Path('input.txt').read_text(encoding='utf-8') + '!', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"envstage\",\n            \"-w\",\n            \"sub\",\n            \"-d\",\n            \"input.txt\",\n            \"-o\",\n            \"output.txt\",\n            sys.executable,\n            \"env_stage.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"envstage\")\n\ngenerated_tests.py:311: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/wdir_and_commands0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'envstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00035930000012740493,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_stage_command_receives_dvc_root_environment",
+      "base_nodeid": "generated_tests.py::test_stage_command_receives_dvc_root_environment",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00031750003108754754,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 311,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def wdir_and_commands(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"wdir_and_commands\"))\n        (root / \"sub\").mkdir()\n        (root / \"sub\" / \"input.txt\").write_text(\"hi\", encoding=\"utf-8\")\n        (root / \"sub\" / \"env_stage.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import os\\n\"\n            \"Path('env.txt').write_text(os.environ.get('DVC_ROOT', '') + '\\\\n' + os.environ.get('DVC_STAGE', ''), encoding='utf-8')\\n\"\n            \"Path('output.txt').write_text(Path('input.txt').read_text(encoding='utf-8') + '!', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"envstage\",\n            \"-w\",\n            \"sub\",\n            \"-d\",\n            \"input.txt\",\n            \"-o\",\n            \"output.txt\",\n            sys.executable,\n            \"env_stage.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"envstage\")\n\ngenerated_tests.py:311: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/wdir_and_commands0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'envstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00032590003684163094,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_stage_command_receives_dvc_stage_environment",
+      "base_nodeid": "generated_tests.py::test_stage_command_receives_dvc_stage_environment",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0003852999652735889,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 311,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def wdir_and_commands(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"wdir_and_commands\"))\n        (root / \"sub\").mkdir()\n        (root / \"sub\" / \"input.txt\").write_text(\"hi\", encoding=\"utf-8\")\n        (root / \"sub\" / \"env_stage.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import os\\n\"\n            \"Path('env.txt').write_text(os.environ.get('DVC_ROOT', '') + '\\\\n' + os.environ.get('DVC_STAGE', ''), encoding='utf-8')\\n\"\n            \"Path('output.txt').write_text(Path('input.txt').read_text(encoding='utf-8') + '!', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"envstage\",\n            \"-w\",\n            \"sub\",\n            \"-d\",\n            \"input.txt\",\n            \"-o\",\n            \"output.txt\",\n            sys.executable,\n            \"env_stage.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"envstage\")\n\ngenerated_tests.py:311: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/wdir_and_commands0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'envstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00036210002144798636,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_command_list_runs_commands_in_order",
+      "base_nodeid": "generated_tests.py::test_command_list_runs_commands_in_order",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0003396000247448683,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 311,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def wdir_and_commands(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"wdir_and_commands\"))\n        (root / \"sub\").mkdir()\n        (root / \"sub\" / \"input.txt\").write_text(\"hi\", encoding=\"utf-8\")\n        (root / \"sub\" / \"env_stage.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import os\\n\"\n            \"Path('env.txt').write_text(os.environ.get('DVC_ROOT', '') + '\\\\n' + os.environ.get('DVC_STAGE', ''), encoding='utf-8')\\n\"\n            \"Path('output.txt').write_text(Path('input.txt').read_text(encoding='utf-8') + '!', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"envstage\",\n            \"-w\",\n            \"sub\",\n            \"-d\",\n            \"input.txt\",\n            \"-o\",\n            \"output.txt\",\n            sys.executable,\n            \"env_stage.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"envstage\")\n\ngenerated_tests.py:311: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/wdir_and_commands0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'envstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00030319998040795326,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_failing_command_list_stage_returns_nonzero",
+      "base_nodeid": "generated_tests.py::test_failing_command_list_stage_returns_nonzero",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0002810000441968441,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 311,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def wdir_and_commands(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"wdir_and_commands\"))\n        (root / \"sub\").mkdir()\n        (root / \"sub\" / \"input.txt\").write_text(\"hi\", encoding=\"utf-8\")\n        (root / \"sub\" / \"env_stage.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import os\\n\"\n            \"Path('env.txt').write_text(os.environ.get('DVC_ROOT', '') + '\\\\n' + os.environ.get('DVC_STAGE', ''), encoding='utf-8')\\n\"\n            \"Path('output.txt').write_text(Path('input.txt').read_text(encoding='utf-8') + '!', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"envstage\",\n            \"-w\",\n            \"sub\",\n            \"-d\",\n            \"input.txt\",\n            \"-o\",\n            \"output.txt\",\n            sys.executable,\n            \"env_stage.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"envstage\")\n\ngenerated_tests.py:311: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/wdir_and_commands0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'envstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00030529999639838934,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_failing_command_list_does_not_run_later_commands",
+      "base_nodeid": "generated_tests.py::test_failing_command_list_does_not_run_later_commands",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00024279998615384102,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 311,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def wdir_and_commands(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"wdir_and_commands\"))\n        (root / \"sub\").mkdir()\n        (root / \"sub\" / \"input.txt\").write_text(\"hi\", encoding=\"utf-8\")\n        (root / \"sub\" / \"env_stage.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import os\\n\"\n            \"Path('env.txt').write_text(os.environ.get('DVC_ROOT', '') + '\\\\n' + os.environ.get('DVC_STAGE', ''), encoding='utf-8')\\n\"\n            \"Path('output.txt').write_text(Path('input.txt').read_text(encoding='utf-8') + '!', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"envstage\",\n            \"-w\",\n            \"sub\",\n            \"-d\",\n            \"input.txt\",\n            \"-o\",\n            \"output.txt\",\n            sys.executable,\n            \"env_stage.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"envstage\")\n\ngenerated_tests.py:311: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/wdir_and_commands0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'envstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'envstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'envstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00038350000977516174,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_params_dependency_initial_repro_uses_param_value",
+      "base_nodeid": "generated_tests.py::test_params_dependency_initial_repro_uses_param_value",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 1.9178469000034966,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0003074000123888254,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_params_change_reports_status_change",
+      "base_nodeid": "generated_tests.py::test_params_change_reports_status_change",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0003646999830380082,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00021770002786070108,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_freeze_writes_frozen_to_stage_definition",
+      "base_nodeid": "generated_tests.py::test_freeze_writes_frozen_to_stage_definition",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0002712999703362584,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00042429997120052576,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_frozen_stage_does_not_reproduce_changed_params",
+      "base_nodeid": "generated_tests.py::test_frozen_stage_does_not_reproduce_changed_params",
+      "layer": "system_e2e",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00024500000290572643,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.000248999975156039,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_unfreeze_removes_frozen_flag_and_repro_updates_output",
+      "base_nodeid": "generated_tests.py::test_unfreeze_removes_frozen_flag_and_repro_updates_output",
+      "layer": "system_e2e",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00022960000205785036,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00037400005385279655,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_local_status_rejects_revision_expansion_option",
+      "base_nodeid": "generated_tests.py::test_local_status_rejects_revision_expansion_option",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0005341999931260943,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00025679997634142637,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_duplicate_stage_name_without_force_fails",
+      "base_nodeid": "generated_tests.py::test_duplicate_stage_name_without_force_fails",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0002812999882735312,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0002686000079847872,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_duplicate_stage_name_with_force_succeeds",
+      "base_nodeid": "generated_tests.py::test_duplicate_stage_name_with_force_succeeds",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0002528000040911138,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00021580001339316368,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_overlapping_stage_outputs_are_rejected",
+      "base_nodeid": "generated_tests.py::test_overlapping_stage_outputs_are_rejected",
+      "layer": "atomic",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00022849999368190765,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 382,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def params_freeze_errors(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"params_freeze_errors\"))\n        (root / \"params.yaml\").write_text(\"alpha: red\\n\", encoding=\"utf-8\")\n        (root / \"param_writer.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"import yaml\\n\"\n            \"data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\\n\"\n            \"Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"paramstage\",\n            \"-p\",\n            \"alpha\",\n            \"-o\",\n            \"param_out.txt\",\n            sys.executable,\n            \"param_writer.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"paramstage\")\n\ngenerated_tests.py:382: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/params_freeze_errors0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'paramstage')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'paramstage'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'paramstage'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0002204999909736216,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_targeted_repro_runs_upstream_dependency_for_target",
+      "base_nodeid": "generated_tests.py::test_targeted_repro_runs_upstream_dependency_for_target",
+      "layer": "system_e2e",
+      "outcome": "error",
+      "setup": {
+        "duration": 3.385208200023044,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 520,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def pipeline_and_repo_api(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"pipeline_and_repo_api\"))\n        (root / \"raw.txt\").write_text(\"a\", encoding=\"utf-8\")\n        (root / \"prepare.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"Path('prepared.txt').write_text(Path('raw.txt').read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        (root / \"train.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"p = Path('train_count.txt')\\n\"\n            \"n = int(p.read_text() or '0') if p.exists() else 0\\n\"\n            \"p.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path('model.txt').write_text(Path('prepared.txt').read_text(encoding='utf-8') + ':model', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"prepare.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"prepare.py\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"train\",\n            \"-d\",\n            \"prepared.txt\",\n            \"-d\",\n            \"train.py\",\n            \"-o\",\n            \"model.txt\",\n            sys.executable,\n            \"train.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"train\")\n\ngenerated_tests.py:520: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/pipeline_and_repo_api0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'train')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0002533000078983605,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_downstream_repro_updates_descendant_stage_output",
+      "base_nodeid": "generated_tests.py::test_downstream_repro_updates_descendant_stage_output",
+      "layer": "system_e2e",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00032920000376179814,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 520,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def pipeline_and_repo_api(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"pipeline_and_repo_api\"))\n        (root / \"raw.txt\").write_text(\"a\", encoding=\"utf-8\")\n        (root / \"prepare.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"Path('prepared.txt').write_text(Path('raw.txt').read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        (root / \"train.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"p = Path('train_count.txt')\\n\"\n            \"n = int(p.read_text() or '0') if p.exists() else 0\\n\"\n            \"p.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path('model.txt').write_text(Path('prepared.txt').read_text(encoding='utf-8') + ':model', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"prepare.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"prepare.py\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"train\",\n            \"-d\",\n            \"prepared.txt\",\n            \"-d\",\n            \"train.py\",\n            \"-o\",\n            \"model.txt\",\n            sys.executable,\n            \"train.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"train\")\n\ngenerated_tests.py:520: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/pipeline_and_repo_api0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'train')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00022569997236132622,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_repo_reproduce_force_returns_reproduced_stages",
+      "base_nodeid": "generated_tests.py::test_repo_reproduce_force_returns_reproduced_stages",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00041770003736019135,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 520,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def pipeline_and_repo_api(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"pipeline_and_repo_api\"))\n        (root / \"raw.txt\").write_text(\"a\", encoding=\"utf-8\")\n        (root / \"prepare.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"Path('prepared.txt').write_text(Path('raw.txt').read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        (root / \"train.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"p = Path('train_count.txt')\\n\"\n            \"n = int(p.read_text() or '0') if p.exists() else 0\\n\"\n            \"p.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path('model.txt').write_text(Path('prepared.txt').read_text(encoding='utf-8') + ':model', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"prepare.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"prepare.py\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"train\",\n            \"-d\",\n            \"prepared.txt\",\n            \"-d\",\n            \"train.py\",\n            \"-o\",\n            \"model.txt\",\n            sys.executable,\n            \"train.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"train\")\n\ngenerated_tests.py:520: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/pipeline_and_repo_api0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'train')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.000395099981687963,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_repo_freeze_writes_same_frozen_state_as_cli",
+      "base_nodeid": "generated_tests.py::test_repo_freeze_writes_same_frozen_state_as_cli",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.00042290001874789596,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 520,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def pipeline_and_repo_api(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"pipeline_and_repo_api\"))\n        (root / \"raw.txt\").write_text(\"a\", encoding=\"utf-8\")\n        (root / \"prepare.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"Path('prepared.txt').write_text(Path('raw.txt').read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        (root / \"train.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"p = Path('train_count.txt')\\n\"\n            \"n = int(p.read_text() or '0') if p.exists() else 0\\n\"\n            \"p.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path('model.txt').write_text(Path('prepared.txt').read_text(encoding='utf-8') + ':model', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"prepare.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"prepare.py\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"train\",\n            \"-d\",\n            \"prepared.txt\",\n            \"-d\",\n            \"train.py\",\n            \"-o\",\n            \"model.txt\",\n            sys.executable,\n            \"train.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"train\")\n\ngenerated_tests.py:520: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/pipeline_and_repo_api0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'train')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.00038790004327893257,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_repo_unfreeze_removes_frozen_state",
+      "base_nodeid": "generated_tests.py::test_repo_unfreeze_removes_frozen_state",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0003228000132367015,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 520,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def pipeline_and_repo_api(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"pipeline_and_repo_api\"))\n        (root / \"raw.txt\").write_text(\"a\", encoding=\"utf-8\")\n        (root / \"prepare.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"Path('prepared.txt').write_text(Path('raw.txt').read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        (root / \"train.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"p = Path('train_count.txt')\\n\"\n            \"n = int(p.read_text() or '0') if p.exists() else 0\\n\"\n            \"p.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path('model.txt').write_text(Path('prepared.txt').read_text(encoding='utf-8') + ':model', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"prepare.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"prepare.py\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"train\",\n            \"-d\",\n            \"prepared.txt\",\n            \"-d\",\n            \"train.py\",\n            \"-o\",\n            \"model.txt\",\n            sys.executable,\n            \"train.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"train\")\n\ngenerated_tests.py:520: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/pipeline_and_repo_api0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'train')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0004164999700151384,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "01_agents/swe-e2e/Bmk-dev/wip/dvc-fullrepro-001/filter/generated_tests.py::test_repo_run_no_exec_writes_stage_but_does_not_create_output",
+      "base_nodeid": "generated_tests.py::test_repo_run_no_exec_writes_stage_but_does_not_create_output",
+      "layer": "integration",
+      "outcome": "error",
+      "setup": {
+        "duration": 0.0002778000198304653,
+        "outcome": "failed",
+        "crash": {
+          "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\dvc-fullrepro-001\\filter\\generated_tests.py",
+          "lineno": 29,
+          "message": "AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 520,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 29,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000002726618A960>, _basetemp=Wi...c-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0'), _retention_count=3, _retention_policy='all')\n\n    @pytest.fixture(scope=\"module\")\n    def pipeline_and_repo_api(tmp_path_factory):\n        root = init_repo(tmp_path_factory.mktemp(\"pipeline_and_repo_api\"))\n        (root / \"raw.txt\").write_text(\"a\", encoding=\"utf-8\")\n        (root / \"prepare.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"Path('prepared.txt').write_text(Path('raw.txt').read_text(encoding='utf-8').upper(), encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        (root / \"train.py\").write_text(\n            \"from pathlib import Path\\n\"\n            \"p = Path('train_count.txt')\\n\"\n            \"n = int(p.read_text() or '0') if p.exists() else 0\\n\"\n            \"p.write_text(str(n + 1), encoding='utf-8')\\n\"\n            \"Path('model.txt').write_text(Path('prepared.txt').read_text(encoding='utf-8') + ':model', encoding='utf-8')\\n\",\n            encoding=\"utf-8\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"prepare\",\n            \"-d\",\n            \"raw.txt\",\n            \"-d\",\n            \"prepare.py\",\n            \"-o\",\n            \"prepared.txt\",\n            sys.executable,\n            \"prepare.py\",\n        )\n        run_dvc(\n            root,\n            \"stage\",\n            \"add\",\n            \"-n\",\n            \"train\",\n            \"-d\",\n            \"prepared.txt\",\n            \"-d\",\n            \"train.py\",\n            \"-o\",\n            \"model.txt\",\n            sys.executable,\n            \"train.py\",\n        )\n>       run_dvc(root, \"repro\", \"--no-commit\", \"--no-run-cache\", \"train\")\n\ngenerated_tests.py:520: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ncwd = WindowsPath('G:/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dvc-specv1-20260701-002/score_generated/tmp-kept/pytest-of-12547/pytest-0/pipeline_and_repo_api0')\ncheck = True, args = ('repro', '--no-commit', '--no-run-cache', 'train')\n\n    def run_dvc(cwd, *args, check=True):\n        env = os.environ.copy()\n        env[\"DVC_TEST\"] = \"true\"\n        env[\"DVC_NO_ANALYTICS\"] = \"1\"\n        result = subprocess.run(\n            [sys.executable, \"-c\", DVC_CLI_MAIN, *args],\n            cwd=cwd,\n            text=True,\n            capture_output=True,\n            env=env,\n            timeout=90,\n        )\n        if check and result.returncode != 0:\n>           raise AssertionError(\n                {\n                    \"args\": args,\n                    \"returncode\": result.returncode,\n                    \"stdout\": result.stdout,\n                    \"stderr\": result.stderr,\n                }\n            )\nE           AssertionError: {'args': ('repro', '--no-commit', '--no-run-cache', 'train'), 'returncode': 1, 'stdout': '', 'stderr': \"The filename, directory name, or volume label syntax is incorrect.\\nfailed to reproduce 'prepare'\\n\"}\n\ngenerated_tests.py:29: AssertionError"
+      },
+      "teardown": {
+        "duration": 0.0005196999991312623,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "task_id": "copier-template-fullrepro-001",
+  "repo": "copier-org__copier",
+  "status": "QUALIFIED",
+  "spec": "spec_v1",
+  "filter": "generated_only_public_iter2",
+  "oracle": {
+    "total": 30,
+    "atomic": 13,
+    "integration": 8,
+    "system_e2e": 9
+  },
+  "reference": {
+    "passed": 30,
+    "total": 30,
+    "pass_rate": 1.0
+  },
+  "candidate_run": "codex-copier-specv1-20260701-001",
+  "candidate": {
+    "passed": 22,
+    "total": 30,
+    "pass_rate": 0.7333333333333333
+  },
+  "scorer_isolation": "--remove-path copier; candidate scoring venv has no installed real copier",
+  "artifacts": {
+    "spec": "spec.md",
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "reference_score": "reference_score.json",
+    "diagnosis": "judge/diagnosis_report.md",
+    "score_result": "judge/score_result.json"
+  },
+  "caveat": "Generated-only repaired oracle; Stage 5 Gate C passed, but Gate D is GAP because update/recopy and direct Cross-View Invariants coverage are absent after replacing the private-helper upstream oracle.",
+  "coverage_gap": [
+    {
+      "section": "`run_recopy` / `run_update` / Updates",
+      "reason": "public update and recopy workflows not covered by repaired oracle"
+    },
+    {
+      "section": "Cross-View Invariants",
+      "reason": "core invariant heading has no directly mapped scoring row"
+    },
+    {
+      "section": "`Phase` and `VcsRef`",
+      "reason": "public enum/reference surface not directly covered"
+    },
+    {
+      "section": "Settings Reference",
+      "reason": "full settings catalog not directly covered"
+    }
+  ],
+  "coverage-gap": [
+    {
+      "section": "`run_recopy` / `run_update` / Updates",
+      "reason": "public update and recopy workflows not covered by repaired oracle"
+    },
+    {
+      "section": "Cross-View Invariants",
+      "reason": "core invariant heading has no directly mapped scoring row"
+    },
+    {
+      "section": "`Phase` and `VcsRef`",
+      "reason": "public enum/reference surface not directly covered"
+    },
+    {
+      "section": "Settings Reference",
+      "reason": "full settings catalog not directly covered"
+    }
+  ]
+}

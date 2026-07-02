@@ -46,7 +46,7 @@ Before starting any pipeline stage, read the specialist skill named for that sta
 - Stage 1 must read `Bmk-dev/skills/candidate-selector/SKILL.md`.
 - Stage 2 must read `Bmk-dev/skills/spec-writer/SKILL.md`.
 - Stage 3 must read `Bmk-dev/skills/test-filter/SKILL.md`.
-- Stage 4 must give the candidate agent only the public packet/run prompt; do not give it workflow skills, source repositories, tests, score reports, or previous attempts.
+- Stage 4 must give the candidate agent only the public packet/run prompt; do not give it workflow skills, source repositories, tests, score reports, or previous attempts. Run Stage 4 evaluation on Linux or WSL — not native Windows.
 - Stage 5 must read `Bmk-dev/skills/task-judge/SKILL.md`.
 
 When delegating a stage or stage audit to a subagent, instruct the subagent to read the same stage skill before inspecting task artifacts. The delegation prompt must name the exact `Bmk-dev/skills/{skill-name}/SKILL.md` path to read first.
@@ -118,7 +118,7 @@ candidate-selector -> spec-writer -> test-filter -> [evaluation] -> task-judge
 Review against principles 1 and 2 before proceeding:
 - **Principle 1 check**: Read the spec body. Does it read like developer documentation, or like a benchmark artifact? Any sentence that sounds like it was written for an evaluator → return to spec-writer.
 - **Principle 2 check**: Is every item in the spec traceable to public API surface? Is source_boundary in the internal header non-empty (proof that sources were actually read)?
-- All 5 validation checks pass: proceed to test-filter
+- All 11 validation checks pass (per spec-writer SKILL): proceed to test-filter
 - Any check fails: patch spec, re-validate before proceeding
 
 **Candidate packet assembly**: the candidate receives the spec body only. Strip the `<!-- INTERNAL ... -->` header before assembling the run prompt. The candidate must not see task_id, delta notes, or source_boundary.
@@ -128,9 +128,14 @@ Review against principles 1 and 2 before proceeding:
 Review against principles 2 and 3 before proceeding:
 - **Principle 2 check**: Sample `covered` rows from spec_test_map.md. Does each `spec_section` value match a real heading in the spec file? If not, the map was produced without genuine spec mapping — return to test-filter.
 - **Principle 3 check**: Sample kept tests. Do they check observable behavior, or internal shapes? If a significant share checks repr format, field names, or exact error message text → return to test-filter.
+
+**Active count verification (mandatory):**
+1. Read `PIPELINE_STATE.md`. Confirm `functions_kept + functions_excluded = functions_in_scope`. If not equal → return to test-filter; functions were not fully processed.
+2. Confirm `oracle_count ≥ 50`. If below 50 → return to test-filter for Track B expansion, filter_iter += 1.
+3. For each H2/H3 section in the spec, count `covered` rows in spec_test_map.md. Any section below its minimum (≥5 for `Cross-View Invariants`/`Error Semantics`, ≥3 for all others) → return to test-filter for targeted generation.
+
 - spec_gap rows present: issue `spec_patch_request.md` → route to spec-writer → after patch, rerun Stage 3
-- Track A + Track B combined oracle < 30 nodeids: record retirement, return to candidate-selector
-- Oracle built: proceed to evaluation
+- All count checks pass: proceed to evaluation
 - If `filter/oracle_source: generated_only` in spec_test_map.md: flag for task-judge additional spot-check
 
 ### After evaluation
@@ -141,13 +146,16 @@ Review against principles 2 and 3 before proceeding:
 
 Before accepting any verdict, verify diagnosis report structural validity:
 - Does the report contain a **Preflight output** block with the literal `__file__` path? If absent → report is invalid, return to task-judge.
+- Does the report contain a **Gate D — Coverage Gap Audit** section with a coverage verdict (FULL / PARTIAL / GAP)? If absent → return to task-judge.
+- If verdict is GAP: does MANIFEST.json contain a `coverage-gap` entry listing the uncovered sections? If not → task-judge output is incomplete, return to task-judge.
 
 | Status | Action |
 |--------|--------|
 | `CHEAT_DETECTED` | Invalidate run, fix evaluation environment, re-evaluate |
 | `BROKEN` (solvability) | Fix environment or return to test-filter; re-evaluate |
 | `BROKEN` (fairness) | Process `filter_correction_request.md` via test-filter; re-evaluate |
-| `BROKEN` (spec gap) | Process `spec_patch_request.md` via spec-writer → test-filter → re-evaluate |
+| `BROKEN` (spec gap) | Process `spec_patch_request.md` (type=spec_gap) via spec-writer → test-filter → re-evaluate |
+| `BROKEN` (spec error) | Process `spec_patch_request.md` (type=spec_error) via spec-writer → test-filter → re-evaluate |
 | `QUALIFIED` | Record in CANDIDATES.md, append to weakness table, done |
 
 ---
@@ -156,7 +164,9 @@ Before accepting any verdict, verify diagnosis report structural validity:
 
 When task-judge signals a problem, it produces one of:
 
-`spec_patch_request.md` - list of spec gaps with evidence; hand to spec-writer
+`spec_patch_request.md` - spec gaps or spec errors with evidence; hand to spec-writer. The file must include a `type` field per item:
+- `type: spec_gap` — behavior present in reference but absent from spec; spec-writer adds it.
+- `type: spec_error` — spec claims X but reference demonstrates Y; spec-writer corrects the claim. The judge must include the reference-observed value and the spec's current claim so spec-writer can verify against source rather than re-inferring.
 
 `filter_correction_request.md` - list of misclassified or incorrectly kept tests; hand to test-filter
 

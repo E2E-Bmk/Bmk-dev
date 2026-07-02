@@ -24,18 +24,38 @@ def read_nodeids(path: Path) -> list[str]:
     return [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def taxonomy_key(pytest_nodeid: str) -> str:
+def taxonomy_keys(pytest_nodeid: str) -> list[str]:
     nodeid = re.sub(r"\[.*\]$", "", pytest_nodeid)
     parts = nodeid.split("::")
     stem = Path(parts[0]).stem
+    dotted = ".".join([stem, *parts[1:]])
     if len(parts) > 2:
-        return f"{stem}::" + ".".join(parts[1:])
-    return "::".join([stem, *parts[1:]])
+        legacy = f"{stem}::" + ".".join(parts[1:])
+    else:
+        legacy = "::".join([stem, *parts[1:]])
+    return [dotted, legacy]
+
+
+def taxonomy_layer(taxonomy: dict[str, str], pytest_nodeid: str) -> str:
+    for key in taxonomy_keys(pytest_nodeid):
+        if key in taxonomy:
+            return taxonomy[key]
+    return "unknown"
 
 
 def load_taxonomy(path: Path | None) -> dict[str, str]:
     if not path:
         return {}
+    if path.suffix == ".jsonl":
+        mapping: dict[str, str] = {}
+        with path.open(encoding="utf-8") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                row = json.loads(line)
+                if row.get("taxonomy_key"):
+                    mapping[row["taxonomy_key"]] = row.get("layer") or "unknown"
+        return mapping
     mapping: dict[str, str] = {}
     with path.open(newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
@@ -66,6 +86,7 @@ def group_by_file(nodeids: list[str]) -> dict[str, list[str]]:
 
 def run_group(
     worktree: Path,
+    solution_dir: Path,
     nodeids: list[str],
     report_path: Path,
     timeout: int,
@@ -82,9 +103,12 @@ def run_group(
         *extra_args,
         *nodeids,
     ]
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(solution_dir.resolve())
     proc = subprocess.run(
         cmd,
         cwd=worktree,
+        env=env,
         text=True,
         encoding="utf-8",
         errors="replace",
@@ -119,7 +143,7 @@ def summarize(
                     {
                         "nodeid": nodeid,
                         "base_nodeid": nodeid,
-                        "layer": taxonomy.get(taxonomy_key(nodeid), "unknown"),
+                        "layer": taxonomy_layer(taxonomy, nodeid),
                         "outcome": "collection_error",
                         "stdout": payload.get("stdout", ""),
                         "stderr": payload.get("stderr", ""),
@@ -135,7 +159,7 @@ def summarize(
                 {
                     "nodeid": nodeid,
                     "base_nodeid": base,
-                    "layer": taxonomy.get(taxonomy_key(nodeid), "unknown"),
+                    "layer": taxonomy_layer(taxonomy, nodeid),
                     "outcome": test.get("outcome", "unknown"),
                     "call": test.get("call", {}),
                 }
@@ -146,7 +170,7 @@ def summarize(
                 {
                     "nodeid": nodeid,
                     "base_nodeid": nodeid,
-                    "layer": taxonomy.get(taxonomy_key(nodeid), "unknown"),
+                    "layer": taxonomy_layer(taxonomy, nodeid),
                     "outcome": "not_collected",
                 }
             )
@@ -193,13 +217,17 @@ def main() -> int:
     nodeids = read_nodeids(args.nodeids.resolve())
     taxonomy = load_taxonomy(args.taxonomy.resolve() if args.taxonomy else None)
     grouped_results = {}
-    env_path = os.environ.get("PYTHONPATH", "")
-    os.environ["PYTHONPATH"] = str(args.solution_dir.resolve()) + (os.pathsep + env_path if env_path else "")
-
     for index, (file_name, file_nodeids) in enumerate(group_by_file(nodeids).items(), start=1):
         report_path = run_dir / f"pytest_report_{index:03d}_{Path(file_name).stem}.json"
         try:
-            _, payload = run_group(worktree, file_nodeids, report_path, args.timeout, args.pytest_arg)
+            _, payload = run_group(
+                worktree,
+                args.solution_dir,
+                file_nodeids,
+                report_path,
+                args.timeout,
+                args.pytest_arg,
+            )
         except subprocess.TimeoutExpired as exc:
             payload = {
                 "returncode": 124,

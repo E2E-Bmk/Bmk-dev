@@ -83,7 +83,10 @@ Items in these categories belong in the spec **only when they pass Q2** — i.e.
 **Behavioral constraints (engineer might implement inconsistently):**
 - Product overview
 - Context precedence rules (multi-source merge order)
-- Cross-View Invariants: >=6 items, user-observable language, spanning all public projection pairs
+- **Product State Model** — before writing per-subsystem sections, write a top-level state model that enumerates the three public projections of the library's core state and states at least three cross-view invariants (e.g. "a value written via API A is visible via API B within the same session"). This gives the candidate a unified state machine to implement against, rather than a list of independent behaviors.
+- Cross-View Invariants: >=6 items, user-observable language, spanning all public projection pairs. Write each invariant with `must` or `returns` — never `can` or `may`.
+- Every behavioral statement uses `must when [condition]` not `can`. If a behavior is conditional, state the condition explicitly.
+- Every behavior description includes its failure path: what the system `must raise` or `must return` when the precondition is violated.
 - >=1 complete end-to-end workflow example
 - Evaluation Notes: what test dimensions exist, no fixture shapes
 
@@ -144,8 +147,14 @@ Spec and test-filter are linked: spec describes what must be implemented; test-f
 3. Are invariants written in behavioral language, not code<-
 4. Are Non-goals explicitly listed<-
 5. Does any section implicitly assume a hidden fixture shape<-
+6. Does every behavioral statement use `must` / `returns` / `raises` — not `can` / `may`<-
+7. Does every conditional behavior state its condition explicitly (`must when [X]`, not `when applicable`)<-
+8. Does every behavior description include its failure path (what `must raise` or `must return` on violation)<-
+9. Is there a Product State Model section (or equivalent) before the per-subsystem sections, with >=3 cross-view invariants stated in user-observable language<-
+10. Does any section contain an escape hatch — language ambiguous enough that a candidate can skip a behavior and still satisfy the spec wording<-
+11. For every statement that describes a priority order, override rule, or multi-source merge (e.g. "A takes precedence over B", "X overrides Y"): was this verified by calling the reference implementation with a concrete input where A and B conflict, not by inferring from documentation alone? If not verified against reference behavior, mark as unverified and do not include until verified<-
 
-All five must pass. Any failure -> patch and re-judge.
+All eleven must pass. Any failure -> patch and re-judge.
 
 ## Critical Experiment Results
 
@@ -159,7 +168,23 @@ All five must pass. Any failure -> patch and re-judge.
 
 ## Patching a Spec
 
-When processing a `spec_patch_request.md` from task-judge, apply gaps using these three principles:
+### Handling spec_error vs spec_gap
+
+`spec_patch_request.md` carries a `type` field. The handling differs:
+
+**type: spec_gap** — A behavior exists in the reference but was omitted from the spec. Add the missing behavior using the three principles below. Standard documentation inference is acceptable.
+
+**type: spec_error** — The spec currently states X, but the judge observed the reference doing Y. Before writing any correction:
+1. Re-run the reference with the exact conflicting input provided in the request. Observe the output directly — do not re-infer from documentation.
+2. Confirm the judge's observed value matches what the reference actually produces.
+3. If confirmed: correct the spec claim to match the reference-observed value. If the correction contradicts other spec statements, resolve those contradictions too.
+4. If the reference produces a third value Z (neither X nor Y): record the discrepancy, correct to Z, and note the judge's evidence was incomplete.
+
+Never correct a spec_error by documentation inference alone. The correction must be grounded in reference execution.
+
+---
+
+When processing a `spec_patch_request.md` from task-judge, apply changes using these three principles:
 
 **1. Attach to the nearest host; do not create new structure.**
 If the gap is a parameter, a CLI option, or a boundary condition of an existing concept, add it to the nearest existing code block signature or behavior bullet list. Do not create a new subsection. The reader should not be able to tell where the patch was inserted.

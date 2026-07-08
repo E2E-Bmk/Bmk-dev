@@ -1,0 +1,602 @@
+{
+  "source_repo": "/Users/zijian/Bmk-dev-main/repo-pool/csvkit-master",
+  "solution_dir": "/Users/zijian/Bmk-dev-main/candidate-runs/gpt-5.5-csvkit-spec_v2-20260702-run1/solution",
+  "nodeids": "/Users/zijian/Bmk-dev-main/wip/csvkit/filter/kept_nodeids.txt",
+  "taxonomy": "/Users/zijian/Bmk-dev-main/wip/csvkit/filter/taxonomy.jsonl",
+  "run_dir": "/Users/zijian/Bmk-dev-main/candidate-runs/gpt-5.5-csvkit-spec_v2-20260702-run1/v3_output",
+  "grouped_results": {
+    "/Users/zijian/Bmk-dev-main/wip/csvkit/filter/public_tests/test_public_cli_blackbox.py": {
+      "returncode": 1,
+      "stdout": ".............................FF.......F...F..                            [100%]\n=================================== FAILURES ===================================\n_______________ test_csvstat_json_reports_structured_statistics ________________\n\ntmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvstat_json_reports_stru0')\n\n    @_mark(\"### `csvstat`\", \"atomic\", \"csvstat --json writes structured statistics\")\n    def test_csvstat_json_reports_structured_statistics(tmp_path):\n        data = write_text(tmp_path / \"items.csv\", \"name,qty\\napple,2\\npear,5\\napple,3\\n\")\n    \n        stdout = ok(\"csvstat\", \"--json\", str(data), cwd=tmp_path)\n        stats = json.loads(stdout)\n    \n>       by_name = {item[\"column_name\"]: item for item in stats}\n                   ^^^^^^^^^^^^^^^^^^^\nE       TypeError: string indices must be integers, not 'str'\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:393: TypeError\n___________ test_csvstat_csv_selected_column_outputs_csv_statistics ____________\n\ntmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvstat_csv_selected_colu0')\n\n    @_mark(\"### `csvstat`\", \"atomic\", \"csvstat --csv restricts statistics to selected columns\")\n    def test_csvstat_csv_selected_column_outputs_csv_statistics(tmp_path):\n        data = write_text(tmp_path / \"items.csv\", \"name,qty\\napple,2\\npear,5\\n\")\n    \n        stdout = ok(\"csvstat\", \"--csv\", \"-c\", \"qty\", str(data), cwd=tmp_path)\n    \n        parsed = list(csv.DictReader(io.StringIO(stdout)))\n>       assert [row[\"column_name\"] for row in parsed] == [\"qty\"]\n                ^^^^^^^^^^^^^^^^^^\nE       KeyError: 'column_name'\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:405: KeyError\n___________ test_csvclean_length_mismatch_reports_structured_stderr ____________\n\ntmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvclean_length_mismatch_0')\n\n    @_mark(\"### `csvclean`\", \"atomic\", \"length-mismatch reports errors on stderr and exits nonzero\")\n    def test_csvclean_length_mismatch_reports_structured_stderr(tmp_path):\n        data = write_text(tmp_path / \"bad.csv\", \"name,qty\\napple,2,extra\\npear,5\\n\")\n    \n        proc = run_cmd(\"csvclean\", \"--length-mismatch\", str(data), cwd=tmp_path)\n    \n        assert proc.returncode == 1\n>       assert rows(proc.stdout) == [[\"name\", \"qty\"], [\"apple\", \"2\", \"extra\"], [\"pear\", \"5\"]]\nE       AssertionError: assert [['name', 'qt...['pear', '5']] == [['name', 'qt...['pear', '5']]\nE         \nE         At index 1 diff: ['apple', '2'] != ['apple', '2', 'extra']\nE         Use -v to get more diff\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:480: AssertionError\n_________________ test_in2csv_converts_fixed_width_with_schema _________________\n\ntmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_in2csv_converts_fixed_wid0')\n\n    @_mark(\"### `in2csv`\", \"atomic\", \"fixed-width input uses the public schema option\")\n    def test_in2csv_converts_fixed_width_with_schema(tmp_path):\n        data = write_text(tmp_path / \"items.txt\", \"01apple02\\n02pear 05\\n\")\n        schema = write_text(tmp_path / \"schema.csv\", \"column,start,length\\nid,1,2\\nname,3,5\\nqty,8,2\\n\")\n    \n        stdout = ok(\"in2csv\", \"--format\", \"fixed\", \"--schema\", str(schema), str(data), cwd=tmp_path)\n    \n>       assert rows(stdout) == [[\"id\", \"name\", \"qty\"], [\"01\", \"apple\", \"02\"], [\"02\", \"pear\", \"05\"]]\nE       AssertionError: assert [['id', 'name...'ear 0', '5']] == [['id', 'name...'pear', '05']]\nE         \nE         At index 1 diff: ['1a', 'pple0', '2'] != ['01', 'apple', '02']\nE         Use -v to get more diff\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:520: AssertionError\n=============================== warnings summary ===============================\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:28\n  /Users/zijian/Bmk-dev-main/wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:28: PytestUnknownMarkWarning: Unknown pytest.mark.csvkit_filter - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html\n    return pytest.mark.csvkit_filter(spec_section=section, layer=layer, notes=notes)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED ../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_json_reports_structured_statistics\nFAILED ../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_csv_selected_column_outputs_csv_statistics\nFAILED ../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_length_mismatch_reports_structured_stderr\nFAILED ../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_fixed_width_with_schema\n4 failed, 41 passed, 1 warning in 3.00s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 0,
+        "duration": 0,
+        "exitcode": 1,
+        "root": "/Users/zijian/Bmk-dev-main",
+        "summary": {},
+        "tests": [
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_top_level_reader_writer_aliases_roundtrip",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_top_level_dict_reader_writer_aliases_roundtrip",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_command_version_flag_reports_command_name",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_selects_named_columns_in_requested_order",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_not_columns_ignores_unknown_exclusions",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_names_lists_positions",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_no_header_row_uses_generated_headers",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_linenumbers_adds_ordinary_column",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_exact_match_filters_selected_column",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_regex_filters_selected_column",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_any_match_checks_any_selected_column",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_invert_match_keeps_nonmatching_rows",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_sorts_numeric_column",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_reverse_descending",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_ignore_case_for_text",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_inner_join_on_named_key",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_left_join_preserves_left_rows",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_without_columns_joins_by_row_position",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_concatenates_rows",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_groups_adds_grouping_column",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_filenames_adds_filename_grouping",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_changes_output_delimiter",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_skip_header_omits_header",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_out_tabs_writes_tab_delimited_output",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_writes_array_of_objects",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_stream_writes_newline_json_objects",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_key_writes_object_keyed_by_column",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_lat_lon_outputs_geojson",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvlook_renders_markdown_table_with_values",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_json_reports_structured_statistics",
+            "outcome": "failed",
+            "call": {
+              "longrepr": "tmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvstat_json_reports_stru0')\n\n    @_mark(\"### `csvstat`\", \"atomic\", \"csvstat --json writes structured statistics\")\n    def test_csvstat_json_reports_structured_statistics(tmp_path):\n        data = write_text(tmp_path / \"items.csv\", \"name,qty\\napple,2\\npear,5\\napple,3\\n\")\n    \n        stdout = ok(\"csvstat\", \"--json\", str(data), cwd=tmp_path)\n        stats = json.loads(stdout)\n    \n>       by_name = {item[\"column_name\"]: item for item in stats}\n                   ^^^^^^^^^^^^^^^^^^^\nE       TypeError: string indices must be integers, not 'str'\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:393: TypeError"
+            }
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_csv_selected_column_outputs_csv_statistics",
+            "outcome": "failed",
+            "call": {
+              "longrepr": "tmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvstat_csv_selected_colu0')\n\n    @_mark(\"### `csvstat`\", \"atomic\", \"csvstat --csv restricts statistics to selected columns\")\n    def test_csvstat_csv_selected_column_outputs_csv_statistics(tmp_path):\n        data = write_text(tmp_path / \"items.csv\", \"name,qty\\napple,2\\npear,5\\n\")\n    \n        stdout = ok(\"csvstat\", \"--csv\", \"-c\", \"qty\", str(data), cwd=tmp_path)\n    \n        parsed = list(csv.DictReader(io.StringIO(stdout)))\n>       assert [row[\"column_name\"] for row in parsed] == [\"qty\"]\n                ^^^^^^^^^^^^^^^^^^\nE       KeyError: 'column_name'\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:405: KeyError"
+            }
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_count_single_column_writes_only_value",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_generates_create_table_statement",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_query_mode_filters_loaded_csv",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_sql2csv_query_text_returns_csv_rows",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_sql2csv_reads_query_from_file",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_header_normalize_space",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_remove_empty_columns",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_length_mismatch_reports_structured_stderr",
+            "outcome": "failed",
+            "call": {
+              "longrepr": "tmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvclean_length_mismatch_0')\n\n    @_mark(\"### `csvclean`\", \"atomic\", \"length-mismatch reports errors on stderr and exits nonzero\")\n    def test_csvclean_length_mismatch_reports_structured_stderr(tmp_path):\n        data = write_text(tmp_path / \"bad.csv\", \"name,qty\\napple,2,extra\\npear,5\\n\")\n    \n        proc = run_cmd(\"csvclean\", \"--length-mismatch\", str(data), cwd=tmp_path)\n    \n        assert proc.returncode == 1\n>       assert rows(proc.stdout) == [[\"name\", \"qty\"], [\"apple\", \"2\", \"extra\"], [\"pear\", \"5\"]]\nE       AssertionError: assert [['name', 'qt...['pear', '5']] == [['name', 'qt...['pear', '5']]\nE         \nE         At index 1 diff: ['apple', '2'] != ['apple', '2', 'extra']\nE         Use -v to get more diff\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:480: AssertionError"
+            }
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_json_array_to_csv",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_ndjson_to_csv",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_flattens_nested_json_keys",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_fixed_width_with_schema",
+            "outcome": "failed",
+            "call": {
+              "longrepr": "tmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_in2csv_converts_fixed_wid0')\n\n    @_mark(\"### `in2csv`\", \"atomic\", \"fixed-width input uses the public schema option\")\n    def test_in2csv_converts_fixed_width_with_schema(tmp_path):\n        data = write_text(tmp_path / \"items.txt\", \"01apple02\\n02pear 05\\n\")\n        schema = write_text(tmp_path / \"schema.csv\", \"column,start,length\\nid,1,2\\nname,3,5\\nqty,8,2\\n\")\n    \n        stdout = ok(\"in2csv\", \"--format\", \"fixed\", \"--schema\", str(schema), str(data), cwd=tmp_path)\n    \n>       assert rows(stdout) == [[\"id\", \"name\", \"qty\"], [\"01\", \"apple\", \"02\"], [\"02\", \"pear\", \"05\"]]\nE       AssertionError: assert [['id', 'name...'ear 0', '5']] == [['id', 'name...'pear', '05']]\nE         \nE         At index 1 diff: ['1a', 'pple0', '2'] != ['01', 'apple', '02']\nE         Use -v to get more diff\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:520: AssertionError"
+            }
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_pipeline_cut_grep_then_json_preserves_filtered_table",
+            "outcome": "passed",
+            "call": {}
+          },
+          {
+            "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_insert_then_sql2csv_query_roundtrip",
+            "outcome": "passed",
+            "call": {}
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 4,
+    "passed": 41,
+    "total": 45
+  },
+  "pass_rate_excluding_skips": 0.9111111111111111,
+  "by_layer": {
+    "atomic": {
+      "failed": 4,
+      "passed": 32,
+      "total": 36
+    },
+    "integration": {
+      "passed": 7,
+      "total": 7
+    },
+    "system_e2e": {
+      "passed": 2,
+      "total": 2
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_top_level_reader_writer_aliases_roundtrip",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_top_level_reader_writer_aliases_roundtrip",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_top_level_dict_reader_writer_aliases_roundtrip",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_top_level_dict_reader_writer_aliases_roundtrip",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_command_version_flag_reports_command_name",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_command_version_flag_reports_command_name",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_selects_named_columns_in_requested_order",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_selects_named_columns_in_requested_order",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_not_columns_ignores_unknown_exclusions",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_not_columns_ignores_unknown_exclusions",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_names_lists_positions",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_names_lists_positions",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_no_header_row_uses_generated_headers",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_no_header_row_uses_generated_headers",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_linenumbers_adds_ordinary_column",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvcut_linenumbers_adds_ordinary_column",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_exact_match_filters_selected_column",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_exact_match_filters_selected_column",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_regex_filters_selected_column",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_regex_filters_selected_column",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_any_match_checks_any_selected_column",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_any_match_checks_any_selected_column",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_invert_match_keeps_nonmatching_rows",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvgrep_invert_match_keeps_nonmatching_rows",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_sorts_numeric_column",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_sorts_numeric_column",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_reverse_descending",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_reverse_descending",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_ignore_case_for_text",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsort_ignore_case_for_text",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_inner_join_on_named_key",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_inner_join_on_named_key",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_left_join_preserves_left_rows",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_left_join_preserves_left_rows",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_without_columns_joins_by_row_position",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjoin_without_columns_joins_by_row_position",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_concatenates_rows",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_concatenates_rows",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_groups_adds_grouping_column",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_groups_adds_grouping_column",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_filenames_adds_filename_grouping",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstack_filenames_adds_filename_grouping",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_changes_output_delimiter",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_changes_output_delimiter",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_skip_header_omits_header",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_skip_header_omits_header",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_out_tabs_writes_tab_delimited_output",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvformat_out_tabs_writes_tab_delimited_output",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_writes_array_of_objects",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_writes_array_of_objects",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_stream_writes_newline_json_objects",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_stream_writes_newline_json_objects",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_key_writes_object_keyed_by_column",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_key_writes_object_keyed_by_column",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_lat_lon_outputs_geojson",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvjson_lat_lon_outputs_geojson",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvlook_renders_markdown_table_with_values",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvlook_renders_markdown_table_with_values",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_json_reports_structured_statistics",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_json_reports_structured_statistics",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "longrepr": "tmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvstat_json_reports_stru0')\n\n    @_mark(\"### `csvstat`\", \"atomic\", \"csvstat --json writes structured statistics\")\n    def test_csvstat_json_reports_structured_statistics(tmp_path):\n        data = write_text(tmp_path / \"items.csv\", \"name,qty\\napple,2\\npear,5\\napple,3\\n\")\n    \n        stdout = ok(\"csvstat\", \"--json\", str(data), cwd=tmp_path)\n        stats = json.loads(stdout)\n    \n>       by_name = {item[\"column_name\"]: item for item in stats}\n                   ^^^^^^^^^^^^^^^^^^^\nE       TypeError: string indices must be integers, not 'str'\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:393: TypeError"
+      }
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_csv_selected_column_outputs_csv_statistics",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_csv_selected_column_outputs_csv_statistics",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "longrepr": "tmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvstat_csv_selected_colu0')\n\n    @_mark(\"### `csvstat`\", \"atomic\", \"csvstat --csv restricts statistics to selected columns\")\n    def test_csvstat_csv_selected_column_outputs_csv_statistics(tmp_path):\n        data = write_text(tmp_path / \"items.csv\", \"name,qty\\napple,2\\npear,5\\n\")\n    \n        stdout = ok(\"csvstat\", \"--csv\", \"-c\", \"qty\", str(data), cwd=tmp_path)\n    \n        parsed = list(csv.DictReader(io.StringIO(stdout)))\n>       assert [row[\"column_name\"] for row in parsed] == [\"qty\"]\n                ^^^^^^^^^^^^^^^^^^\nE       KeyError: 'column_name'\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:405: KeyError"
+      }
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_count_single_column_writes_only_value",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvstat_count_single_column_writes_only_value",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_generates_create_table_statement",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_generates_create_table_statement",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_query_mode_filters_loaded_csv",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_query_mode_filters_loaded_csv",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_sql2csv_query_text_returns_csv_rows",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_sql2csv_query_text_returns_csv_rows",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_sql2csv_reads_query_from_file",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_sql2csv_reads_query_from_file",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_header_normalize_space",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_header_normalize_space",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_remove_empty_columns",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_remove_empty_columns",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_length_mismatch_reports_structured_stderr",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvclean_length_mismatch_reports_structured_stderr",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "longrepr": "tmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_csvclean_length_mismatch_0')\n\n    @_mark(\"### `csvclean`\", \"atomic\", \"length-mismatch reports errors on stderr and exits nonzero\")\n    def test_csvclean_length_mismatch_reports_structured_stderr(tmp_path):\n        data = write_text(tmp_path / \"bad.csv\", \"name,qty\\napple,2,extra\\npear,5\\n\")\n    \n        proc = run_cmd(\"csvclean\", \"--length-mismatch\", str(data), cwd=tmp_path)\n    \n        assert proc.returncode == 1\n>       assert rows(proc.stdout) == [[\"name\", \"qty\"], [\"apple\", \"2\", \"extra\"], [\"pear\", \"5\"]]\nE       AssertionError: assert [['name', 'qt...['pear', '5']] == [['name', 'qt...['pear', '5']]\nE         \nE         At index 1 diff: ['apple', '2'] != ['apple', '2', 'extra']\nE         Use -v to get more diff\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:480: AssertionError"
+      }
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_json_array_to_csv",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_json_array_to_csv",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_ndjson_to_csv",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_ndjson_to_csv",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_flattens_nested_json_keys",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_flattens_nested_json_keys",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_fixed_width_with_schema",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_in2csv_converts_fixed_width_with_schema",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "longrepr": "tmp_path = PosixPath('/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-66/test_in2csv_converts_fixed_wid0')\n\n    @_mark(\"### `in2csv`\", \"atomic\", \"fixed-width input uses the public schema option\")\n    def test_in2csv_converts_fixed_width_with_schema(tmp_path):\n        data = write_text(tmp_path / \"items.txt\", \"01apple02\\n02pear 05\\n\")\n        schema = write_text(tmp_path / \"schema.csv\", \"column,start,length\\nid,1,2\\nname,3,5\\nqty,8,2\\n\")\n    \n        stdout = ok(\"in2csv\", \"--format\", \"fixed\", \"--schema\", str(schema), str(data), cwd=tmp_path)\n    \n>       assert rows(stdout) == [[\"id\", \"name\", \"qty\"], [\"01\", \"apple\", \"02\"], [\"02\", \"pear\", \"05\"]]\nE       AssertionError: assert [['id', 'name...'ear 0', '5']] == [['id', 'name...'pear', '05']]\nE         \nE         At index 1 diff: ['1a', 'pple0', '2'] != ['01', 'apple', '02']\nE         Use -v to get more diff\n\n../../../../wip/csvkit/filter/public_tests/test_public_cli_blackbox.py:520: AssertionError"
+      }
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_pipeline_cut_grep_then_json_preserves_filtered_table",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_pipeline_cut_grep_then_json_preserves_filtered_table",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {}
+    },
+    {
+      "nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_insert_then_sql2csv_query_roundtrip",
+      "base_nodeid": "wip/csvkit/filter/public_tests/test_public_cli_blackbox.py::test_csvsql_insert_then_sql2csv_query_roundtrip",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {}
+    }
+  ]
+}

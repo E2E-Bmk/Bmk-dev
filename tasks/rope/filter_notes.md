@@ -1,0 +1,17 @@
+repo: rope
+source_path: /Users/zijian/Bmk-dev-main/repo-pool/rope-master
+commit: unknown (local candidate copy has no .git metadata)
+src_loc: 22548 physical lines in rope/**/*.py
+test_functions: 1937
+test_files: 45 Python files under ropetest/; 40 files contain test definitions
+dominant_test_styles: pytest-collected unittest.TestCase suites plus pytest fixture tests; project-level integration tests create temporary Rope projects/resources and assert exact transformed source, imports, resource state, history/undo, code-assist, findit, and autoimport results; semantic unit tests cover parser, pycore, object inference, resources, serializer, and sqlite autoimport models.
+public_docs: README.rst; docs/index.rst; docs/overview.rst; docs/library.rst; docs/rope.rst; docs/configuration.rst
+core_fact_source: Rope project state over a Python file tree, including Resource/Project objects, parsed modules/scopes, inferred object/type information, refactoring Change graphs, .ropeproject configuration/history/objectdb data, and autoimport sqlite/pickle indexes.
+derived_views: Python library API (Project, Resource, Change, refactoring classes, libutils, codeassist/findit/autoimport); mutated project file tree and refactored source outputs; IDE helper query results (completion, definition, occurrences, pydoc, import organization); persisted .ropeproject history/objectdb/autoimport/config state.
+external_deps: runtime dependency pytoolconfig[global] >= 1.2.2; stdlib sqlite3/socket/subprocess used by autoimport and dynamic object analysis; optional docs dependencies sphinx/sphinx-rtd-theme/sphinx-autodoc-typehints/pytoolconfig[doc]; optional VCS integration can import pysvn only for SVN commands; tests require pytest-family dev deps and include local external_fixturepkg wheel/sdist fixtures. Isolation plan: run against temporary project roots, keep sqlite/objectdb/history under temp ropefolders or in-memory connections, avoid network, and skip/mock optional VCS or subprocess/socket paths if they are not needed for verifier coverage.
+test_import_audit: clean - specified pre-screen `grep -rn "from rope\\._\\|import rope\\._" ropetest/` returned 0 matches, so 0/45 Python test files (0%) have package-level private imports. Supplemental scan found underscore-prefixed private symbol imports in 3 files (_TextChangeDetector, _js2py, _realpath), which Stage 3 should avoid or rewrite.
+docs_test_alignment: aligned - docs/library.rst and docs/overview.rst document Python API projections over projects, resources, refactorings, changes, SOA, pycore, task handles, .ropeproject state, and IDE-helper behavior. Some existing tests go deeper into implementation-adjacent parser/object-model details, so retained verifier tests should stay on documented/public projections.
+contamination_note: rope@1.14.0, released unknown, relative to training cutoff: unknown
+decision: keep
+reason: Large pure-Python refactoring library with durable project/index/history state, multiple public projections over the same facts, local tests, public library docs, and no high-risk package-private test import pattern.
+risks: Local archive lacks commit metadata; release date is not present in local changelog for 1.14.0; many tests assert exact transformed source/import strings; a few tests import underscore-prefixed private symbols; optional dynamic analysis and VCS paths touch socket/subprocess/pysvn and should be isolated from benchmark-owned verifier tests.

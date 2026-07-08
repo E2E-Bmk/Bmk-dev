@@ -1,0 +1,86 @@
+{
+  "task_id": "anyio",
+  "run_id": "codex-anyio-specv1-20260707-001",
+  "spec_version": "v1",
+  "status": "scored",
+  "score": {
+    "passed": 57,
+    "failed": 8,
+    "skipped": 0,
+    "total": 65,
+    "pass_rate": 0.8769230769
+  },
+  "by_layer": {
+    "atomic": {
+      "passed": 38,
+      "failed": 7,
+      "total": 45
+    },
+    "integration": {
+      "passed": 16,
+      "failed": 1,
+      "total": 17
+    },
+    "system_e2e": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    }
+  },
+  "by_source": {
+    "upstream": {
+      "passed": 9,
+      "failed": 3,
+      "total": 12
+    },
+    "generated": {
+      "passed": 48,
+      "failed": 5,
+      "total": 53
+    }
+  },
+  "failed_nodeids": [
+    "filter/rewritten_upstream_tests.py::test_upstream_buffered_receive_exactly",
+    "filter/rewritten_upstream_tests.py::test_upstream_buffered_receive_exactly_incomplete",
+    "filter/rewritten_upstream_tests.py::test_upstream_buffered_receive_until",
+    "filter/generated_tests.py::test_deprecated_worker_interpreter_alias_warns",
+    "filter/generated_tests.py::test_buffered_receive_exactly_reads_across_chunks",
+    "filter/generated_tests.py::test_buffered_receive_until_returns_before_delimiter",
+    "filter/generated_tests.py::test_buffered_receive_exactly_incomplete_raises",
+    "filter/generated_tests.py::test_temporary_directory_context_removes_path"
+  ],
+  "failure_clusters": [
+    {
+      "cluster": "buffered-byte-receive-over-object-stream",
+      "failed": 6,
+      "sections": [
+        "Streams and Networking",
+        "Error Semantics"
+      ],
+      "summary": "BufferedByteReceiveStream calls receive(max_bytes) on MemoryObjectReceiveStream, but the candidate memory stream receive method accepts no size argument."
+    },
+    {
+      "cluster": "deprecated-worker-interpreter-alias",
+      "failed": 1,
+      "sections": [
+        "Installable Surface"
+      ],
+      "summary": "Accessing BrokenWorkerIntepreter returns the alias but does not emit DeprecationWarning."
+    },
+    {
+      "cluster": "temporary-directory-context-value",
+      "failed": 1,
+      "sections": [
+        "Files, Processes and Workers"
+      ],
+      "summary": "TemporaryDirectory async context returns a TemporaryDirectory object instead of a path-like directory value."
+    }
+  ],
+  "commands": {
+    "failed_plugin_duplicate_attempt": "PYTHONPATH=/Users/zijian/bench/Bmk-dev/candidate-runs/codex-anyio-specv1-20260707-001/output pytest -q -p anyio.pytest_plugin /Users/zijian/bench/Bmk-dev/wip/anyio/filter/rewritten_upstream_tests.py /Users/zijian/bench/Bmk-dev/wip/anyio/filter/generated_tests.py",
+    "score_command": "PYTHONPATH=/Users/zijian/bench/Bmk-dev/candidate-runs/codex-anyio-specv1-20260707-001/output pytest -q /Users/zijian/bench/Bmk-dev/wip/anyio/filter/rewritten_upstream_tests.py /Users/zijian/bench/Bmk-dev/wip/anyio/filter/generated_tests.py",
+    "import_preflight": "PYTHONPATH=/Users/zijian/bench/Bmk-dev/candidate-runs/codex-anyio-specv1-20260707-001/output python3 -c 'import anyio; print(anyio.__file__)'"
+  },
+  "import_preflight_output": "/Users/zijian/bench/Bmk-dev/candidate-runs/codex-anyio-specv1-20260707-001/output/anyio/__init__.py",
+  "environment_note": "Scored in the local macOS sandbox with PYTHONPATH isolation. The task-synthesizer Stage 4 note prefers Linux or WSL; no native Windows run was used."
+}

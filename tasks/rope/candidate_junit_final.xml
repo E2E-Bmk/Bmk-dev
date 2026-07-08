@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="13" skipped="0" tests="33" time="0.102" timestamp="2026-07-01T17:55:22.947076+08:00" hostname="zijiandeMacBook-Pro.local"><testcase classname="ropetest.contrib.changestacktest.ChangeStackTest" name="test_change_stack" time="0.001"><failure message="AssertionError: '3' != '1'&#10;- 3&#10;+ 1">ropetest/contrib/changestacktest.py:30: in test_change_stack
+    self.assertEqual("3", myfile.read())
+E   AssertionError: '3' != '1'
+E   - 3
+E   + 1</failure></testcase><testcase classname="ropetest.contrib.codeassisttest.CodeAssistTest" name="test_completing_global_variables" time="0.001"><failure message="AssertionError: 'global' != 'local'&#10;- global&#10;? -  ^&#10;+ local&#10;?   ^&#10; : proposal &lt;my_global&gt; has wrong scope, expected 'global', got 'local'">ropetest/contrib/codeassisttest.py:65: in test_completing_global_variables
+    self.assert_completion_in_result("my_global", "global", result)
+ropetest/contrib/codeassisttest.py:39: in assert_completion_in_result
+    self.assertEqual(
+E   AssertionError: 'global' != 'local'
+E   - global
+E   ? -  ^
+E   + local
+E   ?   ^
+E    : proposal &lt;my_global&gt; has wrong scope, expected 'global', got 'local'</failure></testcase><testcase classname="ropetest.contrib.codeassisttest.CodeAssistTest" name="test_completion_result" time="0.000" /><testcase classname="ropetest.contrib.codeassisttest.CodeAssistTest" name="test_get_calltips_for_classes" time="0.000"><failure message="AssertionError: 'C.__init__(self)' != 'C(...)'&#10;- C.__init__(self)&#10;+ C(...)">ropetest/contrib/codeassisttest.py:1045: in test_get_calltips_for_classes
+    self.assertEqual("C.__init__(self)", doc)
+E   AssertionError: 'C.__init__(self)' != 'C(...)'
+E   - C.__init__(self)
+E   + C(...)</failure></testcase><testcase classname="ropetest.contrib.codeassisttest.CodeAssistTest" name="test_get_definition_location" time="0.000" /><testcase classname="ropetest.contrib.codeassisttest.CodeAssistTest" name="test_get_definition_location_dotted_names_method" time="0.000" /><testcase classname="ropetest.contrib.codeassisttest.CodeAssistTest" name="test_local_variable_completion_proposal" time="0.000" /><testcase classname="ropetest.contrib.codeassisttest.CodeAssistTest" name="test_proposals_sorter" time="0.000" /><testcase classname="ropetest.contrib.codeassisttest.CodeAssistTest" name="test_simple_get_calltips" time="0.000" /><testcase classname="ropetest.contrib.codeassisttest.CodeAssistInProjectsTest" name="test_assist_on_relative_imports" time="0.001"><failure message="AssertionError: completion &lt;a_func&gt; not proposed">ropetest/contrib/codeassisttest.py:1505: in test_assist_on_relative_imports
+    self.assert_completion_in_result("a_func", "imported", result)
+ropetest/contrib/codeassisttest.py:1358: in assert_completion_in_result
+    self.fail("completion &lt;%s&gt; not proposed" % name)
+E   AssertionError: completion &lt;a_func&gt; not proposed</failure></testcase><testcase classname="ropetest.contrib.codeassisttest.CodeAssistInProjectsTest" name="test_completing_after_dot" time="0.001"><failure message="AssertionError: completion &lt;sample_method&gt; not proposed">ropetest/contrib/codeassisttest.py:1444: in test_completing_after_dot
+    self.assert_completion_in_result("sample_method", "attribute", result)
+ropetest/contrib/codeassisttest.py:1358: in assert_completion_in_result
+    self.fail("completion &lt;%s&gt; not proposed" % name)
+E   AssertionError: completion &lt;sample_method&gt; not proposed</failure></testcase><testcase classname="ropetest.contrib.codeassisttest.CodeAssistInProjectsTest" name="test_result_start_offset_for_dotted_completions" time="0.001" /><testcase classname="ropetest.contrib.codeassisttest.CodeAssistInProjectsTest" name="test_simple_import" time="0.001" /><testcase classname="ropetest.contrib.codeassisttest.CodeAssistInProjectsTest" name="test_starting_expression" time="0.001" /><testcase classname="ropetest.contrib.finderrorstest.FindErrorsTest" name="test_bad_attributes" time="0.001"><failure message="AssertionError: 1 != 0">ropetest/contrib/finderrorstest.py:52: in test_bad_attributes
+    self.assertEqual(1, len(result))
+E   AssertionError: 1 != 0</failure></testcase><testcase classname="ropetest.contrib.finderrorstest.FindErrorsTest" name="test_defined_later" time="0.001"><failure message="AssertionError: 1 != 0">ropetest/contrib/finderrorstest.py:30: in test_defined_later
+    self.assertEqual(1, len(result))
+E   AssertionError: 1 != 0</failure></testcase><testcase classname="ropetest.contrib.finderrorstest.FindErrorsTest" name="test_unresolved_variables" time="0.001" /><testcase classname="ropetest.contrib.findittest.FindItTest" name="test_find_definition_in_other_modules" time="0.001" /><testcase classname="ropetest.contrib.findittest.FindItTest" name="test_find_occurrences_resources_parameter" time="0.001" /><testcase classname="ropetest.contrib.findittest.FindItTest" name="test_finding_occurrences" time="0.001" /><testcase classname="ropetest.contrib.findittest.FindItTest" name="test_finding_occurrences_in_more_than_one_module" time="0.001" /><testcase classname="ropetest.contrib.findittest.FindItTest" name="test_trivial_find_definition" time="0.000"><failure message="AttributeError: 'NoneType' object has no attribute 'offset'">ropetest/contrib/findittest.py:133: in test_trivial_find_definition
+    self.assertEqual(start, result.offset)
+E   AttributeError: 'NoneType' object has no attribute 'offset'</failure></testcase><testcase classname="ropetest.contrib.findittest.FindItTest" name="test_trivial_find_implementations" time="0.001"><failure message="AssertionError: Lists differ: [] != [Location('mod1.py', (21, 22))]&#10;&#10;Second list contains 1 additional elements.&#10;First extra element 0:&#10;Location('mod1.py', (21, 22))&#10;&#10;- []&#10;+ [Location('mod1.py', (21, 22))]">ropetest/contrib/findittest.py:88: in test_trivial_find_implementations
+    self.assertEqual([], result)
+E   AssertionError: Lists differ: [] != [Location('mod1.py', (21, 22))]
+E   
+E   Second list contains 1 additional elements.
+E   First extra element 0:
+E   Location('mod1.py', (21, 22))
+E   
+E   - []
+E   + [Location('mod1.py', (21, 22))]</failure></testcase><testcase classname="ropetest.contrib.fixmodnamestest.FixModuleNamesTest" name="test_fixing_contents" time="0.001"><failure message="AssertionError: 'import _od2\n' != 'import xod2\n'&#10;- import _od2&#10;?        ^&#10;+ import xod2&#10;?        ^">ropetest/contrib/fixmodnamestest.py:39: in test_fixing_contents
+    self.assertEqual("import _od2\n", newmod1.read())
+E   AssertionError: 'import _od2\n' != 'import xod2\n'
+E   - import _od2
+E   ?        ^
+E   + import xod2
+E   ?        ^</failure></testcase><testcase classname="ropetest.contrib.fixmodnamestest.FixModuleNamesTest" name="test_handling_nested_modules" time="0.001"><failure message="AssertionError: True is not false">ropetest/contrib/fixmodnamestest.py:46: in test_handling_nested_modules
+    self.assertFalse(pkg.exists())
+E   AssertionError: True is not false</failure></testcase><testcase classname="ropetest.contrib.fixmodnamestest.FixModuleNamesTest" name="test_packages_module_renaming" time="0.001"><failure message="AssertionError: True is not false">ropetest/contrib/fixmodnamestest.py:28: in test_packages_module_renaming
+    self.assertFalse(pkg.exists())
+E   AssertionError: True is not false</failure></testcase><testcase classname="ropetest.contrib.fixmodnamestest.FixModuleNamesTest" name="test_simple_module_renaming" time="0.001" /><testcase classname="ropetest.historytest.HistoryTest" name="test_moving_files" time="0.001" /><testcase classname="ropetest.historytest.HistoryTest" name="test_moving_files_to_folders" time="0.001"><failure message="IsADirectoryError: [Errno 21] Is a directory: '/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/ropetest-run-e0gtjc5_/project-tlcfnf_j/sample_project/my_file.txt'">ropetest/historytest.py:36: in test_moving_files_to_folders
+    self.assertEqual("", my_file.read())
+../solution/rope/base/resources.py:107: in read
+    raw = self.read_bytes()
+../solution/rope/base/resources.py:102: in read_bytes
+    return self.project.fscommands.read(self.real_path)
+../solution/rope/base/fscommands.py:34: in read
+    with open(path, "rb") as handle:
+E   IsADirectoryError: [Errno 21] Is a directory: '/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/ropetest-run-e0gtjc5_/project-tlcfnf_j/sample_project/my_file.txt'</failure></testcase><testcase classname="ropetest.historytest.HistoryTest" name="test_undoing_writes" time="0.001" /><testcase classname="ropetest.historytest.IsolatedHistoryTest" name="test_redo_list_underflow" time="0.001" /><testcase classname="ropetest.historytest.IsolatedHistoryTest" name="test_undo_list_underflow" time="0.001" /><testcase classname="ropetest.historytest.IsolatedHistoryTest" name="test_undoing_not_available_change" time="0.001" /></testsuite></testsuites>

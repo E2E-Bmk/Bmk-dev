@@ -1,0 +1,27 @@
+{
+  "run_id": "gpt-5.5-beets-spec_v1-20260702-run1",
+  "total": 41,
+  "passed": 38,
+  "failed": 3,
+  "errors": 0,
+  "skipped": 0,
+  "pass_rate": 0.926829268292683,
+  "failures": [
+    {
+      "nodeid": "wip.beets.filter.generated_tests::test_destination_substitutes_metadata_values",
+      "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x1044ad470>('Album/Artist Title.mp3')\n +    where <built-in method endswith of str object at 0x1044ad470> = '/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-32/test_destination_substitutes_m0/out/Artist/Album/1 Title.mp3'.endswith\n +      where '/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-32/test_destination_substitutes_m0/out/Artist/Album/1 Title.mp3' = <function _fscodec.<locals>.fsdecode at 0x102fc5300>(b'/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-32/test_destination_substitutes_m0/out/Artist/Album/1 Title.mp3')\n +        where <function _fscodec.<locals>.fsdecode at 0x102fc5300> = os.fsdecode",
+      "text": "wip/beets/filter/generated_tests.py:312: in test_destination_substitutes_metadata_values\n    assert os.fsdecode(dest).endswith(\"Album/Artist Title.mp3\")\nE   AssertionError: assert False\nE    +  where False = <built-in method endswith of str object at 0x1044ad470>('Album/Artist Title.mp3')\nE    +    where <built-in method endswith of str object at 0x1044ad470> = '/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-32/test_destination_substitutes_m0/out/Artist/Album/1 Title.mp3'.endswith\nE    +      where '/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-32/test_destination_substitutes_m0/out/Artist/Album/1 Title.mp3' = <function _fscodec.<locals>.fsdecode at 0x102fc5300>(b'/private/var/folders/8v/2v0n4gpd503fy6q0_lyh18gh0000gn/T/pytest-of-zijian/pytest-32/test_destination_substitutes_m0/out/Artist/Album/1 Title.mp3')\nE    +        where <function _fscodec.<locals>.fsdecode at 0x102fc5300> = os.fsdecode"
+    },
+    {
+      "nodeid": "wip.beets.filter.generated_tests::test_destination_relative_to_library_root",
+      "message": "AssertionError: assert 'Artist One/E...m/1 Title.mp3' == 'Artist One/Title.mp3'\n  \n  - Artist One/Title.mp3\n  + Artist One/Example Album/1 Title.mp3",
+      "text": "wip/beets/filter/generated_tests.py:336: in test_destination_relative_to_library_root\n    assert os.fsdecode(dest) == \"Artist One/Title.mp3\"\nE   AssertionError: assert 'Artist One/E...m/1 Title.mp3' == 'Artist One/Title.mp3'\nE     \nE     - Artist One/Title.mp3\nE     + Artist One/Example Album/1 Title.mp3"
+    },
+    {
+      "nodeid": "wip.beets.filter.generated_tests::test_cli_fields_includes_flexible_attribute",
+      "message": "AssertionError: assert 'public_flex' in 'added\\nalbum\\nalbum_id\\nalbumartist\\nalbumartists\\nalbumartistsort\\nalbumdisambig\\nalbumtotal\\nalbumtype\\narranger\\na...onth\\nmtime\\npath\\nreleasegroupdisambig\\nremixer\\nremixers\\nsingleton\\ntitle\\ntrack\\ntrackdisambig\\ntracktotal\\nyear\\n'\n +  where 'added\\nalbum\\nalbum_id\\nalbumartist\\nalbumartists\\nalbumartistsort\\nalbumdisambig\\nalbumtotal\\nalbumtype\\narranger\\na...onth\\nmtime\\npath\\nreleasegroupdisambig\\nremixer\\nremixers\\nsingleton\\ntitle\\ntrack\\ntrackdisambig\\ntracktotal\\nyear\\n' = CaptureResult(out='added\\nalbum\\nalbum_id\\nalbumartist\\nalbumartists\\nalbumartistsort\\nalbumdisambig\\nalbumtotal\\nalbu...me\\npath\\nreleasegroupdisambig\\nremixer\\nremixers\\nsingleton\\ntitle\\ntrack\\ntrackdisambig\\ntracktotal\\nyear\\n', err='').out",
+      "text": "wip/beets/filter/generated_tests.py:440: in test_cli_fields_includes_flexible_attribute\n    assert \"public_flex\" in captured.out\nE   AssertionError: assert 'public_flex' in 'added\\nalbum\\nalbum_id\\nalbumartist\\nalbumartists\\nalbumartistsort\\nalbumdisambig\\nalbumtotal\\nalbumtype\\narranger\\na...onth\\nmtime\\npath\\nreleasegroupdisambig\\nremixer\\nremixers\\nsingleton\\ntitle\\ntrack\\ntrackdisambig\\ntracktotal\\nyear\\n'\nE    +  where 'added\\nalbum\\nalbum_id\\nalbumartist\\nalbumartists\\nalbumartistsort\\nalbumdisambig\\nalbumtotal\\nalbumtype\\narranger\\na...onth\\nmtime\\npath\\nreleasegroupdisambig\\nremixer\\nremixers\\nsingleton\\ntitle\\ntrack\\ntrackdisambig\\ntracktotal\\nyear\\n' = CaptureResult(out='added\\nalbum\\nalbum_id\\nalbumartist\\nalbumartists\\nalbumartistsort\\nalbumdisambig\\nalbumtotal\\nalbu...me\\npath\\nreleasegroupdisambig\\nremixer\\nremixers\\nsingleton\\ntitle\\ntrack\\ntrackdisambig\\ntracktotal\\nyear\\n', err='').out"
+    }
+  ],
+  "errors_list": []
+}

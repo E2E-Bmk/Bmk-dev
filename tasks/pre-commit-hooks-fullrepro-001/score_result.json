@@ -1,0 +1,2477 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 180,
+  "remove_paths": [
+    "pre_commit"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/pre-commit-hooks-fullrepro-001",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/solution",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/pre-commit-hooks-fullrepro-001/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/pre-commit-hooks-fullrepro-001/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier",
+  "grouped_results": {
+    "filter/generated_tests.py": {
+      "returncode": 1,
+      "stdout": "...FFF.F..........F......FF....F................F.F..                    [100%]\n=================================== FAILURES ===================================\n___________________ test_load_manifest_applies_hook_defaults ___________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_manifest_applies_hoo0')\n\n    def test_load_manifest_applies_hook_defaults(tmp_path):\n        manifest = _write(\n            tmp_path / \".pre-commit-hooks.yaml\",\n            \"- id: h\\n  name: Hook\\n  entry: echo hi\\n  language: system\\n\",\n        )\n        (hook,) = load_manifest(str(manifest))\n        assert hook[\"id\"] == \"h\"\n>       assert hook[\"language\"] == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\nfilter/generated_tests.py:114: AssertionError\n________________ test_load_manifest_normalizes_script_language _________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_manifest_normalizes_0')\n\n    def test_load_manifest_normalizes_script_language(tmp_path):\n        manifest = _write(\n            tmp_path / \".pre-commit-hooks.yaml\",\n            \"- id: h\\n  name: Hook\\n  entry: script.sh\\n  language: script\\n\",\n        )\n        (hook,) = load_manifest(str(manifest))\n>       assert hook[\"language\"] == \"unsupported_script\"\nE       AssertionError: assert 'script' == 'unsupported_script'\nE         \nE         - unsupported_script\nE         + script\n\nfilter/generated_tests.py:137: AssertionError\n_________________ test_load_config_applies_top_level_defaults __________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_config_applies_top_l0')\n\n    def test_load_config_applies_top_level_defaults(tmp_path):\n        config = _write(tmp_path / \".pre-commit-config.yaml\", \"repos: []\\n\")\n        loaded = load_config(str(config))\n        assert loaded[\"repos\"] == []\n        assert loaded[\"default_install_hook_types\"] == [\"pre-commit\"]\n>       assert loaded[\"default_stages\"] == list(STAGES)\nE       AssertionError: assert ['commit-msg'...-commit', ...] == ['commit-msg'...-commit', ...]\nE         \nE         Right contains one more item: 'manual'\nE         Use -v to get more diff\n\nfilter/generated_tests.py:145: AssertionError\n_______________ test_load_config_normalizes_local_hook_defaults ________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_config_normalizes_lo0')\n\n    def test_load_config_normalizes_local_hook_defaults(tmp_path):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            _local_config(\n                \"  - id: h\\n\"\n                \"    name: Hook\\n\"\n                \"    entry: echo hi\\n\"\n                \"    language: system\\n\"\n            ),\n        )\n        hook = load_config(str(config))[\"repos\"][0][\"hooks\"][0]\n>       assert hook[\"language\"] == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\nfilter/generated_tests.py:174: AssertionError\n____________________ test_normalize_cmd_uses_script_shebang ____________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_normalize_cmd_uses_script0')\n\n    def test_normalize_cmd_uses_script_shebang(tmp_path):\n        script = _write(tmp_path / \"tool.py\", \"#!/usr/bin/env python\\nprint('ok')\\n\")\n>       normalized = normalize_cmd((str(script), \"arg\"))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/generated_tests.py:310: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../solution/pre_commit/parse_shebang.py:37: in normalize_cmd\n    interp = _find_executable(parts[1], env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nexe = 'python', env = None\n\n    def _find_executable(exe, env):\n        path = (env or os.environ).get(\"PATH\")\n        found = shutil.which(exe, path=path)\n        if found:\n            return found\n        if os.path.isfile(exe):\n            return os.path.abspath(exe)\n>       raise ExecutableNotFoundError(f\"Executable `{exe}` not found\")\nE       pre_commit.parse_shebang.ExecutableNotFoundError: Executable `python` not found\n\n../../solution/pre_commit/parse_shebang.py:17: ExecutableNotFoundError\n_____________ test_all_hooks_resolves_local_hook_public_attributes _____________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_all_hooks_resolves_local_0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b473090>\n\n    def test_all_hooks_resolves_local_hook_public_attributes(tmp_path, monkeypatch):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            _local_config(\n                \"  - id: h\\n\"\n                \"    alias: alias-h\\n\"\n                \"    name: Hook\\n\"\n                \"    entry: echo hi\\n\"\n                \"    language: system\\n\"\n                \"    args: [one]\\n\"\n                \"    stages: [manual]\\n\"\n            ),\n        )\n        monkeypatch.chdir(tmp_path)\n        monkeypatch.setenv(\"PRE_COMMIT_HOME\", str(tmp_path / \"home\"))\n        (hook,) = all_hooks(load_config(str(config)), Store(str(tmp_path / \"store\")))\n        assert hook.id == \"h\"\n        assert hook.alias == \"alias-h\"\n        assert hook.name == \"Hook\"\n        assert hook.entry == \"echo hi\"\n>       assert hook.language == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:408: AssertionError\n__________________ test_all_hooks_resolves_meta_identity_hook __________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_all_hooks_resolves_meta_i0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b4710d0>\n\n    def test_all_hooks_resolves_meta_identity_hook(tmp_path, monkeypatch):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            \"repos:\\n- repo: meta\\n  hooks:\\n  - id: identity\\n\",\n        )\n        monkeypatch.chdir(tmp_path)\n        monkeypatch.setenv(\"PRE_COMMIT_HOME\", str(tmp_path / \"home\"))\n        (hook,) = all_hooks(load_config(str(config)), Store(str(tmp_path / \"store\")))\n        assert hook.id == \"identity\"\n        assert hook.name == \"identity\"\n>       assert set(hook.stages) == set(STAGES)\nE       AssertionError: assert {'commit-msg'...-commit', ...} == {'commit-msg'...rewrite', ...}\nE         \nE         Extra items in the right set:\nE         'manual'\nE         Use -v to get more diff\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:423: AssertionError\n__________ test_cli_install_and_uninstall_manage_selected_hook_script __________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_install_and_uninstall0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b442e10>\n\n    def test_cli_install_and_uninstall_manage_selected_hook_script(tmp_path, monkeypatch):\n        repo, cfg = _simple_repo(\n            tmp_path,\n            monkeypatch,\n            _local_config(\n                \"  - id: ok\\n\"\n                \"    name: Ok\\n\"\n                \"    entry: python -c \\\"import sys; sys.exit(0)\\\"\\n\"\n                \"    language: system\\n\"\n            ),\n        )\n        hook_path = repo / \".git\" / \"hooks\" / \"pre-commit\"\n>       assert main((\"install\", \"--config\", str(cfg), \"--hook-type\", \"pre-commit\", \"--color\", \"never\")) == 0\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:472: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/solution/pre_commit/main.py:133: in main\n    args = parser.parse_args(argv)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:1877: in parse_args\n    self.error(msg % ' '.join(argv))\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:2640: in error\n    self.exit(2, _('%(prog)s: error: %(message)s\\n') % args)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = ArgumentParser(prog='pre-commit', usage=None, description=None, formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)\nstatus = 2\nmessage = 'pre-commit: error: unrecognized arguments: --color never\\n'\n\n    def exit(self, status=0, message=None):\n        if message:\n            self._print_message(message, _sys.stderr)\n>       _sys.exit(status)\nE       SystemExit: 2\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:2627: SystemExit\n----------------------------- Captured stderr call -----------------------------\nusage: pre-commit [-h] [--version]\n                  {run,hook-impl,install,uninstall,install-hooks,init-templatedir,validate-config,validate-manifest,sample-config,migrate-config,clean,gc,autoupdate,try-repo,help}\n                  ...\npre-commit: error: unrecognized arguments: --color never\n____________ test_cli_migrate_config_rewrites_python_venv_language _____________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_migrate_config_rewrit2')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b1f5210>\n\n    def test_cli_migrate_config_rewrites_python_venv_language(tmp_path, monkeypatch):\n        repo = tmp_path / \"repo\"\n        repo.mkdir()\n        _init_git_repo(repo)\n        monkeypatch.chdir(repo)\n        config = _write(\n            repo / \".pre-commit-config.yaml\",\n            \"repos:\\n\"\n            \"- repo: local\\n\"\n            \"  hooks:\\n\"\n            \"  - id: h\\n\"\n            \"    name: Hook\\n\"\n            \"    entry: python -V\\n\"\n            \"    language: python_venv\\n\",\n        )\n        assert main((\"migrate-config\", \"--config\", str(config))) == 0\n        migrated = config.read_text(encoding=\"UTF-8\")\n>       assert \"language: python\\n\" in migrated\nE       AssertionError: assert 'language: python\\n' in 'repos:\\n- repo: local\\n  hooks:\\n  - id: h\\n    name: Hook\\n    entry: python -V\\n    language: python_venv\\n'\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:773: AssertionError\n____________ test_cli_run_fail_fast_stops_after_first_failing_hook _____________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_run_fail_fast_stops_a0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b64add0>\n\n    def test_cli_run_fail_fast_stops_after_first_failing_hook(tmp_path, monkeypatch):\n        repo, cfg = _simple_repo(\n            tmp_path,\n            monkeypatch,\n            _local_config(\n                \"  - id: first\\n\"\n                \"    name: First\\n\"\n                \"    entry: first-message\\n\"\n                \"    language: fail\\n\"\n                \"    files: \\\\.txt$\\n\"\n                \"  - id: second\\n\"\n                \"    name: Second\\n\"\n                \"    entry: second-message\\n\"\n                \"    language: fail\\n\"\n                \"    files: \\\\.txt$\\n\"\n            ),\n        )\n        result = _run_pre_commit_module(repo, \"run\", \"--all-files\", \"--fail-fast\", \"--config\", str(cfg), \"--color\", \"never\")\n>       assert result.returncode == 1\nE       AssertionError: assert 2 == 1\nE        +  where 2 = CompletedProcess(args=('/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'pre_commit'...g,clean,gc,autoupdate,try-repo,help}\\n                  ...\\npre-commit: error: unrecognized arguments: --fail-fast\\n').returncode\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:818: AssertionError\n=========================== short test summary info ============================\nFAILED filter/generated_tests.py::test_load_manifest_applies_hook_defaults - ...\nFAILED filter/generated_tests.py::test_load_manifest_normalizes_script_language\nFAILED filter/generated_tests.py::test_load_config_applies_top_level_defaults\nFAILED filter/generated_tests.py::test_load_config_normalizes_local_hook_defaults\nFAILED filter/generated_tests.py::test_normalize_cmd_uses_script_shebang - pr...\nFAILED filter/generated_tests.py::test_all_hooks_resolves_local_hook_public_attributes\nFAILED filter/generated_tests.py::test_all_hooks_resolves_meta_identity_hook\nFAILED filter/generated_tests.py::test_cli_install_and_uninstall_manage_selected_hook_script\nFAILED filter/generated_tests.py::test_cli_migrate_config_rewrites_python_venv_language\nFAILED filter/generated_tests.py::test_cli_run_fail_fast_stops_after_first_failing_hook\n10 failed, 43 passed in 23.58s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783030872.4745371,
+        "duration": 23.430400609970093,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 43,
+          "failed": 10,
+          "total": 53,
+          "collected": 53
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "filter/generated_tests.py::test_hook_types_are_documented_git_hook_types",
+                "type": "Function",
+                "lineno": 79
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_stages_extend_hook_types_with_manual",
+                "type": "Function",
+                "lineno": 95
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_legacy_stage_names_are_normalized",
+                "type": "Function",
+                "lineno": 99
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_load_manifest_applies_hook_defaults",
+                "type": "Function",
+                "lineno": 106
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_load_manifest_normalizes_script_language",
+                "type": "Function",
+                "lineno": 130
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_load_config_applies_top_level_defaults",
+                "type": "Function",
+                "lineno": 139
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_load_config_accepts_ci_mapping_without_changing_local_hooks",
+                "type": "Function",
+                "lineno": 151
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_load_config_normalizes_local_hook_defaults",
+                "type": "Function",
+                "lineno": 162
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_load_config_preserves_explicit_hook_overrides",
+                "type": "Function",
+                "lineno": 180
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_invalid_config_without_repos_raises_invalid_config_error",
+                "type": "Function",
+                "lineno": 209
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_invalid_config_requires_rev_for_normal_repositories",
+                "type": "Function",
+                "lineno": 215
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_invalid_config_rejects_rev_for_local_repositories",
+                "type": "Function",
+                "lineno": 224
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_invalid_manifest_missing_required_keys_raises_invalid_manifest_error",
+                "type": "Function",
+                "lineno": 233
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_use_color_resolves_always_and_never",
+                "type": "Function",
+                "lineno": 259
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_store_uses_pre_commit_home_and_creates_cache_files",
+                "type": "Function",
+                "lineno": 276
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_store_make_local_reuses_matching_dependency_sets",
+                "type": "Function",
+                "lineno": 285
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_normalize_cmd_resolves_existing_executable",
+                "type": "Function",
+                "lineno": 296
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_normalize_cmd_raises_for_missing_executable",
+                "type": "Function",
+                "lineno": 302
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_normalize_cmd_uses_script_shebang",
+                "type": "Function",
+                "lineno": 307
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cmd_output_returns_text_streams",
+                "type": "Function",
+                "lineno": 315
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cmd_output_b_returns_bytes_streams",
+                "type": "Function",
+                "lineno": 322
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cmd_output_can_return_nonzero_without_checking",
+                "type": "Function",
+                "lineno": 334
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cmd_output_checked_nonzero_raises_called_process_error",
+                "type": "Function",
+                "lineno": 346
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_partition_returns_executable_batches_and_handles_empty_args",
+                "type": "Function",
+                "lineno": 353
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_partition_rejects_argument_lists_that_cannot_fit",
+                "type": "Function",
+                "lineno": 360
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_all_hooks_resolves_local_hook_public_attributes",
+                "type": "Function",
+                "lineno": 387
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_all_hooks_resolves_meta_identity_hook",
+                "type": "Function",
+                "lineno": 412
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_validate_config_returns_zero_for_valid_and_nonzero_for_invalid",
+                "type": "Function",
+                "lineno": 425
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_returns_zero_for_valid_and_nonzero_for_invalid",
+                "type": "Function",
+                "lineno": 432
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_sample_config_prints_yaml_example",
+                "type": "Function",
+                "lineno": 442
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_clean_removes_the_configured_store",
+                "type": "Function",
+                "lineno": 449
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_install_and_uninstall_manage_selected_hook_script",
+                "type": "Function",
+                "lineno": 459
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_fail_language_fails_and_reports_hook_id",
+                "type": "Function",
+                "lineno": 480
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_skip_environment_skips_hook_id",
+                "type": "Function",
+                "lineno": 500
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_skip_environment_accepts_alias",
+                "type": "Function",
+                "lineno": 516
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_pygrep_fails_when_pattern_matches",
+                "type": "Function",
+                "lineno": 533
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_pygrep_negate_passes_when_pattern_matches",
+                "type": "Function",
+                "lineno": 554
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_always_run_executes_even_without_matching_files",
+                "type": "Function",
+                "lineno": 571
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_pass_filenames_false_omits_selected_filenames",
+                "type": "Function",
+                "lineno": 587
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_manual_stage_selects_manual_hooks",
+                "type": "Function",
+                "lineno": 609
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_files_limits_hook_input_to_explicit_files",
+                "type": "Function",
+                "lineno": 640
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_validate_config_accepts_multiple_valid_files",
+                "type": "Function",
+                "lineno": 663
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_validate_config_fails_when_any_file_is_invalid",
+                "type": "Function",
+                "lineno": 669
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_accepts_multiple_valid_files",
+                "type": "Function",
+                "lineno": 675
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_fails_when_any_file_is_invalid",
+                "type": "Function",
+                "lineno": 682
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_migrate_config_wraps_legacy_repo_list",
+                "type": "Function",
+                "lineno": 691
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_sha_key_to_rev",
+                "type": "Function",
+                "lineno": 711
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_legacy_stage_names",
+                "type": "Function",
+                "lineno": 730
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_python_venv_language",
+                "type": "Function",
+                "lineno": 755
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_single_hook_id_limits_execution",
+                "type": "Function",
+                "lineno": 776
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_fail_fast_stops_after_first_failing_hook",
+                "type": "Function",
+                "lineno": 799
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_skips_non_matching_files_without_always_run",
+                "type": "Function",
+                "lineno": 822
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_run_default_stage_ignores_manual_only_hooks",
+                "type": "Function",
+                "lineno": 837
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "filter/generated_tests.py::test_hook_types_are_documented_git_hook_types",
+            "lineno": 79,
+            "outcome": "passed",
+            "keywords": [
+              "test_hook_types_are_documented_git_hook_types",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.013603178005723748,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00015141200128709897,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014495800132863224,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_stages_extend_hook_types_with_manual",
+            "lineno": 95,
+            "outcome": "passed",
+            "keywords": [
+              "test_stages_extend_hook_types_with_manual",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002994560054503381,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00012259399954928085,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011933100176975131,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_legacy_stage_names_are_normalized",
+            "lineno": 99,
+            "outcome": "passed",
+            "keywords": [
+              "test_legacy_stage_names_are_normalized",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002638770019984804,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010613100312184542,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010341800225432962,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_load_manifest_applies_hook_defaults",
+            "lineno": 106,
+            "outcome": "failed",
+            "keywords": [
+              "test_load_manifest_applies_hook_defaults",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0012259300056030042,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.009617762996640522,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                "lineno": 114,
+                "message": "AssertionError: assert 'system' == 'unsupported'\n  \n  - unsupported\n  + system"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 114,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_manifest_applies_hoo0')\n\n    def test_load_manifest_applies_hook_defaults(tmp_path):\n        manifest = _write(\n            tmp_path / \".pre-commit-hooks.yaml\",\n            \"- id: h\\n  name: Hook\\n  entry: echo hi\\n  language: system\\n\",\n        )\n        (hook,) = load_manifest(str(manifest))\n        assert hook[\"id\"] == \"h\"\n>       assert hook[\"language\"] == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\nfilter/generated_tests.py:114: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0012767110019922256,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_load_manifest_normalizes_script_language",
+            "lineno": 130,
+            "outcome": "failed",
+            "keywords": [
+              "test_load_manifest_normalizes_script_language",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.006519884002045728,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.010188442000071518,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                "lineno": 137,
+                "message": "AssertionError: assert 'script' == 'unsupported_script'\n  \n  - unsupported_script\n  + script"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 137,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_manifest_normalizes_0')\n\n    def test_load_manifest_normalizes_script_language(tmp_path):\n        manifest = _write(\n            tmp_path / \".pre-commit-hooks.yaml\",\n            \"- id: h\\n  name: Hook\\n  entry: script.sh\\n  language: script\\n\",\n        )\n        (hook,) = load_manifest(str(manifest))\n>       assert hook[\"language\"] == \"unsupported_script\"\nE       AssertionError: assert 'script' == 'unsupported_script'\nE         \nE         - unsupported_script\nE         + script\n\nfilter/generated_tests.py:137: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0022568330023204908,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_load_config_applies_top_level_defaults",
+            "lineno": 139,
+            "outcome": "failed",
+            "keywords": [
+              "test_load_config_applies_top_level_defaults",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008813050008029677,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001809836998290848,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                "lineno": 145,
+                "message": "AssertionError: assert ['commit-msg'...-commit', ...] == ['commit-msg'...-commit', ...]\n  \n  Right contains one more item: 'manual'\n  Use -v to get more diff"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 145,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_config_applies_top_l0')\n\n    def test_load_config_applies_top_level_defaults(tmp_path):\n        config = _write(tmp_path / \".pre-commit-config.yaml\", \"repos: []\\n\")\n        loaded = load_config(str(config))\n        assert loaded[\"repos\"] == []\n        assert loaded[\"default_install_hook_types\"] == [\"pre-commit\"]\n>       assert loaded[\"default_stages\"] == list(STAGES)\nE       AssertionError: assert ['commit-msg'...-commit', ...] == ['commit-msg'...-commit', ...]\nE         \nE         Right contains one more item: 'manual'\nE         Use -v to get more diff\n\nfilter/generated_tests.py:145: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00024041199503699318,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_load_config_accepts_ci_mapping_without_changing_local_hooks",
+            "lineno": 151,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_config_accepts_ci_mapping_without_changing_local_hooks",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0021278659987729043,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011660083000606392,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00021095299598528072,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_load_config_normalizes_local_hook_defaults",
+            "lineno": 162,
+            "outcome": "failed",
+            "keywords": [
+              "test_load_config_normalizes_local_hook_defaults",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.002373841001826804,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.012698603997705504,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                "lineno": 174,
+                "message": "AssertionError: assert 'system' == 'unsupported'\n  \n  - unsupported\n  + system"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 174,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_config_normalizes_lo0')\n\n    def test_load_config_normalizes_local_hook_defaults(tmp_path):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            _local_config(\n                \"  - id: h\\n\"\n                \"    name: Hook\\n\"\n                \"    entry: echo hi\\n\"\n                \"    language: system\\n\"\n            ),\n        )\n        hook = load_config(str(config))[\"repos\"][0][\"hooks\"][0]\n>       assert hook[\"language\"] == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\nfilter/generated_tests.py:174: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00023511099425377324,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_load_config_preserves_explicit_hook_overrides",
+            "lineno": 180,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_config_preserves_explicit_hook_overrides",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001535270996100735,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.016179731996089686,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017829699936555699,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_invalid_config_without_repos_raises_invalid_config_error",
+            "lineno": 209,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_config_without_repos_raises_invalid_config_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008281890040962026,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005048259990871884,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013713199587073177,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_invalid_config_requires_rev_for_normal_repositories",
+            "lineno": 215,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_config_requires_rev_for_normal_repositories",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007225260051200166,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0007261560022016056,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013066599785815924,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_invalid_config_rejects_rev_for_local_repositories",
+            "lineno": 224,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_config_rejects_rev_for_local_repositories",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006790810002712533,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006936920035514049,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012189900007797405,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_invalid_manifest_missing_required_keys_raises_invalid_manifest_error",
+            "lineno": 233,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_manifest_missing_required_keys_raises_invalid_manifest_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006817079993197694,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005295520022627898,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001172299962490797,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_use_color_resolves_always_and_never",
+            "lineno": 259,
+            "outcome": "passed",
+            "keywords": [
+              "test_use_color_resolves_always_and_never",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000276858001598157,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.995099778985605e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.706099808681756e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_store_uses_pre_commit_home_and_creates_cache_files",
+            "lineno": 276,
+            "outcome": "passed",
+            "keywords": [
+              "test_store_uses_pre_commit_home_and_creates_cache_files",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000764569005696103,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.015290606999769807,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018766499852063134,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_store_make_local_reuses_matching_dependency_sets",
+            "lineno": 285,
+            "outcome": "passed",
+            "keywords": [
+              "test_store_make_local_reuses_matching_dependency_sets",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000979932003247086,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01401501099462621,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016918600158533081,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_normalize_cmd_resolves_existing_executable",
+            "lineno": 296,
+            "outcome": "passed",
+            "keywords": [
+              "test_normalize_cmd_resolves_existing_executable",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00031687699811300263,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.019237228996644262,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001608200036571361,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_normalize_cmd_raises_for_missing_executable",
+            "lineno": 302,
+            "outcome": "passed",
+            "keywords": [
+              "test_normalize_cmd_raises_for_missing_executable",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003223060048185289,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00824121999903582,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016551100270589814,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_normalize_cmd_uses_script_shebang",
+            "lineno": 307,
+            "outcome": "failed",
+            "keywords": [
+              "test_normalize_cmd_uses_script_shebang",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008468380037811585,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.004430127999512479,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/solution/pre_commit/parse_shebang.py",
+                "lineno": 17,
+                "message": "pre_commit.parse_shebang.ExecutableNotFoundError: Executable `python` not found"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 310,
+                  "message": ""
+                },
+                {
+                  "path": "../../solution/pre_commit/parse_shebang.py",
+                  "lineno": 37,
+                  "message": "in normalize_cmd"
+                },
+                {
+                  "path": "../../solution/pre_commit/parse_shebang.py",
+                  "lineno": 17,
+                  "message": "ExecutableNotFoundError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_normalize_cmd_uses_script0')\n\n    def test_normalize_cmd_uses_script_shebang(tmp_path):\n        script = _write(tmp_path / \"tool.py\", \"#!/usr/bin/env python\\nprint('ok')\\n\")\n>       normalized = normalize_cmd((str(script), \"arg\"))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/generated_tests.py:310: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../solution/pre_commit/parse_shebang.py:37: in normalize_cmd\n    interp = _find_executable(parts[1], env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nexe = 'python', env = None\n\n    def _find_executable(exe, env):\n        path = (env or os.environ).get(\"PATH\")\n        found = shutil.which(exe, path=path)\n        if found:\n            return found\n        if os.path.isfile(exe):\n            return os.path.abspath(exe)\n>       raise ExecutableNotFoundError(f\"Executable `{exe}` not found\")\nE       pre_commit.parse_shebang.ExecutableNotFoundError: Executable `python` not found\n\n../../solution/pre_commit/parse_shebang.py:17: ExecutableNotFoundError"
+            },
+            "teardown": {
+              "duration": 0.00020994400256313384,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cmd_output_returns_text_streams",
+            "lineno": 315,
+            "outcome": "passed",
+            "keywords": [
+              "test_cmd_output_returns_text_streams",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00033087400515796617,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.17190862200368429,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00021544899936998263,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cmd_output_b_returns_bytes_streams",
+            "lineno": 322,
+            "outcome": "passed",
+            "keywords": [
+              "test_cmd_output_b_returns_bytes_streams",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00029199800337664783,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.17475528600334655,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015011500363470986,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cmd_output_can_return_nonzero_without_checking",
+            "lineno": 334,
+            "outcome": "passed",
+            "keywords": [
+              "test_cmd_output_can_return_nonzero_without_checking",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003159709958708845,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.17552838099800283,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002672059999895282,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cmd_output_checked_nonzero_raises_called_process_error",
+            "lineno": 346,
+            "outcome": "passed",
+            "keywords": [
+              "test_cmd_output_checked_nonzero_raises_called_process_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00027927499468205497,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.16452553099952638,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014230600208975375,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_partition_returns_executable_batches_and_handles_empty_args",
+            "lineno": 353,
+            "outcome": "passed",
+            "keywords": [
+              "test_partition_returns_executable_batches_and_handles_empty_args",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00028272099734749645,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 9.260800288757309e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.829500438878313e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_partition_rejects_argument_lists_that_cannot_fit",
+            "lineno": 360,
+            "outcome": "passed",
+            "keywords": [
+              "test_partition_rejects_argument_lists_that_cannot_fit",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003686499985633418,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00013009800022700801,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.075200068764389e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_all_hooks_resolves_local_hook_public_attributes",
+            "lineno": 387,
+            "outcome": "failed",
+            "keywords": [
+              "test_all_hooks_resolves_local_hook_public_attributes",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007395470020128414,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.041954560998419765,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                "lineno": 408,
+                "message": "AssertionError: assert 'system' == 'unsupported'\n  \n  - unsupported\n  + system"
+              },
+              "traceback": [
+                {
+                  "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                  "lineno": 408,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_all_hooks_resolves_local_0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b473090>\n\n    def test_all_hooks_resolves_local_hook_public_attributes(tmp_path, monkeypatch):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            _local_config(\n                \"  - id: h\\n\"\n                \"    alias: alias-h\\n\"\n                \"    name: Hook\\n\"\n                \"    entry: echo hi\\n\"\n                \"    language: system\\n\"\n                \"    args: [one]\\n\"\n                \"    stages: [manual]\\n\"\n            ),\n        )\n        monkeypatch.chdir(tmp_path)\n        monkeypatch.setenv(\"PRE_COMMIT_HOME\", str(tmp_path / \"home\"))\n        (hook,) = all_hooks(load_config(str(config)), Store(str(tmp_path / \"store\")))\n        assert hook.id == \"h\"\n        assert hook.alias == \"alias-h\"\n        assert hook.name == \"Hook\"\n        assert hook.entry == \"echo hi\"\n>       assert hook.language == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:408: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.006953588999749627,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_all_hooks_resolves_meta_identity_hook",
+            "lineno": 412,
+            "outcome": "failed",
+            "keywords": [
+              "test_all_hooks_resolves_meta_identity_hook",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007881810015533119,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.04151734399783891,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                "lineno": 423,
+                "message": "AssertionError: assert {'commit-msg'...-commit', ...} == {'commit-msg'...rewrite', ...}\n  \n  Extra items in the right set:\n  'manual'\n  Use -v to get more diff"
+              },
+              "traceback": [
+                {
+                  "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                  "lineno": 423,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_all_hooks_resolves_meta_i0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b4710d0>\n\n    def test_all_hooks_resolves_meta_identity_hook(tmp_path, monkeypatch):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            \"repos:\\n- repo: meta\\n  hooks:\\n  - id: identity\\n\",\n        )\n        monkeypatch.chdir(tmp_path)\n        monkeypatch.setenv(\"PRE_COMMIT_HOME\", str(tmp_path / \"home\"))\n        (hook,) = all_hooks(load_config(str(config)), Store(str(tmp_path / \"store\")))\n        assert hook.id == \"identity\"\n        assert hook.name == \"identity\"\n>       assert set(hook.stages) == set(STAGES)\nE       AssertionError: assert {'commit-msg'...-commit', ...} == {'commit-msg'...rewrite', ...}\nE         \nE         Extra items in the right set:\nE         'manual'\nE         Use -v to get more diff\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:423: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.004578566993586719,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_validate_config_returns_zero_for_valid_and_nonzero_for_invalid",
+            "lineno": 425,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_validate_config_returns_zero_for_valid_and_nonzero_for_invalid",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001192278999951668,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.20524492600088706,
+              "outcome": "passed",
+              "stdout": "/tmp/pytest-of-shaoyou/pytest-0/test_cli_validate_config_retur0/bad.yaml: Missing required hook keys: name, entry, language\n"
+            },
+            "teardown": {
+              "duration": 0.000154460001795087,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_returns_zero_for_valid_and_nonzero_for_invalid",
+            "lineno": 432,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_validate_manifest_returns_zero_for_valid_and_nonzero_for_invalid",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006552619961439632,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0873460389993852,
+              "outcome": "passed",
+              "stdout": "/tmp/pytest-of-shaoyou/pytest-0/test_cli_validate_manifest_ret0/bad-manifest.yaml: Missing required hook keys: name, entry, language\n"
+            },
+            "teardown": {
+              "duration": 0.00015052199887577444,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_sample_config_prints_yaml_example",
+            "lineno": 442,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_sample_config_prints_yaml_example",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003600470008677803,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.07445338400430046,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00022075799643062055,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_clean_removes_the_configured_store",
+            "lineno": 449,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_clean_removes_the_configured_store",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007968800055095926,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0975554269971326,
+              "outcome": "passed",
+              "stdout": "Cleaned /tmp/pytest-of-shaoyou/pytest-0/test_cli_clean_removes_the_con0/home\n"
+            },
+            "teardown": {
+              "duration": 0.00017349600238958374,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_install_and_uninstall_manage_selected_hook_script",
+            "lineno": 459,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_install_and_uninstall_manage_selected_hook_script",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007756600025459193,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03351409400056582,
+              "outcome": "failed",
+              "crash": {
+                "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py",
+                "lineno": 2627,
+                "message": "SystemExit: 2"
+              },
+              "traceback": [
+                {
+                  "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                  "lineno": 472,
+                  "message": ""
+                },
+                {
+                  "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/solution/pre_commit/main.py",
+                  "lineno": 133,
+                  "message": "in main"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py",
+                  "lineno": 1877,
+                  "message": "in parse_args"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py",
+                  "lineno": 2640,
+                  "message": "in error"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py",
+                  "lineno": 2627,
+                  "message": "SystemExit"
+                }
+              ],
+              "stderr": "usage: pre-commit [-h] [--version]\n                  {run,hook-impl,install,uninstall,install-hooks,init-templatedir,validate-config,validate-manifest,sample-config,migrate-config,clean,gc,autoupdate,try-repo,help}\n                  ...\npre-commit: error: unrecognized arguments: --color never\n",
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_install_and_uninstall0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b442e10>\n\n    def test_cli_install_and_uninstall_manage_selected_hook_script(tmp_path, monkeypatch):\n        repo, cfg = _simple_repo(\n            tmp_path,\n            monkeypatch,\n            _local_config(\n                \"  - id: ok\\n\"\n                \"    name: Ok\\n\"\n                \"    entry: python -c \\\"import sys; sys.exit(0)\\\"\\n\"\n                \"    language: system\\n\"\n            ),\n        )\n        hook_path = repo / \".git\" / \"hooks\" / \"pre-commit\"\n>       assert main((\"install\", \"--config\", str(cfg), \"--hook-type\", \"pre-commit\", \"--color\", \"never\")) == 0\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:472: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/solution/pre_commit/main.py:133: in main\n    args = parser.parse_args(argv)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:1877: in parse_args\n    self.error(msg % ' '.join(argv))\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:2640: in error\n    self.exit(2, _('%(prog)s: error: %(message)s\\n') % args)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = ArgumentParser(prog='pre-commit', usage=None, description=None, formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)\nstatus = 2\nmessage = 'pre-commit: error: unrecognized arguments: --color never\\n'\n\n    def exit(self, status=0, message=None):\n        if message:\n            self._print_message(message, _sys.stderr)\n>       _sys.exit(status)\nE       SystemExit: 2\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:2627: SystemExit"
+            },
+            "teardown": {
+              "duration": 0.007078624999849126,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_fail_language_fails_and_reports_hook_id",
+            "lineno": 480,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_fail_language_fails_and_reports_hook_id",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008390849980060011,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.4438163469967549,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.006681593004032038,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_skip_environment_skips_hook_id",
+            "lineno": 500,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_skip_environment_skips_hook_id",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008157389966072515,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.10853742800100008,
+              "outcome": "passed",
+              "stdout": "Block...Skipped\n"
+            },
+            "teardown": {
+              "duration": 0.005706797004677355,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_skip_environment_accepts_alias",
+            "lineno": 516,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_skip_environment_accepts_alias",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007957039997563697,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.055294707002758514,
+              "outcome": "passed",
+              "stdout": "Block...Skipped\n"
+            },
+            "teardown": {
+              "duration": 0.007132412996725179,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_pygrep_fails_when_pattern_matches",
+            "lineno": 533,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_pygrep_fails_when_pattern_matches",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008524440054316074,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.2982325679986388,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.005887528997845948,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_pygrep_negate_passes_when_pattern_matches",
+            "lineno": 554,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_pygrep_negate_passes_when_pattern_matches",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007928069971967489,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.08117596400552429,
+              "outcome": "passed",
+              "stdout": "Grep Alpha...Passed\n"
+            },
+            "teardown": {
+              "duration": 0.006315726001048461,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_always_run_executes_even_without_matching_files",
+            "lineno": 571,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_always_run_executes_even_without_matching_files",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009015339965117164,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.05415921800158685,
+              "outcome": "passed",
+              "stdout": "Always...Failed\n- hook id: always\n- exit code: 1\nmust-run\n"
+            },
+            "teardown": {
+              "duration": 0.0070581940017291345,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_pass_filenames_false_omits_selected_filenames",
+            "lineno": 587,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_pass_filenames_false_omits_selected_filenames",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007886530001997016,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.9414696259991615,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.006654579003225081,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_manual_stage_selects_manual_hooks",
+            "lineno": 609,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_manual_stage_selects_manual_hooks",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010786269995151088,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.13605297799949767,
+              "outcome": "passed",
+              "stdout": "Manual Block...Failed\n- hook id: manual-block\n- exit code: 1\nmanual-block-entry\ntracked.txt\n"
+            },
+            "teardown": {
+              "duration": 0.006060935003915802,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_files_limits_hook_input_to_explicit_files",
+            "lineno": 640,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_files_limits_hook_input_to_explicit_files",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008830369988572784,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.738551100002951,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.007407738004985731,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_validate_config_accepts_multiple_valid_files",
+            "lineno": 663,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_validate_config_accepts_multiple_valid_files",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009211440046783537,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.004219839000143111,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016949099517660215,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_validate_config_fails_when_any_file_is_invalid",
+            "lineno": 669,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_validate_config_fails_when_any_file_is_invalid",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009462840025662445,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0043467430004966445,
+              "outcome": "passed",
+              "stdout": "/tmp/pytest-of-shaoyou/pytest-0/test_cli_validate_config_fails0/bad.yaml: config requires repos\n"
+            },
+            "teardown": {
+              "duration": 0.0002088979963446036,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_accepts_multiple_valid_files",
+            "lineno": 675,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_validate_manifest_accepts_multiple_valid_files",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009140089969150722,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03403220399923157,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019250699551776052,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_fails_when_any_file_is_invalid",
+            "lineno": 682,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_validate_manifest_fails_when_any_file_is_invalid",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009138180030276999,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.015905944994301535,
+              "outcome": "passed",
+              "stdout": "/tmp/pytest-of-shaoyou/pytest-0/test_cli_validate_manifest_fai0/bad.yaml: Missing required hook keys: name, entry, language\n"
+            },
+            "teardown": {
+              "duration": 0.0002997530027641915,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_migrate_config_wraps_legacy_repo_list",
+            "lineno": 691,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_migrate_config_wraps_legacy_repo_list",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000950755005760584,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1914179460000014,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.008844421005051117,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_sha_key_to_rev",
+            "lineno": 711,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_migrate_config_rewrites_sha_key_to_rev",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011819120045402087,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.014940945002308581,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.009555657998134848,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_legacy_stage_names",
+            "lineno": 730,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_migrate_config_rewrites_legacy_stage_names",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010703259977162816,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.015584332002617884,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.011724686999514233,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_python_venv_language",
+            "lineno": 755,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_migrate_config_rewrites_python_venv_language",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010265910023008473,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01594939499773318,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                "lineno": 773,
+                "message": "AssertionError: assert 'language: python\\n' in 'repos:\\n- repo: local\\n  hooks:\\n  - id: h\\n    name: Hook\\n    entry: python -V\\n    language: python_venv\\n'"
+              },
+              "traceback": [
+                {
+                  "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                  "lineno": 773,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_migrate_config_rewrit2')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b1f5210>\n\n    def test_cli_migrate_config_rewrites_python_venv_language(tmp_path, monkeypatch):\n        repo = tmp_path / \"repo\"\n        repo.mkdir()\n        _init_git_repo(repo)\n        monkeypatch.chdir(repo)\n        config = _write(\n            repo / \".pre-commit-config.yaml\",\n            \"repos:\\n\"\n            \"- repo: local\\n\"\n            \"  hooks:\\n\"\n            \"  - id: h\\n\"\n            \"    name: Hook\\n\"\n            \"    entry: python -V\\n\"\n            \"    language: python_venv\\n\",\n        )\n        assert main((\"migrate-config\", \"--config\", str(config))) == 0\n        migrated = config.read_text(encoding=\"UTF-8\")\n>       assert \"language: python\\n\" in migrated\nE       AssertionError: assert 'language: python\\n' in 'repos:\\n- repo: local\\n  hooks:\\n  - id: h\\n    name: Hook\\n    entry: python -V\\n    language: python_venv\\n'\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:773: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0061137880038586445,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_single_hook_id_limits_execution",
+            "lineno": 776,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_single_hook_id_limits_execution",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008684369968250394,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.3849199769974803,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00511349800217431,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_fail_fast_stops_after_first_failing_hook",
+            "lineno": 799,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_run_fail_fast_stops_after_first_failing_hook",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009436609980184585,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.4164203330001328,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                "lineno": 818,
+                "message": "AssertionError: assert 2 == 1\n +  where 2 = CompletedProcess(args=('/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'pre_commit'...g,clean,gc,autoupdate,try-repo,help}\\n                  ...\\npre-commit: error: unrecognized arguments: --fail-fast\\n').returncode"
+              },
+              "traceback": [
+                {
+                  "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+                  "lineno": 818,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_run_fail_fast_stops_a0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b64add0>\n\n    def test_cli_run_fail_fast_stops_after_first_failing_hook(tmp_path, monkeypatch):\n        repo, cfg = _simple_repo(\n            tmp_path,\n            monkeypatch,\n            _local_config(\n                \"  - id: first\\n\"\n                \"    name: First\\n\"\n                \"    entry: first-message\\n\"\n                \"    language: fail\\n\"\n                \"    files: \\\\.txt$\\n\"\n                \"  - id: second\\n\"\n                \"    name: Second\\n\"\n                \"    entry: second-message\\n\"\n                \"    language: fail\\n\"\n                \"    files: \\\\.txt$\\n\"\n            ),\n        )\n        result = _run_pre_commit_module(repo, \"run\", \"--all-files\", \"--fail-fast\", \"--config\", str(cfg), \"--color\", \"never\")\n>       assert result.returncode == 1\nE       AssertionError: assert 2 == 1\nE        +  where 2 = CompletedProcess(args=('/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'pre_commit'...g,clean,gc,autoupdate,try-repo,help}\\n                  ...\\npre-commit: error: unrecognized arguments: --fail-fast\\n').returncode\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:818: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.006238570997084025,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_skips_non_matching_files_without_always_run",
+            "lineno": 822,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_skips_non_matching_files_without_always_run",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008661339961690828,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.07144310199510073,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.007441812995239161,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_run_default_stage_ignores_manual_only_hooks",
+            "lineno": 837,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_default_stage_ignores_manual_only_hooks",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0023222829986480065,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.06830142399849137,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.006789095998101402,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 10,
+    "passed": 43,
+    "total": 53
+  },
+  "pass_rate_excluding_skips": 0.8113207547169812,
+  "by_layer": {
+    "atomic": {
+      "failed": 1,
+      "passed": 19,
+      "total": 20
+    },
+    "integration": {
+      "failed": 7,
+      "passed": 12,
+      "total": 19
+    },
+    "system_e2e": {
+      "failed": 2,
+      "passed": 12,
+      "total": 14
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "filter/generated_tests.py::test_hook_types_are_documented_git_hook_types",
+      "base_nodeid": "filter/generated_tests.py::test_hook_types_are_documented_git_hook_types",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00015141200128709897,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_stages_extend_hook_types_with_manual",
+      "base_nodeid": "filter/generated_tests.py::test_stages_extend_hook_types_with_manual",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00012259399954928085,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_legacy_stage_names_are_normalized",
+      "base_nodeid": "filter/generated_tests.py::test_legacy_stage_names_are_normalized",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010613100312184542,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_load_manifest_applies_hook_defaults",
+      "base_nodeid": "filter/generated_tests.py::test_load_manifest_applies_hook_defaults",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.009617762996640522,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+          "lineno": 114,
+          "message": "AssertionError: assert 'system' == 'unsupported'\n  \n  - unsupported\n  + system"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 114,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_manifest_applies_hoo0')\n\n    def test_load_manifest_applies_hook_defaults(tmp_path):\n        manifest = _write(\n            tmp_path / \".pre-commit-hooks.yaml\",\n            \"- id: h\\n  name: Hook\\n  entry: echo hi\\n  language: system\\n\",\n        )\n        (hook,) = load_manifest(str(manifest))\n        assert hook[\"id\"] == \"h\"\n>       assert hook[\"language\"] == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\nfilter/generated_tests.py:114: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_load_manifest_normalizes_script_language",
+      "base_nodeid": "filter/generated_tests.py::test_load_manifest_normalizes_script_language",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.010188442000071518,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+          "lineno": 137,
+          "message": "AssertionError: assert 'script' == 'unsupported_script'\n  \n  - unsupported_script\n  + script"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 137,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_manifest_normalizes_0')\n\n    def test_load_manifest_normalizes_script_language(tmp_path):\n        manifest = _write(\n            tmp_path / \".pre-commit-hooks.yaml\",\n            \"- id: h\\n  name: Hook\\n  entry: script.sh\\n  language: script\\n\",\n        )\n        (hook,) = load_manifest(str(manifest))\n>       assert hook[\"language\"] == \"unsupported_script\"\nE       AssertionError: assert 'script' == 'unsupported_script'\nE         \nE         - unsupported_script\nE         + script\n\nfilter/generated_tests.py:137: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_load_config_applies_top_level_defaults",
+      "base_nodeid": "filter/generated_tests.py::test_load_config_applies_top_level_defaults",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.001809836998290848,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+          "lineno": 145,
+          "message": "AssertionError: assert ['commit-msg'...-commit', ...] == ['commit-msg'...-commit', ...]\n  \n  Right contains one more item: 'manual'\n  Use -v to get more diff"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 145,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_config_applies_top_l0')\n\n    def test_load_config_applies_top_level_defaults(tmp_path):\n        config = _write(tmp_path / \".pre-commit-config.yaml\", \"repos: []\\n\")\n        loaded = load_config(str(config))\n        assert loaded[\"repos\"] == []\n        assert loaded[\"default_install_hook_types\"] == [\"pre-commit\"]\n>       assert loaded[\"default_stages\"] == list(STAGES)\nE       AssertionError: assert ['commit-msg'...-commit', ...] == ['commit-msg'...-commit', ...]\nE         \nE         Right contains one more item: 'manual'\nE         Use -v to get more diff\n\nfilter/generated_tests.py:145: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_load_config_accepts_ci_mapping_without_changing_local_hooks",
+      "base_nodeid": "filter/generated_tests.py::test_load_config_accepts_ci_mapping_without_changing_local_hooks",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011660083000606392,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_load_config_normalizes_local_hook_defaults",
+      "base_nodeid": "filter/generated_tests.py::test_load_config_normalizes_local_hook_defaults",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.012698603997705504,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+          "lineno": 174,
+          "message": "AssertionError: assert 'system' == 'unsupported'\n  \n  - unsupported\n  + system"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 174,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_load_config_normalizes_lo0')\n\n    def test_load_config_normalizes_local_hook_defaults(tmp_path):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            _local_config(\n                \"  - id: h\\n\"\n                \"    name: Hook\\n\"\n                \"    entry: echo hi\\n\"\n                \"    language: system\\n\"\n            ),\n        )\n        hook = load_config(str(config))[\"repos\"][0][\"hooks\"][0]\n>       assert hook[\"language\"] == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\nfilter/generated_tests.py:174: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_load_config_preserves_explicit_hook_overrides",
+      "base_nodeid": "filter/generated_tests.py::test_load_config_preserves_explicit_hook_overrides",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.016179731996089686,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invalid_config_without_repos_raises_invalid_config_error",
+      "base_nodeid": "filter/generated_tests.py::test_invalid_config_without_repos_raises_invalid_config_error",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005048259990871884,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invalid_config_requires_rev_for_normal_repositories",
+      "base_nodeid": "filter/generated_tests.py::test_invalid_config_requires_rev_for_normal_repositories",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0007261560022016056,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invalid_config_rejects_rev_for_local_repositories",
+      "base_nodeid": "filter/generated_tests.py::test_invalid_config_rejects_rev_for_local_repositories",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006936920035514049,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invalid_manifest_missing_required_keys_raises_invalid_manifest_error",
+      "base_nodeid": "filter/generated_tests.py::test_invalid_manifest_missing_required_keys_raises_invalid_manifest_error",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005295520022627898,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_use_color_resolves_always_and_never",
+      "base_nodeid": "filter/generated_tests.py::test_use_color_resolves_always_and_never",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.995099778985605e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_store_uses_pre_commit_home_and_creates_cache_files",
+      "base_nodeid": "filter/generated_tests.py::test_store_uses_pre_commit_home_and_creates_cache_files",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.015290606999769807,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_store_make_local_reuses_matching_dependency_sets",
+      "base_nodeid": "filter/generated_tests.py::test_store_make_local_reuses_matching_dependency_sets",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01401501099462621,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_normalize_cmd_resolves_existing_executable",
+      "base_nodeid": "filter/generated_tests.py::test_normalize_cmd_resolves_existing_executable",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.019237228996644262,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_normalize_cmd_raises_for_missing_executable",
+      "base_nodeid": "filter/generated_tests.py::test_normalize_cmd_raises_for_missing_executable",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00824121999903582,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_normalize_cmd_uses_script_shebang",
+      "base_nodeid": "filter/generated_tests.py::test_normalize_cmd_uses_script_shebang",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.004430127999512479,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/solution/pre_commit/parse_shebang.py",
+          "lineno": 17,
+          "message": "pre_commit.parse_shebang.ExecutableNotFoundError: Executable `python` not found"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 310,
+            "message": ""
+          },
+          {
+            "path": "../../solution/pre_commit/parse_shebang.py",
+            "lineno": 37,
+            "message": "in normalize_cmd"
+          },
+          {
+            "path": "../../solution/pre_commit/parse_shebang.py",
+            "lineno": 17,
+            "message": "ExecutableNotFoundError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_normalize_cmd_uses_script0')\n\n    def test_normalize_cmd_uses_script_shebang(tmp_path):\n        script = _write(tmp_path / \"tool.py\", \"#!/usr/bin/env python\\nprint('ok')\\n\")\n>       normalized = normalize_cmd((str(script), \"arg\"))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/generated_tests.py:310: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../solution/pre_commit/parse_shebang.py:37: in normalize_cmd\n    interp = _find_executable(parts[1], env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nexe = 'python', env = None\n\n    def _find_executable(exe, env):\n        path = (env or os.environ).get(\"PATH\")\n        found = shutil.which(exe, path=path)\n        if found:\n            return found\n        if os.path.isfile(exe):\n            return os.path.abspath(exe)\n>       raise ExecutableNotFoundError(f\"Executable `{exe}` not found\")\nE       pre_commit.parse_shebang.ExecutableNotFoundError: Executable `python` not found\n\n../../solution/pre_commit/parse_shebang.py:17: ExecutableNotFoundError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cmd_output_returns_text_streams",
+      "base_nodeid": "filter/generated_tests.py::test_cmd_output_returns_text_streams",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.17190862200368429,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cmd_output_b_returns_bytes_streams",
+      "base_nodeid": "filter/generated_tests.py::test_cmd_output_b_returns_bytes_streams",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.17475528600334655,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cmd_output_can_return_nonzero_without_checking",
+      "base_nodeid": "filter/generated_tests.py::test_cmd_output_can_return_nonzero_without_checking",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.17552838099800283,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cmd_output_checked_nonzero_raises_called_process_error",
+      "base_nodeid": "filter/generated_tests.py::test_cmd_output_checked_nonzero_raises_called_process_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.16452553099952638,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_partition_returns_executable_batches_and_handles_empty_args",
+      "base_nodeid": "filter/generated_tests.py::test_partition_returns_executable_batches_and_handles_empty_args",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 9.260800288757309e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_partition_rejects_argument_lists_that_cannot_fit",
+      "base_nodeid": "filter/generated_tests.py::test_partition_rejects_argument_lists_that_cannot_fit",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00013009800022700801,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_all_hooks_resolves_local_hook_public_attributes",
+      "base_nodeid": "filter/generated_tests.py::test_all_hooks_resolves_local_hook_public_attributes",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.041954560998419765,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+          "lineno": 408,
+          "message": "AssertionError: assert 'system' == 'unsupported'\n  \n  - unsupported\n  + system"
+        },
+        "traceback": [
+          {
+            "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+            "lineno": 408,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_all_hooks_resolves_local_0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b473090>\n\n    def test_all_hooks_resolves_local_hook_public_attributes(tmp_path, monkeypatch):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            _local_config(\n                \"  - id: h\\n\"\n                \"    alias: alias-h\\n\"\n                \"    name: Hook\\n\"\n                \"    entry: echo hi\\n\"\n                \"    language: system\\n\"\n                \"    args: [one]\\n\"\n                \"    stages: [manual]\\n\"\n            ),\n        )\n        monkeypatch.chdir(tmp_path)\n        monkeypatch.setenv(\"PRE_COMMIT_HOME\", str(tmp_path / \"home\"))\n        (hook,) = all_hooks(load_config(str(config)), Store(str(tmp_path / \"store\")))\n        assert hook.id == \"h\"\n        assert hook.alias == \"alias-h\"\n        assert hook.name == \"Hook\"\n        assert hook.entry == \"echo hi\"\n>       assert hook.language == \"unsupported\"\nE       AssertionError: assert 'system' == 'unsupported'\nE         \nE         - unsupported\nE         + system\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:408: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_all_hooks_resolves_meta_identity_hook",
+      "base_nodeid": "filter/generated_tests.py::test_all_hooks_resolves_meta_identity_hook",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.04151734399783891,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+          "lineno": 423,
+          "message": "AssertionError: assert {'commit-msg'...-commit', ...} == {'commit-msg'...rewrite', ...}\n  \n  Extra items in the right set:\n  'manual'\n  Use -v to get more diff"
+        },
+        "traceback": [
+          {
+            "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+            "lineno": 423,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_all_hooks_resolves_meta_i0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b4710d0>\n\n    def test_all_hooks_resolves_meta_identity_hook(tmp_path, monkeypatch):\n        config = _write(\n            tmp_path / \".pre-commit-config.yaml\",\n            \"repos:\\n- repo: meta\\n  hooks:\\n  - id: identity\\n\",\n        )\n        monkeypatch.chdir(tmp_path)\n        monkeypatch.setenv(\"PRE_COMMIT_HOME\", str(tmp_path / \"home\"))\n        (hook,) = all_hooks(load_config(str(config)), Store(str(tmp_path / \"store\")))\n        assert hook.id == \"identity\"\n        assert hook.name == \"identity\"\n>       assert set(hook.stages) == set(STAGES)\nE       AssertionError: assert {'commit-msg'...-commit', ...} == {'commit-msg'...rewrite', ...}\nE         \nE         Extra items in the right set:\nE         'manual'\nE         Use -v to get more diff\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:423: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_validate_config_returns_zero_for_valid_and_nonzero_for_invalid",
+      "base_nodeid": "filter/generated_tests.py::test_cli_validate_config_returns_zero_for_valid_and_nonzero_for_invalid",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.20524492600088706,
+        "outcome": "passed",
+        "stdout": "/tmp/pytest-of-shaoyou/pytest-0/test_cli_validate_config_retur0/bad.yaml: Missing required hook keys: name, entry, language\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_returns_zero_for_valid_and_nonzero_for_invalid",
+      "base_nodeid": "filter/generated_tests.py::test_cli_validate_manifest_returns_zero_for_valid_and_nonzero_for_invalid",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0873460389993852,
+        "outcome": "passed",
+        "stdout": "/tmp/pytest-of-shaoyou/pytest-0/test_cli_validate_manifest_ret0/bad-manifest.yaml: Missing required hook keys: name, entry, language\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_sample_config_prints_yaml_example",
+      "base_nodeid": "filter/generated_tests.py::test_cli_sample_config_prints_yaml_example",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.07445338400430046,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_clean_removes_the_configured_store",
+      "base_nodeid": "filter/generated_tests.py::test_cli_clean_removes_the_configured_store",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0975554269971326,
+        "outcome": "passed",
+        "stdout": "Cleaned /tmp/pytest-of-shaoyou/pytest-0/test_cli_clean_removes_the_con0/home\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_install_and_uninstall_manage_selected_hook_script",
+      "base_nodeid": "filter/generated_tests.py::test_cli_install_and_uninstall_manage_selected_hook_script",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.03351409400056582,
+        "outcome": "failed",
+        "crash": {
+          "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py",
+          "lineno": 2627,
+          "message": "SystemExit: 2"
+        },
+        "traceback": [
+          {
+            "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+            "lineno": 472,
+            "message": ""
+          },
+          {
+            "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/solution/pre_commit/main.py",
+            "lineno": 133,
+            "message": "in main"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py",
+            "lineno": 1877,
+            "message": "in parse_args"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py",
+            "lineno": 2640,
+            "message": "in error"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py",
+            "lineno": 2627,
+            "message": "SystemExit"
+          }
+        ],
+        "stderr": "usage: pre-commit [-h] [--version]\n                  {run,hook-impl,install,uninstall,install-hooks,init-templatedir,validate-config,validate-manifest,sample-config,migrate-config,clean,gc,autoupdate,try-repo,help}\n                  ...\npre-commit: error: unrecognized arguments: --color never\n",
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_install_and_uninstall0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b442e10>\n\n    def test_cli_install_and_uninstall_manage_selected_hook_script(tmp_path, monkeypatch):\n        repo, cfg = _simple_repo(\n            tmp_path,\n            monkeypatch,\n            _local_config(\n                \"  - id: ok\\n\"\n                \"    name: Ok\\n\"\n                \"    entry: python -c \\\"import sys; sys.exit(0)\\\"\\n\"\n                \"    language: system\\n\"\n            ),\n        )\n        hook_path = repo / \".git\" / \"hooks\" / \"pre-commit\"\n>       assert main((\"install\", \"--config\", str(cfg), \"--hook-type\", \"pre-commit\", \"--color\", \"never\")) == 0\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:472: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/solution/pre_commit/main.py:133: in main\n    args = parser.parse_args(argv)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:1877: in parse_args\n    self.error(msg % ' '.join(argv))\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:2640: in error\n    self.exit(2, _('%(prog)s: error: %(message)s\\n') % args)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = ArgumentParser(prog='pre-commit', usage=None, description=None, formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)\nstatus = 2\nmessage = 'pre-commit: error: unrecognized arguments: --color never\\n'\n\n    def exit(self, status=0, message=None):\n        if message:\n            self._print_message(message, _sys.stderr)\n>       _sys.exit(status)\nE       SystemExit: 2\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/argparse.py:2627: SystemExit"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_fail_language_fails_and_reports_hook_id",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_fail_language_fails_and_reports_hook_id",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.4438163469967549,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_skip_environment_skips_hook_id",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_skip_environment_skips_hook_id",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.10853742800100008,
+        "outcome": "passed",
+        "stdout": "Block...Skipped\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_skip_environment_accepts_alias",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_skip_environment_accepts_alias",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.055294707002758514,
+        "outcome": "passed",
+        "stdout": "Block...Skipped\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_pygrep_fails_when_pattern_matches",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_pygrep_fails_when_pattern_matches",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.2982325679986388,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_pygrep_negate_passes_when_pattern_matches",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_pygrep_negate_passes_when_pattern_matches",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.08117596400552429,
+        "outcome": "passed",
+        "stdout": "Grep Alpha...Passed\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_always_run_executes_even_without_matching_files",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_always_run_executes_even_without_matching_files",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.05415921800158685,
+        "outcome": "passed",
+        "stdout": "Always...Failed\n- hook id: always\n- exit code: 1\nmust-run\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_pass_filenames_false_omits_selected_filenames",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_pass_filenames_false_omits_selected_filenames",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.9414696259991615,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_manual_stage_selects_manual_hooks",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_manual_stage_selects_manual_hooks",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.13605297799949767,
+        "outcome": "passed",
+        "stdout": "Manual Block...Failed\n- hook id: manual-block\n- exit code: 1\nmanual-block-entry\ntracked.txt\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_files_limits_hook_input_to_explicit_files",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_files_limits_hook_input_to_explicit_files",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.738551100002951,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_validate_config_accepts_multiple_valid_files",
+      "base_nodeid": "filter/generated_tests.py::test_cli_validate_config_accepts_multiple_valid_files",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.004219839000143111,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_validate_config_fails_when_any_file_is_invalid",
+      "base_nodeid": "filter/generated_tests.py::test_cli_validate_config_fails_when_any_file_is_invalid",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0043467430004966445,
+        "outcome": "passed",
+        "stdout": "/tmp/pytest-of-shaoyou/pytest-0/test_cli_validate_config_fails0/bad.yaml: config requires repos\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_accepts_multiple_valid_files",
+      "base_nodeid": "filter/generated_tests.py::test_cli_validate_manifest_accepts_multiple_valid_files",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.03403220399923157,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_validate_manifest_fails_when_any_file_is_invalid",
+      "base_nodeid": "filter/generated_tests.py::test_cli_validate_manifest_fails_when_any_file_is_invalid",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.015905944994301535,
+        "outcome": "passed",
+        "stdout": "/tmp/pytest-of-shaoyou/pytest-0/test_cli_validate_manifest_fai0/bad.yaml: Missing required hook keys: name, entry, language\n"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_migrate_config_wraps_legacy_repo_list",
+      "base_nodeid": "filter/generated_tests.py::test_cli_migrate_config_wraps_legacy_repo_list",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1914179460000014,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_sha_key_to_rev",
+      "base_nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_sha_key_to_rev",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.014940945002308581,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_legacy_stage_names",
+      "base_nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_legacy_stage_names",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.015584332002617884,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_python_venv_language",
+      "base_nodeid": "filter/generated_tests.py::test_cli_migrate_config_rewrites_python_venv_language",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.01594939499773318,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+          "lineno": 773,
+          "message": "AssertionError: assert 'language: python\\n' in 'repos:\\n- repo: local\\n  hooks:\\n  - id: h\\n    name: Hook\\n    entry: python -V\\n    language: python_venv\\n'"
+        },
+        "traceback": [
+          {
+            "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+            "lineno": 773,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_migrate_config_rewrit2')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b1f5210>\n\n    def test_cli_migrate_config_rewrites_python_venv_language(tmp_path, monkeypatch):\n        repo = tmp_path / \"repo\"\n        repo.mkdir()\n        _init_git_repo(repo)\n        monkeypatch.chdir(repo)\n        config = _write(\n            repo / \".pre-commit-config.yaml\",\n            \"repos:\\n\"\n            \"- repo: local\\n\"\n            \"  hooks:\\n\"\n            \"  - id: h\\n\"\n            \"    name: Hook\\n\"\n            \"    entry: python -V\\n\"\n            \"    language: python_venv\\n\",\n        )\n        assert main((\"migrate-config\", \"--config\", str(config))) == 0\n        migrated = config.read_text(encoding=\"UTF-8\")\n>       assert \"language: python\\n\" in migrated\nE       AssertionError: assert 'language: python\\n' in 'repos:\\n- repo: local\\n  hooks:\\n  - id: h\\n    name: Hook\\n    entry: python -V\\n    language: python_venv\\n'\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:773: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_single_hook_id_limits_execution",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_single_hook_id_limits_execution",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.3849199769974803,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_fail_fast_stops_after_first_failing_hook",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_fail_fast_stops_after_first_failing_hook",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 1.4164203330001328,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+          "lineno": 818,
+          "message": "AssertionError: assert 2 == 1\n +  where 2 = CompletedProcess(args=('/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'pre_commit'...g,clean,gc,autoupdate,try-repo,help}\\n                  ...\\npre-commit: error: unrecognized arguments: --fail-fast\\n').returncode"
+        },
+        "traceback": [
+          {
+            "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py",
+            "lineno": 818,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_run_fail_fast_stops_a0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4f0b64add0>\n\n    def test_cli_run_fail_fast_stops_after_first_failing_hook(tmp_path, monkeypatch):\n        repo, cfg = _simple_repo(\n            tmp_path,\n            monkeypatch,\n            _local_config(\n                \"  - id: first\\n\"\n                \"    name: First\\n\"\n                \"    entry: first-message\\n\"\n                \"    language: fail\\n\"\n                \"    files: \\\\.txt$\\n\"\n                \"  - id: second\\n\"\n                \"    name: Second\\n\"\n                \"    entry: second-message\\n\"\n                \"    language: fail\\n\"\n                \"    files: \\\\.txt$\\n\"\n            ),\n        )\n        result = _run_pre_commit_module(repo, \"run\", \"--all-files\", \"--fail-fast\", \"--config\", str(cfg), \"--color\", \"never\")\n>       assert result.returncode == 1\nE       AssertionError: assert 2 == 1\nE        +  where 2 = CompletedProcess(args=('/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'pre_commit'...g,clean,gc,autoupdate,try-repo,help}\\n                  ...\\npre-commit: error: unrecognized arguments: --fail-fast\\n').returncode\n\n/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-precommit-specv1-20260701-001/score-wsl-53-wipcarrier/oracle_worktree/filter/generated_tests.py:818: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_skips_non_matching_files_without_always_run",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_skips_non_matching_files_without_always_run",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.07144310199510073,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_run_default_stage_ignores_manual_only_hooks",
+      "base_nodeid": "filter/generated_tests.py::test_cli_run_default_stage_ignores_manual_only_hooks",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.06830142399849137,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

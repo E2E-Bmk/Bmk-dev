@@ -1,0 +1,55 @@
+{
+  "task_id": "boltons-coreutils-fullrepro-001",
+  "status": "QUALIFIED",
+  "oracle_version": "20260704-expanded-86",
+  "oracle_count": 86,
+  "oracle_source": "upstream_plus_generated",
+  "scorer_isolation": "--remove-path boltons",
+  "artifacts": {
+    "spec": "spec.md",
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "score_result": "score_result.json",
+    "diagnosis_report": "diagnosis_report.md",
+    "reference_score": "reference_score.json"
+  },
+  "reference_gate": {
+    "result": "86/86 passed",
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.29",
+    "oracle_carrier": "tmp/boltons_oracle86_20260704",
+    "source": "wip/boltons-coreutils-fullrepro-001/filter/reference_score_expanded_20260704.json"
+  },
+  "reference_gate_p0_3": {
+    "result": "86/86 passed",
+    "platform": "Linux/WSL",
+    "artifact": "reference_score_p0_3.json",
+    "carrier": "tmp/boltons_p0_3_carrier"
+  },
+  "candidate_score": {
+    "score_result_source": "candidate-runs/codex-boltons-coreutils-specv4-20260630-002/score_expanded_20260704.json",
+    "result": "78/86 passed",
+    "passed": 78,
+    "failed": 8,
+    "total": 86,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.29"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "diagnosis_report": "diagnosis_report.md",
+    "source": "wip/boltons-coreutils-fullrepro-001/judge/diagnosis_report_expanded_20260704.md",
+    "date": "2026-07-04"
+  },
+  "labels": [
+    "qualified-expanded-oracle",
+    "discriminating",
+    "partial-secondary-coverage",
+    "cross-view-consistency-signal"
+  ],
+  "notes": [
+    "integration_gap_note: Modules are fully independent (cacheutils, dictutils, iterutils, urlutils have zero cross-module interaction). Integration Gap is expected to be ~0 for this task; it primarily measures parallel-module implementation capability.",
+    "2026-07-09 shipping sync: previous tasks/ contents (38-test superseded score 30/38 with free-text platform field and kept=176 mismatch) moved to archive/superseded-20260709/boltons-coreutils-fullrepro-001/. This package now carries the 2026-07-04 judge-certified 86-test WSL chain end to end.",
+    "Generated oracle rows use nodeid prefix wip/boltons-coreutils-fullrepro-001/filter/generated_tests.py as recorded by the certified reference/candidate runs; the carrier snapshot lives at tmp/boltons_oracle86_20260704.",
+    "The 2026-07-03 user-authorized exception row in CANDIDATES.md is superseded by this certified chain."
+  ]
+}

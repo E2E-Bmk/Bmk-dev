@@ -80,74 +80,9 @@ result_path = cookiecutter(
 
 Returns the absolute path to the generated project directory as a string.
 
-### Public Modules
+### Supported Entry Points
 
-The following modules and their public callables must be importable from the `cookiecutter` package. Their behavioral contracts are described in the sections below.
-
-**`cookiecutter.main`**
-- `cookiecutter(...)` — main entry point described above.
-
-**`cookiecutter.generate`**
-- `is_copy_only_path(path, context)` — returns True if the given path matches any pattern in `context['cookiecutter']['_copy_without_render']`.
-- `apply_overwrites_to_context(context, overwrite_context)` — merges overwrite values into context in place, preserving list ordering for choice variables (overwrite value moves to position 0).
-- `generate_context(cookiecutter_dict, template_dir, output_dir, extra_context)` — reads `cookiecutter.json`, renders templated default values, merges config/overrides, and returns the context dict.
-- `generate_file(project_dir, infile, context, env)` — renders one template file into the project directory.
-- `render_and_create_dir(dirname, context, output_dir, overwrite_if_exists)` — renders the project directory name and creates it.
-- `generate_files(repo_dir, context, output_dir, overwrite_if_exists, skip_if_file_exists, accept_hooks, keep_project_on_failure)` — orchestrates full file tree generation including hooks.
-
-**`cookiecutter.prompt`**
-- `read_user_variable(var_name, default_value, prompts, prefix)` — prompt for a plain string value.
-- `read_user_yes_no(var_name, default_value, prompts, prefix)` — prompt for a boolean value using yes/no semantics.
-- `read_user_choice(var_name, options, prompts, prefix)` — prompt for a choice from a list; displays numbered options.
-- `read_user_dict(var_name, default_value, prompts, prefix)` — prompt for a JSON dictionary value.
-- `read_repo_password(question)` — prompt for a password (no echo).
-- `process_json(user_value)` — parse a JSON string; raise `ValueError` if invalid.
-- `render_variable(raw, cookiecutter_dict, env)` — recursively render Jinja2 expressions inside a value using the current context.
-- `prompt_for_config(context, no_input)` — iterate over all variables in `context['cookiecutter']`, prompt or use defaults, and return the populated context dict.
-- `prompt_choice_for_config(cookiecutter_dict, key, options, no_input)` — handle a choice variable prompt with user-config override support.
-- `prompt_choice_for_template(context, no_input)` — handle nested template selection.
-- `choose_nested_template(context, repo_dir, no_input)` — select a nested template from a `templates` config and return the chosen subdirectory path.
-- `prompt_and_delete(path, no_input)` — prompt the user whether to delete an existing template directory; return True if deleted.
-- `YesNoPrompt` — a prompt class for boolean yes/no input.
-- `JsonPrompt` — a prompt class for dictionary (JSON) input.
-
-**`cookiecutter.config`**
-- `get_user_config(config_file, default_config)` — load and return user configuration dict; merges user config over built-in defaults.
-- `get_config(config_path)` — load a YAML config file and return its dict.
-- `merge_configs(default, overwrite)` — merge two config dicts, with overwrite taking precedence.
-
-**`cookiecutter.hooks`**
-- `find_hook(hook_name, hooks_dir)` — return a list representing the hook script command for the named hook, or None if not found.
-- `valid_hook(hook_file, hook_name)` — return True if the given file is a valid hook for the given hook name.
-- `run_script(script_path, cwd)` — execute a script file in the given working directory; raise `FailedHookException` on nonzero exit.
-- `run_script_with_context(script_path, cwd, context)` — render Jinja2 expressions in the script, write a temp copy, then execute it.
-- `run_hook(hook_name, project_dir, context)` — find and run the named hook from the project hooks directory.
-- `run_hook_from_repo_dir(repo_dir, hook_name, project_dir, context, delete_project_on_failure)` — run a hook from the repository hooks directory with the given context.
-- `run_pre_prompt_hook(repo_dir)` — copy the repo to a temp directory, run `pre_prompt` hook there, and return the temp directory path.
-
-**`cookiecutter.replay`**
-- `get_file_name(replay_dir, template_name)` — return the path `<replay_dir>/<template_name>.json`.
-- `dump(replay_dir, template_name, context)` — serialize and write the context to the replay file.
-- `load(replay_dir, template_name)` — read and return the replay context dict from the replay file.
-
-**`cookiecutter.find`**
-- `find_template(repo_dir, env)` — locate and return the path of the template directory inside `repo_dir`. The template directory is the one whose name is a Jinja2 template expression (contains `{{` and `}}`). Raises `NonTemplatedInputDirException` if none found, `UnknownTemplateDirException` if multiple found.
-
-**`cookiecutter.utils`**
-- `make_sure_path_exists(path)` — create the directory if it does not exist.
-- `work_in(dirname)` — context manager that temporarily changes the working directory to `dirname` and restores it on exit.
-- `make_executable(script_path)` — set the executable bit on a file.
-- `rmtree(path)` — remove a directory tree, handling Windows read-only files.
-- `force_delete(func, path, exc_info)` — error handler for `shutil.rmtree` that removes read-only files.
-- `create_tmp_repo_dir(repo_dir)` — copy a repo directory to a temporary location and return the temp path.
-- `create_env_with_context(context)` — create a `StrictEnvironment` instance with the given context loaded.
-- `simple_filter(filter_function)` — decorator that wraps a plain function as a Jinja2 extension class registering it as a filter.
-
-**`cookiecutter.environment`**
-- `StrictEnvironment` — a Jinja2 `Environment` subclass with `undefined=StrictUndefined`. Used for all template rendering. Accepts a `context` keyword argument to load extensions listed in `context['cookiecutter']['_extensions']`.
-
-**`cookiecutter.exceptions`**
-Refer to the Exceptions section below for the full class list.
+The required callable Python entry point is `cookiecutter.main.cookiecutter(...)`, as described above. The required command-line entry point is `cookiecutter <template>`. The implementation may organize prompting, rendering, hooks, replay storage, configuration, and filesystem helpers in any internal module structure as long as the observable behavior in this specification is preserved.
 
 ---
 
@@ -263,14 +198,9 @@ If `cookiecutter.json` contains a `"template"` key whose value is a list of stri
 
 ---
 
-## Context Building Pipeline
+## Context Resolution
 
-Context is assembled in this precedence order (later sources override earlier):
-
-1. Template defaults from `cookiecutter.json`
-2. User configuration `default_context` values (from `~/.cookiecutterrc` or configured file)
-3. `extra_context` dict passed via Python API or `key=value` CLI arguments
-4. Interactive prompt answers (when `no_input=False` and not in replay mode)
+Context uses template defaults from `cookiecutter.json` as its base. User configuration `default_context` values override those defaults, and `extra_context` values supplied through the Python API or CLI override both. When prompting is enabled and replay mode is not active, interactive answers have final precedence.
 
 With `no_input=True`: skip all prompts, use defaults plus overrides.
 
@@ -282,7 +212,7 @@ With `replay=<file_path>` (a string): load context from the specified JSON file.
 
 ## Rendering and File Generation
 
-All template rendering uses a Jinja2 `StrictEnvironment` (undefined variables raise `UndefinedVariableInTemplate`).
+All template rendering uses strict Jinja2 undefined-variable behavior: an undefined variable raises `UndefinedVariableInTemplate`.
 
 Rendering applies to:
 - The project directory name (rendered to produce the output directory name)
@@ -291,12 +221,7 @@ Rendering applies to:
 
 Binary files are detected and copied without rendering. Text files use UTF-8 encoding by default.
 
-The `generate_files` function:
-1. Renders the top-level project directory name and creates it under `output_dir`.
-2. Walks the template tree, rendering names and contents.
-3. Runs `pre_gen_project` hook (if present) before generating files.
-4. Runs `post_gen_project` hook (if present) after generating files.
-5. If a hook fails and `keep_project_on_failure=False`, removes the partially generated project directory.
+Generation renders the top-level project directory name under `output_dir`, renders names and contents throughout the template tree, and preserves the documented hook ordering. A `pre_gen_project` hook runs before project files are produced, and a `post_gen_project` hook runs after generation. If a hook fails and `keep_project_on_failure=False`, the partially generated project directory is removed.
 
 Existing output directory behavior:
 - Default: raise `OutputDirExistsException`.
@@ -321,7 +246,7 @@ Hook execution details:
 - Hook script contents may contain Jinja2 expressions for `pre_gen_project` and `post_gen_project`; these are rendered before execution.
 - If a hook exits with a nonzero status, `FailedHookException` is raised and generation halts.
 - If `keep_project_on_failure=False` and a hook fails after the project directory was created, the project directory is deleted.
-- `pre_prompt` runs in a copy of the repo dir (created via `create_tmp_repo_dir`); this allows the hook to modify `cookiecutter.json` before prompting.
+- `pre_prompt` runs in a temporary copy of the template directory; this allows the hook to modify `cookiecutter.json` before prompting without mutating the original template.
 - `accept_hooks=False` skips all hooks. `accept_hooks=True` (default) runs hooks. `accept_hooks='ask'` prompts the user before running.
 
 ---
@@ -379,10 +304,10 @@ User config keys:
 - `replay_dir`: where replay files are stored.
 - `abbreviations`: dict of shorthand aliases for template URLs/paths. Values may contain `{0}` as a placeholder for a suffix.
 
-`get_user_config(config_file=None, default_config=False)`:
-- If `default_config=True`, return built-in defaults without reading any file.
+Configuration loading behavior:
+- If `default_config=True`, use built-in defaults without reading any file.
 - If `config_file` is given, read that YAML file; raise `ConfigDoesNotExistException` if it does not exist.
-- Otherwise, try `~/.cookiecutterrc` then `COOKIECUTTER_CONFIG` env var. If neither exists, return built-in defaults.
+- Otherwise, try `~/.cookiecutterrc` then the `COOKIECUTTER_CONFIG` environment variable. If neither exists, use built-in defaults.
 
 ---
 
@@ -406,23 +331,23 @@ If the zip archive is password-protected, the `password` argument (Python API) o
 
 These extensions are always available in the rendering environment without listing them in `_extensions`:
 
-### `cookiecutter.extensions.JsonifyExtension`
+### JSON Filter
 Provides a `jsonify` filter. Converts a Python object to a JSON string.
 - `{{ value | jsonify }}` — default indent 4.
 - `{{ value | jsonify(2) }}` — custom indent.
 
-### `cookiecutter.extensions.RandomStringExtension`
+### Random String Global
 Provides `random_ascii_string(length, punctuation=False)` as a global function.
 - Generates a random ASCII string of the given length.
 - With `punctuation=True`, includes punctuation characters `!"#$%&'()*+,-./:;<=>?@[\]^_\`{|}~`.
 
-### `cookiecutter.extensions.SlugifyExtension`
+### Slugify Filter
 Provides a `slugify` filter. Converts a string to a lowercase hyphen-separated slug. Handles special characters (e.g., apostrophes). Accepts all keyword arguments of `python-slugify`'s `slugify` function (e.g., `separator`).
 
-### `cookiecutter.extensions.TimeExtension`
+### Time Tag
 Provides a `{% now '<timezone>', '<format>' %}` tag. Returns the current time formatted by strftime. Example: `{% now 'utc', '%Y' %}`.
 
-### `cookiecutter.extensions.UUIDExtension`
+### UUID Global
 Provides `uuid4()` as a global function. Returns a UUID4 string.
 
 ### Custom Extensions via `_extensions`
@@ -433,7 +358,7 @@ Templates may list additional Jinja2 extension import paths in `_extensions`. Co
 
 A template may include local Python extension modules in its root directory (e.g., `local_extensions.py` or `local_extensions/__init__.py`). These are listed in `_extensions` by module and class name (e.g., `"local_extensions.FoobarExtension"`).
 
-The `simple_filter` decorator from `cookiecutter.utils` wraps a plain function as a Jinja2 extension that registers the function as a filter under the function's own name.
+Custom Jinja2 extensions may register additional filters, globals, and tags. Their import paths come from `_extensions`; the internal helper used to register them is not prescribed.
 
 ---
 
@@ -465,7 +390,7 @@ All exceptions inherit from `CookiecutterException(Exception)`.
 
 ## Logging
 
-The package provides a `setup_logging(stream_level, debug_file)` function in `cookiecutter.log` that configures logging to stdout and optionally to a debug log file. Verbose mode (`--verbose`) enables DEBUG-level logging to stdout.
+Verbose mode (`--verbose`) enables DEBUG-level logging to stdout. Implementations may also write diagnostic logs to a file, but no internal logging helper or module layout is prescribed.
 
 ---
 

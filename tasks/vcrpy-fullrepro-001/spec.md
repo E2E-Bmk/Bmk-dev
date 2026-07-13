@@ -1,11 +1,4 @@
-# VCR.py Reconstruction Spec v3
-
-Status: candidate-visible public packet
-Task id: vcrpy-fullrepro-001
-Delta from v2: adds docs-backed defaults and semantics for YAML serialization, default `once` record mode, body matching, automatic decorator naming forms, and documented custom persister load errors.
-Source boundary: derived from VCR.py README.rst, docs/usage.rst, docs/configuration.rst, docs/advanced.rst, and docs/api.rst. Repository internals, tests, fixtures, and benchmark artifacts are outside the contract.
-
----
+﻿# VCR.py Reconstruction Spec v3
 
 ## Product Overview
 
@@ -334,7 +327,7 @@ Required behavior:
 
 ## Cross-View Invariants
 
-These invariants define the benchmark target:
+These invariants define the implementation target:
 
 - The same normalized request fields must drive matching, cassette `requests`, filters, serializer output, and replay lookup.
 - Record mode decisions must agree with cassette existence, match results, playback state, and whether a request is saved.

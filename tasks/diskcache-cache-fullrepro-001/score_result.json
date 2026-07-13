@@ -1,0 +1,2719 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 120,
+  "remove_paths": [
+    "diskcache"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/oracle_carrier_clean",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/output",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/diskcache-cache-fullrepro-001/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/diskcache-cache-fullrepro-001/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/score_run_clean",
+  "grouped_results": {
+    "tests/test_swe_e2e_generated.py": {
+      "returncode": 1,
+      "stdout": "...........................FF....................................F       [100%]\n=================================== FAILURES ===================================\n_____________________ test_cache_tag_index_toggle_setting ______________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_cache_tag_index_toggle_se0')\n\n    def test_cache_tag_index_toggle_setting(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\", tag_index=True)\n>       assert cache.tag_index == 1\n               ^^^^^^^^^^^^^^^\nE       AttributeError: 'Cache' object has no attribute 'tag_index'\n\ntests/test_swe_e2e_generated.py:244: AttributeError\n_________ test_cache_reset_returns_previous_value_and_updates_setting __________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_cache_reset_returns_previ0')\n\n    def test_cache_reset_returns_previous_value_and_updates_setting(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\")\n        previous = cache.reset(\"cull_limit\", 0)\n        assert isinstance(previous, int)\n>       assert cache.cull_limit == 0\n               ^^^^^^^^^^^^^^^^\nE       AttributeError: 'Cache' object has no attribute 'cull_limit'\n\ntests/test_swe_e2e_generated.py:255: AttributeError\n_____________ test_memoize_stampede_caches_result_and_exposes_key ______________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_memoize_stampede_caches_r0')\n\n    def test_memoize_stampede_caches_result_and_exposes_key(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\", eviction_policy=\"none\")\n        calls = {\"count\": 0}\n    \n        @dc.memoize_stampede(cache, expire=60)\n        def triple(value):\n            calls[\"count\"] += 1\n            return value * 3\n    \n        assert triple(5) == 15\n        assert triple(5) == 15\n        assert calls[\"count\"] == 1\n>       cached_result, elapsed = cache[triple.__cache_key__(5)]\n        ^^^^^^^^^^^^^^^^^^^^^^\nE       ValueError: too many values to unpack (expected 2)\n\ntests/test_swe_e2e_generated.py:615: ValueError\n=========================== short test summary info ============================\nFAILED tests/test_swe_e2e_generated.py::test_cache_tag_index_toggle_setting\nFAILED tests/test_swe_e2e_generated.py::test_cache_reset_returns_previous_value_and_updates_setting\nFAILED tests/test_swe_e2e_generated.py::test_memoize_stampede_caches_result_and_exposes_key\n3 failed, 63 passed in 13.23s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783148096.6665387,
+        "duration": 13.030938625335693,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/score_run_clean/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 63,
+          "failed": 3,
+          "total": 66,
+          "collected": 66
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_creates_directory",
+                "type": "Function",
+                "lineno": 35
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_rejects_invalid_disk",
+                "type": "Function",
+                "lineno": 42
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_mapping_roundtrip_and_membership",
+                "type": "Function",
+                "lineno": 47
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_missing_mapping_read_raises_keyerror",
+                "type": "Function",
+                "lineno": 57
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_missing_mapping_delete_raises_keyerror",
+                "type": "Function",
+                "lineno": 63
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_get_default_for_missing_key",
+                "type": "Function",
+                "lineno": 69
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_set_overwrites_existing_value",
+                "type": "Function",
+                "lineno": 74
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_add_only_inserts_when_absent",
+                "type": "Function",
+                "lineno": 81
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_touch_updates_existing_and_reports_missing",
+                "type": "Function",
+                "lineno": 88
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_delete_boolean_contract",
+                "type": "Function",
+                "lineno": 95
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_pop_removes_and_returns_value",
+                "type": "Function",
+                "lineno": 102
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_pop_default_for_missing_key",
+                "type": "Function",
+                "lineno": 109
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_metadata_tuple_get_and_pop",
+                "type": "Function",
+                "lineno": 114
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_read_returns_file_like_object",
+                "type": "Function",
+                "lineno": 124
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_read_missing_key_raises_keyerror",
+                "type": "Function",
+                "lineno": 132
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_expire_removes_expired_items",
+                "type": "Function",
+                "lineno": 138
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_evict_removes_matching_tag",
+                "type": "Function",
+                "lineno": 147
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_clear_removes_all_items",
+                "type": "Function",
+                "lineno": 157
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_incr_and_decr_existing_key",
+                "type": "Function",
+                "lineno": 165
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_incr_decr_missing_default_contract",
+                "type": "Function",
+                "lineno": 173
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_iteration_insertion_order_and_sorted_iterkeys",
+                "type": "Function",
+                "lineno": 181
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_peekitem_reads_insertion_edges",
+                "type": "Function",
+                "lineno": 190
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_peekitem_empty_raises_keyerror",
+                "type": "Function",
+                "lineno": 198
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_push_pull_back_and_front",
+                "type": "Function",
+                "lineno": 204
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_prefix_uses_string_keys",
+                "type": "Function",
+                "lineno": 219
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_empty_returns_default",
+                "type": "Function",
+                "lineno": 226
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_stats_count_hits_and_misses",
+                "type": "Function",
+                "lineno": 232
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_tag_index_toggle_setting",
+                "type": "Function",
+                "lineno": 241
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_reset_returns_previous_value_and_updates_setting",
+                "type": "Function",
+                "lineno": 250
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_volume_and_check_public_shapes",
+                "type": "Function",
+                "lineno": 257
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_persists_across_reopened_objects",
+                "type": "Function",
+                "lineno": 264
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_closed_object_reopens_on_access",
+                "type": "Function",
+                "lineno": 273
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_transaction_groups_writes",
+                "type": "Function",
+                "lineno": 280
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_memoize_caches_by_arguments",
+                "type": "Function",
+                "lineno": 288
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_cache_memoize_rejects_bare_decorator_usage",
+                "type": "Function",
+                "lineno": 303
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_mapping_roundtrip_and_membership",
+                "type": "Function",
+                "lineno": 309
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_persists_across_reopened_objects",
+                "type": "Function",
+                "lineno": 319
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_cache_view_persists_by_name",
+                "type": "Function",
+                "lineno": 328
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_deque_view_persists_by_name",
+                "type": "Function",
+                "lineno": 335
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_index_view_persists_by_name",
+                "type": "Function",
+                "lineno": 342
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_transact_not_supported",
+                "type": "Function",
+                "lineno": 349
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_expire_evict_clear_across_shards",
+                "type": "Function",
+                "lineno": 357
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_deque_initialization_and_persistence",
+                "type": "Function",
+                "lineno": 366
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_deque_bounded_discards_opposite_end",
+                "type": "Function",
+                "lineno": 375
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_deque_pop_peek_endpoint_contracts",
+                "type": "Function",
+                "lineno": 383
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_deque_empty_endpoint_errors",
+                "type": "Function",
+                "lineno": 392
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_deque_indexing_assignment_and_deletion",
+                "type": "Function",
+                "lineno": 399
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_deque_remove_reverse_rotate_and_count",
+                "type": "Function",
+                "lineno": 410
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_deque_copy_is_independent",
+                "type": "Function",
+                "lineno": 423
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_deque_fromcache_exposes_same_cache",
+                "type": "Function",
+                "lineno": 431
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_initialization_and_persistence",
+                "type": "Function",
+                "lineno": 438
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_mapping_operations",
+                "type": "Function",
+                "lineno": 445
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_setdefault_and_pop_contract",
+                "type": "Function",
+                "lineno": 458
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_peekitem_and_popitem_sides",
+                "type": "Function",
+                "lineno": 468
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_empty_peekitem_and_popitem_raise_keyerror",
+                "type": "Function",
+                "lineno": 475
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_queue_helpers",
+                "type": "Function",
+                "lineno": 483
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_views_and_equality",
+                "type": "Function",
+                "lineno": 494
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_fromcache_exposes_same_cache",
+                "type": "Function",
+                "lineno": 505
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_index_memoize_caches_function_result",
+                "type": "Function",
+                "lineno": 512
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_averager_get_and_pop",
+                "type": "Function",
+                "lineno": 526
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_lock_context_and_locked_status",
+                "type": "Function",
+                "lineno": 537
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_rlock_reentrant_release_contract",
+                "type": "Function",
+                "lineno": 546
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_bounded_semaphore_release_contract",
+                "type": "Function",
+                "lineno": 557
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_barrier_preserves_return_value",
+                "type": "Function",
+                "lineno": 568
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_throttle_preserves_return_value_with_injected_clock",
+                "type": "Function",
+                "lineno": 578
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_generated.py::test_memoize_stampede_caches_result_and_exposes_key",
+                "type": "Function",
+                "lineno": 602
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_creates_directory",
+            "lineno": 35,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_creates_directory",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.012437880000106816,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.018323345000681,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002525239997339668,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_rejects_invalid_disk",
+            "lineno": 42,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_rejects_invalid_disk",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010469749995536404,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000212067000575189,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017256600040127523,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_mapping_roundtrip_and_membership",
+            "lineno": 47,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_mapping_roundtrip_and_membership",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010131879998880322,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.013536497999666608,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003401530002520303,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_missing_mapping_read_raises_keyerror",
+            "lineno": 57,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_missing_mapping_read_raises_keyerror",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001349881999885838,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.012049011000272003,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00022054500004742295,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_missing_mapping_delete_raises_keyerror",
+            "lineno": 63,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_missing_mapping_delete_raises_keyerror",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009391120001964737,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.013617161000183842,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003735450000021956,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_get_default_for_missing_key",
+            "lineno": 69,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_get_default_for_missing_key",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0014790160003030906,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.012106657000003906,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003414590000829776,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_set_overwrites_existing_value",
+            "lineno": 74,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_set_overwrites_existing_value",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0014619809999203426,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.013832141000420961,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00024806799956422765,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_add_only_inserts_when_absent",
+            "lineno": 81,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_add_only_inserts_when_absent",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011043769991374575,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.05570063699997263,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00027658199996949406,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_touch_updates_existing_and_reports_missing",
+            "lineno": 88,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_touch_updates_existing_and_reports_missing",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010255719998895074,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.014987575000304787,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00021380599991971394,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_delete_boolean_contract",
+            "lineno": 95,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_delete_boolean_contract",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009255980003217701,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.015590022000651516,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002207689994975226,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_pop_removes_and_returns_value",
+            "lineno": 102,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_pop_removes_and_returns_value",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001022178000312124,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.014088382000409183,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000235042999520374,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_pop_default_for_missing_key",
+            "lineno": 109,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_pop_default_for_missing_key",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010752500002126908,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01311585199982801,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003209830001651426,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_metadata_tuple_get_and_pop",
+            "lineno": 114,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_metadata_tuple_get_and_pop",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000805491999926744,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01307281499975943,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003015729998878669,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_read_returns_file_like_object",
+            "lineno": 124,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_read_returns_file_like_object",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008132599996315548,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01843988300061028,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00028875299994979287,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_read_missing_key_raises_keyerror",
+            "lineno": 132,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_read_missing_key_raises_keyerror",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001360983000267879,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.012601243000062823,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003418099995542434,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_expire_removes_expired_items",
+            "lineno": 138,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_expire_removes_expired_items",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000783662000685581,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.021240678999674856,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003089100000579492,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_evict_removes_matching_tag",
+            "lineno": 147,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_evict_removes_matching_tag",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001395612000123947,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.019363747999705083,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023874199996498646,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_clear_removes_all_items",
+            "lineno": 157,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_clear_removes_all_items",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000980347999757214,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.08265293499971449,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002690399996936321,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_incr_and_decr_existing_key",
+            "lineno": 165,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_incr_and_decr_existing_key",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009072270004253369,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011658358000204316,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003094849998888094,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_incr_decr_missing_default_contract",
+            "lineno": 173,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_incr_decr_missing_default_contract",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0013474129991664086,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00978424300046754,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019050099945161492,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_iteration_insertion_order_and_sorted_iterkeys",
+            "lineno": 181,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_iteration_insertion_order_and_sorted_iterkeys",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008750650004003546,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01014080400000239,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001993040004890645,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_peekitem_reads_insertion_edges",
+            "lineno": 190,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_peekitem_reads_insertion_edges",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009001829994303989,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011320263000015984,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023374700049316743,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_peekitem_empty_raises_keyerror",
+            "lineno": 198,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_peekitem_empty_raises_keyerror",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000861312000779435,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011396592999517452,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001995799993892433,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_push_pull_back_and_front",
+            "lineno": 204,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_queue_push_pull_back_and_front",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010238569993816782,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01993391700034408,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017289600054937182,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_prefix_uses_string_keys",
+            "lineno": 219,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_queue_prefix_uses_string_keys",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008210619998862967,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00978821000080643,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018994600031874143,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_empty_returns_default",
+            "lineno": 226,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_queue_empty_returns_default",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009477169996898738,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01188652800010459,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003428489999350859,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_stats_count_hits_and_misses",
+            "lineno": 232,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_stats_count_hits_and_misses",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007985359998201602,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.062379182000768196,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018777399964164943,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_tag_index_toggle_setting",
+            "lineno": 241,
+            "outcome": "failed",
+            "keywords": [
+              "test_cache_tag_index_toggle_setting",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008846000000630738,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.010016973999881884,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/score_run_clean/oracle_worktree/tests/test_swe_e2e_generated.py",
+                "lineno": 244,
+                "message": "AttributeError: 'Cache' object has no attribute 'tag_index'"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_generated.py",
+                  "lineno": 244,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_cache_tag_index_toggle_se0')\n\n    def test_cache_tag_index_toggle_setting(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\", tag_index=True)\n>       assert cache.tag_index == 1\n               ^^^^^^^^^^^^^^^\nE       AttributeError: 'Cache' object has no attribute 'tag_index'\n\ntests/test_swe_e2e_generated.py:244: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.00021167900013097096,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_reset_returns_previous_value_and_updates_setting",
+            "lineno": 250,
+            "outcome": "failed",
+            "keywords": [
+              "test_cache_reset_returns_previous_value_and_updates_setting",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008402459998251288,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00698262599962618,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/score_run_clean/oracle_worktree/tests/test_swe_e2e_generated.py",
+                "lineno": 255,
+                "message": "AttributeError: 'Cache' object has no attribute 'cull_limit'"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_generated.py",
+                  "lineno": 255,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_cache_reset_returns_previ0')\n\n    def test_cache_reset_returns_previous_value_and_updates_setting(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\")\n        previous = cache.reset(\"cull_limit\", 0)\n        assert isinstance(previous, int)\n>       assert cache.cull_limit == 0\n               ^^^^^^^^^^^^^^^^\nE       AttributeError: 'Cache' object has no attribute 'cull_limit'\n\ntests/test_swe_e2e_generated.py:255: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.00022394500047084875,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_volume_and_check_public_shapes",
+            "lineno": 257,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_volume_and_check_public_shapes",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007548510002379771,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.010656847000063863,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015790499946888303,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_persists_across_reopened_objects",
+            "lineno": 264,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_persists_across_reopened_objects",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007589589995404822,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.017830888999924355,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015941499987093266,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_closed_object_reopens_on_access",
+            "lineno": 273,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_closed_object_reopens_on_access",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007803049993526656,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.014390258999810612,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016829600008350099,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_transaction_groups_writes",
+            "lineno": 280,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_transaction_groups_writes",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007079240003804443,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.007847716000469518,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001657779994275188,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_memoize_caches_by_arguments",
+            "lineno": 288,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_memoize_caches_by_arguments",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008611059993199888,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011559552000107942,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018529499993746867,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_cache_memoize_rejects_bare_decorator_usage",
+            "lineno": 303,
+            "outcome": "passed",
+            "keywords": [
+              "test_cache_memoize_rejects_bare_decorator_usage",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000920274999771209,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.008275692000097479,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016427500031568343,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_mapping_roundtrip_and_membership",
+            "lineno": 309,
+            "outcome": "passed",
+            "keywords": [
+              "test_fanout_mapping_roundtrip_and_membership",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000776963000134856,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03592968300017674,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016633199993520975,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_persists_across_reopened_objects",
+            "lineno": 319,
+            "outcome": "passed",
+            "keywords": [
+              "test_fanout_persists_across_reopened_objects",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008614520002083736,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.14461134200064407,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018847100000130013,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_cache_view_persists_by_name",
+            "lineno": 328,
+            "outcome": "passed",
+            "keywords": [
+              "test_fanout_named_cache_view_persists_by_name",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009920880002027843,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.13664353500007564,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002202279993070988,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_deque_view_persists_by_name",
+            "lineno": 335,
+            "outcome": "passed",
+            "keywords": [
+              "test_fanout_named_deque_view_persists_by_name",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000911064999854716,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1717330800001946,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001886019999801647,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_index_view_persists_by_name",
+            "lineno": 342,
+            "outcome": "passed",
+            "keywords": [
+              "test_fanout_named_index_view_persists_by_name",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009742940001160605,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.15602411399959237,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023323999994318,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_transact_not_supported",
+            "lineno": 349,
+            "outcome": "passed",
+            "keywords": [
+              "test_fanout_transact_not_supported",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011015690006388468,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0850925989998359,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00026824399992619874,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_expire_evict_clear_across_shards",
+            "lineno": 357,
+            "outcome": "passed",
+            "keywords": [
+              "test_fanout_expire_evict_clear_across_shards",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010858030000235885,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.05305027900067216,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018086799991579028,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_deque_initialization_and_persistence",
+            "lineno": 366,
+            "outcome": "passed",
+            "keywords": [
+              "test_deque_initialization_and_persistence",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010377329999755602,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.07469444000071235,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017560200012667337,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_deque_bounded_discards_opposite_end",
+            "lineno": 375,
+            "outcome": "passed",
+            "keywords": [
+              "test_deque_bounded_discards_opposite_end",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008900579996407032,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011584585000491643,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018164700031775283,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_deque_pop_peek_endpoint_contracts",
+            "lineno": 383,
+            "outcome": "passed",
+            "keywords": [
+              "test_deque_pop_peek_endpoint_contracts",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009369399995193817,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.013141186999746424,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017497000044386368,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_deque_empty_endpoint_errors",
+            "lineno": 392,
+            "outcome": "passed",
+            "keywords": [
+              "test_deque_empty_endpoint_errors",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009710930007713614,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.017444142999920587,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00027328900068823714,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_deque_indexing_assignment_and_deletion",
+            "lineno": 399,
+            "outcome": "passed",
+            "keywords": [
+              "test_deque_indexing_assignment_and_deletion",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008403070005442714,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.015058288000545872,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018033600008493522,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_deque_remove_reverse_rotate_and_count",
+            "lineno": 410,
+            "outcome": "passed",
+            "keywords": [
+              "test_deque_remove_reverse_rotate_and_count",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008653609993416467,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.009620776999327063,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001748750000842847,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_deque_copy_is_independent",
+            "lineno": 423,
+            "outcome": "passed",
+            "keywords": [
+              "test_deque_copy_is_independent",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008798059998298413,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1254579909991662,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003432550001889467,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_deque_fromcache_exposes_same_cache",
+            "lineno": 431,
+            "outcome": "passed",
+            "keywords": [
+              "test_deque_fromcache_exposes_same_cache",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008566100004827604,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0114253629999439,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017809400014812127,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_initialization_and_persistence",
+            "lineno": 438,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_initialization_and_persistence",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008655680003357702,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.010084018999805267,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001809939994927845,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_mapping_operations",
+            "lineno": 445,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_mapping_operations",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008339129999512807,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011076183999648492,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000182918999598769,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_setdefault_and_pop_contract",
+            "lineno": 458,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_setdefault_and_pop_contract",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009392840001964942,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.010135182999874814,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017652800033829408,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_peekitem_and_popitem_sides",
+            "lineno": 468,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_peekitem_and_popitem_sides",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008519189996150089,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01258684899949003,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001862600001913961,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_empty_peekitem_and_popitem_raise_keyerror",
+            "lineno": 475,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_empty_peekitem_and_popitem_raise_keyerror",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010712080002122093,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.009719656000015675,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020553299964376492,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_queue_helpers",
+            "lineno": 483,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_queue_helpers",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007586430001538247,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0894222520000767,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0006592960007765214,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_views_and_equality",
+            "lineno": 494,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_views_and_equality",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009706009996079956,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.013756087000729167,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002141919994755881,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_fromcache_exposes_same_cache",
+            "lineno": 505,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_fromcache_exposes_same_cache",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008592230005888268,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.009029451000060362,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018207500033895485,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_index_memoize_caches_function_result",
+            "lineno": 512,
+            "outcome": "passed",
+            "keywords": [
+              "test_index_memoize_caches_function_result",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009635379992687376,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.008906553000088024,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019412400069995783,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_averager_get_and_pop",
+            "lineno": 526,
+            "outcome": "passed",
+            "keywords": [
+              "test_averager_get_and_pop",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008156220001183101,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.008436572000391607,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023697500000707805,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_lock_context_and_locked_status",
+            "lineno": 537,
+            "outcome": "passed",
+            "keywords": [
+              "test_lock_context_and_locked_status",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011007379998773104,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.008514244000252802,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018288100000063423,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_rlock_reentrant_release_contract",
+            "lineno": 546,
+            "outcome": "passed",
+            "keywords": [
+              "test_rlock_reentrant_release_contract",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009088630004043807,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.037435524000102305,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017217100048583234,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_bounded_semaphore_release_contract",
+            "lineno": 557,
+            "outcome": "passed",
+            "keywords": [
+              "test_bounded_semaphore_release_contract",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008494559997416218,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.010946708000119543,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017086999923776602,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_barrier_preserves_return_value",
+            "lineno": 568,
+            "outcome": "passed",
+            "keywords": [
+              "test_barrier_preserves_return_value",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000844231999508338,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011206303000108164,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001879660003396566,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_throttle_preserves_return_value_with_injected_clock",
+            "lineno": 578,
+            "outcome": "passed",
+            "keywords": [
+              "test_throttle_preserves_return_value_with_injected_clock",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0021690409994334914,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.009958452999853762,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019103199974779272,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_generated.py::test_memoize_stampede_caches_result_and_exposes_key",
+            "lineno": 602,
+            "outcome": "failed",
+            "keywords": [
+              "test_memoize_stampede_caches_result_and_exposes_key",
+              "test_swe_e2e_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009417089995622518,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011277080000581918,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/score_run_clean/oracle_worktree/tests/test_swe_e2e_generated.py",
+                "lineno": 615,
+                "message": "ValueError: too many values to unpack (expected 2)"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_generated.py",
+                  "lineno": 615,
+                  "message": "ValueError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_memoize_stampede_caches_r0')\n\n    def test_memoize_stampede_caches_result_and_exposes_key(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\", eviction_policy=\"none\")\n        calls = {\"count\": 0}\n    \n        @dc.memoize_stampede(cache, expire=60)\n        def triple(value):\n            calls[\"count\"] += 1\n            return value * 3\n    \n        assert triple(5) == 15\n        assert triple(5) == 15\n        assert calls[\"count\"] == 1\n>       cached_result, elapsed = cache[triple.__cache_key__(5)]\n        ^^^^^^^^^^^^^^^^^^^^^^\nE       ValueError: too many values to unpack (expected 2)\n\ntests/test_swe_e2e_generated.py:615: ValueError"
+            },
+            "teardown": {
+              "duration": 0.00034452100044291,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 3,
+    "passed": 63,
+    "total": 66
+  },
+  "pass_rate_excluding_skips": 0.9545454545454546,
+  "by_layer": {
+    "atomic": {
+      "failed": 2,
+      "passed": 33,
+      "total": 35
+    },
+    "integration": {
+      "failed": 1,
+      "passed": 23,
+      "total": 24
+    },
+    "system_e2e": {
+      "passed": 7,
+      "total": 7
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_creates_directory",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_creates_directory",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.018323345000681,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_rejects_invalid_disk",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_rejects_invalid_disk",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000212067000575189,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_mapping_roundtrip_and_membership",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_mapping_roundtrip_and_membership",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.013536497999666608,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_missing_mapping_read_raises_keyerror",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_missing_mapping_read_raises_keyerror",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.012049011000272003,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_missing_mapping_delete_raises_keyerror",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_missing_mapping_delete_raises_keyerror",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.013617161000183842,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_get_default_for_missing_key",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_get_default_for_missing_key",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.012106657000003906,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_set_overwrites_existing_value",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_set_overwrites_existing_value",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.013832141000420961,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_add_only_inserts_when_absent",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_add_only_inserts_when_absent",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.05570063699997263,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_touch_updates_existing_and_reports_missing",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_touch_updates_existing_and_reports_missing",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.014987575000304787,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_delete_boolean_contract",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_delete_boolean_contract",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.015590022000651516,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_pop_removes_and_returns_value",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_pop_removes_and_returns_value",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.014088382000409183,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_pop_default_for_missing_key",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_pop_default_for_missing_key",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01311585199982801,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_metadata_tuple_get_and_pop",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_metadata_tuple_get_and_pop",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01307281499975943,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_read_returns_file_like_object",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_read_returns_file_like_object",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01843988300061028,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_read_missing_key_raises_keyerror",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_read_missing_key_raises_keyerror",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.012601243000062823,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_expire_removes_expired_items",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_expire_removes_expired_items",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.021240678999674856,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_evict_removes_matching_tag",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_evict_removes_matching_tag",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.019363747999705083,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_clear_removes_all_items",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_clear_removes_all_items",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.08265293499971449,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_incr_and_decr_existing_key",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_incr_and_decr_existing_key",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011658358000204316,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_incr_decr_missing_default_contract",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_incr_decr_missing_default_contract",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00978424300046754,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_iteration_insertion_order_and_sorted_iterkeys",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_iteration_insertion_order_and_sorted_iterkeys",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01014080400000239,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_peekitem_reads_insertion_edges",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_peekitem_reads_insertion_edges",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011320263000015984,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_peekitem_empty_raises_keyerror",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_peekitem_empty_raises_keyerror",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011396592999517452,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_push_pull_back_and_front",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_push_pull_back_and_front",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01993391700034408,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_prefix_uses_string_keys",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_prefix_uses_string_keys",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00978821000080643,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_empty_returns_default",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_queue_empty_returns_default",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01188652800010459,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_stats_count_hits_and_misses",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_stats_count_hits_and_misses",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.062379182000768196,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_tag_index_toggle_setting",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_tag_index_toggle_setting",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.010016973999881884,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/score_run_clean/oracle_worktree/tests/test_swe_e2e_generated.py",
+          "lineno": 244,
+          "message": "AttributeError: 'Cache' object has no attribute 'tag_index'"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_generated.py",
+            "lineno": 244,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_cache_tag_index_toggle_se0')\n\n    def test_cache_tag_index_toggle_setting(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\", tag_index=True)\n>       assert cache.tag_index == 1\n               ^^^^^^^^^^^^^^^\nE       AttributeError: 'Cache' object has no attribute 'tag_index'\n\ntests/test_swe_e2e_generated.py:244: AttributeError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_reset_returns_previous_value_and_updates_setting",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_reset_returns_previous_value_and_updates_setting",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00698262599962618,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/score_run_clean/oracle_worktree/tests/test_swe_e2e_generated.py",
+          "lineno": 255,
+          "message": "AttributeError: 'Cache' object has no attribute 'cull_limit'"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_generated.py",
+            "lineno": 255,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_cache_reset_returns_previ0')\n\n    def test_cache_reset_returns_previous_value_and_updates_setting(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\")\n        previous = cache.reset(\"cull_limit\", 0)\n        assert isinstance(previous, int)\n>       assert cache.cull_limit == 0\n               ^^^^^^^^^^^^^^^^\nE       AttributeError: 'Cache' object has no attribute 'cull_limit'\n\ntests/test_swe_e2e_generated.py:255: AttributeError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_volume_and_check_public_shapes",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_volume_and_check_public_shapes",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.010656847000063863,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_persists_across_reopened_objects",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_persists_across_reopened_objects",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.017830888999924355,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_closed_object_reopens_on_access",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_closed_object_reopens_on_access",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.014390258999810612,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_transaction_groups_writes",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_transaction_groups_writes",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.007847716000469518,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_memoize_caches_by_arguments",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_memoize_caches_by_arguments",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011559552000107942,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_cache_memoize_rejects_bare_decorator_usage",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_cache_memoize_rejects_bare_decorator_usage",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.008275692000097479,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_mapping_roundtrip_and_membership",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_fanout_mapping_roundtrip_and_membership",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.03592968300017674,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_persists_across_reopened_objects",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_fanout_persists_across_reopened_objects",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.14461134200064407,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_cache_view_persists_by_name",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_cache_view_persists_by_name",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.13664353500007564,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_deque_view_persists_by_name",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_deque_view_persists_by_name",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1717330800001946,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_index_view_persists_by_name",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_fanout_named_index_view_persists_by_name",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.15602411399959237,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_transact_not_supported",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_fanout_transact_not_supported",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0850925989998359,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_fanout_expire_evict_clear_across_shards",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_fanout_expire_evict_clear_across_shards",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.05305027900067216,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_deque_initialization_and_persistence",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_deque_initialization_and_persistence",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.07469444000071235,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_deque_bounded_discards_opposite_end",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_deque_bounded_discards_opposite_end",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011584585000491643,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_deque_pop_peek_endpoint_contracts",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_deque_pop_peek_endpoint_contracts",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.013141186999746424,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_deque_empty_endpoint_errors",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_deque_empty_endpoint_errors",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.017444142999920587,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_deque_indexing_assignment_and_deletion",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_deque_indexing_assignment_and_deletion",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.015058288000545872,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_deque_remove_reverse_rotate_and_count",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_deque_remove_reverse_rotate_and_count",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.009620776999327063,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_deque_copy_is_independent",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_deque_copy_is_independent",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1254579909991662,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_deque_fromcache_exposes_same_cache",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_deque_fromcache_exposes_same_cache",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0114253629999439,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_initialization_and_persistence",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_initialization_and_persistence",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.010084018999805267,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_mapping_operations",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_mapping_operations",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011076183999648492,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_setdefault_and_pop_contract",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_setdefault_and_pop_contract",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.010135182999874814,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_peekitem_and_popitem_sides",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_peekitem_and_popitem_sides",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01258684899949003,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_empty_peekitem_and_popitem_raise_keyerror",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_empty_peekitem_and_popitem_raise_keyerror",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.009719656000015675,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_queue_helpers",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_queue_helpers",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0894222520000767,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_views_and_equality",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_views_and_equality",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.013756087000729167,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_fromcache_exposes_same_cache",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_fromcache_exposes_same_cache",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.009029451000060362,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_index_memoize_caches_function_result",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_index_memoize_caches_function_result",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.008906553000088024,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_averager_get_and_pop",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_averager_get_and_pop",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.008436572000391607,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_lock_context_and_locked_status",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_lock_context_and_locked_status",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.008514244000252802,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_rlock_reentrant_release_contract",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_rlock_reentrant_release_contract",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.037435524000102305,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_bounded_semaphore_release_contract",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_bounded_semaphore_release_contract",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.010946708000119543,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_barrier_preserves_return_value",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_barrier_preserves_return_value",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011206303000108164,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_throttle_preserves_return_value_with_injected_clock",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_throttle_preserves_return_value_with_injected_clock",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.009958452999853762,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_generated.py::test_memoize_stampede_caches_result_and_exposes_key",
+      "base_nodeid": "tests/test_swe_e2e_generated.py::test_memoize_stampede_caches_result_and_exposes_key",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.011277080000581918,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-diskcache-specv1-20260704-002/score_run_clean/oracle_worktree/tests/test_swe_e2e_generated.py",
+          "lineno": 615,
+          "message": "ValueError: too many values to unpack (expected 2)"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_generated.py",
+            "lineno": 615,
+            "message": "ValueError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-58/test_memoize_stampede_caches_r0')\n\n    def test_memoize_stampede_caches_result_and_exposes_key(tmp_path):\n        cache = dc.Cache(tmp_path / \"cache\", eviction_policy=\"none\")\n        calls = {\"count\": 0}\n    \n        @dc.memoize_stampede(cache, expire=60)\n        def triple(value):\n            calls[\"count\"] += 1\n            return value * 3\n    \n        assert triple(5) == 15\n        assert triple(5) == 15\n        assert calls[\"count\"] == 1\n>       cached_result, elapsed = cache[triple.__cache_key__(5)]\n        ^^^^^^^^^^^^^^^^^^^^^^\nE       ValueError: too many values to unpack (expected 2)\n\ntests/test_swe_e2e_generated.py:615: ValueError"
+      }
+    }
+  ]
+}

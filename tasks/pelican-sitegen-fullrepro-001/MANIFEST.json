@@ -1,0 +1,47 @@
+{
+  "task_id": "pelican-sitegen-fullrepro-001",
+  "status": "QUALIFIED",
+  "oracle_version": "20260704-public-carrier-v1",
+  "oracle_count": 56,
+  "oracle_source": "generated_public_carrier",
+  "scorer_isolation": "--remove-path pelican",
+  "artifacts": {
+    "spec": "spec.md",
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "score_result": "score_result.json",
+    "diagnosis_report": "diagnosis_report.md",
+    "reference_score": "reference_score.json"
+  },
+  "reference_gate": {
+    "result": "56/56 passed",
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.29",
+    "source": "wip/pelican-sitegen-fullrepro-001/filter/reference_score.json"
+  },
+  "candidate_score": {
+    "score_result_source": "candidate-runs/codex-pelican-specv3-20260701-001/score_result_public_carrier_wsl_20260704.json",
+    "result": "40/56 passed",
+    "passed": 40,
+    "failed": 16,
+    "total": 56,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.29"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "diagnosis_report": "diagnosis_report.md",
+    "source": "wip/pelican-sitegen-fullrepro-001/judge/diagnosis_report_public_carrier_20260704.md",
+    "date": "2026-07-04"
+  },
+  "labels": [
+    "discriminating",
+    "public-carrier-repaired",
+    "api-surface-signal",
+    "cross-view-consistency-signal"
+  ],
+  "notes": [
+    "2026-07-09 shipping sync: previous tasks/ contents (superseded private-harness score 11/156 with 17 collection errors, judged zero-signal by the 2026-07-02 audit) moved to archive/superseded-20260709/pelican-sitegen-fullrepro-001/. This package now carries the 2026-07-04 judge-certified 56-test public-carrier WSL chain.",
+    "spec.md is the candidate-visible body of wip spec/spec_v3.md with the INTERNAL header stripped; the full v3 body is verbatim inside candidate-runs/codex-pelican-specv3-20260701-001/task_prompt.txt (verified 2026-07-09). The full internal version remains in wip/pelican-sitegen-fullrepro-001/spec/spec_v3.md.",
+    "The 2026-07-03 user-authorized exception row in CANDIDATES.md is superseded by this certified chain."
+  ]
+}

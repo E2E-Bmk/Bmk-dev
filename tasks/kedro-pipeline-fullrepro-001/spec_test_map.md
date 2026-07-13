@@ -1,0 +1,82 @@
+﻿# Kedro P0-2 Filter Map
+
+oracle_version: 20260712T_P0_2
+oracle_source: generated_only
+scope: public pipeline graph, catalog/config projections, and SequentialRunner execution behavior
+scorer_isolation: score_pytest_original.py with --remove-path kedro
+
+| test_nodeid | source | layer | spec_section | status | notes |
+|---|---|---|---|---|---|
+| `filter/generated_tests.py::test_node_factory_returns_node_with_public_properties` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_rejects_non_callable_function` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_rejects_empty_inputs_and_outputs` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_rejects_inputs_that_do_not_bind_to_signature` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_rejects_duplicate_output_names` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_rejects_same_input_and_output_dataset` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_run_uses_single_string_input_and_output` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_run_uses_list_inputs_in_order` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_run_uses_dict_inputs_as_keyword_arguments` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_run_with_no_outputs_returns_empty_mapping` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_run_list_outputs_require_matching_sequence_length` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_run_dict_outputs_map_return_keys_to_dataset_names` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_run_requires_exact_runtime_inputs` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_node_tag_returns_new_node_and_preserves_original` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_namespaced_node_reports_namespace_and_prefixes` | generated | atomic | ### Pipeline Nodes | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_orders_nodes_by_dependencies_not_input_order` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_reports_free_inputs_outputs_and_all_datasets` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_node_dependencies_identify_upstream_nodes` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_filter_by_inputs_and_outputs_returns_dependency_slices` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_filter_by_node_names_and_tags_intersects_dimensions` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_filter_missing_dimension_raises_value_error` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_only_nodes_with_namespaces_selects_namespaced_nodes` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_union_subtraction_and_intersection_return_new_pipelines` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_constructor_rejects_duplicate_outputs` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_constructor_rejects_circular_dependencies` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_describe_contains_execution_order_node_names` | generated | atomic | ### Pipelines | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_mapping_includes_registered_datasets` | generated | atomic | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_assignment_wraps_raw_values_as_memory_dataset` | generated | atomic | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_reassignment_replaces_previous_dataset` | generated | atomic | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_get_returns_none_for_missing_dataset` | generated | atomic | ## Error Semantics | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_load_save_release_cycle_with_memory_dataset` | generated | atomic | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_missing_dataset_operations_raise_not_found` | generated | atomic | ## Error Semantics | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_confirm_calls_public_confirm_method` | generated | atomic | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_confirm_without_confirm_method_raises_dataset_error` | generated | atomic | ## Error Semantics | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_wraps_dataset_load_failures_in_dataset_error` | generated | atomic | ## Error Semantics | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_from_config_builds_memory_dataset_by_class_name` | generated | atomic | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_from_config_rejects_invalid_entry_shape` | generated | atomic | ## Error Semantics | covered | public API behavior audit |
+| `filter/generated_tests.py::test_data_catalog_from_config_rejects_unknown_load_version_dataset` | generated | atomic | ## Error Semantics | covered | public API behavior audit |
+| `filter/generated_tests.py::test_memory_dataset_load_before_save_raises_dataset_error` | generated | atomic | ## Error Semantics | covered | public API behavior audit |
+| `filter/generated_tests.py::test_memory_dataset_deepcopy_mode_isolates_loaded_mutation` | generated | atomic | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_memory_dataset_assign_mode_returns_same_object_reference` | generated | atomic | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_memory_dataset_rejects_invalid_copy_mode` | generated | atomic | ## Error Semantics | covered | public API behavior audit |
+| `filter/generated_tests.py::test_omega_config_loader_loads_base_and_default_environment` | generated | atomic | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_omega_config_loader_runtime_params_override_parameter_files` | generated | atomic | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_omega_config_loader_soft_merge_preserves_nested_base_keys` | generated | atomic | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_omega_config_loader_destructive_merge_replaces_top_level_keys` | generated | atomic | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_omega_config_loader_supports_yaml_yml_and_json_files` | generated | atomic | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_omega_config_loader_unknown_key_and_missing_config_errors` | generated | atomic | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_omega_config_loader_duplicate_keys_in_same_environment_raise` | generated | atomic | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_omega_config_loader_omits_hidden_top_level_config_keys` | generated | atomic | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_config_catalog_projection_builds_loadable_dataset` | generated | integration | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_shares_catalog_state_across_dependent_nodes` | generated | integration | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_joins_outputs_from_parallel_branches` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_uses_dependency_order_instead_of_declaration_order` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_executes_pipeline_slice_from_selected_input` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_executes_pipeline_slice_to_selected_output` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_executes_tag_filtered_node_with_catalog_input` | generated | integration | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_executes_named_node_subset_in_dependency_order` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_executes_namespace_filtered_pipeline` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_missing_free_input_prevents_node_execution` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_upstream_error_prevents_downstream_execution` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_save_error_prevents_downstream_execution` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_load_error_prevents_node_execution` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_environment_override_changes_runner_input` | generated | integration | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_soft_merged_config_values_feed_runner` | generated | integration | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runtime_parameter_override_feeds_runner` | generated | integration | ### Configuration Loading | covered | public API behavior audit |
+| `filter/generated_tests.py::test_catalog_configuration_builds_runner_input` | generated | integration | ### Data Catalog And Datasets | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_consumes_multiple_outputs_in_later_node` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_runner_applies_dataset_confirmation_after_node_completion` | generated | integration | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_pipeline_catalog_runner_cross_view_output_names_align` | generated | system_e2e | ## Pipeline Execution | covered | public API behavior audit |
+| `filter/generated_tests.py::test_raw_catalog_assignment_cross_view_returns_memory_dataset_value` | generated | integration | ### Data Catalog And Datasets | covered | public API behavior audit |
+
+Total: 71 | kept (covered): 71 | spec_gap: 0 | source-only: 0 | excluded: 0 | final scoreable: 71

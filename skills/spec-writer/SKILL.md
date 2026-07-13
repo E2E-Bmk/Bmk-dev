@@ -99,6 +99,7 @@ Items in these categories belong in the spec **only when they pass Q2** — i.e.
 - Names of internal helpers absent from the public export surface — presence in test imports alone is not sufficient; check `__all__`, `__init__` exports, and user-facing examples/docstrings
 - Private names (`_name`, `__name`) and names absent from the public export surface
 - Internal implementation details of public classes (field names, internal maps, singleton structure) that are not part of the API contract
+- Escape-hatch language: `Most`, `generally`, `typically`, `in most cases`, `usually` when describing API support scope — these allow a candidate to skip a behavior and still satisfy the spec wording. State the exact scope of support explicitly.
 
 ## Required Structure
 
@@ -129,6 +130,7 @@ source_boundary: {list of sources consulted: docs pages, source files}
 ## Cross-View Invariants        <- >=6 items, user-observable language
 ## Representative Workflow(s)   <- >=1 end-to-end example
 ## Non-Goals                    <- explicit exclusions
+## Invocation Protocol          <- console script name; whether `python -m <pkg>` is supported (write "supported" or "not supported"); exit code table
 ## Evaluation Notes             <- test dimensions and evaluation protocol; no fixture shapes or expected values
 ```
 
@@ -153,8 +155,9 @@ Spec and test-filter are linked: spec describes what must be implemented; test-f
 9. Is there a Product State Model section (or equivalent) before the per-subsystem sections, with >=3 cross-view invariants stated in user-observable language<-
 10. Does any section contain an escape hatch — language ambiguous enough that a candidate can skip a behavior and still satisfy the spec wording<-
 11. For every statement that describes a priority order, override rule, or multi-source merge (e.g. "A takes precedence over B", "X overrides Y"): was this verified by calling the reference implementation with a concrete input where A and B conflict, not by inferring from documentation alone? If not verified against reference behavior, mark as unverified and do not include until verified<-
+12. Does the candidate-visible body contain any of the following strings: `task_id`, `delta:`, `source_boundary:`, `Candidate Agent Input Boundary`, `benchmark`, `oracle`, `judge`? Any match → strip before sending to candidate<-
 
-All eleven must pass. Any failure -> patch and re-judge.
+All twelve must pass. Any failure -> patch and re-judge.
 
 ## Critical Experiment Results
 
@@ -179,6 +182,7 @@ All eleven must pass. Any failure -> patch and re-judge.
 2. Confirm the judge's observed value matches what the reference actually produces.
 3. If confirmed: correct the spec claim to match the reference-observed value. If the correction contradicts other spec statements, resolve those contradictions too.
 4. If the reference produces a third value Z (neither X nor Y): record the discrepancy, correct to Z, and note the judge's evidence was incomplete.
+5. After correction, the spec_patch_request must be routed back through all 12 validation checks before the pipeline proceeds. A confirmed spec_error blocks QUALIFIED — do not record the contradiction as a model weakness until the spec is corrected and the candidate is re-evaluated.
 
 Never correct a spec_error by documentation inference alone. The correction must be grounded in reference execution.
 

@@ -1,0 +1,39 @@
+{
+  "task_id": "requests-cache-fullrepro-001",
+  "status": "QUALIFIED",
+  "oracle_count": 58,
+  "scorer_isolation": "--remove-path requests_cache",
+  "artifacts": {
+    "spec": "spec.md",
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "score_result": "score_result.json",
+    "diagnosis_report": "diagnosis_report.md",
+    "reference_score": "reference_score.json"
+  },
+  "reference_gate": {
+    "result": "58/58 passed",
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64 (WSL2)",
+    "source": "wip/requests-cache-fullrepro-001/filter/reference_score_wsl.json"
+  },
+  "candidate_score": {
+    "score_result_source": "candidate-runs/codex-requests-cache-specv1-20260704-002",
+    "result": "32/58 passed",
+    "passed": 32,
+    "failed": 26,
+    "total": 58,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64 (WSL2)"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "diagnosis_report": "diagnosis_report.md",
+    "source": "wip/requests-cache-fullrepro-001/judge/diagnosis_report_rejudge_20260704.md",
+    "date": "2026-07-04"
+  },
+  "trajectory": "candidate-runs/codex-requests-cache-specv1-20260704-002/trajectory.jsonl",
+  "caveats": [
+    "spec_test_map.md records 'dummy_gate: 56 failed / 2 passed against public-surface dummy stub'; the 2 dummy-passing tests remain in the scoring set without a written exemption. They contribute no discriminative signal and are flagged for exclusion or exemption at the next oracle maintenance cycle (excluding them now would require a candidate rescore, so the shipped score is left untouched).",
+    "MANIFEST.json and reference_score.json were absent from tasks/ at graduation time and were backfilled on 2026-07-09 from existing wip artifacts (no scores were produced or altered in the backfill)."
+  ]
+}

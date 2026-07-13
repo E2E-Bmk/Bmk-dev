@@ -1,0 +1,3213 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 120,
+  "remove_paths": [
+    "invoke"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.tmp/invoke_dummy_source",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/invoke-taskrunner-fullrepro-001/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/invoke-taskrunner-fullrepro-001/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl",
+  "grouped_results": {
+    "filter/rewritten_upstream_tests.py": {
+      "returncode": 1,
+      "stdout": ".F...FFF.......F...FFFFFF.....F..........FF.....F..................      [100%]\n=================================== FAILURES ===================================\n___________ test_task_decorator_options_set_name_aliases_and_default ___________\n\n    def test_task_decorator_options_set_name_aliases_and_default():\n        @task(name=\"ship\", aliases=(\"deploy\",), default=True)\n        def release(c):\n            pass\n    \n        assert release.name == \"ship\"\n        assert release.aliases == (\"deploy\",)\n>       assert release.is_default is True\n               ^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'is_default'\n\nfilter/rewritten_upstream_tests.py:69: AttributeError\n____________ test_task_arguments_drop_context_and_dash_underscores _____________\n\n    def test_task_arguments_drop_context_and_dash_underscores():\n        @task\n        def build(c, target_name, clean=False):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:109: AttributeError\n_____________ test_task_boolean_true_default_creates_inverse_flag ______________\n\n    def test_task_boolean_true_default_creates_inverse_flag():\n        @task\n        def build(c, cache=True):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:120: AttributeError\n_______ test_task_optional_iterable_and_incrementable_argument_metadata ________\n\n    def test_task_optional_iterable_and_incrementable_argument_metadata():\n        @task(optional=(\"target\",), iterable=(\"label\",), incrementable=(\"verbose\",))\n        def build(c, target=None, label=None, verbose=0):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:130: AttributeError\n_____ test_collection_task_names_include_dotted_names_aliases_and_defaults _____\n\n    def test_collection_task_names_include_dotted_names_aliases_and_defaults():\n        @task(aliases=(\"ship\",), default=True)\n        def deploy(c):\n            pass\n    \n        root = Collection(\"root\")\n        root.add_collection(Collection(\"prod\", deploy))\n        names = root.task_names\n        assert \"prod.deploy\" in names\n>       assert \"prod\" in names[\"prod.deploy\"]\nE       AssertionError: assert 'prod' in ['prod.ship']\n\nfilter/rewritten_upstream_tests.py:232: AssertionError\n________________ test_config_supports_dict_and_attribute_access ________________\n\n    def test_config_supports_dict_and_attribute_access():\n>       config = Config(defaults={\"project\": {\"target\": \"dist\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:305: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'project': {'target': 'dist'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError\n_________ test_config_real_attributes_take_precedence_over_config_keys _________\n\n    def test_config_real_attributes_take_precedence_over_config_keys():\n>       config = Config(defaults={\"clone\": {\"value\": \"from-config\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:313: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'clone': {'value': 'from-config'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError\n______ test_config_clone_preserves_values_without_sharing_runtime_changes ______\n\n    def test_config_clone_preserves_values_without_sharing_runtime_changes():\n>       config = Config(defaults={\"project\": {\"target\": \"dist\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:319: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'project': {'target': 'dist'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError\n__________________ test_config_load_overrides_beats_defaults ___________________\n\n    def test_config_load_overrides_beats_defaults():\n>       config = Config(defaults={\"run\": {\"echo\": False}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:327: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'run': {'echo': False}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError\n_____ test_config_environment_casts_existing_boolean_and_numeric_defaults ______\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4107ce5e50>\n\n    def test_config_environment_casts_existing_boolean_and_numeric_defaults(monkeypatch):\n        monkeypatch.setenv(\"INVOKE_RUN_ECHO\", \"1\")\n        monkeypatch.setenv(\"INVOKE_TIMEOUTS_COMMAND\", \"5\")\n>       config = Config(defaults={\"run\": {\"echo\": False}, \"timeouts\": {\"command\": 1}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:335: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'run': {'echo': False}, 'timeouts': {'command': 1}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError\n______________ test_config_unknown_runtime_file_extension_raises _______________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0')\n\n    def test_config_unknown_runtime_file_extension_raises(tmp_path):\n        runtime = tmp_path / \"invoke.ini\"\n        runtime.write_text(\"[run]\\necho = true\\n\", encoding=\"utf-8\")\n>       config = Config(runtime_path=str(runtime))\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:344: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:286: in __init__\n    self.load_runtime(merge=False)\n../../output/invoke/__init__.py:356: in load_runtime\n    data = {} if not path else self._load_file(path)\n                               ^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {}\npath = '/tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0/invoke.ini'\n\n    def _load_file(self, path):\n        suffix = Path(path).suffix.lower().lstrip(\".\")\n        if suffix not in {\"yaml\", \"yml\", \"json\", \"py\"}:\n>           raise UnknownFileType(path)\nE           invoke.UnknownFileType: /tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0/invoke.ini\n\n../../output/invoke/__init__.py:411: UnknownFileType\n___________________ test_context_cd_changes_cwd_for_command ____________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_context_cd_changes_cwd_fo0')\n\n    def test_context_cd_changes_cwd_for_command(tmp_path):\n        RecordingRunner.seen.clear()\n        ctx = Context(config=Config(overrides={\"runners\": {\"local\": RecordingRunner}}))\n        with ctx.cd(str(tmp_path)):\n            ctx.run(\"pwd\", hide=True)\n        command = RecordingRunner.seen[0][0]\n>       assert command.endswith(\" && pwd\")\nE       AssertionError: assert False\nE        +  where False = <built-in method endswith of str object at 0x562be641dad8>(' && pwd')\nE        +    where <built-in method endswith of str object at 0x562be641dad8> = 'pwd'.endswith\n\nfilter/rewritten_upstream_tests.py:416: AssertionError\n______________ test_context_run_wraps_failing_watcher_in_failure _______________\n\n    def test_context_run_wraps_failing_watcher_in_failure():\n        code = (\n            \"import sys; \"\n            \"sys.stdout.write('Password: '); sys.stdout.flush(); \"\n            \"sys.stdin.readline(); print('Sorry')\"\n        )\n        responder = FailingResponder(\n            pattern=r\"Password: \",\n            response=\"bad\\n\",\n            sentinel=r\"Sorry\",\n        )\n>       with pytest.raises(Failure) as exc:\nE       Failed: DID NOT RAISE Failure\n\nfilter/rewritten_upstream_tests.py:516: Failed\n_____________ test_cli_json_list_reports_tasks_aliases_and_default _____________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_json_list_reports_tas0')\n\n    def test_cli_json_list_reports_tasks_aliases_and_default(tmp_path):\n        write_file(\n            tmp_path / \"tasks.py\",\n            \"\"\"\n            from invoke import task, Collection\n    \n            @task(aliases=(\"ship\",), default=True)\n            def deploy(c):\n                pass\n    \n            ns = Collection(\"project\", deploy)\n            \"\"\",\n        )\n        proc = run_invoke(tmp_path, \"--list\", \"--list-format=json\")\n        assert proc.returncode == 0, proc.stderr\n        payload = json.loads(proc.stdout)\n        assert payload[\"name\"] == \"project\"\n>       deploy = next(item for item in payload[\"tasks\"] if item[\"name\"] == \"deploy\")\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:543: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <dict_keyiterator object at 0x7f4107bfa610>\n\n>   deploy = next(item for item in payload[\"tasks\"] if item[\"name\"] == \"deploy\")\n                                                       ^^^^^^^^^^^^\nE   TypeError: string indices must be integers, not 'str'\n\nfilter/rewritten_upstream_tests.py:543: TypeError\n____________ test_cli_iterable_argument_accumulates_repeated_values ____________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_iterable_argument_acc0')\n\n    def test_cli_iterable_argument_accumulates_repeated_values(tmp_path):\n        write_file(\n            tmp_path / \"tasks.py\",\n            \"\"\"\n            from invoke import task\n    \n            @task(iterable=(\"label\",))\n            def build(c, label=None):\n                print(\",\".join(label))\n            \"\"\",\n        )\n        proc = run_invoke(tmp_path, \"build\", \"--label=a\", \"--label=b\")\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"<frozen runpy>\", line 198, in _run_module_as_main\nE           File \"<frozen runpy>\", line 88, in _run_code\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__main__.py\", line 4, in <module>\nE             Program().run()\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1212, in run\nE             code = self._run(argv)\nE                    ^^^^^^^^^^^^^^^\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1261, in _run\nE             self._execute_call(call_obj, config.clone(), parse_result, seen, config[\"tasks\"].get(\"dedupe\", True))\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1376, in _execute_call\nE             if dedupe and ident in seen:\nE                           ^^^^^^^^^^^^^\nE         TypeError: unhashable type: 'list'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'invoke', 'b...ecute_call\\n    if dedupe and ident in seen:\\n                  ^^^^^^^^^^^^^\\nTypeError: unhashable type: \\'list\\'\\n').returncode\n\nfilter/rewritten_upstream_tests.py:644: AssertionError\n=========================== short test summary info ============================\nFAILED filter/rewritten_upstream_tests.py::test_task_decorator_options_set_name_aliases_and_default\nFAILED filter/rewritten_upstream_tests.py::test_task_arguments_drop_context_and_dash_underscores\nFAILED filter/rewritten_upstream_tests.py::test_task_boolean_true_default_creates_inverse_flag\nFAILED filter/rewritten_upstream_tests.py::test_task_optional_iterable_and_incrementable_argument_metadata\nFAILED filter/rewritten_upstream_tests.py::test_collection_task_names_include_dotted_names_aliases_and_defaults\nFAILED filter/rewritten_upstream_tests.py::test_config_supports_dict_and_attribute_access\nFAILED filter/rewritten_upstream_tests.py::test_config_real_attributes_take_precedence_over_config_keys\nFAILED filter/rewritten_upstream_tests.py::test_config_clone_preserves_values_without_sharing_runtime_changes\nFAILED filter/rewritten_upstream_tests.py::test_config_load_overrides_beats_defaults\nFAILED filter/rewritten_upstream_tests.py::test_config_environment_casts_existing_boolean_and_numeric_defaults\nFAILED filter/rewritten_upstream_tests.py::test_config_unknown_runtime_file_extension_raises\nFAILED filter/rewritten_upstream_tests.py::test_context_cd_changes_cwd_for_command\nFAILED filter/rewritten_upstream_tests.py::test_context_run_wraps_failing_watcher_in_failure\nFAILED filter/rewritten_upstream_tests.py::test_cli_json_list_reports_tasks_aliases_and_default\nFAILED filter/rewritten_upstream_tests.py::test_cli_iterable_argument_accumulates_repeated_values\n15 failed, 52 passed in 18.73s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783057265.0214121,
+        "duration": 18.642369270324707,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 52,
+          "failed": 15,
+          "total": 67,
+          "collected": 67
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_bare_wraps_callable_with_public_name",
+                "type": "Function",
+                "lineno": 51
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_options_set_name_aliases_and_default",
+                "type": "Function",
+                "lineno": 61
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_rejects_positional_pretasks_and_pre_keyword",
+                "type": "Function",
+                "lineno": 71
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_task_call_requires_context_as_first_argument",
+                "type": "Function",
+                "lineno": 80
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_task_call_marks_task_as_called_after_success",
+                "type": "Function",
+                "lineno": 89
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_task_arguments_drop_context_and_dash_underscores",
+                "type": "Function",
+                "lineno": 103
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_task_boolean_true_default_creates_inverse_flag",
+                "type": "Function",
+                "lineno": 114
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_task_optional_iterable_and_incrementable_argument_metadata",
+                "type": "Function",
+                "lineno": 124
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_call_helper_stores_task_args_and_kwargs",
+                "type": "Function",
+                "lineno": 135
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_call_clone_is_independent_and_can_replace_data",
+                "type": "Function",
+                "lineno": 147
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_call_make_context_uses_config_and_remainder",
+                "type": "Function",
+                "lineno": 161
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_collection_add_task_binds_name_alias_and_lookup",
+                "type": "Function",
+                "lineno": 175
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_collection_empty_lookup_returns_default_task",
+                "type": "Function",
+                "lineno": 187
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_collection_rejects_second_default_task",
+                "type": "Function",
+                "lineno": 197
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_collection_dotted_subcollection_lookup_and_default",
+                "type": "Function",
+                "lineno": 210
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_collection_task_names_include_dotted_names_aliases_and_defaults",
+                "type": "Function",
+                "lineno": 222
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_collection_configuration_merges_parent_over_child_for_path",
+                "type": "Function",
+                "lineno": 235
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_collection_from_module_prefers_explicit_namespace",
+                "type": "Function",
+                "lineno": 248
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_collection_from_module_uses_top_level_tasks_without_namespace",
+                "type": "Function",
+                "lineno": 279
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_config_supports_dict_and_attribute_access",
+                "type": "Function",
+                "lineno": 303
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_config_real_attributes_take_precedence_over_config_keys",
+                "type": "Function",
+                "lineno": 311
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_config_clone_preserves_values_without_sharing_runtime_changes",
+                "type": "Function",
+                "lineno": 317
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_config_load_overrides_beats_defaults",
+                "type": "Function",
+                "lineno": 325
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_config_environment_casts_existing_boolean_and_numeric_defaults",
+                "type": "Function",
+                "lineno": 331
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_config_unknown_runtime_file_extension_raises",
+                "type": "Function",
+                "lineno": 340
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_uses_configured_local_runner_class",
+                "type": "Function",
+                "lineno": 356
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_invoke_run_creates_anonymous_context_and_returns_result",
+                "type": "Function",
+                "lineno": 366
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_warn_true_returns_failed_result",
+                "type": "Function",
+                "lineno": 376
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_warn_false_raises_unexpected_exit",
+                "type": "Function",
+                "lineno": 387
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_dry_returns_success_without_running_command",
+                "type": "Function",
+                "lineno": 397
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_cd_changes_cwd_for_command",
+                "type": "Function",
+                "lineno": 409
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_prefix_runs_before_command",
+                "type": "Function",
+                "lineno": 419
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_result_truth_return_code_and_default_env",
+                "type": "Function",
+                "lineno": 430
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_result_tail_returns_requested_stream_lines",
+                "type": "Function",
+                "lineno": 439
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_mock_context_returns_prepared_string_and_boolean_results",
+                "type": "Function",
+                "lineno": 447
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_mock_context_raises_when_no_prepared_result_matches",
+                "type": "Function",
+                "lineno": 453
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_stream_watcher_base_submit_is_not_implemented",
+                "type": "Function",
+                "lineno": 459
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_responder_yields_response_for_regex_match",
+                "type": "Function",
+                "lineno": 464
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_responder_consumes_each_stream_segment_once",
+                "type": "Function",
+                "lineno": 469
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_failing_responder_raises_after_response_sentinel",
+                "type": "Function",
+                "lineno": 476
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_watcher_responds_to_prompt_and_preserves_output",
+                "type": "Function",
+                "lineno": 487
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_wraps_failing_watcher_in_failure",
+                "type": "Function",
+                "lineno": 504
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_json_list_reports_tasks_aliases_and_default",
+                "type": "Function",
+                "lineno": 525
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_invokes_default_task_when_no_task_name_is_given",
+                "type": "Function",
+                "lineno": 546
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_explicit_collection_module_replaces_tasks_default",
+                "type": "Function",
+                "lineno": 564
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_delivers_dashed_flag_to_underscored_python_argument",
+                "type": "Function",
+                "lineno": 580
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_inverse_boolean_flag_sets_false",
+                "type": "Function",
+                "lineno": 596
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_optional_argument_accepts_bare_flag_and_value",
+                "type": "Function",
+                "lineno": 612
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_iterable_argument_accumulates_repeated_values",
+                "type": "Function",
+                "lineno": 631
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_incrementable_argument_counts_repetitions",
+                "type": "Function",
+                "lineno": 647
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_runs_pre_and_post_tasks_around_requested_task",
+                "type": "Function",
+                "lineno": 663
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_dedupes_repeated_task_calls_by_default",
+                "type": "Function",
+                "lineno": 687
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_no_dedupe_allows_repeated_task_calls",
+                "type": "Function",
+                "lineno": 703
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_remainder_after_double_dash_reaches_context",
+                "type": "Function",
+                "lineno": 719
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_project_config_is_visible_to_task_context",
+                "type": "Function",
+                "lineno": 735
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_environment_variable_overrides_existing_config_key",
+                "type": "Function",
+                "lineno": 758
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_runtime_config_file_overrides_project_config",
+                "type": "Function",
+                "lineno": 774
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_run_flag_overrides_config_for_task_commands",
+                "type": "Function",
+                "lineno": 793
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_help_for_task_includes_docstring_and_task_option",
+                "type": "Function",
+                "lineno": 811
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_unknown_task_exits_unsuccessfully",
+                "type": "Function",
+                "lineno": 830
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_python_module_invocation_runs_same_program",
+                "type": "Function",
+                "lineno": 837
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_program_run_string_argv_and_exit_false_do_not_raise_system_exit",
+                "type": "Function",
+                "lineno": 853
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_program_run_unknown_task_with_exit_false_returns_without_system_exit",
+                "type": "Function",
+                "lineno": 874
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_flat_list_uses_dotted_names_for_nested_collections",
+                "type": "Function",
+                "lineno": 886
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_cli_list_depth_with_json_is_an_error",
+                "type": "Function",
+                "lineno": 905
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_context_sudo_runtime_password_builds_prompt_responder",
+                "type": "Function",
+                "lineno": 925
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_sudo_rejected_response_translates_to_auth_failure",
+                "type": "Function",
+                "lineno": 949
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_bare_wraps_callable_with_public_name",
+            "lineno": 51,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_decorator_bare_wraps_callable_with_public_name",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.009679700000560842,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002889059978770092,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003065369965042919,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_options_set_name_aliases_and_default",
+            "lineno": 61,
+            "outcome": "failed",
+            "keywords": [
+              "test_task_decorator_options_set_name_aliases_and_default",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00075958100205753,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00028840600134572014,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 69,
+                "message": "AttributeError: 'Task' object has no attribute 'is_default'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 69,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "def test_task_decorator_options_set_name_aliases_and_default():\n        @task(name=\"ship\", aliases=(\"deploy\",), default=True)\n        def release(c):\n            pass\n    \n        assert release.name == \"ship\"\n        assert release.aliases == (\"deploy\",)\n>       assert release.is_default is True\n               ^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'is_default'\n\nfilter/rewritten_upstream_tests.py:69: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.00040392800292465836,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_rejects_positional_pretasks_and_pre_keyword",
+            "lineno": 71,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_decorator_rejects_positional_pretasks_and_pre_keyword",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00030554499971913174,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017121299606515095,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010250000195810571,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_task_call_requires_context_as_first_argument",
+            "lineno": 80,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_call_requires_context_as_first_argument",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004210519982734695,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010767499770736322,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.92630050657317e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_task_call_marks_task_as_called_after_success",
+            "lineno": 89,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_call_marks_task_as_called_after_success",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00038843400398036465,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000419846001022961,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.866800246527418e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_task_arguments_drop_context_and_dash_underscores",
+            "lineno": 103,
+            "outcome": "failed",
+            "keywords": [
+              "test_task_arguments_drop_context_and_dash_underscores",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006070469971746206,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00021366599685279652,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 109,
+                "message": "AttributeError: 'Task' object has no attribute 'get_arguments'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 109,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "def test_task_arguments_drop_context_and_dash_underscores():\n        @task\n        def build(c, target_name, clean=False):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:109: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.0002293720026500523,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_task_boolean_true_default_creates_inverse_flag",
+            "lineno": 114,
+            "outcome": "failed",
+            "keywords": [
+              "test_task_boolean_true_default_creates_inverse_flag",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000311142997816205,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00011843100219266489,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 120,
+                "message": "AttributeError: 'Task' object has no attribute 'get_arguments'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 120,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "def test_task_boolean_true_default_creates_inverse_flag():\n        @task\n        def build(c, cache=True):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:120: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.00022346900368575007,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_task_optional_iterable_and_incrementable_argument_metadata",
+            "lineno": 124,
+            "outcome": "failed",
+            "keywords": [
+              "test_task_optional_iterable_and_incrementable_argument_metadata",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004236309978296049,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00012954099656781182,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 130,
+                "message": "AttributeError: 'Task' object has no attribute 'get_arguments'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 130,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "def test_task_optional_iterable_and_incrementable_argument_metadata():\n        @task(optional=(\"target\",), iterable=(\"label\",), incrementable=(\"verbose\",))\n        def build(c, target=None, label=None, verbose=0):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:130: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.00021265399846015498,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_call_helper_stores_task_args_and_kwargs",
+            "lineno": 135,
+            "outcome": "passed",
+            "keywords": [
+              "test_call_helper_stores_task_args_and_kwargs",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003032259992323816,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018657100008567795,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017707499500829726,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_call_clone_is_independent_and_can_replace_data",
+            "lineno": 147,
+            "outcome": "passed",
+            "keywords": [
+              "test_call_clone_is_independent_and_can_replace_data",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00043245400593150407,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010286099859513342,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.018400305649266e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_call_make_context_uses_config_and_remainder",
+            "lineno": 161,
+            "outcome": "passed",
+            "keywords": [
+              "test_call_make_context_uses_config_and_remainder",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002448369996272959,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000568477000342682,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010979000217048451,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_collection_add_task_binds_name_alias_and_lookup",
+            "lineno": 175,
+            "outcome": "passed",
+            "keywords": [
+              "test_collection_add_task_binds_name_alias_and_lookup",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002856459977920167,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00011753899889299646,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.798800601856783e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_collection_empty_lookup_returns_default_task",
+            "lineno": 187,
+            "outcome": "passed",
+            "keywords": [
+              "test_collection_empty_lookup_returns_default_task",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022539000201504678,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010330299846827984,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.657199941808358e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_collection_rejects_second_default_task",
+            "lineno": 197,
+            "outcome": "passed",
+            "keywords": [
+              "test_collection_rejects_second_default_task",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002184999975725077,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00014457900397246704,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014424099936150014,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_collection_dotted_subcollection_lookup_and_default",
+            "lineno": 210,
+            "outcome": "passed",
+            "keywords": [
+              "test_collection_dotted_subcollection_lookup_and_default",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00023318400053540245,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001225260057253763,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.686699922895059e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_collection_task_names_include_dotted_names_aliases_and_defaults",
+            "lineno": 222,
+            "outcome": "failed",
+            "keywords": [
+              "test_collection_task_names_include_dotted_names_aliases_and_defaults",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004902960063191131,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000701617005688604,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 232,
+                "message": "AssertionError: assert 'prod' in ['prod.ship']"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 232,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_collection_task_names_include_dotted_names_aliases_and_defaults():\n        @task(aliases=(\"ship\",), default=True)\n        def deploy(c):\n            pass\n    \n        root = Collection(\"root\")\n        root.add_collection(Collection(\"prod\", deploy))\n        names = root.task_names\n        assert \"prod.deploy\" in names\n>       assert \"prod\" in names[\"prod.deploy\"]\nE       AssertionError: assert 'prod' in ['prod.ship']\n\nfilter/rewritten_upstream_tests.py:232: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0002061790000880137,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_collection_configuration_merges_parent_over_child_for_path",
+            "lineno": 235,
+            "outcome": "passed",
+            "keywords": [
+              "test_collection_configuration_merges_parent_over_child_for_path",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003058599977521226,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00022450000687967986,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010676399688236415,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_collection_from_module_prefers_explicit_namespace",
+            "lineno": 248,
+            "outcome": "passed",
+            "keywords": [
+              "test_collection_from_module_prefers_explicit_namespace",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009072370012290776,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0008416269993176684,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018898800044553354,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_collection_from_module_uses_top_level_tasks_without_namespace",
+            "lineno": 279,
+            "outcome": "passed",
+            "keywords": [
+              "test_collection_from_module_uses_top_level_tasks_without_namespace",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001493545998528134,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0008700899998075329,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000181463998160325,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_config_supports_dict_and_attribute_access",
+            "lineno": 303,
+            "outcome": "failed",
+            "keywords": [
+              "test_config_supports_dict_and_attribute_access",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003316430011182092,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018669499695533887,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+                "lineno": 374,
+                "message": "KeyError: 'runners'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 305,
+                  "message": ""
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 289,
+                  "message": "in __init__"
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 374,
+                  "message": "KeyError"
+                }
+              ],
+              "longrepr": "def test_config_supports_dict_and_attribute_access():\n>       config = Config(defaults={\"project\": {\"target\": \"dist\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:305: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'project': {'target': 'dist'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+            },
+            "teardown": {
+              "duration": 0.00019839399465126917,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_config_real_attributes_take_precedence_over_config_keys",
+            "lineno": 311,
+            "outcome": "failed",
+            "keywords": [
+              "test_config_real_attributes_take_precedence_over_config_keys",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00027175599825568497,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00024240899801952764,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+                "lineno": 374,
+                "message": "KeyError: 'runners'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 313,
+                  "message": ""
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 289,
+                  "message": "in __init__"
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 374,
+                  "message": "KeyError"
+                }
+              ],
+              "longrepr": "def test_config_real_attributes_take_precedence_over_config_keys():\n>       config = Config(defaults={\"clone\": {\"value\": \"from-config\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:313: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'clone': {'value': 'from-config'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+            },
+            "teardown": {
+              "duration": 0.00019273399811936542,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_config_clone_preserves_values_without_sharing_runtime_changes",
+            "lineno": 317,
+            "outcome": "failed",
+            "keywords": [
+              "test_config_clone_preserves_values_without_sharing_runtime_changes",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003917779977200553,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00021516199922189116,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+                "lineno": 374,
+                "message": "KeyError: 'runners'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 319,
+                  "message": ""
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 289,
+                  "message": "in __init__"
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 374,
+                  "message": "KeyError"
+                }
+              ],
+              "longrepr": "def test_config_clone_preserves_values_without_sharing_runtime_changes():\n>       config = Config(defaults={\"project\": {\"target\": \"dist\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:319: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'project': {'target': 'dist'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+            },
+            "teardown": {
+              "duration": 0.0002148729981854558,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_config_load_overrides_beats_defaults",
+            "lineno": 325,
+            "outcome": "failed",
+            "keywords": [
+              "test_config_load_overrides_beats_defaults",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00033477399847470224,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017293799464823678,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+                "lineno": 374,
+                "message": "KeyError: 'runners'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 327,
+                  "message": ""
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 289,
+                  "message": "in __init__"
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 374,
+                  "message": "KeyError"
+                }
+              ],
+              "longrepr": "def test_config_load_overrides_beats_defaults():\n>       config = Config(defaults={\"run\": {\"echo\": False}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:327: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'run': {'echo': False}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+            },
+            "teardown": {
+              "duration": 0.00021519599977182224,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_config_environment_casts_existing_boolean_and_numeric_defaults",
+            "lineno": 331,
+            "outcome": "failed",
+            "keywords": [
+              "test_config_environment_casts_existing_boolean_and_numeric_defaults",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003642129959189333,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018848600302590057,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+                "lineno": 374,
+                "message": "KeyError: 'runners'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 335,
+                  "message": ""
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 289,
+                  "message": "in __init__"
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 374,
+                  "message": "KeyError"
+                }
+              ],
+              "longrepr": "monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4107ce5e50>\n\n    def test_config_environment_casts_existing_boolean_and_numeric_defaults(monkeypatch):\n        monkeypatch.setenv(\"INVOKE_RUN_ECHO\", \"1\")\n        monkeypatch.setenv(\"INVOKE_TIMEOUTS_COMMAND\", \"5\")\n>       config = Config(defaults={\"run\": {\"echo\": False}, \"timeouts\": {\"command\": 1}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:335: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'run': {'echo': False}, 'timeouts': {'command': 1}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+            },
+            "teardown": {
+              "duration": 0.0002453049964969978,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_config_unknown_runtime_file_extension_raises",
+            "lineno": 340,
+            "outcome": "failed",
+            "keywords": [
+              "test_config_unknown_runtime_file_extension_raises",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0012050739969708957,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003368210018379614,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+                "lineno": 411,
+                "message": "invoke.UnknownFileType: /tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0/invoke.ini"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 344,
+                  "message": ""
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 286,
+                  "message": "in __init__"
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 356,
+                  "message": "in load_runtime"
+                },
+                {
+                  "path": "../../output/invoke/__init__.py",
+                  "lineno": 411,
+                  "message": "UnknownFileType"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0')\n\n    def test_config_unknown_runtime_file_extension_raises(tmp_path):\n        runtime = tmp_path / \"invoke.ini\"\n        runtime.write_text(\"[run]\\necho = true\\n\", encoding=\"utf-8\")\n>       config = Config(runtime_path=str(runtime))\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:344: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:286: in __init__\n    self.load_runtime(merge=False)\n../../output/invoke/__init__.py:356: in load_runtime\n    data = {} if not path else self._load_file(path)\n                               ^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {}\npath = '/tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0/invoke.ini'\n\n    def _load_file(self, path):\n        suffix = Path(path).suffix.lower().lstrip(\".\")\n        if suffix not in {\"yaml\", \"yml\", \"json\", \"py\"}:\n>           raise UnknownFileType(path)\nE           invoke.UnknownFileType: /tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0/invoke.ini\n\n../../output/invoke/__init__.py:411: UnknownFileType"
+            },
+            "teardown": {
+              "duration": 0.00019679700199048966,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_uses_configured_local_runner_class",
+            "lineno": 356,
+            "outcome": "passed",
+            "keywords": [
+              "test_context_run_uses_configured_local_runner_class",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004636550002032891,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00041685900214361027,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018175299919676036,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_invoke_run_creates_anonymous_context_and_returns_result",
+            "lineno": 366,
+            "outcome": "passed",
+            "keywords": [
+              "test_invoke_run_creates_anonymous_context_and_returns_result",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005017479998059571,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1432552330006729,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00022646100114798173,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_warn_true_returns_failed_result",
+            "lineno": 376,
+            "outcome": "passed",
+            "keywords": [
+              "test_context_run_warn_true_returns_failed_result",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003389850025996566,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1427927409968106,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0005297390016494319,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_warn_false_raises_unexpected_exit",
+            "lineno": 387,
+            "outcome": "passed",
+            "keywords": [
+              "test_context_run_warn_false_raises_unexpected_exit",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004954730029567145,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.16913176300295163,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002545950046624057,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_dry_returns_success_without_running_command",
+            "lineno": 397,
+            "outcome": "passed",
+            "keywords": [
+              "test_context_run_dry_returns_success_without_running_command",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004604579953593202,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0007524520042352378,
+              "outcome": "passed",
+              "stdout": "this-command-should-not-exist\n"
+            },
+            "teardown": {
+              "duration": 0.00013582800602307543,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_cd_changes_cwd_for_command",
+            "lineno": 409,
+            "outcome": "failed",
+            "keywords": [
+              "test_context_cd_changes_cwd_for_command",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009768029995029792,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005875089991604909,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 416,
+                "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x562be641dad8>(' && pwd')\n +    where <built-in method endswith of str object at 0x562be641dad8> = 'pwd'.endswith"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 416,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_context_cd_changes_cwd_fo0')\n\n    def test_context_cd_changes_cwd_for_command(tmp_path):\n        RecordingRunner.seen.clear()\n        ctx = Context(config=Config(overrides={\"runners\": {\"local\": RecordingRunner}}))\n        with ctx.cd(str(tmp_path)):\n            ctx.run(\"pwd\", hide=True)\n        command = RecordingRunner.seen[0][0]\n>       assert command.endswith(\" && pwd\")\nE       AssertionError: assert False\nE        +  where False = <built-in method endswith of str object at 0x562be641dad8>(' && pwd')\nE        +    where <built-in method endswith of str object at 0x562be641dad8> = 'pwd'.endswith\n\nfilter/rewritten_upstream_tests.py:416: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00025696699594845995,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_prefix_runs_before_command",
+            "lineno": 419,
+            "outcome": "passed",
+            "keywords": [
+              "test_context_prefix_runs_before_command",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003316709990031086,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.336566619000223,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018370400357525796,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_result_truth_return_code_and_default_env",
+            "lineno": 430,
+            "outcome": "passed",
+            "keywords": [
+              "test_result_truth_return_code_and_default_env",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002977069962071255,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 9.764899732545018e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.940300176618621e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_result_tail_returns_requested_stream_lines",
+            "lineno": 439,
+            "outcome": "passed",
+            "keywords": [
+              "test_result_tail_returns_requested_stream_lines",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003426490002311766,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010362300236010924,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.003100421978161e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_mock_context_returns_prepared_string_and_boolean_results",
+            "lineno": 447,
+            "outcome": "passed",
+            "keywords": [
+              "test_mock_context_returns_prepared_string_and_boolean_results",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002342020015930757,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00039196199941216037,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.53819981077686e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_mock_context_raises_when_no_prepared_result_matches",
+            "lineno": 453,
+            "outcome": "passed",
+            "keywords": [
+              "test_mock_context_raises_when_no_prepared_result_matches",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024446199677186087,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00040260500099975616,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010039899643743411,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_stream_watcher_base_submit_is_not_implemented",
+            "lineno": 459,
+            "outcome": "passed",
+            "keywords": [
+              "test_stream_watcher_base_submit_is_not_implemented",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002693049973458983,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010321300214855,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.83370012161322e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_responder_yields_response_for_regex_match",
+            "lineno": 464,
+            "outcome": "passed",
+            "keywords": [
+              "test_responder_yields_response_for_regex_match",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00025366399495396763,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001993769983528182,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010104999819304794,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_responder_consumes_each_stream_segment_once",
+            "lineno": 469,
+            "outcome": "passed",
+            "keywords": [
+              "test_responder_consumes_each_stream_segment_once",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022360900038620457,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018617199384607375,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.935200068866834e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_failing_responder_raises_after_response_sentinel",
+            "lineno": 476,
+            "outcome": "passed",
+            "keywords": [
+              "test_failing_responder_raises_after_response_sentinel",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022733099467586726,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00019977099873358384,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.399099897360429e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_watcher_responds_to_prompt_and_preserves_output",
+            "lineno": 487,
+            "outcome": "passed",
+            "keywords": [
+              "test_context_run_watcher_responds_to_prompt_and_preserves_output",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00030170600075507537,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.21804488800262334,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016790799418231472,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_wraps_failing_watcher_in_failure",
+            "lineno": 504,
+            "outcome": "failed",
+            "keywords": [
+              "test_context_run_wraps_failing_watcher_in_failure",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002918030004366301,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.16660844199941494,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 516,
+                "message": "Failed: DID NOT RAISE Failure"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 516,
+                  "message": "Failed"
+                }
+              ],
+              "longrepr": "def test_context_run_wraps_failing_watcher_in_failure():\n        code = (\n            \"import sys; \"\n            \"sys.stdout.write('Password: '); sys.stdout.flush(); \"\n            \"sys.stdin.readline(); print('Sorry')\"\n        )\n        responder = FailingResponder(\n            pattern=r\"Password: \",\n            response=\"bad\\n\",\n            sentinel=r\"Sorry\",\n        )\n>       with pytest.raises(Failure) as exc:\nE       Failed: DID NOT RAISE Failure\n\nfilter/rewritten_upstream_tests.py:516: Failed"
+            },
+            "teardown": {
+              "duration": 0.0002318679980817251,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_json_list_reports_tasks_aliases_and_default",
+            "lineno": 525,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_json_list_reports_tasks_aliases_and_default",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007915660025901161,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.37921462200029055,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 543,
+                "message": "TypeError: string indices must be integers, not 'str'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 543,
+                  "message": ""
+                },
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 543,
+                  "message": "TypeError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_json_list_reports_tas0')\n\n    def test_cli_json_list_reports_tasks_aliases_and_default(tmp_path):\n        write_file(\n            tmp_path / \"tasks.py\",\n            \"\"\"\n            from invoke import task, Collection\n    \n            @task(aliases=(\"ship\",), default=True)\n            def deploy(c):\n                pass\n    \n            ns = Collection(\"project\", deploy)\n            \"\"\",\n        )\n        proc = run_invoke(tmp_path, \"--list\", \"--list-format=json\")\n        assert proc.returncode == 0, proc.stderr\n        payload = json.loads(proc.stdout)\n        assert payload[\"name\"] == \"project\"\n>       deploy = next(item for item in payload[\"tasks\"] if item[\"name\"] == \"deploy\")\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:543: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <dict_keyiterator object at 0x7f4107bfa610>\n\n>   deploy = next(item for item in payload[\"tasks\"] if item[\"name\"] == \"deploy\")\n                                                       ^^^^^^^^^^^^\nE   TypeError: string indices must be integers, not 'str'\n\nfilter/rewritten_upstream_tests.py:543: TypeError"
+            },
+            "teardown": {
+              "duration": 0.00021222999930614606,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_invokes_default_task_when_no_task_name_is_given",
+            "lineno": 546,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_invokes_default_task_when_no_task_name_is_given",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009362190030515194,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.35575951299688313,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00022760800493415445,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_explicit_collection_module_replaces_tasks_default",
+            "lineno": 564,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_explicit_collection_module_replaces_tasks_default",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009441699949093163,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3532545560010476,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001509140056441538,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_delivers_dashed_flag_to_underscored_python_argument",
+            "lineno": 580,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_delivers_dashed_flag_to_underscored_python_argument",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000684090999129694,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.4098467780058854,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016976599727058783,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_inverse_boolean_flag_sets_false",
+            "lineno": 596,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_inverse_boolean_flag_sets_false",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0017272039985982701,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.38771482000447577,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001595539943082258,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_optional_argument_accepts_bare_flag_and_value",
+            "lineno": 612,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_optional_argument_accepts_bare_flag_and_value",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007662129937671125,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.899976822998724,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001595880021341145,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_iterable_argument_accumulates_repeated_values",
+            "lineno": 631,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_iterable_argument_accumulates_repeated_values",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007404259959002957,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.4032849279974471,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 644,
+                "message": "AssertionError: Traceback (most recent call last):\n    File \"<frozen runpy>\", line 198, in _run_module_as_main\n    File \"<frozen runpy>\", line 88, in _run_code\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__main__.py\", line 4, in <module>\n      Program().run()\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1212, in run\n      code = self._run(argv)\n             ^^^^^^^^^^^^^^^\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1261, in _run\n      self._execute_call(call_obj, config.clone(), parse_result, seen, config[\"tasks\"].get(\"dedupe\", True))\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1376, in _execute_call\n      if dedupe and ident in seen:\n                    ^^^^^^^^^^^^^\n  TypeError: unhashable type: 'list'\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'invoke', 'b...ecute_call\\n    if dedupe and ident in seen:\\n                  ^^^^^^^^^^^^^\\nTypeError: unhashable type: \\'list\\'\\n').returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 644,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_iterable_argument_acc0')\n\n    def test_cli_iterable_argument_accumulates_repeated_values(tmp_path):\n        write_file(\n            tmp_path / \"tasks.py\",\n            \"\"\"\n            from invoke import task\n    \n            @task(iterable=(\"label\",))\n            def build(c, label=None):\n                print(\",\".join(label))\n            \"\"\",\n        )\n        proc = run_invoke(tmp_path, \"build\", \"--label=a\", \"--label=b\")\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"<frozen runpy>\", line 198, in _run_module_as_main\nE           File \"<frozen runpy>\", line 88, in _run_code\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__main__.py\", line 4, in <module>\nE             Program().run()\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1212, in run\nE             code = self._run(argv)\nE                    ^^^^^^^^^^^^^^^\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1261, in _run\nE             self._execute_call(call_obj, config.clone(), parse_result, seen, config[\"tasks\"].get(\"dedupe\", True))\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1376, in _execute_call\nE             if dedupe and ident in seen:\nE                           ^^^^^^^^^^^^^\nE         TypeError: unhashable type: 'list'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'invoke', 'b...ecute_call\\n    if dedupe and ident in seen:\\n                  ^^^^^^^^^^^^^\\nTypeError: unhashable type: \\'list\\'\\n').returncode\n\nfilter/rewritten_upstream_tests.py:644: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0002243470007670112,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_incrementable_argument_counts_repetitions",
+            "lineno": 647,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_incrementable_argument_counts_repetitions",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000699977004842367,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.348058884999773,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014806399849476293,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_runs_pre_and_post_tasks_around_requested_task",
+            "lineno": 663,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_runs_pre_and_post_tasks_around_requested_task",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007199469982879236,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.433750484000484,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00031690799369243905,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_dedupes_repeated_task_calls_by_default",
+            "lineno": 687,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_dedupes_repeated_task_calls_by_default",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009010909998323768,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3941597169978195,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001905919998534955,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_no_dedupe_allows_repeated_task_calls",
+            "lineno": 703,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_no_dedupe_allows_repeated_task_calls",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008717390010133386,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.4540398249955615,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016822600446175784,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_remainder_after_double_dash_reaches_context",
+            "lineno": 719,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_remainder_after_double_dash_reaches_context",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007219610051834024,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.386787611998443,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016922500071814284,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_project_config_is_visible_to_task_context",
+            "lineno": 735,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_project_config_is_visible_to_task_context",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008687790032126941,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3517189319973113,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023537499509984627,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_environment_variable_overrides_existing_config_key",
+            "lineno": 758,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_environment_variable_overrides_existing_config_key",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006730399982188828,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3546941320018959,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018148999515688047,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_runtime_config_file_overrides_project_config",
+            "lineno": 774,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_runtime_config_file_overrides_project_config",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0014866659985273145,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3642873900025734,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001528650027466938,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_run_flag_overrides_config_for_task_commands",
+            "lineno": 793,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_run_flag_overrides_config_for_task_commands",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006946870053070597,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.525836711996817,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00021597899467451498,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_help_for_task_includes_docstring_and_task_option",
+            "lineno": 811,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_help_for_task_includes_docstring_and_task_option",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006871870064060204,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3407062309997855,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014287500380305573,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_unknown_task_exits_unsuccessfully",
+            "lineno": 830,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_unknown_task_exits_unsuccessfully",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006631140058743767,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3363160009976127,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001532460009912029,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_python_module_invocation_runs_same_program",
+            "lineno": 837,
+            "outcome": "passed",
+            "keywords": [
+              "test_python_module_invocation_runs_same_program",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007104160031303763,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3395765180030139,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019142199744237587,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_program_run_string_argv_and_exit_false_do_not_raise_system_exit",
+            "lineno": 853,
+            "outcome": "passed",
+            "keywords": [
+              "test_program_run_string_argv_and_exit_false_do_not_raise_system_exit",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008481920012854971,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.006829410995123908,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003326339938212186,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_program_run_unknown_task_with_exit_false_returns_without_system_exit",
+            "lineno": 874,
+            "outcome": "passed",
+            "keywords": [
+              "test_program_run_unknown_task_with_exit_false_returns_without_system_exit",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001377740001771599,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.006189435996930115,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001853849971666932,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_flat_list_uses_dotted_names_for_nested_collections",
+            "lineno": 886,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_flat_list_uses_dotted_names_for_nested_collections",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006339669998851605,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.35636182899907,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002570910000940785,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_cli_list_depth_with_json_is_an_error",
+            "lineno": 905,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_list_depth_with_json_is_an_error",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001031329004035797,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3803629820031347,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002491979976184666,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_context_sudo_runtime_password_builds_prompt_responder",
+            "lineno": 925,
+            "outcome": "passed",
+            "keywords": [
+              "test_context_sudo_runtime_password_builds_prompt_responder",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005809759968542494,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0007231830022647046,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010704000305850059,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_sudo_rejected_response_translates_to_auth_failure",
+            "lineno": 949,
+            "outcome": "passed",
+            "keywords": [
+              "test_sudo_rejected_response_translates_to_auth_failure",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003389900011825375,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005408270008047111,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017688199295662344,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 15,
+    "passed": 52,
+    "total": 67
+  },
+  "pass_rate_excluding_skips": 0.7761194029850746,
+  "by_layer": {
+    "atomic": {
+      "failed": 10,
+      "passed": 20,
+      "total": 30
+    },
+    "integration": {
+      "failed": 4,
+      "passed": 18,
+      "total": 22
+    },
+    "system_e2e": {
+      "failed": 1,
+      "passed": 14,
+      "total": 15
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_bare_wraps_callable_with_public_name",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_bare_wraps_callable_with_public_name",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002889059978770092,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_options_set_name_aliases_and_default",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_options_set_name_aliases_and_default",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00028840600134572014,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 69,
+          "message": "AttributeError: 'Task' object has no attribute 'is_default'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 69,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "def test_task_decorator_options_set_name_aliases_and_default():\n        @task(name=\"ship\", aliases=(\"deploy\",), default=True)\n        def release(c):\n            pass\n    \n        assert release.name == \"ship\"\n        assert release.aliases == (\"deploy\",)\n>       assert release.is_default is True\n               ^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'is_default'\n\nfilter/rewritten_upstream_tests.py:69: AttributeError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_rejects_positional_pretasks_and_pre_keyword",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_task_decorator_rejects_positional_pretasks_and_pre_keyword",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00017121299606515095,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_task_call_requires_context_as_first_argument",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_task_call_requires_context_as_first_argument",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010767499770736322,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_task_call_marks_task_as_called_after_success",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_task_call_marks_task_as_called_after_success",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000419846001022961,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_task_arguments_drop_context_and_dash_underscores",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_task_arguments_drop_context_and_dash_underscores",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00021366599685279652,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 109,
+          "message": "AttributeError: 'Task' object has no attribute 'get_arguments'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 109,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "def test_task_arguments_drop_context_and_dash_underscores():\n        @task\n        def build(c, target_name, clean=False):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:109: AttributeError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_task_boolean_true_default_creates_inverse_flag",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_task_boolean_true_default_creates_inverse_flag",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00011843100219266489,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 120,
+          "message": "AttributeError: 'Task' object has no attribute 'get_arguments'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 120,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "def test_task_boolean_true_default_creates_inverse_flag():\n        @task\n        def build(c, cache=True):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:120: AttributeError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_task_optional_iterable_and_incrementable_argument_metadata",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_task_optional_iterable_and_incrementable_argument_metadata",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00012954099656781182,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 130,
+          "message": "AttributeError: 'Task' object has no attribute 'get_arguments'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 130,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "def test_task_optional_iterable_and_incrementable_argument_metadata():\n        @task(optional=(\"target\",), iterable=(\"label\",), incrementable=(\"verbose\",))\n        def build(c, target=None, label=None, verbose=0):\n            pass\n    \n>       args = {arg.name: arg for arg in build.get_arguments()}\n                                         ^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Task' object has no attribute 'get_arguments'\n\nfilter/rewritten_upstream_tests.py:130: AttributeError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_call_helper_stores_task_args_and_kwargs",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_call_helper_stores_task_args_and_kwargs",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00018657100008567795,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_call_clone_is_independent_and_can_replace_data",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_call_clone_is_independent_and_can_replace_data",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010286099859513342,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_call_make_context_uses_config_and_remainder",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_call_make_context_uses_config_and_remainder",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000568477000342682,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_collection_add_task_binds_name_alias_and_lookup",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_collection_add_task_binds_name_alias_and_lookup",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00011753899889299646,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_collection_empty_lookup_returns_default_task",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_collection_empty_lookup_returns_default_task",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010330299846827984,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_collection_rejects_second_default_task",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_collection_rejects_second_default_task",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00014457900397246704,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_collection_dotted_subcollection_lookup_and_default",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_collection_dotted_subcollection_lookup_and_default",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001225260057253763,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_collection_task_names_include_dotted_names_aliases_and_defaults",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_collection_task_names_include_dotted_names_aliases_and_defaults",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.000701617005688604,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 232,
+          "message": "AssertionError: assert 'prod' in ['prod.ship']"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 232,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_collection_task_names_include_dotted_names_aliases_and_defaults():\n        @task(aliases=(\"ship\",), default=True)\n        def deploy(c):\n            pass\n    \n        root = Collection(\"root\")\n        root.add_collection(Collection(\"prod\", deploy))\n        names = root.task_names\n        assert \"prod.deploy\" in names\n>       assert \"prod\" in names[\"prod.deploy\"]\nE       AssertionError: assert 'prod' in ['prod.ship']\n\nfilter/rewritten_upstream_tests.py:232: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_collection_configuration_merges_parent_over_child_for_path",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_collection_configuration_merges_parent_over_child_for_path",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00022450000687967986,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_collection_from_module_prefers_explicit_namespace",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_collection_from_module_prefers_explicit_namespace",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0008416269993176684,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_collection_from_module_uses_top_level_tasks_without_namespace",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_collection_from_module_uses_top_level_tasks_without_namespace",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0008700899998075329,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_config_supports_dict_and_attribute_access",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_config_supports_dict_and_attribute_access",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00018669499695533887,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+          "lineno": 374,
+          "message": "KeyError: 'runners'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 305,
+            "message": ""
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 289,
+            "message": "in __init__"
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 374,
+            "message": "KeyError"
+          }
+        ],
+        "longrepr": "def test_config_supports_dict_and_attribute_access():\n>       config = Config(defaults={\"project\": {\"target\": \"dist\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:305: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'project': {'target': 'dist'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_config_real_attributes_take_precedence_over_config_keys",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_config_real_attributes_take_precedence_over_config_keys",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00024240899801952764,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+          "lineno": 374,
+          "message": "KeyError: 'runners'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 313,
+            "message": ""
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 289,
+            "message": "in __init__"
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 374,
+            "message": "KeyError"
+          }
+        ],
+        "longrepr": "def test_config_real_attributes_take_precedence_over_config_keys():\n>       config = Config(defaults={\"clone\": {\"value\": \"from-config\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:313: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'clone': {'value': 'from-config'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_config_clone_preserves_values_without_sharing_runtime_changes",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_config_clone_preserves_values_without_sharing_runtime_changes",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00021516199922189116,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+          "lineno": 374,
+          "message": "KeyError: 'runners'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 319,
+            "message": ""
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 289,
+            "message": "in __init__"
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 374,
+            "message": "KeyError"
+          }
+        ],
+        "longrepr": "def test_config_clone_preserves_values_without_sharing_runtime_changes():\n>       config = Config(defaults={\"project\": {\"target\": \"dist\"}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:319: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'project': {'target': 'dist'}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_config_load_overrides_beats_defaults",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_config_load_overrides_beats_defaults",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00017293799464823678,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+          "lineno": 374,
+          "message": "KeyError: 'runners'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 327,
+            "message": ""
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 289,
+            "message": "in __init__"
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 374,
+            "message": "KeyError"
+          }
+        ],
+        "longrepr": "def test_config_load_overrides_beats_defaults():\n>       config = Config(defaults={\"run\": {\"echo\": False}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:327: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'run': {'echo': False}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_config_environment_casts_existing_boolean_and_numeric_defaults",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_config_environment_casts_existing_boolean_and_numeric_defaults",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00018848600302590057,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+          "lineno": 374,
+          "message": "KeyError: 'runners'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 335,
+            "message": ""
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 289,
+            "message": "in __init__"
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 374,
+            "message": "KeyError"
+          }
+        ],
+        "longrepr": "monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4107ce5e50>\n\n    def test_config_environment_casts_existing_boolean_and_numeric_defaults(monkeypatch):\n        monkeypatch.setenv(\"INVOKE_RUN_ECHO\", \"1\")\n        monkeypatch.setenv(\"INVOKE_TIMEOUTS_COMMAND\", \"5\")\n>       config = Config(defaults={\"run\": {\"echo\": False}, \"timeouts\": {\"command\": 1}})\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:335: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:289: in __init__\n    self.merge()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {'run': {'echo': False}, 'timeouts': {'command': 1}}\n\n    def merge(self):\n        data = {}\n        for name in self._source_names:\n            data = _merge_dicts(data, self._sources.get(name, {}))\n        object.__setattr__(self, \"_data\", data)\n        if data.get(\"runners\", {}).get(\"local\") is None and \"Local\" in globals():\n>           data[\"runners\"][\"local\"] = Local\n            ^^^^^^^^^^^^^^^\nE           KeyError: 'runners'\n\n../../output/invoke/__init__.py:374: KeyError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_config_unknown_runtime_file_extension_raises",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_config_unknown_runtime_file_extension_raises",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0003368210018379614,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py",
+          "lineno": 411,
+          "message": "invoke.UnknownFileType: /tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0/invoke.ini"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 344,
+            "message": ""
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 286,
+            "message": "in __init__"
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 356,
+            "message": "in load_runtime"
+          },
+          {
+            "path": "../../output/invoke/__init__.py",
+            "lineno": 411,
+            "message": "UnknownFileType"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0')\n\n    def test_config_unknown_runtime_file_extension_raises(tmp_path):\n        runtime = tmp_path / \"invoke.ini\"\n        runtime.write_text(\"[run]\\necho = true\\n\", encoding=\"utf-8\")\n>       config = Config(runtime_path=str(runtime))\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:344: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n../../output/invoke/__init__.py:286: in __init__\n    self.load_runtime(merge=False)\n../../output/invoke/__init__.py:356: in load_runtime\n    data = {} if not path else self._load_file(path)\n                               ^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = {}\npath = '/tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0/invoke.ini'\n\n    def _load_file(self, path):\n        suffix = Path(path).suffix.lower().lstrip(\".\")\n        if suffix not in {\"yaml\", \"yml\", \"json\", \"py\"}:\n>           raise UnknownFileType(path)\nE           invoke.UnknownFileType: /tmp/pytest-of-shaoyou/pytest-0/test_config_unknown_runtime_fi0/invoke.ini\n\n../../output/invoke/__init__.py:411: UnknownFileType"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_uses_configured_local_runner_class",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_run_uses_configured_local_runner_class",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00041685900214361027,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_invoke_run_creates_anonymous_context_and_returns_result",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_invoke_run_creates_anonymous_context_and_returns_result",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1432552330006729,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_warn_true_returns_failed_result",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_run_warn_true_returns_failed_result",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1427927409968106,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_warn_false_raises_unexpected_exit",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_run_warn_false_raises_unexpected_exit",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.16913176300295163,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_dry_returns_success_without_running_command",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_run_dry_returns_success_without_running_command",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0007524520042352378,
+        "outcome": "passed",
+        "stdout": "this-command-should-not-exist\n"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_cd_changes_cwd_for_command",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_cd_changes_cwd_for_command",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0005875089991604909,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 416,
+          "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x562be641dad8>(' && pwd')\n +    where <built-in method endswith of str object at 0x562be641dad8> = 'pwd'.endswith"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 416,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_context_cd_changes_cwd_fo0')\n\n    def test_context_cd_changes_cwd_for_command(tmp_path):\n        RecordingRunner.seen.clear()\n        ctx = Context(config=Config(overrides={\"runners\": {\"local\": RecordingRunner}}))\n        with ctx.cd(str(tmp_path)):\n            ctx.run(\"pwd\", hide=True)\n        command = RecordingRunner.seen[0][0]\n>       assert command.endswith(\" && pwd\")\nE       AssertionError: assert False\nE        +  where False = <built-in method endswith of str object at 0x562be641dad8>(' && pwd')\nE        +    where <built-in method endswith of str object at 0x562be641dad8> = 'pwd'.endswith\n\nfilter/rewritten_upstream_tests.py:416: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_prefix_runs_before_command",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_prefix_runs_before_command",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.336566619000223,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_result_truth_return_code_and_default_env",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_result_truth_return_code_and_default_env",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 9.764899732545018e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_result_tail_returns_requested_stream_lines",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_result_tail_returns_requested_stream_lines",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010362300236010924,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_mock_context_returns_prepared_string_and_boolean_results",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_mock_context_returns_prepared_string_and_boolean_results",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00039196199941216037,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_mock_context_raises_when_no_prepared_result_matches",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_mock_context_raises_when_no_prepared_result_matches",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00040260500099975616,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_stream_watcher_base_submit_is_not_implemented",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_stream_watcher_base_submit_is_not_implemented",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010321300214855,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_responder_yields_response_for_regex_match",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_responder_yields_response_for_regex_match",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001993769983528182,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_responder_consumes_each_stream_segment_once",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_responder_consumes_each_stream_segment_once",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00018617199384607375,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_failing_responder_raises_after_response_sentinel",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_failing_responder_raises_after_response_sentinel",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00019977099873358384,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_watcher_responds_to_prompt_and_preserves_output",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_run_watcher_responds_to_prompt_and_preserves_output",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.21804488800262334,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_run_wraps_failing_watcher_in_failure",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_run_wraps_failing_watcher_in_failure",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.16660844199941494,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 516,
+          "message": "Failed: DID NOT RAISE Failure"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 516,
+            "message": "Failed"
+          }
+        ],
+        "longrepr": "def test_context_run_wraps_failing_watcher_in_failure():\n        code = (\n            \"import sys; \"\n            \"sys.stdout.write('Password: '); sys.stdout.flush(); \"\n            \"sys.stdin.readline(); print('Sorry')\"\n        )\n        responder = FailingResponder(\n            pattern=r\"Password: \",\n            response=\"bad\\n\",\n            sentinel=r\"Sorry\",\n        )\n>       with pytest.raises(Failure) as exc:\nE       Failed: DID NOT RAISE Failure\n\nfilter/rewritten_upstream_tests.py:516: Failed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_json_list_reports_tasks_aliases_and_default",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_json_list_reports_tasks_aliases_and_default",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.37921462200029055,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 543,
+          "message": "TypeError: string indices must be integers, not 'str'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 543,
+            "message": ""
+          },
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 543,
+            "message": "TypeError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_json_list_reports_tas0')\n\n    def test_cli_json_list_reports_tasks_aliases_and_default(tmp_path):\n        write_file(\n            tmp_path / \"tasks.py\",\n            \"\"\"\n            from invoke import task, Collection\n    \n            @task(aliases=(\"ship\",), default=True)\n            def deploy(c):\n                pass\n    \n            ns = Collection(\"project\", deploy)\n            \"\"\",\n        )\n        proc = run_invoke(tmp_path, \"--list\", \"--list-format=json\")\n        assert proc.returncode == 0, proc.stderr\n        payload = json.loads(proc.stdout)\n        assert payload[\"name\"] == \"project\"\n>       deploy = next(item for item in payload[\"tasks\"] if item[\"name\"] == \"deploy\")\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:543: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <dict_keyiterator object at 0x7f4107bfa610>\n\n>   deploy = next(item for item in payload[\"tasks\"] if item[\"name\"] == \"deploy\")\n                                                       ^^^^^^^^^^^^\nE   TypeError: string indices must be integers, not 'str'\n\nfilter/rewritten_upstream_tests.py:543: TypeError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_invokes_default_task_when_no_task_name_is_given",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_invokes_default_task_when_no_task_name_is_given",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.35575951299688313,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_explicit_collection_module_replaces_tasks_default",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_explicit_collection_module_replaces_tasks_default",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3532545560010476,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_delivers_dashed_flag_to_underscored_python_argument",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_delivers_dashed_flag_to_underscored_python_argument",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.4098467780058854,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_inverse_boolean_flag_sets_false",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_inverse_boolean_flag_sets_false",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.38771482000447577,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_optional_argument_accepts_bare_flag_and_value",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_optional_argument_accepts_bare_flag_and_value",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.899976822998724,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_iterable_argument_accumulates_repeated_values",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_iterable_argument_accumulates_repeated_values",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.4032849279974471,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/score_run_wsl/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 644,
+          "message": "AssertionError: Traceback (most recent call last):\n    File \"<frozen runpy>\", line 198, in _run_module_as_main\n    File \"<frozen runpy>\", line 88, in _run_code\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__main__.py\", line 4, in <module>\n      Program().run()\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1212, in run\n      code = self._run(argv)\n             ^^^^^^^^^^^^^^^\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1261, in _run\n      self._execute_call(call_obj, config.clone(), parse_result, seen, config[\"tasks\"].get(\"dedupe\", True))\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1376, in _execute_call\n      if dedupe and ident in seen:\n                    ^^^^^^^^^^^^^\n  TypeError: unhashable type: 'list'\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'invoke', 'b...ecute_call\\n    if dedupe and ident in seen:\\n                  ^^^^^^^^^^^^^\\nTypeError: unhashable type: \\'list\\'\\n').returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 644,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-0/test_cli_iterable_argument_acc0')\n\n    def test_cli_iterable_argument_accumulates_repeated_values(tmp_path):\n        write_file(\n            tmp_path / \"tasks.py\",\n            \"\"\"\n            from invoke import task\n    \n            @task(iterable=(\"label\",))\n            def build(c, label=None):\n                print(\",\".join(label))\n            \"\"\",\n        )\n        proc = run_invoke(tmp_path, \"build\", \"--label=a\", \"--label=b\")\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"<frozen runpy>\", line 198, in _run_module_as_main\nE           File \"<frozen runpy>\", line 88, in _run_code\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__main__.py\", line 4, in <module>\nE             Program().run()\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1212, in run\nE             code = self._run(argv)\nE                    ^^^^^^^^^^^^^^^\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1261, in _run\nE             self._execute_call(call_obj, config.clone(), parse_result, seen, config[\"tasks\"].get(\"dedupe\", True))\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-invoke-specv1-20260703-001/output/invoke/__init__.py\", line 1376, in _execute_call\nE             if dedupe and ident in seen:\nE                           ^^^^^^^^^^^^^\nE         TypeError: unhashable type: 'list'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'invoke', 'b...ecute_call\\n    if dedupe and ident in seen:\\n                  ^^^^^^^^^^^^^\\nTypeError: unhashable type: \\'list\\'\\n').returncode\n\nfilter/rewritten_upstream_tests.py:644: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_incrementable_argument_counts_repetitions",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_incrementable_argument_counts_repetitions",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.348058884999773,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_runs_pre_and_post_tasks_around_requested_task",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_runs_pre_and_post_tasks_around_requested_task",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.433750484000484,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_dedupes_repeated_task_calls_by_default",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_dedupes_repeated_task_calls_by_default",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3941597169978195,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_no_dedupe_allows_repeated_task_calls",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_no_dedupe_allows_repeated_task_calls",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.4540398249955615,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_remainder_after_double_dash_reaches_context",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_remainder_after_double_dash_reaches_context",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.386787611998443,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_project_config_is_visible_to_task_context",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_project_config_is_visible_to_task_context",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3517189319973113,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_environment_variable_overrides_existing_config_key",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_environment_variable_overrides_existing_config_key",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3546941320018959,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_runtime_config_file_overrides_project_config",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_runtime_config_file_overrides_project_config",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3642873900025734,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_run_flag_overrides_config_for_task_commands",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_run_flag_overrides_config_for_task_commands",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.525836711996817,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_help_for_task_includes_docstring_and_task_option",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_help_for_task_includes_docstring_and_task_option",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3407062309997855,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_unknown_task_exits_unsuccessfully",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_unknown_task_exits_unsuccessfully",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3363160009976127,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_python_module_invocation_runs_same_program",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_python_module_invocation_runs_same_program",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3395765180030139,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_program_run_string_argv_and_exit_false_do_not_raise_system_exit",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_program_run_string_argv_and_exit_false_do_not_raise_system_exit",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.006829410995123908,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_program_run_unknown_task_with_exit_false_returns_without_system_exit",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_program_run_unknown_task_with_exit_false_returns_without_system_exit",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.006189435996930115,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_flat_list_uses_dotted_names_for_nested_collections",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_flat_list_uses_dotted_names_for_nested_collections",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.35636182899907,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_cli_list_depth_with_json_is_an_error",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_cli_list_depth_with_json_is_an_error",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3803629820031347,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_context_sudo_runtime_password_builds_prompt_responder",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_context_sudo_runtime_password_builds_prompt_responder",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0007231830022647046,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_sudo_rejected_response_translates_to_auth_failure",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_sudo_rejected_response_translates_to_auth_failure",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005408270008047111,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

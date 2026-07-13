@@ -1,0 +1,81 @@
+{
+  "task_id": "cattrs-converters-fullrepro-001",
+  "repo": "python-attrs/cattrs",
+  "commit": "d7de3c2786a05a8dcef4616b2657c1ef0a856fff",
+  "oracle_source": "generated_only",
+  "oracle_version": "generated_only_20260704_001",
+  "oracle_count": 62,
+  "spec": "spec.md",
+  "kept_nodeids": "kept_nodeids.txt",
+  "taxonomy": "taxonomy.jsonl",
+  "spec_test_map": "spec_test_map.md",
+  "score_result": "score_result.json",
+  "diagnosis_report": "diagnosis_report.md",
+  "scorer_isolation": [
+    "--remove-path cattrs"
+  ],
+  "reference_gate": {
+    "platform": "linux",
+    "python": "3.11.15",
+    "passed": 62,
+    "total": 62,
+    "reference_import": "/mnt/g/research/01_agents/swe-e2e/repo-pool/python-attrs__cattrs/src/cattrs/__init__.py",
+    "isolation": "PYTHONPATH reference src checkout in repo-specific WSL venv"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "date": "2026-07-04",
+    "candidate_run": "candidate-runs/codex-cattrs-specv1-20260704-001",
+    "candidate_score": {
+      "passed": 0,
+      "failed": 0,
+      "collection_error": 62,
+      "total": 62,
+      "pass_rate_excluding_skips": 0.0,
+      "by_layer": {
+        "atomic": {
+          "collection_error": 39,
+          "total": 39
+        },
+        "integration": {
+          "collection_error": 18,
+          "total": 18
+        },
+        "system_e2e": {
+          "collection_error": 5,
+          "total": 5
+        }
+      }
+    },
+    "reference_score": {
+      "passed": 62,
+      "total": 62
+    },
+    "root_failure": {
+      "dimension": "api-surface",
+      "description": "Top-level cattrs.override is missing even though the spec requires it as importable public API.",
+      "affected_tests": 62
+    },
+    "labels": [
+      "generated-only-oracle",
+      "api-surface",
+      "cascade-dominated",
+      "floor-score-via-public-import-failure",
+      "candidate-non-saturated"
+    ],
+    "synced_artifacts": [
+      "spec.md",
+      "kept_nodeids.txt",
+      "taxonomy.jsonl",
+      "spec_test_map.md",
+      "score_result.json",
+      "diagnosis_report.md",
+      "MANIFEST.json"
+    ]
+  },
+  "caveats": [
+    "Track-B generated-only oracle; task-judge applied Gate C generated-oracle spot check.",
+    "Gate D found no uncovered scoreable core sections; descriptive and protocol headings are not standalone scoreable behavior.",
+    "Global weakness_table.md was not updated because the user write scope limited this turn to cattrs judge/report, tasks sync artifacts, and PIPELINE_STATE.md."
+  ]
+}

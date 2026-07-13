@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+
+RUN pip install --no-cache-dir pytest pytest-json-report pytest-timeout coverage
+
+COPY harness/score_pytest_original.py /harness/score_pytest_original.py
+COPY harness/filter.py /harness/filter.py
+
+WORKDIR /workspace
+
+ENTRYPOINT ["python", "/harness/score_pytest_original.py"]

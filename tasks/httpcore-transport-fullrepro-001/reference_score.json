@@ -1,0 +1,2559 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 120,
+  "remove_paths": [
+    "httpcore"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/httpcore-transport-fullrepro-001/oracle_repo",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/repo-pool/_repo_cache/encode__httpcore",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/httpcore-transport-fullrepro-001/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/httpcore-transport-fullrepro-001/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/httpcore-transport-fullrepro-001/filter/reference_run_v2",
+  "grouped_results": {
+    "tests/test_transport_fullrepro.py": {
+      "returncode": 0,
+      "stdout": "................................................................         [100%]\n64 passed in 3.34s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783166136.9208899,
+        "duration": 3.0865883827209473,
+        "exitcode": 0,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/httpcore-transport-fullrepro-001/filter/reference_run_v2/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 64,
+          "total": 64,
+          "collected": 64
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_pool_request_returns_status_headers_content_and_extensions",
+                "type": "Function",
+                "lineno": 119
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_request_line_uses_path_and_query_from_url",
+                "type": "Function",
+                "lineno": 141
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_empty_url_path_is_sent_as_slash",
+                "type": "Function",
+                "lineno": 149
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_default_http_port_is_omitted_from_host_header",
+                "type": "Function",
+                "lineno": 155
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_non_default_http_port_is_included_in_host_header",
+                "type": "Function",
+                "lineno": 161
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_user_supplied_host_header_is_not_replaced",
+                "type": "Function",
+                "lineno": 167
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_mapping_headers_are_sent_as_http_headers",
+                "type": "Function",
+                "lineno": 175
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_sequence_headers_preserve_duplicate_names",
+                "type": "Function",
+                "lineno": 181
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_bytes_method_and_url_are_accepted",
+                "type": "Function",
+                "lineno": 192
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_bytes_content_adds_content_length_and_body",
+                "type": "Function",
+                "lineno": 199
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_empty_bytes_content_adds_zero_content_length",
+                "type": "Function",
+                "lineno": 207
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_iterable_content_uses_chunked_transfer_encoding",
+                "type": "Function",
+                "lineno": 213
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_explicit_content_length_is_preserved",
+                "type": "Function",
+                "lineno": 221
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_explicit_transfer_encoding_prevents_auto_content_length",
+                "type": "Function",
+                "lineno": 233
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_stream_response_iterates_body_chunks_without_preloading_content",
+                "type": "Function",
+                "lineno": 246
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_stream_response_read_makes_content_available",
+                "type": "Function",
+                "lineno": 258
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_response_iter_stream_can_only_be_consumed_once",
+                "type": "Function",
+                "lineno": 268
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_response_read_caches_content_for_repeated_access",
+                "type": "Function",
+                "lineno": 275
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_response_close_calls_stream_close_when_available",
+                "type": "Function",
+                "lineno": 282
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_same_origin_reuses_connection_after_response_is_read",
+                "type": "Function",
+                "lineno": 299
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_different_origins_open_distinct_connections",
+                "type": "Function",
+                "lineno": 312
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_pool_close_closes_idle_connections",
+                "type": "Function",
+                "lineno": 325
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_pool_context_manager_closes_idle_connections_on_exit",
+                "type": "Function",
+                "lineno": 332
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_zero_keepalive_limit_closes_connection_after_response_body",
+                "type": "Function",
+                "lineno": 339
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_unsupported_protocol_raises_public_exception",
+                "type": "Function",
+                "lineno": 345
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_missing_protocol_raises_public_exception",
+                "type": "Function",
+                "lineno": 351
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_local_address_is_passed_to_tcp_connect",
+                "type": "Function",
+                "lineno": 357
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_socket_options_are_passed_to_tcp_connect",
+                "type": "Function",
+                "lineno": 363
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_unix_domain_socket_uses_connect_unix_socket",
+                "type": "Function",
+                "lineno": 370
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_connect_timeout_extension_is_passed_to_backend_connect",
+                "type": "Function",
+                "lineno": 377
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_read_timeout_extension_is_passed_to_stream_reads",
+                "type": "Function",
+                "lineno": 387
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_write_timeout_extension_is_passed_to_stream_writes",
+                "type": "Function",
+                "lineno": 397
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_https_request_connects_to_default_tls_port_and_starts_tls",
+                "type": "Function",
+                "lineno": 408
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_https_request_uses_sni_hostname_extension_when_present",
+                "type": "Function",
+                "lineno": 416
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_https_non_default_port_is_used_for_connect_and_host_header",
+                "type": "Function",
+                "lineno": 426
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_connect_error_is_retried_when_retries_are_available",
+                "type": "Function",
+                "lineno": 433
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_connect_error_is_raised_when_no_retries_remain",
+                "type": "Function",
+                "lineno": 444
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_multiple_retries_use_exponential_backoff_sequence",
+                "type": "Function",
+                "lineno": 452
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_direct_handle_request_returns_response",
+                "type": "Function",
+                "lineno": 465
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_rejects_requests_for_other_origins",
+                "type": "Function",
+                "lineno": 477
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_close_closes_the_underlying_stream",
+                "type": "Function",
+                "lineno": 487
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_reuses_its_stream_for_same_origin_requests",
+                "type": "Function",
+                "lineno": 498
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_request_target_extension_overrides_url_target_on_the_wire",
+                "type": "Function",
+                "lineno": 520
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_request_object_target_extension_changes_url_target",
+                "type": "Function",
+                "lineno": 532
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_url_from_string_exposes_components_and_default_origin_port",
+                "type": "Function",
+                "lineno": 539
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_url_from_explicit_components_round_trips_to_bytes",
+                "type": "Function",
+                "lineno": 548
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_url_target_allows_options_star_request",
+                "type": "Function",
+                "lineno": 554
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_absolute_form_target_is_sent_unchanged",
+                "type": "Function",
+                "lineno": 561
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_request_rejects_non_ascii_method_strings",
+                "type": "Function",
+                "lineno": 575
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_request_rejects_non_ascii_header_values",
+                "type": "Function",
+                "lineno": 580
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_url_rejects_non_ascii_url_strings",
+                "type": "Function",
+                "lineno": 585
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_response_header_mapping_is_normalized_to_byte_pairs",
+                "type": "Function",
+                "lineno": 590
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_proxy_auth_adds_basic_proxy_authorization_header",
+                "type": "Function",
+                "lineno": 595
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_proxy_preserves_custom_headers_after_authorization_header",
+                "type": "Function",
+                "lineno": 601
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_mock_backend_can_serve_documented_http11_response",
+                "type": "Function",
+                "lineno": 613
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_mock_stream_read_returns_configured_chunks_then_empty_bytes",
+                "type": "Function",
+                "lineno": 622
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_mock_stream_start_tls_returns_stream_itself",
+                "type": "Function",
+                "lineno": 629
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_trace_extension_reports_started_and_complete_events",
+                "type": "Function",
+                "lineno": 652
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_trace_extension_reports_failed_connection_event",
+                "type": "Function",
+                "lineno": 670
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_premature_server_disconnect_raises_remote_protocol_error",
+                "type": "Function",
+                "lineno": 685
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_invalid_response_header_raises_remote_protocol_error",
+                "type": "Function",
+                "lineno": 691
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_connect_response_exposes_network_stream_extension",
+                "type": "Function",
+                "lineno": 699
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_pool_connections_property_returns_a_list_snapshot",
+                "type": "Function",
+                "lineno": 710
+              },
+              {
+                "nodeid": "tests/test_transport_fullrepro.py::test_connection_available_state_is_publicly_queryable",
+                "type": "Function",
+                "lineno": 719
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_pool_request_returns_status_headers_content_and_extensions",
+            "lineno": 119,
+            "outcome": "passed",
+            "keywords": [
+              "test_pool_request_returns_status_headers_content_and_extensions",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.039108487999328645,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0007510089999414049,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013208299787947908,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_request_line_uses_path_and_query_from_url",
+            "lineno": 141,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_line_uses_path_and_query_from_url",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002758470000117086,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004691600006481167,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010565399861661717,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_empty_url_path_is_sent_as_slash",
+            "lineno": 149,
+            "outcome": "passed",
+            "keywords": [
+              "test_empty_url_path_is_sent_as_slash",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024756300263106823,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004069220012752339,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012743499974021688,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_default_http_port_is_omitted_from_host_header",
+            "lineno": 155,
+            "outcome": "passed",
+            "keywords": [
+              "test_default_http_port_is_omitted_from_host_header",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00031447199944523163,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006890639997436665,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016321500152116641,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_non_default_http_port_is_included_in_host_header",
+            "lineno": 161,
+            "outcome": "passed",
+            "keywords": [
+              "test_non_default_http_port_is_included_in_host_header",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00033828900268417783,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004308139978093095,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001103550021070987,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_user_supplied_host_header_is_not_replaced",
+            "lineno": 167,
+            "outcome": "passed",
+            "keywords": [
+              "test_user_supplied_host_header_is_not_replaced",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024665599994477816,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004200980001769494,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.417199908057228e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_mapping_headers_are_sent_as_http_headers",
+            "lineno": 175,
+            "outcome": "passed",
+            "keywords": [
+              "test_mapping_headers_are_sent_as_http_headers",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002319310005987063,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00040414300019619986,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.45889990159776e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_sequence_headers_preserve_duplicate_names",
+            "lineno": 181,
+            "outcome": "passed",
+            "keywords": [
+              "test_sequence_headers_preserve_duplicate_names",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021782600015285425,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004584039998007938,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.881799996946938e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_bytes_method_and_url_are_accepted",
+            "lineno": 192,
+            "outcome": "passed",
+            "keywords": [
+              "test_bytes_method_and_url_are_accepted",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022547399930772372,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00046124299842631444,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011979700138908811,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_bytes_content_adds_content_length_and_body",
+            "lineno": 199,
+            "outcome": "passed",
+            "keywords": [
+              "test_bytes_content_adds_content_length_and_body",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003412849982851185,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00048446900109411217,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.157000022241846e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_empty_bytes_content_adds_zero_content_length",
+            "lineno": 207,
+            "outcome": "passed",
+            "keywords": [
+              "test_empty_bytes_content_adds_zero_content_length",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002454509995004628,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00032584300060989335,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.112700015772134e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_iterable_content_uses_chunked_transfer_encoding",
+            "lineno": 213,
+            "outcome": "passed",
+            "keywords": [
+              "test_iterable_content_uses_chunked_transfer_encoding",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021202700008871034,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004867310017289128,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.834500113152899e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_explicit_content_length_is_preserved",
+            "lineno": 221,
+            "outcome": "passed",
+            "keywords": [
+              "test_explicit_content_length_is_preserved",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002417089999653399,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003115559993602801,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.112300201901235e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_explicit_transfer_encoding_prevents_auto_content_length",
+            "lineno": 233,
+            "outcome": "passed",
+            "keywords": [
+              "test_explicit_transfer_encoding_prevents_auto_content_length",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021351099712774158,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003240609985368792,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.042899935389869e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_stream_response_iterates_body_chunks_without_preloading_content",
+            "lineno": 246,
+            "outcome": "passed",
+            "keywords": [
+              "test_stream_response_iterates_body_chunks_without_preloading_content",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00032591399940429255,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004753840003104415,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010812599794007838,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_stream_response_read_makes_content_available",
+            "lineno": 258,
+            "outcome": "passed",
+            "keywords": [
+              "test_stream_response_read_makes_content_available",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000251658999331994,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00039916899913805537,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.968199836090207e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_response_iter_stream_can_only_be_consumed_once",
+            "lineno": 268,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_iter_stream_can_only_be_consumed_once",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002529220000724308,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00019157099814037792,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00024338200091733597,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_response_read_caches_content_for_repeated_access",
+            "lineno": 275,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_read_caches_content_for_repeated_access",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00025585399998817593,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010674000077415258,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.349699757876806e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_response_close_calls_stream_close_when_available",
+            "lineno": 282,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_close_calls_stream_close_when_available",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00023841599977458827,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001221390011778567,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.212899774662219e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_same_origin_reuses_connection_after_response_is_read",
+            "lineno": 299,
+            "outcome": "passed",
+            "keywords": [
+              "test_same_origin_reuses_connection_after_response_is_read",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022150299992063083,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006276040003285743,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002750589992501773,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_different_origins_open_distinct_connections",
+            "lineno": 312,
+            "outcome": "passed",
+            "keywords": [
+              "test_different_origins_open_distinct_connections",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024324799960595556,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005656079993059393,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.367300299345516e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_pool_close_closes_idle_connections",
+            "lineno": 325,
+            "outcome": "passed",
+            "keywords": [
+              "test_pool_close_closes_idle_connections",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003248470020480454,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00040109900146489963,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.913399869925343e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_pool_context_manager_closes_idle_connections_on_exit",
+            "lineno": 332,
+            "outcome": "passed",
+            "keywords": [
+              "test_pool_context_manager_closes_idle_connections_on_exit",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022832000104244798,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00035556399961933494,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.728800094104372e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_zero_keepalive_limit_closes_connection_after_response_body",
+            "lineno": 339,
+            "outcome": "passed",
+            "keywords": [
+              "test_zero_keepalive_limit_closes_connection_after_response_body",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022952700237510726,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003684900002554059,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.813399836071767e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_unsupported_protocol_raises_public_exception",
+            "lineno": 345,
+            "outcome": "passed",
+            "keywords": [
+              "test_unsupported_protocol_raises_public_exception",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00023669099755352363,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017118699906859547,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.674899800098501e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_missing_protocol_raises_public_exception",
+            "lineno": 351,
+            "outcome": "passed",
+            "keywords": [
+              "test_missing_protocol_raises_public_exception",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00023987399981706403,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003423060006753076,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.84080000105314e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_local_address_is_passed_to_tcp_connect",
+            "lineno": 357,
+            "outcome": "passed",
+            "keywords": [
+              "test_local_address_is_passed_to_tcp_connect",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022923100186744705,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003793699979723897,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.710600013728254e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_socket_options_are_passed_to_tcp_connect",
+            "lineno": 363,
+            "outcome": "passed",
+            "keywords": [
+              "test_socket_options_are_passed_to_tcp_connect",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024472899895044975,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00036132899913354777,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.781200085650198e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_unix_domain_socket_uses_connect_unix_socket",
+            "lineno": 370,
+            "outcome": "passed",
+            "keywords": [
+              "test_unix_domain_socket_uses_connect_unix_socket",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022324400197248906,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00031516500166617334,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.852099927025847e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_connect_timeout_extension_is_passed_to_backend_connect",
+            "lineno": 377,
+            "outcome": "passed",
+            "keywords": [
+              "test_connect_timeout_extension_is_passed_to_backend_connect",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002495890003046952,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003356790002726484,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.202599929063581e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_read_timeout_extension_is_passed_to_stream_reads",
+            "lineno": 387,
+            "outcome": "passed",
+            "keywords": [
+              "test_read_timeout_extension_is_passed_to_stream_reads",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021400499826995656,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003129659999103751,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.369300121557899e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_write_timeout_extension_is_passed_to_stream_writes",
+            "lineno": 397,
+            "outcome": "passed",
+            "keywords": [
+              "test_write_timeout_extension_is_passed_to_stream_writes",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021901699801674113,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000647020002361387,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014535000082105398,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_https_request_connects_to_default_tls_port_and_starts_tls",
+            "lineno": 408,
+            "outcome": "passed",
+            "keywords": [
+              "test_https_request_connects_to_default_tls_port_and_starts_tls",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002679470017028507,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.02646201499737799,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001567190010973718,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_https_request_uses_sni_hostname_extension_when_present",
+            "lineno": 416,
+            "outcome": "passed",
+            "keywords": [
+              "test_https_request_uses_sni_hostname_extension_when_present",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003054590015381109,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.025268049001169857,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001292870001634583,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_https_non_default_port_is_used_for_connect_and_host_header",
+            "lineno": 426,
+            "outcome": "passed",
+            "keywords": [
+              "test_https_non_default_port_is_used_for_connect_and_host_header",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00026303699996788055,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.022983532999205636,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001301320007769391,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_connect_error_is_retried_when_retries_are_available",
+            "lineno": 433,
+            "outcome": "passed",
+            "keywords": [
+              "test_connect_error_is_retried_when_retries_are_available",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002868269984901417,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003708559997903649,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.83959983184468e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_connect_error_is_raised_when_no_retries_remain",
+            "lineno": 444,
+            "outcome": "passed",
+            "keywords": [
+              "test_connect_error_is_raised_when_no_retries_remain",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000221534999582218,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00016926200260058977,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.566199903725646e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_multiple_retries_use_exponential_backoff_sequence",
+            "lineno": 452,
+            "outcome": "passed",
+            "keywords": [
+              "test_multiple_retries_use_exponential_backoff_sequence",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021864599693799391,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003664719988591969,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.518899994669482e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_direct_handle_request_returns_response",
+            "lineno": 465,
+            "outcome": "passed",
+            "keywords": [
+              "test_http_connection_direct_handle_request_returns_response",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021413200011011213,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00028629699954763055,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010235700028715655,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_rejects_requests_for_other_origins",
+            "lineno": 477,
+            "outcome": "passed",
+            "keywords": [
+              "test_http_connection_rejects_requests_for_other_origins",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002041489969997201,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00013998400027048774,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.218100240104832e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_close_closes_the_underlying_stream",
+            "lineno": 487,
+            "outcome": "passed",
+            "keywords": [
+              "test_http_connection_close_closes_the_underlying_stream",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00020092999693588354,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002745569981925655,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.058499952312559e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_reuses_its_stream_for_same_origin_requests",
+            "lineno": 498,
+            "outcome": "passed",
+            "keywords": [
+              "test_http_connection_reuses_its_stream_for_same_origin_requests",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022335399989970028,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00041002299985848367,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00024087100246106274,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_request_target_extension_overrides_url_target_on_the_wire",
+            "lineno": 520,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_target_extension_overrides_url_target_on_the_wire",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024174099962692708,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006638080012635328,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011218200233997777,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_request_object_target_extension_changes_url_target",
+            "lineno": 532,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_object_target_extension_changes_url_target",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00026339399846619926,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010975099939969368,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.264899952337146e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_url_from_string_exposes_components_and_default_origin_port",
+            "lineno": 539,
+            "outcome": "passed",
+            "keywords": [
+              "test_url_from_string_exposes_components_and_default_origin_port",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002120970020769164,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001118889995268546,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010520800060476176,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_url_from_explicit_components_round_trips_to_bytes",
+            "lineno": 548,
+            "outcome": "passed",
+            "keywords": [
+              "test_url_from_explicit_components_round_trips_to_bytes",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002099639968946576,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 9.00249979167711e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.103200161713175e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_url_target_allows_options_star_request",
+            "lineno": 554,
+            "outcome": "passed",
+            "keywords": [
+              "test_url_target_allows_options_star_request",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001982850008062087,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00034756300010485575,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.14220002212096e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_absolute_form_target_is_sent_unchanged",
+            "lineno": 561,
+            "outcome": "passed",
+            "keywords": [
+              "test_absolute_form_target_is_sent_unchanged",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021505200129467994,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003633979977166746,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011378199997125193,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_request_rejects_non_ascii_method_strings",
+            "lineno": 575,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_rejects_non_ascii_method_strings",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002230299978691619,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010807400030898862,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.973900210345164e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_request_rejects_non_ascii_header_values",
+            "lineno": 580,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_rejects_non_ascii_header_values",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019520699788699858,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00013226400187704712,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.848899986129254e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_url_rejects_non_ascii_url_strings",
+            "lineno": 585,
+            "outcome": "passed",
+            "keywords": [
+              "test_url_rejects_non_ascii_url_strings",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000210824997338932,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 9.691199738881551e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.72259991208557e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_response_header_mapping_is_normalized_to_byte_pairs",
+            "lineno": 590,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_header_mapping_is_normalized_to_byte_pairs",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001990810014831368,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.640500163892284e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.460900087608024e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_proxy_auth_adds_basic_proxy_authorization_header",
+            "lineno": 595,
+            "outcome": "passed",
+            "keywords": [
+              "test_proxy_auth_adds_basic_proxy_authorization_header",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001946320007846225,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001229900008183904,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.744399772491306e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_proxy_preserves_custom_headers_after_authorization_header",
+            "lineno": 601,
+            "outcome": "passed",
+            "keywords": [
+              "test_proxy_preserves_custom_headers_after_authorization_header",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021996699797455221,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010472699796082452,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.572300091851503e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_mock_backend_can_serve_documented_http11_response",
+            "lineno": 613,
+            "outcome": "passed",
+            "keywords": [
+              "test_mock_backend_can_serve_documented_http11_response",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019949400302721187,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.021889785999519518,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013546599802793935,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_mock_stream_read_returns_configured_chunks_then_empty_bytes",
+            "lineno": 622,
+            "outcome": "passed",
+            "keywords": [
+              "test_mock_stream_read_returns_configured_chunks_then_empty_bytes",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002658539997355547,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010478200056240894,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.189700020011514e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_mock_stream_start_tls_returns_stream_itself",
+            "lineno": 629,
+            "outcome": "passed",
+            "keywords": [
+              "test_mock_stream_start_tls_returns_stream_itself",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022415199782699347,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003991939993284177,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.114400018006563e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_trace_extension_reports_started_and_complete_events",
+            "lineno": 652,
+            "outcome": "passed",
+            "keywords": [
+              "test_trace_extension_reports_started_and_complete_events",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002166439990105573,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004320189982536249,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.60130021465011e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_trace_extension_reports_failed_connection_event",
+            "lineno": 670,
+            "outcome": "passed",
+            "keywords": [
+              "test_trace_extension_reports_failed_connection_event",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021226800163276494,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00021670100250048563,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.00279995019082e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_premature_server_disconnect_raises_remote_protocol_error",
+            "lineno": 685,
+            "outcome": "passed",
+            "keywords": [
+              "test_premature_server_disconnect_raises_remote_protocol_error",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021046899928478524,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002551039979152847,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.992300015757792e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_invalid_response_header_raises_remote_protocol_error",
+            "lineno": 691,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_response_header_raises_remote_protocol_error",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002057089986919891,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00028917800227645785,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.665299901622348e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_connect_response_exposes_network_stream_extension",
+            "lineno": 699,
+            "outcome": "passed",
+            "keywords": [
+              "test_connect_response_exposes_network_stream_extension",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00032678500065230764,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00030762400274397805,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.371700096176937e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_pool_connections_property_returns_a_list_snapshot",
+            "lineno": 710,
+            "outcome": "passed",
+            "keywords": [
+              "test_pool_connections_property_returns_a_list_snapshot",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00023103599960450083,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003218019992345944,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.297499880427495e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_transport_fullrepro.py::test_connection_available_state_is_publicly_queryable",
+            "lineno": 719,
+            "outcome": "passed",
+            "keywords": [
+              "test_connection_available_state_is_publicly_queryable",
+              "test_transport_fullrepro.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021124900013091974,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00027027000032830983,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001204209984280169,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "passed": 64,
+    "total": 64
+  },
+  "pass_rate_excluding_skips": 1.0,
+  "by_layer": {
+    "atomic": {
+      "passed": 15,
+      "total": 15
+    },
+    "integration": {
+      "passed": 35,
+      "total": 35
+    },
+    "system_e2e": {
+      "passed": 14,
+      "total": 14
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_pool_request_returns_status_headers_content_and_extensions",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_pool_request_returns_status_headers_content_and_extensions",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0007510089999414049,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_request_line_uses_path_and_query_from_url",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_request_line_uses_path_and_query_from_url",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004691600006481167,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_empty_url_path_is_sent_as_slash",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_empty_url_path_is_sent_as_slash",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004069220012752339,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_default_http_port_is_omitted_from_host_header",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_default_http_port_is_omitted_from_host_header",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006890639997436665,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_non_default_http_port_is_included_in_host_header",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_non_default_http_port_is_included_in_host_header",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004308139978093095,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_user_supplied_host_header_is_not_replaced",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_user_supplied_host_header_is_not_replaced",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004200980001769494,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_mapping_headers_are_sent_as_http_headers",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_mapping_headers_are_sent_as_http_headers",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00040414300019619986,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_sequence_headers_preserve_duplicate_names",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_sequence_headers_preserve_duplicate_names",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004584039998007938,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_bytes_method_and_url_are_accepted",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_bytes_method_and_url_are_accepted",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00046124299842631444,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_bytes_content_adds_content_length_and_body",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_bytes_content_adds_content_length_and_body",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00048446900109411217,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_empty_bytes_content_adds_zero_content_length",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_empty_bytes_content_adds_zero_content_length",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00032584300060989335,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_iterable_content_uses_chunked_transfer_encoding",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_iterable_content_uses_chunked_transfer_encoding",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004867310017289128,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_explicit_content_length_is_preserved",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_explicit_content_length_is_preserved",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003115559993602801,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_explicit_transfer_encoding_prevents_auto_content_length",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_explicit_transfer_encoding_prevents_auto_content_length",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003240609985368792,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_stream_response_iterates_body_chunks_without_preloading_content",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_stream_response_iterates_body_chunks_without_preloading_content",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004753840003104415,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_stream_response_read_makes_content_available",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_stream_response_read_makes_content_available",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00039916899913805537,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_response_iter_stream_can_only_be_consumed_once",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_response_iter_stream_can_only_be_consumed_once",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00019157099814037792,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_response_read_caches_content_for_repeated_access",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_response_read_caches_content_for_repeated_access",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010674000077415258,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_response_close_calls_stream_close_when_available",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_response_close_calls_stream_close_when_available",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001221390011778567,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_same_origin_reuses_connection_after_response_is_read",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_same_origin_reuses_connection_after_response_is_read",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006276040003285743,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_different_origins_open_distinct_connections",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_different_origins_open_distinct_connections",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005656079993059393,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_pool_close_closes_idle_connections",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_pool_close_closes_idle_connections",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00040109900146489963,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_pool_context_manager_closes_idle_connections_on_exit",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_pool_context_manager_closes_idle_connections_on_exit",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00035556399961933494,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_zero_keepalive_limit_closes_connection_after_response_body",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_zero_keepalive_limit_closes_connection_after_response_body",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003684900002554059,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_unsupported_protocol_raises_public_exception",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_unsupported_protocol_raises_public_exception",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00017118699906859547,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_missing_protocol_raises_public_exception",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_missing_protocol_raises_public_exception",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003423060006753076,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_local_address_is_passed_to_tcp_connect",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_local_address_is_passed_to_tcp_connect",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003793699979723897,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_socket_options_are_passed_to_tcp_connect",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_socket_options_are_passed_to_tcp_connect",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00036132899913354777,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_unix_domain_socket_uses_connect_unix_socket",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_unix_domain_socket_uses_connect_unix_socket",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00031516500166617334,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_connect_timeout_extension_is_passed_to_backend_connect",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_connect_timeout_extension_is_passed_to_backend_connect",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003356790002726484,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_read_timeout_extension_is_passed_to_stream_reads",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_read_timeout_extension_is_passed_to_stream_reads",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003129659999103751,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_write_timeout_extension_is_passed_to_stream_writes",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_write_timeout_extension_is_passed_to_stream_writes",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000647020002361387,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_https_request_connects_to_default_tls_port_and_starts_tls",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_https_request_connects_to_default_tls_port_and_starts_tls",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.02646201499737799,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_https_request_uses_sni_hostname_extension_when_present",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_https_request_uses_sni_hostname_extension_when_present",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.025268049001169857,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_https_non_default_port_is_used_for_connect_and_host_header",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_https_non_default_port_is_used_for_connect_and_host_header",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.022983532999205636,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_connect_error_is_retried_when_retries_are_available",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_connect_error_is_retried_when_retries_are_available",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003708559997903649,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_connect_error_is_raised_when_no_retries_remain",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_connect_error_is_raised_when_no_retries_remain",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00016926200260058977,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_multiple_retries_use_exponential_backoff_sequence",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_multiple_retries_use_exponential_backoff_sequence",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003664719988591969,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_direct_handle_request_returns_response",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_http_connection_direct_handle_request_returns_response",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00028629699954763055,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_rejects_requests_for_other_origins",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_http_connection_rejects_requests_for_other_origins",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00013998400027048774,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_close_closes_the_underlying_stream",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_http_connection_close_closes_the_underlying_stream",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002745569981925655,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_http_connection_reuses_its_stream_for_same_origin_requests",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_http_connection_reuses_its_stream_for_same_origin_requests",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00041002299985848367,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_request_target_extension_overrides_url_target_on_the_wire",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_request_target_extension_overrides_url_target_on_the_wire",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006638080012635328,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_request_object_target_extension_changes_url_target",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_request_object_target_extension_changes_url_target",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010975099939969368,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_url_from_string_exposes_components_and_default_origin_port",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_url_from_string_exposes_components_and_default_origin_port",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001118889995268546,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_url_from_explicit_components_round_trips_to_bytes",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_url_from_explicit_components_round_trips_to_bytes",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 9.00249979167711e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_url_target_allows_options_star_request",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_url_target_allows_options_star_request",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00034756300010485575,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_absolute_form_target_is_sent_unchanged",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_absolute_form_target_is_sent_unchanged",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003633979977166746,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_request_rejects_non_ascii_method_strings",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_request_rejects_non_ascii_method_strings",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010807400030898862,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_request_rejects_non_ascii_header_values",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_request_rejects_non_ascii_header_values",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00013226400187704712,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_url_rejects_non_ascii_url_strings",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_url_rejects_non_ascii_url_strings",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 9.691199738881551e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_response_header_mapping_is_normalized_to_byte_pairs",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_response_header_mapping_is_normalized_to_byte_pairs",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.640500163892284e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_proxy_auth_adds_basic_proxy_authorization_header",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_proxy_auth_adds_basic_proxy_authorization_header",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001229900008183904,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_proxy_preserves_custom_headers_after_authorization_header",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_proxy_preserves_custom_headers_after_authorization_header",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010472699796082452,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_mock_backend_can_serve_documented_http11_response",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_mock_backend_can_serve_documented_http11_response",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.021889785999519518,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_mock_stream_read_returns_configured_chunks_then_empty_bytes",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_mock_stream_read_returns_configured_chunks_then_empty_bytes",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010478200056240894,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_mock_stream_start_tls_returns_stream_itself",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_mock_stream_start_tls_returns_stream_itself",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003991939993284177,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_trace_extension_reports_started_and_complete_events",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_trace_extension_reports_started_and_complete_events",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004320189982536249,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_trace_extension_reports_failed_connection_event",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_trace_extension_reports_failed_connection_event",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00021670100250048563,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_premature_server_disconnect_raises_remote_protocol_error",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_premature_server_disconnect_raises_remote_protocol_error",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002551039979152847,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_invalid_response_header_raises_remote_protocol_error",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_invalid_response_header_raises_remote_protocol_error",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00028917800227645785,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_connect_response_exposes_network_stream_extension",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_connect_response_exposes_network_stream_extension",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00030762400274397805,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_pool_connections_property_returns_a_list_snapshot",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_pool_connections_property_returns_a_list_snapshot",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003218019992345944,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_transport_fullrepro.py::test_connection_available_state_is_publicly_queryable",
+      "base_nodeid": "tests/test_transport_fullrepro.py::test_connection_available_state_is_publicly_queryable",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00027027000032830983,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

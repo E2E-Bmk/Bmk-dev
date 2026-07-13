@@ -1,0 +1,59 @@
+filter/oracle_source: generated_only
+task: sqlalchemy-fullrepro-001
+spec: spec/spec_v1.md
+source_file: filter/generated_tests.py
+
+| test_nodeid | source | taxonomy | spec_section | status | notes |
+|---|---|---|---|---|---|
+| filter/generated_tests.py::test_core_create_insert_select_reflect_join_workflow | generated | system_e2e | ### Core and ORM over SQLite | covered | End-to-end Core schema, DML, SELECT, reflection, and join workflow over SQLite. |
+| filter/generated_tests.py::test_connect_block_rolls_back_uncommitted_work | generated | integration | ### Engine and Execution | covered | Verifies Connection transaction rollback behavior for uncommitted work. |
+| filter/generated_tests.py::test_engine_begin_commits_success_and_rolls_back_exception | generated | integration | ### Engine and Execution | covered | Verifies Engine.begin commit-on-success and rollback-on-exception semantics. |
+| filter/generated_tests.py::test_result_rows_support_positions_attributes_and_mappings | generated | atomic | ### Engine and Execution | covered | Checks Result and Row positional, attribute, and mapping access. |
+| filter/generated_tests.py::test_reflection_inspector_reports_columns_pk_fk_indexes_unique | generated | integration | ### Reflection and Inspection | covered | Covers reflected Table and Inspector schema projections. |
+| filter/generated_tests.py::test_select_where_bindparams_order_by_limit_offset | generated | atomic | ### SQL Expressions and Compilation | covered | Covers select(), where(), bind parameters, ordering, limit, and offset. |
+| filter/generated_tests.py::test_boolean_expressions_text_and_literal_values_execute_with_parameters | generated | integration | ### SQL Expressions and Compilation | covered | Covers boolean expressions, text(), literal values, and bound parameter execution. |
+| filter/generated_tests.py::test_functions_cast_type_coerce_and_labels_return_expected_values | generated | atomic | ### SQL Expressions and Compilation | covered | Covers func, cast, type_coerce, and labels through public SQL expressions. |
+| filter/generated_tests.py::test_core_dml_update_delete_rowcount_and_inserted_primary_key | generated | integration | ### DML | covered | Covers insert/update/delete execution effects, rowcount, and inserted primary key behavior. |
+| filter/generated_tests.py::test_sqlite_datetime_date_time_roundtrip_and_raw_storage | generated | integration | ### SQLite Dialect Behavior | covered | Covers SQLite DATE/DATETIME/TIME roundtrip and storage behavior. |
+| filter/generated_tests.py::test_sqlite_dialect_date_datetime_time_type_roundtrip | generated | atomic | ### SQLite Dialect Behavior | covered | Covers documented SQLite DATE/DATETIME/TIME bind/result roundtrip behavior. |
+| filter/generated_tests.py::test_sqlite_json_roundtrip_preserves_nested_python_values | generated | integration | ### SQLite Dialect Behavior | covered | Covers SQLite JSON bind/result processing for nested Python values. |
+| filter/generated_tests.py::test_sqlite_insert_on_conflict_do_nothing_and_do_update | generated | integration | ### SQLite Dialect Behavior | covered | Covers SQLite insert().on_conflict_do_nothing and on_conflict_do_update. |
+| filter/generated_tests.py::test_sqlite_insert_on_conflict_where_clause_controls_update | generated | integration | ### SQLite Dialect Behavior | covered | Covers SQLite ON CONFLICT update with where clause. |
+| filter/generated_tests.py::test_session_add_commit_get_identity_and_object_session | generated | integration | ### Session and Unit of Work | covered | Covers Session add, commit, get, identity map, and object_session. |
+| filter/generated_tests.py::test_sessionmaker_begin_commits_and_rolls_back_on_exception | generated | integration | ### Session and Unit of Work | covered | Covers sessionmaker begin context manager commit/rollback behavior. |
+| filter/generated_tests.py::test_session_flush_autoflush_no_autoflush_and_rollback | generated | integration | ### Session and Unit of Work | covered | Covers flush, autoflush, no_autoflush, and rollback effects. |
+| filter/generated_tests.py::test_session_delete_marks_row_for_delete_on_flush | generated | integration | ### Session and Unit of Work | covered | Covers Session.delete and flush/delete visibility. |
+| filter/generated_tests.py::test_relationship_back_populates_and_cascade_persist_children | generated | integration | ### Relationships and Loading | covered | Covers back_populates synchronization and default save-update cascade. |
+| filter/generated_tests.py::test_selectinload_and_joinedload_return_same_primary_objects | generated | integration | ### Relationships and Loading | covered | Covers selectinload, joinedload, Result.unique, and primary object identity. |
+| filter/generated_tests.py::test_lazyload_raiseload_and_detached_lazy_load_errors | generated | integration | ### Relationships and Loading | covered | Covers lazyload, raiseload, and detached lazy-load exception behavior. |
+| filter/generated_tests.py::test_contains_eager_uses_explicit_join_to_populate_filtered_collection | generated | integration | ### Relationships and Loading | covered | Covers contains_eager with explicit join and populated relationship subset. |
+| filter/generated_tests.py::test_core_insert_then_orm_query_over_same_table | generated | system_e2e | ## Cross-View Invariants | covered | Connects Core DML and ORM query views over the same underlying table state. |
+| filter/generated_tests.py::test_declarative_base_function_and_inferred_nullable_types | generated | atomic | ### ORM Declarative Mapping | covered | Covers declarative_base, mapped_column typing, and nullable inference. |
+| filter/generated_tests.py::test_result_cardinality_errors_for_scalar_one | generated | atomic | ## Error Semantics | covered | Covers NoResultFound and MultipleResultsFound for scalar-one style methods. |
+| filter/generated_tests.py::test_missing_table_and_broken_foreign_key_errors | generated | atomic | ## Error Semantics | covered | Covers NoSuchTableError and unresolved foreign key exception types. |
+| filter/generated_tests.py::test_join_inference_errors_for_missing_and_ambiguous_foreign_keys | generated | atomic | ## Error Semantics | covered | Covers NoForeignKeysError and AmbiguousForeignKeysError. |
+| filter/generated_tests.py::test_integrity_error_and_session_recovery_after_rollback | generated | integration | ## Error Semantics | covered | Covers IntegrityError plus rollback recovery for Session use. |
+| filter/generated_tests.py::test_unmapped_instance_errors | generated | atomic | ## Error Semantics | covered | Covers ORM unmapped instance exception behavior. |
+| filter/generated_tests.py::test_numeric_float_largebinary_and_null_roundtrip | generated | integration | ### Metadata, Tables, Columns, and Types | covered | Covers common SQLAlchemy type roundtrips and SQL NULL behavior. |
+| filter/generated_tests.py::test_top_level_import_surface_exposes_common_core_and_orm_names | generated | atomic | ## Installable Surface + ## Public API | covered | Checks common Core, ORM, and SQLite public imports are exposed. |
+| filter/generated_tests.py::test_url_parsing_and_file_sqlite_engine_connects | generated | integration | ### Engine and Execution | removed-unpromised-surface | removed 2026-07-09 fairness surgery: asserted `URL.get_backend_name()`, which the spec never documents; assertion surface exceeded spec promises |
+| filter/generated_tests.py::test_metadata_collections_constraints_indexes_and_create_drop | generated | integration | ### Metadata, Tables, Columns, and Types | covered | Covers metadata table collections, constraints, indexes, create_all, and drop_all. |
+| filter/generated_tests.py::test_reflected_table_can_be_used_for_insert_select_update_delete | generated | system_e2e | ## Cross-View Invariants | covered | Uses reflected metadata through the same DML and SELECT APIs as declared metadata. |
+| filter/generated_tests.py::test_textual_statement_and_bound_parameters_do_not_interpolate_values | generated | atomic | ### Engine and Execution | covered | Covers text() bound parameters as values rather than interpolated SQL text. |
+| filter/generated_tests.py::test_table_column_key_label_and_row_mapping_views_agree | generated | system_e2e | ## Cross-View Invariants | covered | Connects column key/name, labels, row mapping, and reflection views. |
+| filter/generated_tests.py::test_primary_foreign_unique_and_check_constraints_reflect_from_sqlite | generated | integration | ### Reflection and Inspection | covered | Covers SQLite reflection of primary keys, foreign keys, unique constraints, and check constraints. |
+| filter/generated_tests.py::test_insert_executemany_and_select_mappings_preserve_column_names | generated | integration | ### DML | covered | Covers executemany insert and mapping result column names. |
+| filter/generated_tests.py::test_boolean_true_false_null_and_between_expressions_execute | generated | atomic | ### SQL Expressions and Compilation | covered | Covers true/false/null/between expression execution. |
+| filter/generated_tests.py::test_declarative_default_init_table_and_metadata_views_agree | generated | integration | ### ORM Declarative Mapping | covered | Covers declarative default initializer, generated table, and metadata views. |
+| filter/generated_tests.py::test_session_context_manager_closes_but_engine_data_persists | generated | integration | ### Session and Unit of Work | covered | Covers Session context manager close after committed durable data. |
+| filter/generated_tests.py::test_expire_on_commit_refreshes_attributes_from_database | generated | integration | ### Session and Unit of Work | covered | Covers expiration and explicit refresh of persistent attributes. |
+| filter/generated_tests.py::test_session_get_accepts_tuple_for_composite_primary_key | generated | atomic | ### Session and Unit of Work | covered | Covers Session.get with tuple composite primary keys. |
+| filter/generated_tests.py::test_many_to_one_lazy_load_can_use_identity_map | generated | integration | ### Relationships and Loading | covered | Covers many-to-one lazy load resolving to an identity-map object in-session. |
+| filter/generated_tests.py::test_joinedload_collection_requires_unique_for_duplicate_primary_rows | generated | integration | ### Relationships and Loading | covered | Covers joined eager loading with Result.unique for collection duplicates. |
+| filter/generated_tests.py::test_raiseload_option_raises_for_many_to_one_access | generated | atomic | ## Error Semantics | covered | Covers raiseload raising InvalidRequestError on relationship access. |
+| filter/generated_tests.py::test_sqlite_uppercase_type_names_compile_and_roundtrip | generated | atomic | ### SQLite Dialect Behavior | covered | Covers SQLite uppercase dialect type names and value roundtrip. |
+| filter/generated_tests.py::test_sqlite_json_path_expression_reads_nested_value | generated | integration | ### SQLite Dialect Behavior | removed-unpromised-surface | removed 2026-07-09 fairness surgery: asserted JSON path `.as_string()` casting, which the spec never documents (spec only speaks generically of supported SQLite JSON functions) |
+| filter/generated_tests.py::test_core_and_orm_share_transaction_visibility_until_commit | generated | system_e2e | ## Cross-View Invariants | covered | Connects Core transaction state with ORM Session bound to the same connection. |
+| filter/generated_tests.py::test_full_core_orm_reflection_workflow_with_second_address | generated | system_e2e | ## Cross-View Invariants + ## Representative Workflows + ### Core and ORM over SQLite | covered | Covers representative Core insert, ORM relationship update, and reflection workflow. |
+
+Total: 50 | kept (covered): 48 | spec_gap: 0 | source-only: 0 | excluded (removed-unpromised-surface, 2026-07-09): 2 | final_scoreable: 48

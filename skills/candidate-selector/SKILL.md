@@ -39,13 +39,35 @@ Prefer repos with:
 
 ## Test Import Pre-Screen
 
-Before writing filter_notes.md, run:
+Before writing filter_notes.md, run an AST-level import closure check — not just underscore-prefixed names. For each test file, collect all imported top-level package names and compare against the spec's Installable Surface (or the candidate repo's `__all__` / `__init__` exports if the spec does not yet exist).
 
 ```bash
+# Quick grep for explicit private imports
 grep -rn "from <pkg>\._\|import <pkg>\._" tests/
+
+# Also check for undocumented non-underscore modules used as test carriers:
+# e.g. `from scrapy.utils._deps_compat import`, `from pelican.tests.support import`
+# These do not have underscores but are not part of the public API surface.
+python - <<'EOF'
+import ast, pathlib, sys
+pkg = sys.argv[1] if len(sys.argv) > 1 else "<pkg>"
+bad = []
+for f in pathlib.Path("tests").rglob("*.py"):
+    try:
+        tree = ast.parse(f.read_text(encoding="utf-8", errors="replace"))
+    except SyntaxError:
+        continue
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            mod = getattr(node, "module", None) or (node.names[0].name if isinstance(node, ast.Import) else "")
+            if mod and mod.startswith(pkg + ".") and not mod.split(".")[1].startswith("_"):
+                bad.append((str(f), mod))
+for f, m in bad:
+    print(f"UNDOC_IMPORT {f}: {m}")
+EOF
 ```
 
-If > 30% of test files have module-level private imports, mark `test_import_audit: HIGH_RISK`. This is the leading cause of collection errors in clean candidate environments — it does not block selection but must be flagged, because Stage 3 Track A will require significant rewrite work or will trigger Track B early.
+If > 30% of test files have module-level private imports **or** undocumented carrier imports, mark `test_import_audit: HIGH_RISK`. This is the leading cause of collection errors in clean candidate environments.
 
 ## Gate 1: Evidence Record
 
@@ -69,7 +91,10 @@ contamination_note: {repo}@{version}, released {date}, relative to training cuto
 decision: {keep|defer|reject}
 reason: {one sentence}
 risks: {key risks}
+scope_plan: {if src_loc > 15000 or test_functions > 300, write: target_subdomain=X, expected_oracle_max=N; otherwise write: N/A}
 ```
+
+When `scope_plan` is not N/A, the Stage 3 handoff must verify the actual kept set matches the stated `target_subdomain` and does not exceed `expected_oracle_max`. If it does, return to Stage 2 to scope down.
 
 ## Selection Record
 

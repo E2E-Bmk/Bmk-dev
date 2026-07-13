@@ -1,0 +1,3187 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 90,
+  "remove_paths": [
+    "dateparser"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/dateparser-dates-fullrepro-001/oracle_repo",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/output",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/tasks/dateparser-dates-fullrepro-001/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/tasks/dateparser-dates-fullrepro-001/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2",
+  "grouped_results": {
+    "tests/test_swe_e2e_dateparser_generated.py": {
+      "returncode": 1,
+      "stdout": "................FFF.........F......F...........FFFF..FF.......F......... [100%]\n=================================== FAILURES ===================================\n__________ test_parse_month_name_uses_current_day_from_relative_base ___________\n\n    def test_parse_month_name_uses_current_day_from_relative_base():\n>       assert parse(\"March\", settings={\"RELATIVE_BASE\": MIDYEAR}) == datetime(2020, 3, 16)\nE       AssertionError: assert None == datetime.datetime(2020, 3, 16, 0, 0)\nE        +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0)})\nE        +  and   datetime.datetime(2020, 3, 16, 0, 0) = datetime(2020, 3, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:100: AssertionError\n___________ test_parse_prefer_dates_from_future_moves_month_forward ____________\n\n    def test_parse_prefer_dates_from_future_moves_month_forward():\n        settings = {\"RELATIVE_BASE\": MIDYEAR, \"PREFER_DATES_FROM\": \"future\"}\n>       assert parse(\"March\", settings=settings) == datetime(2021, 3, 16)\nE       AssertionError: assert None == datetime.datetime(2021, 3, 16, 0, 0)\nE        +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'future'})\nE        +  and   datetime.datetime(2021, 3, 16, 0, 0) = datetime(2021, 3, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:105: AssertionError\n____________ test_parse_prefer_dates_from_past_moves_month_backward ____________\n\n    def test_parse_prefer_dates_from_past_moves_month_backward():\n        settings = {\"RELATIVE_BASE\": MIDYEAR, \"PREFER_DATES_FROM\": \"past\"}\n>       assert parse(\"August\", settings=settings) == datetime(2019, 8, 16)\nE       AssertionError: assert None == datetime.datetime(2019, 8, 16, 0, 0)\nE        +  where None = parse('August', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'past'})\nE        +  and   datetime.datetime(2019, 8, 16, 0, 0) = datetime(2019, 8, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:110: AssertionError\n________________ test_parse_no_spaces_time_when_parser_enabled _________________\n\n    def test_parse_no_spaces_time_when_parser_enabled():\n        settings = {\"PARSERS\": [\"no-spaces-time\"], \"RELATIVE_BASE\": datetime(2020, 1, 1)}\n>       assert parse(\"121994\", settings=settings) == datetime(1994, 1, 2)\nE       AssertionError: assert None == datetime.datetime(1994, 1, 2, 0, 0)\nE        +  where None = parse('121994', settings={'PARSERS': ['no-spaces-time'], 'RELATIVE_BASE': datetime.datetime(2020, 1, 1, 0, 0)})\nE        +  and   datetime.datetime(1994, 1, 2, 0, 0) = datetime(1994, 1, 2)\n\ntests/test_swe_e2e_dateparser_generated.py:157: AssertionError\n________ test_parse_input_timezone_converts_to_target_zone_with_tzinfo _________\n\n    def test_parse_input_timezone_converts_to_target_zone_with_tzinfo():\n        result = parse(\"January 12, 2012 10:00 PM UTC\", settings={\"TO_TIMEZONE\": \"US/Eastern\"})\n        assert result.replace(tzinfo=None) == datetime(2012, 1, 12, 17, 0)\n>       assert result.tzinfo is not None\nE       assert None is not None\nE        +  where None = datetime.datetime(2012, 1, 12, 17, 0).tzinfo\n\ntests/test_swe_e2e_dateparser_generated.py:194: AssertionError\n______________ test_search_dates_extracts_multiple_dates_in_order ______________\n\n    def test_search_dates_extracts_multiple_dates_in_order():\n        text = \"The client arrived on March 3rd, 2004 and returned on May 6th 2004.\"\n        result = search_dates(text, languages=[\"en\"])\n>       assert result is not None\nE       assert None is not None\n\ntests/test_swe_e2e_dateparser_generated.py:291: AssertionError\n_______________ test_search_dates_with_explicit_spanish_language _______________\n\n    def test_search_dates_with_explicit_spanish_language():\n>       assert search_dates(\"Llego el 3 de marzo de 2020.\", languages=[\"es\"]) == [\n            (\"3 de marzo de 2020\", datetime(2020, 3, 3))\n        ]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\nE        +  where None = search_dates('Llego el 3 de marzo de 2020.', languages=['es'])\n\ntests/test_swe_e2e_dateparser_generated.py:300: AssertionError\n__________________ test_search_dates_custom_language_detector __________________\n\n    def test_search_dates_custom_language_detector():\n        calls = []\n    \n        def detector(*args, **kwargs):\n            calls.append((args, kwargs))\n            return [\"es\"]\n    \n>       assert search_dates(\"Llego el 3 de marzo de 2020.\", detect_languages_function=detector) == [\n            (\"3 de marzo de 2020\", datetime(2020, 3, 3))\n        ]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\nE        +  where None = search_dates('Llego el 3 de marzo de 2020.', detect_languages_function=<function test_search_dates_custom_language_detector.<locals>.detector at 0x7fda56d51260>)\n\ntests/test_swe_e2e_dateparser_generated.py:312: AssertionError\n_________ test_search_dates_languages_argument_prevents_detector_call __________\n\n    def test_search_dates_languages_argument_prevents_detector_call():\n        calls = []\n    \n        def detector(*args, **kwargs):\n            calls.append((args, kwargs))\n            return [\"fr\"]\n    \n        result = search_dates(\"Llego el 3 de marzo de 2020.\", languages=[\"es\"], detect_languages_function=detector)\n>       assert result == [(\"3 de marzo de 2020\", datetime(2020, 3, 3))]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\n\ntests/test_swe_e2e_dateparser_generated.py:327: AssertionError\n_______ test_search_dates_return_time_span_for_past_week_default_monday ________\n\n    def test_search_dates_return_time_span_for_past_week_default_monday():\n        settings = {\"RELATIVE_BASE\": datetime(2020, 5, 15, 12, 0), \"RETURN_TIME_SPAN\": True}\n>       assert search_dates(\"Report covers past week.\", languages=[\"en\"], settings=settings) == [\n            (\"past week (start)\", datetime(2020, 5, 4, 12, 0)),\n            (\"past week (end)\", datetime(2020, 5, 10, 12, 0)),\n        ]\nE       AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ..., 10, 12, 0))]\nE         \nE         At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 4, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 4, 12, 0))\nE         Use -v to get more diff\n\ntests/test_swe_e2e_dateparser_generated.py:356: AssertionError\n________ test_search_dates_return_time_span_respects_sunday_week_start _________\n\n    def test_search_dates_return_time_span_respects_sunday_week_start():\n        settings = {\n            \"RELATIVE_BASE\": datetime(2020, 5, 15, 12, 0),\n            \"RETURN_TIME_SPAN\": True,\n            \"DEFAULT_START_OF_WEEK\": \"sunday\",\n        }\n>       assert search_dates(\"Report covers past week.\", languages=[\"en\"], settings=settings) == [\n            (\"past week (start)\", datetime(2020, 5, 3, 12, 0)),\n            (\"past week (end)\", datetime(2020, 5, 9, 12, 0)),\n        ]\nE       AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ...5, 9, 12, 0))]\nE         \nE         At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 3, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 3, 12, 0))\nE         Use -v to get more diff\n\ntests/test_swe_e2e_dateparser_generated.py:368: AssertionError\n___________ test_unknown_parser_name_raises_setting_validation_error ___________\n\n    def test_unknown_parser_name_raises_setting_validation_error():\n>       with pytest.raises(SettingValidationError):\nE       Failed: DID NOT RAISE SettingValidationError\n\ntests/test_swe_e2e_dateparser_generated.py:420: Failed\n=========================== short test summary info ============================\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_parse_month_name_uses_current_day_from_relative_base\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_future_moves_month_forward\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_past_moves_month_backward\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_parse_no_spaces_time_when_parser_enabled\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_parse_input_timezone_converts_to_target_zone_with_tzinfo\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_search_dates_extracts_multiple_dates_in_order\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_search_dates_with_explicit_spanish_language\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_search_dates_custom_language_detector\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_search_dates_languages_argument_prevents_detector_call\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_week_default_monday\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_respects_sunday_week_start\nFAILED tests/test_swe_e2e_dateparser_generated.py::test_unknown_parser_name_raises_setting_validation_error\n12 failed, 60 passed in 7.39s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783165198.6898737,
+        "duration": 7.296513080596924,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 60,
+          "failed": 12,
+          "total": 72,
+          "collected": 72
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_absolute_english_month_name",
+                "type": "Function",
+                "lineno": 15
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_numeric_default_mdy_order",
+                "type": "Function",
+                "lineno": 19
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_french_numeric_uses_locale_order_without_override",
+                "type": "Function",
+                "lineno": 23
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_explicit_date_order_overrides_locale_order",
+                "type": "Function",
+                "lineno": 27
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_locale_date_order_false_uses_configured_order",
+                "type": "Function",
+                "lineno": 31
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_date_format_with_swapped_day_month",
+                "type": "Function",
+                "lineno": 36
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_spanish_with_explicit_language",
+                "type": "Function",
+                "lineno": 40
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_default_languages_fallback",
+                "type": "Function",
+                "lineno": 44
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_language_detector_for_top_level_parse",
+                "type": "Function",
+                "lineno": 48
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_languages_argument_prevents_custom_detector_call",
+                "type": "Function",
+                "lineno": 60
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_use_given_language_order_false_uses_default_priority",
+                "type": "Function",
+                "lineno": 71
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_use_given_language_order_true_preserves_caller_order",
+                "type": "Function",
+                "lineno": 75
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_tomorrow_uses_relative_base_time",
+                "type": "Function",
+                "lineno": 80
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_yesterday_uses_relative_base_time",
+                "type": "Function",
+                "lineno": 85
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_weeks_ago_uses_relative_base",
+                "type": "Function",
+                "lineno": 90
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_future_days_uses_relative_base",
+                "type": "Function",
+                "lineno": 94
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_month_name_uses_current_day_from_relative_base",
+                "type": "Function",
+                "lineno": 98
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_future_moves_month_forward",
+                "type": "Function",
+                "lineno": 102
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_past_moves_month_backward",
+                "type": "Function",
+                "lineno": 107
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_day_first_for_missing_day",
+                "type": "Function",
+                "lineno": 112
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_day_last_for_missing_day",
+                "type": "Function",
+                "lineno": 117
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_month_first_for_year_only",
+                "type": "Function",
+                "lineno": 122
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_month_last_for_year_only",
+                "type": "Function",
+                "lineno": 127
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_strict_parsing_rejects_incomplete_month",
+                "type": "Function",
+                "lineno": 132
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_month_rejects_year_only_input",
+                "type": "Function",
+                "lineno": 136
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_day_rejects_month_year_input",
+                "type": "Function",
+                "lineno": 140
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_all_parts_accepts_complete_date",
+                "type": "Function",
+                "lineno": 145
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timestamp_in_utc",
+                "type": "Function",
+                "lineno": 150
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_no_spaces_time_when_parser_enabled",
+                "type": "Function",
+                "lineno": 154
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_parser_list_can_exclude_relative_time",
+                "type": "Function",
+                "lineno": 159
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_unicode_normalization_true_accepts_unaccented_french",
+                "type": "Function",
+                "lineno": 164
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_unicode_normalization_false_rejects_unaccented_french",
+                "type": "Function",
+                "lineno": 168
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_abbreviation_returns_naive_when_requested",
+                "type": "Function",
+                "lineno": 172
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_abbreviation_returns_aware_when_requested",
+                "type": "Function",
+                "lineno": 177
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_setting_converts_to_target_zone",
+                "type": "Function",
+                "lineno": 185
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_input_timezone_converts_to_target_zone_with_tzinfo",
+                "type": "Function",
+                "lineno": 190
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_returns_month_period_for_missing_day",
+                "type": "Function",
+                "lineno": 197
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_returns_year_period_for_year_only",
+                "type": "Function",
+                "lineno": 204
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_selects_dutch_locale",
+                "type": "Function",
+                "lineno": 211
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_selects_german_locale",
+                "type": "Function",
+                "lineno": 219
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_rejects_outside_language",
+                "type": "Function",
+                "lineno": 226
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_return_time_as_period",
+                "type": "Function",
+                "lineno": 233
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_date_formats_report_month_period",
+                "type": "Function",
+                "lineno": 240
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_supports_dictionary_style_read",
+                "type": "Function",
+                "lineno": 249
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_supports_dictionary_style_write",
+                "type": "Function",
+                "lineno": 256
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_finds_documented_satellite_date",
+                "type": "Function",
+                "lineno": 264
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_adds_detected_language_without_changing_datetime",
+                "type": "Function",
+                "lineno": 273
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_extracts_multiple_dates_in_order",
+                "type": "Function",
+                "lineno": 287
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_with_explicit_spanish_language",
+                "type": "Function",
+                "lineno": 298
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_custom_language_detector",
+                "type": "Function",
+                "lineno": 304
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_languages_argument_prevents_detector_call",
+                "type": "Function",
+                "lineno": 318
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_relative_and_absolute_with_fixed_base",
+                "type": "Function",
+                "lineno": 330
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_month",
+                "type": "Function",
+                "lineno": 345
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_week_default_monday",
+                "type": "Function",
+                "lineno": 353
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_respects_sunday_week_start",
+                "type": "Function",
+                "lineno": 361
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_parse_matches_date_data_parser",
+                "type": "Function",
+                "lineno": 373
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_search_result_matches_direct_parse",
+                "type": "Function",
+                "lineno": 379
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_add_detected_language_preserves_search_payload",
+                "type": "Function",
+                "lineno": 385
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_timezone_parse_matches_date_data_parser",
+                "type": "Function",
+                "lineno": 393
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_strict_parsing_none_matches_date_data_parser_none",
+                "type": "Function",
+                "lineno": 401
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_setting_name_raises_setting_validation_error",
+                "type": "Function",
+                "lineno": 408
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_date_order_raises_setting_validation_error",
+                "type": "Function",
+                "lineno": 413
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_parser_name_raises_setting_validation_error",
+                "type": "Function",
+                "lineno": 418
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_languages_type_raises_type_error",
+                "type": "Function",
+                "lineno": 423
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_language_raises_value_error",
+                "type": "Function",
+                "lineno": 428
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_locales_type_raises_type_error",
+                "type": "Function",
+                "lineno": 433
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_locale_raises_value_error",
+                "type": "Function",
+                "lineno": 438
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_region_type_raises_type_error",
+                "type": "Function",
+                "lineno": 443
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_use_given_order_without_languages_or_locales_raises_value_error",
+                "type": "Function",
+                "lineno": 448
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_get_date_data_non_string_input_raises_type_error",
+                "type": "Function",
+                "lineno": 453
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_unknown_key_read_raises_key_error",
+                "type": "Function",
+                "lineno": 458
+              },
+              {
+                "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_unknown_key_write_raises_key_error",
+                "type": "Function",
+                "lineno": 463
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_absolute_english_month_name",
+            "lineno": 15,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_absolute_english_month_name",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.007880092998675536,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0021679329984181095,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016714600133127533,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_numeric_default_mdy_order",
+            "lineno": 19,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_numeric_default_mdy_order",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003147770003124606,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0012732069990306627,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001274089991056826,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_french_numeric_uses_locale_order_without_override",
+            "lineno": 23,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_french_numeric_uses_locale_order_without_override",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022855399947729893,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0021370470021793153,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010035599916591309,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_explicit_date_order_overrides_locale_order",
+            "lineno": 27,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_explicit_date_order_overrides_locale_order",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002229330020782072,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006284049995883834,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010302699956810102,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_locale_date_order_false_uses_configured_order",
+            "lineno": 31,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_prefer_locale_date_order_false_uses_configured_order",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002472180021868553,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006555529980687425,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001054519998433534,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_date_format_with_swapped_day_month",
+            "lineno": 36,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_custom_date_format_with_swapped_day_month",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00023102799968910404,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.005732331999752205,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013749600111623295,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_spanish_with_explicit_language",
+            "lineno": 40,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_spanish_with_explicit_language",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002830479970725719,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0010588470031507313,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001030610001180321,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_default_languages_fallback",
+            "lineno": 44,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_default_languages_fallback",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002468150014465209,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003798809993895702,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.625699749449268e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_language_detector_for_top_level_parse",
+            "lineno": 48,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_custom_language_detector_for_top_level_parse",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021930500224698335,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00029745900246780366,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.339700070791878e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_languages_argument_prevents_custom_detector_call",
+            "lineno": 60,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_languages_argument_prevents_custom_detector_call",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000207346001843689,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00027351799872121774,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.729300290928222e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_use_given_language_order_false_uses_default_priority",
+            "lineno": 71,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_use_given_language_order_false_uses_default_priority",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002007850016525481,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00025002100301207975,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.063700079219416e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_use_given_language_order_true_preserves_caller_order",
+            "lineno": 75,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_use_given_language_order_true_preserves_caller_order",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00020053299886058085,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001119539996579988,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.11149982130155e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_tomorrow_uses_relative_base_time",
+            "lineno": 80,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_relative_tomorrow_uses_relative_base_time",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00031665000278735533,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00023793099899194203,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012976099969819188,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_yesterday_uses_relative_base_time",
+            "lineno": 85,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_relative_yesterday_uses_relative_base_time",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003537720003805589,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002011420001508668,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016099899949040264,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_weeks_ago_uses_relative_base",
+            "lineno": 90,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_relative_weeks_ago_uses_relative_base",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021502600066014566,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00013007000234210864,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.87150020187255e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_future_days_uses_relative_base",
+            "lineno": 94,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_relative_future_days_uses_relative_base",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00020847300038440153,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00011551599891390651,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.135299842455424e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_month_name_uses_current_day_from_relative_base",
+            "lineno": 98,
+            "outcome": "failed",
+            "keywords": [
+              "test_parse_month_name_uses_current_day_from_relative_base",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001960459994734265,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001342475999990711,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 100,
+                "message": "AssertionError: assert None == datetime.datetime(2020, 3, 16, 0, 0)\n +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0)})\n +  and   datetime.datetime(2020, 3, 16, 0, 0) = datetime(2020, 3, 16)"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 100,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_parse_month_name_uses_current_day_from_relative_base():\n>       assert parse(\"March\", settings={\"RELATIVE_BASE\": MIDYEAR}) == datetime(2020, 3, 16)\nE       AssertionError: assert None == datetime.datetime(2020, 3, 16, 0, 0)\nE        +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0)})\nE        +  and   datetime.datetime(2020, 3, 16, 0, 0) = datetime(2020, 3, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:100: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00018901300063589588,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_future_moves_month_forward",
+            "lineno": 102,
+            "outcome": "failed",
+            "keywords": [
+              "test_parse_prefer_dates_from_future_moves_month_forward",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002614499971969053,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001628139001695672,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 105,
+                "message": "AssertionError: assert None == datetime.datetime(2021, 3, 16, 0, 0)\n +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'future'})\n +  and   datetime.datetime(2021, 3, 16, 0, 0) = datetime(2021, 3, 16)"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 105,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_parse_prefer_dates_from_future_moves_month_forward():\n        settings = {\"RELATIVE_BASE\": MIDYEAR, \"PREFER_DATES_FROM\": \"future\"}\n>       assert parse(\"March\", settings=settings) == datetime(2021, 3, 16)\nE       AssertionError: assert None == datetime.datetime(2021, 3, 16, 0, 0)\nE        +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'future'})\nE        +  and   datetime.datetime(2021, 3, 16, 0, 0) = datetime(2021, 3, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:105: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00035768599991570227,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_past_moves_month_backward",
+            "lineno": 107,
+            "outcome": "failed",
+            "keywords": [
+              "test_parse_prefer_dates_from_past_moves_month_backward",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002903700005845167,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0035950189994764514,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 110,
+                "message": "AssertionError: assert None == datetime.datetime(2019, 8, 16, 0, 0)\n +  where None = parse('August', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'past'})\n +  and   datetime.datetime(2019, 8, 16, 0, 0) = datetime(2019, 8, 16)"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 110,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_parse_prefer_dates_from_past_moves_month_backward():\n        settings = {\"RELATIVE_BASE\": MIDYEAR, \"PREFER_DATES_FROM\": \"past\"}\n>       assert parse(\"August\", settings=settings) == datetime(2019, 8, 16)\nE       AssertionError: assert None == datetime.datetime(2019, 8, 16, 0, 0)\nE        +  where None = parse('August', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'past'})\nE        +  and   datetime.datetime(2019, 8, 16, 0, 0) = datetime(2019, 8, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:110: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00018885399913415313,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_day_first_for_missing_day",
+            "lineno": 112,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_prefer_day_first_for_missing_day",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00025832000028458424,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003317180016892962,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011819299834314734,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_day_last_for_missing_day",
+            "lineno": 117,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_prefer_day_last_for_missing_day",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00023071600298862904,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003227749984944239,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.728499935590662e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_month_first_for_year_only",
+            "lineno": 122,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_prefer_month_first_for_year_only",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00020562499776133336,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002722809986153152,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.028799857129343e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_month_last_for_year_only",
+            "lineno": 127,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_prefer_month_last_for_year_only",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019705999875441194,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002806310003506951,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.915799869806506e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_strict_parsing_rejects_incomplete_month",
+            "lineno": 132,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_strict_parsing_rejects_incomplete_month",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00026310199973522685,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0010650689982867334,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.270900070783682e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_month_rejects_year_only_input",
+            "lineno": 136,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_require_month_rejects_year_only_input",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00025283600189141,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00023593599689775147,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.296600208268501e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_day_rejects_month_year_input",
+            "lineno": 140,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_require_day_rejects_month_year_input",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00020317899907240644,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00031280699840863235,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.302699643536471e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_all_parts_accepts_complete_date",
+            "lineno": 145,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_require_all_parts_accepts_complete_date",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019994999820482917,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003166429996781517,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.62430026952643e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timestamp_in_utc",
+            "lineno": 150,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_timestamp_in_utc",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022265400184551254,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001390370016451925,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.381899922620505e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_no_spaces_time_when_parser_enabled",
+            "lineno": 154,
+            "outcome": "failed",
+            "keywords": [
+              "test_parse_no_spaces_time_when_parser_enabled",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002922849998867605,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.005096887001855066,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 157,
+                "message": "AssertionError: assert None == datetime.datetime(1994, 1, 2, 0, 0)\n +  where None = parse('121994', settings={'PARSERS': ['no-spaces-time'], 'RELATIVE_BASE': datetime.datetime(2020, 1, 1, 0, 0)})\n +  and   datetime.datetime(1994, 1, 2, 0, 0) = datetime(1994, 1, 2)"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 157,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_parse_no_spaces_time_when_parser_enabled():\n        settings = {\"PARSERS\": [\"no-spaces-time\"], \"RELATIVE_BASE\": datetime(2020, 1, 1)}\n>       assert parse(\"121994\", settings=settings) == datetime(1994, 1, 2)\nE       AssertionError: assert None == datetime.datetime(1994, 1, 2, 0, 0)\nE        +  where None = parse('121994', settings={'PARSERS': ['no-spaces-time'], 'RELATIVE_BASE': datetime.datetime(2020, 1, 1, 0, 0)})\nE        +  and   datetime.datetime(1994, 1, 2, 0, 0) = datetime(1994, 1, 2)\n\ntests/test_swe_e2e_dateparser_generated.py:157: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.000232893002248602,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_parser_list_can_exclude_relative_time",
+            "lineno": 159,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_custom_parser_list_can_exclude_relative_time",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00026692699975683354,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000170134000654798,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010453299910295755,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_unicode_normalization_true_accepts_unaccented_french",
+            "lineno": 164,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_unicode_normalization_true_accepts_unaccented_french",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002185360026487615,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002966329993796535,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.970100341481157e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_unicode_normalization_false_rejects_unaccented_french",
+            "lineno": 168,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_unicode_normalization_false_rejects_unaccented_french",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019812799655483104,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001551160021335818,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.795100100338459e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_abbreviation_returns_naive_when_requested",
+            "lineno": 172,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_timezone_abbreviation_returns_naive_when_requested",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019988699932582676,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004462750002858229,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010365799971623346,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_abbreviation_returns_aware_when_requested",
+            "lineno": 177,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_timezone_abbreviation_returns_aware_when_requested",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024594099886598997,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003634369968494866,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.158199827652425e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_setting_converts_to_target_zone",
+            "lineno": 185,
+            "outcome": "passed",
+            "keywords": [
+              "test_parse_timezone_setting_converts_to_target_zone",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002125649989466183,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0037917650006420445,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014927200027159415,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_input_timezone_converts_to_target_zone_with_tzinfo",
+            "lineno": 190,
+            "outcome": "failed",
+            "keywords": [
+              "test_parse_input_timezone_converts_to_target_zone_with_tzinfo",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00028809200011892244,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005834889998368453,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 194,
+                "message": "assert None is not None\n +  where None = datetime.datetime(2012, 1, 12, 17, 0).tzinfo"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 194,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_parse_input_timezone_converts_to_target_zone_with_tzinfo():\n        result = parse(\"January 12, 2012 10:00 PM UTC\", settings={\"TO_TIMEZONE\": \"US/Eastern\"})\n        assert result.replace(tzinfo=None) == datetime(2012, 1, 12, 17, 0)\n>       assert result.tzinfo is not None\nE       assert None is not None\nE        +  where None = datetime.datetime(2012, 1, 12, 17, 0).tzinfo\n\ntests/test_swe_e2e_dateparser_generated.py:194: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0003107590018771589,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_returns_month_period_for_missing_day",
+            "lineno": 197,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_parser_returns_month_period_for_missing_day",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004869519980275072,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005329460000211839,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014508800086332485,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_returns_year_period_for_year_only",
+            "lineno": 204,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_parser_returns_year_period_for_year_only",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00033733900272636674,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000408828000217909,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011528300092322752,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_selects_dutch_locale",
+            "lineno": 211,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_parser_known_languages_selects_dutch_locale",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003070479979214724,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006255539992707781,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015686999904573895,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_selects_german_locale",
+            "lineno": 219,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_parser_known_languages_selects_german_locale",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00032817300234455615,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005668519988830667,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014306000230135396,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_rejects_outside_language",
+            "lineno": 226,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_parser_known_languages_rejects_outside_language",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00044536400309880264,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005684600000677165,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001497550001658965,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_return_time_as_period",
+            "lineno": 233,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_parser_return_time_as_period",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000273161000222899,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006668940004601609,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012383400098769926,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_date_formats_report_month_period",
+            "lineno": 240,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_parser_date_formats_report_month_period",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00034268800300196745,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005758050028816797,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001547859974380117,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_supports_dictionary_style_read",
+            "lineno": 249,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_supports_dictionary_style_read",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003462210006546229,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00015390300177386962,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012136399891460314,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_supports_dictionary_style_write",
+            "lineno": 256,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_supports_dictionary_style_write",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00035384800139581785,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001272529989364557,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012125600187573582,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_finds_documented_satellite_date",
+            "lineno": 264,
+            "outcome": "passed",
+            "keywords": [
+              "test_search_dates_finds_documented_satellite_date",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003160269989166409,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.006623650999245001,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014008700236445293,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_adds_detected_language_without_changing_datetime",
+            "lineno": 273,
+            "outcome": "passed",
+            "keywords": [
+              "test_search_dates_adds_detected_language_without_changing_datetime",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00037402800080599263,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0008772820001468062,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023653900279896334,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_extracts_multiple_dates_in_order",
+            "lineno": 287,
+            "outcome": "failed",
+            "keywords": [
+              "test_search_dates_extracts_multiple_dates_in_order",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004132109970669262,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0008468380001431797,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 291,
+                "message": "assert None is not None"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 291,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_search_dates_extracts_multiple_dates_in_order():\n        text = \"The client arrived on March 3rd, 2004 and returned on May 6th 2004.\"\n        result = search_dates(text, languages=[\"en\"])\n>       assert result is not None\nE       assert None is not None\n\ntests/test_swe_e2e_dateparser_generated.py:291: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.000188817000889685,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_with_explicit_spanish_language",
+            "lineno": 298,
+            "outcome": "failed",
+            "keywords": [
+              "test_search_dates_with_explicit_spanish_language",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002841459972842131,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0007556809978268575,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 300,
+                "message": "AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\n +  where None = search_dates('Llego el 3 de marzo de 2020.', languages=['es'])"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 300,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_search_dates_with_explicit_spanish_language():\n>       assert search_dates(\"Llego el 3 de marzo de 2020.\", languages=[\"es\"]) == [\n            (\"3 de marzo de 2020\", datetime(2020, 3, 3))\n        ]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\nE        +  where None = search_dates('Llego el 3 de marzo de 2020.', languages=['es'])\n\ntests/test_swe_e2e_dateparser_generated.py:300: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00028897799711558037,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_custom_language_detector",
+            "lineno": 304,
+            "outcome": "failed",
+            "keywords": [
+              "test_search_dates_custom_language_detector",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004904950001218822,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000597186000959482,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 312,
+                "message": "AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\n +  where None = search_dates('Llego el 3 de marzo de 2020.', detect_languages_function=<function test_search_dates_custom_language_detector.<locals>.detector at 0x7fda56d51260>)"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 312,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_search_dates_custom_language_detector():\n        calls = []\n    \n        def detector(*args, **kwargs):\n            calls.append((args, kwargs))\n            return [\"es\"]\n    \n>       assert search_dates(\"Llego el 3 de marzo de 2020.\", detect_languages_function=detector) == [\n            (\"3 de marzo de 2020\", datetime(2020, 3, 3))\n        ]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\nE        +  where None = search_dates('Llego el 3 de marzo de 2020.', detect_languages_function=<function test_search_dates_custom_language_detector.<locals>.detector at 0x7fda56d51260>)\n\ntests/test_swe_e2e_dateparser_generated.py:312: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00018762999752652831,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_languages_argument_prevents_detector_call",
+            "lineno": 318,
+            "outcome": "failed",
+            "keywords": [
+              "test_search_dates_languages_argument_prevents_detector_call",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00028261999977985397,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004976029995304998,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 327,
+                "message": "AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 327,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_search_dates_languages_argument_prevents_detector_call():\n        calls = []\n    \n        def detector(*args, **kwargs):\n            calls.append((args, kwargs))\n            return [\"fr\"]\n    \n        result = search_dates(\"Llego el 3 de marzo de 2020.\", languages=[\"es\"], detect_languages_function=detector)\n>       assert result == [(\"3 de marzo de 2020\", datetime(2020, 3, 3))]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\n\ntests/test_swe_e2e_dateparser_generated.py:327: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00017869399744085968,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_relative_and_absolute_with_fixed_base",
+            "lineno": 330,
+            "outcome": "passed",
+            "keywords": [
+              "test_search_dates_relative_and_absolute_with_fixed_base",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00028758199914591387,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0009893610003928188,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.628699990571477e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_month",
+            "lineno": 345,
+            "outcome": "passed",
+            "keywords": [
+              "test_search_dates_return_time_span_for_past_month",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002294490004715044,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00044041400178684853,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.386499757762067e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_week_default_monday",
+            "lineno": 353,
+            "outcome": "failed",
+            "keywords": [
+              "test_search_dates_return_time_span_for_past_week_default_monday",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021592099801637232,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005096169988973998,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 356,
+                "message": "AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ..., 10, 12, 0))]\n  \n  At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 4, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 4, 12, 0))\n  Use -v to get more diff"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 356,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_search_dates_return_time_span_for_past_week_default_monday():\n        settings = {\"RELATIVE_BASE\": datetime(2020, 5, 15, 12, 0), \"RETURN_TIME_SPAN\": True}\n>       assert search_dates(\"Report covers past week.\", languages=[\"en\"], settings=settings) == [\n            (\"past week (start)\", datetime(2020, 5, 4, 12, 0)),\n            (\"past week (end)\", datetime(2020, 5, 10, 12, 0)),\n        ]\nE       AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ..., 10, 12, 0))]\nE         \nE         At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 4, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 4, 12, 0))\nE         Use -v to get more diff\n\ntests/test_swe_e2e_dateparser_generated.py:356: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00018864600133383647,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_respects_sunday_week_start",
+            "lineno": 361,
+            "outcome": "failed",
+            "keywords": [
+              "test_search_dates_return_time_span_respects_sunday_week_start",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00026884199905907735,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005676310029230081,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 368,
+                "message": "AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ...5, 9, 12, 0))]\n  \n  At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 3, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 3, 12, 0))\n  Use -v to get more diff"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 368,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_search_dates_return_time_span_respects_sunday_week_start():\n        settings = {\n            \"RELATIVE_BASE\": datetime(2020, 5, 15, 12, 0),\n            \"RETURN_TIME_SPAN\": True,\n            \"DEFAULT_START_OF_WEEK\": \"sunday\",\n        }\n>       assert search_dates(\"Report covers past week.\", languages=[\"en\"], settings=settings) == [\n            (\"past week (start)\", datetime(2020, 5, 3, 12, 0)),\n            (\"past week (end)\", datetime(2020, 5, 9, 12, 0)),\n        ]\nE       AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ...5, 9, 12, 0))]\nE         \nE         At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 3, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 3, 12, 0))\nE         Use -v to get more diff\n\ntests/test_swe_e2e_dateparser_generated.py:368: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00019016499936697073,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_parse_matches_date_data_parser",
+            "lineno": 373,
+            "outcome": "passed",
+            "keywords": [
+              "test_cross_view_parse_matches_date_data_parser",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00027305999901727773,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005808689966215752,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001221249985974282,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_search_result_matches_direct_parse",
+            "lineno": 379,
+            "outcome": "passed",
+            "keywords": [
+              "test_cross_view_search_result_matches_direct_parse",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022070900013204664,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006999910001468379,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.24210001155734e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_add_detected_language_preserves_search_payload",
+            "lineno": 385,
+            "outcome": "passed",
+            "keywords": [
+              "test_cross_view_add_detected_language_preserves_search_payload",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00023909299852675758,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0009073510009329766,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.095500015770085e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_timezone_parse_matches_date_data_parser",
+            "lineno": 393,
+            "outcome": "passed",
+            "keywords": [
+              "test_cross_view_timezone_parse_matches_date_data_parser",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00022235299911699258,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005611779997707345,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.176999835995957e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_strict_parsing_none_matches_date_data_parser_none",
+            "lineno": 401,
+            "outcome": "passed",
+            "keywords": [
+              "test_cross_view_strict_parsing_none_matches_date_data_parser_none",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00020349500118754804,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0018983129994012415,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.012300142785534e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_setting_name_raises_setting_validation_error",
+            "lineno": 408,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_setting_name_raises_setting_validation_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021496300178114325,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010276700049871579,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.162800051853992e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_date_order_raises_setting_validation_error",
+            "lineno": 413,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_date_order_raises_setting_validation_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002223289993708022,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 9.788100214791484e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.781900058034807e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_parser_name_raises_setting_validation_error",
+            "lineno": 418,
+            "outcome": "failed",
+            "keywords": [
+              "test_unknown_parser_name_raises_setting_validation_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019543300004443154,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017535399820189923,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+                "lineno": 420,
+                "message": "Failed: DID NOT RAISE SettingValidationError"
+              },
+              "traceback": [
+                {
+                  "path": "tests/test_swe_e2e_dateparser_generated.py",
+                  "lineno": 420,
+                  "message": "Failed"
+                }
+              ],
+              "longrepr": "def test_unknown_parser_name_raises_setting_validation_error():\n>       with pytest.raises(SettingValidationError):\nE       Failed: DID NOT RAISE SettingValidationError\n\ntests/test_swe_e2e_dateparser_generated.py:420: Failed"
+            },
+            "teardown": {
+              "duration": 0.00018538100266596302,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_languages_type_raises_type_error",
+            "lineno": 423,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_languages_type_raises_type_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002711650013225153,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001101159978134092,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.831800005282275e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_language_raises_value_error",
+            "lineno": 428,
+            "outcome": "passed",
+            "keywords": [
+              "test_unknown_language_raises_value_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021419900076580234,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 9.372799831908196e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.882100180722773e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_locales_type_raises_type_error",
+            "lineno": 433,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_locales_type_raises_type_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00020174100063741207,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.819700087769888e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.628000093973242e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_locale_raises_value_error",
+            "lineno": 438,
+            "outcome": "passed",
+            "keywords": [
+              "test_unknown_locale_raises_value_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019368100038263947,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.712999988347292e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016543700257898308,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_region_type_raises_type_error",
+            "lineno": 443,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_region_type_raises_type_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021782800104119815,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00012080499800504185,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.012599937501363e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_use_given_order_without_languages_or_locales_raises_value_error",
+            "lineno": 448,
+            "outcome": "passed",
+            "keywords": [
+              "test_use_given_order_without_languages_or_locales_raises_value_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002033300006587524,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.760600030655041e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.34429995645769e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_get_date_data_non_string_input_raises_type_error",
+            "lineno": 453,
+            "outcome": "passed",
+            "keywords": [
+              "test_get_date_data_non_string_input_raises_type_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00020824899911531247,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.488199819112197e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.578599954489619e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_unknown_key_read_raises_key_error",
+            "lineno": 458,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_unknown_key_read_raises_key_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021976100106257945,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.617600178695284e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.224200064432807e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_unknown_key_write_raises_key_error",
+            "lineno": 463,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_data_unknown_key_write_raises_key_error",
+              "test_swe_e2e_dateparser_generated.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00021234599989838898,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.107100074994378e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012767699809046462,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 12,
+    "passed": 60,
+    "total": 72
+  },
+  "pass_rate_excluding_skips": 0.8333333333333334,
+  "by_layer": {
+    "atomic": {
+      "failed": 6,
+      "passed": 49,
+      "total": 55
+    },
+    "integration": {
+      "failed": 6,
+      "passed": 6,
+      "total": 12
+    },
+    "system_e2e": {
+      "passed": 5,
+      "total": 5
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_absolute_english_month_name",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_absolute_english_month_name",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0021679329984181095,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_numeric_default_mdy_order",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_numeric_default_mdy_order",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0012732069990306627,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_french_numeric_uses_locale_order_without_override",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_french_numeric_uses_locale_order_without_override",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0021370470021793153,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_explicit_date_order_overrides_locale_order",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_explicit_date_order_overrides_locale_order",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006284049995883834,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_locale_date_order_false_uses_configured_order",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_locale_date_order_false_uses_configured_order",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006555529980687425,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_date_format_with_swapped_day_month",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_date_format_with_swapped_day_month",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.005732331999752205,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_spanish_with_explicit_language",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_spanish_with_explicit_language",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0010588470031507313,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_default_languages_fallback",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_default_languages_fallback",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003798809993895702,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_language_detector_for_top_level_parse",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_language_detector_for_top_level_parse",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00029745900246780366,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_languages_argument_prevents_custom_detector_call",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_languages_argument_prevents_custom_detector_call",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00027351799872121774,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_use_given_language_order_false_uses_default_priority",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_use_given_language_order_false_uses_default_priority",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00025002100301207975,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_use_given_language_order_true_preserves_caller_order",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_use_given_language_order_true_preserves_caller_order",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.001119539996579988,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_tomorrow_uses_relative_base_time",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_tomorrow_uses_relative_base_time",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00023793099899194203,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_yesterday_uses_relative_base_time",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_yesterday_uses_relative_base_time",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002011420001508668,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_weeks_ago_uses_relative_base",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_weeks_ago_uses_relative_base",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00013007000234210864,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_future_days_uses_relative_base",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_relative_future_days_uses_relative_base",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00011551599891390651,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_month_name_uses_current_day_from_relative_base",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_month_name_uses_current_day_from_relative_base",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.001342475999990711,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 100,
+          "message": "AssertionError: assert None == datetime.datetime(2020, 3, 16, 0, 0)\n +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0)})\n +  and   datetime.datetime(2020, 3, 16, 0, 0) = datetime(2020, 3, 16)"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 100,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_parse_month_name_uses_current_day_from_relative_base():\n>       assert parse(\"March\", settings={\"RELATIVE_BASE\": MIDYEAR}) == datetime(2020, 3, 16)\nE       AssertionError: assert None == datetime.datetime(2020, 3, 16, 0, 0)\nE        +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0)})\nE        +  and   datetime.datetime(2020, 3, 16, 0, 0) = datetime(2020, 3, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:100: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_future_moves_month_forward",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_future_moves_month_forward",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.001628139001695672,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 105,
+          "message": "AssertionError: assert None == datetime.datetime(2021, 3, 16, 0, 0)\n +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'future'})\n +  and   datetime.datetime(2021, 3, 16, 0, 0) = datetime(2021, 3, 16)"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 105,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_parse_prefer_dates_from_future_moves_month_forward():\n        settings = {\"RELATIVE_BASE\": MIDYEAR, \"PREFER_DATES_FROM\": \"future\"}\n>       assert parse(\"March\", settings=settings) == datetime(2021, 3, 16)\nE       AssertionError: assert None == datetime.datetime(2021, 3, 16, 0, 0)\nE        +  where None = parse('March', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'future'})\nE        +  and   datetime.datetime(2021, 3, 16, 0, 0) = datetime(2021, 3, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:105: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_past_moves_month_backward",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_dates_from_past_moves_month_backward",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0035950189994764514,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 110,
+          "message": "AssertionError: assert None == datetime.datetime(2019, 8, 16, 0, 0)\n +  where None = parse('August', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'past'})\n +  and   datetime.datetime(2019, 8, 16, 0, 0) = datetime(2019, 8, 16)"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 110,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_parse_prefer_dates_from_past_moves_month_backward():\n        settings = {\"RELATIVE_BASE\": MIDYEAR, \"PREFER_DATES_FROM\": \"past\"}\n>       assert parse(\"August\", settings=settings) == datetime(2019, 8, 16)\nE       AssertionError: assert None == datetime.datetime(2019, 8, 16, 0, 0)\nE        +  where None = parse('August', settings={'RELATIVE_BASE': datetime.datetime(2020, 6, 16, 0, 0), 'PREFER_DATES_FROM': 'past'})\nE        +  and   datetime.datetime(2019, 8, 16, 0, 0) = datetime(2019, 8, 16)\n\ntests/test_swe_e2e_dateparser_generated.py:110: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_day_first_for_missing_day",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_day_first_for_missing_day",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003317180016892962,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_day_last_for_missing_day",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_day_last_for_missing_day",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003227749984944239,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_month_first_for_year_only",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_month_first_for_year_only",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002722809986153152,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_month_last_for_year_only",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_prefer_month_last_for_year_only",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002806310003506951,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_strict_parsing_rejects_incomplete_month",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_strict_parsing_rejects_incomplete_month",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0010650689982867334,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_month_rejects_year_only_input",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_month_rejects_year_only_input",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00023593599689775147,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_day_rejects_month_year_input",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_day_rejects_month_year_input",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00031280699840863235,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_all_parts_accepts_complete_date",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_require_all_parts_accepts_complete_date",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003166429996781517,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timestamp_in_utc",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timestamp_in_utc",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001390370016451925,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_no_spaces_time_when_parser_enabled",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_no_spaces_time_when_parser_enabled",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.005096887001855066,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 157,
+          "message": "AssertionError: assert None == datetime.datetime(1994, 1, 2, 0, 0)\n +  where None = parse('121994', settings={'PARSERS': ['no-spaces-time'], 'RELATIVE_BASE': datetime.datetime(2020, 1, 1, 0, 0)})\n +  and   datetime.datetime(1994, 1, 2, 0, 0) = datetime(1994, 1, 2)"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 157,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_parse_no_spaces_time_when_parser_enabled():\n        settings = {\"PARSERS\": [\"no-spaces-time\"], \"RELATIVE_BASE\": datetime(2020, 1, 1)}\n>       assert parse(\"121994\", settings=settings) == datetime(1994, 1, 2)\nE       AssertionError: assert None == datetime.datetime(1994, 1, 2, 0, 0)\nE        +  where None = parse('121994', settings={'PARSERS': ['no-spaces-time'], 'RELATIVE_BASE': datetime.datetime(2020, 1, 1, 0, 0)})\nE        +  and   datetime.datetime(1994, 1, 2, 0, 0) = datetime(1994, 1, 2)\n\ntests/test_swe_e2e_dateparser_generated.py:157: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_parser_list_can_exclude_relative_time",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_custom_parser_list_can_exclude_relative_time",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000170134000654798,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_unicode_normalization_true_accepts_unaccented_french",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_unicode_normalization_true_accepts_unaccented_french",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002966329993796535,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_unicode_normalization_false_rejects_unaccented_french",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_unicode_normalization_false_rejects_unaccented_french",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001551160021335818,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_abbreviation_returns_naive_when_requested",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_abbreviation_returns_naive_when_requested",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004462750002858229,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_abbreviation_returns_aware_when_requested",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_abbreviation_returns_aware_when_requested",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003634369968494866,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_setting_converts_to_target_zone",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_timezone_setting_converts_to_target_zone",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0037917650006420445,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_input_timezone_converts_to_target_zone_with_tzinfo",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_parse_input_timezone_converts_to_target_zone_with_tzinfo",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0005834889998368453,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 194,
+          "message": "assert None is not None\n +  where None = datetime.datetime(2012, 1, 12, 17, 0).tzinfo"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 194,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_parse_input_timezone_converts_to_target_zone_with_tzinfo():\n        result = parse(\"January 12, 2012 10:00 PM UTC\", settings={\"TO_TIMEZONE\": \"US/Eastern\"})\n        assert result.replace(tzinfo=None) == datetime(2012, 1, 12, 17, 0)\n>       assert result.tzinfo is not None\nE       assert None is not None\nE        +  where None = datetime.datetime(2012, 1, 12, 17, 0).tzinfo\n\ntests/test_swe_e2e_dateparser_generated.py:194: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_returns_month_period_for_missing_day",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_returns_month_period_for_missing_day",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005329460000211839,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_returns_year_period_for_year_only",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_returns_year_period_for_year_only",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000408828000217909,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_selects_dutch_locale",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_selects_dutch_locale",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006255539992707781,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_selects_german_locale",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_selects_german_locale",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005668519988830667,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_rejects_outside_language",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_known_languages_rejects_outside_language",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005684600000677165,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_return_time_as_period",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_return_time_as_period",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006668940004601609,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_date_formats_report_month_period",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_parser_date_formats_report_month_period",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005758050028816797,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_supports_dictionary_style_read",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_supports_dictionary_style_read",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00015390300177386962,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_supports_dictionary_style_write",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_supports_dictionary_style_write",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001272529989364557,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_finds_documented_satellite_date",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_finds_documented_satellite_date",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.006623650999245001,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_adds_detected_language_without_changing_datetime",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_adds_detected_language_without_changing_datetime",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0008772820001468062,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_extracts_multiple_dates_in_order",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_extracts_multiple_dates_in_order",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0008468380001431797,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 291,
+          "message": "assert None is not None"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 291,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_search_dates_extracts_multiple_dates_in_order():\n        text = \"The client arrived on March 3rd, 2004 and returned on May 6th 2004.\"\n        result = search_dates(text, languages=[\"en\"])\n>       assert result is not None\nE       assert None is not None\n\ntests/test_swe_e2e_dateparser_generated.py:291: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_with_explicit_spanish_language",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_with_explicit_spanish_language",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0007556809978268575,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 300,
+          "message": "AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\n +  where None = search_dates('Llego el 3 de marzo de 2020.', languages=['es'])"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 300,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_search_dates_with_explicit_spanish_language():\n>       assert search_dates(\"Llego el 3 de marzo de 2020.\", languages=[\"es\"]) == [\n            (\"3 de marzo de 2020\", datetime(2020, 3, 3))\n        ]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\nE        +  where None = search_dates('Llego el 3 de marzo de 2020.', languages=['es'])\n\ntests/test_swe_e2e_dateparser_generated.py:300: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_custom_language_detector",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_custom_language_detector",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.000597186000959482,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 312,
+          "message": "AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\n +  where None = search_dates('Llego el 3 de marzo de 2020.', detect_languages_function=<function test_search_dates_custom_language_detector.<locals>.detector at 0x7fda56d51260>)"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 312,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_search_dates_custom_language_detector():\n        calls = []\n    \n        def detector(*args, **kwargs):\n            calls.append((args, kwargs))\n            return [\"es\"]\n    \n>       assert search_dates(\"Llego el 3 de marzo de 2020.\", detect_languages_function=detector) == [\n            (\"3 de marzo de 2020\", datetime(2020, 3, 3))\n        ]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\nE        +  where None = search_dates('Llego el 3 de marzo de 2020.', detect_languages_function=<function test_search_dates_custom_language_detector.<locals>.detector at 0x7fda56d51260>)\n\ntests/test_swe_e2e_dateparser_generated.py:312: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_languages_argument_prevents_detector_call",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_languages_argument_prevents_detector_call",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0004976029995304998,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 327,
+          "message": "AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 327,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_search_dates_languages_argument_prevents_detector_call():\n        calls = []\n    \n        def detector(*args, **kwargs):\n            calls.append((args, kwargs))\n            return [\"fr\"]\n    \n        result = search_dates(\"Llego el 3 de marzo de 2020.\", languages=[\"es\"], detect_languages_function=detector)\n>       assert result == [(\"3 de marzo de 2020\", datetime(2020, 3, 3))]\nE       AssertionError: assert None == [('3 de marzo de 2020', datetime.datetime(2020, 3, 3, 0, 0))]\n\ntests/test_swe_e2e_dateparser_generated.py:327: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_relative_and_absolute_with_fixed_base",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_relative_and_absolute_with_fixed_base",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0009893610003928188,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_month",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_month",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00044041400178684853,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_week_default_monday",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_for_past_week_default_monday",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0005096169988973998,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 356,
+          "message": "AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ..., 10, 12, 0))]\n  \n  At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 4, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 4, 12, 0))\n  Use -v to get more diff"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 356,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_search_dates_return_time_span_for_past_week_default_monday():\n        settings = {\"RELATIVE_BASE\": datetime(2020, 5, 15, 12, 0), \"RETURN_TIME_SPAN\": True}\n>       assert search_dates(\"Report covers past week.\", languages=[\"en\"], settings=settings) == [\n            (\"past week (start)\", datetime(2020, 5, 4, 12, 0)),\n            (\"past week (end)\", datetime(2020, 5, 10, 12, 0)),\n        ]\nE       AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ..., 10, 12, 0))]\nE         \nE         At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 4, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 4, 12, 0))\nE         Use -v to get more diff\n\ntests/test_swe_e2e_dateparser_generated.py:356: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_respects_sunday_week_start",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_search_dates_return_time_span_respects_sunday_week_start",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0005676310029230081,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 368,
+          "message": "AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ...5, 9, 12, 0))]\n  \n  At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 3, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 3, 12, 0))\n  Use -v to get more diff"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 368,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_search_dates_return_time_span_respects_sunday_week_start():\n        settings = {\n            \"RELATIVE_BASE\": datetime(2020, 5, 15, 12, 0),\n            \"RETURN_TIME_SPAN\": True,\n            \"DEFAULT_START_OF_WEEK\": \"sunday\",\n        }\n>       assert search_dates(\"Report covers past week.\", languages=[\"en\"], settings=settings) == [\n            (\"past week (start)\", datetime(2020, 5, 3, 12, 0)),\n            (\"past week (end)\", datetime(2020, 5, 9, 12, 0)),\n        ]\nE       AssertionError: assert [('past week ..., 15, 12, 0))] == [('past week ...5, 9, 12, 0))]\nE         \nE         At index 0 diff: ('past week (start)', datetime.datetime(2020, 5, 3, 0, 0)) != ('past week (start)', datetime.datetime(2020, 5, 3, 12, 0))\nE         Use -v to get more diff\n\ntests/test_swe_e2e_dateparser_generated.py:368: AssertionError"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_parse_matches_date_data_parser",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_parse_matches_date_data_parser",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005808689966215752,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_search_result_matches_direct_parse",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_search_result_matches_direct_parse",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006999910001468379,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_add_detected_language_preserves_search_payload",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_add_detected_language_preserves_search_payload",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0009073510009329766,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_timezone_parse_matches_date_data_parser",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_timezone_parse_matches_date_data_parser",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005611779997707345,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_strict_parsing_none_matches_date_data_parser_none",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_cross_view_strict_parsing_none_matches_date_data_parser_none",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0018983129994012415,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_setting_name_raises_setting_validation_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_setting_name_raises_setting_validation_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010276700049871579,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_date_order_raises_setting_validation_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_date_order_raises_setting_validation_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 9.788100214791484e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_parser_name_raises_setting_validation_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_parser_name_raises_setting_validation_error",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00017535399820189923,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-dateparser-specv1-20260704-001/score_retry_specv2/oracle_worktree/tests/test_swe_e2e_dateparser_generated.py",
+          "lineno": 420,
+          "message": "Failed: DID NOT RAISE SettingValidationError"
+        },
+        "traceback": [
+          {
+            "path": "tests/test_swe_e2e_dateparser_generated.py",
+            "lineno": 420,
+            "message": "Failed"
+          }
+        ],
+        "longrepr": "def test_unknown_parser_name_raises_setting_validation_error():\n>       with pytest.raises(SettingValidationError):\nE       Failed: DID NOT RAISE SettingValidationError\n\ntests/test_swe_e2e_dateparser_generated.py:420: Failed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_languages_type_raises_type_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_languages_type_raises_type_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001101159978134092,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_language_raises_value_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_language_raises_value_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 9.372799831908196e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_locales_type_raises_type_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_locales_type_raises_type_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.819700087769888e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_locale_raises_value_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_unknown_locale_raises_value_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.712999988347292e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_region_type_raises_type_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_invalid_region_type_raises_type_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00012080499800504185,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_use_given_order_without_languages_or_locales_raises_value_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_use_given_order_without_languages_or_locales_raises_value_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.760600030655041e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_get_date_data_non_string_input_raises_type_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_get_date_data_non_string_input_raises_type_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.488199819112197e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_unknown_key_read_raises_key_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_unknown_key_read_raises_key_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.617600178695284e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_unknown_key_write_raises_key_error",
+      "base_nodeid": "tests/test_swe_e2e_dateparser_generated.py::test_date_data_unknown_key_write_raises_key_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.107100074994378e-05,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

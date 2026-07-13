@@ -1,0 +1,40 @@
+{
+  "task_id": "hatch-envbuild-fullrepro-001",
+  "status": "QUALIFIED",
+  "oracle_version": "20260703-v4-59",
+  "oracle_count": 59,
+  "scorer_isolation": "--remove-path hatch --remove-path hatchling",
+  "artifacts": {
+    "spec": "spec.md",
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "score_result": "score_result.json",
+    "diagnosis_report": "diagnosis_report.md",
+    "reference_score": "reference_score.json"
+  },
+  "reference_gate": {
+    "result": "59/59 passed",
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64 (WSL2)",
+    "source": "wip/hatch-envbuild-fullrepro-001/filter/reference_score_wsl_59_v4_exception_raw.json"
+  },
+  "candidate_score": {
+    "score_result_source": "candidate-runs/codex-hatch-specv1-20260703-001",
+    "result": "49/59 passed",
+    "passed": 49,
+    "failed": 10,
+    "total": 59,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64 (WSL2)"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "diagnosis_report": "diagnosis_report.md",
+    "source": "wip/hatch-envbuild-fullrepro-001/judge/diagnosis_report.md",
+    "date": "2026-07-03"
+  },
+  "caveats": [
+    "user-authorized exception on 2026-07-03: task was reopened under the same task_id after RETIRED and filter_iter was reset to 0, contrary to the standard rescue prohibition (which requires a new task_id inheriting counters). The judge report records this explicitly and states it must not be treated as precedent.",
+    "After the verdict, the oracle was expanded by 8 lockfile-coverage tests and rescored (candidate 49/59, reference 59/59, both WSL raw JSON on disk), but the judge report was not re-signed against the expanded oracle. Flagged for a re-sign pass at the next judge cycle.",
+    "MANIFEST.json and reference_score.json were absent from tasks/ at graduation time and were backfilled on 2026-07-09 from existing wip artifacts (no scores were produced or altered in the backfill)."
+  ]
+}

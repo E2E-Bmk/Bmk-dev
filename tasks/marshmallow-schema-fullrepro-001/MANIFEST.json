@@ -1,0 +1,31 @@
+{
+  "task_id": "marshmallow-schema-fullrepro-001",
+  "status": "QUALIFIED",
+  "spec": "spec.md",
+  "filter": "generated_public_20260704_v1",
+  "reference": "reference_score.json",
+  "candidate_run": "candidate-runs/codex-marshmallow-specv1-20260704-001",
+  "scorer_isolation": "--remove-path marshmallow",
+  "oracle_count": 69,
+  "oracle_source": "generated_reference_observed",
+  "dummy_score": "0/69 passed",
+  "reference_score": "69/69 passed",
+  "platform_requirement": "Linux/WSL only",
+  "source_repo_for_scoring": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\marshmallow-schema-fullrepro-001\\oracle_repo",
+  "formal_candidate_scoring": "codex-marshmallow-specv1-20260704-001 scored on WSL with --remove-path marshmallow: 67/69 passed, 2 failed, no collection errors",
+  "score_result": "score_result.json",
+  "diagnosis_report": "diagnosis_report.md",
+  "verdict": "QUALIFIED",
+  "strict_legal_count": true,
+  "candidate_score": "67/69 passed",
+  "candidate_failures": [
+    "filter/generated_tests.py::test_field_pre_and_post_load_processors_transform_value",
+    "filter/generated_tests.py::test_field_processor_validation_error_attaches_to_field"
+  ],
+  "labels": [
+    "discriminating",
+    "high-score-non-saturated",
+    "atomic-field-processor-gap",
+    "generated-reference-observed-oracle"
+  ]
+}

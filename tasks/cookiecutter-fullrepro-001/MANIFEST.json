@@ -1,10 +1,56 @@
 {
-    "task_id": "cookiecutter-fullrepro-001",
-    "status": "QUALIFIED",
+  "task_id": "cookiecutter-fullrepro-001",
+  "status": "QUALIFIED",
+  "oracle_version": "20260704-wsl-222-repair",
+  "oracle_count_base": 222,
+  "oracle_count_expanded_reference": 287,
+  "oracle_count_expanded_candidate": 273,
+  "oracle_source": "upstream_filtered",
+  "scorer_isolation": "--remove-path cookiecutter --remove-path cookiecutter.egg-info",
+  "artifacts": {
     "spec": "spec.md",
-    "filter": "oracle_candidates_v1",
-    "reference": "reference_score.json",
-    "candidate_run": "Bmk-dev/candidate-runs/codex-cookiecutter-specv2only-20260629-001",
-    "candidate_score": "candidate-runs/codex-cookiecutter-specv2only-20260629-001/codex_specv2only_score_report.md",
-    "caveat": "Best valid candidate (spec_v2-only, 25.38%) with corrected scorer isolation (--remove-path cookiecutter). Earlier high scores (97.81%) were invalid: reference-path leakage, target-package PyPI install, and scorer source-package shadowing. Spec detail experiment showed v2-only outperforms patched packet and v3/v4 variants."
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "score_result": "score_result.json",
+    "diagnosis_report": "diagnosis_report.md",
+    "reference_score": "reference_score.json"
+  },
+  "reference_gate": {
+    "result": "277 passed / 6 failed / 4 skipped of 287 expanded (pass_rate_excluding_skips 0.9788)",
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.29",
+    "oracle_carrier": "tmp/cookiecutter-oracle-carrier-20260704",
+    "source": "wip/cookiecutter-fullrepro-001/filter/reference_score_wsl_222_repair_20260704.json",
+    "caveat": "6 residual reference failures share one click.testing environment-compatibility pattern and 4 skips are Windows-only cases; accepted by judge under the >=95% solvability threshold. These nodeids must not be counted as model-failure evidence."
+  },
+  "candidate_score": {
+    "score_result_source": "candidate-runs/codex-cookiecutter-specv2only-20260629-001/score_result_wsl_222_repair_20260704.json",
+    "result": "72 passed / 273 expanded (pass_rate_excluding_skips 0.2677)",
+    "passed": 72,
+    "failed": 173,
+    "error": 2,
+    "timeout": 1,
+    "collection_error": 21,
+    "skipped": 4,
+    "total": 273,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.29"
+  },
+  "judge": {
+    "verdict": "QUALIFIED (with solvability caveat)",
+    "diagnosis_report": "diagnosis_report.md",
+    "source": "wip/cookiecutter-fullrepro-001/judge/diagnosis_report_repaired_20260704.md",
+    "date": "2026-07-04"
+  },
+  "labels": [
+    "discriminating",
+    "wsl-carrier-repaired",
+    "api-surface-signal",
+    "reference-residual-caveat"
+  ],
+  "notes": [
+    "2026-07-09 shipping sync: previous tasks/ contents (reconstructed remote score 66/264 whose own MANIFEST admitted 'not rerun', a 468-byte reference stub, a stale diagnosis report, and a mojibake-damaged spec copy) moved to archive/superseded-20260709/cookiecutter-fullrepro-001/. This package now carries the 2026-07-04 judge-certified WSL repair chain (reference 277/287, candidate 72/273). The 2026-07-03 'reconstructed, not rerun' user-authorized exception is thereby retired.",
+    "spec.md is byte-identical to candidate-runs/codex-cookiecutter-specv2only-20260629-001/output/spec_v2.md (what the candidate saw). Known historical wart retained verbatim: the packet header includes 'Status: candidate-visible public packet' and 'Task id: cookiecutter-fullrepro-001' lines that predate the cleanroom forbidden-word gate. Altering the shipped spec would desynchronize it from the scored run; flagged as open item for the next legitimate respec/re-evaluation cycle.",
+    "Denominator note: kept_nodeids.txt lists 222 base nodeids; parametrization expands to 287 cases on the reference environment and 273 on the candidate run (collection errors collapse some parametrizations). Numbers 264/222/273/287 seen in older documents refer to superseded runs; the shipped pair is 287 (reference) / 273 (candidate).",
+    "judge/ subdirectory retains 2026-06-29 historical gate reports predating the repair; they are context, not the certified verdict."
+  ]
 }

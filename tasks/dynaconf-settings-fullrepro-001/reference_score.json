@@ -1,0 +1,2089 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 300,
+  "remove_paths": [
+    "dynaconf"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/dynaconf-settings-fullrepro-001/filter",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/repo-pool/rochacbruno__dynaconf",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/tasks/dynaconf-settings-fullrepro-001/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/tasks/dynaconf-settings-fullrepro-001/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.tmp/repair-runs/dynaconf-reference-49-20260709",
+  "grouped_results": {
+    "generated_tests.py": {
+      "returncode": 1,
+      "stdout": ".............F..................................F                        [100%]\n=================================== FAILURES ===================================\n__________ test_cli_get_list_and_inspect_observe_configured_instance ___________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-526/test_cli_get_list_and_inspect_0')\n\n    def test_cli_get_list_and_inspect_observe_configured_instance(tmp_path):\n        _write(\n            tmp_path / \"settings.toml\",\n            \"\"\"\n            [default]\n            PORT = 8000\n            [development]\n            PORT = 8100\n            NAME = \"api\"\n            [production]\n            PORT = 8200\n            \"\"\",\n        )\n        _write(\n            tmp_path / \"app_settings.py\",\n            \"\"\"\n            from dynaconf import Dynaconf\n            settings = Dynaconf(\n                envvar_prefix=\"TBCLI\",\n                settings_files=[\"settings.toml\"],\n                environments=True,\n                env=\"development\",\n            )\n            \"\"\",\n        )\n    \n>       get_dev = _run_dynaconf_cli(tmp_path, \"-i\", \"app_settings.settings\", \"get\", \"PORT\")\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:349: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ngenerated_tests.py:24: in _run_dynaconf_cli\n    return subprocess.run(\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: -9 args: ['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.en...>\nendtime = 439646.859915634, orig_timeout = 20, stdout_seq = [], stderr_seq = []\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'get', 'PORT']' timed out after 20 seconds\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1253: TimeoutExpired\n_____________________ test_cli_inspect_prints_json_report ______________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-526/test_cli_inspect_prints_json_r0')\n\n    def test_cli_inspect_prints_json_report(tmp_path):\n        _write(\n            tmp_path / \"settings.toml\",\n            \"PORT = 8000\",\n        )\n        _write(\n            tmp_path / \"app_settings.py\",\n            \"\"\"\n            from dynaconf import Dynaconf\n            settings = Dynaconf(\n                envvar_prefix=\"TBCLIINSPECT\",\n                settings_files=[\"settings.toml\"],\n                environments=False,\n            )\n            \"\"\",\n        )\n    \n>       proc = _run_dynaconf_cli(\n            tmp_path,\n            \"-i\",\n            \"app_settings.settings\",\n            \"inspect\",\n            \"--key\",\n            \"PORT\",\n            \"--format\",\n            \"json-compact\",\n        )\n\ngenerated_tests.py:1022: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ngenerated_tests.py:24: in _run_dynaconf_cli\n    return subprocess.run(\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: -9 args: ['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.en...>\nendtime = 439724.534921343, orig_timeout = 20, stdout_seq = [], stderr_seq = []\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'inspect', '--key', 'PORT', '--format', 'json-compact']' timed out after 20 seconds\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1253: TimeoutExpired\n=============================== warnings summary ===============================\n../../../../../repo-pool/rochacbruno__dynaconf/dynaconf/base.py:173\n  /mnt/g/research/01_agents/swe-e2e/repo-pool/rochacbruno__dynaconf/dynaconf/base.py:173: DeprecationWarning: Usage of `from dynaconf import settings` is now DEPRECATED in 3.0.0+. You are encouraged to change it to your own instance e.g: `settings = Dynaconf(*options)`\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED generated_tests.py::test_cli_get_list_and_inspect_observe_configured_instance\nFAILED generated_tests.py::test_cli_inspect_prints_json_report - subprocess.T...\n2 failed, 47 passed, 1 warning in 170.68s (0:02:50)\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783601012.128739,
+        "duration": 170.45058846473694,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.tmp/repair-runs/dynaconf-reference-49-20260709/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 47,
+          "failed": 2,
+          "total": 49,
+          "collected": 49
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "generated_tests.py::test_envvar_overrides_file_and_casts_to_int",
+                "type": "Function",
+                "lineno": 48
+              },
+              {
+                "nodeid": "generated_tests.py::test_local_file_overrides_base_file",
+                "type": "Function",
+                "lineno": 70
+              },
+              {
+                "nodeid": "generated_tests.py::test_includes_load_after_regular_settings",
+                "type": "Function",
+                "lineno": 85
+              },
+              {
+                "nodeid": "generated_tests.py::test_nested_access_as_dict_and_env_dunder_merge",
+                "type": "Function",
+                "lineno": 114
+              },
+              {
+                "nodeid": "generated_tests.py::test_merge_marker_combines_environment_dictionary",
+                "type": "Function",
+                "lineno": 138
+              },
+              {
+                "nodeid": "generated_tests.py::test_environment_default_global_and_active_values",
+                "type": "Function",
+                "lineno": 162
+              },
+              {
+                "nodeid": "generated_tests.py::test_from_env_returns_isolated_settings_without_changing_original",
+                "type": "Function",
+                "lineno": 190
+              },
+              {
+                "nodeid": "generated_tests.py::test_setenv_and_using_env_restore_active_environment",
+                "type": "Function",
+                "lineno": 215
+              },
+              {
+                "nodeid": "generated_tests.py::test_validator_default_and_cast_mutate_visible_state",
+                "type": "Function",
+                "lineno": 241
+              },
+              {
+                "nodeid": "generated_tests.py::test_validate_all_accumulates_multiple_validation_errors",
+                "type": "Function",
+                "lineno": 257
+              },
+              {
+                "nodeid": "generated_tests.py::test_validate_on_update_rejects_invalid_runtime_value",
+                "type": "Function",
+                "lineno": 271
+              },
+              {
+                "nodeid": "generated_tests.py::test_custom_converter_composes_with_format_token",
+                "type": "Function",
+                "lineno": 285
+              },
+              {
+                "nodeid": "generated_tests.py::test_history_and_inspect_report_file_and_env_sources",
+                "type": "Function",
+                "lineno": 304
+              },
+              {
+                "nodeid": "generated_tests.py::test_cli_get_list_and_inspect_observe_configured_instance",
+                "type": "Function",
+                "lineno": 322
+              },
+              {
+                "nodeid": "generated_tests.py::test_preload_regular_file_and_include_order",
+                "type": "Function",
+                "lineno": 382
+              },
+              {
+                "nodeid": "generated_tests.py::test_file_declared_dynaconf_include_loads_relative_file",
+                "type": "Function",
+                "lineno": 402
+              },
+              {
+                "nodeid": "generated_tests.py::test_settings_files_accepts_semicolon_separated_paths",
+                "type": "Function",
+                "lineno": 423
+              },
+              {
+                "nodeid": "generated_tests.py::test_python_settings_file_loads_only_uppercase_names",
+                "type": "Function",
+                "lineno": 438
+              },
+              {
+                "nodeid": "generated_tests.py::test_multiple_envvar_prefixes_are_loaded",
+                "type": "Function",
+                "lineno": 457
+              },
+              {
+                "nodeid": "generated_tests.py::test_unprefixed_environment_variables_can_be_settings",
+                "type": "Function",
+                "lineno": 467
+              },
+              {
+                "nodeid": "generated_tests.py::test_ignore_unknown_envvars_keeps_only_preexisting_keys",
+                "type": "Function",
+                "lineno": 475
+              },
+              {
+                "nodeid": "generated_tests.py::test_sysenv_fallback_reads_unprefixed_missing_key",
+                "type": "Function",
+                "lineno": 491
+              },
+              {
+                "nodeid": "generated_tests.py::test_sysenv_fallback_list_restricts_allowed_names",
+                "type": "Function",
+                "lineno": 503
+              },
+              {
+                "nodeid": "generated_tests.py::test_comma_separated_active_envs_load_in_order",
+                "type": "Function",
+                "lineno": 517
+              },
+              {
+                "nodeid": "generated_tests.py::test_from_env_keep_chains_existing_values",
+                "type": "Function",
+                "lineno": 544
+              },
+              {
+                "nodeid": "generated_tests.py::test_auto_cast_false_leaves_envvar_tokens_as_strings",
+                "type": "Function",
+                "lineno": 570
+              },
+              {
+                "nodeid": "generated_tests.py::test_builtin_cast_tokens_from_file",
+                "type": "Function",
+                "lineno": 584
+              },
+              {
+                "nodeid": "generated_tests.py::test_get_token_reads_another_setting_and_casts_default",
+                "type": "Function",
+                "lineno": 607
+              },
+              {
+                "nodeid": "generated_tests.py::test_read_file_token_reads_relative_file",
+                "type": "Function",
+                "lineno": 627
+              },
+              {
+                "nodeid": "generated_tests.py::test_string_utility_tokens_transform_values",
+                "type": "Function",
+                "lineno": 645
+              },
+              {
+                "nodeid": "generated_tests.py::test_insert_token_adds_list_item_at_requested_position",
+                "type": "Function",
+                "lineno": 668
+              },
+              {
+                "nodeid": "generated_tests.py::test_del_token_removes_nested_envvar_value",
+                "type": "Function",
+                "lineno": 681
+              },
+              {
+                "nodeid": "generated_tests.py::test_global_merge_enabled_merges_later_dictionaries_and_lists",
+                "type": "Function",
+                "lineno": 702
+              },
+              {
+                "nodeid": "generated_tests.py::test_local_file_top_level_merge_marker_merges_environment_section",
+                "type": "Function",
+                "lineno": 726
+              },
+              {
+                "nodeid": "generated_tests.py::test_runtime_set_creates_nested_value_visible_in_all_views",
+                "type": "Function",
+                "lineno": 758
+              },
+              {
+                "nodeid": "generated_tests.py::test_runtime_update_validate_true_raises_first_error",
+                "type": "Function",
+                "lineno": 768
+              },
+              {
+                "nodeid": "generated_tests.py::test_validator_apply_default_on_none_sets_none_value",
+                "type": "Function",
+                "lineno": 779
+              },
+              {
+                "nodeid": "generated_tests.py::test_validator_or_and_and_composition",
+                "type": "Function",
+                "lineno": 793
+              },
+              {
+                "nodeid": "generated_tests.py::test_validator_callable_default_can_read_settings_context",
+                "type": "Function",
+                "lineno": 811
+              },
+              {
+                "nodeid": "generated_tests.py::test_validator_casts_are_ordered_and_mutate_state",
+                "type": "Function",
+                "lineno": 826
+              },
+              {
+                "nodeid": "generated_tests.py::test_load_file_adds_runtime_values_and_history",
+                "type": "Function",
+                "lineno": 842
+              },
+              {
+                "nodeid": "generated_tests.py::test_load_file_env_false_loads_top_level_without_environment_sections",
+                "type": "Function",
+                "lineno": 852
+              },
+              {
+                "nodeid": "generated_tests.py::test_fresh_var_reloads_source_on_access",
+                "type": "Function",
+                "lineno": 869
+              },
+              {
+                "nodeid": "generated_tests.py::test_constructor_post_hook_merges_returned_data",
+                "type": "Function",
+                "lineno": 884
+              },
+              {
+                "nodeid": "generated_tests.py::test_dynaconf_hooks_file_contributes_post_data",
+                "type": "Function",
+                "lineno": 900
+              },
+              {
+                "nodeid": "generated_tests.py::test_python_settings_post_hook_runs_when_file_loads",
+                "type": "Function",
+                "lineno": 920
+              },
+              {
+                "nodeid": "generated_tests.py::test_cli_get_missing_key_without_default_returns_nonzero",
+                "type": "Function",
+                "lineno": 942
+              },
+              {
+                "nodeid": "generated_tests.py::test_cli_get_missing_key_with_default_prints_default",
+                "type": "Function",
+                "lineno": 956
+              },
+              {
+                "nodeid": "generated_tests.py::test_cli_inspect_prints_json_report",
+                "type": "Function",
+                "lineno": 1004
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "generated_tests.py::test_envvar_overrides_file_and_casts_to_int",
+            "lineno": 48,
+            "outcome": "passed",
+            "keywords": [
+              "test_envvar_overrides_file_and_casts_to_int",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.014458236983045936,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1106391369830817,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002956460230052471,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_local_file_overrides_base_file",
+            "lineno": 70,
+            "outcome": "passed",
+            "keywords": [
+              "test_local_file_overrides_base_file",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010203919955529273,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.09772640699520707,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019366201013326645,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_includes_load_after_regular_settings",
+            "lineno": 85,
+            "outcome": "passed",
+            "keywords": [
+              "test_includes_load_after_regular_settings",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0022138109779916704,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.2909026080160402,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002203370095230639,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_nested_access_as_dict_and_env_dunder_merge",
+            "lineno": 114,
+            "outcome": "passed",
+            "keywords": [
+              "test_nested_access_as_dict_and_env_dunder_merge",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001005758997052908,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.12193513102829456,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023806595709174871,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_merge_marker_combines_environment_dictionary",
+            "lineno": 138,
+            "outcome": "passed",
+            "keywords": [
+              "test_merge_marker_combines_environment_dictionary",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011897559743374586,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.10997377499006689,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003296390059404075,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_environment_default_global_and_active_values",
+            "lineno": 162,
+            "outcome": "passed",
+            "keywords": [
+              "test_environment_default_global_and_active_values",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010547200217843056,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.10172883997438475,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002144489553757012,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_from_env_returns_isolated_settings_without_changing_original",
+            "lineno": 190,
+            "outcome": "passed",
+            "keywords": [
+              "test_from_env_returns_isolated_settings_without_changing_original",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001196627039462328,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.2137658330029808,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001711150398477912,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_setenv_and_using_env_restore_active_environment",
+            "lineno": 215,
+            "outcome": "passed",
+            "keywords": [
+              "test_setenv_and_using_env_restore_active_environment",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000744352990295738,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1186672740150243,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002335860044695437,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_validator_default_and_cast_mutate_visible_state",
+            "lineno": 241,
+            "outcome": "passed",
+            "keywords": [
+              "test_validator_default_and_cast_mutate_visible_state",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00040349498158320785,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0884318330208771,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018856796668842435,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_validate_all_accumulates_multiple_validation_errors",
+            "lineno": 257,
+            "outcome": "passed",
+            "keywords": [
+              "test_validate_all_accumulates_multiple_validation_errors",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00029070302844047546,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.09924843098269776,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018131703836843371,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_validate_on_update_rejects_invalid_runtime_value",
+            "lineno": 271,
+            "outcome": "passed",
+            "keywords": [
+              "test_validate_on_update_rejects_invalid_runtime_value",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000323016953188926,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.093812944018282,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0004091389710083604,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_custom_converter_composes_with_format_token",
+            "lineno": 285,
+            "outcome": "passed",
+            "keywords": [
+              "test_custom_converter_composes_with_format_token",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010653689969331026,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.09044200100470334,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0004042810178361833,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_history_and_inspect_report_file_and_env_sources",
+            "lineno": 304,
+            "outcome": "passed",
+            "keywords": [
+              "test_history_and_inspect_report_file_and_env_sources",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009191569988615811,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.09667010803241283,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00021515600383281708,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_cli_get_list_and_inspect_observe_configured_instance",
+            "lineno": 322,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_get_list_and_inspect_observe_configured_instance",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001028359984047711,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 20.044222719967365,
+              "outcome": "failed",
+              "crash": {
+                "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                "lineno": 1253,
+                "message": "subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'get', 'PORT']' timed out after 20 seconds"
+              },
+              "traceback": [
+                {
+                  "path": "generated_tests.py",
+                  "lineno": 349,
+                  "message": ""
+                },
+                {
+                  "path": "generated_tests.py",
+                  "lineno": 24,
+                  "message": "in _run_dynaconf_cli"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                  "lineno": 550,
+                  "message": "in run"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                  "lineno": 1209,
+                  "message": "in communicate"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                  "lineno": 2116,
+                  "message": "in _communicate"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                  "lineno": 1253,
+                  "message": "TimeoutExpired"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-526/test_cli_get_list_and_inspect_0')\n\n    def test_cli_get_list_and_inspect_observe_configured_instance(tmp_path):\n        _write(\n            tmp_path / \"settings.toml\",\n            \"\"\"\n            [default]\n            PORT = 8000\n            [development]\n            PORT = 8100\n            NAME = \"api\"\n            [production]\n            PORT = 8200\n            \"\"\",\n        )\n        _write(\n            tmp_path / \"app_settings.py\",\n            \"\"\"\n            from dynaconf import Dynaconf\n            settings = Dynaconf(\n                envvar_prefix=\"TBCLI\",\n                settings_files=[\"settings.toml\"],\n                environments=True,\n                env=\"development\",\n            )\n            \"\"\",\n        )\n    \n>       get_dev = _run_dynaconf_cli(tmp_path, \"-i\", \"app_settings.settings\", \"get\", \"PORT\")\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:349: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ngenerated_tests.py:24: in _run_dynaconf_cli\n    return subprocess.run(\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: -9 args: ['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.en...>\nendtime = 439646.859915634, orig_timeout = 20, stdout_seq = [], stderr_seq = []\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'get', 'PORT']' timed out after 20 seconds\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1253: TimeoutExpired"
+            },
+            "teardown": {
+              "duration": 0.00024721596855670214,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_preload_regular_file_and_include_order",
+            "lineno": 382,
+            "outcome": "passed",
+            "keywords": [
+              "test_preload_regular_file_and_include_order",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010749950306490064,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 2.942994133976754,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020615896210074425,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_file_declared_dynaconf_include_loads_relative_file",
+            "lineno": 402,
+            "outcome": "passed",
+            "keywords": [
+              "test_file_declared_dynaconf_include_loads_relative_file",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001370973011944443,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.1303682400030084,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001465940149500966,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_settings_files_accepts_semicolon_separated_paths",
+            "lineno": 423,
+            "outcome": "passed",
+            "keywords": [
+              "test_settings_files_accepts_semicolon_separated_paths",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007283920422196388,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.08208057400770485,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001543660182505846,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_python_settings_file_loads_only_uppercase_names",
+            "lineno": 438,
+            "outcome": "passed",
+            "keywords": [
+              "test_python_settings_file_loads_only_uppercase_names",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006116339936852455,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 11.154326973017305,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020974100334569812,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_multiple_envvar_prefixes_are_loaded",
+            "lineno": 457,
+            "outcome": "passed",
+            "keywords": [
+              "test_multiple_envvar_prefixes_are_loaded",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00042450695764273405,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.07954282005084679,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017231900710612535,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_unprefixed_environment_variables_can_be_settings",
+            "lineno": 467,
+            "outcome": "passed",
+            "keywords": [
+              "test_unprefixed_environment_variables_can_be_settings",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003504969645291567,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.09580623201327398,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020612397929653525,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_ignore_unknown_envvars_keeps_only_preexisting_keys",
+            "lineno": 475,
+            "outcome": "passed",
+            "keywords": [
+              "test_ignore_unknown_envvars_keeps_only_preexisting_keys",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010320630390197039,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.09698497498175129,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00021711800945922732,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_sysenv_fallback_reads_unprefixed_missing_key",
+            "lineno": 491,
+            "outcome": "passed",
+            "keywords": [
+              "test_sysenv_fallback_reads_unprefixed_missing_key",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006696499767713249,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1335607499931939,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00022755999816581607,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_sysenv_fallback_list_restricts_allowed_names",
+            "lineno": 503,
+            "outcome": "passed",
+            "keywords": [
+              "test_sysenv_fallback_list_restricts_allowed_names",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00037835497641935945,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.11341980402357876,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001921490184031427,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_comma_separated_active_envs_load_in_order",
+            "lineno": 517,
+            "outcome": "passed",
+            "keywords": [
+              "test_comma_separated_active_envs_load_in_order",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009571000118739903,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.11238738702377304,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002655130228959024,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_from_env_keep_chains_existing_values",
+            "lineno": 544,
+            "outcome": "passed",
+            "keywords": [
+              "test_from_env_keep_chains_existing_values",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00248049502260983,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.24684704298852012,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00044167303713038564,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_auto_cast_false_leaves_envvar_tokens_as_strings",
+            "lineno": 570,
+            "outcome": "passed",
+            "keywords": [
+              "test_auto_cast_false_leaves_envvar_tokens_as_strings",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004102649982087314,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0923599970410578,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018998398445546627,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_builtin_cast_tokens_from_file",
+            "lineno": 584,
+            "outcome": "passed",
+            "keywords": [
+              "test_builtin_cast_tokens_from_file",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010330670047551394,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.11222406796878204,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018968404037877917,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_get_token_reads_another_setting_and_casts_default",
+            "lineno": 607,
+            "outcome": "passed",
+            "keywords": [
+              "test_get_token_reads_another_setting_and_casts_default",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007800409803166986,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.15530877996934578,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015219399938359857,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_read_file_token_reads_relative_file",
+            "lineno": 627,
+            "outcome": "passed",
+            "keywords": [
+              "test_read_file_token_reads_relative_file",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007258070399984717,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.18510348099516705,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020589301129803061,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_string_utility_tokens_transform_values",
+            "lineno": 645,
+            "outcome": "passed",
+            "keywords": [
+              "test_string_utility_tokens_transform_values",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010224439902231097,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.13056763698114082,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020636699628084898,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_insert_token_adds_list_item_at_requested_position",
+            "lineno": 668,
+            "outcome": "passed",
+            "keywords": [
+              "test_insert_token_adds_list_item_at_requested_position",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011129159829579294,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.1893525889609009,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017797498730942607,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_del_token_removes_nested_envvar_value",
+            "lineno": 681,
+            "outcome": "passed",
+            "keywords": [
+              "test_del_token_removes_nested_envvar_value",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001031243009492755,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.12302065698895603,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019809900550171733,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_global_merge_enabled_merges_later_dictionaries_and_lists",
+            "lineno": 702,
+            "outcome": "passed",
+            "keywords": [
+              "test_global_merge_enabled_merges_later_dictionaries_and_lists",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009607819956727326,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.13880127196898684,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016478600446134806,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_local_file_top_level_merge_marker_merges_environment_section",
+            "lineno": 726,
+            "outcome": "passed",
+            "keywords": [
+              "test_local_file_top_level_merge_marker_merges_environment_section",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007906440296210349,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.11831967195030302,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002280169865116477,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_runtime_set_creates_nested_value_visible_in_all_views",
+            "lineno": 758,
+            "outcome": "passed",
+            "keywords": [
+              "test_runtime_set_creates_nested_value_visible_in_all_views",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00030875002266839147,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.11709146795328707,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001486089895479381,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_runtime_update_validate_true_raises_first_error",
+            "lineno": 768,
+            "outcome": "passed",
+            "keywords": [
+              "test_runtime_update_validate_true_raises_first_error",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000299298029858619,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.12036875600460917,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015091797104105353,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_validator_apply_default_on_none_sets_none_value",
+            "lineno": 779,
+            "outcome": "passed",
+            "keywords": [
+              "test_validator_apply_default_on_none_sets_none_value",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00039119203574955463,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.09197618602775037,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001821650075726211,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_validator_or_and_and_composition",
+            "lineno": 793,
+            "outcome": "passed",
+            "keywords": [
+              "test_validator_or_and_and_composition",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003277129726484418,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.15530763403512537,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0005440849927254021,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_validator_callable_default_can_read_settings_context",
+            "lineno": 811,
+            "outcome": "passed",
+            "keywords": [
+              "test_validator_callable_default_can_read_settings_context",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00032117601949721575,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.13261179899564013,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00036619603633880615,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_validator_casts_are_ordered_and_mutate_state",
+            "lineno": 826,
+            "outcome": "passed",
+            "keywords": [
+              "test_validator_casts_are_ordered_and_mutate_state",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005737870233133435,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.16654874896630645,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002157780108973384,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_load_file_adds_runtime_values_and_history",
+            "lineno": 842,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_file_adds_runtime_values_and_history",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009878930286504328,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.7344668300356716,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002556570107117295,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_load_file_env_false_loads_top_level_without_environment_sections",
+            "lineno": 852,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_file_env_false_loads_top_level_without_environment_sections",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009601669735275209,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.2225234339712188,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0004826529766432941,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_fresh_var_reloads_source_on_access",
+            "lineno": 869,
+            "outcome": "passed",
+            "keywords": [
+              "test_fresh_var_reloads_source_on_access",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008188480278477073,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.07435993402032182,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00025980599457398057,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_constructor_post_hook_merges_returned_data",
+            "lineno": 884,
+            "outcome": "passed",
+            "keywords": [
+              "test_constructor_post_hook_merges_returned_data",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001062676019500941,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.09933405002811924,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00035707198549062014,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_dynaconf_hooks_file_contributes_post_data",
+            "lineno": 900,
+            "outcome": "passed",
+            "keywords": [
+              "test_dynaconf_hooks_file_contributes_post_data",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0012132060364820063,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.177876028988976,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0005733830039389431,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_python_settings_post_hook_runs_when_file_loads",
+            "lineno": 920,
+            "outcome": "passed",
+            "keywords": [
+              "test_python_settings_post_hook_runs_when_file_loads",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008627980132587254,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 8.251466371002607,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023333303397521377,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_cli_get_missing_key_without_default_returns_nonzero",
+            "lineno": 942,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_get_missing_key_without_default_returns_nonzero",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0013823100016452372,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 11.47377293696627,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000173267035279423,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_cli_get_missing_key_with_default_prints_default",
+            "lineno": 956,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_get_missing_key_with_default_prints_default",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008323110523633659,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 14.538145111000631,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00022793997777625918,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "generated_tests.py::test_cli_inspect_prints_json_report",
+            "lineno": 1004,
+            "outcome": "failed",
+            "keywords": [
+              "test_cli_inspect_prints_json_report",
+              "generated_tests.py",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011550899944268167,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 20.046611035999376,
+              "outcome": "failed",
+              "crash": {
+                "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                "lineno": 1253,
+                "message": "subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'inspect', '--key', 'PORT', '--format', 'json-compact']' timed out after 20 seconds"
+              },
+              "traceback": [
+                {
+                  "path": "generated_tests.py",
+                  "lineno": 1022,
+                  "message": ""
+                },
+                {
+                  "path": "generated_tests.py",
+                  "lineno": 24,
+                  "message": "in _run_dynaconf_cli"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                  "lineno": 550,
+                  "message": "in run"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                  "lineno": 1209,
+                  "message": "in communicate"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                  "lineno": 2116,
+                  "message": "in _communicate"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+                  "lineno": 1253,
+                  "message": "TimeoutExpired"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-526/test_cli_inspect_prints_json_r0')\n\n    def test_cli_inspect_prints_json_report(tmp_path):\n        _write(\n            tmp_path / \"settings.toml\",\n            \"PORT = 8000\",\n        )\n        _write(\n            tmp_path / \"app_settings.py\",\n            \"\"\"\n            from dynaconf import Dynaconf\n            settings = Dynaconf(\n                envvar_prefix=\"TBCLIINSPECT\",\n                settings_files=[\"settings.toml\"],\n                environments=False,\n            )\n            \"\"\",\n        )\n    \n>       proc = _run_dynaconf_cli(\n            tmp_path,\n            \"-i\",\n            \"app_settings.settings\",\n            \"inspect\",\n            \"--key\",\n            \"PORT\",\n            \"--format\",\n            \"json-compact\",\n        )\n\ngenerated_tests.py:1022: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ngenerated_tests.py:24: in _run_dynaconf_cli\n    return subprocess.run(\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: -9 args: ['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.en...>\nendtime = 439724.534921343, orig_timeout = 20, stdout_seq = [], stderr_seq = []\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'inspect', '--key', 'PORT', '--format', 'json-compact']' timed out after 20 seconds\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1253: TimeoutExpired"
+            },
+            "teardown": {
+              "duration": 0.0010138600482605398,
+              "outcome": "passed"
+            }
+          }
+        ],
+        "warnings": [
+          {
+            "message": "Usage of `from dynaconf import settings` is now DEPRECATED in 3.0.0+. You are encouraged to change it to your own instance e.g: `settings = Dynaconf(*options)`",
+            "category": "DeprecationWarning",
+            "when": "collect",
+            "filename": "/mnt/g/research/01_agents/swe-e2e/repo-pool/rochacbruno__dynaconf/dynaconf/base.py",
+            "lineno": 173
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 2,
+    "passed": 47,
+    "total": 49
+  },
+  "pass_rate_excluding_skips": 0.9591836734693877,
+  "by_layer": {
+    "atomic": {
+      "passed": 14,
+      "total": 14
+    },
+    "integration": {
+      "passed": 30,
+      "total": 30
+    },
+    "system_e2e": {
+      "failed": 2,
+      "passed": 3,
+      "total": 5
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "generated_tests.py::test_envvar_overrides_file_and_casts_to_int",
+      "base_nodeid": "generated_tests.py::test_envvar_overrides_file_and_casts_to_int",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1106391369830817,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_local_file_overrides_base_file",
+      "base_nodeid": "generated_tests.py::test_local_file_overrides_base_file",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.09772640699520707,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_includes_load_after_regular_settings",
+      "base_nodeid": "generated_tests.py::test_includes_load_after_regular_settings",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.2909026080160402,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_nested_access_as_dict_and_env_dunder_merge",
+      "base_nodeid": "generated_tests.py::test_nested_access_as_dict_and_env_dunder_merge",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.12193513102829456,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_merge_marker_combines_environment_dictionary",
+      "base_nodeid": "generated_tests.py::test_merge_marker_combines_environment_dictionary",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.10997377499006689,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_environment_default_global_and_active_values",
+      "base_nodeid": "generated_tests.py::test_environment_default_global_and_active_values",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.10172883997438475,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_from_env_returns_isolated_settings_without_changing_original",
+      "base_nodeid": "generated_tests.py::test_from_env_returns_isolated_settings_without_changing_original",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.2137658330029808,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_setenv_and_using_env_restore_active_environment",
+      "base_nodeid": "generated_tests.py::test_setenv_and_using_env_restore_active_environment",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1186672740150243,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_validator_default_and_cast_mutate_visible_state",
+      "base_nodeid": "generated_tests.py::test_validator_default_and_cast_mutate_visible_state",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0884318330208771,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_validate_all_accumulates_multiple_validation_errors",
+      "base_nodeid": "generated_tests.py::test_validate_all_accumulates_multiple_validation_errors",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.09924843098269776,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_validate_on_update_rejects_invalid_runtime_value",
+      "base_nodeid": "generated_tests.py::test_validate_on_update_rejects_invalid_runtime_value",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.093812944018282,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_custom_converter_composes_with_format_token",
+      "base_nodeid": "generated_tests.py::test_custom_converter_composes_with_format_token",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.09044200100470334,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_history_and_inspect_report_file_and_env_sources",
+      "base_nodeid": "generated_tests.py::test_history_and_inspect_report_file_and_env_sources",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.09667010803241283,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_cli_get_list_and_inspect_observe_configured_instance",
+      "base_nodeid": "generated_tests.py::test_cli_get_list_and_inspect_observe_configured_instance",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 20.044222719967365,
+        "outcome": "failed",
+        "crash": {
+          "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+          "lineno": 1253,
+          "message": "subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'get', 'PORT']' timed out after 20 seconds"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 349,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 24,
+            "message": "in _run_dynaconf_cli"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+            "lineno": 550,
+            "message": "in run"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+            "lineno": 1209,
+            "message": "in communicate"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+            "lineno": 2116,
+            "message": "in _communicate"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+            "lineno": 1253,
+            "message": "TimeoutExpired"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-526/test_cli_get_list_and_inspect_0')\n\n    def test_cli_get_list_and_inspect_observe_configured_instance(tmp_path):\n        _write(\n            tmp_path / \"settings.toml\",\n            \"\"\"\n            [default]\n            PORT = 8000\n            [development]\n            PORT = 8100\n            NAME = \"api\"\n            [production]\n            PORT = 8200\n            \"\"\",\n        )\n        _write(\n            tmp_path / \"app_settings.py\",\n            \"\"\"\n            from dynaconf import Dynaconf\n            settings = Dynaconf(\n                envvar_prefix=\"TBCLI\",\n                settings_files=[\"settings.toml\"],\n                environments=True,\n                env=\"development\",\n            )\n            \"\"\",\n        )\n    \n>       get_dev = _run_dynaconf_cli(tmp_path, \"-i\", \"app_settings.settings\", \"get\", \"PORT\")\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ngenerated_tests.py:349: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ngenerated_tests.py:24: in _run_dynaconf_cli\n    return subprocess.run(\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: -9 args: ['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.en...>\nendtime = 439646.859915634, orig_timeout = 20, stdout_seq = [], stderr_seq = []\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'get', 'PORT']' timed out after 20 seconds\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1253: TimeoutExpired"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_preload_regular_file_and_include_order",
+      "base_nodeid": "generated_tests.py::test_preload_regular_file_and_include_order",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 2.942994133976754,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_file_declared_dynaconf_include_loads_relative_file",
+      "base_nodeid": "generated_tests.py::test_file_declared_dynaconf_include_loads_relative_file",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.1303682400030084,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_settings_files_accepts_semicolon_separated_paths",
+      "base_nodeid": "generated_tests.py::test_settings_files_accepts_semicolon_separated_paths",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.08208057400770485,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_python_settings_file_loads_only_uppercase_names",
+      "base_nodeid": "generated_tests.py::test_python_settings_file_loads_only_uppercase_names",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 11.154326973017305,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_multiple_envvar_prefixes_are_loaded",
+      "base_nodeid": "generated_tests.py::test_multiple_envvar_prefixes_are_loaded",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.07954282005084679,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_unprefixed_environment_variables_can_be_settings",
+      "base_nodeid": "generated_tests.py::test_unprefixed_environment_variables_can_be_settings",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.09580623201327398,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_ignore_unknown_envvars_keeps_only_preexisting_keys",
+      "base_nodeid": "generated_tests.py::test_ignore_unknown_envvars_keeps_only_preexisting_keys",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.09698497498175129,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_sysenv_fallback_reads_unprefixed_missing_key",
+      "base_nodeid": "generated_tests.py::test_sysenv_fallback_reads_unprefixed_missing_key",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1335607499931939,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_sysenv_fallback_list_restricts_allowed_names",
+      "base_nodeid": "generated_tests.py::test_sysenv_fallback_list_restricts_allowed_names",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.11341980402357876,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_comma_separated_active_envs_load_in_order",
+      "base_nodeid": "generated_tests.py::test_comma_separated_active_envs_load_in_order",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.11238738702377304,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_from_env_keep_chains_existing_values",
+      "base_nodeid": "generated_tests.py::test_from_env_keep_chains_existing_values",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.24684704298852012,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_auto_cast_false_leaves_envvar_tokens_as_strings",
+      "base_nodeid": "generated_tests.py::test_auto_cast_false_leaves_envvar_tokens_as_strings",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0923599970410578,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_builtin_cast_tokens_from_file",
+      "base_nodeid": "generated_tests.py::test_builtin_cast_tokens_from_file",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.11222406796878204,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_get_token_reads_another_setting_and_casts_default",
+      "base_nodeid": "generated_tests.py::test_get_token_reads_another_setting_and_casts_default",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.15530877996934578,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_read_file_token_reads_relative_file",
+      "base_nodeid": "generated_tests.py::test_read_file_token_reads_relative_file",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.18510348099516705,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_string_utility_tokens_transform_values",
+      "base_nodeid": "generated_tests.py::test_string_utility_tokens_transform_values",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.13056763698114082,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_insert_token_adds_list_item_at_requested_position",
+      "base_nodeid": "generated_tests.py::test_insert_token_adds_list_item_at_requested_position",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.1893525889609009,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_del_token_removes_nested_envvar_value",
+      "base_nodeid": "generated_tests.py::test_del_token_removes_nested_envvar_value",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.12302065698895603,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_global_merge_enabled_merges_later_dictionaries_and_lists",
+      "base_nodeid": "generated_tests.py::test_global_merge_enabled_merges_later_dictionaries_and_lists",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.13880127196898684,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_local_file_top_level_merge_marker_merges_environment_section",
+      "base_nodeid": "generated_tests.py::test_local_file_top_level_merge_marker_merges_environment_section",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.11831967195030302,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_runtime_set_creates_nested_value_visible_in_all_views",
+      "base_nodeid": "generated_tests.py::test_runtime_set_creates_nested_value_visible_in_all_views",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.11709146795328707,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_runtime_update_validate_true_raises_first_error",
+      "base_nodeid": "generated_tests.py::test_runtime_update_validate_true_raises_first_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.12036875600460917,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_validator_apply_default_on_none_sets_none_value",
+      "base_nodeid": "generated_tests.py::test_validator_apply_default_on_none_sets_none_value",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.09197618602775037,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_validator_or_and_and_composition",
+      "base_nodeid": "generated_tests.py::test_validator_or_and_and_composition",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.15530763403512537,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_validator_callable_default_can_read_settings_context",
+      "base_nodeid": "generated_tests.py::test_validator_callable_default_can_read_settings_context",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.13261179899564013,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_validator_casts_are_ordered_and_mutate_state",
+      "base_nodeid": "generated_tests.py::test_validator_casts_are_ordered_and_mutate_state",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.16654874896630645,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_load_file_adds_runtime_values_and_history",
+      "base_nodeid": "generated_tests.py::test_load_file_adds_runtime_values_and_history",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.7344668300356716,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_load_file_env_false_loads_top_level_without_environment_sections",
+      "base_nodeid": "generated_tests.py::test_load_file_env_false_loads_top_level_without_environment_sections",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.2225234339712188,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_fresh_var_reloads_source_on_access",
+      "base_nodeid": "generated_tests.py::test_fresh_var_reloads_source_on_access",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.07435993402032182,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_constructor_post_hook_merges_returned_data",
+      "base_nodeid": "generated_tests.py::test_constructor_post_hook_merges_returned_data",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.09933405002811924,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_dynaconf_hooks_file_contributes_post_data",
+      "base_nodeid": "generated_tests.py::test_dynaconf_hooks_file_contributes_post_data",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.177876028988976,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_python_settings_post_hook_runs_when_file_loads",
+      "base_nodeid": "generated_tests.py::test_python_settings_post_hook_runs_when_file_loads",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 8.251466371002607,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_cli_get_missing_key_without_default_returns_nonzero",
+      "base_nodeid": "generated_tests.py::test_cli_get_missing_key_without_default_returns_nonzero",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 11.47377293696627,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_cli_get_missing_key_with_default_prints_default",
+      "base_nodeid": "generated_tests.py::test_cli_get_missing_key_with_default_prints_default",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 14.538145111000631,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "generated_tests.py::test_cli_inspect_prints_json_report",
+      "base_nodeid": "generated_tests.py::test_cli_inspect_prints_json_report",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 20.046611035999376,
+        "outcome": "failed",
+        "crash": {
+          "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+          "lineno": 1253,
+          "message": "subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'inspect', '--key', 'PORT', '--format', 'json-compact']' timed out after 20 seconds"
+        },
+        "traceback": [
+          {
+            "path": "generated_tests.py",
+            "lineno": 1022,
+            "message": ""
+          },
+          {
+            "path": "generated_tests.py",
+            "lineno": 24,
+            "message": "in _run_dynaconf_cli"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+            "lineno": 550,
+            "message": "in run"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+            "lineno": 1209,
+            "message": "in communicate"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+            "lineno": 2116,
+            "message": "in _communicate"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py",
+            "lineno": 1253,
+            "message": "TimeoutExpired"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-526/test_cli_inspect_prints_json_r0')\n\n    def test_cli_inspect_prints_json_report(tmp_path):\n        _write(\n            tmp_path / \"settings.toml\",\n            \"PORT = 8000\",\n        )\n        _write(\n            tmp_path / \"app_settings.py\",\n            \"\"\"\n            from dynaconf import Dynaconf\n            settings = Dynaconf(\n                envvar_prefix=\"TBCLIINSPECT\",\n                settings_files=[\"settings.toml\"],\n                environments=False,\n            )\n            \"\"\",\n        )\n    \n>       proc = _run_dynaconf_cli(\n            tmp_path,\n            \"-i\",\n            \"app_settings.settings\",\n            \"inspect\",\n            \"--key\",\n            \"PORT\",\n            \"--format\",\n            \"json-compact\",\n        )\n\ngenerated_tests.py:1022: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ngenerated_tests.py:24: in _run_dynaconf_cli\n    return subprocess.run(\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: -9 args: ['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.en...>\nendtime = 439724.534921343, orig_timeout = 20, stdout_seq = [], stderr_seq = []\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '-m', 'dynaconf', '-i', 'app_settings.settings', 'inspect', '--key', 'PORT', '--format', 'json-compact']' timed out after 20 seconds\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1253: TimeoutExpired"
+      }
+    }
+  ]
+}

@@ -113,6 +113,8 @@ Total: N | kept (covered): N | spec_gap: N | source-only: N | excluded: N | fina
 3. Accept a lower count for high unit-test style libraries
 4. None of the above -> retire candidate
 
+**Kept set too large:** if the kept set exceeds ~150 base nodeids, provide an explicit argument that the spec can cover the entire retained surface in behavioral language. A large oracle forces the candidate to reconstruct a near-complete API in one pass — if the spec cannot describe all of it without becoming a fill-in-the-blanks template, scope down to a core workflow subset and re-filter. The oracle size should match what the spec can honestly specify, not the full upstream test suite.
+
 **Preserved rate is not sufficient alone.** A high preserved rate can be misleading if failures cluster around a few broken primitives or if import provenance was not fully audited. Audit by failure surface and cascade root count, not just the percentage of retained tests.
 
 **Coverage too low:** if a significant share of kept tests are `source-only` after resolution, the library may not be viable - its tests cover behavior that cannot be fairly specified.
@@ -141,6 +143,10 @@ When a large share of nodeids come from parametrized expansion of few functions,
 **Scorer isolation requirement:** All evaluation runs against `kept_nodeids.txt` must use `--remove-path <pkg>` (or equivalent isolation flag) to prevent a system-installed copy of the target package from shadowing the candidate solution. Record the isolation method in the task's MANIFEST.json under `scorer_isolation`. Scores produced without this flag are invalid and must be discarded.
 
 `taxonomy.jsonl` - scorer-compatible. Key format must match `score_pytest_original.py` mapping `tests/path.py::test_name` -> `path_stem::test_name`. One JSON object per line:
+
+**Oracle atomic update rule:** whenever any oracle file is modified after Stage 3 completes (including retro additions), all four files (kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md, reference_score) must be updated together and assigned a new `oracle_version` timestamp in spec_test_map.md header. Partial updates that leave counts inconsistent across files are invalid.
+
+**Preservation rule:** do not delete the `wip/{task}/` directory after a task reaches QUALIFIED. The wip directory is the audit trail. Its removal makes evaluation scores permanently unverifiable.
 
 ```jsonl
 {"taxonomy_key": "test_foo::test_bar", "layer": "atomic"}
@@ -228,7 +234,11 @@ For each retained nodeid, compare assertion surface against public docs:
 
 ### Step 3: Dummy gate
 
-Run the entire kept set against a dummy implementation (every public function `return None` / `raise NotImplementedError`). Discard any test that passes the dummy - these are structurally trivial, not difficulty evidence.
+Run the entire kept set against a dummy implementation (every public function `return None` / `raise NotImplementedError`). Discard any test that passes the dummy — these are structurally trivial, not difficulty evidence.
+
+**Execution requirement:** the dummy gate must be a real pytest invocation — not a structural code review or manual inspection. A "structural audit" does not substitute.
+
+**Interpretation rule:** if the dummy run produces collection errors (not just failures), this is a carrier-block signal, not a pass. A dummy that cannot even import means the test harness depends on private implementation details that will not exist in any clean candidate environment. Treat this as a hard blocker: diagnose the carrier dependency before continuing. Do not record collection errors as "passed dummy gate."
 
 **Output:** `filter/kept_upstream.txt`
 
@@ -293,8 +303,8 @@ A flat target of 12–30 total tests is insufficient for any library with more t
 
 Generation protocol:
 1. Call `reference_pkg.fn(input)` and record the real return value / side effect
-2. Write the test assertion from the observed result, not from spec inference
-3. For each generated test, verify: is this I/O relationship derivable from the spec? If not, discard the test — do not add spec content to compensate
+2. Write the test assertion from the observed result, not from spec inference. Keep test code natural — do not embed spec phrases or section names inside test code.
+3. For each generated test, fill its `spec_test_map.md` row immediately: identify the `spec_section` heading it maps to. If the row cannot be completed (no spec section covers this behavior), discard the test — do not add spec content to compensate. The derivability check lives in the map row, not in the test code.
 4. After generation, verify each mandatory target section meets its per-section minimum and total oracle ≥ 50. If either fails, return to generation.
 
 Enforce in prompt:

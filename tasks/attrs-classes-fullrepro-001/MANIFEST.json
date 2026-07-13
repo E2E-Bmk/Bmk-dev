@@ -1,0 +1,47 @@
+{
+  "task_id": "attrs-classes-fullrepro-001",
+  "oracle_count": 81,
+  "oracle_source": "generated_only",
+  "source_repo": "G:/research/01_agents/swe-e2e/Bmk-dev/wip/attrs-classes-fullrepro-001/oracle_repo",
+  "reference_solution_dir": "G:/research/01_agents/swe-e2e/Bmk-dev/wip/attrs-classes-fullrepro-001/oracle_repo/src",
+  "reference_score": "G:/research/01_agents/swe-e2e/Bmk-dev/wip/attrs-classes-fullrepro-001/filter/reference_score.json",
+  "scorer_isolation": [
+    "--remove-path src/attrs",
+    "--remove-path src/attr",
+    "--remove-path attrs",
+    "--remove-path attr"
+  ],
+  "pytest_plugin_control": "Set PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 and pass --pytest-arg=-p --pytest-arg=pytest_jsonreport.plugin when using the current WSL environment.",
+  "judge": {
+    "verdict": "QUALIFIED",
+    "date": "2026-07-04",
+    "candidate_run": "candidate-runs/codex-attrs-specv1-20260704-001",
+    "candidate_score": {
+      "passed": 71,
+      "failed": 10,
+      "total": 81,
+      "pass_rate_excluding_skips": 0.8765432098765432
+    },
+    "reference_score": {
+      "passed": 81,
+      "total": 81
+    },
+    "strict_legal_count": true,
+    "synced_artifacts": [
+      "score_result.json",
+      "diagnosis_report.md"
+    ],
+    "labels": [
+      "discriminating",
+      "generated-only-oracle",
+      "candidate-non-saturated",
+      "cross-view-consistency-signal",
+      "state-management-signal"
+    ]
+  },
+  "caveats": [
+    "Track-B generated-only oracle; task-judge should apply generated-oracle spot check.",
+    "Task-judge generated-only oracle spot check passed; scoreable coverage is FULL with only descriptive/protocol headings uncovered.",
+    "Global CANDIDATES.md was not updated because user write scope excluded global files."
+  ]
+}

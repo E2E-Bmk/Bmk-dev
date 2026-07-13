@@ -1,0 +1,2407 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 180,
+  "remove_paths": [
+    "src/apscheduler"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/apscheduler-jobs-fullrepro-001/filter/oracle_repo",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-apscheduler-specv1-20260704-001/output",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/apscheduler-jobs-fullrepro-001/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/apscheduler-jobs-fullrepro-001/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-apscheduler-specv1-20260704-001/score_run_v2b",
+  "grouped_results": {
+    "tests/test_generated_core.py": {
+      "returncode": 0,
+      "stdout": "............................................................             [100%]\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783147939.6853447,
+        "duration": 7.478441953659058,
+        "exitcode": 0,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-apscheduler-specv1-20260704-001/score_run_v2b/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 60,
+          "total": 60,
+          "collected": 60
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "tests/test_generated_core.py::test_default_sync_scheduler_components_and_state",
+                "type": "Function",
+                "lineno": 100
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_sync_scheduler_context_variable_is_set_inside_context",
+                "type": "Function",
+                "lineno": 110
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_configure_task_creates_task_and_task_added_event",
+                "type": "Function",
+                "lineno": 115
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_configure_task_updates_existing_task_and_emits_update",
+                "type": "Function",
+                "lineno": 129
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_configure_task_merges_defaults_decorator_and_direct_metadata",
+                "type": "Function",
+                "lineno": 142
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_task_decorator_rejects_non_callable",
+                "type": "Function",
+                "lineno": 155
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_task_decorator_rejects_double_decoration",
+                "type": "Function",
+                "lineno": 160
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_configure_task_rejects_invalid_identifier_type",
+                "type": "Function",
+                "lineno": 169
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_get_tasks_returns_sorted_by_id",
+                "type": "Function",
+                "lineno": 175
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_add_schedule_returns_supplied_id_and_stores_schedule",
+                "type": "Function",
+                "lineno": 182
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_add_schedule_without_id_generates_string_identifier",
+                "type": "Function",
+                "lineno": 193
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_schedule_added_event_contains_schedule_and_task_identity",
+                "type": "Function",
+                "lineno": 201
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_schedule_get_missing_raises_schedule_lookup_error",
+                "type": "Function",
+                "lineno": 214
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_remove_schedule_removes_view_and_emits_event",
+                "type": "Function",
+                "lineno": 220
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_remove_missing_schedule_is_noop",
+                "type": "Function",
+                "lineno": 234
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_pause_and_unpause_schedule_change_public_state_and_events",
+                "type": "Function",
+                "lineno": 240
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_unpause_resume_from_advances_interval_schedule",
+                "type": "Function",
+                "lineno": 254
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_conflict_policy_do_nothing_preserves_existing_schedule",
+                "type": "Function",
+                "lineno": 268
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_conflict_policy_replace_updates_schedule",
+                "type": "Function",
+                "lineno": 280
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_conflict_policy_exception_raises_conflicting_id_error",
+                "type": "Function",
+                "lineno": 291
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_paused_due_schedule_does_not_create_job_until_unpaused",
+                "type": "Function",
+                "lineno": 301
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_scheduler_role_scheduler_processes_schedule_without_running_job",
+                "type": "Function",
+                "lineno": 311
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_scheduler_role_worker_runs_existing_direct_job",
+                "type": "Function",
+                "lineno": 321
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_add_job_returns_uuid_and_job_is_visible_before_processing",
+                "type": "Function",
+                "lineno": 329
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_add_job_publishes_job_added_event",
+                "type": "Function",
+                "lineno": 338
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_get_job_result_wait_false_before_run_raises_lookup_error",
+                "type": "Function",
+                "lineno": 348
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_run_job_returns_callable_value",
+                "type": "Function",
+                "lineno": 355
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_run_job_reraises_callable_exception",
+                "type": "Function",
+                "lineno": 361
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_successful_job_result_is_consumed_after_retrieval",
+                "type": "Function",
+                "lineno": 368
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_job_events_are_emitted_in_lifecycle_order",
+                "type": "Function",
+                "lineno": 378
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_current_job_context_variable_identifies_running_job",
+                "type": "Function",
+                "lineno": 391
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_current_scheduler_context_variable_visible_to_sync_job",
+                "type": "Function",
+                "lineno": 399
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_threadpool_executor_runs_sync_job_off_calling_thread",
+                "type": "Function",
+                "lineno": 406
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_async_scheduler_async_executor_runs_on_event_loop[asyncio]",
+                "type": "Function",
+                "lineno": 413
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_async_scheduler_context_variable_visible_to_async_job[asyncio]",
+                "type": "Function",
+                "lineno": 426
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_scheduler_start_and_stop_publish_lifecycle_events",
+                "type": "Function",
+                "lineno": 437
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_wait_until_stopped_returns_after_stop_job",
+                "type": "Function",
+                "lineno": 449
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_finished_schedule_removed_by_cleanup",
+                "type": "Function",
+                "lineno": 458
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_job_result_expiration_cleanup_removes_result",
+                "type": "Function",
+                "lineno": 474
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_date_trigger_fires_once_then_exhausts",
+                "type": "Function",
+                "lineno": 486
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_date_trigger_state_round_trip_preserves_completion",
+                "type": "Function",
+                "lineno": 493
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_interval_trigger_rejects_zero_interval",
+                "type": "Function",
+                "lineno": 502
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_interval_trigger_rejects_end_before_start",
+                "type": "Function",
+                "lineno": 507
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_interval_trigger_returns_start_then_interval_steps_until_end",
+                "type": "Function",
+                "lineno": 514
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_interval_trigger_state_round_trip_continues_from_last_fire_time",
+                "type": "Function",
+                "lineno": 523
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_memory_datastore_get_next_schedule_run_time_tracks_earliest",
+                "type": "Function",
+                "lineno": 532
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_memory_datastore_task_lookup_error_for_missing_task[asyncio]",
+                "type": "Function",
+                "lineno": 542
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_job_result_from_job_sets_expiration_from_finish_time",
+                "type": "Function",
+                "lineno": 554
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_job_original_scheduled_time_subtracts_jitter",
+                "type": "Function",
+                "lineno": 565
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_job_result_not_ready_exception_is_public_constructible",
+                "type": "Function",
+                "lineno": 577
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_local_event_broker_delivers_one_shot_only_once",
+                "type": "Function",
+                "lineno": 584
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_local_event_broker_filters_event_types",
+                "type": "Function",
+                "lineno": 594
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_get_next_event_returns_matching_event",
+                "type": "Function",
+                "lineno": 603
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_schedule_metadata_inherits_task_metadata_and_overrides_top_level",
+                "type": "Function",
+                "lineno": 612
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_direct_job_metadata_inherits_task_metadata_and_overrides_top_level",
+                "type": "Function",
+                "lineno": 631
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_max_running_jobs_limits_second_acquisition_until_release[asyncio]",
+                "type": "Function",
+                "lineno": 645
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_state_model_views_agree_for_task_schedule_and_job",
+                "type": "Function",
+                "lineno": 664
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_direct_job_representative_workflow_events_and_result",
+                "type": "Function",
+                "lineno": 679
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_date_schedule_representative_workflow_pause_unpause_remove",
+                "type": "Function",
+                "lineno": 692
+              },
+              {
+                "nodeid": "tests/test_generated_core.py::test_cross_view_schedule_event_matches_stored_schedule",
+                "type": "Function",
+                "lineno": 704
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "tests/test_generated_core.py::test_default_sync_scheduler_components_and_state",
+            "lineno": 100,
+            "outcome": "passed",
+            "keywords": [
+              "test_default_sync_scheduler_components_and_state",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000252018000537646,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0017411549997632392,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017232500067621004,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_sync_scheduler_context_variable_is_set_inside_context",
+            "lineno": 110,
+            "outcome": "passed",
+            "keywords": [
+              "test_sync_scheduler_context_variable_is_set_inside_context",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011083100071118679,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0011820850004369277,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011626600007730303,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_configure_task_creates_task_and_task_added_event",
+            "lineno": 115,
+            "outcome": "passed",
+            "keywords": [
+              "test_configure_task_creates_task_and_task_added_event",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.759699969436042e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.002113743000336399,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014371500037668739,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_configure_task_updates_existing_task_and_emits_update",
+            "lineno": 129,
+            "outcome": "passed",
+            "keywords": [
+              "test_configure_task_updates_existing_task_and_emits_update",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011288899986539036,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.002154205999431724,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013356700037547853,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_configure_task_merges_defaults_decorator_and_direct_metadata",
+            "lineno": 142,
+            "outcome": "passed",
+            "keywords": [
+              "test_configure_task_merges_defaults_decorator_and_direct_metadata",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010354900041420478,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0023705929997959174,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000173929000084172,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_task_decorator_rejects_non_callable",
+            "lineno": 155,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_decorator_rejects_non_callable",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00014609900063078385,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017148599999927683,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012299099944357295,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_task_decorator_rejects_double_decoration",
+            "lineno": 160,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_decorator_rejects_double_decoration",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001691130000835983,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00020220100032020127,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013874199976271484,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_configure_task_rejects_invalid_identifier_type",
+            "lineno": 169,
+            "outcome": "passed",
+            "keywords": [
+              "test_configure_task_rejects_invalid_identifier_type",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00012275399967620615,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0019629039998108055,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002235570000266307,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_get_tasks_returns_sorted_by_id",
+            "lineno": 175,
+            "outcome": "passed",
+            "keywords": [
+              "test_get_tasks_returns_sorted_by_id",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00016185799995582784,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.002383023000220419,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015174199961620616,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_add_schedule_returns_supplied_id_and_stores_schedule",
+            "lineno": 182,
+            "outcome": "passed",
+            "keywords": [
+              "test_add_schedule_returns_supplied_id_and_stores_schedule",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010372900032962207,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0017978559999392019,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019482399966364028,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_add_schedule_without_id_generates_string_identifier",
+            "lineno": 193,
+            "outcome": "passed",
+            "keywords": [
+              "test_add_schedule_without_id_generates_string_identifier",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00015866099965933245,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0017093480000767158,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014077499963605078,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_schedule_added_event_contains_schedule_and_task_identity",
+            "lineno": 201,
+            "outcome": "passed",
+            "keywords": [
+              "test_schedule_added_event_contains_schedule_and_task_identity",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002026920001299004,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0025156249994324753,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012118999984522816,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_schedule_get_missing_raises_schedule_lookup_error",
+            "lineno": 214,
+            "outcome": "passed",
+            "keywords": [
+              "test_schedule_get_missing_raises_schedule_lookup_error",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00013502799993148074,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001201697999931639,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001347719999102992,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_remove_schedule_removes_view_and_emits_event",
+            "lineno": 220,
+            "outcome": "passed",
+            "keywords": [
+              "test_remove_schedule_removes_view_and_emits_event",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011872599952766905,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.002480263000506966,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012114400033169659,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_remove_missing_schedule_is_noop",
+            "lineno": 234,
+            "outcome": "passed",
+            "keywords": [
+              "test_remove_missing_schedule_is_noop",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.645699992688606e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0020967150003343704,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001588240002092789,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_pause_and_unpause_schedule_change_public_state_and_events",
+            "lineno": 240,
+            "outcome": "passed",
+            "keywords": [
+              "test_pause_and_unpause_schedule_change_public_state_and_events",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00012155500007793307,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.002562138000030245,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000130680999973265,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_unpause_resume_from_advances_interval_schedule",
+            "lineno": 254,
+            "outcome": "passed",
+            "keywords": [
+              "test_unpause_resume_from_advances_interval_schedule",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010240499977953732,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.002097723000588303,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011998499940091278,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_conflict_policy_do_nothing_preserves_existing_schedule",
+            "lineno": 268,
+            "outcome": "passed",
+            "keywords": [
+              "test_conflict_policy_do_nothing_preserves_existing_schedule",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010660799944162136,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001507922999735456,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012936700022692094,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_conflict_policy_replace_updates_schedule",
+            "lineno": 280,
+            "outcome": "passed",
+            "keywords": [
+              "test_conflict_policy_replace_updates_schedule",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00014048899993213126,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0015777850003360072,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012574300035339547,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_conflict_policy_exception_raises_conflicting_id_error",
+            "lineno": 291,
+            "outcome": "passed",
+            "keywords": [
+              "test_conflict_policy_exception_raises_conflicting_id_error",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011032499969587661,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0023789480001141783,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012499900003604125,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_paused_due_schedule_does_not_create_job_until_unpaused",
+            "lineno": 301,
+            "outcome": "passed",
+            "keywords": [
+              "test_paused_due_schedule_does_not_create_job_until_unpaused",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00019403699934628094,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.20491684399985388,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015393200010294095,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_scheduler_role_scheduler_processes_schedule_without_running_job",
+            "lineno": 311,
+            "outcome": "passed",
+            "keywords": [
+              "test_scheduler_role_scheduler_processes_schedule_without_running_job",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011519999952724902,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.4023480070000005,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011950999942200724,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_scheduler_role_worker_runs_existing_direct_job",
+            "lineno": 321,
+            "outcome": "passed",
+            "keywords": [
+              "test_scheduler_role_worker_runs_existing_direct_job",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.620100015832577e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011906794999958947,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012529200012068031,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_add_job_returns_uuid_and_job_is_visible_before_processing",
+            "lineno": 329,
+            "outcome": "passed",
+            "keywords": [
+              "test_add_job_returns_uuid_and_job_is_visible_before_processing",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.76180001796456e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0010785659997054609,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.222100015904289e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_add_job_publishes_job_added_event",
+            "lineno": 338,
+            "outcome": "passed",
+            "keywords": [
+              "test_add_job_publishes_job_added_event",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 7.75540001995978e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0012453370000002906,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.930599935614737e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_get_job_result_wait_false_before_run_raises_lookup_error",
+            "lineno": 348,
+            "outcome": "passed",
+            "keywords": [
+              "test_get_job_result_wait_false_before_run_raises_lookup_error",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 7.930699939606711e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0010531319994697697,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.340900032839272e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_run_job_returns_callable_value",
+            "lineno": 355,
+            "outcome": "passed",
+            "keywords": [
+              "test_run_job_returns_callable_value",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.450599943898851e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0329518239996105,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012025099931634031,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_run_job_reraises_callable_exception",
+            "lineno": 361,
+            "outcome": "passed",
+            "keywords": [
+              "test_run_job_reraises_callable_exception",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.599900022294605e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.03282805200069561,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013928699991083704,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_successful_job_result_is_consumed_after_retrieval",
+            "lineno": 368,
+            "outcome": "passed",
+            "keywords": [
+              "test_successful_job_result_is_consumed_after_retrieval",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.914199927152367e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.013039125999966927,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001373210006931913,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_job_events_are_emitted_in_lifecycle_order",
+            "lineno": 378,
+            "outcome": "passed",
+            "keywords": [
+              "test_job_events_are_emitted_in_lifecycle_order",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.623599999031285e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.013074941000013496,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001332279998678132,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_current_job_context_variable_identifies_running_job",
+            "lineno": 391,
+            "outcome": "passed",
+            "keywords": [
+              "test_current_job_context_variable_identifies_running_job",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.735700041346718e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01253523099967424,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017821099936554674,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_current_scheduler_context_variable_visible_to_sync_job",
+            "lineno": 399,
+            "outcome": "passed",
+            "keywords": [
+              "test_current_scheduler_context_variable_visible_to_sync_job",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00015407600039907265,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.012667166000028374,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013765899984719,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_threadpool_executor_runs_sync_job_off_calling_thread",
+            "lineno": 406,
+            "outcome": "passed",
+            "keywords": [
+              "test_threadpool_executor_runs_sync_job_off_calling_thread",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.742499969433993e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.032954965000499215,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014278700018621748,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_async_scheduler_async_executor_runs_on_event_loop[asyncio]",
+            "lineno": 413,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_scheduler_async_executor_runs_on_event_loop[asyncio]",
+              "asyncio",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00034833900008379715,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.011034530999495473,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001297529997827951,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_async_scheduler_context_variable_visible_to_async_job[asyncio]",
+            "lineno": 426,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_scheduler_context_variable_visible_to_async_job[asyncio]",
+              "asyncio",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001843449999796576,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01097180400029174,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013024000054429052,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_memory_datastore_task_lookup_error_for_missing_task[asyncio]",
+            "lineno": 542,
+            "outcome": "passed",
+            "keywords": [
+              "test_memory_datastore_task_lookup_error_for_missing_task[asyncio]",
+              "asyncio",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002232570004707668,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004442939998625661,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.471400062466273e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_max_running_jobs_limits_second_acquisition_until_release[asyncio]",
+            "lineno": 645,
+            "outcome": "passed",
+            "keywords": [
+              "test_max_running_jobs_limits_second_acquisition_until_release[asyncio]",
+              "asyncio",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00014470099995378405,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004099160005353042,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.947499984264141e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_scheduler_start_and_stop_publish_lifecycle_events",
+            "lineno": 437,
+            "outcome": "passed",
+            "keywords": [
+              "test_scheduler_start_and_stop_publish_lifecycle_events",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.051500026340364e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0017316409994236892,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001010409996524686,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_wait_until_stopped_returns_after_stop_job",
+            "lineno": 449,
+            "outcome": "passed",
+            "keywords": [
+              "test_wait_until_stopped_returns_after_stop_job",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.559599973523291e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0025912099999914062,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010808100068970816,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_finished_schedule_removed_by_cleanup",
+            "lineno": 458,
+            "outcome": "passed",
+            "keywords": [
+              "test_finished_schedule_removed_by_cleanup",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.845799948176136e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0024357639995287172,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010493700028746389,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_job_result_expiration_cleanup_removes_result",
+            "lineno": 474,
+            "outcome": "passed",
+            "keywords": [
+              "test_job_result_expiration_cleanup_removes_result",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.937900020100642e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.21327850299985585,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013566199959313963,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_date_trigger_fires_once_then_exhausts",
+            "lineno": 486,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_trigger_fires_once_then_exhausts",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.808500024315435e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010097599988512229,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.247300022252603e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_date_trigger_state_round_trip_preserves_completion",
+            "lineno": 493,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_trigger_state_round_trip_preserves_completion",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.01030000729952e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 9.481200049776817e-05,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.002300000953255e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_interval_trigger_rejects_zero_interval",
+            "lineno": 502,
+            "outcome": "passed",
+            "keywords": [
+              "test_interval_trigger_rejects_zero_interval",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011214799997105729,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017397000010532793,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001175600000351551,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_interval_trigger_rejects_end_before_start",
+            "lineno": 507,
+            "outcome": "passed",
+            "keywords": [
+              "test_interval_trigger_rejects_end_before_start",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.791699994821101e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00012985899957129732,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.423699975741329e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_interval_trigger_returns_start_then_interval_steps_until_end",
+            "lineno": 514,
+            "outcome": "passed",
+            "keywords": [
+              "test_interval_trigger_returns_start_then_interval_steps_until_end",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.145199990394758e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010594800005492289,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.865099996706704e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_interval_trigger_state_round_trip_continues_from_last_fire_time",
+            "lineno": 523,
+            "outcome": "passed",
+            "keywords": [
+              "test_interval_trigger_state_round_trip_continues_from_last_fire_time",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.000199977686862e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00011229699975956464,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.858000026317313e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_memory_datastore_get_next_schedule_run_time_tracks_earliest",
+            "lineno": 532,
+            "outcome": "passed",
+            "keywords": [
+              "test_memory_datastore_get_next_schedule_run_time_tracks_earliest",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 7.95539999671746e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001794155000425235,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.898999996948987e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_job_result_from_job_sets_expiration_from_finish_time",
+            "lineno": 554,
+            "outcome": "passed",
+            "keywords": [
+              "test_job_result_from_job_sets_expiration_from_finish_time",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.105800043267664e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001272984000024735,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.65369999903487e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_job_original_scheduled_time_subtracts_jitter",
+            "lineno": 565,
+            "outcome": "passed",
+            "keywords": [
+              "test_job_original_scheduled_time_subtracts_jitter",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00015354900006059324,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00161054599993804,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001039849994413089,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_job_result_not_ready_exception_is_public_constructible",
+            "lineno": 577,
+            "outcome": "passed",
+            "keywords": [
+              "test_job_result_not_ready_exception_is_public_constructible",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.507199981977465e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.056605497999953513,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013574900003732182,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_local_event_broker_delivers_one_shot_only_once",
+            "lineno": 584,
+            "outcome": "passed",
+            "keywords": [
+              "test_local_event_broker_delivers_one_shot_only_once",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.31209997361293e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0021781519999422017,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012603799950738903,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_local_event_broker_filters_event_types",
+            "lineno": 594,
+            "outcome": "passed",
+            "keywords": [
+              "test_local_event_broker_filters_event_types",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.254899941879557e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001599655000063649,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001046029992721742,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_get_next_event_returns_matching_event",
+            "lineno": 603,
+            "outcome": "passed",
+            "keywords": [
+              "test_get_next_event_returns_matching_event",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.6860000010347e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0018673209997359663,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.808399954636116e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_schedule_metadata_inherits_task_metadata_and_overrides_top_level",
+            "lineno": 612,
+            "outcome": "passed",
+            "keywords": [
+              "test_schedule_metadata_inherits_task_metadata_and_overrides_top_level",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 8.59100000525359e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0018592010001157178,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012156600041635102,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_direct_job_metadata_inherits_task_metadata_and_overrides_top_level",
+            "lineno": 631,
+            "outcome": "passed",
+            "keywords": [
+              "test_direct_job_metadata_inherits_task_metadata_and_overrides_top_level",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.168900032818783e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0014650040002379683,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012176400014141109,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_state_model_views_agree_for_task_schedule_and_job",
+            "lineno": 664,
+            "outcome": "passed",
+            "keywords": [
+              "test_state_model_views_agree_for_task_schedule_and_job",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 9.19600006454857e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.003929036999579694,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00022827299926575506,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_direct_job_representative_workflow_events_and_result",
+            "lineno": 679,
+            "outcome": "passed",
+            "keywords": [
+              "test_direct_job_representative_workflow_events_and_result",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024540400045225397,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.01301088600030198,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013253799988888204,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_date_schedule_representative_workflow_pause_unpause_remove",
+            "lineno": 692,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_schedule_representative_workflow_pause_unpause_remove",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010891600049944827,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.002769497000372212,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015708099999756087,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "tests/test_generated_core.py::test_cross_view_schedule_event_matches_stored_schedule",
+            "lineno": 704,
+            "outcome": "passed",
+            "keywords": [
+              "test_cross_view_schedule_event_matches_stored_schedule",
+              "test_generated_core.py",
+              "tests",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011408200043661054,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0017474500000389526,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013679699986823834,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "passed": 60,
+    "total": 60
+  },
+  "pass_rate_excluding_skips": 1.0,
+  "by_layer": {
+    "atomic": {
+      "passed": 23,
+      "total": 23
+    },
+    "integration": {
+      "passed": 23,
+      "total": 23
+    },
+    "system_e2e": {
+      "passed": 14,
+      "total": 14
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "tests/test_generated_core.py::test_default_sync_scheduler_components_and_state",
+      "base_nodeid": "tests/test_generated_core.py::test_default_sync_scheduler_components_and_state",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0017411549997632392,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_sync_scheduler_context_variable_is_set_inside_context",
+      "base_nodeid": "tests/test_generated_core.py::test_sync_scheduler_context_variable_is_set_inside_context",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0011820850004369277,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_configure_task_creates_task_and_task_added_event",
+      "base_nodeid": "tests/test_generated_core.py::test_configure_task_creates_task_and_task_added_event",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.002113743000336399,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_configure_task_updates_existing_task_and_emits_update",
+      "base_nodeid": "tests/test_generated_core.py::test_configure_task_updates_existing_task_and_emits_update",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.002154205999431724,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_configure_task_merges_defaults_decorator_and_direct_metadata",
+      "base_nodeid": "tests/test_generated_core.py::test_configure_task_merges_defaults_decorator_and_direct_metadata",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0023705929997959174,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_task_decorator_rejects_non_callable",
+      "base_nodeid": "tests/test_generated_core.py::test_task_decorator_rejects_non_callable",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00017148599999927683,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_task_decorator_rejects_double_decoration",
+      "base_nodeid": "tests/test_generated_core.py::test_task_decorator_rejects_double_decoration",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00020220100032020127,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_configure_task_rejects_invalid_identifier_type",
+      "base_nodeid": "tests/test_generated_core.py::test_configure_task_rejects_invalid_identifier_type",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0019629039998108055,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_get_tasks_returns_sorted_by_id",
+      "base_nodeid": "tests/test_generated_core.py::test_get_tasks_returns_sorted_by_id",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.002383023000220419,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_add_schedule_returns_supplied_id_and_stores_schedule",
+      "base_nodeid": "tests/test_generated_core.py::test_add_schedule_returns_supplied_id_and_stores_schedule",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0017978559999392019,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_add_schedule_without_id_generates_string_identifier",
+      "base_nodeid": "tests/test_generated_core.py::test_add_schedule_without_id_generates_string_identifier",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0017093480000767158,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_schedule_added_event_contains_schedule_and_task_identity",
+      "base_nodeid": "tests/test_generated_core.py::test_schedule_added_event_contains_schedule_and_task_identity",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0025156249994324753,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_schedule_get_missing_raises_schedule_lookup_error",
+      "base_nodeid": "tests/test_generated_core.py::test_schedule_get_missing_raises_schedule_lookup_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.001201697999931639,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_remove_schedule_removes_view_and_emits_event",
+      "base_nodeid": "tests/test_generated_core.py::test_remove_schedule_removes_view_and_emits_event",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.002480263000506966,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_remove_missing_schedule_is_noop",
+      "base_nodeid": "tests/test_generated_core.py::test_remove_missing_schedule_is_noop",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0020967150003343704,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_pause_and_unpause_schedule_change_public_state_and_events",
+      "base_nodeid": "tests/test_generated_core.py::test_pause_and_unpause_schedule_change_public_state_and_events",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.002562138000030245,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_unpause_resume_from_advances_interval_schedule",
+      "base_nodeid": "tests/test_generated_core.py::test_unpause_resume_from_advances_interval_schedule",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.002097723000588303,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_conflict_policy_do_nothing_preserves_existing_schedule",
+      "base_nodeid": "tests/test_generated_core.py::test_conflict_policy_do_nothing_preserves_existing_schedule",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.001507922999735456,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_conflict_policy_replace_updates_schedule",
+      "base_nodeid": "tests/test_generated_core.py::test_conflict_policy_replace_updates_schedule",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0015777850003360072,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_conflict_policy_exception_raises_conflicting_id_error",
+      "base_nodeid": "tests/test_generated_core.py::test_conflict_policy_exception_raises_conflicting_id_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0023789480001141783,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_paused_due_schedule_does_not_create_job_until_unpaused",
+      "base_nodeid": "tests/test_generated_core.py::test_paused_due_schedule_does_not_create_job_until_unpaused",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.20491684399985388,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_scheduler_role_scheduler_processes_schedule_without_running_job",
+      "base_nodeid": "tests/test_generated_core.py::test_scheduler_role_scheduler_processes_schedule_without_running_job",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.4023480070000005,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_scheduler_role_worker_runs_existing_direct_job",
+      "base_nodeid": "tests/test_generated_core.py::test_scheduler_role_worker_runs_existing_direct_job",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011906794999958947,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_add_job_returns_uuid_and_job_is_visible_before_processing",
+      "base_nodeid": "tests/test_generated_core.py::test_add_job_returns_uuid_and_job_is_visible_before_processing",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0010785659997054609,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_add_job_publishes_job_added_event",
+      "base_nodeid": "tests/test_generated_core.py::test_add_job_publishes_job_added_event",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0012453370000002906,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_get_job_result_wait_false_before_run_raises_lookup_error",
+      "base_nodeid": "tests/test_generated_core.py::test_get_job_result_wait_false_before_run_raises_lookup_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0010531319994697697,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_run_job_returns_callable_value",
+      "base_nodeid": "tests/test_generated_core.py::test_run_job_returns_callable_value",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0329518239996105,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_run_job_reraises_callable_exception",
+      "base_nodeid": "tests/test_generated_core.py::test_run_job_reraises_callable_exception",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.03282805200069561,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_successful_job_result_is_consumed_after_retrieval",
+      "base_nodeid": "tests/test_generated_core.py::test_successful_job_result_is_consumed_after_retrieval",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.013039125999966927,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_job_events_are_emitted_in_lifecycle_order",
+      "base_nodeid": "tests/test_generated_core.py::test_job_events_are_emitted_in_lifecycle_order",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.013074941000013496,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_current_job_context_variable_identifies_running_job",
+      "base_nodeid": "tests/test_generated_core.py::test_current_job_context_variable_identifies_running_job",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01253523099967424,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_current_scheduler_context_variable_visible_to_sync_job",
+      "base_nodeid": "tests/test_generated_core.py::test_current_scheduler_context_variable_visible_to_sync_job",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.012667166000028374,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_threadpool_executor_runs_sync_job_off_calling_thread",
+      "base_nodeid": "tests/test_generated_core.py::test_threadpool_executor_runs_sync_job_off_calling_thread",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.032954965000499215,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_async_scheduler_async_executor_runs_on_event_loop[asyncio]",
+      "base_nodeid": "tests/test_generated_core.py::test_async_scheduler_async_executor_runs_on_event_loop",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.011034530999495473,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_async_scheduler_context_variable_visible_to_async_job[asyncio]",
+      "base_nodeid": "tests/test_generated_core.py::test_async_scheduler_context_variable_visible_to_async_job",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01097180400029174,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_memory_datastore_task_lookup_error_for_missing_task[asyncio]",
+      "base_nodeid": "tests/test_generated_core.py::test_memory_datastore_task_lookup_error_for_missing_task",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004442939998625661,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_max_running_jobs_limits_second_acquisition_until_release[asyncio]",
+      "base_nodeid": "tests/test_generated_core.py::test_max_running_jobs_limits_second_acquisition_until_release",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004099160005353042,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_scheduler_start_and_stop_publish_lifecycle_events",
+      "base_nodeid": "tests/test_generated_core.py::test_scheduler_start_and_stop_publish_lifecycle_events",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0017316409994236892,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_wait_until_stopped_returns_after_stop_job",
+      "base_nodeid": "tests/test_generated_core.py::test_wait_until_stopped_returns_after_stop_job",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0025912099999914062,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_finished_schedule_removed_by_cleanup",
+      "base_nodeid": "tests/test_generated_core.py::test_finished_schedule_removed_by_cleanup",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0024357639995287172,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_job_result_expiration_cleanup_removes_result",
+      "base_nodeid": "tests/test_generated_core.py::test_job_result_expiration_cleanup_removes_result",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.21327850299985585,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_date_trigger_fires_once_then_exhausts",
+      "base_nodeid": "tests/test_generated_core.py::test_date_trigger_fires_once_then_exhausts",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010097599988512229,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_date_trigger_state_round_trip_preserves_completion",
+      "base_nodeid": "tests/test_generated_core.py::test_date_trigger_state_round_trip_preserves_completion",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 9.481200049776817e-05,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_interval_trigger_rejects_zero_interval",
+      "base_nodeid": "tests/test_generated_core.py::test_interval_trigger_rejects_zero_interval",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00017397000010532793,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_interval_trigger_rejects_end_before_start",
+      "base_nodeid": "tests/test_generated_core.py::test_interval_trigger_rejects_end_before_start",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00012985899957129732,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_interval_trigger_returns_start_then_interval_steps_until_end",
+      "base_nodeid": "tests/test_generated_core.py::test_interval_trigger_returns_start_then_interval_steps_until_end",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010594800005492289,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_interval_trigger_state_round_trip_continues_from_last_fire_time",
+      "base_nodeid": "tests/test_generated_core.py::test_interval_trigger_state_round_trip_continues_from_last_fire_time",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00011229699975956464,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_memory_datastore_get_next_schedule_run_time_tracks_earliest",
+      "base_nodeid": "tests/test_generated_core.py::test_memory_datastore_get_next_schedule_run_time_tracks_earliest",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.001794155000425235,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_job_result_from_job_sets_expiration_from_finish_time",
+      "base_nodeid": "tests/test_generated_core.py::test_job_result_from_job_sets_expiration_from_finish_time",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.001272984000024735,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_job_original_scheduled_time_subtracts_jitter",
+      "base_nodeid": "tests/test_generated_core.py::test_job_original_scheduled_time_subtracts_jitter",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00161054599993804,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_job_result_not_ready_exception_is_public_constructible",
+      "base_nodeid": "tests/test_generated_core.py::test_job_result_not_ready_exception_is_public_constructible",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.056605497999953513,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_local_event_broker_delivers_one_shot_only_once",
+      "base_nodeid": "tests/test_generated_core.py::test_local_event_broker_delivers_one_shot_only_once",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0021781519999422017,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_local_event_broker_filters_event_types",
+      "base_nodeid": "tests/test_generated_core.py::test_local_event_broker_filters_event_types",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.001599655000063649,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_get_next_event_returns_matching_event",
+      "base_nodeid": "tests/test_generated_core.py::test_get_next_event_returns_matching_event",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0018673209997359663,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_schedule_metadata_inherits_task_metadata_and_overrides_top_level",
+      "base_nodeid": "tests/test_generated_core.py::test_schedule_metadata_inherits_task_metadata_and_overrides_top_level",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0018592010001157178,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_direct_job_metadata_inherits_task_metadata_and_overrides_top_level",
+      "base_nodeid": "tests/test_generated_core.py::test_direct_job_metadata_inherits_task_metadata_and_overrides_top_level",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0014650040002379683,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_state_model_views_agree_for_task_schedule_and_job",
+      "base_nodeid": "tests/test_generated_core.py::test_state_model_views_agree_for_task_schedule_and_job",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.003929036999579694,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_direct_job_representative_workflow_events_and_result",
+      "base_nodeid": "tests/test_generated_core.py::test_direct_job_representative_workflow_events_and_result",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.01301088600030198,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_date_schedule_representative_workflow_pause_unpause_remove",
+      "base_nodeid": "tests/test_generated_core.py::test_date_schedule_representative_workflow_pause_unpause_remove",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.002769497000372212,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "tests/test_generated_core.py::test_cross_view_schedule_event_matches_stored_schedule",
+      "base_nodeid": "tests/test_generated_core.py::test_cross_view_schedule_event_matches_stored_schedule",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0017474500000389526,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

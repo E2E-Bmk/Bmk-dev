@@ -1,0 +1,2714 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 180,
+  "remove_paths": [
+    "mkdocs"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/mkdocs-sitebuild-fullrepro-002",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/mkdocs-sitebuild-fullrepro-002/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/mkdocs-sitebuild-fullrepro-002/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50",
+  "grouped_results": {
+    "filter/generated_tests.py": {
+      "returncode": 1,
+      "stdout": "F.....F.FF.F.                                                            [100%]\n=================================== FAILURES ===================================\n______________ test_public_package_exposes_version_and_cli_group _______________\n\n    def test_public_package_exposes_version_and_cli_group():\n        assert isinstance(mkdocs.__version__, str)\n        assert mkdocs.__version__\n>       assert cli.name == \"cli\"\n               ^^^^^^^^\nE       AttributeError: 'function' object has no attribute 'name'\n\nfilter/generated_tests.py:31: AttributeError\n_____________________ test_strict_build_aborts_on_warning ______________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_strict_build_aborts_on_wa0')\n\n    def test_strict_build_aborts_on_warning(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Strict\n            nav:\n              - Missing: missing.md\n            \"\"\",\n            {\"index.md\": \"# Home\"},\n        )\n        config = load_config(config_file=str(config_file), strict=True)\n    \n>       with pytest.raises(Abort):\nE       Failed: DID NOT RAISE Abort\n\nfilter/generated_tests.py:115: Failed\n_____________ test_plugin_build_error_hook_observes_build_failure ______________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_plugin_build_error_hook_o0')\n\n    def test_plugin_build_error_hook_observes_build_failure(tmp_path):\n        seen = []\n    \n        class FailingPlugin(BasePlugin):\n            def on_pre_build(self, *, config):\n                raise RuntimeError(\"boom\")\n    \n            def on_build_error(self, *, error):\n                seen.append(type(error).__name__)\n    \n        config_file = write_project(tmp_path, \"site_name: Error Hook\\n\")\n        config = load_config(config_file=str(config_file))\n        plugins = PluginCollection()\n        plugins[\"failing\"] = FailingPlugin()\n        config.plugins = plugins\n    \n        with pytest.raises(RuntimeError):\n            build(config)\n>       assert seen == [\"RuntimeError\"]\nE       AssertionError: assert [] == ['RuntimeError']\nE         \nE         Right contains one more item: 'RuntimeError'\nE         Use -v to get more diff\n\nfilter/generated_tests.py:158: AssertionError\n_______________ test_repo_url_and_site_url_shape_page_edit_links _______________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_repo_url_and_site_url_sha0')\n\n    def test_repo_url_and_site_url_shape_page_edit_links(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Links\n            site_url: https://example.com/docs/\n            repo_url: https://github.com/example/project\n            edit_uri: edit/main/docs/\n            \"\"\",\n            {\"index.md\": \"# Home\"},\n        )\n        config = load_config(config_file=str(config_file))\n    \n        build(config)\n        html = (Path(config.site_dir) / \"index.html\").read_text(encoding=\"utf-8\")\n    \n>       assert \"https://example.com/docs/\" in html\nE       assert 'https://example.com/docs/' in '<!doctype html>\\n<html><head><meta charset=\"utf-8\"><title>Home - Links</title>\\n\\n</head><body>\\n<nav><a href=\"index.html\">Home</a> </nav>\\n<main>&lt;h1 id=&#34;home&#34;&gt;Home&lt;/h1&gt;</main>\\n\\n</body></html>'\n\nfilter/generated_tests.py:177: AssertionError\n__________________ test_validation_rejects_unknown_theme_name __________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_validation_rejects_unknow0')\n\n    def test_validation_rejects_unknown_theme_name(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Bad Theme\n            theme:\n              name: definitely-not-a-theme\n            \"\"\",\n        )\n    \n>       with pytest.raises(Abort):\nE       Failed: DID NOT RAISE Abort\n\nfilter/generated_tests.py:213: Failed\n=========================== short test summary info ============================\nFAILED filter/generated_tests.py::test_public_package_exposes_version_and_cli_group\nFAILED filter/generated_tests.py::test_strict_build_aborts_on_warning - Faile...\nFAILED filter/generated_tests.py::test_plugin_build_error_hook_observes_build_failure\nFAILED filter/generated_tests.py::test_repo_url_and_site_url_shape_page_edit_links\nFAILED filter/generated_tests.py::test_validation_rejects_unknown_theme_name\n5 failed, 8 passed in 27.24s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783019388.6141765,
+        "duration": 27.030843019485474,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "failed": 5,
+          "passed": 8,
+          "total": 13,
+          "collected": 13
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "filter/generated_tests.py::test_public_package_exposes_version_and_cli_group",
+                "type": "Function",
+                "lineno": 27
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_python_module_version_reports_installed_version",
+                "type": "Function",
+                "lineno": 36
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_load_config_rejects_missing_docs_dir",
+                "type": "Function",
+                "lineno": 50
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_project_config_defaults_include_site_and_theme",
+                "type": "Function",
+                "lineno": 58
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_build_api_writes_site_pages_and_search_assets",
+                "type": "Function",
+                "lineno": 70
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_build_site_dir_override_keeps_config_and_output_consistent",
+                "type": "Function",
+                "lineno": 90
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_strict_build_aborts_on_warning",
+                "type": "Function",
+                "lineno": 102
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_plugin_lifecycle_events_run_during_build",
+                "type": "Function",
+                "lineno": 118
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_plugin_build_error_hook_observes_build_failure",
+                "type": "Function",
+                "lineno": 139
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_repo_url_and_site_url_shape_page_edit_links",
+                "type": "Function",
+                "lineno": 160
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_custom_theme_directory_overrides_main_template",
+                "type": "Function",
+                "lineno": 181
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_validation_rejects_unknown_theme_name",
+                "type": "Function",
+                "lineno": 202
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_full_new_then_build_workflow",
+                "type": "Function",
+                "lineno": 216
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "filter/generated_tests.py::test_public_package_exposes_version_and_cli_group",
+            "lineno": 27,
+            "outcome": "failed",
+            "keywords": [
+              "test_public_package_exposes_version_and_cli_group",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.012879459001851501,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00021659800040652044,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+                "lineno": 31,
+                "message": "AttributeError: 'function' object has no attribute 'name'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 31,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "def test_public_package_exposes_version_and_cli_group():\n        assert isinstance(mkdocs.__version__, str)\n        assert mkdocs.__version__\n>       assert cli.name == \"cli\"\n               ^^^^^^^^\nE       AttributeError: 'function' object has no attribute 'name'\n\nfilter/generated_tests.py:31: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.0004042310029035434,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_python_module_version_reports_installed_version",
+            "lineno": 36,
+            "outcome": "passed",
+            "keywords": [
+              "test_python_module_version_reports_installed_version",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00044385699948179536,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.6033670369979518,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017790499987313524,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_load_config_rejects_missing_docs_dir",
+            "lineno": 50,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_config_rejects_missing_docs_dir",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010445369989611208,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.615968903999601,
+              "outcome": "passed",
+              "log": [
+                {
+                  "name": "mkdocs.config",
+                  "msg": "Config value 'docs_dir': The path '/tmp/pytest-of-shaoyou/pytest-9/test_load_config_rejects_missi0/docs' does not exist.",
+                  "args": null,
+                  "levelname": "ERROR",
+                  "levelno": 40,
+                  "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/config/base.py",
+                  "filename": "base.py",
+                  "module": "base",
+                  "exc_info": null,
+                  "exc_text": null,
+                  "stack_info": null,
+                  "lineno": 151,
+                  "funcName": "load_config",
+                  "created": 1783019378.6693597,
+                  "msecs": 669.0,
+                  "relativeCreated": 27154.602766036987,
+                  "thread": 140211750500160,
+                  "threadName": "MainThread",
+                  "processName": "MainProcess",
+                  "process": 1910
+                }
+              ]
+            },
+            "teardown": {
+              "duration": 0.00018242600344819948,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_project_config_defaults_include_site_and_theme",
+            "lineno": 58,
+            "outcome": "passed",
+            "keywords": [
+              "test_project_config_defaults_include_site_and_theme",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009910469998430926,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.45279085999936797,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000182379997568205,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_build_api_writes_site_pages_and_search_assets",
+            "lineno": 70,
+            "outcome": "passed",
+            "keywords": [
+              "test_build_api_writes_site_pages_and_search_assets",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008076849990175106,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.4751955020001333,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020273999689379707,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_build_site_dir_override_keeps_config_and_output_consistent",
+            "lineno": 90,
+            "outcome": "passed",
+            "keywords": [
+              "test_build_site_dir_override_keeps_config_and_output_consistent",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000772815001255367,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.32474827600162826,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017195100008393638,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_strict_build_aborts_on_warning",
+            "lineno": 102,
+            "outcome": "failed",
+            "keywords": [
+              "test_strict_build_aborts_on_warning",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007254949996422511,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.2533911110003828,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+                "lineno": 115,
+                "message": "Failed: DID NOT RAISE Abort"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 115,
+                  "message": "Failed"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_strict_build_aborts_on_wa0')\n\n    def test_strict_build_aborts_on_warning(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Strict\n            nav:\n              - Missing: missing.md\n            \"\"\",\n            {\"index.md\": \"# Home\"},\n        )\n        config = load_config(config_file=str(config_file), strict=True)\n    \n>       with pytest.raises(Abort):\nE       Failed: DID NOT RAISE Abort\n\nfilter/generated_tests.py:115: Failed"
+            },
+            "teardown": {
+              "duration": 0.0003269419976277277,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_plugin_lifecycle_events_run_during_build",
+            "lineno": 118,
+            "outcome": "passed",
+            "keywords": [
+              "test_plugin_lifecycle_events_run_during_build",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001165784000477288,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3085738039990247,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002164470024581533,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_plugin_build_error_hook_observes_build_failure",
+            "lineno": 139,
+            "outcome": "failed",
+            "keywords": [
+              "test_plugin_build_error_hook_observes_build_failure",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007712990009167697,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.4625812449994555,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+                "lineno": 158,
+                "message": "AssertionError: assert [] == ['RuntimeError']\n  \n  Right contains one more item: 'RuntimeError'\n  Use -v to get more diff"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 158,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_plugin_build_error_hook_o0')\n\n    def test_plugin_build_error_hook_observes_build_failure(tmp_path):\n        seen = []\n    \n        class FailingPlugin(BasePlugin):\n            def on_pre_build(self, *, config):\n                raise RuntimeError(\"boom\")\n    \n            def on_build_error(self, *, error):\n                seen.append(type(error).__name__)\n    \n        config_file = write_project(tmp_path, \"site_name: Error Hook\\n\")\n        config = load_config(config_file=str(config_file))\n        plugins = PluginCollection()\n        plugins[\"failing\"] = FailingPlugin()\n        config.plugins = plugins\n    \n        with pytest.raises(RuntimeError):\n            build(config)\n>       assert seen == [\"RuntimeError\"]\nE       AssertionError: assert [] == ['RuntimeError']\nE         \nE         Right contains one more item: 'RuntimeError'\nE         Use -v to get more diff\n\nfilter/generated_tests.py:158: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00027048900301451795,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_repo_url_and_site_url_shape_page_edit_links",
+            "lineno": 160,
+            "outcome": "failed",
+            "keywords": [
+              "test_repo_url_and_site_url_shape_page_edit_links",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007391629987978376,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.3070670989982318,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+                "lineno": 177,
+                "message": "assert 'https://example.com/docs/' in '<!doctype html>\\n<html><head><meta charset=\"utf-8\"><title>Home - Links</title>\\n\\n</head><body>\\n<nav><a href=\"index.html\">Home</a> </nav>\\n<main>&lt;h1 id=&#34;home&#34;&gt;Home&lt;/h1&gt;</main>\\n\\n</body></html>'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 177,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_repo_url_and_site_url_sha0')\n\n    def test_repo_url_and_site_url_shape_page_edit_links(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Links\n            site_url: https://example.com/docs/\n            repo_url: https://github.com/example/project\n            edit_uri: edit/main/docs/\n            \"\"\",\n            {\"index.md\": \"# Home\"},\n        )\n        config = load_config(config_file=str(config_file))\n    \n        build(config)\n        html = (Path(config.site_dir) / \"index.html\").read_text(encoding=\"utf-8\")\n    \n>       assert \"https://example.com/docs/\" in html\nE       assert 'https://example.com/docs/' in '<!doctype html>\\n<html><head><meta charset=\"utf-8\"><title>Home - Links</title>\\n\\n</head><body>\\n<nav><a href=\"index.html\">Home</a> </nav>\\n<main>&lt;h1 id=&#34;home&#34;&gt;Home&lt;/h1&gt;</main>\\n\\n</body></html>'\n\nfilter/generated_tests.py:177: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00024026699975365773,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_custom_theme_directory_overrides_main_template",
+            "lineno": 181,
+            "outcome": "passed",
+            "keywords": [
+              "test_custom_theme_directory_overrides_main_template",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000871501997607993,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.37147909100167453,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002556789986556396,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_validation_rejects_unknown_theme_name",
+            "lineno": 202,
+            "outcome": "failed",
+            "keywords": [
+              "test_validation_rejects_unknown_theme_name",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007101600021997001,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.305535814997711,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+                "lineno": 213,
+                "message": "Failed: DID NOT RAISE Abort"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 213,
+                  "message": "Failed"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_validation_rejects_unknow0')\n\n    def test_validation_rejects_unknown_theme_name(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Bad Theme\n            theme:\n              name: definitely-not-a-theme\n            \"\"\",\n        )\n    \n>       with pytest.raises(Abort):\nE       Failed: DID NOT RAISE Abort\n\nfilter/generated_tests.py:213: Failed"
+            },
+            "teardown": {
+              "duration": 0.00028459500026656315,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_full_new_then_build_workflow",
+            "lineno": 216,
+            "outcome": "passed",
+            "keywords": [
+              "test_full_new_then_build_workflow",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008177849995263387,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 5.928781087000971,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0005675720021827146,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    },
+    "filter/rewritten_upstream_tests.py": {
+      "returncode": 1,
+      "stdout": ".......F...F.....F......F....FF...F..                                    [100%]\n=================================== FAILURES ===================================\n__________ test_yaml_inherit_deep_merges_mappings_and_replaces_lists ___________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_yaml_inherit_deep_merges_0')\n\n    def test_yaml_inherit_deep_merges_mappings_and_replaces_lists(tmp_path):\n        parent = tmp_path / \"parent.yml\"\n        child = tmp_path / \"child.yml\"\n        parent.write_text(\"site_name: Parent\\nextra:\\n  a: 1\\nnav:\\n  - Home: index.md\\n\", encoding=\"utf-8\")\n        child.write_text(\"INHERIT: parent.yml\\nextra:\\n  b: 2\\nnav:\\n  - Guide: guide.md\\n\", encoding=\"utf-8\")\n    \n        with child.open(encoding=\"utf-8\") as handle:\n>           data = yaml_load(handle)\n                   ^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:129: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsource = <_io.TextIOWrapper name='/tmp/pytest-of-shaoyou/pytest-10/test_yaml_inherit_deep_merges_0/child.yml' mode='r' encoding='utf-8'>\nconfig_file_path = None\n\n    def yaml_load(source, *, config_file_path=None):\n        try:\n            data = yaml.load(source or \"\", Loader=_Loader) if yaml else _simple_yaml_load(source or \"\")\n            data = data or {}\n        except Exception as e:\n            raise ConfigurationError(f\"Error parsing YAML: {e}\") from e\n        if not isinstance(data, dict):\n            raise ConfigurationError(\"The configuration file must contain a YAML mapping.\")\n        inherit = data.get(\"INHERIT\")\n        if inherit:\n            base = Path(config_file_path or \".\").parent\n            parent_path = Path(inherit)\n            if not parent_path.is_absolute():\n                parent_path = base / parent_path\n            if not parent_path.exists():\n>               raise ConfigurationError(f\"Inherited config file does not exist: {parent_path}\")\nE               mkdocs.exceptions.ConfigurationError: Inherited config file does not exist: parent.yml\n\n../../solution/mkdocs/utils/yaml.py:92: ConfigurationError\n_______________________ test_file_directory_url_mapping ________________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_file_directory_url_mappin0')\n\n    def test_file_directory_url_mapping(tmp_path):\n        docs = tmp_path / \"docs\"\n        site = tmp_path / \"site\"\n        docs.mkdir()\n        file = File(\"guide/intro.md\", str(docs), str(site), True)\n    \n        assert file.src_uri == \"guide/intro.md\"\n        assert file.dest_uri == \"guide/intro/index.html\"\n>       assert file.url == \"guide/intro/\"\nE       AssertionError: assert 'guide/intro//' == 'guide/intro/'\nE         \nE         - guide/intro/\nE         + guide/intro//\nE         ?             +\n\nfilter/rewritten_upstream_tests.py:179: AssertionError\n___________________ test_get_files_prefers_index_over_readme ___________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_get_files_prefers_index_o0')\n\n    def test_get_files_prefers_index_over_readme(tmp_path):\n        config = _loaded_config(\n            tmp_path,\n            \"site_name: Example\\n\",\n            {\"index.md\": \"# Home\", \"README.md\": \"# Readme\", \"guide.md\": \"# Guide\"},\n        )\n    \n        files = get_files(config)\n    \n        assert files.get_file_from_path(\"index.md\") is not None\n>       assert files.get_file_from_path(\"README.md\") is None\nE       AssertionError: assert <mkdocs.structure.files.File object at 0x7f7e12553610> is None\nE        +  where <mkdocs.structure.files.File object at 0x7f7e12553610> = get_file_from_path('README.md')\nE        +    where get_file_from_path = <mkdocs.structure.files.Files object at 0x7f7e1231c6d0>.get_file_from_path\n\nfilter/rewritten_upstream_tests.py:269: AssertionError\n_______________ test_template_filters_normalize_urls_and_scripts _______________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_template_filters_normaliz0')\n\n    def test_template_filters_normalize_urls_and_scripts(tmp_path):\n        config = _loaded_config(tmp_path, pages={\"guide/index.md\": \"# Guide\"})\n        file = File(\"guide/index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Guide\", file, config)\n        context = {\"page\": page, \"base_url\": \"\"}\n    \n>       assert url_filter(context, \"assets/app.css\") == \"../assets/app.css\"\nE       assert \"{'page': <mk...ase_url': ''}\" == '../assets/app.css'\nE         \nE         - ../assets/app.css\nE         + {'page': <mkdocs.structure.pages.Page object at 0x7f7e124fe7d0>, 'base_url': ''}\n\nfilter/rewritten_upstream_tests.py:362: AssertionError\n____________ test_search_index_serializes_page_and_section_entries _____________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_search_index_serializes_p0')\n\n    def test_search_index_serializes_page_and_section_entries(tmp_path):\n        config = _loaded_config(tmp_path)\n        file = File(\"index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Home\", file, config)\n        page.content = '<h1 id=\"intro\">Intro</h1><p>Welcome</p>'\n        page.toc = TableOfContents([AnchorLink(\"Intro\", \"intro\", 1)])\n        index = SearchIndex(lang=[\"en\"], separator=r\"[\\s\\-]+\", min_search_length=3, prebuild_index=False, indexing=\"full\")\n    \n        index.add_entry_from_context(page)\n>       payload = json.loads(index.generate_search_index())\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:437: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ns = {'config': {'lang': ['en'], 'separator': '[\\\\s\\\\-]+', 'min_search_length': 3, 'prebuild_index': False, ...}, 'docs': [{'location': 'index.html', 'title': 'Home', 'text': 'Intro Welcome'}]}\ncls = None, object_hook = None, parse_float = None, parse_int = None\nparse_constant = None, object_pairs_hook = None, kw = {}\n\n    def loads(s, *, cls=None, object_hook=None, parse_float=None,\n            parse_int=None, parse_constant=None, object_pairs_hook=None, **kw):\n        \"\"\"Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance\n        containing a JSON document) to a Python object.\n    \n        ``object_hook`` is an optional function that will be called with the\n        result of any object literal decode (a ``dict``). The return value of\n        ``object_hook`` will be used instead of the ``dict``. This feature\n        can be used to implement custom decoders (e.g. JSON-RPC class hinting).\n    \n        ``object_pairs_hook`` is an optional function that will be called with the\n        result of any object literal decoded with an ordered list of pairs.  The\n        return value of ``object_pairs_hook`` will be used instead of the ``dict``.\n        This feature can be used to implement custom decoders.  If ``object_hook``\n        is also defined, the ``object_pairs_hook`` takes priority.\n    \n        ``parse_float``, if specified, will be called with the string\n        of every JSON float to be decoded. By default this is equivalent to\n        float(num_str). This can be used to use another datatype or parser\n        for JSON floats (e.g. decimal.Decimal).\n    \n        ``parse_int``, if specified, will be called with the string\n        of every JSON int to be decoded. By default this is equivalent to\n        int(num_str). This can be used to use another datatype or parser\n        for JSON integers (e.g. float).\n    \n        ``parse_constant``, if specified, will be called with one of the\n        following strings: -Infinity, Infinity, NaN.\n        This can be used to raise an exception if invalid JSON numbers\n        are encountered.\n    \n        To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``\n        kwarg; otherwise ``JSONDecoder`` is used.\n        \"\"\"\n        if isinstance(s, str):\n            if s.startswith('\\ufeff'):\n                raise JSONDecodeError(\"Unexpected UTF-8 BOM (decode using utf-8-sig)\",\n                                      s, 0)\n        else:\n            if not isinstance(s, (bytes, bytearray)):\n>               raise TypeError(f'the JSON object must be str, bytes or bytearray, '\n                                f'not {s.__class__.__name__}')\nE               TypeError: the JSON object must be str, bytes or bytearray, not dict\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py:339: TypeError\n_____________ test_search_index_titles_mode_omits_section_entries ______________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_search_index_titles_mode_0')\n\n    def test_search_index_titles_mode_omits_section_entries(tmp_path):\n        config = _loaded_config(tmp_path)\n        file = File(\"index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Home\", file, config)\n        page.content = '<h1 id=\"intro\">Intro</h1><p>Welcome</p>'\n        page.toc = TableOfContents([AnchorLink(\"Intro\", \"intro\", 1)])\n        index = SearchIndex(lang=[\"en\"], separator=r\"[\\s\\-]+\", min_search_length=3, prebuild_index=False, indexing=\"titles\")\n    \n        index.add_entry_from_context(page)\n>       payload = json.loads(index.generate_search_index())\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:454: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ns = {'config': {'lang': ['en'], 'separator': '[\\\\s\\\\-]+', 'min_search_length': 3, 'prebuild_index': False, ...}, 'docs': [{'location': 'index.html', 'title': 'Home', 'text': 'Intro Welcome'}]}\ncls = None, object_hook = None, parse_float = None, parse_int = None\nparse_constant = None, object_pairs_hook = None, kw = {}\n\n    def loads(s, *, cls=None, object_hook=None, parse_float=None,\n            parse_int=None, parse_constant=None, object_pairs_hook=None, **kw):\n        \"\"\"Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance\n        containing a JSON document) to a Python object.\n    \n        ``object_hook`` is an optional function that will be called with the\n        result of any object literal decode (a ``dict``). The return value of\n        ``object_hook`` will be used instead of the ``dict``. This feature\n        can be used to implement custom decoders (e.g. JSON-RPC class hinting).\n    \n        ``object_pairs_hook`` is an optional function that will be called with the\n        result of any object literal decoded with an ordered list of pairs.  The\n        return value of ``object_pairs_hook`` will be used instead of the ``dict``.\n        This feature can be used to implement custom decoders.  If ``object_hook``\n        is also defined, the ``object_pairs_hook`` takes priority.\n    \n        ``parse_float``, if specified, will be called with the string\n        of every JSON float to be decoded. By default this is equivalent to\n        float(num_str). This can be used to use another datatype or parser\n        for JSON floats (e.g. decimal.Decimal).\n    \n        ``parse_int``, if specified, will be called with the string\n        of every JSON int to be decoded. By default this is equivalent to\n        int(num_str). This can be used to use another datatype or parser\n        for JSON integers (e.g. float).\n    \n        ``parse_constant``, if specified, will be called with one of the\n        following strings: -Infinity, Infinity, NaN.\n        This can be used to raise an exception if invalid JSON numbers\n        are encountered.\n    \n        To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``\n        kwarg; otherwise ``JSONDecoder`` is used.\n        \"\"\"\n        if isinstance(s, str):\n            if s.startswith('\\ufeff'):\n                raise JSONDecodeError(\"Unexpected UTF-8 BOM (decode using utf-8-sig)\",\n                                      s, 0)\n        else:\n            if not isinstance(s, (bytes, bytearray)):\n>               raise TypeError(f'the JSON object must be str, bytes or bytearray, '\n                                f'not {s.__class__.__name__}')\nE               TypeError: the JSON object must be str, bytes or bytearray, not dict\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py:339: TypeError\n__________ test_meta_parser_extracts_yaml_and_multimarkdown_metadata ___________\n\n    def test_meta_parser_extracts_yaml_and_multimarkdown_metadata():\n        yaml_doc = \"---\\ntitle: YAML Title\\n---\\n# Body\"\n        markdown, meta = get_data(yaml_doc)\n>       assert markdown.strip() == \"# Body\"\n               ^^^^^^^^^^^^^^\nE       AttributeError: 'dict' object has no attribute 'strip'\n\nfilter/rewritten_upstream_tests.py:501: AttributeError\n=========================== short test summary info ============================\nFAILED filter/rewritten_upstream_tests.py::test_yaml_inherit_deep_merges_mappings_and_replaces_lists\nFAILED filter/rewritten_upstream_tests.py::test_file_directory_url_mapping - ...\nFAILED filter/rewritten_upstream_tests.py::test_get_files_prefers_index_over_readme\nFAILED filter/rewritten_upstream_tests.py::test_template_filters_normalize_urls_and_scripts\nFAILED filter/rewritten_upstream_tests.py::test_search_index_serializes_page_and_section_entries\nFAILED filter/rewritten_upstream_tests.py::test_search_index_titles_mode_omits_section_entries\nFAILED filter/rewritten_upstream_tests.py::test_meta_parser_extracts_yaml_and_multimarkdown_metadata\n7 failed, 30 passed in 23.87s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783019432.8251028,
+        "duration": 23.73474431037903,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 30,
+          "failed": 7,
+          "total": 37,
+          "collected": 37
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_new_creates_project_config_and_index",
+                "type": "Function",
+                "lineno": 54
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_new_preserves_existing_config_and_index",
+                "type": "Function",
+                "lineno": 62
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_applies_keyword_overrides",
+                "type": "Function",
+                "lineno": 74
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_discovers_mkdocs_yml_before_yaml",
+                "type": "Function",
+                "lineno": 87
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_missing_default_file_raises_configuration_error",
+                "type": "Function",
+                "lineno": 99
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_unknown_config_key_is_warning_and_strict_aborts",
+                "type": "Function",
+                "lineno": 106
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_yaml_env_tag_uses_environment_and_default",
+                "type": "Function",
+                "lineno": 114
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_yaml_inherit_deep_merges_mappings_and_replaces_lists",
+                "type": "Function",
+                "lineno": 121
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_docs_dir_and_site_dir_may_not_contain_each_other",
+                "type": "Function",
+                "lineno": 135
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_config_mapping_and_attribute_access_round_trip",
+                "type": "Function",
+                "lineno": 142
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_config_options_validate_choice_list_and_optional",
+                "type": "Function",
+                "lineno": 158
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_file_directory_url_mapping",
+                "type": "Function",
+                "lineno": 170
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_file_no_directory_url_mapping",
+                "type": "Function",
+                "lineno": 182
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_file_generated_content_and_edit_uri",
+                "type": "Function",
+                "lineno": 192
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_file_generated_requires_exactly_one_source",
+                "type": "Function",
+                "lineno": 218
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_files_collection_replaces_filters_and_removes",
+                "type": "Function",
+                "lineno": 227
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_copy_static_files_copies_included_non_markdown",
+                "type": "Function",
+                "lineno": 246
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_get_files_prefers_index_over_readme",
+                "type": "Function",
+                "lineno": 258
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_page_title_from_metadata_outranks_heading",
+                "type": "Function",
+                "lineno": 272
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_page_title_from_heading_and_filename_fallback",
+                "type": "Function",
+                "lineno": 283
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_page_render_rewrites_internal_markdown_links",
+                "type": "Function",
+                "lineno": 298
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_navigation_builds_sections_links_and_pages",
+                "type": "Function",
+                "lineno": 314
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_pages_omitted_from_explicit_nav_still_get_page_objects",
+                "type": "Function",
+                "lineno": 330
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_theme_mapping_and_custom_dir_precedence",
+                "type": "Function",
+                "lineno": 344
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_template_filters_normalize_urls_and_scripts",
+                "type": "Function",
+                "lineno": 355
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_load_config_validates_schema",
+                "type": "Function",
+                "lineno": 367
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_collection_runs_events_in_priority_order",
+                "type": "Function",
+                "lineno": 380
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_event_returning_none_preserves_current_value",
+                "type": "Function",
+                "lineno": 404
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_search_plugin_config_defaults_and_overrides",
+                "type": "Function",
+                "lineno": 416
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_search_index_serializes_page_and_section_entries",
+                "type": "Function",
+                "lineno": 427
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_search_index_titles_mode_omits_section_entries",
+                "type": "Function",
+                "lineno": 444
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_url_helpers_preserve_external_urls_and_normalize_relative_paths",
+                "type": "Function",
+                "lineno": 459
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_file_and_path_utility_helpers",
+                "type": "Function",
+                "lineno": 469
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_clean_directory_preserves_hidden_entries",
+                "type": "Function",
+                "lineno": 485
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_meta_parser_extracts_yaml_and_multimarkdown_metadata",
+                "type": "Function",
+                "lineno": 497
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_count_handler_counts_records_by_level",
+                "type": "Function",
+                "lineno": 509
+              },
+              {
+                "nodeid": "filter/rewritten_upstream_tests.py::test_build_date_helpers_use_source_date_epoch",
+                "type": "Function",
+                "lineno": 523
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_new_creates_project_config_and_index",
+            "lineno": 54,
+            "outcome": "passed",
+            "keywords": [
+              "test_new_creates_project_config_and_index",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.011423137999372557,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005628950020764023,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017319399921689183,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_new_preserves_existing_config_and_index",
+            "lineno": 62,
+            "outcome": "passed",
+            "keywords": [
+              "test_new_preserves_existing_config_and_index",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008799269999144599,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005887650004297029,
+              "outcome": "passed",
+              "stdout": "Project already exists: /tmp/pytest-of-shaoyou/pytest-10/test_new_preserves_existing_co0/existing\n"
+            },
+            "teardown": {
+              "duration": 0.0001485089997004252,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_applies_keyword_overrides",
+            "lineno": 74,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_config_applies_keyword_overrides",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006719769990013447,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.475062554996839,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019235199943068437,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_discovers_mkdocs_yml_before_yaml",
+            "lineno": 87,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_config_discovers_mkdocs_yml_before_yaml",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00117771800069022,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.2837347829990904,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.013413161999778822,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_missing_default_file_raises_configuration_error",
+            "lineno": 99,
+            "outcome": "passed",
+            "keywords": [
+              "test_load_config_missing_default_file_raises_configuration_error",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011377660011930857,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0025300380002590828,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.011138920999655966,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_unknown_config_key_is_warning_and_strict_aborts",
+            "lineno": 106,
+            "outcome": "passed",
+            "keywords": [
+              "test_unknown_config_key_is_warning_and_strict_aborts",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000842591001855908,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.010273533000145,
+              "outcome": "passed",
+              "log": [
+                {
+                  "name": "mkdocs.config",
+                  "msg": "Config value 'unexpected_key': Unrecognized configuration name.",
+                  "args": null,
+                  "levelname": "WARNING",
+                  "levelno": 30,
+                  "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/config/base.py",
+                  "filename": "base.py",
+                  "module": "base",
+                  "exc_info": null,
+                  "exc_text": null,
+                  "stack_info": null,
+                  "lineno": 149,
+                  "funcName": "load_config",
+                  "created": 1783019414.4002993,
+                  "msecs": 400.0,
+                  "relativeCreated": 21764.082193374634,
+                  "thread": 140179482376000,
+                  "threadName": "MainThread",
+                  "processName": "MainProcess",
+                  "process": 1917
+                },
+                {
+                  "name": "mkdocs.config",
+                  "msg": "Config value 'unexpected_key': Unrecognized configuration name.",
+                  "args": null,
+                  "levelname": "WARNING",
+                  "levelno": 30,
+                  "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/config/base.py",
+                  "filename": "base.py",
+                  "module": "base",
+                  "exc_info": null,
+                  "exc_text": null,
+                  "stack_info": null,
+                  "lineno": 149,
+                  "funcName": "load_config",
+                  "created": 1783019415.0577946,
+                  "msecs": 57.0,
+                  "relativeCreated": 22421.57745361328,
+                  "thread": 140179482376000,
+                  "threadName": "MainThread",
+                  "processName": "MainProcess",
+                  "process": 1917
+                }
+              ]
+            },
+            "teardown": {
+              "duration": 0.00022084100055508316,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_yaml_env_tag_uses_environment_and_default",
+            "lineno": 114,
+            "outcome": "passed",
+            "keywords": [
+              "test_yaml_env_tag_uses_environment_and_default",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005090260019642301,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0007276989999809302,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018166999871027656,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_yaml_inherit_deep_merges_mappings_and_replaces_lists",
+            "lineno": 121,
+            "outcome": "failed",
+            "keywords": [
+              "test_yaml_inherit_deep_merges_mappings_and_replaces_lists",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010693369986256585,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0029698370017285924,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/utils/yaml.py",
+                "lineno": 92,
+                "message": "mkdocs.exceptions.ConfigurationError: Inherited config file does not exist: parent.yml"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 129,
+                  "message": ""
+                },
+                {
+                  "path": "../../solution/mkdocs/utils/yaml.py",
+                  "lineno": 92,
+                  "message": "ConfigurationError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_yaml_inherit_deep_merges_0')\n\n    def test_yaml_inherit_deep_merges_mappings_and_replaces_lists(tmp_path):\n        parent = tmp_path / \"parent.yml\"\n        child = tmp_path / \"child.yml\"\n        parent.write_text(\"site_name: Parent\\nextra:\\n  a: 1\\nnav:\\n  - Home: index.md\\n\", encoding=\"utf-8\")\n        child.write_text(\"INHERIT: parent.yml\\nextra:\\n  b: 2\\nnav:\\n  - Guide: guide.md\\n\", encoding=\"utf-8\")\n    \n        with child.open(encoding=\"utf-8\") as handle:\n>           data = yaml_load(handle)\n                   ^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:129: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsource = <_io.TextIOWrapper name='/tmp/pytest-of-shaoyou/pytest-10/test_yaml_inherit_deep_merges_0/child.yml' mode='r' encoding='utf-8'>\nconfig_file_path = None\n\n    def yaml_load(source, *, config_file_path=None):\n        try:\n            data = yaml.load(source or \"\", Loader=_Loader) if yaml else _simple_yaml_load(source or \"\")\n            data = data or {}\n        except Exception as e:\n            raise ConfigurationError(f\"Error parsing YAML: {e}\") from e\n        if not isinstance(data, dict):\n            raise ConfigurationError(\"The configuration file must contain a YAML mapping.\")\n        inherit = data.get(\"INHERIT\")\n        if inherit:\n            base = Path(config_file_path or \".\").parent\n            parent_path = Path(inherit)\n            if not parent_path.is_absolute():\n                parent_path = base / parent_path\n            if not parent_path.exists():\n>               raise ConfigurationError(f\"Inherited config file does not exist: {parent_path}\")\nE               mkdocs.exceptions.ConfigurationError: Inherited config file does not exist: parent.yml\n\n../../solution/mkdocs/utils/yaml.py:92: ConfigurationError"
+            },
+            "teardown": {
+              "duration": 0.0004306839982746169,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_docs_dir_and_site_dir_may_not_contain_each_other",
+            "lineno": 135,
+            "outcome": "passed",
+            "keywords": [
+              "test_docs_dir_and_site_dir_may_not_contain_each_other",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0012675379985012114,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.24027788099920144,
+              "outcome": "passed",
+              "log": [
+                {
+                  "name": "mkdocs.config",
+                  "msg": "Config value 'site_dir': site_dir and docs_dir must not contain one another.",
+                  "args": null,
+                  "levelname": "ERROR",
+                  "levelno": 40,
+                  "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/config/base.py",
+                  "filename": "base.py",
+                  "module": "base",
+                  "exc_info": null,
+                  "exc_text": null,
+                  "stack_info": null,
+                  "lineno": 151,
+                  "funcName": "load_config",
+                  "created": 1783019429.19774,
+                  "msecs": 197.0,
+                  "relativeCreated": 36561.52296066284,
+                  "thread": 140179482376000,
+                  "threadName": "MainThread",
+                  "processName": "MainProcess",
+                  "process": 1917
+                }
+              ]
+            },
+            "teardown": {
+              "duration": 0.00031349200071417727,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_config_mapping_and_attribute_access_round_trip",
+            "lineno": 142,
+            "outcome": "passed",
+            "keywords": [
+              "test_config_mapping_and_attribute_access_round_trip",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006316589970083442,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00029655500111402944,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002162079981644638,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_config_options_validate_choice_list_and_optional",
+            "lineno": 158,
+            "outcome": "passed",
+            "keywords": [
+              "test_config_options_validate_choice_list_and_optional",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0004470690000744071,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018435500169289298,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014365800234372728,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_file_directory_url_mapping",
+            "lineno": 170,
+            "outcome": "failed",
+            "keywords": [
+              "test_file_directory_url_mapping",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009121189978031907,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0007822740008123219,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 179,
+                "message": "AssertionError: assert 'guide/intro//' == 'guide/intro/'\n  \n  - guide/intro/\n  + guide/intro//\n  ?             +"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 179,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_file_directory_url_mappin0')\n\n    def test_file_directory_url_mapping(tmp_path):\n        docs = tmp_path / \"docs\"\n        site = tmp_path / \"site\"\n        docs.mkdir()\n        file = File(\"guide/intro.md\", str(docs), str(site), True)\n    \n        assert file.src_uri == \"guide/intro.md\"\n        assert file.dest_uri == \"guide/intro/index.html\"\n>       assert file.url == \"guide/intro/\"\nE       AssertionError: assert 'guide/intro//' == 'guide/intro/'\nE         \nE         - guide/intro/\nE         + guide/intro//\nE         ?             +\n\nfilter/rewritten_upstream_tests.py:179: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00023911599782877602,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_file_no_directory_url_mapping",
+            "lineno": 182,
+            "outcome": "passed",
+            "keywords": [
+              "test_file_no_directory_url_mapping",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008727589993213769,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00031232699984684587,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001425520022166893,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_file_generated_content_and_edit_uri",
+            "lineno": 192,
+            "outcome": "passed",
+            "keywords": [
+              "test_file_generated_content_and_edit_uri",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007940770010463893,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.19965738000246347,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018100500165019184,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_file_generated_requires_exactly_one_source",
+            "lineno": 218,
+            "outcome": "passed",
+            "keywords": [
+              "test_file_generated_requires_exactly_one_source",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007997549982974306,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.2228350240002328,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00020848500207648613,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_files_collection_replaces_filters_and_removes",
+            "lineno": 227,
+            "outcome": "passed",
+            "keywords": [
+              "test_files_collection_replaces_filters_and_removes",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009442439986742102,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00036802899921895005,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014741799896000884,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_copy_static_files_copies_included_non_markdown",
+            "lineno": 246,
+            "outcome": "passed",
+            "keywords": [
+              "test_copy_static_files_copies_included_non_markdown",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006926899986865465,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006035280021023937,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014956399900256656,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_get_files_prefers_index_over_readme",
+            "lineno": 258,
+            "outcome": "failed",
+            "keywords": [
+              "test_get_files_prefers_index_over_readme",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006093960000725929,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.201792503001343,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 269,
+                "message": "AssertionError: assert <mkdocs.structure.files.File object at 0x7f7e12553610> is None\n +  where <mkdocs.structure.files.File object at 0x7f7e12553610> = get_file_from_path('README.md')\n +    where get_file_from_path = <mkdocs.structure.files.Files object at 0x7f7e1231c6d0>.get_file_from_path"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 269,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_get_files_prefers_index_o0')\n\n    def test_get_files_prefers_index_over_readme(tmp_path):\n        config = _loaded_config(\n            tmp_path,\n            \"site_name: Example\\n\",\n            {\"index.md\": \"# Home\", \"README.md\": \"# Readme\", \"guide.md\": \"# Guide\"},\n        )\n    \n        files = get_files(config)\n    \n        assert files.get_file_from_path(\"index.md\") is not None\n>       assert files.get_file_from_path(\"README.md\") is None\nE       AssertionError: assert <mkdocs.structure.files.File object at 0x7f7e12553610> is None\nE        +  where <mkdocs.structure.files.File object at 0x7f7e12553610> = get_file_from_path('README.md')\nE        +    where get_file_from_path = <mkdocs.structure.files.Files object at 0x7f7e1231c6d0>.get_file_from_path\n\nfilter/rewritten_upstream_tests.py:269: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00029080500098643824,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_page_title_from_metadata_outranks_heading",
+            "lineno": 272,
+            "outcome": "passed",
+            "keywords": [
+              "test_page_title_from_metadata_outranks_heading",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0026217449994874187,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.21470506300101988,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002549269993323833,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_page_title_from_heading_and_filename_fallback",
+            "lineno": 283,
+            "outcome": "passed",
+            "keywords": [
+              "test_page_title_from_heading_and_filename_fallback",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008269749996543396,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.2691606030020921,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00023343999782809988,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_page_render_rewrites_internal_markdown_links",
+            "lineno": 298,
+            "outcome": "passed",
+            "keywords": [
+              "test_page_render_rewrites_internal_markdown_links",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011713769999914803,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.25413233599829255,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017221100279130042,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_navigation_builds_sections_links_and_pages",
+            "lineno": 314,
+            "outcome": "passed",
+            "keywords": [
+              "test_navigation_builds_sections_links_and_pages",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007744870017631911,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.2715206370012311,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015272700329660438,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_pages_omitted_from_explicit_nav_still_get_page_objects",
+            "lineno": 330,
+            "outcome": "passed",
+            "keywords": [
+              "test_pages_omitted_from_explicit_nav_still_get_page_objects",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008247579971794039,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.21442841500174836,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000181835002877051,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_theme_mapping_and_custom_dir_precedence",
+            "lineno": 344,
+            "outcome": "passed",
+            "keywords": [
+              "test_theme_mapping_and_custom_dir_precedence",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007843019993742928,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00035080299858236685,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011133400039398111,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_template_filters_normalize_urls_and_scripts",
+            "lineno": 355,
+            "outcome": "failed",
+            "keywords": [
+              "test_template_filters_normalize_urls_and_scripts",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000570265001442749,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.20850448100100039,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 362,
+                "message": "assert \"{'page': <mk...ase_url': ''}\" == '../assets/app.css'\n  \n  - ../assets/app.css\n  + {'page': <mkdocs.structure.pages.Page object at 0x7f7e124fe7d0>, 'base_url': ''}"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 362,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_template_filters_normaliz0')\n\n    def test_template_filters_normalize_urls_and_scripts(tmp_path):\n        config = _loaded_config(tmp_path, pages={\"guide/index.md\": \"# Guide\"})\n        file = File(\"guide/index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Guide\", file, config)\n        context = {\"page\": page, \"base_url\": \"\"}\n    \n>       assert url_filter(context, \"assets/app.css\") == \"../assets/app.css\"\nE       assert \"{'page': <mk...ase_url': ''}\" == '../assets/app.css'\nE         \nE         - ../assets/app.css\nE         + {'page': <mkdocs.structure.pages.Page object at 0x7f7e124fe7d0>, 'base_url': ''}\n\nfilter/rewritten_upstream_tests.py:362: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00023545500152977183,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_load_config_validates_schema",
+            "lineno": 367,
+            "outcome": "passed",
+            "keywords": [
+              "test_plugin_load_config_validates_schema",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003622169970185496,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00020207700072205625,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.000130288000946166,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_collection_runs_events_in_priority_order",
+            "lineno": 380,
+            "outcome": "passed",
+            "keywords": [
+              "test_plugin_collection_runs_events_in_priority_order",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00026565100051811896,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002785889992082957,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010099300197907723,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_event_returning_none_preserves_current_value",
+            "lineno": 404,
+            "outcome": "passed",
+            "keywords": [
+              "test_plugin_event_returning_none_preserves_current_value",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00024007700267247856,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00019963299928349443,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010221800039289519,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_search_plugin_config_defaults_and_overrides",
+            "lineno": 416,
+            "outcome": "passed",
+            "keywords": [
+              "test_search_plugin_config_defaults_and_overrides",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002713629983190913,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00011651600289042108,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010358100189478137,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_search_index_serializes_page_and_section_entries",
+            "lineno": 427,
+            "outcome": "failed",
+            "keywords": [
+              "test_search_index_serializes_page_and_section_entries",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006978439996601082,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.20232665600269684,
+              "outcome": "failed",
+              "crash": {
+                "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py",
+                "lineno": 339,
+                "message": "TypeError: the JSON object must be str, bytes or bytearray, not dict"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 437,
+                  "message": ""
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py",
+                  "lineno": 339,
+                  "message": "TypeError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_search_index_serializes_p0')\n\n    def test_search_index_serializes_page_and_section_entries(tmp_path):\n        config = _loaded_config(tmp_path)\n        file = File(\"index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Home\", file, config)\n        page.content = '<h1 id=\"intro\">Intro</h1><p>Welcome</p>'\n        page.toc = TableOfContents([AnchorLink(\"Intro\", \"intro\", 1)])\n        index = SearchIndex(lang=[\"en\"], separator=r\"[\\s\\-]+\", min_search_length=3, prebuild_index=False, indexing=\"full\")\n    \n        index.add_entry_from_context(page)\n>       payload = json.loads(index.generate_search_index())\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:437: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ns = {'config': {'lang': ['en'], 'separator': '[\\\\s\\\\-]+', 'min_search_length': 3, 'prebuild_index': False, ...}, 'docs': [{'location': 'index.html', 'title': 'Home', 'text': 'Intro Welcome'}]}\ncls = None, object_hook = None, parse_float = None, parse_int = None\nparse_constant = None, object_pairs_hook = None, kw = {}\n\n    def loads(s, *, cls=None, object_hook=None, parse_float=None,\n            parse_int=None, parse_constant=None, object_pairs_hook=None, **kw):\n        \"\"\"Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance\n        containing a JSON document) to a Python object.\n    \n        ``object_hook`` is an optional function that will be called with the\n        result of any object literal decode (a ``dict``). The return value of\n        ``object_hook`` will be used instead of the ``dict``. This feature\n        can be used to implement custom decoders (e.g. JSON-RPC class hinting).\n    \n        ``object_pairs_hook`` is an optional function that will be called with the\n        result of any object literal decoded with an ordered list of pairs.  The\n        return value of ``object_pairs_hook`` will be used instead of the ``dict``.\n        This feature can be used to implement custom decoders.  If ``object_hook``\n        is also defined, the ``object_pairs_hook`` takes priority.\n    \n        ``parse_float``, if specified, will be called with the string\n        of every JSON float to be decoded. By default this is equivalent to\n        float(num_str). This can be used to use another datatype or parser\n        for JSON floats (e.g. decimal.Decimal).\n    \n        ``parse_int``, if specified, will be called with the string\n        of every JSON int to be decoded. By default this is equivalent to\n        int(num_str). This can be used to use another datatype or parser\n        for JSON integers (e.g. float).\n    \n        ``parse_constant``, if specified, will be called with one of the\n        following strings: -Infinity, Infinity, NaN.\n        This can be used to raise an exception if invalid JSON numbers\n        are encountered.\n    \n        To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``\n        kwarg; otherwise ``JSONDecoder`` is used.\n        \"\"\"\n        if isinstance(s, str):\n            if s.startswith('\\ufeff'):\n                raise JSONDecodeError(\"Unexpected UTF-8 BOM (decode using utf-8-sig)\",\n                                      s, 0)\n        else:\n            if not isinstance(s, (bytes, bytearray)):\n>               raise TypeError(f'the JSON object must be str, bytes or bytearray, '\n                                f'not {s.__class__.__name__}')\nE               TypeError: the JSON object must be str, bytes or bytearray, not dict\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py:339: TypeError"
+            },
+            "teardown": {
+              "duration": 0.00021475399989867583,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_search_index_titles_mode_omits_section_entries",
+            "lineno": 444,
+            "outcome": "failed",
+            "keywords": [
+              "test_search_index_titles_mode_omits_section_entries",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007984440017025918,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.19899602399891592,
+              "outcome": "failed",
+              "crash": {
+                "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py",
+                "lineno": 339,
+                "message": "TypeError: the JSON object must be str, bytes or bytearray, not dict"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 454,
+                  "message": ""
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py",
+                  "lineno": 339,
+                  "message": "TypeError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_search_index_titles_mode_0')\n\n    def test_search_index_titles_mode_omits_section_entries(tmp_path):\n        config = _loaded_config(tmp_path)\n        file = File(\"index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Home\", file, config)\n        page.content = '<h1 id=\"intro\">Intro</h1><p>Welcome</p>'\n        page.toc = TableOfContents([AnchorLink(\"Intro\", \"intro\", 1)])\n        index = SearchIndex(lang=[\"en\"], separator=r\"[\\s\\-]+\", min_search_length=3, prebuild_index=False, indexing=\"titles\")\n    \n        index.add_entry_from_context(page)\n>       payload = json.loads(index.generate_search_index())\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:454: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ns = {'config': {'lang': ['en'], 'separator': '[\\\\s\\\\-]+', 'min_search_length': 3, 'prebuild_index': False, ...}, 'docs': [{'location': 'index.html', 'title': 'Home', 'text': 'Intro Welcome'}]}\ncls = None, object_hook = None, parse_float = None, parse_int = None\nparse_constant = None, object_pairs_hook = None, kw = {}\n\n    def loads(s, *, cls=None, object_hook=None, parse_float=None,\n            parse_int=None, parse_constant=None, object_pairs_hook=None, **kw):\n        \"\"\"Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance\n        containing a JSON document) to a Python object.\n    \n        ``object_hook`` is an optional function that will be called with the\n        result of any object literal decode (a ``dict``). The return value of\n        ``object_hook`` will be used instead of the ``dict``. This feature\n        can be used to implement custom decoders (e.g. JSON-RPC class hinting).\n    \n        ``object_pairs_hook`` is an optional function that will be called with the\n        result of any object literal decoded with an ordered list of pairs.  The\n        return value of ``object_pairs_hook`` will be used instead of the ``dict``.\n        This feature can be used to implement custom decoders.  If ``object_hook``\n        is also defined, the ``object_pairs_hook`` takes priority.\n    \n        ``parse_float``, if specified, will be called with the string\n        of every JSON float to be decoded. By default this is equivalent to\n        float(num_str). This can be used to use another datatype or parser\n        for JSON floats (e.g. decimal.Decimal).\n    \n        ``parse_int``, if specified, will be called with the string\n        of every JSON int to be decoded. By default this is equivalent to\n        int(num_str). This can be used to use another datatype or parser\n        for JSON integers (e.g. float).\n    \n        ``parse_constant``, if specified, will be called with one of the\n        following strings: -Infinity, Infinity, NaN.\n        This can be used to raise an exception if invalid JSON numbers\n        are encountered.\n    \n        To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``\n        kwarg; otherwise ``JSONDecoder`` is used.\n        \"\"\"\n        if isinstance(s, str):\n            if s.startswith('\\ufeff'):\n                raise JSONDecodeError(\"Unexpected UTF-8 BOM (decode using utf-8-sig)\",\n                                      s, 0)\n        else:\n            if not isinstance(s, (bytes, bytearray)):\n>               raise TypeError(f'the JSON object must be str, bytes or bytearray, '\n                                f'not {s.__class__.__name__}')\nE               TypeError: the JSON object must be str, bytes or bytearray, not dict\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py:339: TypeError"
+            },
+            "teardown": {
+              "duration": 0.0003920599992852658,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_url_helpers_preserve_external_urls_and_normalize_relative_paths",
+            "lineno": 459,
+            "outcome": "passed",
+            "keywords": [
+              "test_url_helpers_preserve_external_urls_and_normalize_relative_paths",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0012803370009351056,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.20092421899971669,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018045199976768345,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_file_and_path_utility_helpers",
+            "lineno": 469,
+            "outcome": "passed",
+            "keywords": [
+              "test_file_and_path_utility_helpers",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008564520030631684,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006781619995308574,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001326829988101963,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_clean_directory_preserves_hidden_entries",
+            "lineno": 485,
+            "outcome": "passed",
+            "keywords": [
+              "test_clean_directory_preserves_hidden_entries",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007504910026909783,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005090150007163174,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013868699898011982,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_meta_parser_extracts_yaml_and_multimarkdown_metadata",
+            "lineno": 497,
+            "outcome": "failed",
+            "keywords": [
+              "test_meta_parser_extracts_yaml_and_multimarkdown_metadata",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00031703100103186443,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003931419996661134,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+                "lineno": 501,
+                "message": "AttributeError: 'dict' object has no attribute 'strip'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/rewritten_upstream_tests.py",
+                  "lineno": 501,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "def test_meta_parser_extracts_yaml_and_multimarkdown_metadata():\n        yaml_doc = \"---\\ntitle: YAML Title\\n---\\n# Body\"\n        markdown, meta = get_data(yaml_doc)\n>       assert markdown.strip() == \"# Body\"\n               ^^^^^^^^^^^^^^\nE       AttributeError: 'dict' object has no attribute 'strip'\n\nfilter/rewritten_upstream_tests.py:501: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.00023614699966856278,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_count_handler_counts_records_by_level",
+            "lineno": 509,
+            "outcome": "passed",
+            "keywords": [
+              "test_count_handler_counts_records_by_level",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00039897199894767255,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00048326099931728095,
+              "outcome": "passed",
+              "log": [
+                {
+                  "name": "mkdocs.tests.rewritten.counts",
+                  "msg": "one",
+                  "args": null,
+                  "levelname": "WARNING",
+                  "levelno": 30,
+                  "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+                  "filename": "rewritten_upstream_tests.py",
+                  "module": "rewritten_upstream_tests",
+                  "exc_info": null,
+                  "exc_text": null,
+                  "stack_info": null,
+                  "lineno": 515,
+                  "funcName": "test_count_handler_counts_records_by_level",
+                  "created": 1783019432.8226745,
+                  "msecs": 822.0,
+                  "relativeCreated": 40186.45739555359,
+                  "thread": 140179482376000,
+                  "threadName": "MainThread",
+                  "processName": "MainProcess",
+                  "process": 1917
+                },
+                {
+                  "name": "mkdocs.tests.rewritten.counts",
+                  "msg": "two",
+                  "args": null,
+                  "levelname": "ERROR",
+                  "levelno": 40,
+                  "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+                  "filename": "rewritten_upstream_tests.py",
+                  "module": "rewritten_upstream_tests",
+                  "exc_info": null,
+                  "exc_text": null,
+                  "stack_info": null,
+                  "lineno": 516,
+                  "funcName": "test_count_handler_counts_records_by_level",
+                  "created": 1783019432.8228407,
+                  "msecs": 822.0,
+                  "relativeCreated": 40186.62357330322,
+                  "thread": 140179482376000,
+                  "threadName": "MainThread",
+                  "processName": "MainProcess",
+                  "process": 1917
+                },
+                {
+                  "name": "mkdocs.tests.rewritten.counts",
+                  "msg": "three",
+                  "args": null,
+                  "levelname": "ERROR",
+                  "levelno": 40,
+                  "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+                  "filename": "rewritten_upstream_tests.py",
+                  "module": "rewritten_upstream_tests",
+                  "exc_info": null,
+                  "exc_text": null,
+                  "stack_info": null,
+                  "lineno": 517,
+                  "funcName": "test_count_handler_counts_records_by_level",
+                  "created": 1783019432.8228762,
+                  "msecs": 822.0,
+                  "relativeCreated": 40186.65909767151,
+                  "thread": 140179482376000,
+                  "threadName": "MainThread",
+                  "processName": "MainProcess",
+                  "process": 1917
+                }
+              ]
+            },
+            "teardown": {
+              "duration": 0.00012044199684169143,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/rewritten_upstream_tests.py::test_build_date_helpers_use_source_date_epoch",
+            "lineno": 523,
+            "outcome": "passed",
+            "keywords": [
+              "test_build_date_helpers_use_source_date_epoch",
+              "rewritten_upstream_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000383700000384124,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002633989970490802,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00040083199928631075,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 12,
+    "passed": 38,
+    "total": 50
+  },
+  "pass_rate_excluding_skips": 0.76,
+  "by_layer": {
+    "atomic": {
+      "failed": 5,
+      "passed": 20,
+      "total": 25
+    },
+    "integration": {
+      "failed": 5,
+      "passed": 10,
+      "total": 15
+    },
+    "system_e2e": {
+      "failed": 2,
+      "passed": 8,
+      "total": 10
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "filter/generated_tests.py::test_public_package_exposes_version_and_cli_group",
+      "base_nodeid": "filter/generated_tests.py::test_public_package_exposes_version_and_cli_group",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00021659800040652044,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+          "lineno": 31,
+          "message": "AttributeError: 'function' object has no attribute 'name'"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 31,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "def test_public_package_exposes_version_and_cli_group():\n        assert isinstance(mkdocs.__version__, str)\n        assert mkdocs.__version__\n>       assert cli.name == \"cli\"\n               ^^^^^^^^\nE       AttributeError: 'function' object has no attribute 'name'\n\nfilter/generated_tests.py:31: AttributeError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_python_module_version_reports_installed_version",
+      "base_nodeid": "filter/generated_tests.py::test_python_module_version_reports_installed_version",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.6033670369979518,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_load_config_rejects_missing_docs_dir",
+      "base_nodeid": "filter/generated_tests.py::test_load_config_rejects_missing_docs_dir",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.615968903999601,
+        "outcome": "passed",
+        "log": [
+          {
+            "name": "mkdocs.config",
+            "msg": "Config value 'docs_dir': The path '/tmp/pytest-of-shaoyou/pytest-9/test_load_config_rejects_missi0/docs' does not exist.",
+            "args": null,
+            "levelname": "ERROR",
+            "levelno": 40,
+            "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/config/base.py",
+            "filename": "base.py",
+            "module": "base",
+            "exc_info": null,
+            "exc_text": null,
+            "stack_info": null,
+            "lineno": 151,
+            "funcName": "load_config",
+            "created": 1783019378.6693597,
+            "msecs": 669.0,
+            "relativeCreated": 27154.602766036987,
+            "thread": 140211750500160,
+            "threadName": "MainThread",
+            "processName": "MainProcess",
+            "process": 1910
+          }
+        ]
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_project_config_defaults_include_site_and_theme",
+      "base_nodeid": "filter/generated_tests.py::test_project_config_defaults_include_site_and_theme",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.45279085999936797,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_build_api_writes_site_pages_and_search_assets",
+      "base_nodeid": "filter/generated_tests.py::test_build_api_writes_site_pages_and_search_assets",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.4751955020001333,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_build_site_dir_override_keeps_config_and_output_consistent",
+      "base_nodeid": "filter/generated_tests.py::test_build_site_dir_override_keeps_config_and_output_consistent",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.32474827600162826,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_strict_build_aborts_on_warning",
+      "base_nodeid": "filter/generated_tests.py::test_strict_build_aborts_on_warning",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.2533911110003828,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+          "lineno": 115,
+          "message": "Failed: DID NOT RAISE Abort"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 115,
+            "message": "Failed"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_strict_build_aborts_on_wa0')\n\n    def test_strict_build_aborts_on_warning(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Strict\n            nav:\n              - Missing: missing.md\n            \"\"\",\n            {\"index.md\": \"# Home\"},\n        )\n        config = load_config(config_file=str(config_file), strict=True)\n    \n>       with pytest.raises(Abort):\nE       Failed: DID NOT RAISE Abort\n\nfilter/generated_tests.py:115: Failed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_plugin_lifecycle_events_run_during_build",
+      "base_nodeid": "filter/generated_tests.py::test_plugin_lifecycle_events_run_during_build",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.3085738039990247,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_plugin_build_error_hook_observes_build_failure",
+      "base_nodeid": "filter/generated_tests.py::test_plugin_build_error_hook_observes_build_failure",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.4625812449994555,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+          "lineno": 158,
+          "message": "AssertionError: assert [] == ['RuntimeError']\n  \n  Right contains one more item: 'RuntimeError'\n  Use -v to get more diff"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 158,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_plugin_build_error_hook_o0')\n\n    def test_plugin_build_error_hook_observes_build_failure(tmp_path):\n        seen = []\n    \n        class FailingPlugin(BasePlugin):\n            def on_pre_build(self, *, config):\n                raise RuntimeError(\"boom\")\n    \n            def on_build_error(self, *, error):\n                seen.append(type(error).__name__)\n    \n        config_file = write_project(tmp_path, \"site_name: Error Hook\\n\")\n        config = load_config(config_file=str(config_file))\n        plugins = PluginCollection()\n        plugins[\"failing\"] = FailingPlugin()\n        config.plugins = plugins\n    \n        with pytest.raises(RuntimeError):\n            build(config)\n>       assert seen == [\"RuntimeError\"]\nE       AssertionError: assert [] == ['RuntimeError']\nE         \nE         Right contains one more item: 'RuntimeError'\nE         Use -v to get more diff\n\nfilter/generated_tests.py:158: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_repo_url_and_site_url_shape_page_edit_links",
+      "base_nodeid": "filter/generated_tests.py::test_repo_url_and_site_url_shape_page_edit_links",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.3070670989982318,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+          "lineno": 177,
+          "message": "assert 'https://example.com/docs/' in '<!doctype html>\\n<html><head><meta charset=\"utf-8\"><title>Home - Links</title>\\n\\n</head><body>\\n<nav><a href=\"index.html\">Home</a> </nav>\\n<main>&lt;h1 id=&#34;home&#34;&gt;Home&lt;/h1&gt;</main>\\n\\n</body></html>'"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 177,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_repo_url_and_site_url_sha0')\n\n    def test_repo_url_and_site_url_shape_page_edit_links(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Links\n            site_url: https://example.com/docs/\n            repo_url: https://github.com/example/project\n            edit_uri: edit/main/docs/\n            \"\"\",\n            {\"index.md\": \"# Home\"},\n        )\n        config = load_config(config_file=str(config_file))\n    \n        build(config)\n        html = (Path(config.site_dir) / \"index.html\").read_text(encoding=\"utf-8\")\n    \n>       assert \"https://example.com/docs/\" in html\nE       assert 'https://example.com/docs/' in '<!doctype html>\\n<html><head><meta charset=\"utf-8\"><title>Home - Links</title>\\n\\n</head><body>\\n<nav><a href=\"index.html\">Home</a> </nav>\\n<main>&lt;h1 id=&#34;home&#34;&gt;Home&lt;/h1&gt;</main>\\n\\n</body></html>'\n\nfilter/generated_tests.py:177: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_custom_theme_directory_overrides_main_template",
+      "base_nodeid": "filter/generated_tests.py::test_custom_theme_directory_overrides_main_template",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.37147909100167453,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_validation_rejects_unknown_theme_name",
+      "base_nodeid": "filter/generated_tests.py::test_validation_rejects_unknown_theme_name",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.305535814997711,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/generated_tests.py",
+          "lineno": 213,
+          "message": "Failed: DID NOT RAISE Abort"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 213,
+            "message": "Failed"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-9/test_validation_rejects_unknow0')\n\n    def test_validation_rejects_unknown_theme_name(tmp_path):\n        config_file = write_project(\n            tmp_path,\n            \"\"\"\n            site_name: Bad Theme\n            theme:\n              name: definitely-not-a-theme\n            \"\"\",\n        )\n    \n>       with pytest.raises(Abort):\nE       Failed: DID NOT RAISE Abort\n\nfilter/generated_tests.py:213: Failed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_full_new_then_build_workflow",
+      "base_nodeid": "filter/generated_tests.py::test_full_new_then_build_workflow",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 5.928781087000971,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_new_creates_project_config_and_index",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_new_creates_project_config_and_index",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005628950020764023,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_new_preserves_existing_config_and_index",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_new_preserves_existing_config_and_index",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005887650004297029,
+        "outcome": "passed",
+        "stdout": "Project already exists: /tmp/pytest-of-shaoyou/pytest-10/test_new_preserves_existing_co0/existing\n"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_applies_keyword_overrides",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_load_config_applies_keyword_overrides",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.475062554996839,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_discovers_mkdocs_yml_before_yaml",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_load_config_discovers_mkdocs_yml_before_yaml",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.2837347829990904,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_load_config_missing_default_file_raises_configuration_error",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_load_config_missing_default_file_raises_configuration_error",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0025300380002590828,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_unknown_config_key_is_warning_and_strict_aborts",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_unknown_config_key_is_warning_and_strict_aborts",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.010273533000145,
+        "outcome": "passed",
+        "log": [
+          {
+            "name": "mkdocs.config",
+            "msg": "Config value 'unexpected_key': Unrecognized configuration name.",
+            "args": null,
+            "levelname": "WARNING",
+            "levelno": 30,
+            "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/config/base.py",
+            "filename": "base.py",
+            "module": "base",
+            "exc_info": null,
+            "exc_text": null,
+            "stack_info": null,
+            "lineno": 149,
+            "funcName": "load_config",
+            "created": 1783019414.4002993,
+            "msecs": 400.0,
+            "relativeCreated": 21764.082193374634,
+            "thread": 140179482376000,
+            "threadName": "MainThread",
+            "processName": "MainProcess",
+            "process": 1917
+          },
+          {
+            "name": "mkdocs.config",
+            "msg": "Config value 'unexpected_key': Unrecognized configuration name.",
+            "args": null,
+            "levelname": "WARNING",
+            "levelno": 30,
+            "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/config/base.py",
+            "filename": "base.py",
+            "module": "base",
+            "exc_info": null,
+            "exc_text": null,
+            "stack_info": null,
+            "lineno": 149,
+            "funcName": "load_config",
+            "created": 1783019415.0577946,
+            "msecs": 57.0,
+            "relativeCreated": 22421.57745361328,
+            "thread": 140179482376000,
+            "threadName": "MainThread",
+            "processName": "MainProcess",
+            "process": 1917
+          }
+        ]
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_yaml_env_tag_uses_environment_and_default",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_yaml_env_tag_uses_environment_and_default",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0007276989999809302,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_yaml_inherit_deep_merges_mappings_and_replaces_lists",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_yaml_inherit_deep_merges_mappings_and_replaces_lists",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0029698370017285924,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/utils/yaml.py",
+          "lineno": 92,
+          "message": "mkdocs.exceptions.ConfigurationError: Inherited config file does not exist: parent.yml"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 129,
+            "message": ""
+          },
+          {
+            "path": "../../solution/mkdocs/utils/yaml.py",
+            "lineno": 92,
+            "message": "ConfigurationError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_yaml_inherit_deep_merges_0')\n\n    def test_yaml_inherit_deep_merges_mappings_and_replaces_lists(tmp_path):\n        parent = tmp_path / \"parent.yml\"\n        child = tmp_path / \"child.yml\"\n        parent.write_text(\"site_name: Parent\\nextra:\\n  a: 1\\nnav:\\n  - Home: index.md\\n\", encoding=\"utf-8\")\n        child.write_text(\"INHERIT: parent.yml\\nextra:\\n  b: 2\\nnav:\\n  - Guide: guide.md\\n\", encoding=\"utf-8\")\n    \n        with child.open(encoding=\"utf-8\") as handle:\n>           data = yaml_load(handle)\n                   ^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:129: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nsource = <_io.TextIOWrapper name='/tmp/pytest-of-shaoyou/pytest-10/test_yaml_inherit_deep_merges_0/child.yml' mode='r' encoding='utf-8'>\nconfig_file_path = None\n\n    def yaml_load(source, *, config_file_path=None):\n        try:\n            data = yaml.load(source or \"\", Loader=_Loader) if yaml else _simple_yaml_load(source or \"\")\n            data = data or {}\n        except Exception as e:\n            raise ConfigurationError(f\"Error parsing YAML: {e}\") from e\n        if not isinstance(data, dict):\n            raise ConfigurationError(\"The configuration file must contain a YAML mapping.\")\n        inherit = data.get(\"INHERIT\")\n        if inherit:\n            base = Path(config_file_path or \".\").parent\n            parent_path = Path(inherit)\n            if not parent_path.is_absolute():\n                parent_path = base / parent_path\n            if not parent_path.exists():\n>               raise ConfigurationError(f\"Inherited config file does not exist: {parent_path}\")\nE               mkdocs.exceptions.ConfigurationError: Inherited config file does not exist: parent.yml\n\n../../solution/mkdocs/utils/yaml.py:92: ConfigurationError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_docs_dir_and_site_dir_may_not_contain_each_other",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_docs_dir_and_site_dir_may_not_contain_each_other",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.24027788099920144,
+        "outcome": "passed",
+        "log": [
+          {
+            "name": "mkdocs.config",
+            "msg": "Config value 'site_dir': site_dir and docs_dir must not contain one another.",
+            "args": null,
+            "levelname": "ERROR",
+            "levelno": 40,
+            "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/config/base.py",
+            "filename": "base.py",
+            "module": "base",
+            "exc_info": null,
+            "exc_text": null,
+            "stack_info": null,
+            "lineno": 151,
+            "funcName": "load_config",
+            "created": 1783019429.19774,
+            "msecs": 197.0,
+            "relativeCreated": 36561.52296066284,
+            "thread": 140179482376000,
+            "threadName": "MainThread",
+            "processName": "MainProcess",
+            "process": 1917
+          }
+        ]
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_config_mapping_and_attribute_access_round_trip",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_config_mapping_and_attribute_access_round_trip",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00029655500111402944,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_config_options_validate_choice_list_and_optional",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_config_options_validate_choice_list_and_optional",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00018435500169289298,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_file_directory_url_mapping",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_file_directory_url_mapping",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0007822740008123219,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 179,
+          "message": "AssertionError: assert 'guide/intro//' == 'guide/intro/'\n  \n  - guide/intro/\n  + guide/intro//\n  ?             +"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 179,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_file_directory_url_mappin0')\n\n    def test_file_directory_url_mapping(tmp_path):\n        docs = tmp_path / \"docs\"\n        site = tmp_path / \"site\"\n        docs.mkdir()\n        file = File(\"guide/intro.md\", str(docs), str(site), True)\n    \n        assert file.src_uri == \"guide/intro.md\"\n        assert file.dest_uri == \"guide/intro/index.html\"\n>       assert file.url == \"guide/intro/\"\nE       AssertionError: assert 'guide/intro//' == 'guide/intro/'\nE         \nE         - guide/intro/\nE         + guide/intro//\nE         ?             +\n\nfilter/rewritten_upstream_tests.py:179: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_file_no_directory_url_mapping",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_file_no_directory_url_mapping",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00031232699984684587,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_file_generated_content_and_edit_uri",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_file_generated_content_and_edit_uri",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.19965738000246347,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_file_generated_requires_exactly_one_source",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_file_generated_requires_exactly_one_source",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.2228350240002328,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_files_collection_replaces_filters_and_removes",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_files_collection_replaces_filters_and_removes",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00036802899921895005,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_copy_static_files_copies_included_non_markdown",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_copy_static_files_copies_included_non_markdown",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006035280021023937,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_get_files_prefers_index_over_readme",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_get_files_prefers_index_over_readme",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.201792503001343,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 269,
+          "message": "AssertionError: assert <mkdocs.structure.files.File object at 0x7f7e12553610> is None\n +  where <mkdocs.structure.files.File object at 0x7f7e12553610> = get_file_from_path('README.md')\n +    where get_file_from_path = <mkdocs.structure.files.Files object at 0x7f7e1231c6d0>.get_file_from_path"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 269,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_get_files_prefers_index_o0')\n\n    def test_get_files_prefers_index_over_readme(tmp_path):\n        config = _loaded_config(\n            tmp_path,\n            \"site_name: Example\\n\",\n            {\"index.md\": \"# Home\", \"README.md\": \"# Readme\", \"guide.md\": \"# Guide\"},\n        )\n    \n        files = get_files(config)\n    \n        assert files.get_file_from_path(\"index.md\") is not None\n>       assert files.get_file_from_path(\"README.md\") is None\nE       AssertionError: assert <mkdocs.structure.files.File object at 0x7f7e12553610> is None\nE        +  where <mkdocs.structure.files.File object at 0x7f7e12553610> = get_file_from_path('README.md')\nE        +    where get_file_from_path = <mkdocs.structure.files.Files object at 0x7f7e1231c6d0>.get_file_from_path\n\nfilter/rewritten_upstream_tests.py:269: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_page_title_from_metadata_outranks_heading",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_page_title_from_metadata_outranks_heading",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.21470506300101988,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_page_title_from_heading_and_filename_fallback",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_page_title_from_heading_and_filename_fallback",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.2691606030020921,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_page_render_rewrites_internal_markdown_links",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_page_render_rewrites_internal_markdown_links",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.25413233599829255,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_navigation_builds_sections_links_and_pages",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_navigation_builds_sections_links_and_pages",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.2715206370012311,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_pages_omitted_from_explicit_nav_still_get_page_objects",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_pages_omitted_from_explicit_nav_still_get_page_objects",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.21442841500174836,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_theme_mapping_and_custom_dir_precedence",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_theme_mapping_and_custom_dir_precedence",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00035080299858236685,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_template_filters_normalize_urls_and_scripts",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_template_filters_normalize_urls_and_scripts",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.20850448100100039,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 362,
+          "message": "assert \"{'page': <mk...ase_url': ''}\" == '../assets/app.css'\n  \n  - ../assets/app.css\n  + {'page': <mkdocs.structure.pages.Page object at 0x7f7e124fe7d0>, 'base_url': ''}"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 362,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_template_filters_normaliz0')\n\n    def test_template_filters_normalize_urls_and_scripts(tmp_path):\n        config = _loaded_config(tmp_path, pages={\"guide/index.md\": \"# Guide\"})\n        file = File(\"guide/index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Guide\", file, config)\n        context = {\"page\": page, \"base_url\": \"\"}\n    \n>       assert url_filter(context, \"assets/app.css\") == \"../assets/app.css\"\nE       assert \"{'page': <mk...ase_url': ''}\" == '../assets/app.css'\nE         \nE         - ../assets/app.css\nE         + {'page': <mkdocs.structure.pages.Page object at 0x7f7e124fe7d0>, 'base_url': ''}\n\nfilter/rewritten_upstream_tests.py:362: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_load_config_validates_schema",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_plugin_load_config_validates_schema",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00020207700072205625,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_collection_runs_events_in_priority_order",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_plugin_collection_runs_events_in_priority_order",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002785889992082957,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_plugin_event_returning_none_preserves_current_value",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_plugin_event_returning_none_preserves_current_value",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00019963299928349443,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_search_plugin_config_defaults_and_overrides",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_search_plugin_config_defaults_and_overrides",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00011651600289042108,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_search_index_serializes_page_and_section_entries",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_search_index_serializes_page_and_section_entries",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.20232665600269684,
+        "outcome": "failed",
+        "crash": {
+          "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py",
+          "lineno": 339,
+          "message": "TypeError: the JSON object must be str, bytes or bytearray, not dict"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 437,
+            "message": ""
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py",
+            "lineno": 339,
+            "message": "TypeError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_search_index_serializes_p0')\n\n    def test_search_index_serializes_page_and_section_entries(tmp_path):\n        config = _loaded_config(tmp_path)\n        file = File(\"index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Home\", file, config)\n        page.content = '<h1 id=\"intro\">Intro</h1><p>Welcome</p>'\n        page.toc = TableOfContents([AnchorLink(\"Intro\", \"intro\", 1)])\n        index = SearchIndex(lang=[\"en\"], separator=r\"[\\s\\-]+\", min_search_length=3, prebuild_index=False, indexing=\"full\")\n    \n        index.add_entry_from_context(page)\n>       payload = json.loads(index.generate_search_index())\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:437: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ns = {'config': {'lang': ['en'], 'separator': '[\\\\s\\\\-]+', 'min_search_length': 3, 'prebuild_index': False, ...}, 'docs': [{'location': 'index.html', 'title': 'Home', 'text': 'Intro Welcome'}]}\ncls = None, object_hook = None, parse_float = None, parse_int = None\nparse_constant = None, object_pairs_hook = None, kw = {}\n\n    def loads(s, *, cls=None, object_hook=None, parse_float=None,\n            parse_int=None, parse_constant=None, object_pairs_hook=None, **kw):\n        \"\"\"Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance\n        containing a JSON document) to a Python object.\n    \n        ``object_hook`` is an optional function that will be called with the\n        result of any object literal decode (a ``dict``). The return value of\n        ``object_hook`` will be used instead of the ``dict``. This feature\n        can be used to implement custom decoders (e.g. JSON-RPC class hinting).\n    \n        ``object_pairs_hook`` is an optional function that will be called with the\n        result of any object literal decoded with an ordered list of pairs.  The\n        return value of ``object_pairs_hook`` will be used instead of the ``dict``.\n        This feature can be used to implement custom decoders.  If ``object_hook``\n        is also defined, the ``object_pairs_hook`` takes priority.\n    \n        ``parse_float``, if specified, will be called with the string\n        of every JSON float to be decoded. By default this is equivalent to\n        float(num_str). This can be used to use another datatype or parser\n        for JSON floats (e.g. decimal.Decimal).\n    \n        ``parse_int``, if specified, will be called with the string\n        of every JSON int to be decoded. By default this is equivalent to\n        int(num_str). This can be used to use another datatype or parser\n        for JSON integers (e.g. float).\n    \n        ``parse_constant``, if specified, will be called with one of the\n        following strings: -Infinity, Infinity, NaN.\n        This can be used to raise an exception if invalid JSON numbers\n        are encountered.\n    \n        To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``\n        kwarg; otherwise ``JSONDecoder`` is used.\n        \"\"\"\n        if isinstance(s, str):\n            if s.startswith('\\ufeff'):\n                raise JSONDecodeError(\"Unexpected UTF-8 BOM (decode using utf-8-sig)\",\n                                      s, 0)\n        else:\n            if not isinstance(s, (bytes, bytearray)):\n>               raise TypeError(f'the JSON object must be str, bytes or bytearray, '\n                                f'not {s.__class__.__name__}')\nE               TypeError: the JSON object must be str, bytes or bytearray, not dict\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py:339: TypeError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_search_index_titles_mode_omits_section_entries",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_search_index_titles_mode_omits_section_entries",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.19899602399891592,
+        "outcome": "failed",
+        "crash": {
+          "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py",
+          "lineno": 339,
+          "message": "TypeError: the JSON object must be str, bytes or bytearray, not dict"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 454,
+            "message": ""
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py",
+            "lineno": 339,
+            "message": "TypeError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-10/test_search_index_titles_mode_0')\n\n    def test_search_index_titles_mode_omits_section_entries(tmp_path):\n        config = _loaded_config(tmp_path)\n        file = File(\"index.md\", config.docs_dir, config.site_dir, config.use_directory_urls)\n        page = Page(\"Home\", file, config)\n        page.content = '<h1 id=\"intro\">Intro</h1><p>Welcome</p>'\n        page.toc = TableOfContents([AnchorLink(\"Intro\", \"intro\", 1)])\n        index = SearchIndex(lang=[\"en\"], separator=r\"[\\s\\-]+\", min_search_length=3, prebuild_index=False, indexing=\"titles\")\n    \n        index.add_entry_from_context(page)\n>       payload = json.loads(index.generate_search_index())\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nfilter/rewritten_upstream_tests.py:454: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ns = {'config': {'lang': ['en'], 'separator': '[\\\\s\\\\-]+', 'min_search_length': 3, 'prebuild_index': False, ...}, 'docs': [{'location': 'index.html', 'title': 'Home', 'text': 'Intro Welcome'}]}\ncls = None, object_hook = None, parse_float = None, parse_int = None\nparse_constant = None, object_pairs_hook = None, kw = {}\n\n    def loads(s, *, cls=None, object_hook=None, parse_float=None,\n            parse_int=None, parse_constant=None, object_pairs_hook=None, **kw):\n        \"\"\"Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance\n        containing a JSON document) to a Python object.\n    \n        ``object_hook`` is an optional function that will be called with the\n        result of any object literal decode (a ``dict``). The return value of\n        ``object_hook`` will be used instead of the ``dict``. This feature\n        can be used to implement custom decoders (e.g. JSON-RPC class hinting).\n    \n        ``object_pairs_hook`` is an optional function that will be called with the\n        result of any object literal decoded with an ordered list of pairs.  The\n        return value of ``object_pairs_hook`` will be used instead of the ``dict``.\n        This feature can be used to implement custom decoders.  If ``object_hook``\n        is also defined, the ``object_pairs_hook`` takes priority.\n    \n        ``parse_float``, if specified, will be called with the string\n        of every JSON float to be decoded. By default this is equivalent to\n        float(num_str). This can be used to use another datatype or parser\n        for JSON floats (e.g. decimal.Decimal).\n    \n        ``parse_int``, if specified, will be called with the string\n        of every JSON int to be decoded. By default this is equivalent to\n        int(num_str). This can be used to use another datatype or parser\n        for JSON integers (e.g. float).\n    \n        ``parse_constant``, if specified, will be called with one of the\n        following strings: -Infinity, Infinity, NaN.\n        This can be used to raise an exception if invalid JSON numbers\n        are encountered.\n    \n        To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``\n        kwarg; otherwise ``JSONDecoder`` is used.\n        \"\"\"\n        if isinstance(s, str):\n            if s.startswith('\\ufeff'):\n                raise JSONDecodeError(\"Unexpected UTF-8 BOM (decode using utf-8-sig)\",\n                                      s, 0)\n        else:\n            if not isinstance(s, (bytes, bytearray)):\n>               raise TypeError(f'the JSON object must be str, bytes or bytearray, '\n                                f'not {s.__class__.__name__}')\nE               TypeError: the JSON object must be str, bytes or bytearray, not dict\n\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/json/__init__.py:339: TypeError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_url_helpers_preserve_external_urls_and_normalize_relative_paths",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_url_helpers_preserve_external_urls_and_normalize_relative_paths",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.20092421899971669,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_file_and_path_utility_helpers",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_file_and_path_utility_helpers",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006781619995308574,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_clean_directory_preserves_hidden_entries",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_clean_directory_preserves_hidden_entries",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005090150007163174,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_meta_parser_extracts_yaml_and_multimarkdown_metadata",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_meta_parser_extracts_yaml_and_multimarkdown_metadata",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0003931419996661134,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+          "lineno": 501,
+          "message": "AttributeError: 'dict' object has no attribute 'strip'"
+        },
+        "traceback": [
+          {
+            "path": "filter/rewritten_upstream_tests.py",
+            "lineno": 501,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "def test_meta_parser_extracts_yaml_and_multimarkdown_metadata():\n        yaml_doc = \"---\\ntitle: YAML Title\\n---\\n# Body\"\n        markdown, meta = get_data(yaml_doc)\n>       assert markdown.strip() == \"# Body\"\n               ^^^^^^^^^^^^^^\nE       AttributeError: 'dict' object has no attribute 'strip'\n\nfilter/rewritten_upstream_tests.py:501: AttributeError"
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_count_handler_counts_records_by_level",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_count_handler_counts_records_by_level",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00048326099931728095,
+        "outcome": "passed",
+        "log": [
+          {
+            "name": "mkdocs.tests.rewritten.counts",
+            "msg": "one",
+            "args": null,
+            "levelname": "WARNING",
+            "levelno": 30,
+            "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+            "filename": "rewritten_upstream_tests.py",
+            "module": "rewritten_upstream_tests",
+            "exc_info": null,
+            "exc_text": null,
+            "stack_info": null,
+            "lineno": 515,
+            "funcName": "test_count_handler_counts_records_by_level",
+            "created": 1783019432.8226745,
+            "msecs": 822.0,
+            "relativeCreated": 40186.45739555359,
+            "thread": 140179482376000,
+            "threadName": "MainThread",
+            "processName": "MainProcess",
+            "process": 1917
+          },
+          {
+            "name": "mkdocs.tests.rewritten.counts",
+            "msg": "two",
+            "args": null,
+            "levelname": "ERROR",
+            "levelno": 40,
+            "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+            "filename": "rewritten_upstream_tests.py",
+            "module": "rewritten_upstream_tests",
+            "exc_info": null,
+            "exc_text": null,
+            "stack_info": null,
+            "lineno": 516,
+            "funcName": "test_count_handler_counts_records_by_level",
+            "created": 1783019432.8228407,
+            "msecs": 822.0,
+            "relativeCreated": 40186.62357330322,
+            "thread": 140179482376000,
+            "threadName": "MainThread",
+            "processName": "MainProcess",
+            "process": 1917
+          },
+          {
+            "name": "mkdocs.tests.rewritten.counts",
+            "msg": "three",
+            "args": null,
+            "levelname": "ERROR",
+            "levelno": 40,
+            "pathname": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-mkdocs-specv1-20260701-001/score-wsl-50/oracle_worktree/filter/rewritten_upstream_tests.py",
+            "filename": "rewritten_upstream_tests.py",
+            "module": "rewritten_upstream_tests",
+            "exc_info": null,
+            "exc_text": null,
+            "stack_info": null,
+            "lineno": 517,
+            "funcName": "test_count_handler_counts_records_by_level",
+            "created": 1783019432.8228762,
+            "msecs": 822.0,
+            "relativeCreated": 40186.65909767151,
+            "thread": 140179482376000,
+            "threadName": "MainThread",
+            "processName": "MainProcess",
+            "process": 1917
+          }
+        ]
+      }
+    },
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_build_date_helpers_use_source_date_epoch",
+      "base_nodeid": "filter/rewritten_upstream_tests.py::test_build_date_helpers_use_source_date_epoch",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002633989970490802,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "task_id": "httpcore-transport-fullrepro-001",
+  "status": "QUALIFIED",
+  "qualified_date": "2026-07-04",
+  "spec_version": "v2",
+  "oracle_version": "20260704T114845Z",
+  "oracle_count": 64,
+  "oracle_source": "generated_only",
+  "scorer_isolation": "score_pytest_original.py --remove-path httpcore",
+  "platform": "Linux/WSL",
+  "reference_score": "wip/httpcore-transport-fullrepro-001/filter/reference_score.json",
+  "candidate_score": "candidate-runs/codex-httpcore-specv1-20260704-001/score_retry_specv2/score_result.json",
+  "score_result": "tasks/httpcore-transport-fullrepro-001/score_result.json",
+  "diagnosis_report": "tasks/httpcore-transport-fullrepro-001/diagnosis_report.md",
+  "candidate_passed": 58,
+  "candidate_total": 64,
+  "reference_passed": 64,
+  "reference_total": 64,
+  "remove_paths": [
+    "httpcore"
+  ],
+  "by_layer": {
+    "atomic": {
+      "passed": 15,
+      "total": 15
+    },
+    "integration": {
+      "passed": 30,
+      "failed": 5,
+      "total": 35
+    },
+    "system_e2e": {
+      "passed": 13,
+      "failed": 1,
+      "total": 14
+    }
+  },
+  "labels": [
+    "generated-only-oracle",
+    "discriminating",
+    "public-backend-contract",
+    "streaming-boundary",
+    "tls-default-context",
+    "partial-map-coverage-acceptable"
+  ],
+  "caveats": [
+    "CANDIDATES.md not edited because worker write scope was limited to task directories",
+    "pytest-json-report loaded from .envs/s4-score-linux; h11 and a certifi shim loaded from wip deps for local WSL scorer",
+    "Gate D direct-map coverage is partial for overview/meta and cross-cutting summary sections; concrete core transport behaviors are covered through narrower mapped sections",
+    "Candidate run name and preserved task_prompt.txt reflect the earlier spec_v1 packet; this terminal judgment uses the requested formal spec_v2 score"
+  ]
+}

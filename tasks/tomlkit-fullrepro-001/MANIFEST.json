@@ -1,0 +1,50 @@
+{
+  "task_id": "tomlkit-fullrepro-001",
+  "status": "QUALIFIED",
+  "oracle_version": "20260704-v4-repair",
+  "oracle_count_base": 96,
+  "oracle_count_expanded": 195,
+  "oracle_source": "upstream_plus_generated",
+  "scorer_isolation": "--remove-path tomlkit",
+  "artifacts": {
+    "spec": "spec.md",
+    "kept_nodeids": "kept_nodeids.txt",
+    "taxonomy": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "score_result": "score_result.json",
+    "diagnosis_report": "diagnosis_report.md",
+    "reference_score": "reference_score.json"
+  },
+  "reference_gate": {
+    "result": "195/195 passed (expanded)",
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.29",
+    "oracle_carrier": "tmp/tomlkit-oracle-repair-20260704",
+    "source": "wip/tomlkit-fullrepro-001/filter/reference_score_filter_v4.json"
+  },
+  "candidate_score": {
+    "score_result_source": "candidate-runs/codex-tomlkit-specv5-20260630-001/score_filter_v4.json",
+    "result": "106/195 passed (expanded)",
+    "passed": 106,
+    "failed": 89,
+    "total": 195,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.29"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "diagnosis_report": "diagnosis_report.md",
+    "source": "wip/tomlkit-fullrepro-001/judge/diagnosis_report_v4_20260704.md",
+    "date": "2026-07-04"
+  },
+  "labels": [
+    "discriminating",
+    "style-preservation-signal",
+    "cross-view-consistency-signal",
+    "public-generated-carrier"
+  ],
+  "notes": [
+    "2026-07-09 shipping sync: previous tasks/ contents (86/150 free-text-platform score with kept=266 denominator mismatch) moved to archive/superseded-20260709/tomlkit-fullrepro-001/. This package now carries the 2026-07-04 judge-certified v4 195-expanded-case WSL chain.",
+    "spec.md is byte-identical to candidate-runs/codex-tomlkit-specv5-20260630-001/input/spec.md (what the candidate saw). It contains the word 'benchmark' once in the intro sentence ('non-public benchmark artifacts are outside the contract'); this predates the cleanroom forbidden-word gate and is retained verbatim because altering the shipped spec would desynchronize it from the scored run. Flagged for wording cleanup at next legitimate respec/re-evaluation cycle.",
+    "kept_nodeids.txt lists 96 base nodeids; parametrization expands to 195 scored cases in score/reference files.",
+    "The 2026-07-03 user-authorized exception row in CANDIDATES.md is superseded by this certified chain."
+  ]
+}

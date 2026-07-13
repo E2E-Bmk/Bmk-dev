@@ -39,6 +39,10 @@ A failure on a test that violates either condition is a **verifier failure**, no
 
 All three must pass for any results to be considered valid.
 
+### 0. Role Boundary
+
+The judge reads artifacts and produces verdicts. The judge does not modify oracle files, add test cases, or strengthen kept_nodeids.txt. Any gap found during judging must be returned to test-filter via `filter_correction_request.md` (filter_iter + 1). Adding a test case to the oracle and then judging against it in the same pass is invalid.
+
 ### 1. Anti-Cheat
 
 Before reading any score, run an import provenance preflight:
@@ -50,6 +54,8 @@ python -c "import <pkg>; print(<pkg>.__file__)"
 **Write the literal output of this command into your diagnosis report as a `Preflight output` block before opening any score file or quoting any score value.** If this block is absent from your report, the report is structurally invalid — do not proceed.
 
 This must point into the candidate solution directory, not the oracle worktree or any installed package. If running pytest from a copied source worktree, `sys.path[0]` may shadow `PYTHONPATH` — use `--remove-path <package>` when invoking pytest, or confirm via the preflight above before accepting any score. If provenance check fails, fix the environment and re-run.
+
+**High-score mandatory probe:** for any run where candidate pass rate ≥ 95%, the preflight probe is not optional — it is a prerequisite for reading any score value. If the probe output shows `__file__` pointing outside the candidate solution directory, the run is invalid regardless of score. Record the probe output verbatim in the diagnosis report before citing any number.
 
 Then scan the agent's full trajectory/log for any access to information the model should not have. Any match -> mark run `CHEAT_DETECTED`, discard score.
 
@@ -82,7 +88,14 @@ The reference pass rate establishes the ceiling: the task is only valid if the o
 
 **Gate A — Spec mapping spot-check**
 
-Sample a subset of `covered` rows from `spec_test_map.md`. For each sampled test, verify the spec_section mapping is correct — that a senior engineer reading only that spec section could predict the test outcome. If spot-check finds incorrect mappings -> return to test-filter to correct the map.
+Sample a subset of `covered` rows from `spec_test_map.md`. For each sampled test, record a four-column table:
+
+| nodeid | assertion summary | spec_section | verdict |
+|--------|------------------|--------------|---------|
+
+The `spec_section` cell must quote the exact heading from the spec file. The `verdict` cell is `derivable` only if a senior engineer reading that section could predict the test outcome without any other information. Writing `derivable` without quoting the spec section is invalid — the row must be completed in full or the spot-check does not count.
+
+If spot-check finds incorrect mappings → return to test-filter to correct the map.
 
 **Gate B — Failure pattern audit**
 
@@ -94,11 +107,16 @@ If the majority of failures cluster around undocumented atomic internal shapes, 
 
 **Gate C — Generated-only oracle spot-check**
 
-If `spec_test_map.md` header contains `oracle_source: generated_only`, the tests were machine-generated and have not been author-validated. Manually sample >= 5 generated tests and re-apply the two core principles to each:
-- **Spec-driven**: is the assertion's expected value derivable from a specific spec section? Or did the generator infer it from its own spec reading (circular)?
-- **Behavioral**: would a correct reimplementation with different internals pass this test? Or does it check repr format, internal field names, or exact error message text?
+If `spec_test_map.md` header contains `oracle_source: generated_only`, manually sample >= 5 generated tests and record a four-column table for each:
 
-If Gate C fails, return `filter_correction_request.md` to test-filter for regeneration.
+| nodeid | assertion summary | spec_section | verdict |
+|--------|------------------|--------------|---------|
+
+Apply both core principles per row:
+- **Spec-driven**: is the assertion's expected value derivable from the quoted `spec_section`? Mark `circular` if the generator inferred the value from its own spec reading rather than from reference execution.
+- **Behavioral**: would a correct reimplementation with different internals pass this test? Mark `internal-shape` if the test checks repr format, internal field names, or exact error message text.
+
+Any `circular` or `internal-shape` verdict → return `filter_correction_request.md` to test-filter for regeneration.
 
 **Gate D — Coverage Gap Audit**
 
@@ -134,6 +152,19 @@ Examples of the kind of labels that carry signal:
 These are examples, not an exhaustive set. If the evidence suggests a label not listed here, add it.
 
 **Saturation heuristic (mandatory check when candidate pass rate = 100%):** If the candidate consolidates the upstream package into significantly fewer files than the original (e.g. 4 files vs 20+) AND achieves 100% pass rate, apply both `trivially-solved` and `saturated-candidate-score`. Record in the diagnosis report that the run pattern is consistent with recall from training data rather than reconstruction from spec. This does not block QUALIFIED but must appear in MANIFEST caveats.
+
+---
+
+## REOPENED_S3 Protocol
+
+If any oracle file (kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md) is modified after a task has reached QUALIFIED status:
+
+1. Set `state → REOPENED_S3` in PIPELINE_STATE.md.
+2. Add `superseded_by: {new_oracle_version}` to the existing CANDIDATES.md QUALIFIED row — do not overwrite it.
+3. Invalidate the existing score_result.json by renaming it `score_result_superseded_{date}.json`.
+4. Re-run Stage 4 → Stage 5 against the new oracle before reinstating QUALIFIED.
+
+The transition `QUALIFIED → QUALIFIED` (same state, updated oracle, no re-run) is explicitly forbidden.
 
 ---
 

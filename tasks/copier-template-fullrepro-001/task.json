@@ -1,0 +1,80 @@
+{
+  "instance_id": "copier-template-fullrepro-001",
+  "status": "REVALIDATION-REQUIRED",
+  "repo": "",
+  "repo_commit": "",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 51,
+    "scorer_isolation": [
+      "--remove-path"
+    ]
+  },
+  "taxonomy": {
+    "generated_tests.test_run_copy_renders_file_contents_and_paths": "integration",
+    "generated_tests.test_defaults_mode_uses_question_defaults": "atomic",
+    "generated_tests.test_api_data_overrides_template_default": "atomic",
+    "generated_tests.test_settings_defaults_are_used_when_defaults_mode_is_enabled": "integration",
+    "generated_tests.test_custom_answers_file_path_is_used_for_recorded_answers": "integration",
+    "generated_tests.test_exclude_omits_matching_template_files": "atomic",
+    "generated_tests.test_skip_if_exists_preserves_existing_destination_file": "integration",
+    "generated_tests.test_force_overwrites_existing_destination_file": "integration",
+    "generated_tests.test_jinja_environment_settings_change_template_syntax": "integration",
+    "generated_tests.test_multiple_config_files_raise_documented_error": "atomic",
+    "generated_tests.test_minimum_version_blocks_unsupported_template": "atomic",
+    "generated_tests.test_secret_answer_can_render_but_is_not_recorded": "integration",
+    "generated_tests.test_subdirectory_template_root_only_copies_that_tree": "integration",
+    "generated_tests.test_task_runs_when_template_is_trusted": "system_e2e",
+    "generated_tests.test_skip_tasks_avoids_running_trusted_tasks": "system_e2e",
+    "generated_tests.test_load_settings_reads_yaml_defaults_and_trust": "atomic",
+    "generated_tests.test_invalid_settings_yaml_raises_settings_error": "atomic",
+    "generated_tests.test_cli_copy_with_defaults_renders_template": "system_e2e",
+    "generated_tests.test_cli_data_overrides_default": "system_e2e",
+    "generated_tests.test_cli_data_file_is_used_for_answers": "system_e2e",
+    "generated_tests.test_cli_data_takes_precedence_over_data_file": "system_e2e",
+    "generated_tests.test_cli_force_overwrites_existing_file": "system_e2e",
+    "generated_tests.test_cli_refuses_unsafe_task_without_trust_exit_4": "system_e2e",
+    "generated_tests.test_question_type_int_parses_api_data": "atomic",
+    "generated_tests.test_question_type_bool_parses_cli_data": "system_e2e",
+    "generated_tests.test_question_type_float_parses_api_data": "atomic",
+    "generated_tests.test_question_type_yaml_preserves_list_value": "atomic",
+    "generated_tests.test_configuration_defaults_are_available_to_rendering": "atomic",
+    "generated_tests.test_phase_variable_is_render_during_file_render": "atomic",
+    "generated_tests.test_python_variable_points_to_current_interpreter": "atomic",
+    "generated_tests.test_public_import_surface_includes_recopy_update_phase_and_vcsref": "atomic",
+    "generated_tests.test_phase_context_manager_restores_previous_phase": "atomic",
+    "generated_tests.test_vcsref_current_string_is_accepted_by_copy_api": "atomic",
+    "generated_tests.test_pretend_copy_leaves_destination_unchanged": "integration",
+    "generated_tests.test_custom_answers_file_argument_overrides_template_setting": "integration",
+    "generated_tests.test_run_recopy_reuses_recorded_source_and_answers": "system_e2e",
+    "generated_tests.test_run_recopy_data_overrides_recorded_answers": "integration",
+    "generated_tests.test_run_recopy_pretend_leaves_project_files_unchanged": "integration",
+    "generated_tests.test_cli_recopy_reuses_answers_file": "system_e2e",
+    "generated_tests.test_cli_pretend_copy_does_not_create_destination": "system_e2e",
+    "generated_tests.test_cli_quiet_suppresses_normal_copy_output": "system_e2e",
+    "generated_tests.test_cli_answers_file_option_controls_recorded_path": "system_e2e",
+    "generated_tests.test_external_data_requires_trust": "atomic",
+    "generated_tests.test_external_data_renders_when_template_is_trusted": "atomic",
+    "generated_tests.test_settings_default_factory_isolated_between_instances": "atomic",
+    "generated_tests.test_load_settings_missing_env_path_returns_empty_with_warning": "atomic",
+    "generated_tests.test_cli_skip_option_preserves_existing_file": "system_e2e",
+    "generated_tests.test_cli_exclude_option_omits_matching_file": "system_e2e",
+    "generated_tests.test_cli_no_cleanup_preserves_destination_after_error": "system_e2e",
+    "generated_tests.test_cli_help_lists_copy_recopy_update_and_check_update": "atomic",
+    "generated_tests.test_error_namespace_exports_documented_base_classes": "atomic"
+  },
+  "stats": {
+    "atomic": 22,
+    "integration": 12,
+    "system_e2e": 17
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": {
+    "passed": 36,
+    "total": 51
+  }
+}

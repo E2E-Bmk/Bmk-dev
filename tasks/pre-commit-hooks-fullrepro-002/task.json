@@ -1,0 +1,81 @@
+{
+  "instance_id": "pre-commit-hooks-fullrepro-002",
+  "status": "QUALIFIED",
+  "repo": "",
+  "repo_commit": "",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 52,
+    "scorer_isolation": [
+      "--remove-path"
+    ]
+  },
+  "taxonomy": {
+    "generated_tests.test_hook_types_are_documented_git_hook_types": "atomic",
+    "generated_tests.test_stages_extend_hook_types_with_manual": "atomic",
+    "generated_tests.test_legacy_stage_names_are_normalized": "atomic",
+    "generated_tests.test_load_manifest_applies_hook_defaults": "integration",
+    "generated_tests.test_load_manifest_normalizes_script_language": "integration",
+    "generated_tests.test_load_config_applies_top_level_defaults": "integration",
+    "generated_tests.test_load_config_accepts_ci_mapping_without_changing_local_hooks": "integration",
+    "generated_tests.test_load_config_normalizes_local_hook_defaults": "integration",
+    "generated_tests.test_load_config_preserves_explicit_hook_overrides": "integration",
+    "generated_tests.test_invalid_config_without_repos_raises_invalid_config_error": "integration",
+    "generated_tests.test_invalid_config_requires_rev_for_normal_repositories": "integration",
+    "generated_tests.test_invalid_config_rejects_rev_for_local_repositories": "integration",
+    "generated_tests.test_invalid_manifest_missing_required_keys_raises_invalid_manifest_error": "integration",
+    "generated_tests.test_use_color_resolves_always_and_never": "atomic",
+    "generated_tests.test_store_uses_pre_commit_home_and_creates_cache_files": "integration",
+    "generated_tests.test_store_make_local_reuses_matching_dependency_sets": "integration",
+    "generated_tests.test_normalize_cmd_resolves_existing_executable": "atomic",
+    "generated_tests.test_normalize_cmd_raises_for_missing_executable": "atomic",
+    "generated_tests.test_cmd_output_returns_text_streams": "atomic",
+    "generated_tests.test_cmd_output_b_returns_bytes_streams": "atomic",
+    "generated_tests.test_cmd_output_can_return_nonzero_without_checking": "atomic",
+    "generated_tests.test_cmd_output_checked_nonzero_raises_called_process_error": "atomic",
+    "generated_tests.test_partition_returns_executable_batches_and_handles_empty_args": "atomic",
+    "generated_tests.test_partition_rejects_argument_lists_that_cannot_fit": "atomic",
+    "generated_tests.test_all_hooks_resolves_local_hook_public_attributes": "integration",
+    "generated_tests.test_all_hooks_resolves_meta_identity_hook": "integration",
+    "generated_tests.test_cli_validate_config_returns_zero_for_valid_and_nonzero_for_invalid": "atomic",
+    "generated_tests.test_cli_validate_manifest_returns_zero_for_valid_and_nonzero_for_invalid": "atomic",
+    "generated_tests.test_cli_sample_config_prints_yaml_example": "atomic",
+    "generated_tests.test_cli_clean_removes_the_configured_store": "integration",
+    "generated_tests.test_cli_install_and_uninstall_manage_selected_hook_script": "system_e2e",
+    "generated_tests.test_cli_run_fail_language_fails_and_reports_hook_id": "system_e2e",
+    "generated_tests.test_cli_run_skip_environment_skips_hook_id": "system_e2e",
+    "generated_tests.test_cli_run_skip_environment_accepts_alias": "system_e2e",
+    "generated_tests.test_cli_run_pygrep_fails_when_pattern_matches": "system_e2e",
+    "generated_tests.test_cli_run_pygrep_negate_passes_when_pattern_matches": "system_e2e",
+    "generated_tests.test_cli_run_always_run_executes_even_without_matching_files": "system_e2e",
+    "generated_tests.test_cli_run_pass_filenames_false_omits_selected_filenames": "system_e2e",
+    "generated_tests.test_cli_run_manual_stage_selects_manual_hooks": "system_e2e",
+    "generated_tests.test_cli_run_files_limits_hook_input_to_explicit_files": "system_e2e",
+    "generated_tests.test_cli_validate_config_accepts_multiple_valid_files": "atomic",
+    "generated_tests.test_cli_validate_config_fails_when_any_file_is_invalid": "atomic",
+    "generated_tests.test_cli_validate_manifest_accepts_multiple_valid_files": "atomic",
+    "generated_tests.test_cli_validate_manifest_fails_when_any_file_is_invalid": "atomic",
+    "generated_tests.test_cli_migrate_config_wraps_legacy_repo_list": "integration",
+    "generated_tests.test_cli_migrate_config_rewrites_sha_key_to_rev": "integration",
+    "generated_tests.test_cli_migrate_config_rewrites_legacy_stage_names": "integration",
+    "generated_tests.test_cli_migrate_config_rewrites_python_venv_language": "integration",
+    "generated_tests.test_cli_run_single_hook_id_limits_execution": "system_e2e",
+    "generated_tests.test_cli_run_fail_fast_stops_after_first_failing_hook": "system_e2e",
+    "generated_tests.test_cli_run_skips_non_matching_files_without_always_run": "system_e2e",
+    "generated_tests.test_cli_run_default_stage_ignores_manual_only_hooks": "system_e2e"
+  },
+  "stats": {
+    "atomic": 19,
+    "integration": 19,
+    "system_e2e": 14
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": {
+    "passed": 43,
+    "total": 52
+  }
+}

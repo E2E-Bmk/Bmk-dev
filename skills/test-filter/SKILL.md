@@ -144,14 +144,34 @@ When a large share of nodeids come from parametrized expansion of few functions,
 
 `taxonomy.jsonl` - scorer-compatible. Key format must match `score_pytest_original.py` mapping `tests/path.py::test_name` -> `path_stem::test_name`. One JSON object per line:
 
-**Oracle atomic update rule:** whenever any oracle file is modified after Stage 3 completes (including retro additions), all four files (kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md, reference_score) must be updated together and assigned a new `oracle_version` timestamp in spec_test_map.md header. Partial updates that leave counts inconsistent across files are invalid.
-
-**Preservation rule:** do not delete the `wip/{task}/` directory after a task reaches QUALIFIED. The wip directory is the audit trail. Its removal makes evaluation scores permanently unverifiable.
-
 ```jsonl
 {"taxonomy_key": "test_foo::test_bar", "layer": "atomic"}
 {"taxonomy_key": "test_baz::test_workflow", "layer": "system_e2e"}
 ```
+
+### Oracle File Layout (tasks/{task-id}/oracle/)
+
+When a task graduates to `tasks/`, its oracle directory must contain exactly two test files split by taxonomy layer:
+
+```
+oracle/
+├── test_atomic.py        # all "atomic" layer tests
+├── test_integration.py   # all "integration" + "system_e2e" layer tests
+├── conftest.py           # shared fixtures (optional, only if needed)
+└── requirements.txt      # test runtime dependencies (pytest, mocks, etc.)
+```
+
+**Split rules:**
+- Each test function goes into the file matching its taxonomy layer
+- Helper functions, fixtures, and imports used by both files may be duplicated in each, or placed in `conftest.py`
+- Test function names must not change (must still match `kept_nodeids.txt`)
+- File headers: `# Spec2Repo oracle - atomic tests for {task-id}` / `# Spec2Repo oracle - integration tests for {task-id}`
+
+**Rationale:** This split enables direct computation of Integration Gap = (atomic pass rate) − (integration pass rate) without post-hoc taxonomy lookup. The scorer can run each file independently.
+
+**Oracle atomic update rule:** whenever any oracle file is modified after Stage 3 completes (including retro additions), all four files (kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md, reference_score) must be updated together and assigned a new `oracle_version` timestamp in spec_test_map.md header. Partial updates that leave counts inconsistent across files are invalid.
+
+**Preservation rule:** do not delete the `wip/{task}/` directory after a task reaches QUALIFIED. The wip directory is the audit trail. Its removal makes evaluation scores permanently unverifiable.
 
 Key generation algorithm: strip parameter suffixes (e.g. `[case0]`), replace the file path with its stem, and for nested nodeid parts after the file (class name, method name) join them with `.` — e.g. `tests/test_req.py::TestParsing::test_valid` → `test_req.TestParsing.test_valid`.
 

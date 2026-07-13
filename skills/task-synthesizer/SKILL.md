@@ -71,8 +71,14 @@ Bmk-dev/
 |       `-- diagnosis_report.md
 |-- tasks/{task-id}/             <- QUALIFIED tasks (graduated from wip/)
 |   |-- spec.md
-|   |-- kept_nodeids.txt
-|   |-- taxonomy.jsonl
+|   |-- oracle/
+|   |   |-- test_atomic.py       <- atomic layer tests
+|   |   |-- test_integration.py  <- integration + system_e2e tests
+|   |   |-- conftest.py          <- shared fixtures (optional)
+|   |   `-- requirements.txt     <- test dependencies
+|   |-- task.json                <- metadata (taxonomy, nodeids, manifest combined)
+|   |-- kept_nodeids.txt         <- (legacy, to be replaced by task.json)
+|   |-- taxonomy.jsonl           <- (legacy, to be replaced by task.json)
 |   `-- spec_test_map.md
 |-- candidate-runs/              <- evaluation runs
 |   `-- {model}-{task}-{spec}-{date}-{run}/
@@ -163,7 +169,7 @@ Before accepting any verdict, verify diagnosis report structural validity:
 **QUALIFIED exit checklist (all must pass before writing QUALIFIED to PIPELINE_STATE.md):**
 
 1. CANDIDATES.md has a SELECTED row for this repo
-2. `tasks/{task_id}/` directory exists and contains: `spec.md`, `kept_nodeids.txt`, `taxonomy.jsonl`, `spec_test_map.md`
+2. `tasks/{task_id}/` directory exists and contains: `spec.md`, `oracle/test_atomic.py`, `oracle/test_integration.py`, `kept_nodeids.txt`, `taxonomy.jsonl`, `spec_test_map.md`
 3. `kept_nodeids.txt` line count matches `oracle_count` in PIPELINE_STATE.md
 4. `spec.md` candidate-visible body contains none of: `task_id`, `delta:`, `source_boundary:`, `benchmark`, `oracle`, `judge`
 5. Score JSON `platform` field confirms Linux/WSL evaluation

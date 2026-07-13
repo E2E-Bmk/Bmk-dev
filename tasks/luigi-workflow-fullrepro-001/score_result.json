@@ -1,0 +1,2548 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 120,
+  "remove_paths": [
+    "luigi"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/luigi-workflow-fullrepro-001/filter/source_carrier",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/luigi-workflow-fullrepro-001/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/luigi-workflow-fullrepro-001/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final",
+  "grouped_results": {
+    "filter/generated_tests.py": {
+      "returncode": 1,
+      "stdout": "........F............................F..F.....F.F...........             [100%]\n=================================== FAILURES ===================================\n_____________ test_path_parameter_normalizes_and_checks_existence ______________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0')\n\n    def test_path_parameter_normalizes_and_checks_existence(tmp_path):\n        import luigi\n    \n        existing = tmp_path / \"data.txt\"\n        existing.write_text(\"ok\", encoding=\"utf-8\")\n        existing_param = luigi.PathParameter(exists=True)\n        missing = tmp_path / \"missing.txt\"\n>       assert existing_param.parse(str(existing)) == str(existing)\nE       AssertionError: assert PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') == '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'\nE        +  where PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') = parse('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt')\nE        +    where parse = <luigi.parameter.PathParameter object at 0x7f7fd7f61910>.parse\nE        +    and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))\nE        +  and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))\n\nfilter/generated_tests.py:277: AssertionError\n_______ test_config_environment_interpolation_uses_environment_variable ________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0')\n\n    def test_config_environment_interpolation_uses_environment_variable(tmp_path):\n        cfg = tmp_path / \"client.cfg\"\n        cfg.write_text(\"[paths]\\nroot = ${ROOT_DIR}/data\\n\", encoding=\"utf-8\")\n        proc = run_script(\n            tmp_path,\n            \"\"\"\n            import luigi\n    \n            class EnvConfigTask(luigi.Task):\n                root = luigi.Parameter(config_path={\"section\": \"paths\", \"name\": \"root\"}, default=\"fallback\")\n    \n            print(EnvConfigTask().root)\n            \"\"\",\n            extra_env={\"LUIGI_CONFIG_PATH\": str(cfg), \"ROOT_DIR\": \"/tmp/root\"},\n        )\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 4, in <module>\nE             class EnvConfigTask(luigi.Task):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 5, in EnvConfigTask\nE             root = luigi.Parameter(config_path={\"section\": \"paths\", \"name\": \"root\"}, default=\"fallback\")\nE                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/parameter.py\", line 100, in __init__\nE             raise ParameterException(\"config_path must be a string or a pair\")\nE         luigi.parameter.ParameterException: config_path must be a string or a pair\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...onfig_path must be a string or a pair\")\\nluigi.parameter.ParameterException: config_path must be a string or a pair\\n').returncode\n\nfilter/generated_tests.py:1114: AssertionError\n__________ test_event_handler_can_be_registered_triggered_and_removed __________\n\n    def test_event_handler_can_be_registered_triggered_and_removed():\n        import luigi\n    \n        seen = []\n    \n        class EventTask(luigi.Task):\n            pass\n    \n        def callback(value):\n            seen.append(value)\n    \n        EventTask.event_handler(\"custom-event\")(callback)\n>       EventTask().trigger_event(\"custom-event\", \"payload\")\n\nfilter/generated_tests.py:1211: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = EventTask(), event = 'custom-event', args = ('payload',), kwargs = {}\n\n    def trigger_event(self, event, *args, **kwargs):\n        result = None\n        for cls in reversed(self.__class__.mro()):\n            for callback in getattr(cls, \"_event_handlers\", {}).get(event, []):\n>               result = callback(self, *args, **kwargs)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE               TypeError: test_event_handler_can_be_registered_triggered_and_removed.<locals>.callback() takes 1 positional argument but 2 were given\n\n../../output/luigi/__init__.py:401: TypeError\n_______ test_requires_returning_target_is_reported_as_scheduling_failure _______\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_requires_returning_target0')\n\n    def test_requires_returning_target_is_reported_as_scheduling_failure(tmp_path):\n        import luigi\n    \n        class BadRequiresTask(luigi.Task):\n            def requires(self):\n                return luigi.LocalTarget(tmp_path / \"not-a-task.txt\")\n    \n            def output(self):\n                return luigi.LocalTarget(tmp_path / \"bad-requires-output.txt\")\n    \n>       with pytest.raises(Exception):\nE       Failed: DID NOT RAISE Exception\n\nfilter/generated_tests.py:1531: Failed\n________________ test_worker_scheduler_factory_methods_are_used ________________\n\ntmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_worker_scheduler_factory_0')\n\n    def test_worker_scheduler_factory_methods_are_used(tmp_path):\n        proc = run_script(\n            tmp_path,\n            \"\"\"\n            import luigi\n    \n            class HookReached(Exception):\n                pass\n    \n            class FactoryTask(luigi.Task):\n                pass\n    \n            class LocalFactory:\n                def create_local_scheduler(self):\n                    raise HookReached(\"local\")\n                def create_remote_scheduler(self, url):\n                    raise HookReached(\"remote\")\n                def create_worker(self, scheduler, worker_processes, assistant=False):\n                    raise HookReached(\"worker\")\n    \n            class WorkerFactory:\n                def create_local_scheduler(self):\n                    return object()\n                def create_remote_scheduler(self, url):\n                    return object()\n                def create_worker(self, scheduler, worker_processes, assistant=False):\n                    raise HookReached(f\"worker:{worker_processes}:{assistant}\")\n    \n            for factory in (LocalFactory(), WorkerFactory()):\n                try:\n                    luigi.build([FactoryTask()], local_scheduler=True, worker_scheduler_factory=factory, workers=2)\n                except HookReached as exc:\n                    print(exc)\n    \n            \"\"\",\n        )\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_worker_scheduler_factory_0/probe.py\", line 28, in <module>\nE             luigi.build([FactoryTask()], local_scheduler=True, worker_scheduler_factory=factory, workers=2)\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/__init__.py\", line 652, in build\nE             worker = worker_scheduler_factory.create_worker(scheduler=scheduler)\nE                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE         TypeError: WorkerFactory.create_worker() missing 1 required positional argument: 'worker_processes'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...^^^^^^^^^^^^\\nTypeError: WorkerFactory.create_worker() missing 1 required positional argument: \\'worker_processes\\'\\n').returncode\n\nfilter/generated_tests.py:1582: AssertionError\n=========================== short test summary info ============================\nFAILED filter/generated_tests.py::test_path_parameter_normalizes_and_checks_existence\nFAILED filter/generated_tests.py::test_config_environment_interpolation_uses_environment_variable\nFAILED filter/generated_tests.py::test_event_handler_can_be_registered_triggered_and_removed\nFAILED filter/generated_tests.py::test_requires_returning_target_is_reported_as_scheduling_failure\nFAILED filter/generated_tests.py::test_worker_scheduler_factory_methods_are_used\n5 failed, 55 passed in 28.28s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783633851.5374765,
+        "duration": 28.100476503372192,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree",
+        "environment": {},
+        "summary": {
+          "passed": 55,
+          "failed": 5,
+          "total": 60,
+          "collected": 60
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "filter/generated_tests.py::test_basic_parameter_types_parse_and_serialize_public_values",
+                "type": "Function",
+                "lineno": 153
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_invalid_basic_parameter_values_raise_value_error",
+                "type": "Function",
+                "lineno": 164
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_date_parameters_parse_documented_shapes",
+                "type": "Function",
+                "lineno": 175
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_date_parameter_invalid_input_raises_value_error",
+                "type": "Function",
+                "lineno": 184
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_list_tuple_and_dict_parameters_parse_json_publicly",
+                "type": "Function",
+                "lineno": 193
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_enum_parameter_round_trips_by_member_name",
+                "type": "Function",
+                "lineno": 209
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_choice_parameter_accepts_only_configured_values",
+                "type": "Function",
+                "lineno": 235
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_numerical_parameter_enforces_bounds",
+                "type": "Function",
+                "lineno": 257
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_path_parameter_normalizes_and_checks_existence",
+                "type": "Function",
+                "lineno": 269
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_optional_parameters_parse_empty_string_as_none",
+                "type": "Function",
+                "lineno": 301
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_required_parameter_missing_raises_missing_parameter_exception",
+                "type": "Function",
+                "lineno": 324
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_unknown_keyword_raises_unknown_parameter_exception",
+                "type": "Function",
+                "lineno": 335
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_duplicate_positional_and_keyword_parameter_raises",
+                "type": "Function",
+                "lineno": 346
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_insignificant_parameter_is_omitted_from_identity_and_public_strings",
+                "type": "Function",
+                "lineno": 368
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_parameter_visibility_controls_public_serialization_without_changing_attribute",
+                "type": "Function",
+                "lineno": 382
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_from_str_params_parses_string_mapping_and_falls_back_to_defaults",
+                "type": "Function",
+                "lineno": 396
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_task_equality_uses_class_and_significant_public_values",
+                "type": "Function",
+                "lineno": 408
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_task_family_uses_namespace_and_class_name",
+                "type": "Function",
+                "lineno": 422
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_task_input_preserves_nested_dependency_output_shape",
+                "type": "Function",
+                "lineno": 446
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_task_complete_false_without_outputs_and_true_when_local_output_exists",
+                "type": "Function",
+                "lineno": 469
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_task_complete_raises_when_output_has_no_exists_method",
+                "type": "Function",
+                "lineno": 486
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_external_task_has_no_run_method_and_missing_output_is_incomplete",
+                "type": "Function",
+                "lineno": 515
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_wrapper_task_complete_reflects_requirements",
+                "type": "Function",
+                "lineno": 527
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_dynamic_requirements_complete_uses_wrapped_requirements",
+                "type": "Function",
+                "lineno": 546
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_local_target_write_creates_parent_and_commits_on_close",
+                "type": "Function",
+                "lineno": 579
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_local_target_rejects_missing_path_unless_temporary",
+                "type": "Function",
+                "lineno": 601
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_local_target_move_copy_remove_and_exists",
+                "type": "Function",
+                "lineno": 620
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_build_runs_dependencies_then_downstream_and_reuses_existing_outputs",
+                "type": "Function",
+                "lineno": 653
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_build_detailed_summary_reports_failed_task",
+                "type": "Function",
+                "lineno": 688
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_build_reports_missing_external_dependency_without_running_dependent",
+                "type": "Function",
+                "lineno": 704
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_run_accepts_cmdline_args_and_main_task_cls",
+                "type": "Function",
+                "lineno": 728
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_module_invocation_runs_local_scheduler_task",
+                "type": "Function",
+                "lineno": 771
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_hyphenated_parameter_name_maps_to_underscore_attribute",
+                "type": "Function",
+                "lineno": 806
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_cli_class_qualified_parameter_supplies_dependency_value",
+                "type": "Function",
+                "lineno": 841
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_config_file_supplies_task_parameter_default",
+                "type": "Function",
+                "lineno": 1040
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_constructor_value_overrides_config_value",
+                "type": "Function",
+                "lineno": 1059
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_config_class_reads_values_from_matching_section",
+                "type": "Function",
+                "lineno": 1076
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_config_environment_interpolation_uses_environment_variable",
+                "type": "Function",
+                "lineno": 1098
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_toml_config_parser_reads_luigi_config_path",
+                "type": "Function",
+                "lineno": 1137
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_failed_run_calls_on_failure_callback_and_reports_failed_status",
+                "type": "Function",
+                "lineno": 1156
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_event_handler_can_be_registered_triggered_and_removed",
+                "type": "Function",
+                "lineno": 1198
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_priority_affects_ready_task_order_after_dependencies_are_satisfied",
+                "type": "Function",
+                "lineno": 1216
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_dynamic_dependency_yield_restarts_task_and_uses_dependency_output",
+                "type": "Function",
+                "lineno": 1262
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_representative_workflow_build_and_second_build_agree_on_completion",
+                "type": "Function",
+                "lineno": 1293
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_python_and_cli_projection_create_same_workflow_outputs",
+                "type": "Function",
+                "lineno": 1432
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_task_without_declared_output_does_not_unlock_downstream_as_complete",
+                "type": "Function",
+                "lineno": 1490
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_requires_returning_target_is_reported_as_scheduling_failure",
+                "type": "Function",
+                "lineno": 1520
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_complete_failure_is_reported_as_scheduling_failure",
+                "type": "Function",
+                "lineno": 1534
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_worker_scheduler_factory_methods_are_used",
+                "type": "Function",
+                "lineno": 1545
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_python_module_invocation_matches_luigi_command_shape_for_local_scheduler",
+                "type": "Function",
+                "lineno": 1635
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_summary_text_and_boolean_result_reflect_successful_workflow",
+                "type": "Function",
+                "lineno": 1720
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_private_parameter_is_not_exposed_in_public_str_params_but_remains_attribute",
+                "type": "Function",
+                "lineno": 1737
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_installable_surface_top_level_task_parameter_target_and_build_work",
+                "type": "Function",
+                "lineno": 106
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_product_state_model_parameter_identity_visible_across_projections",
+                "type": "Function",
+                "lineno": 139
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_installable_surface_documented_parameter_exceptions_match_task_construction",
+                "type": "Function",
+                "lineno": 286
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_filesystem_target_temporary_path_commits_and_rolls_back",
+                "type": "Function",
+                "lineno": 637
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_invocation_protocol_python_module_class_qualified_dependency_flag",
+                "type": "Function",
+                "lineno": 902
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_invocation_protocol_python_module_hyphenated_root_flag",
+                "type": "Function",
+                "lineno": 963
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_representative_workflow_input_target_feeds_downstream_task",
+                "type": "Function",
+                "lineno": 1335
+              },
+              {
+                "nodeid": "filter/generated_tests.py::test_representative_workflow_cli_invocation_writes_downstream_output",
+                "type": "Function",
+                "lineno": 1369
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "filter/generated_tests.py::test_basic_parameter_types_parse_and_serialize_public_values",
+            "lineno": 153,
+            "outcome": "passed",
+            "keywords": [
+              "test_basic_parameter_types_parse_and_serialize_public_values",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.011610818000917789,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.23513789499884297,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002002929995796876,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_invalid_basic_parameter_values_raise_value_error",
+            "lineno": 164,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_basic_parameter_values_raise_value_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00043785300113086123,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00025390300106664654,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013148400103091262,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_date_parameters_parse_documented_shapes",
+            "lineno": 175,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_parameters_parse_documented_shapes",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00036366299900691956,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.008476736999000423,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018654499945114367,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_date_parameter_invalid_input_raises_value_error",
+            "lineno": 184,
+            "outcome": "passed",
+            "keywords": [
+              "test_date_parameter_invalid_input_raises_value_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003583710004022578,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002144210011465475,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014781499885430094,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_list_tuple_and_dict_parameters_parse_json_publicly",
+            "lineno": 193,
+            "outcome": "passed",
+            "keywords": [
+              "test_list_tuple_and_dict_parameters_parse_json_publicly",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003465089994278969,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00025506600104563404,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011653000001388136,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_enum_parameter_round_trips_by_member_name",
+            "lineno": 209,
+            "outcome": "passed",
+            "keywords": [
+              "test_enum_parameter_round_trips_by_member_name",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003023509998456575,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002937760000349954,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001240660003531957,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_choice_parameter_accepts_only_configured_values",
+            "lineno": 235,
+            "outcome": "passed",
+            "keywords": [
+              "test_choice_parameter_accepts_only_configured_values",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00034849099938583095,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001681849989836337,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001150819989561569,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_numerical_parameter_enforces_bounds",
+            "lineno": 257,
+            "outcome": "passed",
+            "keywords": [
+              "test_numerical_parameter_enforces_bounds",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008142200003931066,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005092889987281524,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00021333199947548565,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_path_parameter_normalizes_and_checks_existence",
+            "lineno": 269,
+            "outcome": "failed",
+            "keywords": [
+              "test_path_parameter_normalizes_and_checks_existence",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009185830003843876,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.021968295999613474,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree/filter/generated_tests.py",
+                "lineno": 277,
+                "message": "AssertionError: assert PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') == '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'\n +  where PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') = parse('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt')\n +    where parse = <luigi.parameter.PathParameter object at 0x7f7fd7f61910>.parse\n +    and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))\n +  and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 277,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0')\n\n    def test_path_parameter_normalizes_and_checks_existence(tmp_path):\n        import luigi\n    \n        existing = tmp_path / \"data.txt\"\n        existing.write_text(\"ok\", encoding=\"utf-8\")\n        existing_param = luigi.PathParameter(exists=True)\n        missing = tmp_path / \"missing.txt\"\n>       assert existing_param.parse(str(existing)) == str(existing)\nE       AssertionError: assert PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') == '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'\nE        +  where PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') = parse('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt')\nE        +    where parse = <luigi.parameter.PathParameter object at 0x7f7fd7f61910>.parse\nE        +    and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))\nE        +  and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))\n\nfilter/generated_tests.py:277: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00022156199884193484,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_optional_parameters_parse_empty_string_as_none",
+            "lineno": 301,
+            "outcome": "passed",
+            "keywords": [
+              "test_optional_parameters_parse_empty_string_as_none",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003836550004052697,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00013791399942419957,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010653500066837296,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_required_parameter_missing_raises_missing_parameter_exception",
+            "lineno": 324,
+            "outcome": "passed",
+            "keywords": [
+              "test_required_parameter_missing_raises_missing_parameter_exception",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002629020000313176,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.001206183000249439,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011737000022549182,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_unknown_keyword_raises_unknown_parameter_exception",
+            "lineno": 335,
+            "outcome": "passed",
+            "keywords": [
+              "test_unknown_keyword_raises_unknown_parameter_exception",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002930230002675671,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001941030004672939,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013551399933930952,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_duplicate_positional_and_keyword_parameter_raises",
+            "lineno": 346,
+            "outcome": "passed",
+            "keywords": [
+              "test_duplicate_positional_and_keyword_parameter_raises",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00037669899938919116,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018140599968319293,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010394799937785137,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_insignificant_parameter_is_omitted_from_identity_and_public_strings",
+            "lineno": 368,
+            "outcome": "passed",
+            "keywords": [
+              "test_insignificant_parameter_is_omitted_from_identity_and_public_strings",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00025527900106681045,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00021878599909541663,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001026780009851791,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_parameter_visibility_controls_public_serialization_without_changing_attribute",
+            "lineno": 382,
+            "outcome": "passed",
+            "keywords": [
+              "test_parameter_visibility_controls_public_serialization_without_changing_attribute",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002760940005828161,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00021309899966581725,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010744199971668422,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_from_str_params_parses_string_mapping_and_falls_back_to_defaults",
+            "lineno": 396,
+            "outcome": "passed",
+            "keywords": [
+              "test_from_str_params_parses_string_mapping_and_falls_back_to_defaults",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006258350003918167,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002008280007430585,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001036689991451567,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_task_equality_uses_class_and_significant_public_values",
+            "lineno": 408,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_equality_uses_class_and_significant_public_values",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000349746000210871,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004702480000560172,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001237640008184826,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_task_family_uses_namespace_and_class_name",
+            "lineno": 422,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_family_uses_namespace_and_class_name",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00033021299896063283,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00013386399950832129,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010219300020253286,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_task_input_preserves_nested_dependency_output_shape",
+            "lineno": 446,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_input_preserves_nested_dependency_output_shape",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006982419999985723,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00027032500111090485,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001923159998113988,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_task_complete_false_without_outputs_and_true_when_local_output_exists",
+            "lineno": 469,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_complete_false_without_outputs_and_true_when_local_output_exists",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0014667049999843584,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00033432800046284683,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001347069992334582,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_task_complete_raises_when_output_has_no_exists_method",
+            "lineno": 486,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_complete_raises_when_output_has_no_exists_method",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003192080002918374,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001802120004867902,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001170109990198398,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_external_task_has_no_run_method_and_missing_output_is_incomplete",
+            "lineno": 515,
+            "outcome": "passed",
+            "keywords": [
+              "test_external_task_has_no_run_method_and_missing_output_is_incomplete",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006425049996323651,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00019251000048825517,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013618699995276984,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_wrapper_task_complete_reflects_requirements",
+            "lineno": 527,
+            "outcome": "passed",
+            "keywords": [
+              "test_wrapper_task_complete_reflects_requirements",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006063950004318031,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00031173500065051485,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001350109996565152,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_dynamic_requirements_complete_uses_wrapped_requirements",
+            "lineno": 546,
+            "outcome": "passed",
+            "keywords": [
+              "test_dynamic_requirements_complete_uses_wrapped_requirements",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006328689996735193,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000250723000135622,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011264899876550771,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_local_target_write_creates_parent_and_commits_on_close",
+            "lineno": 579,
+            "outcome": "passed",
+            "keywords": [
+              "test_local_target_write_creates_parent_and_commits_on_close",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005770509997091722,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004673650000768248,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001227329994435422,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_local_target_rejects_missing_path_unless_temporary",
+            "lineno": 601,
+            "outcome": "passed",
+            "keywords": [
+              "test_local_target_rejects_missing_path_unless_temporary",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0002789590016618604,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00021219599875621498,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010211200060439296,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_local_target_move_copy_remove_and_exists",
+            "lineno": 620,
+            "outcome": "passed",
+            "keywords": [
+              "test_local_target_move_copy_remove_and_exists",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006319399999483721,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0024071820007520728,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015872199946898036,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_build_runs_dependencies_then_downstream_and_reuses_existing_outputs",
+            "lineno": 653,
+            "outcome": "passed",
+            "keywords": [
+              "test_build_runs_dependencies_then_downstream_and_reuses_existing_outputs",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007355550005740952,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0008913260007830104,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013072500041744206,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_build_detailed_summary_reports_failed_task",
+            "lineno": 688,
+            "outcome": "passed",
+            "keywords": [
+              "test_build_detailed_summary_reports_failed_task",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000673984999593813,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00026837999939743895,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011496200022520497,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_build_reports_missing_external_dependency_without_running_dependent",
+            "lineno": 704,
+            "outcome": "passed",
+            "keywords": [
+              "test_build_reports_missing_external_dependency_without_running_dependent",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006256839988054708,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00027102199965156615,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012683800014201552,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_run_accepts_cmdline_args_and_main_task_cls",
+            "lineno": 728,
+            "outcome": "passed",
+            "keywords": [
+              "test_run_accepts_cmdline_args_and_main_task_cls",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0005578889995376812,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.7714714920002734,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002036240002780687,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_module_invocation_runs_local_scheduler_task",
+            "lineno": 771,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_module_invocation_runs_local_scheduler_task",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008795720004854957,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.7087991019998299,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018663199989532586,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_hyphenated_parameter_name_maps_to_underscore_attribute",
+            "lineno": 806,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_hyphenated_parameter_name_maps_to_underscore_attribute",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008763810001255479,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.6519197819998226,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001810550002119271,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_cli_class_qualified_parameter_supplies_dependency_value",
+            "lineno": 841,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_class_qualified_parameter_supplies_dependency_value",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009966629986593034,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.9896607239988953,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019923900072171818,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_config_file_supplies_task_parameter_default",
+            "lineno": 1040,
+            "outcome": "passed",
+            "keywords": [
+              "test_config_file_supplies_task_parameter_default",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001009657999020419,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.6878327489994263,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002526989992475137,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_constructor_value_overrides_config_value",
+            "lineno": 1059,
+            "outcome": "passed",
+            "keywords": [
+              "test_constructor_value_overrides_config_value",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0010012069997173967,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.606133764000333,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00018846500097424723,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_config_class_reads_values_from_matching_section",
+            "lineno": 1076,
+            "outcome": "passed",
+            "keywords": [
+              "test_config_class_reads_values_from_matching_section",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008912430002965266,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.5925271810010599,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019368900029803626,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_config_environment_interpolation_uses_environment_variable",
+            "lineno": 1098,
+            "outcome": "failed",
+            "keywords": [
+              "test_config_environment_interpolation_uses_environment_variable",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008770300009928178,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.6438606889987568,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree/filter/generated_tests.py",
+                "lineno": 1114,
+                "message": "AssertionError: Traceback (most recent call last):\n    File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 4, in <module>\n      class EnvConfigTask(luigi.Task):\n    File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 5, in EnvConfigTask\n      root = luigi.Parameter(config_path={\"section\": \"paths\", \"name\": \"root\"}, default=\"fallback\")\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/parameter.py\", line 100, in __init__\n      raise ParameterException(\"config_path must be a string or a pair\")\n  luigi.parameter.ParameterException: config_path must be a string or a pair\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...onfig_path must be a string or a pair\")\\nluigi.parameter.ParameterException: config_path must be a string or a pair\\n').returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 1114,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0')\n\n    def test_config_environment_interpolation_uses_environment_variable(tmp_path):\n        cfg = tmp_path / \"client.cfg\"\n        cfg.write_text(\"[paths]\\nroot = ${ROOT_DIR}/data\\n\", encoding=\"utf-8\")\n        proc = run_script(\n            tmp_path,\n            \"\"\"\n            import luigi\n    \n            class EnvConfigTask(luigi.Task):\n                root = luigi.Parameter(config_path={\"section\": \"paths\", \"name\": \"root\"}, default=\"fallback\")\n    \n            print(EnvConfigTask().root)\n            \"\"\",\n            extra_env={\"LUIGI_CONFIG_PATH\": str(cfg), \"ROOT_DIR\": \"/tmp/root\"},\n        )\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 4, in <module>\nE             class EnvConfigTask(luigi.Task):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 5, in EnvConfigTask\nE             root = luigi.Parameter(config_path={\"section\": \"paths\", \"name\": \"root\"}, default=\"fallback\")\nE                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/parameter.py\", line 100, in __init__\nE             raise ParameterException(\"config_path must be a string or a pair\")\nE         luigi.parameter.ParameterException: config_path must be a string or a pair\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...onfig_path must be a string or a pair\")\\nluigi.parameter.ParameterException: config_path must be a string or a pair\\n').returncode\n\nfilter/generated_tests.py:1114: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0005150319993845187,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_toml_config_parser_reads_luigi_config_path",
+            "lineno": 1137,
+            "outcome": "passed",
+            "keywords": [
+              "test_toml_config_parser_reads_luigi_config_path",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008741260007809615,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.8800611989991012,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00019616200006566942,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_failed_run_calls_on_failure_callback_and_reports_failed_status",
+            "lineno": 1156,
+            "outcome": "passed",
+            "keywords": [
+              "test_failed_run_calls_on_failure_callback_and_reports_failed_status",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008534889984730398,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00029965099929540884,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001228930013894569,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_event_handler_can_be_registered_triggered_and_removed",
+            "lineno": 1198,
+            "outcome": "failed",
+            "keywords": [
+              "test_event_handler_can_be_registered_triggered_and_removed",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00028682799893431365,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017515500076115131,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/__init__.py",
+                "lineno": 401,
+                "message": "TypeError: test_event_handler_can_be_registered_triggered_and_removed.<locals>.callback() takes 1 positional argument but 2 were given"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 1211,
+                  "message": ""
+                },
+                {
+                  "path": "../../output/luigi/__init__.py",
+                  "lineno": 401,
+                  "message": "TypeError"
+                }
+              ],
+              "longrepr": "def test_event_handler_can_be_registered_triggered_and_removed():\n        import luigi\n    \n        seen = []\n    \n        class EventTask(luigi.Task):\n            pass\n    \n        def callback(value):\n            seen.append(value)\n    \n        EventTask.event_handler(\"custom-event\")(callback)\n>       EventTask().trigger_event(\"custom-event\", \"payload\")\n\nfilter/generated_tests.py:1211: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = EventTask(), event = 'custom-event', args = ('payload',), kwargs = {}\n\n    def trigger_event(self, event, *args, **kwargs):\n        result = None\n        for cls in reversed(self.__class__.mro()):\n            for callback in getattr(cls, \"_event_handlers\", {}).get(event, []):\n>               result = callback(self, *args, **kwargs)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE               TypeError: test_event_handler_can_be_registered_triggered_and_removed.<locals>.callback() takes 1 positional argument but 2 were given\n\n../../output/luigi/__init__.py:401: TypeError"
+            },
+            "teardown": {
+              "duration": 0.00030767700081923977,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_priority_affects_ready_task_order_after_dependencies_are_satisfied",
+            "lineno": 1216,
+            "outcome": "passed",
+            "keywords": [
+              "test_priority_affects_ready_task_order_after_dependencies_are_satisfied",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008507359998475295,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0009956770009011962,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013668999963556416,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_dynamic_dependency_yield_restarts_task_and_uses_dependency_output",
+            "lineno": 1262,
+            "outcome": "passed",
+            "keywords": [
+              "test_dynamic_dependency_yield_restarts_task_and_uses_dependency_output",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007773969991831109,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006780530002288288,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001270970005862182,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_representative_workflow_build_and_second_build_agree_on_completion",
+            "lineno": 1293,
+            "outcome": "passed",
+            "keywords": [
+              "test_representative_workflow_build_and_second_build_agree_on_completion",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007364610009972239,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0008746209987293696,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013918800141254906,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_python_and_cli_projection_create_same_workflow_outputs",
+            "lineno": 1432,
+            "outcome": "passed",
+            "keywords": [
+              "test_python_and_cli_projection_create_same_workflow_outputs",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007884890001150779,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 1.5991293169990968,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00021172299966565333,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_task_without_declared_output_does_not_unlock_downstream_as_complete",
+            "lineno": 1490,
+            "outcome": "passed",
+            "keywords": [
+              "test_task_without_declared_output_does_not_unlock_downstream_as_complete",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009062609988177428,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003633859996625688,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001327420013694791,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_requires_returning_target_is_reported_as_scheduling_failure",
+            "lineno": 1520,
+            "outcome": "failed",
+            "keywords": [
+              "test_requires_returning_target_is_reported_as_scheduling_failure",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009425839998584706,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00042052600110764615,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree/filter/generated_tests.py",
+                "lineno": 1531,
+                "message": "Failed: DID NOT RAISE Exception"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 1531,
+                  "message": "Failed"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_requires_returning_target0')\n\n    def test_requires_returning_target_is_reported_as_scheduling_failure(tmp_path):\n        import luigi\n    \n        class BadRequiresTask(luigi.Task):\n            def requires(self):\n                return luigi.LocalTarget(tmp_path / \"not-a-task.txt\")\n    \n            def output(self):\n                return luigi.LocalTarget(tmp_path / \"bad-requires-output.txt\")\n    \n>       with pytest.raises(Exception):\nE       Failed: DID NOT RAISE Exception\n\nfilter/generated_tests.py:1531: Failed"
+            },
+            "teardown": {
+              "duration": 0.00029186099891376216,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_complete_failure_is_reported_as_scheduling_failure",
+            "lineno": 1534,
+            "outcome": "passed",
+            "keywords": [
+              "test_complete_failure_is_reported_as_scheduling_failure",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.001131046999944374,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00031467100052395836,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00015389700092782732,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_worker_scheduler_factory_methods_are_used",
+            "lineno": 1545,
+            "outcome": "failed",
+            "keywords": [
+              "test_worker_scheduler_factory_methods_are_used",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008296570013044402,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.8017904809985339,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree/filter/generated_tests.py",
+                "lineno": 1582,
+                "message": "AssertionError: Traceback (most recent call last):\n    File \"/tmp/pytest-of-shaoyou/pytest-102/test_worker_scheduler_factory_0/probe.py\", line 28, in <module>\n      luigi.build([FactoryTask()], local_scheduler=True, worker_scheduler_factory=factory, workers=2)\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/__init__.py\", line 652, in build\n      worker = worker_scheduler_factory.create_worker(scheduler=scheduler)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  TypeError: WorkerFactory.create_worker() missing 1 required positional argument: 'worker_processes'\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...^^^^^^^^^^^^\\nTypeError: WorkerFactory.create_worker() missing 1 required positional argument: \\'worker_processes\\'\\n').returncode"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 1582,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_worker_scheduler_factory_0')\n\n    def test_worker_scheduler_factory_methods_are_used(tmp_path):\n        proc = run_script(\n            tmp_path,\n            \"\"\"\n            import luigi\n    \n            class HookReached(Exception):\n                pass\n    \n            class FactoryTask(luigi.Task):\n                pass\n    \n            class LocalFactory:\n                def create_local_scheduler(self):\n                    raise HookReached(\"local\")\n                def create_remote_scheduler(self, url):\n                    raise HookReached(\"remote\")\n                def create_worker(self, scheduler, worker_processes, assistant=False):\n                    raise HookReached(\"worker\")\n    \n            class WorkerFactory:\n                def create_local_scheduler(self):\n                    return object()\n                def create_remote_scheduler(self, url):\n                    return object()\n                def create_worker(self, scheduler, worker_processes, assistant=False):\n                    raise HookReached(f\"worker:{worker_processes}:{assistant}\")\n    \n            for factory in (LocalFactory(), WorkerFactory()):\n                try:\n                    luigi.build([FactoryTask()], local_scheduler=True, worker_scheduler_factory=factory, workers=2)\n                except HookReached as exc:\n                    print(exc)\n    \n            \"\"\",\n        )\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_worker_scheduler_factory_0/probe.py\", line 28, in <module>\nE             luigi.build([FactoryTask()], local_scheduler=True, worker_scheduler_factory=factory, workers=2)\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/__init__.py\", line 652, in build\nE             worker = worker_scheduler_factory.create_worker(scheduler=scheduler)\nE                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE         TypeError: WorkerFactory.create_worker() missing 1 required positional argument: 'worker_processes'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...^^^^^^^^^^^^\\nTypeError: WorkerFactory.create_worker() missing 1 required positional argument: \\'worker_processes\\'\\n').returncode\n\nfilter/generated_tests.py:1582: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.000296133001029375,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_python_module_invocation_matches_luigi_command_shape_for_local_scheduler",
+            "lineno": 1635,
+            "outcome": "passed",
+            "keywords": [
+              "test_python_module_invocation_matches_luigi_command_shape_for_local_scheduler",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000884212999153533,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.6494571319999523,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00017307899906882085,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_summary_text_and_boolean_result_reflect_successful_workflow",
+            "lineno": 1720,
+            "outcome": "passed",
+            "keywords": [
+              "test_summary_text_and_boolean_result_reflect_successful_workflow",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0007559910009149462,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00043424099931144156,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014018900037626736,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_private_parameter_is_not_exposed_in_public_str_params_but_remains_attribute",
+            "lineno": 1737,
+            "outcome": "passed",
+            "keywords": [
+              "test_private_parameter_is_not_exposed_in_public_str_params_but_remains_attribute",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00028499399923020974,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002120649987773504,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012663800043810625,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_installable_surface_top_level_task_parameter_target_and_build_work",
+            "lineno": 106,
+            "outcome": "passed",
+            "keywords": [
+              "test_installable_surface_top_level_task_parameter_target_and_build_work",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006808800008002436,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005007749987271382,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011581599937926512,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_product_state_model_parameter_identity_visible_across_projections",
+            "lineno": 139,
+            "outcome": "passed",
+            "keywords": [
+              "test_product_state_model_parameter_identity_visible_across_projections",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00027595800020208117,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018702099987422116,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010481799836270511,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_installable_surface_documented_parameter_exceptions_match_task_construction",
+            "lineno": 286,
+            "outcome": "passed",
+            "keywords": [
+              "test_installable_surface_documented_parameter_exceptions_match_task_construction",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000294399000267731,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00023051599964674097,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.971500003302936e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_filesystem_target_temporary_path_commits_and_rolls_back",
+            "lineno": 637,
+            "outcome": "passed",
+            "keywords": [
+              "test_filesystem_target_temporary_path_commits_and_rolls_back",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0006910219999554101,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0013258480012154905,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013424799908534624,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_invocation_protocol_python_module_class_qualified_dependency_flag",
+            "lineno": 902,
+            "outcome": "passed",
+            "keywords": [
+              "test_invocation_protocol_python_module_class_qualified_dependency_flag",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0008793409997451818,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.7612239659993065,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002360460002819309,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_invocation_protocol_python_module_hyphenated_root_flag",
+            "lineno": 963,
+            "outcome": "passed",
+            "keywords": [
+              "test_invocation_protocol_python_module_hyphenated_root_flag",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0009847239998634905,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.7801917369997682,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0002748970000538975,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_representative_workflow_input_target_feeds_downstream_task",
+            "lineno": 1335,
+            "outcome": "passed",
+            "keywords": [
+              "test_representative_workflow_input_target_feeds_downstream_task",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0011268010002822848,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0010734699990280205,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00016545700054848567,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "filter/generated_tests.py::test_representative_workflow_cli_invocation_writes_downstream_output",
+            "lineno": 1369,
+            "outcome": "passed",
+            "keywords": [
+              "test_representative_workflow_cli_invocation_writes_downstream_output",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000864973000716418,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.7056889689993113,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0003669840007205494,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 5,
+    "passed": 55,
+    "total": 60
+  },
+  "pass_rate_excluding_skips": 0.9166666666666666,
+  "by_layer": {
+    "atomic": {
+      "failed": 2,
+      "passed": 24,
+      "total": 26
+    },
+    "integration": {
+      "failed": 2,
+      "passed": 11,
+      "total": 13
+    },
+    "system_e2e": {
+      "failed": 1,
+      "passed": 20,
+      "total": 21
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "filter/generated_tests.py::test_basic_parameter_types_parse_and_serialize_public_values",
+      "base_nodeid": "filter/generated_tests.py::test_basic_parameter_types_parse_and_serialize_public_values",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.23513789499884297,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invalid_basic_parameter_values_raise_value_error",
+      "base_nodeid": "filter/generated_tests.py::test_invalid_basic_parameter_values_raise_value_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00025390300106664654,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_date_parameters_parse_documented_shapes",
+      "base_nodeid": "filter/generated_tests.py::test_date_parameters_parse_documented_shapes",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.008476736999000423,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_date_parameter_invalid_input_raises_value_error",
+      "base_nodeid": "filter/generated_tests.py::test_date_parameter_invalid_input_raises_value_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002144210011465475,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_list_tuple_and_dict_parameters_parse_json_publicly",
+      "base_nodeid": "filter/generated_tests.py::test_list_tuple_and_dict_parameters_parse_json_publicly",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00025506600104563404,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_enum_parameter_round_trips_by_member_name",
+      "base_nodeid": "filter/generated_tests.py::test_enum_parameter_round_trips_by_member_name",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002937760000349954,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_choice_parameter_accepts_only_configured_values",
+      "base_nodeid": "filter/generated_tests.py::test_choice_parameter_accepts_only_configured_values",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001681849989836337,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_numerical_parameter_enforces_bounds",
+      "base_nodeid": "filter/generated_tests.py::test_numerical_parameter_enforces_bounds",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005092889987281524,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_path_parameter_normalizes_and_checks_existence",
+      "base_nodeid": "filter/generated_tests.py::test_path_parameter_normalizes_and_checks_existence",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.021968295999613474,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree/filter/generated_tests.py",
+          "lineno": 277,
+          "message": "AssertionError: assert PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') == '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'\n +  where PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') = parse('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt')\n +    where parse = <luigi.parameter.PathParameter object at 0x7f7fd7f61910>.parse\n +    and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))\n +  and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 277,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0')\n\n    def test_path_parameter_normalizes_and_checks_existence(tmp_path):\n        import luigi\n    \n        existing = tmp_path / \"data.txt\"\n        existing.write_text(\"ok\", encoding=\"utf-8\")\n        existing_param = luigi.PathParameter(exists=True)\n        missing = tmp_path / \"missing.txt\"\n>       assert existing_param.parse(str(existing)) == str(existing)\nE       AssertionError: assert PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') == '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'\nE        +  where PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt') = parse('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt')\nE        +    where parse = <luigi.parameter.PathParameter object at 0x7f7fd7f61910>.parse\nE        +    and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))\nE        +  and   '/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt' = str(PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_path_parameter_normalizes0/data.txt'))\n\nfilter/generated_tests.py:277: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_optional_parameters_parse_empty_string_as_none",
+      "base_nodeid": "filter/generated_tests.py::test_optional_parameters_parse_empty_string_as_none",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00013791399942419957,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_required_parameter_missing_raises_missing_parameter_exception",
+      "base_nodeid": "filter/generated_tests.py::test_required_parameter_missing_raises_missing_parameter_exception",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.001206183000249439,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_unknown_keyword_raises_unknown_parameter_exception",
+      "base_nodeid": "filter/generated_tests.py::test_unknown_keyword_raises_unknown_parameter_exception",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001941030004672939,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_duplicate_positional_and_keyword_parameter_raises",
+      "base_nodeid": "filter/generated_tests.py::test_duplicate_positional_and_keyword_parameter_raises",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00018140599968319293,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_insignificant_parameter_is_omitted_from_identity_and_public_strings",
+      "base_nodeid": "filter/generated_tests.py::test_insignificant_parameter_is_omitted_from_identity_and_public_strings",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00021878599909541663,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_parameter_visibility_controls_public_serialization_without_changing_attribute",
+      "base_nodeid": "filter/generated_tests.py::test_parameter_visibility_controls_public_serialization_without_changing_attribute",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00021309899966581725,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_from_str_params_parses_string_mapping_and_falls_back_to_defaults",
+      "base_nodeid": "filter/generated_tests.py::test_from_str_params_parses_string_mapping_and_falls_back_to_defaults",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002008280007430585,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_task_equality_uses_class_and_significant_public_values",
+      "base_nodeid": "filter/generated_tests.py::test_task_equality_uses_class_and_significant_public_values",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004702480000560172,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_task_family_uses_namespace_and_class_name",
+      "base_nodeid": "filter/generated_tests.py::test_task_family_uses_namespace_and_class_name",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00013386399950832129,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_task_input_preserves_nested_dependency_output_shape",
+      "base_nodeid": "filter/generated_tests.py::test_task_input_preserves_nested_dependency_output_shape",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00027032500111090485,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_task_complete_false_without_outputs_and_true_when_local_output_exists",
+      "base_nodeid": "filter/generated_tests.py::test_task_complete_false_without_outputs_and_true_when_local_output_exists",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00033432800046284683,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_task_complete_raises_when_output_has_no_exists_method",
+      "base_nodeid": "filter/generated_tests.py::test_task_complete_raises_when_output_has_no_exists_method",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001802120004867902,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_external_task_has_no_run_method_and_missing_output_is_incomplete",
+      "base_nodeid": "filter/generated_tests.py::test_external_task_has_no_run_method_and_missing_output_is_incomplete",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00019251000048825517,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_wrapper_task_complete_reflects_requirements",
+      "base_nodeid": "filter/generated_tests.py::test_wrapper_task_complete_reflects_requirements",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00031173500065051485,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_dynamic_requirements_complete_uses_wrapped_requirements",
+      "base_nodeid": "filter/generated_tests.py::test_dynamic_requirements_complete_uses_wrapped_requirements",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000250723000135622,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_local_target_write_creates_parent_and_commits_on_close",
+      "base_nodeid": "filter/generated_tests.py::test_local_target_write_creates_parent_and_commits_on_close",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004673650000768248,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_local_target_rejects_missing_path_unless_temporary",
+      "base_nodeid": "filter/generated_tests.py::test_local_target_rejects_missing_path_unless_temporary",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00021219599875621498,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_local_target_move_copy_remove_and_exists",
+      "base_nodeid": "filter/generated_tests.py::test_local_target_move_copy_remove_and_exists",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0024071820007520728,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_build_runs_dependencies_then_downstream_and_reuses_existing_outputs",
+      "base_nodeid": "filter/generated_tests.py::test_build_runs_dependencies_then_downstream_and_reuses_existing_outputs",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0008913260007830104,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_build_detailed_summary_reports_failed_task",
+      "base_nodeid": "filter/generated_tests.py::test_build_detailed_summary_reports_failed_task",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00026837999939743895,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_build_reports_missing_external_dependency_without_running_dependent",
+      "base_nodeid": "filter/generated_tests.py::test_build_reports_missing_external_dependency_without_running_dependent",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00027102199965156615,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_run_accepts_cmdline_args_and_main_task_cls",
+      "base_nodeid": "filter/generated_tests.py::test_run_accepts_cmdline_args_and_main_task_cls",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.7714714920002734,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_module_invocation_runs_local_scheduler_task",
+      "base_nodeid": "filter/generated_tests.py::test_cli_module_invocation_runs_local_scheduler_task",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.7087991019998299,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_hyphenated_parameter_name_maps_to_underscore_attribute",
+      "base_nodeid": "filter/generated_tests.py::test_cli_hyphenated_parameter_name_maps_to_underscore_attribute",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.6519197819998226,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_class_qualified_parameter_supplies_dependency_value",
+      "base_nodeid": "filter/generated_tests.py::test_cli_class_qualified_parameter_supplies_dependency_value",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.9896607239988953,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_config_file_supplies_task_parameter_default",
+      "base_nodeid": "filter/generated_tests.py::test_config_file_supplies_task_parameter_default",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.6878327489994263,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_constructor_value_overrides_config_value",
+      "base_nodeid": "filter/generated_tests.py::test_constructor_value_overrides_config_value",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.606133764000333,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_config_class_reads_values_from_matching_section",
+      "base_nodeid": "filter/generated_tests.py::test_config_class_reads_values_from_matching_section",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.5925271810010599,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_config_environment_interpolation_uses_environment_variable",
+      "base_nodeid": "filter/generated_tests.py::test_config_environment_interpolation_uses_environment_variable",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.6438606889987568,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree/filter/generated_tests.py",
+          "lineno": 1114,
+          "message": "AssertionError: Traceback (most recent call last):\n    File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 4, in <module>\n      class EnvConfigTask(luigi.Task):\n    File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 5, in EnvConfigTask\n      root = luigi.Parameter(config_path={\"section\": \"paths\", \"name\": \"root\"}, default=\"fallback\")\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/parameter.py\", line 100, in __init__\n      raise ParameterException(\"config_path must be a string or a pair\")\n  luigi.parameter.ParameterException: config_path must be a string or a pair\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...onfig_path must be a string or a pair\")\\nluigi.parameter.ParameterException: config_path must be a string or a pair\\n').returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 1114,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0')\n\n    def test_config_environment_interpolation_uses_environment_variable(tmp_path):\n        cfg = tmp_path / \"client.cfg\"\n        cfg.write_text(\"[paths]\\nroot = ${ROOT_DIR}/data\\n\", encoding=\"utf-8\")\n        proc = run_script(\n            tmp_path,\n            \"\"\"\n            import luigi\n    \n            class EnvConfigTask(luigi.Task):\n                root = luigi.Parameter(config_path={\"section\": \"paths\", \"name\": \"root\"}, default=\"fallback\")\n    \n            print(EnvConfigTask().root)\n            \"\"\",\n            extra_env={\"LUIGI_CONFIG_PATH\": str(cfg), \"ROOT_DIR\": \"/tmp/root\"},\n        )\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 4, in <module>\nE             class EnvConfigTask(luigi.Task):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_config_environment_interp0/probe.py\", line 5, in EnvConfigTask\nE             root = luigi.Parameter(config_path={\"section\": \"paths\", \"name\": \"root\"}, default=\"fallback\")\nE                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/parameter.py\", line 100, in __init__\nE             raise ParameterException(\"config_path must be a string or a pair\")\nE         luigi.parameter.ParameterException: config_path must be a string or a pair\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...onfig_path must be a string or a pair\")\\nluigi.parameter.ParameterException: config_path must be a string or a pair\\n').returncode\n\nfilter/generated_tests.py:1114: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_toml_config_parser_reads_luigi_config_path",
+      "base_nodeid": "filter/generated_tests.py::test_toml_config_parser_reads_luigi_config_path",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.8800611989991012,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_failed_run_calls_on_failure_callback_and_reports_failed_status",
+      "base_nodeid": "filter/generated_tests.py::test_failed_run_calls_on_failure_callback_and_reports_failed_status",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00029965099929540884,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_event_handler_can_be_registered_triggered_and_removed",
+      "base_nodeid": "filter/generated_tests.py::test_event_handler_can_be_registered_triggered_and_removed",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00017515500076115131,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/__init__.py",
+          "lineno": 401,
+          "message": "TypeError: test_event_handler_can_be_registered_triggered_and_removed.<locals>.callback() takes 1 positional argument but 2 were given"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 1211,
+            "message": ""
+          },
+          {
+            "path": "../../output/luigi/__init__.py",
+            "lineno": 401,
+            "message": "TypeError"
+          }
+        ],
+        "longrepr": "def test_event_handler_can_be_registered_triggered_and_removed():\n        import luigi\n    \n        seen = []\n    \n        class EventTask(luigi.Task):\n            pass\n    \n        def callback(value):\n            seen.append(value)\n    \n        EventTask.event_handler(\"custom-event\")(callback)\n>       EventTask().trigger_event(\"custom-event\", \"payload\")\n\nfilter/generated_tests.py:1211: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = EventTask(), event = 'custom-event', args = ('payload',), kwargs = {}\n\n    def trigger_event(self, event, *args, **kwargs):\n        result = None\n        for cls in reversed(self.__class__.mro()):\n            for callback in getattr(cls, \"_event_handlers\", {}).get(event, []):\n>               result = callback(self, *args, **kwargs)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE               TypeError: test_event_handler_can_be_registered_triggered_and_removed.<locals>.callback() takes 1 positional argument but 2 were given\n\n../../output/luigi/__init__.py:401: TypeError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_priority_affects_ready_task_order_after_dependencies_are_satisfied",
+      "base_nodeid": "filter/generated_tests.py::test_priority_affects_ready_task_order_after_dependencies_are_satisfied",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0009956770009011962,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_dynamic_dependency_yield_restarts_task_and_uses_dependency_output",
+      "base_nodeid": "filter/generated_tests.py::test_dynamic_dependency_yield_restarts_task_and_uses_dependency_output",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0006780530002288288,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_representative_workflow_build_and_second_build_agree_on_completion",
+      "base_nodeid": "filter/generated_tests.py::test_representative_workflow_build_and_second_build_agree_on_completion",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0008746209987293696,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_python_and_cli_projection_create_same_workflow_outputs",
+      "base_nodeid": "filter/generated_tests.py::test_python_and_cli_projection_create_same_workflow_outputs",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 1.5991293169990968,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_task_without_declared_output_does_not_unlock_downstream_as_complete",
+      "base_nodeid": "filter/generated_tests.py::test_task_without_declared_output_does_not_unlock_downstream_as_complete",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003633859996625688,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_requires_returning_target_is_reported_as_scheduling_failure",
+      "base_nodeid": "filter/generated_tests.py::test_requires_returning_target_is_reported_as_scheduling_failure",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00042052600110764615,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree/filter/generated_tests.py",
+          "lineno": 1531,
+          "message": "Failed: DID NOT RAISE Exception"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 1531,
+            "message": "Failed"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_requires_returning_target0')\n\n    def test_requires_returning_target_is_reported_as_scheduling_failure(tmp_path):\n        import luigi\n    \n        class BadRequiresTask(luigi.Task):\n            def requires(self):\n                return luigi.LocalTarget(tmp_path / \"not-a-task.txt\")\n    \n            def output(self):\n                return luigi.LocalTarget(tmp_path / \"bad-requires-output.txt\")\n    \n>       with pytest.raises(Exception):\nE       Failed: DID NOT RAISE Exception\n\nfilter/generated_tests.py:1531: Failed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_complete_failure_is_reported_as_scheduling_failure",
+      "base_nodeid": "filter/generated_tests.py::test_complete_failure_is_reported_as_scheduling_failure",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00031467100052395836,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_worker_scheduler_factory_methods_are_used",
+      "base_nodeid": "filter/generated_tests.py::test_worker_scheduler_factory_methods_are_used",
+      "layer": "system_e2e",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.8017904809985339,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/score_run_wsl_20260710_filter_iter2_final/oracle_worktree/filter/generated_tests.py",
+          "lineno": 1582,
+          "message": "AssertionError: Traceback (most recent call last):\n    File \"/tmp/pytest-of-shaoyou/pytest-102/test_worker_scheduler_factory_0/probe.py\", line 28, in <module>\n      luigi.build([FactoryTask()], local_scheduler=True, worker_scheduler_factory=factory, workers=2)\n    File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/__init__.py\", line 652, in build\n      worker = worker_scheduler_factory.create_worker(scheduler=scheduler)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  TypeError: WorkerFactory.create_worker() missing 1 required positional argument: 'worker_processes'\n  \nassert 1 == 0\n +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...^^^^^^^^^^^^\\nTypeError: WorkerFactory.create_worker() missing 1 required positional argument: \\'worker_processes\\'\\n').returncode"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 1582,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "tmp_path = PosixPath('/tmp/pytest-of-shaoyou/pytest-102/test_worker_scheduler_factory_0')\n\n    def test_worker_scheduler_factory_methods_are_used(tmp_path):\n        proc = run_script(\n            tmp_path,\n            \"\"\"\n            import luigi\n    \n            class HookReached(Exception):\n                pass\n    \n            class FactoryTask(luigi.Task):\n                pass\n    \n            class LocalFactory:\n                def create_local_scheduler(self):\n                    raise HookReached(\"local\")\n                def create_remote_scheduler(self, url):\n                    raise HookReached(\"remote\")\n                def create_worker(self, scheduler, worker_processes, assistant=False):\n                    raise HookReached(\"worker\")\n    \n            class WorkerFactory:\n                def create_local_scheduler(self):\n                    return object()\n                def create_remote_scheduler(self, url):\n                    return object()\n                def create_worker(self, scheduler, worker_processes, assistant=False):\n                    raise HookReached(f\"worker:{worker_processes}:{assistant}\")\n    \n            for factory in (LocalFactory(), WorkerFactory()):\n                try:\n                    luigi.build([FactoryTask()], local_scheduler=True, worker_scheduler_factory=factory, workers=2)\n                except HookReached as exc:\n                    print(exc)\n    \n            \"\"\",\n        )\n>       assert proc.returncode == 0, proc.stderr\nE       AssertionError: Traceback (most recent call last):\nE           File \"/tmp/pytest-of-shaoyou/pytest-102/test_worker_scheduler_factory_0/probe.py\", line 28, in <module>\nE             luigi.build([FactoryTask()], local_scheduler=True, worker_scheduler_factory=factory, workers=2)\nE           File \"/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-luigi-specv1-20260710-001/output/luigi/__init__.py\", line 652, in build\nE             worker = worker_scheduler_factory.create_worker(scheduler=scheduler)\nE                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE         TypeError: WorkerFactory.create_worker() missing 1 required positional argument: 'worker_processes'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/mnt/g/research/01_agents/swe-e2e/Bmk-dev/.envs/s4-score-linux/bin/python', '/tmp/pytest-of-sh...^^^^^^^^^^^^\\nTypeError: WorkerFactory.create_worker() missing 1 required positional argument: \\'worker_processes\\'\\n').returncode\n\nfilter/generated_tests.py:1582: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_python_module_invocation_matches_luigi_command_shape_for_local_scheduler",
+      "base_nodeid": "filter/generated_tests.py::test_python_module_invocation_matches_luigi_command_shape_for_local_scheduler",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.6494571319999523,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_summary_text_and_boolean_result_reflect_successful_workflow",
+      "base_nodeid": "filter/generated_tests.py::test_summary_text_and_boolean_result_reflect_successful_workflow",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00043424099931144156,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_private_parameter_is_not_exposed_in_public_str_params_but_remains_attribute",
+      "base_nodeid": "filter/generated_tests.py::test_private_parameter_is_not_exposed_in_public_str_params_but_remains_attribute",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002120649987773504,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_installable_surface_top_level_task_parameter_target_and_build_work",
+      "base_nodeid": "filter/generated_tests.py::test_installable_surface_top_level_task_parameter_target_and_build_work",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005007749987271382,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_product_state_model_parameter_identity_visible_across_projections",
+      "base_nodeid": "filter/generated_tests.py::test_product_state_model_parameter_identity_visible_across_projections",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00018702099987422116,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_installable_surface_documented_parameter_exceptions_match_task_construction",
+      "base_nodeid": "filter/generated_tests.py::test_installable_surface_documented_parameter_exceptions_match_task_construction",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00023051599964674097,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_filesystem_target_temporary_path_commits_and_rolls_back",
+      "base_nodeid": "filter/generated_tests.py::test_filesystem_target_temporary_path_commits_and_rolls_back",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0013258480012154905,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invocation_protocol_python_module_class_qualified_dependency_flag",
+      "base_nodeid": "filter/generated_tests.py::test_invocation_protocol_python_module_class_qualified_dependency_flag",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.7612239659993065,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invocation_protocol_python_module_hyphenated_root_flag",
+      "base_nodeid": "filter/generated_tests.py::test_invocation_protocol_python_module_hyphenated_root_flag",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.7801917369997682,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_representative_workflow_input_target_feeds_downstream_task",
+      "base_nodeid": "filter/generated_tests.py::test_representative_workflow_input_target_feeds_downstream_task",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0010734699990280205,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_representative_workflow_cli_invocation_writes_downstream_output",
+      "base_nodeid": "filter/generated_tests.py::test_representative_workflow_cli_invocation_writes_downstream_output",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.7056889689993113,
+        "outcome": "passed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "oracle_version": "2026-07-10T18:20:45+08:00",
+  "oracle_count": 64,
+  "status": "completed",
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "scorer": "harness/score_pytest_original.py",
+  "scorer_isolation": "--remove-path starlette",
+  "provenance": {
+    "candidate_run": "candidate-runs/codex-starlette-specv1-20260710-001",
+    "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-starlette-specv1-20260710-001/output",
+    "trajectory": "candidate-runs/codex-starlette-specv1-20260710-001/trajectory.jsonl",
+    "trajectory_reaudit": "candidate-runs/codex-starlette-specv1-20260710-001/trajectory_reaudit_oracle64.md",
+    "trajectory_boundary_verdict": "PASS",
+    "candidate_output_hash_verdict": "PASS: 41 of 41 files unchanged across preflight and scoring",
+    "preflight_import": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-starlette-specv1-20260710-001/output/starlette/__init__.py"
+  },
+  "isolation": {
+    "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/starlette-asgi-fullrepro-001/repo",
+    "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/starlette-asgi-fullrepro-001/filter/kept_nodeids.txt",
+    "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/starlette-asgi-fullrepro-001/filter/taxonomy.jsonl",
+    "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-starlette-specv1-20260710-001/score_run_oracle64",
+    "remove_paths": ["starlette"],
+    "timeout_seconds": 120,
+    "environment": "env -i with explicit HOME/PATH, PYTEST_DISABLE_PLUGIN_AUTOLOAD=1, PYTHONDONTWRITEBYTECODE=1",
+    "pytest_args": ["-o", "filterwarnings=", "-p", "pytest_jsonreport.plugin"],
+    "carrier_sha256": "fa8759f790aaf6d7a2321cdff07441b007b54aab57adba3e195b3f38ce06dc35",
+    "collection_errors": 0,
+    "unknown_layers": 0,
+    "not_collected": 0,
+    "skipped": 0
+  },
+  "raw_score": {
+    "artifact": "candidate-runs/codex-starlette-specv1-20260710-001/score_result_raw_oracle64.json",
+    "sha256": "1ebe825c4c149ee4f2401f4c7d31b27a6594f7daa79289c70e76f2b410f9703d",
+    "preserved": true
+  },
+  "superseded_score": {
+    "artifact": "candidate-runs/codex-starlette-specv1-20260710-001/score_result_superseded_oracle66.json",
+    "oracle_count": 66,
+    "score": "63/66",
+    "sha256": "fd28f6ec5307a8987d4145726fdad48c76f7870c29b8f092b90f45122a61b3ce",
+    "status": "superseded"
+  },
+  "summary": {
+    "failed": 1,
+    "passed": 63,
+    "total": 64
+  },
+  "pass_rate_excluding_skips": 0.984375,
+  "by_layer": {
+    "atomic": {
+      "passed": 22,
+      "total": 22
+    },
+    "integration": {
+      "failed": 1,
+      "passed": 30,
+      "total": 31
+    },
+    "system_e2e": {
+      "passed": 11,
+      "total": 11
+    }
+  },
+  "failed_cases": [
+    {
+      "nodeid": "filter/rewritten_upstream_tests.py::test_websocket_json_text_and_binary_modes",
+      "layer": "integration",
+      "outcome": "failed",
+      "candidate_exception": "KeyError: 'bytes'",
+      "candidate_path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-starlette-specv1-20260710-001/output/starlette/testclient.py",
+      "candidate_line": 178
+    }
+  ],
+  "operational_anomalies": [
+    {
+      "artifact": "candidate-runs/codex-starlette-specv1-20260710-001/score_result_oracle64_cleanenv_anomaly.json",
+      "status": "superseded",
+      "reason": "An over-restrictive PYTHONNOUSERSITE preflight environment hid the already-provisioned pytest module, producing 64 collection errors before oracle execution. The accepted run removed only that environment flag and explicitly disabled plugin autoload while loading the required JSON report plugin."
+    }
+  ]
+}

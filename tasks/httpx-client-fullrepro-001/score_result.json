@@ -1,0 +1,3410 @@
+{
+  "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
+  "python_version": "3.11.15 (main, Mar 24 2026, 22:50:29) [Clang 22.1.1 ]",
+  "timeout_seconds": 120,
+  "remove_paths": [
+    "httpx"
+  ],
+  "source_repo": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/httpx-client-fullrepro-001/filter/scorer_source",
+  "solution_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/output",
+  "nodeids": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/httpx-client-fullrepro-001/filter/kept_nodeids.txt",
+  "taxonomy": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/wip/httpx-client-fullrepro-001/filter/taxonomy.jsonl",
+  "run_dir": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run",
+  "grouped_results": {
+    "filter/generated_tests.py": {
+      "returncode": 1,
+      "stdout": "........F.F.......F............F......F..............F.................. [ 92%]\n..F...                                                                   [100%]\n=================================== FAILURES ===================================\n______________ test_client_stream_context_closes_response_on_exit ______________\n\n    def test_client_stream_context_closes_response_on_exit():\n        response = httpx.Response(200, stream=httpx.ByteStream(b\"abc\"))\n        client = httpx.Client(transport=httpx.MockTransport(lambda request: response))\n        with client.stream(\"GET\", \"https://example.org/\") as streamed:\n>           assert streamed.is_closed is False\n                   ^^^^^^^^^^^^^^^^^^\nE           AttributeError: 'Response' object has no attribute 'is_closed'\n\nfilter/generated_tests.py:129: AttributeError\n_____________ test_base_url_relative_paths_resolve_under_base_path _____________\n\n    def test_base_url_relative_paths_resolve_under_base_path():\n        client = httpx.Client(base_url=\"https://example.org/root/path/\")\n        assert str(client.build_request(\"GET\", \"child\").url) == \"https://example.org/root/path/child\"\n>       assert str(client.build_request(\"GET\", \"../sibling\").url) == \"https://example.org/root/sibling\"\nE       AssertionError: assert 'https://exam...th/../sibling' == 'https://exam.../root/sibling'\nE         \nE         - https://example.org/root/sibling\nE         + https://example.org/root/path/../sibling\nE         ?                          ++++++++\n\nfilter/generated_tests.py:156: AssertionError\n____________________ test_invalid_header_value_is_rejected _____________________\n\n    def test_invalid_header_value_is_rejected():\n>       with pytest.raises(TypeError):\nE       Failed: DID NOT RAISE TypeError\n\nfilter/generated_tests.py:220: Failed\n_________ test_response_status_reason_http_version_and_url_projection __________\n\n    def test_response_status_reason_http_version_and_url_projection():\n        request = httpx.Request(\"GET\", \"https://example.org/\")\n        response = httpx.Response(201, request=request, extensions={\"http_version\": b\"HTTP/2\"})\n        assert response.status_code == 201\n        assert response.reason_phrase == \"Created\"\n>       assert response.http_version == \"HTTP/2\"\nE       AssertionError: assert b'HTTP/2' == 'HTTP/2'\nE        +  where b'HTTP/2' = <httpx.Response object at 0x7f9f33fb5a90>.http_version\n\nfilter/generated_tests.py:345: AssertionError\n_________ test_streamed_response_read_caches_content_and_closes_stream _________\n\n    def test_streamed_response_read_caches_content_and_closes_stream():\n        response = httpx.Response(200, stream=httpx.ByteStream(b\"hello\"))\n        with pytest.raises(httpx.ResponseNotRead):\n            _ = response.text\n        assert response.read() == b\"hello\"\n        assert response.content == b\"hello\"\n>       assert response.is_closed is True\n               ^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Response' object has no attribute 'is_closed'\n\nfilter/generated_tests.py:403: AttributeError\n____________ test_custom_auth_flow_can_retry_with_response_history _____________\n\n    def test_custom_auth_flow_can_retry_with_response_history():\n        class RetryAuth(httpx.Auth):\n            def auth_flow(self, request):\n                request.headers[\"Authorization\"] = \"first\"\n                response = yield request\n                if response.status_code == 401:\n                    request.headers[\"Authorization\"] = \"second\"\n                    yield request\n    \n        seen = []\n    \n        def handler(request):\n            seen.append(request.headers[\"authorization\"])\n            if len(seen) == 1:\n                return httpx.Response(401, request=request)\n            return httpx.Response(200, request=request)\n    \n        client = httpx.Client(transport=httpx.MockTransport(handler))\n        response = client.get(\"https://example.org/\", auth=RetryAuth())\n        assert response.status_code == 200\n        assert seen == [\"first\", \"second\"]\n>       assert [item.status_code for item in response.history] == [401]\nE       assert [] == [401]\nE         \nE         Right contains one more item: 401\nE         Use -v to get more diff\n\nfilter/generated_tests.py:612: AssertionError\n_ test_async_asgi_representative_workflow_can_return_error_response_when_configured _\n\n    def test_async_asgi_representative_workflow_can_return_error_response_when_configured():\n        async def app(scope, receive, send):\n            await send({\"type\": \"http.response.start\", \"status\": 500, \"headers\": [(b\"content-type\", b\"text/plain\")]})\n            await send({\"type\": \"http.response.body\", \"body\": b\"error\"})\n            raise RuntimeError(\"after response\")\n    \n        async def run():\n            transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)\n            async with httpx.AsyncClient(transport=transport, base_url=\"http://testserver\") as client:\n                response = await client.get(\"/\")\n            assert response.status_code == 500\n            assert response.text == \"error\"\n    \n>       asyncio.run(run())\n\nfilter/generated_tests.py:891: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    async def run():\n        transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)\n        async with httpx.AsyncClient(transport=transport, base_url=\"http://testserver\") as client:\n            response = await client.get(\"/\")\n        assert response.status_code == 500\n>       assert response.text == \"error\"\nE       AssertionError: assert '' == 'error'\nE         \nE         - error\n\nfilter/generated_tests.py:889: AssertionError\n=========================== short test summary info ============================\nFAILED filter/generated_tests.py::test_client_stream_context_closes_response_on_exit\nFAILED filter/generated_tests.py::test_base_url_relative_paths_resolve_under_base_path\nFAILED filter/generated_tests.py::test_invalid_header_value_is_rejected - Fai...\nFAILED filter/generated_tests.py::test_response_status_reason_http_version_and_url_projection\nFAILED filter/generated_tests.py::test_streamed_response_read_caches_content_and_closes_stream\nFAILED filter/generated_tests.py::test_custom_auth_flow_can_retry_with_response_history\nFAILED filter/generated_tests.py::test_async_asgi_representative_workflow_can_return_error_response_when_configured\n7 failed, 71 passed in 2.74s\n",
+      "stderr": "",
+      "json_report": {
+        "created": 1783632411.5056734,
+        "duration": 2.6657960414886475,
+        "exitcode": 1,
+        "root": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run",
+        "environment": {},
+        "summary": {
+          "passed": 71,
+          "failed": 7,
+          "total": 78,
+          "collected": 78
+        },
+        "collectors": [
+          {
+            "nodeid": "",
+            "outcome": "passed",
+            "result": [
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_close_is_idempotent_and_blocks_later_send",
+                "type": "Function",
+                "lineno": 8
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_context_returns_self_and_closes_transport",
+                "type": "Function",
+                "lineno": 18
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_reentering_open_context_raises",
+                "type": "Function",
+                "lineno": 36
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_enter_after_close_raises",
+                "type": "Function",
+                "lineno": 44
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_client_context_and_aclose_are_idempotent",
+                "type": "Function",
+                "lineno": 52
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_build_request_merges_base_url_headers_cookies_and_params",
+                "type": "Function",
+                "lineno": 75
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_request_sends_prepared_request_and_reads_body",
+                "type": "Function",
+                "lineno": 98
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_send_stream_true_leaves_response_unread_until_read",
+                "type": "Function",
+                "lineno": 113
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_stream_context_closes_response_on_exit",
+                "type": "Function",
+                "lineno": 124
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_client_request_and_build_request",
+                "type": "Function",
+                "lineno": 133
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_base_url_relative_paths_resolve_under_base_path",
+                "type": "Function",
+                "lineno": 152
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_invalid_url_construction_raises_public_exception",
+                "type": "Function",
+                "lineno": 158
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_level_auth_none_disables_client_auth",
+                "type": "Function",
+                "lineno": 163
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_level_follow_redirects_overrides_client_default",
+                "type": "Function",
+                "lineno": 172
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_headers_case_insensitive_lookup_and_duplicates",
+                "type": "Function",
+                "lineno": 188
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_headers_setting_replaces_all_existing_values",
+                "type": "Function",
+                "lineno": 196
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_headers_get_and_missing_key_behavior",
+                "type": "Function",
+                "lineno": 205
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_headers_split_commas_keeps_ordered_values",
+                "type": "Function",
+                "lineno": 213
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_invalid_header_value_is_rejected",
+                "type": "Function",
+                "lineno": 218
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_queryparams_lookup_lists_and_string_encoding",
+                "type": "Function",
+                "lineno": 223
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_queryparams_set_add_remove_and_merge_are_immutable",
+                "type": "Function",
+                "lineno": 230
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_url_exposes_normalized_components",
+                "type": "Function",
+                "lineno": 243
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_url_copy_and_param_helpers_return_new_urls",
+                "type": "Function",
+                "lineno": 255
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_url_join_resolves_relative_references",
+                "type": "Function",
+                "lineno": 265
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_cookies_set_get_delete_and_conflict",
+                "type": "Function",
+                "lineno": 270
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_cookies_extract_and_send_matching_cookie_header",
+                "type": "Function",
+                "lineno": 281
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_cookies_clear_removes_matching_domain_and_path",
+                "type": "Function",
+                "lineno": 291
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_cookie_jar_persists_between_requests",
+                "type": "Function",
+                "lineno": 300
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_model_adds_default_headers_and_content_length",
+                "type": "Function",
+                "lineno": 315
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_json_body_sets_content_type_and_bytes",
+                "type": "Function",
+                "lineno": 324
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_stream_content_requires_read_before_content_access",
+                "type": "Function",
+                "lineno": 330
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_status_reason_http_version_and_url_projection",
+                "type": "Function",
+                "lineno": 339
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_request_and_url_require_attached_request",
+                "type": "Function",
+                "lineno": 348
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_content_text_json_and_cookies",
+                "type": "Function",
+                "lineno": 356
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_links_are_parsed_by_relation",
+                "type": "Function",
+                "lineno": 365
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_raise_for_status_returns_self_for_success_and_raises_for_error",
+                "type": "Function",
+                "lineno": 370
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_status_category_booleans",
+                "type": "Function",
+                "lineno": 381
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_has_redirect_location_requires_redirect_status_and_location",
+                "type": "Function",
+                "lineno": 390
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_streamed_response_read_caches_content_and_closes_stream",
+                "type": "Function",
+                "lineno": 396
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_iter_bytes_text_lines_and_raw_consume_streams",
+                "type": "Function",
+                "lineno": 405
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_closed_before_read_raises_stream_closed",
+                "type": "Function",
+                "lineno": 418
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_num_bytes_downloaded_tracks_raw_stream_consumption",
+                "type": "Function",
+                "lineno": 425
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_response_aread_and_aiter_bytes",
+                "type": "Function",
+                "lineno": 432
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_redirect_without_following_exposes_next_request",
+                "type": "Function",
+                "lineno": 450
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_follow_redirects_populates_history_and_final_request",
+                "type": "Function",
+                "lineno": 461
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_too_many_redirects_raises_with_request",
+                "type": "Function",
+                "lineno": 477
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_post_303_redirect_rewrites_to_get",
+                "type": "Function",
+                "lineno": 487
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_and_response_hooks_run_in_order_and_mutate_request",
+                "type": "Function",
+                "lineno": 502
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_hook_can_read_streaming_body_before_return",
+                "type": "Function",
+                "lineno": 528
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_event_hooks_property_can_be_mutated",
+                "type": "Function",
+                "lineno": 540
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_client_rejects_sync_hook_when_awaited",
+                "type": "Function",
+                "lineno": 554
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_basic_auth_tuple_sets_authorization_header",
+                "type": "Function",
+                "lineno": 569
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_callable_auth_mutates_prepared_request",
+                "type": "Function",
+                "lineno": 578
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_custom_auth_flow_can_retry_with_response_history",
+                "type": "Function",
+                "lineno": 590
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_auth_flow_reads_request_body_when_required",
+                "type": "Function",
+                "lineno": 614
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_mock_transport_calls_sync_handler_with_request",
+                "type": "Function",
+                "lineno": 629
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_mock_transport_awaits_async_handler",
+                "type": "Function",
+                "lineno": 641
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_base_transport_without_handle_request_raises_not_implemented",
+                "type": "Function",
+                "lineno": 657
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_wsgi_transport_populates_environ_and_returns_response",
+                "type": "Function",
+                "lineno": 663
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_wsgi_transport_can_return_error_response_when_configured",
+                "type": "Function",
+                "lineno": 682
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_asgi_transport_populates_scope_and_returns_response",
+                "type": "Function",
+                "lineno": 693
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_sync_client_with_async_transport_raises_capability_error",
+                "type": "Function",
+                "lineno": 710
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_public_exception_hierarchy_and_request_attribute",
+                "type": "Function",
+                "lineno": 717
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_stream_state_exceptions_are_public_stream_errors",
+                "type": "Function",
+                "lineno": 728
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_unsupported_protocol_raises_request_error_subclass",
+                "type": "Function",
+                "lineno": 738
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_hook_header_visible_to_transport_cross_view",
+                "type": "Function",
+                "lineno": 744
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_object_seen_by_hook_is_returned_to_caller",
+                "type": "Function",
+                "lineno": 755
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_built_request_defaults_match_url_header_and_query_views",
+                "type": "Function",
+                "lineno": 769
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_read_bytes_match_content_and_text_cache",
+                "type": "Function",
+                "lineno": 784
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_mocked_sync_workflow_with_hooks_redirects_and_json",
+                "type": "Function",
+                "lineno": 791
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_mocked_sync_workflow_handler_exception_propagates",
+                "type": "Function",
+                "lineno": 823
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_mocked_sync_workflow_preserves_client_params_into_redirect",
+                "type": "Function",
+                "lineno": 832
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_asgi_representative_workflow",
+                "type": "Function",
+                "lineno": 850
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_asgi_representative_workflow_exception_propagates",
+                "type": "Function",
+                "lineno": 864
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_asgi_representative_workflow_can_return_error_response_when_configured",
+                "type": "Function",
+                "lineno": 877
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_cli_help_exits_successfully",
+                "type": "Function",
+                "lineno": 893
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_cli_rejects_invalid_json_before_request",
+                "type": "Function",
+                "lineno": 901
+              },
+              {
+                "nodeid": "oracle_worktree/filter/generated_tests.py::test_cli_requires_url_argument_before_request",
+                "type": "Function",
+                "lineno": 909
+              }
+            ]
+          }
+        ],
+        "tests": [
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_close_is_idempotent_and_blocks_later_send",
+            "lineno": 8,
+            "outcome": "passed",
+            "keywords": [
+              "test_client_close_is_idempotent_and_blocks_later_send",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00037512699964281637,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00037666400021407753,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012512299872469157,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_context_returns_self_and_closes_transport",
+            "lineno": 18,
+            "outcome": "passed",
+            "keywords": [
+              "test_client_context_returns_self_and_closes_transport",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00013516600120055955,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00031162800041784067,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010262099931424018,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_reentering_open_context_raises",
+            "lineno": 36,
+            "outcome": "passed",
+            "keywords": [
+              "test_client_reentering_open_context_raises",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011847600035252981,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005105719992570812,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011501599874463864,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_enter_after_close_raises",
+            "lineno": 44,
+            "outcome": "passed",
+            "keywords": [
+              "test_client_enter_after_close_raises",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001436889997421531,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00024052499975368846,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00013628299893753137,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_client_context_and_aclose_are_idempotent",
+            "lineno": 52,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_client_context_and_aclose_are_idempotent",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00017226899944944307,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000724165998690296,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001068620003934484,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_build_request_merges_base_url_headers_cookies_and_params",
+            "lineno": 75,
+            "outcome": "passed",
+            "keywords": [
+              "test_build_request_merges_base_url_headers_cookies_and_params",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00014781500067329034,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00038221400063775945,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.959099952538963e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_request_sends_prepared_request_and_reads_body",
+            "lineno": 98,
+            "outcome": "passed",
+            "keywords": [
+              "test_client_request_sends_prepared_request_and_reads_body",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011045399878639728,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00037884400080656633,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010204700083704665,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_send_stream_true_leaves_response_unread_until_read",
+            "lineno": 113,
+            "outcome": "passed",
+            "keywords": [
+              "test_client_send_stream_true_leaves_response_unread_until_read",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.000150535001012031,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00027380800020182505,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012861100003647152,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_stream_context_closes_response_on_exit",
+            "lineno": 124,
+            "outcome": "failed",
+            "keywords": [
+              "test_client_stream_context_closes_response_on_exit",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00015752600120322313,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00037942199924145825,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+                "lineno": 129,
+                "message": "AttributeError: 'Response' object has no attribute 'is_closed'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 129,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "def test_client_stream_context_closes_response_on_exit():\n        response = httpx.Response(200, stream=httpx.ByteStream(b\"abc\"))\n        client = httpx.Client(transport=httpx.MockTransport(lambda request: response))\n        with client.stream(\"GET\", \"https://example.org/\") as streamed:\n>           assert streamed.is_closed is False\n                   ^^^^^^^^^^^^^^^^^^\nE           AttributeError: 'Response' object has no attribute 'is_closed'\n\nfilter/generated_tests.py:129: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.00019165199955750722,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_client_request_and_build_request",
+            "lineno": 133,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_client_request_and_build_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0003561209996405523,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000774456999351969,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010175200077355839,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_base_url_relative_paths_resolve_under_base_path",
+            "lineno": 152,
+            "outcome": "failed",
+            "keywords": [
+              "test_base_url_relative_paths_resolve_under_base_path",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00012005300050077494,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0006856199997855583,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+                "lineno": 156,
+                "message": "AssertionError: assert 'https://exam...th/../sibling' == 'https://exam.../root/sibling'\n  \n  - https://example.org/root/sibling\n  + https://example.org/root/path/../sibling\n  ?                          ++++++++"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 156,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_base_url_relative_paths_resolve_under_base_path():\n        client = httpx.Client(base_url=\"https://example.org/root/path/\")\n        assert str(client.build_request(\"GET\", \"child\").url) == \"https://example.org/root/path/child\"\n>       assert str(client.build_request(\"GET\", \"../sibling\").url) == \"https://example.org/root/sibling\"\nE       AssertionError: assert 'https://exam...th/../sibling' == 'https://exam.../root/sibling'\nE         \nE         - https://example.org/root/sibling\nE         + https://example.org/root/path/../sibling\nE         ?                          ++++++++\n\nfilter/generated_tests.py:156: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0001938010009325808,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_invalid_url_construction_raises_public_exception",
+            "lineno": 158,
+            "outcome": "passed",
+            "keywords": [
+              "test_invalid_url_construction_raises_public_exception",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00013403299999481533,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018449899835104588,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.185400085698348e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_level_auth_none_disables_client_auth",
+            "lineno": 163,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_level_auth_none_disables_client_auth",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00012591700033226516,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004344930002844194,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010478399963176344,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_level_follow_redirects_overrides_client_default",
+            "lineno": 172,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_level_follow_redirects_overrides_client_default",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010183199992752634,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003873570003634086,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.689899914315902e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_headers_case_insensitive_lookup_and_duplicates",
+            "lineno": 188,
+            "outcome": "passed",
+            "keywords": [
+              "test_headers_case_insensitive_lookup_and_duplicates",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001017419999698177,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001149239997175755,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.028599950193893e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_headers_setting_replaces_all_existing_values",
+            "lineno": 196,
+            "outcome": "passed",
+            "keywords": [
+              "test_headers_setting_replaces_all_existing_values",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.33619994611945e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010749300054158084,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.957700108818244e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_headers_get_and_missing_key_behavior",
+            "lineno": 205,
+            "outcome": "passed",
+            "keywords": [
+              "test_headers_get_and_missing_key_behavior",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.122600022237748e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00012635799976123963,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012812599925382528,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_headers_split_commas_keeps_ordered_values",
+            "lineno": 213,
+            "outcome": "passed",
+            "keywords": [
+              "test_headers_split_commas_keeps_ordered_values",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001573589997860836,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00012148699897807091,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.301800153276417e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_invalid_header_value_is_rejected",
+            "lineno": 218,
+            "outcome": "failed",
+            "keywords": [
+              "test_invalid_header_value_is_rejected",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010975499935739208,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018186299894296099,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+                "lineno": 220,
+                "message": "Failed: DID NOT RAISE TypeError"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 220,
+                  "message": "Failed"
+                }
+              ],
+              "longrepr": "def test_invalid_header_value_is_rejected():\n>       with pytest.raises(TypeError):\nE       Failed: DID NOT RAISE TypeError\n\nfilter/generated_tests.py:220: Failed"
+            },
+            "teardown": {
+              "duration": 0.00018410300071991514,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_queryparams_lookup_lists_and_string_encoding",
+            "lineno": 223,
+            "outcome": "passed",
+            "keywords": [
+              "test_queryparams_lookup_lists_and_string_encoding",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00012936699931742623,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017225999908987433,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.841099952405784e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_queryparams_set_add_remove_and_merge_are_immutable",
+            "lineno": 230,
+            "outcome": "passed",
+            "keywords": [
+              "test_queryparams_set_add_remove_and_merge_are_immutable",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010224899961031042,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001523810005892301,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.070299918472301e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_url_exposes_normalized_components",
+            "lineno": 243,
+            "outcome": "passed",
+            "keywords": [
+              "test_url_exposes_normalized_components",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.551699986332096e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00013597299948742148,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.950500003062189e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_url_copy_and_param_helpers_return_new_urls",
+            "lineno": 255,
+            "outcome": "passed",
+            "keywords": [
+              "test_url_copy_and_param_helpers_return_new_urls",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.360200056107715e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002771809995465446,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.612300007371232e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_url_join_resolves_relative_references",
+            "lineno": 265,
+            "outcome": "passed",
+            "keywords": [
+              "test_url_join_resolves_relative_references",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.601999954611529e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00014719700084242504,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.917999937490094e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_cookies_set_get_delete_and_conflict",
+            "lineno": 270,
+            "outcome": "passed",
+            "keywords": [
+              "test_cookies_set_get_delete_and_conflict",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.293100083596073e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00013876800039724912,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.993599865585566e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_cookies_extract_and_send_matching_cookie_header",
+            "lineno": 281,
+            "outcome": "passed",
+            "keywords": [
+              "test_cookies_extract_and_send_matching_cookie_header",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 8.989699927042238e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002675420000741724,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.555200111004524e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_cookies_clear_removes_matching_domain_and_path",
+            "lineno": 291,
+            "outcome": "passed",
+            "keywords": [
+              "test_cookies_clear_removes_matching_domain_and_path",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.696200140751898e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001100450008379994,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.943899981910363e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_cookie_jar_persists_between_requests",
+            "lineno": 300,
+            "outcome": "passed",
+            "keywords": [
+              "test_client_cookie_jar_persists_between_requests",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.487699935561977e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000763130999985151,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011068300045735668,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_model_adds_default_headers_and_content_length",
+            "lineno": 315,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_model_adds_default_headers_and_content_length",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010707099863793701,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0008511079995514592,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.23589996091323e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_json_body_sets_content_type_and_bytes",
+            "lineno": 324,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_json_body_sets_content_type_and_bytes",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010261100032948889,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00018239299970446154,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.929199975682423e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_stream_content_requires_read_before_content_access",
+            "lineno": 330,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_stream_content_requires_read_before_content_access",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00012117000005673617,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00016607699944870546,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.429300007468555e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_status_reason_http_version_and_url_projection",
+            "lineno": 339,
+            "outcome": "failed",
+            "keywords": [
+              "test_response_status_reason_http_version_and_url_projection",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.897899872157723e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003274550017522415,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+                "lineno": 345,
+                "message": "AssertionError: assert b'HTTP/2' == 'HTTP/2'\n +  where b'HTTP/2' = <httpx.Response object at 0x7f9f33fb5a90>.http_version"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 345,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_response_status_reason_http_version_and_url_projection():\n        request = httpx.Request(\"GET\", \"https://example.org/\")\n        response = httpx.Response(201, request=request, extensions={\"http_version\": b\"HTTP/2\"})\n        assert response.status_code == 201\n        assert response.reason_phrase == \"Created\"\n>       assert response.http_version == \"HTTP/2\"\nE       AssertionError: assert b'HTTP/2' == 'HTTP/2'\nE        +  where b'HTTP/2' = <httpx.Response object at 0x7f9f33fb5a90>.http_version\n\nfilter/generated_tests.py:345: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00019758500093303155,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_request_and_url_require_attached_request",
+            "lineno": 348,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_request_and_url_require_attached_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001584959991305368,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00014919899876986165,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014125699999567587,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_content_text_json_and_cookies",
+            "lineno": 356,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_content_text_json_and_cookies",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011358499978086911,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002935760003310861,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.862999857228715e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_links_are_parsed_by_relation",
+            "lineno": 365,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_links_are_parsed_by_relation",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.807900096348021e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001154710007540416,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.44399998843437e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_raise_for_status_returns_self_for_success_and_raises_for_error",
+            "lineno": 370,
+            "outcome": "passed",
+            "keywords": [
+              "test_raise_for_status_returns_self_for_success_and_raises_for_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00012177200005680788,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00016663400128891226,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.97949996922398e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_status_category_booleans",
+            "lineno": 381,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_status_category_booleans",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.040500117407646e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010685499910323415,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.957899965229444e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_has_redirect_location_requires_redirect_status_and_location",
+            "lineno": 390,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_has_redirect_location_requires_redirect_status_and_location",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.707400022307411e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001500449998275144,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.952499981911387e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_streamed_response_read_caches_content_and_closes_stream",
+            "lineno": 396,
+            "outcome": "failed",
+            "keywords": [
+              "test_streamed_response_read_caches_content_and_closes_stream",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.739699999045115e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001374059993395349,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+                "lineno": 403,
+                "message": "AttributeError: 'Response' object has no attribute 'is_closed'"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 403,
+                  "message": "AttributeError"
+                }
+              ],
+              "longrepr": "def test_streamed_response_read_caches_content_and_closes_stream():\n        response = httpx.Response(200, stream=httpx.ByteStream(b\"hello\"))\n        with pytest.raises(httpx.ResponseNotRead):\n            _ = response.text\n        assert response.read() == b\"hello\"\n        assert response.content == b\"hello\"\n>       assert response.is_closed is True\n               ^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Response' object has no attribute 'is_closed'\n\nfilter/generated_tests.py:403: AttributeError"
+            },
+            "teardown": {
+              "duration": 0.00018383299902779981,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_iter_bytes_text_lines_and_raw_consume_streams",
+            "lineno": 405,
+            "outcome": "passed",
+            "keywords": [
+              "test_iter_bytes_text_lines_and_raw_consume_streams",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00018955999985337257,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00019119299940939527,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.354299982078373e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_closed_before_read_raises_stream_closed",
+            "lineno": 418,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_closed_before_read_raises_stream_closed",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010710899914556649,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00023469299958378542,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.974699994723778e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_num_bytes_downloaded_tracks_raw_stream_consumption",
+            "lineno": 425,
+            "outcome": "passed",
+            "keywords": [
+              "test_num_bytes_downloaded_tracks_raw_stream_consumption",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010006499906012323,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00011045000064768828,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.832899973436724e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_response_aread_and_aiter_bytes",
+            "lineno": 432,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_response_aread_and_aiter_bytes",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.572900125931483e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004928910002490738,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.17470006243093e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_redirect_without_following_exposes_next_request",
+            "lineno": 450,
+            "outcome": "passed",
+            "keywords": [
+              "test_redirect_without_following_exposes_next_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.933600085787475e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003120719993603416,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.220699965022504e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_follow_redirects_populates_history_and_final_request",
+            "lineno": 461,
+            "outcome": "passed",
+            "keywords": [
+              "test_follow_redirects_populates_history_and_final_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.466600022278726e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003797130011662375,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00010615800056257285,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_too_many_redirects_raises_with_request",
+            "lineno": 477,
+            "outcome": "passed",
+            "keywords": [
+              "test_too_many_redirects_raises_with_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010385000132373534,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004000709996034857,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.948899994720705e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_post_303_redirect_rewrites_to_get",
+            "lineno": 487,
+            "outcome": "passed",
+            "keywords": [
+              "test_post_303_redirect_rewrites_to_get",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.753199992701411e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00029241999982332345,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.201599848689511e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_and_response_hooks_run_in_order_and_mutate_request",
+            "lineno": 502,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_and_response_hooks_run_in_order_and_mutate_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.257899910153355e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00023735400100122206,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.60660002217628e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_hook_can_read_streaming_body_before_return",
+            "lineno": 528,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_hook_can_read_streaming_body_before_return",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.739300003275275e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000198199999431381,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.417299977736548e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_client_event_hooks_property_can_be_mutated",
+            "lineno": 540,
+            "outcome": "passed",
+            "keywords": [
+              "test_client_event_hooks_property_can_be_mutated",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.42250007938128e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00017148400002042763,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.817100049578585e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_client_rejects_sync_hook_when_awaited",
+            "lineno": 554,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_client_rejects_sync_hook_when_awaited",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.062500066647772e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00050582900075824,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.156700070889201e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_basic_auth_tuple_sets_authorization_header",
+            "lineno": 569,
+            "outcome": "passed",
+            "keywords": [
+              "test_basic_auth_tuple_sets_authorization_header",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.82489982561674e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00025027199990290683,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.090700066532008e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_callable_auth_mutates_prepared_request",
+            "lineno": 578,
+            "outcome": "passed",
+            "keywords": [
+              "test_callable_auth_mutates_prepared_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.3284999820753e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00020320000112405978,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.05710005806759e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_custom_auth_flow_can_retry_with_response_history",
+            "lineno": 590,
+            "outcome": "failed",
+            "keywords": [
+              "test_custom_auth_flow_can_retry_with_response_history",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.15910004550824e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00036792800165130757,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+                "lineno": 612,
+                "message": "assert [] == [401]\n  \n  Right contains one more item: 401\n  Use -v to get more diff"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 612,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_custom_auth_flow_can_retry_with_response_history():\n        class RetryAuth(httpx.Auth):\n            def auth_flow(self, request):\n                request.headers[\"Authorization\"] = \"first\"\n                response = yield request\n                if response.status_code == 401:\n                    request.headers[\"Authorization\"] = \"second\"\n                    yield request\n    \n        seen = []\n    \n        def handler(request):\n            seen.append(request.headers[\"authorization\"])\n            if len(seen) == 1:\n                return httpx.Response(401, request=request)\n            return httpx.Response(200, request=request)\n    \n        client = httpx.Client(transport=httpx.MockTransport(handler))\n        response = client.get(\"https://example.org/\", auth=RetryAuth())\n        assert response.status_code == 200\n        assert seen == [\"first\", \"second\"]\n>       assert [item.status_code for item in response.history] == [401]\nE       assert [] == [401]\nE         \nE         Right contains one more item: 401\nE         Use -v to get more diff\n\nfilter/generated_tests.py:612: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.0001854980000643991,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_auth_flow_reads_request_body_when_required",
+            "lineno": 614,
+            "outcome": "passed",
+            "keywords": [
+              "test_auth_flow_reads_request_body_when_required",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00012448800043785013,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00034357600088696927,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.073900037037674e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_mock_transport_calls_sync_handler_with_request",
+            "lineno": 629,
+            "outcome": "passed",
+            "keywords": [
+              "test_mock_transport_calls_sync_handler_with_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.992999912356026e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00022725899907527491,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.222799988288898e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_mock_transport_awaits_async_handler",
+            "lineno": 641,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_mock_transport_awaits_async_handler",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.42070000746753e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005728010000893846,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.679399954620749e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_base_transport_without_handle_request_raises_not_implemented",
+            "lineno": 657,
+            "outcome": "passed",
+            "keywords": [
+              "test_base_transport_without_handle_request_raises_not_implemented",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00013472099999489728,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002201389997935621,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.48420004331274e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_wsgi_transport_populates_environ_and_returns_response",
+            "lineno": 663,
+            "outcome": "passed",
+            "keywords": [
+              "test_wsgi_transport_populates_environ_and_returns_response",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.907599996950012e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003204099994036369,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.686999874247704e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_wsgi_transport_can_return_error_response_when_configured",
+            "lineno": 682,
+            "outcome": "passed",
+            "keywords": [
+              "test_wsgi_transport_can_return_error_response_when_configured",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.556599979987368e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00025053600074897986,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.120699931168929e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_asgi_transport_populates_scope_and_returns_response",
+            "lineno": 693,
+            "outcome": "passed",
+            "keywords": [
+              "test_asgi_transport_populates_scope_and_returns_response",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.325300015916582e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000520626999787055,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.154399958788417e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_sync_client_with_async_transport_raises_capability_error",
+            "lineno": 710,
+            "outcome": "passed",
+            "keywords": [
+              "test_sync_client_with_async_transport_raises_capability_error",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001211360013257945,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002086019994749222,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.16490010038251e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_public_exception_hierarchy_and_request_attribute",
+            "lineno": 717,
+            "outcome": "passed",
+            "keywords": [
+              "test_public_exception_hierarchy_and_request_attribute",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.52179998421343e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00014486100008070935,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.741199988231529e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_stream_state_exceptions_are_public_stream_errors",
+            "lineno": 728,
+            "outcome": "passed",
+            "keywords": [
+              "test_stream_state_exceptions_are_public_stream_errors",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.216900070896372e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010938400009763427,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.897999967099167e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_unsupported_protocol_raises_request_error_subclass",
+            "lineno": 738,
+            "outcome": "passed",
+            "keywords": [
+              "test_unsupported_protocol_raises_request_error_subclass",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.078400034923106e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00022262799939198885,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.940300019981805e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_request_hook_header_visible_to_transport_cross_view",
+            "lineno": 744,
+            "outcome": "passed",
+            "keywords": [
+              "test_request_hook_header_visible_to_transport_cross_view",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001057800000126008,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002481989995430922,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.530699960829224e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_object_seen_by_hook_is_returned_to_caller",
+            "lineno": 755,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_object_seen_by_hook_is_returned_to_caller",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.393899927090388e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0001952439997694455,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.931900108815171e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_built_request_defaults_match_url_header_and_query_views",
+            "lineno": 769,
+            "outcome": "passed",
+            "keywords": [
+              "test_built_request_defaults_match_url_header_and_query_views",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001007289993140148,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0002647620003699558,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.085299850790761e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_response_read_bytes_match_content_and_text_cache",
+            "lineno": 784,
+            "outcome": "passed",
+            "keywords": [
+              "test_response_read_bytes_match_content_and_text_cache",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.148499884759076e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00010615999963192735,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 7.829099922673777e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_mocked_sync_workflow_with_hooks_redirects_and_json",
+            "lineno": 791,
+            "outcome": "passed",
+            "keywords": [
+              "test_mocked_sync_workflow_with_hooks_redirects_and_json",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00010225199912383687,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0004049320014019031,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00011288899986539036,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_mocked_sync_workflow_handler_exception_propagates",
+            "lineno": 823,
+            "outcome": "passed",
+            "keywords": [
+              "test_mocked_sync_workflow_handler_exception_propagates",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011503600035212003,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.00021431099958135746,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 8.602500020060688e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_mocked_sync_workflow_preserves_client_params_into_redirect",
+            "lineno": 832,
+            "outcome": "passed",
+            "keywords": [
+              "test_mocked_sync_workflow_preserves_client_params_into_redirect",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 9.648400009609759e-05,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0003926509998564143,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00025293500038969796,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_asgi_representative_workflow",
+            "lineno": 850,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_asgi_representative_workflow",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00014046900105313398,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005408119995991001,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00014471100075752474,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_asgi_representative_workflow_exception_propagates",
+            "lineno": 864,
+            "outcome": "passed",
+            "keywords": [
+              "test_async_asgi_representative_workflow_exception_propagates",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011649000043689739,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0005600580007012468,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001025950004986953,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_async_asgi_representative_workflow_can_return_error_response_when_configured",
+            "lineno": 877,
+            "outcome": "failed",
+            "keywords": [
+              "test_async_asgi_representative_workflow_can_return_error_response_when_configured",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011493199963297229,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000636177001069882,
+              "outcome": "failed",
+              "crash": {
+                "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+                "lineno": 889,
+                "message": "AssertionError: assert '' == 'error'\n  \n  - error"
+              },
+              "traceback": [
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 891,
+                  "message": ""
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+                  "lineno": 190,
+                  "message": "in run"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+                  "lineno": 118,
+                  "message": "in run"
+                },
+                {
+                  "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+                  "lineno": 654,
+                  "message": "in run_until_complete"
+                },
+                {
+                  "path": "filter/generated_tests.py",
+                  "lineno": 889,
+                  "message": "AssertionError"
+                }
+              ],
+              "longrepr": "def test_async_asgi_representative_workflow_can_return_error_response_when_configured():\n        async def app(scope, receive, send):\n            await send({\"type\": \"http.response.start\", \"status\": 500, \"headers\": [(b\"content-type\", b\"text/plain\")]})\n            await send({\"type\": \"http.response.body\", \"body\": b\"error\"})\n            raise RuntimeError(\"after response\")\n    \n        async def run():\n            transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)\n            async with httpx.AsyncClient(transport=transport, base_url=\"http://testserver\") as client:\n                response = await client.get(\"/\")\n            assert response.status_code == 500\n            assert response.text == \"error\"\n    \n>       asyncio.run(run())\n\nfilter/generated_tests.py:891: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    async def run():\n        transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)\n        async with httpx.AsyncClient(transport=transport, base_url=\"http://testserver\") as client:\n            response = await client.get(\"/\")\n        assert response.status_code == 500\n>       assert response.text == \"error\"\nE       AssertionError: assert '' == 'error'\nE         \nE         - error\n\nfilter/generated_tests.py:889: AssertionError"
+            },
+            "teardown": {
+              "duration": 0.00019058399993809871,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_cli_help_exits_successfully",
+            "lineno": 893,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_help_exits_successfully",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001321499985351693,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.004186824000498746,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.00012170499940111768,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_cli_rejects_invalid_json_before_request",
+            "lineno": 901,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_rejects_invalid_json_before_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.00011353499940014444,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.000862249000419979,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 9.588600005372427e-05,
+              "outcome": "passed"
+            }
+          },
+          {
+            "nodeid": "oracle_worktree/filter/generated_tests.py::test_cli_requires_url_argument_before_request",
+            "lineno": 909,
+            "outcome": "passed",
+            "keywords": [
+              "test_cli_requires_url_argument_before_request",
+              "generated_tests.py",
+              "filter",
+              "oracle_worktree",
+              "score_run",
+              ""
+            ],
+            "setup": {
+              "duration": 0.0001042139992932789,
+              "outcome": "passed"
+            },
+            "call": {
+              "duration": 0.0007455800005118363,
+              "outcome": "passed"
+            },
+            "teardown": {
+              "duration": 0.0001338559995929245,
+              "outcome": "passed"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "summary": {
+    "failed": 7,
+    "passed": 71,
+    "total": 78
+  },
+  "pass_rate_excluding_skips": 0.9102564102564102,
+  "by_layer": {
+    "atomic": {
+      "failed": 4,
+      "passed": 36,
+      "total": 40
+    },
+    "integration": {
+      "failed": 3,
+      "passed": 23,
+      "total": 26
+    },
+    "system_e2e": {
+      "passed": 12,
+      "total": 12
+    }
+  },
+  "cases": [
+    {
+      "nodeid": "filter/generated_tests.py::test_client_close_is_idempotent_and_blocks_later_send",
+      "base_nodeid": "filter/generated_tests.py::test_client_close_is_idempotent_and_blocks_later_send",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00037666400021407753,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_client_context_returns_self_and_closes_transport",
+      "base_nodeid": "filter/generated_tests.py::test_client_context_returns_self_and_closes_transport",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00031162800041784067,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_client_reentering_open_context_raises",
+      "base_nodeid": "filter/generated_tests.py::test_client_reentering_open_context_raises",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005105719992570812,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_client_enter_after_close_raises",
+      "base_nodeid": "filter/generated_tests.py::test_client_enter_after_close_raises",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00024052499975368846,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_async_client_context_and_aclose_are_idempotent",
+      "base_nodeid": "filter/generated_tests.py::test_async_client_context_and_aclose_are_idempotent",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000724165998690296,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_build_request_merges_base_url_headers_cookies_and_params",
+      "base_nodeid": "filter/generated_tests.py::test_build_request_merges_base_url_headers_cookies_and_params",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00038221400063775945,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_client_request_sends_prepared_request_and_reads_body",
+      "base_nodeid": "filter/generated_tests.py::test_client_request_sends_prepared_request_and_reads_body",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00037884400080656633,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_client_send_stream_true_leaves_response_unread_until_read",
+      "base_nodeid": "filter/generated_tests.py::test_client_send_stream_true_leaves_response_unread_until_read",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00027380800020182505,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_client_stream_context_closes_response_on_exit",
+      "base_nodeid": "filter/generated_tests.py::test_client_stream_context_closes_response_on_exit",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00037942199924145825,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+          "lineno": 129,
+          "message": "AttributeError: 'Response' object has no attribute 'is_closed'"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 129,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "def test_client_stream_context_closes_response_on_exit():\n        response = httpx.Response(200, stream=httpx.ByteStream(b\"abc\"))\n        client = httpx.Client(transport=httpx.MockTransport(lambda request: response))\n        with client.stream(\"GET\", \"https://example.org/\") as streamed:\n>           assert streamed.is_closed is False\n                   ^^^^^^^^^^^^^^^^^^\nE           AttributeError: 'Response' object has no attribute 'is_closed'\n\nfilter/generated_tests.py:129: AttributeError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_async_client_request_and_build_request",
+      "base_nodeid": "filter/generated_tests.py::test_async_client_request_and_build_request",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000774456999351969,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_base_url_relative_paths_resolve_under_base_path",
+      "base_nodeid": "filter/generated_tests.py::test_base_url_relative_paths_resolve_under_base_path",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0006856199997855583,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+          "lineno": 156,
+          "message": "AssertionError: assert 'https://exam...th/../sibling' == 'https://exam.../root/sibling'\n  \n  - https://example.org/root/sibling\n  + https://example.org/root/path/../sibling\n  ?                          ++++++++"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 156,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_base_url_relative_paths_resolve_under_base_path():\n        client = httpx.Client(base_url=\"https://example.org/root/path/\")\n        assert str(client.build_request(\"GET\", \"child\").url) == \"https://example.org/root/path/child\"\n>       assert str(client.build_request(\"GET\", \"../sibling\").url) == \"https://example.org/root/sibling\"\nE       AssertionError: assert 'https://exam...th/../sibling' == 'https://exam.../root/sibling'\nE         \nE         - https://example.org/root/sibling\nE         + https://example.org/root/path/../sibling\nE         ?                          ++++++++\n\nfilter/generated_tests.py:156: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invalid_url_construction_raises_public_exception",
+      "base_nodeid": "filter/generated_tests.py::test_invalid_url_construction_raises_public_exception",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00018449899835104588,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_request_level_auth_none_disables_client_auth",
+      "base_nodeid": "filter/generated_tests.py::test_request_level_auth_none_disables_client_auth",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004344930002844194,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_request_level_follow_redirects_overrides_client_default",
+      "base_nodeid": "filter/generated_tests.py::test_request_level_follow_redirects_overrides_client_default",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003873570003634086,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_headers_case_insensitive_lookup_and_duplicates",
+      "base_nodeid": "filter/generated_tests.py::test_headers_case_insensitive_lookup_and_duplicates",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001149239997175755,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_headers_setting_replaces_all_existing_values",
+      "base_nodeid": "filter/generated_tests.py::test_headers_setting_replaces_all_existing_values",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010749300054158084,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_headers_get_and_missing_key_behavior",
+      "base_nodeid": "filter/generated_tests.py::test_headers_get_and_missing_key_behavior",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00012635799976123963,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_headers_split_commas_keeps_ordered_values",
+      "base_nodeid": "filter/generated_tests.py::test_headers_split_commas_keeps_ordered_values",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00012148699897807091,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_invalid_header_value_is_rejected",
+      "base_nodeid": "filter/generated_tests.py::test_invalid_header_value_is_rejected",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00018186299894296099,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+          "lineno": 220,
+          "message": "Failed: DID NOT RAISE TypeError"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 220,
+            "message": "Failed"
+          }
+        ],
+        "longrepr": "def test_invalid_header_value_is_rejected():\n>       with pytest.raises(TypeError):\nE       Failed: DID NOT RAISE TypeError\n\nfilter/generated_tests.py:220: Failed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_queryparams_lookup_lists_and_string_encoding",
+      "base_nodeid": "filter/generated_tests.py::test_queryparams_lookup_lists_and_string_encoding",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00017225999908987433,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_queryparams_set_add_remove_and_merge_are_immutable",
+      "base_nodeid": "filter/generated_tests.py::test_queryparams_set_add_remove_and_merge_are_immutable",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001523810005892301,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_url_exposes_normalized_components",
+      "base_nodeid": "filter/generated_tests.py::test_url_exposes_normalized_components",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00013597299948742148,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_url_copy_and_param_helpers_return_new_urls",
+      "base_nodeid": "filter/generated_tests.py::test_url_copy_and_param_helpers_return_new_urls",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002771809995465446,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_url_join_resolves_relative_references",
+      "base_nodeid": "filter/generated_tests.py::test_url_join_resolves_relative_references",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00014719700084242504,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cookies_set_get_delete_and_conflict",
+      "base_nodeid": "filter/generated_tests.py::test_cookies_set_get_delete_and_conflict",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00013876800039724912,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cookies_extract_and_send_matching_cookie_header",
+      "base_nodeid": "filter/generated_tests.py::test_cookies_extract_and_send_matching_cookie_header",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002675420000741724,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cookies_clear_removes_matching_domain_and_path",
+      "base_nodeid": "filter/generated_tests.py::test_cookies_clear_removes_matching_domain_and_path",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001100450008379994,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_client_cookie_jar_persists_between_requests",
+      "base_nodeid": "filter/generated_tests.py::test_client_cookie_jar_persists_between_requests",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000763130999985151,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_request_model_adds_default_headers_and_content_length",
+      "base_nodeid": "filter/generated_tests.py::test_request_model_adds_default_headers_and_content_length",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0008511079995514592,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_request_json_body_sets_content_type_and_bytes",
+      "base_nodeid": "filter/generated_tests.py::test_request_json_body_sets_content_type_and_bytes",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00018239299970446154,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_request_stream_content_requires_read_before_content_access",
+      "base_nodeid": "filter/generated_tests.py::test_request_stream_content_requires_read_before_content_access",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00016607699944870546,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_status_reason_http_version_and_url_projection",
+      "base_nodeid": "filter/generated_tests.py::test_response_status_reason_http_version_and_url_projection",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0003274550017522415,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+          "lineno": 345,
+          "message": "AssertionError: assert b'HTTP/2' == 'HTTP/2'\n +  where b'HTTP/2' = <httpx.Response object at 0x7f9f33fb5a90>.http_version"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 345,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_response_status_reason_http_version_and_url_projection():\n        request = httpx.Request(\"GET\", \"https://example.org/\")\n        response = httpx.Response(201, request=request, extensions={\"http_version\": b\"HTTP/2\"})\n        assert response.status_code == 201\n        assert response.reason_phrase == \"Created\"\n>       assert response.http_version == \"HTTP/2\"\nE       AssertionError: assert b'HTTP/2' == 'HTTP/2'\nE        +  where b'HTTP/2' = <httpx.Response object at 0x7f9f33fb5a90>.http_version\n\nfilter/generated_tests.py:345: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_request_and_url_require_attached_request",
+      "base_nodeid": "filter/generated_tests.py::test_response_request_and_url_require_attached_request",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00014919899876986165,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_content_text_json_and_cookies",
+      "base_nodeid": "filter/generated_tests.py::test_response_content_text_json_and_cookies",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002935760003310861,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_links_are_parsed_by_relation",
+      "base_nodeid": "filter/generated_tests.py::test_response_links_are_parsed_by_relation",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001154710007540416,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_raise_for_status_returns_self_for_success_and_raises_for_error",
+      "base_nodeid": "filter/generated_tests.py::test_raise_for_status_returns_self_for_success_and_raises_for_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00016663400128891226,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_status_category_booleans",
+      "base_nodeid": "filter/generated_tests.py::test_response_status_category_booleans",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010685499910323415,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_has_redirect_location_requires_redirect_status_and_location",
+      "base_nodeid": "filter/generated_tests.py::test_response_has_redirect_location_requires_redirect_status_and_location",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001500449998275144,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_streamed_response_read_caches_content_and_closes_stream",
+      "base_nodeid": "filter/generated_tests.py::test_streamed_response_read_caches_content_and_closes_stream",
+      "layer": "atomic",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.0001374059993395349,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+          "lineno": 403,
+          "message": "AttributeError: 'Response' object has no attribute 'is_closed'"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 403,
+            "message": "AttributeError"
+          }
+        ],
+        "longrepr": "def test_streamed_response_read_caches_content_and_closes_stream():\n        response = httpx.Response(200, stream=httpx.ByteStream(b\"hello\"))\n        with pytest.raises(httpx.ResponseNotRead):\n            _ = response.text\n        assert response.read() == b\"hello\"\n        assert response.content == b\"hello\"\n>       assert response.is_closed is True\n               ^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'Response' object has no attribute 'is_closed'\n\nfilter/generated_tests.py:403: AttributeError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_iter_bytes_text_lines_and_raw_consume_streams",
+      "base_nodeid": "filter/generated_tests.py::test_iter_bytes_text_lines_and_raw_consume_streams",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00019119299940939527,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_closed_before_read_raises_stream_closed",
+      "base_nodeid": "filter/generated_tests.py::test_response_closed_before_read_raises_stream_closed",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00023469299958378542,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_num_bytes_downloaded_tracks_raw_stream_consumption",
+      "base_nodeid": "filter/generated_tests.py::test_num_bytes_downloaded_tracks_raw_stream_consumption",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00011045000064768828,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_async_response_aread_and_aiter_bytes",
+      "base_nodeid": "filter/generated_tests.py::test_async_response_aread_and_aiter_bytes",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004928910002490738,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_redirect_without_following_exposes_next_request",
+      "base_nodeid": "filter/generated_tests.py::test_redirect_without_following_exposes_next_request",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003120719993603416,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_follow_redirects_populates_history_and_final_request",
+      "base_nodeid": "filter/generated_tests.py::test_follow_redirects_populates_history_and_final_request",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003797130011662375,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_too_many_redirects_raises_with_request",
+      "base_nodeid": "filter/generated_tests.py::test_too_many_redirects_raises_with_request",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004000709996034857,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_post_303_redirect_rewrites_to_get",
+      "base_nodeid": "filter/generated_tests.py::test_post_303_redirect_rewrites_to_get",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00029241999982332345,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_request_and_response_hooks_run_in_order_and_mutate_request",
+      "base_nodeid": "filter/generated_tests.py::test_request_and_response_hooks_run_in_order_and_mutate_request",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00023735400100122206,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_hook_can_read_streaming_body_before_return",
+      "base_nodeid": "filter/generated_tests.py::test_response_hook_can_read_streaming_body_before_return",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000198199999431381,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_client_event_hooks_property_can_be_mutated",
+      "base_nodeid": "filter/generated_tests.py::test_client_event_hooks_property_can_be_mutated",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00017148400002042763,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_async_client_rejects_sync_hook_when_awaited",
+      "base_nodeid": "filter/generated_tests.py::test_async_client_rejects_sync_hook_when_awaited",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00050582900075824,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_basic_auth_tuple_sets_authorization_header",
+      "base_nodeid": "filter/generated_tests.py::test_basic_auth_tuple_sets_authorization_header",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00025027199990290683,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_callable_auth_mutates_prepared_request",
+      "base_nodeid": "filter/generated_tests.py::test_callable_auth_mutates_prepared_request",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00020320000112405978,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_custom_auth_flow_can_retry_with_response_history",
+      "base_nodeid": "filter/generated_tests.py::test_custom_auth_flow_can_retry_with_response_history",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.00036792800165130757,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+          "lineno": 612,
+          "message": "assert [] == [401]\n  \n  Right contains one more item: 401\n  Use -v to get more diff"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 612,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_custom_auth_flow_can_retry_with_response_history():\n        class RetryAuth(httpx.Auth):\n            def auth_flow(self, request):\n                request.headers[\"Authorization\"] = \"first\"\n                response = yield request\n                if response.status_code == 401:\n                    request.headers[\"Authorization\"] = \"second\"\n                    yield request\n    \n        seen = []\n    \n        def handler(request):\n            seen.append(request.headers[\"authorization\"])\n            if len(seen) == 1:\n                return httpx.Response(401, request=request)\n            return httpx.Response(200, request=request)\n    \n        client = httpx.Client(transport=httpx.MockTransport(handler))\n        response = client.get(\"https://example.org/\", auth=RetryAuth())\n        assert response.status_code == 200\n        assert seen == [\"first\", \"second\"]\n>       assert [item.status_code for item in response.history] == [401]\nE       assert [] == [401]\nE         \nE         Right contains one more item: 401\nE         Use -v to get more diff\n\nfilter/generated_tests.py:612: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_auth_flow_reads_request_body_when_required",
+      "base_nodeid": "filter/generated_tests.py::test_auth_flow_reads_request_body_when_required",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00034357600088696927,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_mock_transport_calls_sync_handler_with_request",
+      "base_nodeid": "filter/generated_tests.py::test_mock_transport_calls_sync_handler_with_request",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00022725899907527491,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_async_mock_transport_awaits_async_handler",
+      "base_nodeid": "filter/generated_tests.py::test_async_mock_transport_awaits_async_handler",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005728010000893846,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_base_transport_without_handle_request_raises_not_implemented",
+      "base_nodeid": "filter/generated_tests.py::test_base_transport_without_handle_request_raises_not_implemented",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002201389997935621,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_wsgi_transport_populates_environ_and_returns_response",
+      "base_nodeid": "filter/generated_tests.py::test_wsgi_transport_populates_environ_and_returns_response",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003204099994036369,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_wsgi_transport_can_return_error_response_when_configured",
+      "base_nodeid": "filter/generated_tests.py::test_wsgi_transport_can_return_error_response_when_configured",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00025053600074897986,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_asgi_transport_populates_scope_and_returns_response",
+      "base_nodeid": "filter/generated_tests.py::test_asgi_transport_populates_scope_and_returns_response",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000520626999787055,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_sync_client_with_async_transport_raises_capability_error",
+      "base_nodeid": "filter/generated_tests.py::test_sync_client_with_async_transport_raises_capability_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002086019994749222,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_public_exception_hierarchy_and_request_attribute",
+      "base_nodeid": "filter/generated_tests.py::test_public_exception_hierarchy_and_request_attribute",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00014486100008070935,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_stream_state_exceptions_are_public_stream_errors",
+      "base_nodeid": "filter/generated_tests.py::test_stream_state_exceptions_are_public_stream_errors",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010938400009763427,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_unsupported_protocol_raises_request_error_subclass",
+      "base_nodeid": "filter/generated_tests.py::test_unsupported_protocol_raises_request_error_subclass",
+      "layer": "atomic",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00022262799939198885,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_request_hook_header_visible_to_transport_cross_view",
+      "base_nodeid": "filter/generated_tests.py::test_request_hook_header_visible_to_transport_cross_view",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002481989995430922,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_object_seen_by_hook_is_returned_to_caller",
+      "base_nodeid": "filter/generated_tests.py::test_response_object_seen_by_hook_is_returned_to_caller",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0001952439997694455,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_built_request_defaults_match_url_header_and_query_views",
+      "base_nodeid": "filter/generated_tests.py::test_built_request_defaults_match_url_header_and_query_views",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0002647620003699558,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_response_read_bytes_match_content_and_text_cache",
+      "base_nodeid": "filter/generated_tests.py::test_response_read_bytes_match_content_and_text_cache",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00010615999963192735,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_mocked_sync_workflow_with_hooks_redirects_and_json",
+      "base_nodeid": "filter/generated_tests.py::test_mocked_sync_workflow_with_hooks_redirects_and_json",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0004049320014019031,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_mocked_sync_workflow_handler_exception_propagates",
+      "base_nodeid": "filter/generated_tests.py::test_mocked_sync_workflow_handler_exception_propagates",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.00021431099958135746,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_mocked_sync_workflow_preserves_client_params_into_redirect",
+      "base_nodeid": "filter/generated_tests.py::test_mocked_sync_workflow_preserves_client_params_into_redirect",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0003926509998564143,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_async_asgi_representative_workflow",
+      "base_nodeid": "filter/generated_tests.py::test_async_asgi_representative_workflow",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005408119995991001,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_async_asgi_representative_workflow_exception_propagates",
+      "base_nodeid": "filter/generated_tests.py::test_async_asgi_representative_workflow_exception_propagates",
+      "layer": "integration",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0005600580007012468,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_async_asgi_representative_workflow_can_return_error_response_when_configured",
+      "base_nodeid": "filter/generated_tests.py::test_async_asgi_representative_workflow_can_return_error_response_when_configured",
+      "layer": "integration",
+      "outcome": "failed",
+      "call": {
+        "duration": 0.000636177001069882,
+        "outcome": "failed",
+        "crash": {
+          "path": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/candidate-runs/codex-httpx-specv1-20260710-001/score_run/oracle_worktree/filter/generated_tests.py",
+          "lineno": 889,
+          "message": "AssertionError: assert '' == 'error'\n  \n  - error"
+        },
+        "traceback": [
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 891,
+            "message": ""
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "lineno": 190,
+            "message": "in run"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py",
+            "lineno": 118,
+            "message": "in run"
+          },
+          {
+            "path": "/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py",
+            "lineno": 654,
+            "message": "in run_until_complete"
+          },
+          {
+            "path": "filter/generated_tests.py",
+            "lineno": 889,
+            "message": "AssertionError"
+          }
+        ],
+        "longrepr": "def test_async_asgi_representative_workflow_can_return_error_response_when_configured():\n        async def app(scope, receive, send):\n            await send({\"type\": \"http.response.start\", \"status\": 500, \"headers\": [(b\"content-type\", b\"text/plain\")]})\n            await send({\"type\": \"http.response.body\", \"body\": b\"error\"})\n            raise RuntimeError(\"after response\")\n    \n        async def run():\n            transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)\n            async with httpx.AsyncClient(transport=transport, base_url=\"http://testserver\") as client:\n                response = await client.get(\"/\")\n            assert response.status_code == 500\n            assert response.text == \"error\"\n    \n>       asyncio.run(run())\n\nfilter/generated_tests.py:891: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py:190: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/shaoyou/DeepScientist/runtime/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py:654: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    async def run():\n        transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)\n        async with httpx.AsyncClient(transport=transport, base_url=\"http://testserver\") as client:\n            response = await client.get(\"/\")\n        assert response.status_code == 500\n>       assert response.text == \"error\"\nE       AssertionError: assert '' == 'error'\nE         \nE         - error\n\nfilter/generated_tests.py:889: AssertionError"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_help_exits_successfully",
+      "base_nodeid": "filter/generated_tests.py::test_cli_help_exits_successfully",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.004186824000498746,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_rejects_invalid_json_before_request",
+      "base_nodeid": "filter/generated_tests.py::test_cli_rejects_invalid_json_before_request",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.000862249000419979,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "filter/generated_tests.py::test_cli_requires_url_argument_before_request",
+      "base_nodeid": "filter/generated_tests.py::test_cli_requires_url_argument_before_request",
+      "layer": "system_e2e",
+      "outcome": "passed",
+      "call": {
+        "duration": 0.0007455800005118363,
+        "outcome": "passed"
+      }
+    }
+  ],
+  "aggregation_note": "Normalized pytest-json-report nodeids by stripping oracle_worktree/ prefix emitted by this WSL pytest rootdir; raw grouped_results are unchanged and collected 78/78 active nodeids."
+}

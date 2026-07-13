@@ -37,6 +37,12 @@ Prefer repos with:
 - No mandatory external services; network calls removable or mockable
 - Test files that import only public API symbols at module level (no `from pkg._xxx import` at top level)
 
+## Selection Preferences
+
+**Multi-component collaboration preference:** Prioritize frameworks, engines, pipelines, protocol stacks, and multi-layer architectures. Avoid utility function collections, single-class libraries, and pure algorithm packages. Quick test: does the library's typical usage involve ≥3 cooperating objects to complete one user scenario? If it can be fully demonstrated in one line of code, it's not suitable.
+
+---
+
 ## Test Import Pre-Screen
 
 Before writing filter_notes.md, run an AST-level import closure check — not just underscore-prefixed names. For each test file, collect all imported top-level package names and compare against the spec's Installable Surface (or the candidate repo's `__all__` / `__init__` exports if the spec does not yet exist).
@@ -97,6 +103,12 @@ scope_plan: {if src_loc > 15000 or test_functions > 300, write: target_subdomain
 When `scope_plan` is not N/A, the Stage 3 handoff must verify the actual kept set matches the stated `target_subdomain` and does not exceed `expected_oracle_max`. If it does, return to Stage 2 to scope down.
 
 ## Selection Record
+
+**source_meta collection:** When a task reaches QUALIFIED, record in task.json:
+- `source_meta.github_stars`: GitHub star count at time of qualification
+- `source_meta.pypi_monthly_downloads`: approximate PyPI downloads
+- `source_meta.loc`: lines of code in source package
+- `source_meta.first_release`: date of first PyPI release
 
 When a candidate is accepted, append to `CANDIDATES.md`:
 

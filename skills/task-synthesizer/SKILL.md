@@ -201,6 +201,13 @@ A feedback loop terminates when:
 
 Cycles through the same loop more than twice without resolution → retire candidate.
 
+**Spec change linkage rule:** Whenever spec.md is modified after Stage 3 has completed (including post-QUALIFIED patches):
+1. Re-validate spec_test_map.md: every "covered" test must still map to an existing spec section
+2. Remove orphaned tests (those whose spec_section no longer exists) from the oracle
+3. Update task.json taxonomy and stats to reflect removals
+4. Re-run reference gate to confirm ≥95% on the updated oracle
+Partial spec edits that leave orphaned tests in the oracle are invalid.
+
 **Rescue prohibition:** once a task reaches `RETIRED`, it cannot be reopened under the same task_id. If the root cause is fixable and worth retrying, open a new task_id (e.g. `-002`). The new task must:
 - Inherit iter counters from the predecessor (do not reset to 0)
 - Have a `predecessor_task` field in its INTERNAL spec header

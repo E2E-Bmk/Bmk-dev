@@ -131,7 +131,17 @@ source_boundary: {list of sources consulted: docs pages, source files}
 ## Representative Workflow(s)   <- >=1 end-to-end example
 ## Non-Goals                    <- explicit exclusions
 ## Invocation Protocol          <- console script name; whether `python -m <pkg>` is supported (write "supported" or "not supported"); exit code table
+## Environment                  <- runtime dependency declaration policy
 ## Evaluation Notes             <- test dimensions and evaluation protocol; no fixture shapes or expected values
+```
+
+**Environment section (required in all specs):**
+Every spec must include near the end:
+
+```
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 ```
 
 The body must read as if written by a library author, not a benchmark designer. `Evaluation Notes` is the only section that describes the evaluation setup — it tells the candidate what dimensions are tested and how scoring works, so failures reflect capability gaps, not protocol confusion.
@@ -158,6 +168,15 @@ Spec and test-filter are linked: spec describes what must be implemented; test-f
 12. Does the candidate-visible body contain any of the following strings: `task_id`, `delta:`, `source_boundary:`, `Candidate Agent Input Boundary`, `benchmark`, `oracle`, `judge`? Any match → strip before sending to candidate<-
 
 All twelve must pass. Any failure -> patch and re-judge.
+
+## Style Gate
+
+**Style gate (mandatory before proceeding to Stage 3):**
+- Spec must be organized by concept/workflow, NOT by module/class hierarchy
+- No continuous signature code blocks exceeding 10 lines
+- "Installable Surface" must be written as natural prose (e.g. "The package is imported as `httpcore`. The primary entry point is `ConnectionPool`..."), NOT as bare import code blocks
+- No evaluation leakage words: benchmark, oracle, judge, task_id, candidate-visible, scorer, evaluation
+- Failure: return to spec-writer for revision
 
 ## Critical Experiment Results
 

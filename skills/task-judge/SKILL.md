@@ -184,6 +184,14 @@ Before attributing any failure to the model, verify each failure cluster satisfi
 
 If a significant share of failures fail Pass 1, set task status to `BROKEN` (fairness) and issue `filter_correction_request.md`. Do not score the run as QUALIFIED difficulty evidence.
 
+**Negative Gap diagnostic:** If the candidate's atomic pass rate is lower than its integration pass rate, diagnose the cause before finalizing:
+- Are atomic failures caused by ImportError/collection errors on paths not in spec? → Flag as Q1 violation, return to Stage 3 for test cleanup
+- Are atomic failures genuine assertion errors (model implemented the function but got behavior wrong)? → Normal model weakness, proceed
+- Are integration tests passing because they're too weak (only check "no exception" without verifying behavior)? → Flag as test quality issue, return to Stage 3
+Document the diagnosis in the judge report.
+
+**Spec adequacy check for integration failures:** For each failed integration/system_e2e test, verify that the spec contains the cross-module constraint being tested. If the spec does not describe the interaction that failed, this is a spec gap (not a model failure) — issue a spec_patch_request to add the missing constraint, then re-evaluate.
+
 **Pass 2 — Model failure analysis**
 
 For every failure cluster that passed Pass 1:
@@ -256,6 +264,17 @@ Per evaluation run, a structured narrative covering:
 4. Protocol issues found and actions taken
 5. Real failure clusters with root cause and dimension
 6. Cascade analysis: how many failures root in how many root causes
+
+### Weakness Recording
+
+**Weakness recording:** When the verdict is QUALIFIED, identify model failure dimensions from the candidate score and write them directly into task.json as:
+```json
+"weaknesses": [
+  {"dimension": "cross-view-consistency", "description": "...", "affected_tests": N},
+  ...
+]
+```
+Do not maintain a separate weakness_table file.
 
 ### Weakness Table
 

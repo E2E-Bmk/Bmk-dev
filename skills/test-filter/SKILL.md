@@ -26,6 +26,8 @@ Every filtering decision reduces to two questions. Both must be true to keep a t
 
 A test that checks exact field names, repr strings, internal maps, exception message wording, or singleton shapes answers No — a correct reimplementation with different internals would fail it. Exclude these regardless of import visibility.
 
+**Q1 strict enforcement for atomic tests:** Atomic tests may only import through entry points explicitly described in the spec's prose (the "Installable Surface" or equivalent section). If a test imports from a sub-module path not mentioned in the spec text, it violates Q1 regardless of whether the path has an underscore prefix. The test: "if the model puts this function in a different sub-module (behavior identical), would this test fail due to ImportError?" — if yes, exclude.
+
 **Q2 — Spec-derivable?**
 > Can a senior engineer who has only read the spec infer what this test expects?
 
@@ -117,6 +119,8 @@ Total: N | kept (covered): N | spec_gap: N | source-only: N | excluded: N | fina
 
 **Preserved rate is not sufficient alone.** A high preserved rate can be misleading if failures cluster around a few broken primitives or if import provenance was not fully audited. Audit by failure surface and cascade root count, not just the percentage of retained tests.
 
+**Per-layer minimum count:** The final oracle must contain at least 15 atomic tests AND at least 15 integration+system_e2e tests. If either layer falls below 15 after filtering, return to Track B generation targeting the deficient layer until the minimum is met. This ensures Integration Gap computation has statistical significance (each layer needs enough samples to avoid >10% random fluctuation from a single test).
+
 **Coverage too low:** if a significant share of kept tests are `source-only` after resolution, the library may not be viable - its tests cover behavior that cannot be fairly specified.
 
 When `spec_gap` rows trigger spec patches, patches must pass spec-writer validation (all 5 checks) before the row is re-labeled `covered`.
@@ -170,6 +174,8 @@ oracle/
 **Rationale:** This split enables direct computation of Integration Gap = (atomic pass rate) − (integration pass rate) without post-hoc taxonomy lookup. The scorer can run each file independently.
 
 **Oracle atomic update rule:** whenever any oracle file is modified after Stage 3 completes (including retro additions), all four files (kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md, reference_score) must be updated together and assigned a new `oracle_version` timestamp in spec_test_map.md header. Partial updates that leave counts inconsistent across files are invalid.
+
+**Dependency extraction (required before leaving Stage 3):** Extract test runtime dependencies from the upstream repository's `pyproject.toml` (test extras or dev dependencies). Write these to `oracle/requirements.txt`, excluding the target package itself (that's what the candidate implements). If the upstream repo has no explicit test extras, inspect test file imports for third-party packages and list them manually.
 
 **Preservation rule:** do not delete the `wip/{task}/` directory after a task reaches QUALIFIED. The wip directory is the audit trail. Its removal makes evaluation scores permanently unverifiable.
 

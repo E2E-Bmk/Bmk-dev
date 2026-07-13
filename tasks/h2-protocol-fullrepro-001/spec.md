@@ -327,6 +327,6 @@ There is no console script. `python -m h2` is not supported. Importing the packa
 | `import h2` | succeeds and exposes `__version__` |
 | `python -m h2` | not supported |
 
-## Evaluation Notes
+## Implementation Guidance
 
 The test suite exercises public Python behavior only. It checks that independent `H2Connection` objects interoperate through bytes returned by `data_to_send()`, that inbound bytes produce documented event classes and attributes, that settings and flow-control projections agree with events, and that documented exception classes are raised for invalid public operations. Tests avoid exact `repr()` text, private attributes, private modules, and exact exception message wording.

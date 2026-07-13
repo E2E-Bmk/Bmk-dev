@@ -1,4 +1,4 @@
-# pre-commit Specification
+﻿# pre-commit Specification
 
 ## Product Overview
 
@@ -314,7 +314,7 @@ Other language backends may be present in the package, but full environment crea
 - Private helper functions and underscored modules are not public API.
 - pre-commit.ci service behavior is not part of local pre-commit execution.
 
-## Evaluation Notes
+## Implementation Guidance
 
 Validation focuses on observable behavior through the public interfaces described above. Checks exercise CLI command dispatch, YAML config and manifest validation, hook resolution, installed hook scripts, Git file selection, store/cache persistence, local hook execution, meta hooks, bounded local languages, utility APIs that affect command behavior, and cross-view consistency among files, Git state, cache state, output, and exit codes.
 

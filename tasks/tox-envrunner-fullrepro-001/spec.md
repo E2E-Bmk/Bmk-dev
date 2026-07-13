@@ -281,11 +281,11 @@ It does not require implementing a build backend, virtualenv, pip, or Python int
 
 It does not require supporting undocumented private imports, test-only fixtures, or project-maintainer onboarding material as public user API.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation exercises the behavior described here through public imports, CLI invocations, configuration files, plugin hooks, and observable filesystem/output state. Tests may compare the same project through several public views, such as `tox list`, `tox config`, a run result, log files, and generated schema output.
+The expected implementation exercises the behavior described here through public imports, CLI invocations, configuration files, plugin hooks, and observable filesystem/output state. Tests may compare the same project through several public views, such as `tox list`, `tox config`, a run result, log files, and generated schema output.
 
-Scoring focuses on user-visible contracts: configuration discovery and precedence, environment generation and selection, substitution and conditional evaluation, environment variable composition, package-mode effects, command execution outcomes, skip/fail behavior, plugin hook calls, and consistency between resolved configuration and actual runs.
+The focus is on user-visible contracts: configuration discovery and precedence, environment generation and selection, substitution and conditional evaluation, environment variable composition, package-mode effects, command execution outcomes, skip/fail behavior, plugin hook calls, and consistency between resolved configuration and actual runs.
 
 Tests should not require private tox modules or hidden fixture shapes. They may use temporary projects, local files, local packages, and controlled subprocess commands to make outcomes deterministic. Exact stdout formatting is relevant only where tox documents a machine-readable format, a stable CLI option, an error condition, or a user-facing status distinction.
 

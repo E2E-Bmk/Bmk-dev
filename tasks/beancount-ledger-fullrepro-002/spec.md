@@ -1,4 +1,4 @@
-# Beancount Specification
+﻿# Beancount Specification
 
 ## Product Overview
 
@@ -400,9 +400,9 @@ When enabled by a ledger `plugin` option, the function receives the current dire
 - Inventory objects are not immutable. Directive objects are immutable tuple-like records, but inventories intentionally mutate when positions are added.
 - Command-line tools are not required to fetch live prices or contact external services for the covered behavior.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation focuses on public behavior observable from the documented package surface. Tests may construct public directive objects, load small Beancount ledgers, inspect returned entries/errors/options, realize account trees, build price maps, reduce inventories, format directives, and invoke the installed command-line tools.
+The expected implementation focuses on public behavior observable from the documented package surface. Tests may construct public directive objects, load small Beancount ledgers, inspect returned entries/errors/options, realize account trees, build price maps, reduce inventories, format directives, and invoke the installed command-line tools.
 
 The expected implementation should preserve the relationships among views: loader output, account getters, inventories, realized trees, price maps, printed syntax, plugin errors, and CLI status/output should all be derived from the same ledger facts. Scoring rewards correct behavior across those projections rather than matching a particular internal organization.
 

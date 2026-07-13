@@ -361,6 +361,6 @@ CLI return code behavior:
 
 When several configured nonzero categories apply, the process must exit with the numerically greatest configured code.
 
-## Evaluation Notes
+## Implementation Guidance
 
 Public checks for this package exercise behavior through user-facing imports, task classes, local output files, configuration files, command-line invocations, local scheduler runs, and `luigi.build`/`luigi.run` return values. They focus on observable task graph behavior, parameter resolution and parsing, completion state, local target side effects, worker/scheduler outcomes, and documented error classes. They do not require exact private data layouts, exact log wording, browser output, daemon process management, or external service integrations.

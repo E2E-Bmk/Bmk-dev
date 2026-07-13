@@ -499,9 +499,9 @@ JSON output is for reporting. Quiet mode is for scripts: exit code `2` means a n
 - It does not require reproducing private test helpers, private attributes, or internal metadata structures beyond the documented answers file and public template variables.
 - It does not require supporting template features that depend on third-party extensions unless those extensions are installed and explicitly trusted.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation focuses on public behavior through the documented Python API, CLI commands, generated destination trees, answers files, update/check-update outcomes, template configuration semantics, user settings, and documented error classes. Tests may compare API and CLI projections of the same operation, verify answer precedence, inspect rendered files and answers files, exercise local Git update flows, check unsafe-feature refusal and trust behavior, and validate documented exceptions and warnings.
+The expected implementation focuses on public behavior through the documented Python API, CLI commands, generated destination trees, answers files, update/check-update outcomes, template configuration semantics, user settings, and documented error classes. Tests may compare API and CLI projections of the same operation, verify answer precedence, inspect rendered files and answers files, exercise local Git update flows, check unsafe-feature refusal and trust behavior, and validate documented exceptions and warnings.
 
 Scoring should reward behavior that follows this specification from public inputs and outputs. It should not depend on private import paths, private class names, exact internal object layouts, network repositories, or terminal styling. Fixture templates are examples of the documented concepts rather than hidden requirements; a correct implementation should generalize from the documented contracts.
 

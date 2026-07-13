@@ -1,4 +1,4 @@
-# Marshmallow Specification
+﻿# Marshmallow Specification
 
 ## Product Overview
 
@@ -153,6 +153,6 @@ The package is used through Python imports. There is no supported `marshmallow` 
 
 Exit code behavior is therefore limited to normal Python process behavior: importing and calling the API succeeds without exiting the process; uncaught exceptions propagate according to Python rules.
 
-## Evaluation Notes
+## Implementation Guidance
 
 The test suite exercises public imports, schema declaration, dump/load/JSON agreement, field conversion, validators, unknown and partial options, nested schemas, decorator hooks, error dictionaries, and context behavior. The tests use public return values, public exception types, and public exception attributes. They do not require exact error message wording, private attributes, source file layout, or maintainer-only helper objects.

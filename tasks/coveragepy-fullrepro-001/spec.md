@@ -1,4 +1,4 @@
-# Coverage.py Specification
+﻿# Coverage.py Specification
 
 ## Product Overview
 
@@ -327,9 +327,9 @@ coverage html -d demo/htmlcov
 - Guaranteeing platform-specific path spelling beyond documented include/omit/path mapping semantics.
 - Treating unsupported importable modules as public API merely because their module names have no leading underscore.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation should exercise coverage.py through public imports and ordinary command-line workflows. Tests should create temporary Python files, run them under coverage measurement, inspect `CoverageData`, generate reports, combine and erase data files, and verify errors through public exception classes.
+The expected implementation should exercise coverage.py through public imports and ordinary command-line workflows. Tests should create temporary Python files, run them under coverage measurement, inspect `CoverageData`, generate reports, combine and erase data files, and verify errors through public exception classes.
 
 Scoring should reward semantic compatibility: measured files, line and branch data, contexts, data-file persistence, report totals, and CLI/API consistency. Checks may inspect structured JSON/XML fields and public `CoverageData` query results, but should avoid exact debug formatting, exact HTML/CSS asset contents, private attributes, project-specific helper behavior, and implementation-specific object representations.
 

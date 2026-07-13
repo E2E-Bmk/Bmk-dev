@@ -1,4 +1,4 @@
-# httpcore Specification
+﻿# httpcore Specification
 
 ## Product Overview
 
@@ -137,6 +137,6 @@ There is no console script in scope. `python -m httpcore` is not supported for t
 
 Exit codes are not part of the covered API.
 
-## Evaluation Notes
+## Implementation Guidance
 
 Validation exercises public imports, local custom network backends, mock streams, request serialization, response parsing, streaming lifecycle, connection reuse, TLS and UDS dispatch, retry behavior, trace callbacks, and documented error classes. The checks use local byte streams and do not require external network access.

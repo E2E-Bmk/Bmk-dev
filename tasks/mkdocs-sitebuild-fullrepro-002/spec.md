@@ -1,4 +1,4 @@
-# MkDocs Specification
+﻿# MkDocs Specification
 
 ## Product Overview
 
@@ -497,8 +497,8 @@ The plugin can be enabled through `plugins`, receives validated config, particip
 - Guaranteeing compatibility with arbitrary third-party themes, plugins, or Markdown extensions beyond the public entry point, config, hook, and event contracts.
 - Preserving soft-deprecated internals beyond their documented importability and stated behavior.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation exercises the public behavior described above through command-line workflows, programmatic API calls, configuration loading, site builds in temporary local projects, plugin and hook interactions, theme/template context rendering, search output generation, navigation/page/file object behavior, URL/link handling, metadata parsing, error handling, and selected utility functions.
+The expected implementation exercises the public behavior described above through command-line workflows, programmatic API calls, configuration loading, site builds in temporary local projects, plugin and hook interactions, theme/template context rendering, search output generation, navigation/page/file object behavior, URL/link handling, metadata parsing, error handling, and selected utility functions.
 
-The evaluation is behavioral. It checks whether observable outputs, returned objects, logged/raised error classes, and cross-view relationships match this specification. Tests are not intended to require private modules, private attributes, source-code layout, exact internal helper call order, or hidden fixture knowledge. A correct implementation may choose its own internal organization as long as the public contracts, invariants, and error semantics are preserved.
+The Assessment is behavioral. It checks whether observable outputs, returned objects, logged/raised error classes, and cross-view relationships match this specification. Tests are not intended to require private modules, private attributes, source-code layout, exact internal helper call order, or hidden fixture knowledge. A correct implementation may choose its own internal organization as long as the public contracts, invariants, and error semantics are preserved.

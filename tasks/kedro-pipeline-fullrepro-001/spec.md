@@ -304,6 +304,6 @@ This specification excludes project creation from starters, cookiecutter templat
 | `kedro run` outside a Kedro project | supported failure | exits non-zero and reports that project commands require a project |
 | `python -m kedro run` inside a Kedro project | supported | follows the same project command behavior as the console script |
 
-## Evaluation Notes
+## Implementation Guidance
 
 Validation exercises the public behavior described above from multiple entry points. It checks import paths, node and pipeline graph construction, graph filtering, catalog mapping behavior, in-memory dataset state changes, configuration loading and merge rules, `KedroSession.run`, `kedro run` option mapping, and consistency between API-visible graph state, catalog state, configuration values, and run outputs. Scoring is based on observable behavior, public exceptions, and cross-view consistency rather than internal helper names, private attributes, or exact terminal styling.

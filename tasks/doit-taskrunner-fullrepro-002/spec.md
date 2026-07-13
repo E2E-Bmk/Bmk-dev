@@ -1,4 +1,4 @@
-# doit Specification
+﻿# doit Specification
 
 ## Product Overview
 
@@ -324,10 +324,10 @@ Running `doit` creates `source.txt`, saves `line_count`, passes it to `shout`, a
 - This specification does not require implementing undocumented plugin discovery internals beyond the documented local configuration and installed entry-point categories.
 - This specification does not require preserving internal helper names that are not exported, documented, or shown in public examples.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation exercises public behavior through both Python APIs and command-line workflows. Tests may create temporary dodo files, invoke `python -m doit` or `doit`, inspect task output/status, use multiple dependency backends, verify persistence across invocations, and call documented public helpers directly.
+The expected implementation exercises public behavior through both Python APIs and command-line workflows. Tests may create temporary dodo files, invoke `python -m doit` or `doit`, inspect task output/status, use multiple dependency backends, verify persistence across invocations, and call documented public helpers directly.
 
-The expected implementation should be assessed on behavioral compatibility: task loading, action execution, dependency decisions, saved values/results, command semantics, configuration precedence, reporter outcomes, and documented extension APIs. Tests should not depend on private modules, hidden attributes, exact internal class layouts, or source-only implementation details.
+The expected implementation should be assessed on behavioral compatibility: task loading, action execution, dependency decisions, saved values/results, command semantics, configuration precedence, reporter outcomes, and documented extension APIs. A correct implementation should not require on private modules, hidden attributes, exact internal class layouts, or source-only implementation details.
 
 Fixtures are ordinary temporary projects and task definitions. Passing does not require knowing their names in advance; it requires honoring the public contracts described above.

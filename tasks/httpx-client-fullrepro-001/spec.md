@@ -1,4 +1,4 @@
-# HTTPX Specification
+﻿# HTTPX Specification
 
 ## Product Overview
 
@@ -445,7 +445,7 @@ Exit status:
 | A `RequestError` is raised | 1 |
 | `--help` is used | 0 |
 
-## Evaluation Notes
+## Implementation Guidance
 
 Checks exercise public behavior only. They create clients with `MockTransport`, `WSGITransport`, `ASGITransport`, and small custom transports; construct and inspect `Request`, `Response`, `URL`, `Headers`, `Cookies`, and `QueryParams`; verify sync and async client lifecycle; verify redirect and history behavior; verify stream state transitions; verify event hooks and auth flows; and invoke the selected CLI surface without requiring external network access.
 

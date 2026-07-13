@@ -1,9 +1,6 @@
-# Cookiecutter Reconstruction Spec v2
+﻿# Cookiecutter Reconstruction Spec v2
 
-Status: candidate-visible public packet
-Task id: cookiecutter-fullrepro-001
 Source: derived from official Cookiecutter documentation, API reference, and public README only.
-Candidates must not inspect the source repository, hidden tests, previous attempts, or scoring materials.
 
 ---
 
@@ -407,6 +404,6 @@ Verbose mode (`--verbose`) enables DEBUG-level logging to stdout. Implementation
 
 ---
 
-## Evaluation Notes
+## Implementation Guidance
 
 Hidden tests use only public APIs, CLI invocations, generated file inspection, replay JSON content, exception classes, and observable CLI exit codes. They do not require access to private internals, private fixture shapes, or undocumented exception message text.

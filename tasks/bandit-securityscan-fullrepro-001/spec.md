@@ -1,4 +1,4 @@
-# Bandit Specification
+﻿# Bandit Specification
 
 ## Product Overview
 
@@ -401,7 +401,7 @@ bandit-baseline [-f {txt,html,json}] targets... [additional bandit options]
 
 The script must return 0 or 1 from the current comparison scan and 2 for baseline setup failure. It must not leave the repository checked out at the parent commit after success or failure.
 
-## Evaluation Notes
+## Implementation Guidance
 
 Automated checks exercise public console scripts, package-level plugin symbols, documented extension entry groups, and parsed report outputs. Checks compare semantic issue identity, ratings, CWE, locations, metrics, suppression, selection, baseline behavior, skipped-file errors, and exit status across formats. They do not compare exact presentation, timestamps, ordering, platform-specific path rendering, terminal color, or HTML styling.
 

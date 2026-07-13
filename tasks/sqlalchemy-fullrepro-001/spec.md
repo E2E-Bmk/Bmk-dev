@@ -1,4 +1,4 @@
-# SQLAlchemy Specification
+﻿# SQLAlchemy Specification
 
 ## Product Overview
 
@@ -399,9 +399,9 @@ with engine.connect() as conn:
 - Implementing Alembic migrations or long-term schema migration workflows.
 - Guaranteeing SQLite behavior that depends on unavailable SQLite library features; when SQLite itself rejects unsupported SQL, SQLAlchemy may surface the DBAPI-derived error.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation should exercise public behavior through documented imports and ordinary user workflows. Tests should create SQLite-local engines, define metadata and declarative models, execute Core and ORM statements, inspect returned rows and objects, reflect simple schemas, and verify relationship loading behavior through public APIs.
+The expected implementation should exercise public behavior through documented imports and ordinary user workflows. Tests should create SQLite-local engines, define metadata and declarative models, execute Core and ORM statements, inspect returned rows and objects, reflect simple schemas, and verify relationship loading behavior through public APIs.
 
 Scoring should reward semantic compatibility rather than internal fidelity. SQL text may be checked for structural clauses, identifiers, and bound parameter behavior, but exact whitespace, private names, logging text, and internal reprs should not be used as pass/fail criteria.
 

@@ -1,4 +1,4 @@
-# fsspec Specification
+﻿# fsspec Specification
 
 ## Product Overview
 
@@ -302,6 +302,6 @@ There is no required console script for the covered task. `python -m fsspec` is 
 | `import fsspec` | succeeds and exposes the Installable Surface |
 | `python -m fsspec` | not supported |
 
-## Evaluation Notes
+## Implementation Guidance
 
 The tests exercise public filesystem behavior through local-only backends. They check API imports, protocol lookup, byte reads and writes, directory listings, path expansion, mapping views, directory-prefix views, ZIP archive views, simple cache reads and writes, transactions, error types, and cross-view consistency. The tests do not require network services or optional remote storage packages. Scoring runs with the candidate package placed ahead of the reference package and with the reference package path removed from the test carrier.

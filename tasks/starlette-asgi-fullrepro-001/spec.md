@@ -1,4 +1,4 @@
-# Starlette Specification
+﻿# Starlette Specification
 
 ## Product Overview
 
@@ -286,7 +286,7 @@ Exit behavior:
 | `from starlette.testclient import TestClient` | yes | imports the synchronous in-process test client when its HTTP client dependency is installed |
 | `python -m starlette` | no | must not be required for application behavior |
 
-## Evaluation Notes
+## Implementation Guidance
 
 Behavior is exercised through public imports, in-process ASGI calls, `TestClient` HTTP requests, `TestClient` WebSocket sessions, temporary static files, response headers and bodies, and lifespan context entry and exit. The expected implementation should satisfy observable contracts for routing, state propagation, middleware effects, request body consumption, response rendering, WebSocket lifecycle, file serving, and documented error handling.
 

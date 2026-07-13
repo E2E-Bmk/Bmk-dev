@@ -1,4 +1,4 @@
-# nbformat Specification
+﻿# nbformat Specification
 
 ## Product Overview
 
@@ -196,6 +196,6 @@ Exit behavior:
 | `jupyter-trust` with stdin | Reads notebook JSON from standard input, signs it, then exits with status 0. | Invalid stdin JSON exits nonzero through the application error path. |
 | `jupyter-trust --reset` | Removes the trusted signature cache when present, writes a new signing key, then exits with status 0. | Filesystem errors exit nonzero through the application error path. |
 
-## Evaluation Notes
+## Implementation Guidance
 
 Assessment exercises the documented public API through observable behavior: import availability, notebook construction, dictionary and attribute projections, JSON string and file round trips, version conversion, validation success and failure paths, v4 reader and writer behavior, trust-store state transitions, and `jupyter-trust` invocation. Scoring is based on user-visible outcomes, returned objects, raised exception classes, durable file contents, and trust-state transitions. Tests do not require private helper modules, exact schema snapshot data, exact error message strings, or exact generated ids.

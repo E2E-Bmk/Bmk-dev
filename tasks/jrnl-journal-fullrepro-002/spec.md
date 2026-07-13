@@ -1,4 +1,4 @@
-# jrnl Specification
+﻿# jrnl Specification
 
 ## Product Overview
 
@@ -514,9 +514,9 @@ The `work` token selects the configured `work` journal and applies its overrides
 - Internal upgrade flows for old configuration files are not covered except where legacy journal opening and public encryption labels are explicitly described.
 - Exact prose of every user-facing status message is not required unless the behavior depends on stdout/stderr routing, exit status, or named error condition.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation focuses on public behavior that a user can observe through the CLI, documented files, and exported Python import paths. Tests may exercise entry creation, date parsing boundaries, tag/star parsing, config scoping and overrides, journal selection, search combinations, editor/template behavior, import de-duplication, export formats, storage persistence, encryption/decryption flows with controlled password/keyring behavior, and public Python API imports.
+The expected implementation focuses on public behavior that a user can observe through the CLI, documented files, and exported Python import paths. Tests may exercise entry creation, date parsing boundaries, tag/star parsing, config scoping and overrides, journal selection, search combinations, editor/template behavior, import de-duplication, export formats, storage persistence, encryption/decryption flows with controlled password/keyring behavior, and public Python API imports.
 
 Scoring is based on behavioral compatibility, not source-code similarity. A correct implementation may choose different internal modules or helper functions as long as the public command, file, object, output, and error contracts described here are satisfied.
 

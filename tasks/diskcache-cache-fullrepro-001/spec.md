@@ -1,4 +1,4 @@
-# DiskCache Specification
+﻿# DiskCache Specification
 
 ## Product Overview
 
@@ -361,6 +361,6 @@ There is no required command-line interface for this package profile. `python -m
 
 Expected package usage is direct Python import from the `diskcache` package. The implementation should be placed so that `import diskcache` loads the candidate package.
 
-## Evaluation Notes
+## Implementation Guidance
 
 The package will be exercised through public Python imports. Checks cover key-value cache operations, persistence across reopened objects, metadata and expiration behavior, queue helpers, fanout named views, persistent containers, recipe helpers, and documented error behavior. The tests focus on observable return values, raised exception classes, public attributes, and filesystem-backed persistence.

@@ -1,5 +1,4 @@
-<!-- INTERNAL
-task_id: dateparser-dates-fullrepro-001
+﻿<!-- INTERNAL
 spec_version: v2
 delta: clarifies no-spaces-time compact digit parsing, TO_TIMEZONE awareness for timezone-bearing input, and past-week RETURN_TIME_SPAN boundary/time semantics; excludes timezone implementation object shape
 source_boundary: dateparser/__init__.py; dateparser/date.py public signatures and docstrings; dateparser/search/__init__.py; dateparser/search/search.py public signatures and docstrings; dateparser/conf.py validation surface; docs/usage.rst; docs/settings.rst; docs/dateparser.rst; docs/custom_language_detection.rst; pyproject.toml console script declaration
@@ -280,7 +279,7 @@ Exit code expectations:
 - Import failures, syntax errors, and uncaught exceptions in user code follow normal Python process behavior.
 - The covered parsing API signals user errors through Python exceptions, not process exit codes.
 
-## Evaluation Notes
+## Implementation Guidance
 
 The scoring checks exercise public parsing behavior from the perspective of a caller using the documented API. They cover successful absolute parsing, relative parsing with fixed bases, incomplete-date settings, language and locale hints, custom language detection, search result shape, timezone conversion, deterministic cross-view agreement, and documented error types.
 

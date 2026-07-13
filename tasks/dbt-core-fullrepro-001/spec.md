@@ -325,7 +325,7 @@ Exit behavior:
 | Invocation completed with handled node or command errors | 1 | `False` | Command-specific result when available | `None` |
 | Invocation failed from invalid usage or unhandled exception | 2 or nonzero command failure | `False` | `None` unless a result-bearing exit occurred | Exception object |
 
-## Evaluation Notes
+## Implementation Guidance
 
 Automated checks exercise public behavior through local project files, CLI invocations, Python `dbtRunner` calls, and emitted artifacts. They inspect command status, runner result objects, selected list output, artifact presence, key artifact fields, compiled SQL projections, partial-parse cache reuse and invalidation, and the relationships between list output, manifest entries, run results, and compiled files.
 

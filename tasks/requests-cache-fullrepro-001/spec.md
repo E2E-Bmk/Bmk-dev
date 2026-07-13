@@ -1,4 +1,4 @@
-# Requests-Cache Specification
+﻿# Requests-Cache Specification
 
 ## Product Overview
 
@@ -351,6 +351,6 @@ Programmatic use is through Python imports and normal `requests` adapters. Tests
 
 Exit code behavior is not applicable because the covered surface is a Python library interface.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Implementations are exercised through public Python APIs. The checks cover local cache hit/miss behavior, patcher state, cache persistence, expiration priority, request matching, filtering, inspection, deletion, serializers, response metadata, and error semantics. Tests use local mock adapters and temporary files instead of live network services. Scoring focuses on observable behavior from the public contract above, not private data structures or exact textual representations.
+Implementations are exercised through public Python APIs. The checks cover local cache hit/miss behavior, patcher state, cache persistence, expiration priority, request matching, filtering, inspection, deletion, serializers, response metadata, and error semantics. Tests use local mock adapters and temporary files instead of live network services. The focus is on observable behavior from the public contract above, not private data structures or exact textual representations.

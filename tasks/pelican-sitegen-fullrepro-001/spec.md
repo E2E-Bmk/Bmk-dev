@@ -1,4 +1,4 @@
-# Pelican Specification
+﻿# Pelican Specification
 
 ## Product Overview
 
@@ -242,7 +242,7 @@ Changing `ARTICLE_SAVE_AS` and `ARTICLE_URL` changes both the written path and t
 - Guaranteeing deterministic output when the user relies on ambiguous multi-document `{attach}` ordering.
 - Preserving compatibility with unsupported Python versions or dependency versions.
 
-## Evaluation Notes
+## Implementation Guidance
 
 Correctness is evaluated through public behavior: CLI parsing and generation, settings loading and override precedence, content reader metadata, generated file trees, feeds, links, themes, static files, cache-visible behavior, plugin extension points, importer/theme helper command behavior, and the public Python objects used by templates and plugins.
 

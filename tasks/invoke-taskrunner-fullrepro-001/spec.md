@@ -208,7 +208,7 @@ Exit behavior:
 
 `Program.run(argv=None, exit=True)` must use `sys.argv` when `argv` is `None`, split a string `argv` on whitespace when a string is supplied, and use a supplied list as-is. With `exit=False`, it must not call `sys.exit` for handled `Exit`, `ParseError`, or `UnexpectedExit` conditions.
 
-## Evaluation Notes
+## Implementation Guidance
 
 Assessment should exercise the same public behavior from both Python and CLI entry points. Useful dimensions include task decorator metadata, task argument parsing, namespace defaults and aliases, module loading, config source precedence, context proxy access, `Context.run` success and failure paths, `Result` truth and stream behavior, watcher response behavior, sudo authentication failure translation, and intentional CLI exits.
 

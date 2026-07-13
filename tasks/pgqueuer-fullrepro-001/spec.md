@@ -1,4 +1,4 @@
-# PgQueuer Specification
+﻿# PgQueuer Specification
 
 ## Product Overview
 
@@ -174,6 +174,6 @@ The package must be importable from the candidate solution directory as `pgqueue
 
 Exit code behavior for the scoped package is limited to pytest execution: passing tests exit with code `0`, assertion or runtime failures exit nonzero.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation focuses on public in-memory behavior: import surface, queue enqueue/dequeue ordering, state transitions, handler dispatch, context resource injection, retry and failure handling, dedupe release, cancellation, schedule registration/storage/dispatch, schema no-op behavior, and cross-view consistency among queue, log, status, statistics, and scheduler projections. Tests are behavioral and use only public imports and public object attributes. They do not require PostgreSQL, Docker, CLI execution, hidden fixtures, internal dictionaries, exact repr strings, or exact exception message wording beyond the public `RetryRequested` default string.
+The expected implementation focuses on public in-memory behavior: import surface, queue enqueue/dequeue ordering, state transitions, handler dispatch, context resource injection, retry and failure handling, dedupe release, cancellation, schedule registration/storage/dispatch, schema no-op behavior, and cross-view consistency among queue, log, status, statistics, and scheduler projections. Tests are behavioral and use only public imports and public object attributes. They do not require PostgreSQL, Docker, CLI execution, hidden fixtures, internal dictionaries, exact repr strings, or exact exception message wording beyond the public `RetryRequested` default string.

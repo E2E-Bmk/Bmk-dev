@@ -1,4 +1,4 @@
-# attrs Specification
+﻿# attrs Specification
 
 ## Product Overview
 
@@ -269,6 +269,6 @@ The package is used as an importable Python library. There is no console script 
 
 When public APIs succeed, they must return the documented value or mutate the documented public state. When public APIs reject invalid input, they must raise the documented exception type. Importing public namespaces must not print to stdout or stderr.
 
-## Evaluation Notes
+## Implementation Guidance
 
 Tests exercise the public behavior described here by importing `attrs` and `attr`, defining classes, instantiating them, inspecting fields, converting instances to collections, applying validators and converters, assigning attributes, creating frozen instances, evolving instances, and checking namespace compatibility. They avoid private modules, private helper functions, exact internal object layouts, and exact exception message wording.

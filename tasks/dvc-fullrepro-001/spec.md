@@ -326,9 +326,9 @@ This specification does not cover:
 - Shell-specific behavior outside the documented effect that stage commands run in the stage working directory with DVC environment variables.
 - Compatibility with old DVC metadata formats except where current public commands explicitly document migration-related behavior.
 
-## Evaluation Notes
+## Implementation Guidance
 
-Evaluation focuses on public behavior that a DVC user can observe through commands, repository methods, YAML files, lockfiles, workspace files, cache effects, exit codes, and exceptions.
+The expected implementation focuses on public behavior that a DVC user can observe through commands, repository methods, YAML files, lockfiles, workspace files, cache effects, exit codes, and exceptions.
 
 Tests may exercise stage creation, target resolution, pipeline ordering, incremental reproduction, forced and dry reproduction, missing data handling, run-cache skips, status output modes, freeze/unfreeze state, local pull/fetch/checkout behavior, and consistency between CLI calls and repository methods.
 

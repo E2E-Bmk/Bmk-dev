@@ -1,4 +1,4 @@
-# cattrs Specification
+﻿# cattrs Specification
 
 ## Product Overview
 
@@ -293,7 +293,7 @@ cattrs is a Python library. It has no required console script for the covered fu
 
 Exit codes are not part of the covered public API because there is no covered command-line interface.
 
-## Evaluation Notes
+## Implementation Guidance
 
 The tests exercise public converter behavior only. They call `cattrs` and `cattrs.gen` public imports, create attrs classes and dataclasses in test code, register hooks through public methods, and assert on returned objects, plain dictionaries/lists/tuples, public exception classes, and transformed error paths.
 

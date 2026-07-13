@@ -1,0 +1,748 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minipackaging-realrepo-001\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-reference",
+  "total_cases": 30,
+  "passed_cases": 30,
+  "total_weight": 168,
+  "passed_weight": 168,
+  "score": 1.0,
+  "unit_score": 1.0,
+  "system_score": 1.0,
+  "gap_pp": 0.0,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 96,
+      "cases": 12,
+      "passed": 12
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 72,
+      "cases": 18,
+      "passed": 18
+    }
+  },
+  "categories": {
+    "canonical_roundtrip": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "compatible_release_requirement": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "direct_url_marker": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "environment_copy": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "error_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "extras_marker": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "imports": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "marker": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "marker_version_comparison": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "order_sensitive_marker": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "prerelease_policy": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "requirement": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "requirement_specifier_version": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "specifier": {
+      "weight": 20,
+      "passed_weight": 20,
+      "cases": 5,
+      "passed": 5
+    },
+    "state_reuse": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "version": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "wildcard_requirement_marker": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "failed_cases": [],
+  "all_cases": [
+    {
+      "id": "MPU001",
+      "layer": "unit",
+      "type": "unit",
+      "category": "imports",
+      "dimension": "package_shape",
+      "requirement_refs": [
+        "REQ-package-shape"
+      ],
+      "description": "Public names import from the single module and exception classes inherit from ValueError.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version, InvalidVersion, SpecifierSet, InvalidSpecifier, Requirement, InvalidRequirement, Marker, InvalidMarker, UndefinedEnvironmentName, default_environment, is_requirement_satisfied\nprint(Version.__name__, SpecifierSet.__name__, Requirement.__name__, Marker.__name__)\nprint(issubclass(InvalidVersion, ValueError), issubclass(InvalidSpecifier, ValueError), issubclass(InvalidRequirement, ValueError), issubclass(InvalidMarker, ValueError), issubclass(UndefinedEnvironmentName, ValueError))\n",
+      "expected_output": "Version SpecifierSet Requirement Marker\nTrue True True True True",
+      "passed": true,
+      "actual": "Version SpecifierSet Requirement Marker\nTrue True True True True",
+      "expected": "Version SpecifierSet Requirement Marker\nTrue True True True True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU002",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version canonicalizes release zeros, epoch, pre-release aliases, post-release aliases, and local labels.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nvals = ['1.0.0', '2!01.02.0', '1.0ALPHA2', '1.0-r3', '1.0+LOCAL_build-5']\nprint([str(Version(v)) for v in vals])\nprint(Version('1.0') == Version('1.0.0'))\n",
+      "expected_output": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "passed": true,
+      "actual": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "expected": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU003",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version ordering handles dev, pre, final, and post releases.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nordered = [Version(v) for v in ['1.0.dev1', '1.0a1', '1.0b1', '1.0rc1', '1.0', '1.0.post1']]\nprint(all(a < b for a, b in zip(ordered, ordered[1:])))\nprint([str(v) for v in sorted(reversed(ordered))])\n",
+      "expected_output": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "passed": true,
+      "actual": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "expected": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU004",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version ordering includes epochs and local labels after public-version equality.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nprint(Version('1!0.9') > Version('2.0'))\nprint(Version('1.0+abc') < Version('1.0+1'))\nprint(Version('1.0+1') < Version('1.0+2'))\n",
+      "expected_output": "True\nTrue\nTrue",
+      "passed": true,
+      "actual": "True\nTrue\nTrue",
+      "expected": "True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU005",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version",
+        "REQ-errors"
+      ],
+      "description": "Invalid version text raises InvalidVersion.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version, InvalidVersion\nfor text in ['', '1..2', '1.0+', 'v nope']:\n    try:\n        Version(text); print('accepted')\n    except InvalidVersion:\n        print('InvalidVersion')\n",
+      "expected_output": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "passed": true,
+      "actual": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "expected": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU006",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet applies inclusive and exclusive range clauses.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns = SpecifierSet('>=1.2, <2.0')\nprint(str(s))\nprint([s.contains(v) for v in ['1.1', '1.2', '1.9', '2.0']])\n",
+      "expected_output": ">=1.2,<2\n[False, True, True, False]",
+      "passed": true,
+      "actual": ">=1.2,<2\n[False, True, True, False]",
+      "expected": ">=1.2,<2\n[False, True, True, False]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU007",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet supports equality, inequality, and wildcard release prefixes.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\nprint([SpecifierSet('==1.2.*').contains(v) for v in ['1.2', '1.2.5', '1.3']])\nprint([SpecifierSet('!=1.2.*').contains(v) for v in ['1.1', '1.2.9', '1.3']])\n",
+      "expected_output": "[True, True, False]\n[True, False, True]",
+      "passed": true,
+      "actual": "[True, True, False]\n[True, False, True]",
+      "expected": "[True, True, False]\n[True, False, True]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU008",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet supports compatible release bounds.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns1 = SpecifierSet('~=1.4')\ns2 = SpecifierSet('~=1.4.5')\nprint([s1.contains(v) for v in ['1.4', '1.9', '2.0']])\nprint([s2.contains(v) for v in ['1.4.5', '1.4.9', '1.5']])\n",
+      "expected_output": "[True, True, False]\n[True, True, False]",
+      "passed": true,
+      "actual": "[True, True, False]\n[True, True, False]",
+      "expected": "[True, True, False]\n[True, True, False]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU009",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet excludes pre-releases by default and includes them when requested.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns = SpecifierSet('>=1.0')\nprint(s.contains('1.1a1'))\nprint(s.contains('1.1a1', prereleases=True))\nprint(s.contains('1.1.dev1', prereleases=False))\n",
+      "expected_output": "False\nTrue\nFalse",
+      "passed": true,
+      "actual": "False\nTrue\nFalse",
+      "expected": "False\nTrue\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU010",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-errors"
+      ],
+      "description": "Invalid specifier text raises InvalidSpecifier.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet, InvalidSpecifier\nfor text in ['=>1.0', '>=', '==1.*.2']:\n    try:\n        SpecifierSet(text); print('accepted')\n    except InvalidSpecifier:\n        print('InvalidSpecifier')\n",
+      "expected_output": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "passed": true,
+      "actual": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "expected": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU011",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement parses normalized names, sorted normalized extras, and canonical specifiers.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\nr = Requirement('My_Pkg[PDF,security-extra] >=1.0, <2')\nprint(r.name)\nprint(sorted(r.extras))\nprint(str(r.specifier))\nprint(str(r))\n",
+      "expected_output": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "passed": true,
+      "actual": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "expected": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU012",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement parses direct URLs and marker text as distinct fields.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\nr = Requirement('Demo @ https://example.test/demo-1.0.whl ; python_version >= \"3.10\"')\nprint(r.name)\nprint(r.url)\nprint(str(r.specifier))\nprint(type(r.marker).__name__)\nprint(str(r))\n",
+      "expected_output": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "passed": true,
+      "actual": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "expected": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU013",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement equality and hashing use normalized names and sorted extras.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\na = Requirement('Pkg_Name[B,A]>=1')\nb = Requirement('pkg-name[a,b] >= 1.0.0')\nprint(a == b)\nprint(len({a, b}))\nprint(str(b))\n",
+      "expected_output": "True\n1\npkg-name[a,b]>=1",
+      "passed": true,
+      "actual": "True\n1\npkg-name[a,b]>=1",
+      "expected": "True\n1\npkg-name[a,b]>=1",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU014",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-errors"
+      ],
+      "description": "Invalid requirement strings raise InvalidRequirement.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement, InvalidRequirement\nfor text in ['bad name>=1', 'pkg[bad extra]', 'pkg @ https://x >=1']:\n    try:\n        Requirement(text); print('accepted')\n    except InvalidRequirement:\n        print('InvalidRequirement')\n",
+      "expected_output": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "passed": true,
+      "actual": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "expected": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU015",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker evaluates equality and version comparisons against a caller environment.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nenv = {'python_version': '3.11', 'os_name': 'posix'}\nprint(Marker('python_version >= \"3.8\"').evaluate(env))\nprint(Marker('os_name == \"nt\"').evaluate(env))\n",
+      "expected_output": "True\nFalse",
+      "passed": true,
+      "actual": "True\nFalse",
+      "expected": "True\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU016",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker honors boolean precedence and parentheses.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nenv = {'python_version': '3.9', 'sys_platform': 'linux', 'os_name': 'posix'}\nprint(Marker('python_version >= \"3.8\" and sys_platform == \"linux\"').evaluate(env))\nprint(Marker('python_version < \"3.8\" and (sys_platform == \"linux\" or os_name == \"posix\")').evaluate(env))\n",
+      "expected_output": "True\nFalse",
+      "passed": true,
+      "actual": "True\nFalse",
+      "expected": "True\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU017",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker evaluates membership operators and requested extras.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nprint(Marker('sys_platform in \"linux darwin\"').evaluate({'sys_platform': 'linux'}))\nprint(Marker('extra == \"security-extra\"').evaluate({}, requested_extras={'Security_Extra'}))\nprint(Marker('extra == \"docs\"').evaluate({}, requested_extras={'Security_Extra'}))\n",
+      "expected_output": "True\nTrue\nFalse",
+      "passed": true,
+      "actual": "True\nTrue\nFalse",
+      "expected": "True\nTrue\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU018",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker",
+        "REQ-errors"
+      ],
+      "description": "Marker syntax errors and missing environment variables use the documented exceptions.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker, InvalidMarker, UndefinedEnvironmentName\ntry:\n    Marker('python_version === \"3\"'); print('accepted')\nexcept InvalidMarker:\n    print('InvalidMarker')\ntry:\n    Marker('python_version >= \"3.8\"').evaluate({}); print('evaluated')\nexcept UndefinedEnvironmentName:\n    print('UndefinedEnvironmentName')\n",
+      "expected_output": "InvalidMarker\nUndefinedEnvironmentName",
+      "passed": true,
+      "actual": "InvalidMarker\nUndefinedEnvironmentName",
+      "expected": "InvalidMarker\nUndefinedEnvironmentName",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS001",
+      "layer": "system",
+      "type": "system",
+      "category": "requirement_specifier_version",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-specifier",
+        "REQ-version",
+        "REQ-satisfaction"
+      ],
+      "description": "A requirement's parsed specifier must evaluate installed versions using the shared Version semantics.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\nr = Requirement('demo>=1.0,<2')\nprint(is_requirement_satisfied(r, '1.0.0'))\nprint(is_requirement_satisfied(r, '2.0'))\n",
+      "expected_output": "True\nFalse",
+      "passed": true,
+      "actual": "True\nFalse",
+      "expected": "True\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS002",
+      "layer": "system",
+      "type": "system",
+      "category": "marker_version_comparison",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-marker",
+        "REQ-version",
+        "REQ-global-invariants"
+      ],
+      "description": "Version-valued marker comparisons must use the same ordering as Version.",
+      "weight": 8,
+      "test_code": "from minipackaging import Marker, Version\nenv = {'python_version': '3.10', 'python_full_version': '3.10.0rc1'}\nprint(Version('3.10.0rc1') < Version('3.10'))\nprint(Marker('python_version >= \"3.9\"').evaluate(env))\nprint(Marker('python_full_version < \"3.10\"').evaluate(env))\n",
+      "expected_output": "True\nTrue\nTrue",
+      "passed": true,
+      "actual": "True\nTrue\nTrue",
+      "expected": "True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS003",
+      "layer": "system",
+      "type": "system",
+      "category": "extras_marker",
+      "dimension": "boundary_crossing",
+      "system_dimension": "boundary_crossing",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-marker",
+        "REQ-satisfaction"
+      ],
+      "description": "Requested extras and requirement marker extras normalize to the same extra namespace.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\nr = Requirement('crypto-lib>=2; extra == \"security-extra\"')\nprint(is_requirement_satisfied(r, '2.1', requested_extras={'Security_Extra'}))\nprint(is_requirement_satisfied(r, '1.9', requested_extras={'Security_Extra'}))\nprint(is_requirement_satisfied(r, '1.9', requested_extras={'docs'}))\n",
+      "expected_output": "True\nFalse\nTrue",
+      "passed": true,
+      "actual": "True\nFalse\nTrue",
+      "expected": "True\nFalse\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS004",
+      "layer": "system",
+      "type": "system",
+      "category": "direct_url_marker",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-marker",
+        "REQ-satisfaction"
+      ],
+      "description": "A direct-URL requirement keeps URL parsing separate while its marker still controls applicability.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\nr = Requirement('tool @ https://example.test/tool.whl ; sys_platform == \"linux\"')\nprint(r.url)\nprint(is_requirement_satisfied(r, '0', {'sys_platform': 'linux'}))\nprint(is_requirement_satisfied(r, '0', {'sys_platform': 'win32'}))\n",
+      "expected_output": "https://example.test/tool.whl\nTrue\nTrue",
+      "passed": true,
+      "actual": "https://example.test/tool.whl\nTrue\nTrue",
+      "expected": "https://example.test/tool.whl\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS005",
+      "layer": "system",
+      "type": "system",
+      "category": "compatible_release_requirement",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-specifier",
+        "REQ-version",
+        "REQ-satisfaction"
+      ],
+      "description": "Compatible-release specifiers parsed from requirements must compute upper bounds from normalized release segments.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\nr = Requirement('lib~=1.4.5')\nprint(str(r.specifier))\nprint([is_requirement_satisfied(r, v) for v in ['1.4.5', '1.4.9', '1.5']])\n",
+      "expected_output": "~=1.4.5\n[True, True, False]",
+      "passed": true,
+      "actual": "~=1.4.5\n[True, True, False]",
+      "expected": "~=1.4.5\n[True, True, False]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS006",
+      "layer": "system",
+      "type": "system",
+      "category": "state_reuse",
+      "dimension": "state_accumulation",
+      "system_dimension": "state_accumulation",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-marker",
+        "REQ-specifier",
+        "REQ-satisfaction"
+      ],
+      "description": "A parsed requirement object can be reused across environments and versions without retaining prior evaluation state.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\nr = Requirement('pkg>=1; python_version >= \"3.10\"')\nprint(is_requirement_satisfied(r, '1.2', {'python_version': '3.11'}))\nprint(is_requirement_satisfied(r, '1.2', {'python_version': '3.9'}))\nprint(is_requirement_satisfied(r, '0.9', {'python_version': '3.11'}))\n",
+      "expected_output": "True\nTrue\nFalse",
+      "passed": true,
+      "actual": "True\nTrue\nFalse",
+      "expected": "True\nTrue\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS007",
+      "layer": "system",
+      "type": "system",
+      "category": "prerelease_policy",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-version",
+        "REQ-satisfaction"
+      ],
+      "description": "Prerelease handling is consistent whether a specifier is used directly or through requirement satisfaction.",
+      "weight": 8,
+      "test_code": "from minipackaging import SpecifierSet, Requirement, is_requirement_satisfied\ns = SpecifierSet('>=1')\nr = Requirement('pkg>=1')\nprint(s.contains('1.1a1'))\nprint(is_requirement_satisfied(r, '1.1a1'))\nprint(is_requirement_satisfied(r, '1.1a1', prereleases=True))\n",
+      "expected_output": "False\nFalse\nTrue",
+      "passed": true,
+      "actual": "False\nFalse\nTrue",
+      "expected": "False\nFalse\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS008",
+      "layer": "system",
+      "type": "system",
+      "category": "error_atomicity",
+      "dimension": "error_atomicity",
+      "system_dimension": "error_atomicity",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-requirement",
+        "REQ-marker",
+        "REQ-satisfaction"
+      ],
+      "description": "Failed parsing and missing marker environment errors do not corrupt later valid requirement satisfaction.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, InvalidRequirement, Marker, UndefinedEnvironmentName, is_requirement_satisfied\nvalid = Requirement('ok>=1; python_version >= \"3.8\"')\ntry:\n    Requirement('bad name>=1')\nexcept InvalidRequirement:\n    print('bad-requirement')\ntry:\n    Marker('python_version >= \"3.8\"').evaluate({})\nexcept UndefinedEnvironmentName:\n    print('bad-env')\nprint(is_requirement_satisfied(valid, '1.2', {'python_version': '3.11'}))\n",
+      "expected_output": "bad-requirement\nbad-env\nTrue",
+      "passed": true,
+      "actual": "bad-requirement\nbad-env\nTrue",
+      "expected": "bad-requirement\nbad-env\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS009",
+      "layer": "system",
+      "type": "system",
+      "category": "order_sensitive_marker",
+      "dimension": "operation_order_sensitivity",
+      "system_dimension": "operation_order_sensitivity",
+      "requirement_refs": [
+        "REQ-marker",
+        "REQ-satisfaction"
+      ],
+      "description": "Boolean marker precedence controls whether a version specifier is applied to a requirement.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\nenv = {'python_version': '3.9', 'sys_platform': 'linux', 'os_name': 'nt'}\nr1 = Requirement('pkg>=2; python_version >= \"3.10\" and sys_platform == \"linux\" or os_name == \"nt\"')\nr2 = Requirement('pkg>=2; python_version >= \"3.10\" and (sys_platform == \"linux\" or os_name == \"nt\")')\nprint(is_requirement_satisfied(r1, '1.0', env))\nprint(is_requirement_satisfied(r2, '1.0', env))\n",
+      "expected_output": "False\nTrue",
+      "passed": true,
+      "actual": "False\nTrue",
+      "expected": "False\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS010",
+      "layer": "system",
+      "type": "system",
+      "category": "canonical_roundtrip",
+      "dimension": "state_accumulation",
+      "system_dimension": "state_accumulation",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-specifier",
+        "REQ-marker",
+        "REQ-global-invariants"
+      ],
+      "description": "Canonical requirement serialization can be parsed again without changing extras, specifier, or marker semantics.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\na = Requirement('Pkg_B[Z,A] >=1.0 ; python_version >= \"3.8\"')\nb = Requirement(str(a))\nprint(str(a))\nprint(a == b)\nprint(is_requirement_satisfied(b, '1.0.0', {'python_version': '3.11'}))\n",
+      "expected_output": "pkg-b[a,z]>=1; python_version >= \"3.8\"\nTrue\nTrue",
+      "passed": true,
+      "actual": "pkg-b[a,z]>=1; python_version >= \"3.8\"\nTrue\nTrue",
+      "expected": "pkg-b[a,z]>=1; python_version >= \"3.8\"\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS011",
+      "layer": "system",
+      "type": "system",
+      "category": "environment_copy",
+      "dimension": "error_atomicity",
+      "system_dimension": "error_atomicity",
+      "requirement_refs": [
+        "REQ-marker",
+        "REQ-environment",
+        "REQ-satisfaction"
+      ],
+      "description": "Marker evaluation for requested extras must not mutate the caller's environment dictionary.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\nenv = {'python_version': '3.11'}\nr = Requirement('pkg>=1; extra == \"docs\" or python_version >= \"3.10\"')\nprint(is_requirement_satisfied(r, '1.2', env, requested_extras={'Docs'}))\nprint(sorted(env.items()))\n",
+      "expected_output": "True\n[('python_version', '3.11')]",
+      "passed": true,
+      "actual": "True\n[('python_version', '3.11')]",
+      "expected": "True\n[('python_version', '3.11')]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS012",
+      "layer": "system",
+      "type": "system",
+      "category": "wildcard_requirement_marker",
+      "dimension": "boundary_crossing",
+      "system_dimension": "boundary_crossing",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-specifier",
+        "REQ-marker",
+        "REQ-satisfaction"
+      ],
+      "description": "Wildcard specifiers and platform markers parsed from one requirement string must compose without losing either constraint.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, is_requirement_satisfied\nr = Requirement('plugin==1.2.*; sys_platform in \"linux darwin\"')\nprint(is_requirement_satisfied(r, '1.2.9', {'sys_platform': 'linux'}))\nprint(is_requirement_satisfied(r, '1.3', {'sys_platform': 'linux'}))\nprint(is_requirement_satisfied(r, '1.3', {'sys_platform': 'win32'}))\n",
+      "expected_output": "True\nFalse\nTrue",
+      "passed": true,
+      "actual": "True\nFalse\nTrue",
+      "expected": "True\nFalse\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

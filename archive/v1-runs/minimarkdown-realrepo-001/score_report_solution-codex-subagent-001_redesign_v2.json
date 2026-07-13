@@ -1,0 +1,1126 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minimarkdown-realrepo-001\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001",
+  "total_cases": 30,
+  "passed_cases": 13,
+  "total_weight": 168,
+  "passed_weight": 76,
+  "score": 0.4523809523809524,
+  "unit_score": 0.3888888888888889,
+  "system_score": 0.5,
+  "gap_pp": -11.11111111111111,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 48,
+      "cases": 12,
+      "passed": 6
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 28,
+      "cases": 18,
+      "passed": 7
+    }
+  },
+  "categories": {
+    "ast_rendering": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "block_parsing": {
+      "weight": 20,
+      "passed_weight": 0,
+      "cases": 5,
+      "passed": 0
+    },
+    "code_literal_escaping": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "custom_plugin_ast_html_dispatch": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "error_behavior": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "error_recovery_reuse": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "heading_anchor_toc_projection": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "html_rendering": {
+      "weight": 8,
+      "passed_weight": 4,
+      "cases": 2,
+      "passed": 1
+    },
+    "inline_parsing": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "link_nested_escape": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "nested_inline_block_nodes": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "parser_reuse_projection_stability": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "plugin_inline_projection": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "plugins": {
+      "weight": 16,
+      "passed_weight": 8,
+      "cases": 4,
+      "passed": 2
+    },
+    "public_api": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "renderer_toc_ast_consistency": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "table_cell_inline_projection": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "table_order_sensitivity": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "task_list_inline_state": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "failed_cases": [
+    {
+      "id": "MMU001",
+      "layer": "unit",
+      "type": "unit",
+      "category": "public_api",
+      "dimension": "public_api",
+      "requirement_refs": [
+        "REQ-public-api"
+      ],
+      "description": "Public names import, default Markdown is callable, explicit renderers construct through the public API, and TOC projection is exposed without requiring private attributes.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown, HTMLRenderer, ASTRenderer, escape_html\nm = Markdown()\nprint(callable(m), hasattr(m, 'parse'), hasattr(m, 'toc'), hasattr(m, 'register_inline'), hasattr(m, 'register_block'))\nprint(Markdown(renderer=HTMLRenderer())('plain'))\nprint(Markdown(renderer='ast')('plain')[0]['type'])\nprint(escape_html('\"<&>'))\n",
+      "expected_output": "True True True True True\n<p>plain</p>\nparagraph\n&quot;&lt;&amp;&gt;",
+      "passed": false,
+      "actual": "True True False True True\n<p>plain</p>\nparagraph\n&quot;&lt;&amp;&gt;",
+      "expected": "True True True True True\n<p>plain</p>\nparagraph\n&quot;&lt;&amp;&gt;",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU002",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-heading-index"
+      ],
+      "description": "Block parsing recognizes ATX heading level, source text, and the public generated anchor id for an isolated heading.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nt = Markdown('ast').parse('# Alpha & Beta!')[0]\nprint(t['type'], t.get('level'), t.get('text'), t.get('attrs', {}).get('id'))\n",
+      "expected_output": "heading 1 Alpha & Beta! alpha-beta",
+      "passed": false,
+      "actual": "heading 1 Alpha & Beta! None",
+      "expected": "heading 1 Alpha & Beta! alpha-beta",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU003",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block parsing recognizes fenced code blocks with an optional language.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nt = Markdown('ast').parse('```python\\nprint(\"<x>\")\\n```')[0]\nprint(t['type'], t.get('lang'), t.get('text'))\n",
+      "expected_output": "block_code python print(\"<x>\")",
+      "passed": false,
+      "actual": "code_block python print(\"<x>\")",
+      "expected": "block_code python print(\"<x>\")",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU004",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block parsing recognizes indented code and thematic breaks.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\ntokens = Markdown('ast').parse('    a < b\\n    c\\n\\n---')\nprint(tokens[0]['type'], tokens[0]['text'].startswith('a < b\\nc'))\nprint(tokens[1]['type'])\n",
+      "expected_output": "block_code True\nthematic_break",
+      "passed": false,
+      "actual": "code_block True\nthematic_break",
+      "expected": "block_code True\nthematic_break",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU005",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block parsing recognizes unordered and ordered list structures.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\ntokens = Markdown('ast').parse('- one\\n- two\\n\\n1. first\\n2. second')\nprint([(t['ordered'], [i.get('text') for i in t['items']]) for t in tokens])\n",
+      "expected_output": "[(False, ['one', 'two']), (True, ['first', 'second'])]",
+      "passed": false,
+      "actual": "[(False, [None, None]), (True, [None, None])]",
+      "expected": "[(False, ['one', 'two']), (True, ['first', 'second'])]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU006",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block parsing recognizes block quote nesting as block content.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nquote = Markdown('ast').parse('> # Quote\\n> text')[0]\nprint(quote['type'])\nprint([(child['type'], child.get('level'), child.get('text')) for child in quote['children']])\n",
+      "expected_output": "block_quote\n[('heading', 1, 'Quote'), ('paragraph', None, 'text')]",
+      "passed": false,
+      "actual": "blockquote\n[('heading', 1, 'Quote'), ('paragraph', None, 'text')]",
+      "expected": "block_quote\n[('heading', 1, 'Quote'), ('paragraph', None, 'text')]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU012",
+      "layer": "unit",
+      "type": "unit",
+      "category": "html_rendering",
+      "dimension": "html_rendering",
+      "requirement_refs": [
+        "REQ-render-html",
+        "REQ-heading-index"
+      ],
+      "description": "HTML renderer emits core block tags, including heading anchors, from direct public token dictionaries.",
+      "weight": 4,
+      "test_code": "from minimarkdown import HTMLRenderer\ntokens = [{'type':'heading','level':2,'attrs':{'id':'hi-there'},'children':[{'type':'text','text':'Hi'}]},{'type':'thematic_break'},{'type':'block_code','text':'x < y','lang':'py'}]\nprint(HTMLRenderer().render(tokens))\n",
+      "expected_output": "<h2 id=\"hi-there\">Hi</h2>\n<hr>\n<pre><code class=\"language-py\">x &lt; y</code></pre>",
+      "passed": false,
+      "actual": "<h2>Hi</h2>\n<hr>\nx &lt; y",
+      "expected": "<h2 id=\"hi-there\">Hi</h2>\n<hr>\n<pre><code class=\"language-py\">x &lt; y</code></pre>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU013",
+      "layer": "unit",
+      "type": "unit",
+      "category": "ast_rendering",
+      "dimension": "ast_rendering",
+      "requirement_refs": [
+        "REQ-render-ast"
+      ],
+      "description": "AST renderer returns public token dictionaries with nested inline children and without private state.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\ntokens = Markdown('ast')('Text **bold** and `code`')\npara = tokens[0]\nprint(type(tokens).__name__, para['type'])\nprint([c['type'] for c in para['children']])\nprint(any(k.startswith('_') for t in tokens for k in t.keys()))\n",
+      "expected_output": "list paragraph\n['text', 'strong', 'text', 'code_span']\nFalse",
+      "passed": false,
+      "actual": "list paragraph\n['text', 'strong', 'text', 'codespan']\nFalse",
+      "expected": "list paragraph\n['text', 'strong', 'text', 'code_span']\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU016",
+      "layer": "unit",
+      "type": "unit",
+      "category": "plugins",
+      "dimension": "plugins",
+      "requirement_refs": [
+        "REQ-plugins"
+      ],
+      "description": "The task list plugin recognizes checked and unchecked item markers.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nitems = Markdown('ast', plugins=['task_list'])('- [x] done\\n- [ ] todo')[0]['items']\nprint([(i.get('checked'), i.get('text')) for i in items])\n",
+      "expected_output": "[(True, 'done'), (False, 'todo')]",
+      "passed": false,
+      "actual": "[(True, None), (False, None)]",
+      "expected": "[(True, 'done'), (False, 'todo')]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU017",
+      "layer": "unit",
+      "type": "unit",
+      "category": "plugins",
+      "dimension": "plugins",
+      "requirement_refs": [
+        "REQ-plugins"
+      ],
+      "description": "Custom inline plugin callables can register parse and render handlers.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\n\ndef mark_plugin(md):\n    md.register_inline('mark', r'==([^=]+)==', lambda m: {'text': m.group(1)}, lambda r, t: '<mark>' + r.render_inlines([{'type':'text','text':t['text']}]) + '</mark>')\n\nprint(Markdown(plugins=[mark_plugin])('A ==hit & run=='))\n",
+      "expected_output": "<p>A <mark>hit &amp; run</mark></p>",
+      "passed": false,
+      "actual": "",
+      "expected": "<p>A <mark>hit &amp; run</mark></p>",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmprx1ht0ez\\case.py\", line 6, in <module>\n    print(Markdown(plugins=[mark_plugin])('A ==hit & run=='))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 191, in __call__\n    tokens = self.parse(text)\n             ^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 242, in parse\n    return self._parse_blocks(normalized.split(\"\\n\"))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 272, in _parse_blocks\n    tokens.append(self._finalize_block_token(token))\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 280, in _finalize_block_token\n    token[\"children\"] = self.parse_inlines(token.get(\"text\", \"\"))\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 479, in parse_inlines\n    parsed = parse_func(self, match)\n             ^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: mark_plugin.<locals>.<lambda>() takes 1 positional argument but 2 were given",
+      "exit_code": 1
+    },
+    {
+      "id": "MMU018",
+      "layer": "unit",
+      "type": "unit",
+      "category": "error_behavior",
+      "dimension": "error_behavior",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Malformed inline constructs remain literal and unknown plugin names raise ValueError.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\ntry:\n    Markdown(plugins=['missing'])\nexcept ValueError:\n    print('ValueError')\nprint(Markdown()('bad **strong and [link](nope then *ok*'))\n",
+      "expected_output": "ValueError\n<p>bad **strong and [link](nope then <em>ok</em></p>",
+      "passed": false,
+      "actual": "ValueError\n<p>bad <em>*strong and [link](nope then </em>ok*</p>",
+      "expected": "ValueError\n<p>bad **strong and [link](nope then <em>ok</em></p>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS002",
+      "layer": "system",
+      "type": "system",
+      "category": "heading_anchor_toc_projection",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-inline",
+        "REQ-render-html",
+        "REQ-heading-index",
+        "INV-heading-projection"
+      ],
+      "description": "Heading AST ids, rendered HTML anchors, and TOC entries project the same inline-derived heading text and duplicate slug state without relying on private helpers.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef safe_toc(md, text):\n    try:\n        return md.toc(text)\n    except Exception:\n        return []\n\ndoc = '''# API & **SDK**\n\n## API `SDK`\n\n# API SDK'''\nhtml = Markdown()(doc)\nast = Markdown('ast')(doc)\ntoc = safe_toc(Markdown(), doc)\nheads = [t for t in ast if isinstance(t, dict) and t.get('type') == 'heading']\nast_ids = [h.get('attrs', {}).get('id') for h in heads]\ntoc_ids = [entry.get('id') for entry in toc]\nexpected_ids = ['api-sdk', 'api-sdk-2', 'api-sdk-3']\nprint(ast_ids == expected_ids, toc_ids == expected_ids)\nprint([entry.get('text') for entry in toc] == ['API & SDK', 'API SDK', 'API SDK'])\nprint(all(('id=\"%s\"' % anchor) in html for anchor in expected_ids))\n",
+      "expected_output": "True True\nTrue\nTrue",
+      "passed": false,
+      "actual": "False False\nFalse\nFalse",
+      "expected": "True True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS003",
+      "layer": "system",
+      "type": "system",
+      "category": "nested_inline_block_nodes",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-inline",
+        "REQ-render-html",
+        "REQ-render-ast",
+        "INV-nested-inline-containers"
+      ],
+      "description": "Block quote and list containers preserve nested inline token trees in AST and render equivalent HTML without assuming fixed child indexes.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef contains_type(value, target):\n    if isinstance(value, dict):\n        return value.get('type') == target or any(contains_type(v, target) for v in value.values())\n    if isinstance(value, list):\n        return any(contains_type(v, target) for v in value)\n    return False\n\ndoc = '''> ## Inner *Head*\n> quoted **text**\n>\n> - item [one](https://e.test)'''\nhtml = Markdown()(doc)\nast = Markdown('ast')(doc)\nquote = ast[0] if ast else {}\nprint(isinstance(quote, dict) and quote.get('type') == 'block_quote')\nprint(contains_type(quote, 'emphasis'), contains_type(quote, 'strong'), contains_type(quote, 'link'))\nprint('<h2 id=\"inner-head\">Inner <em>Head</em></h2>' in html)\nprint('<li>item <a href=\"https://e.test\">one</a></li>' in html)\n",
+      "expected_output": "True\nTrue True True\nTrue\nTrue",
+      "passed": false,
+      "actual": "False\nTrue True True\nFalse\nTrue",
+      "expected": "True\nTrue True True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS006",
+      "layer": "system",
+      "type": "system",
+      "category": "renderer_toc_ast_consistency",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-render-ast",
+        "REQ-render-html",
+        "REQ-heading-index",
+        "INV-renderer-independent-tokens",
+        "INV-heading-projection"
+      ],
+      "description": "AST, HTML, and TOC projections agree on headings and list item semantic text in one mixed document.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef plain(value):\n    if isinstance(value, str):\n        return value\n    if isinstance(value, dict):\n        if 'children' in value:\n            return ''.join(plain(child) for child in value['children'])\n        return value.get('text', '')\n    if isinstance(value, list):\n        return ''.join(plain(item) for item in value)\n    return ''\n\ndef safe_toc(md, text):\n    try:\n        return md.toc(text)\n    except Exception:\n        return []\n\ndoc = '''# H\n\n- *one*\n- `two`\n\n## H'''\nhtml = Markdown()(doc)\nast = Markdown('ast')(doc)\ntoc = safe_toc(Markdown(), doc)\nheads = [t for t in ast if isinstance(t, dict) and t.get('type') == 'heading']\nlists = [t for t in ast if isinstance(t, dict) and t.get('type') == 'list']\nitem_texts = [plain(item) for item in (lists[0].get('items', []) if lists else [])]\nprint([h.get('attrs', {}).get('id') for h in heads] == [entry.get('id') for entry in toc] == ['h', 'h-2'])\nprint(item_texts == ['one', 'two'])\nprint('<h1 id=\"h\">H</h1>' in html, '<em>one</em>' in html, '<code>two</code>' in html, '<h2 id=\"h-2\">H</h2>' in html)\n",
+      "expected_output": "True\nTrue\nTrue True True True",
+      "passed": false,
+      "actual": "False\nTrue\nFalse True True False",
+      "expected": "True\nTrue\nTrue True True True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS008",
+      "layer": "system",
+      "type": "system",
+      "category": "table_cell_inline_projection",
+      "dimension": "boundary_crossing",
+      "system_dimension": "boundary_crossing",
+      "requirement_refs": [
+        "REQ-plugins",
+        "REQ-inline",
+        "REQ-render-ast",
+        "INV-inline-scope",
+        "INV-nested-inline-containers"
+      ],
+      "description": "Table cell boundaries come from the block plugin, and each cell projects independent inline semantics to AST and HTML.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef count_type(value, target):\n    if isinstance(value, dict):\n        return (1 if value.get('type') == target else 0) + sum(count_type(v, target) for v in value.values())\n    if isinstance(value, list):\n        return sum(count_type(v, target) for v in value)\n    return 0\n\ndoc = '''| A | B |\n| --- | --- |\n| *x* | **y** |\n| `a` | [z](https://e.test) |'''\nhtml = Markdown(plugins=['table'])(doc)\nast_doc = Markdown('ast', plugins=['table'])(doc)\ntable = ast_doc[0] if ast_doc else {}\nprint(isinstance(table, dict) and table.get('type') == 'table')\nprint(count_type(table, 'emphasis') == 1, count_type(table, 'strong') == 1, count_type(table, 'code_span') == 1, count_type(table, 'link') == 1)\nprint('<td><em>x</em></td><td><strong>y</strong></td>' in html)\nprint('<td><code>a</code></td><td><a href=\"https://e.test\">z</a></td>' in html)\n",
+      "expected_output": "True\nTrue True True True\nTrue\nTrue",
+      "passed": false,
+      "actual": "True\nTrue True False True\nTrue\nTrue",
+      "expected": "True\nTrue True True True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS010",
+      "layer": "system",
+      "type": "system",
+      "category": "custom_plugin_ast_html_dispatch",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-plugins",
+        "REQ-render-html",
+        "REQ-render-ast",
+        "INV-plugin-shared-dispatch",
+        "INV-plugin-projection"
+      ],
+      "description": "A custom inline plugin registered once is dispatched through both HTML and AST renderers from the shared parser pipeline.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown, escape_html\n\ndef badge_plugin(md):\n    md.register_inline('badge', r'\\[\\[([^\\]]+)\\]\\]', lambda m: {'text': m.group(1)}, lambda r, t: '<span class=\"badge\">' + escape_html(t['text']) + '</span>')\n\ndef count_badges(value):\n    if isinstance(value, dict):\n        return (1 if value.get('type') == 'badge' and value.get('text') == 'v1 & beta' else 0) + sum(count_badges(v) for v in value.values())\n    if isinstance(value, list):\n        return sum(count_badges(v) for v in value)\n    return 0\n\ntry:\n    html = Markdown(plugins=[badge_plugin])('Ship [[v1 & beta]]')\n    ast = Markdown('ast', plugins=[badge_plugin])('Ship [[v1 & beta]]')\nexcept Exception:\n    html = ''\n    ast = []\nprint(html == '<p>Ship <span class=\"badge\">v1 &amp; beta</span></p>')\nprint(count_badges(ast) == 1)\n",
+      "expected_output": "True\nTrue",
+      "passed": false,
+      "actual": "False\nFalse",
+      "expected": "True\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS011",
+      "layer": "system",
+      "type": "system",
+      "category": "table_order_sensitivity",
+      "dimension": "operation_order_sensitivity",
+      "system_dimension": "operation_order_sensitivity",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-plugins",
+        "INV-inline-scope"
+      ],
+      "description": "Table recognition is order-sensitive: a delimiter row must immediately follow a table header at a block boundary, while later pipe text remains paragraph content.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef ast_types(src):\n    try:\n        return [t.get('type') for t in Markdown('ast', plugins=['table'])(src) if isinstance(t, dict)]\n    except Exception:\n        return ['ERROR']\n\nnot_table = ast_types('''Intro paragraph\nA | B\n| --- | --- |''')\nyes_table = ast_types('''| A | B |\n| --- | --- |\n| 1 | 2 |''')\nreordered = ast_types('''| --- | --- |\n| A | B |\n| 1 | 2 |''')\nprint('table' not in not_table, 'paragraph' in not_table)\nprint(yes_table[:1] == ['table'])\nprint('table' not in reordered)\n",
+      "expected_output": "True True\nTrue\nTrue",
+      "passed": false,
+      "actual": "False True\nTrue\nTrue",
+      "expected": "True True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ],
+  "all_cases": [
+    {
+      "id": "MMU001",
+      "layer": "unit",
+      "type": "unit",
+      "category": "public_api",
+      "dimension": "public_api",
+      "requirement_refs": [
+        "REQ-public-api"
+      ],
+      "description": "Public names import, default Markdown is callable, explicit renderers construct through the public API, and TOC projection is exposed without requiring private attributes.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown, HTMLRenderer, ASTRenderer, escape_html\nm = Markdown()\nprint(callable(m), hasattr(m, 'parse'), hasattr(m, 'toc'), hasattr(m, 'register_inline'), hasattr(m, 'register_block'))\nprint(Markdown(renderer=HTMLRenderer())('plain'))\nprint(Markdown(renderer='ast')('plain')[0]['type'])\nprint(escape_html('\"<&>'))\n",
+      "expected_output": "True True True True True\n<p>plain</p>\nparagraph\n&quot;&lt;&amp;&gt;",
+      "passed": false,
+      "actual": "True True False True True\n<p>plain</p>\nparagraph\n&quot;&lt;&amp;&gt;",
+      "expected": "True True True True True\n<p>plain</p>\nparagraph\n&quot;&lt;&amp;&gt;",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU002",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-heading-index"
+      ],
+      "description": "Block parsing recognizes ATX heading level, source text, and the public generated anchor id for an isolated heading.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nt = Markdown('ast').parse('# Alpha & Beta!')[0]\nprint(t['type'], t.get('level'), t.get('text'), t.get('attrs', {}).get('id'))\n",
+      "expected_output": "heading 1 Alpha & Beta! alpha-beta",
+      "passed": false,
+      "actual": "heading 1 Alpha & Beta! None",
+      "expected": "heading 1 Alpha & Beta! alpha-beta",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU003",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block parsing recognizes fenced code blocks with an optional language.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nt = Markdown('ast').parse('```python\\nprint(\"<x>\")\\n```')[0]\nprint(t['type'], t.get('lang'), t.get('text'))\n",
+      "expected_output": "block_code python print(\"<x>\")",
+      "passed": false,
+      "actual": "code_block python print(\"<x>\")",
+      "expected": "block_code python print(\"<x>\")",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU004",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block parsing recognizes indented code and thematic breaks.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\ntokens = Markdown('ast').parse('    a < b\\n    c\\n\\n---')\nprint(tokens[0]['type'], tokens[0]['text'].startswith('a < b\\nc'))\nprint(tokens[1]['type'])\n",
+      "expected_output": "block_code True\nthematic_break",
+      "passed": false,
+      "actual": "code_block True\nthematic_break",
+      "expected": "block_code True\nthematic_break",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU005",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block parsing recognizes unordered and ordered list structures.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\ntokens = Markdown('ast').parse('- one\\n- two\\n\\n1. first\\n2. second')\nprint([(t['ordered'], [i.get('text') for i in t['items']]) for t in tokens])\n",
+      "expected_output": "[(False, ['one', 'two']), (True, ['first', 'second'])]",
+      "passed": false,
+      "actual": "[(False, [None, None]), (True, [None, None])]",
+      "expected": "[(False, ['one', 'two']), (True, ['first', 'second'])]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU006",
+      "layer": "unit",
+      "type": "unit",
+      "category": "block_parsing",
+      "dimension": "block_parsing",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block parsing recognizes block quote nesting as block content.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nquote = Markdown('ast').parse('> # Quote\\n> text')[0]\nprint(quote['type'])\nprint([(child['type'], child.get('level'), child.get('text')) for child in quote['children']])\n",
+      "expected_output": "block_quote\n[('heading', 1, 'Quote'), ('paragraph', None, 'text')]",
+      "passed": false,
+      "actual": "blockquote\n[('heading', 1, 'Quote'), ('paragraph', None, 'text')]",
+      "expected": "block_quote\n[('heading', 1, 'Quote'), ('paragraph', None, 'text')]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU007",
+      "layer": "unit",
+      "type": "unit",
+      "category": "inline_parsing",
+      "dimension": "inline_parsing",
+      "requirement_refs": [
+        "REQ-inline"
+      ],
+      "description": "Inline parsing handles emphasis and strong emphasis.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nchildren = Markdown('ast')('*em* and __strong__')[0]['children']\nprint([c['type'] for c in children])\nprint(children[0]['children'][0]['text'], children[2]['children'][0]['text'])\n",
+      "expected_output": "['emphasis', 'text', 'strong']\nem strong",
+      "passed": true,
+      "actual": "['emphasis', 'text', 'strong']\nem strong",
+      "expected": "['emphasis', 'text', 'strong']\nem strong",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU008",
+      "layer": "unit",
+      "type": "unit",
+      "category": "inline_parsing",
+      "dimension": "inline_parsing",
+      "requirement_refs": [
+        "REQ-inline"
+      ],
+      "description": "Inline code spans are literal islands and suppress nested inline parsing.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nprint(Markdown()('Use `**literal** <tag>` now'))\n",
+      "expected_output": "<p>Use <code>**literal** &lt;tag&gt;</code> now</p>",
+      "passed": true,
+      "actual": "<p>Use <code>**literal** &lt;tag&gt;</code> now</p>",
+      "expected": "<p>Use <code>**literal** &lt;tag&gt;</code> now</p>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU009",
+      "layer": "unit",
+      "type": "unit",
+      "category": "inline_parsing",
+      "dimension": "inline_parsing",
+      "requirement_refs": [
+        "REQ-inline"
+      ],
+      "description": "Inline parsing handles links and image attributes.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nhtml = Markdown()('[*docs*](https://e.test?a=1&b=2 \"T & Q\") ![A *B*](img.png \"Pic\")')\nprint('<em>docs</em>' in html, 'href=\"https://e.test?a=1&amp;b=2\"' in html, 'title=\"T &amp; Q\"' in html)\nprint('<img src=\"img.png\" alt=\"A B\" title=\"Pic\">' in html)\n",
+      "expected_output": "True True True\nTrue",
+      "passed": true,
+      "actual": "True True True\nTrue",
+      "expected": "True True True\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU010",
+      "layer": "unit",
+      "type": "unit",
+      "category": "inline_parsing",
+      "dimension": "inline_parsing",
+      "requirement_refs": [
+        "REQ-inline"
+      ],
+      "description": "Inline parsing handles escapes, autolinks, and hard line breaks.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nhtml = Markdown()('Escaped \\\\* star and <https://example.test>  \\nnext\\\\\\nline')\nprint('Escaped * star' in html)\nprint('<a href=\"https://example.test\">https://example.test</a>' in html)\nprint(html.count('<br>') == 2)\n",
+      "expected_output": "True\nTrue\nTrue",
+      "passed": true,
+      "actual": "True\nTrue\nTrue",
+      "expected": "True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU011",
+      "layer": "unit",
+      "type": "unit",
+      "category": "html_rendering",
+      "dimension": "html_rendering",
+      "requirement_refs": [
+        "REQ-render-html"
+      ],
+      "description": "HTML rendering escapes literal text and attributes from direct public token dictionaries.",
+      "weight": 4,
+      "test_code": "from minimarkdown import HTMLRenderer, escape_html\nprint(escape_html('\"<&>'))\nhtml = HTMLRenderer().render([{'type':'paragraph','children':[{'type':'link','url':'https://e.test?a=1&b=\"q\"','title':'A & B','children':[{'type':'text','text':'go'}]}]}])\nprint(html)\n",
+      "expected_output": "&quot;&lt;&amp;&gt;\n<p><a href=\"https://e.test?a=1&amp;b=&quot;q&quot;\" title=\"A &amp; B\">go</a></p>",
+      "passed": true,
+      "actual": "&quot;&lt;&amp;&gt;\n<p><a href=\"https://e.test?a=1&amp;b=&quot;q&quot;\" title=\"A &amp; B\">go</a></p>",
+      "expected": "&quot;&lt;&amp;&gt;\n<p><a href=\"https://e.test?a=1&amp;b=&quot;q&quot;\" title=\"A &amp; B\">go</a></p>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU012",
+      "layer": "unit",
+      "type": "unit",
+      "category": "html_rendering",
+      "dimension": "html_rendering",
+      "requirement_refs": [
+        "REQ-render-html",
+        "REQ-heading-index"
+      ],
+      "description": "HTML renderer emits core block tags, including heading anchors, from direct public token dictionaries.",
+      "weight": 4,
+      "test_code": "from minimarkdown import HTMLRenderer\ntokens = [{'type':'heading','level':2,'attrs':{'id':'hi-there'},'children':[{'type':'text','text':'Hi'}]},{'type':'thematic_break'},{'type':'block_code','text':'x < y','lang':'py'}]\nprint(HTMLRenderer().render(tokens))\n",
+      "expected_output": "<h2 id=\"hi-there\">Hi</h2>\n<hr>\n<pre><code class=\"language-py\">x &lt; y</code></pre>",
+      "passed": false,
+      "actual": "<h2>Hi</h2>\n<hr>\nx &lt; y",
+      "expected": "<h2 id=\"hi-there\">Hi</h2>\n<hr>\n<pre><code class=\"language-py\">x &lt; y</code></pre>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU013",
+      "layer": "unit",
+      "type": "unit",
+      "category": "ast_rendering",
+      "dimension": "ast_rendering",
+      "requirement_refs": [
+        "REQ-render-ast"
+      ],
+      "description": "AST renderer returns public token dictionaries with nested inline children and without private state.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\ntokens = Markdown('ast')('Text **bold** and `code`')\npara = tokens[0]\nprint(type(tokens).__name__, para['type'])\nprint([c['type'] for c in para['children']])\nprint(any(k.startswith('_') for t in tokens for k in t.keys()))\n",
+      "expected_output": "list paragraph\n['text', 'strong', 'text', 'code_span']\nFalse",
+      "passed": false,
+      "actual": "list paragraph\n['text', 'strong', 'text', 'codespan']\nFalse",
+      "expected": "list paragraph\n['text', 'strong', 'text', 'code_span']\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU014",
+      "layer": "unit",
+      "type": "unit",
+      "category": "plugins",
+      "dimension": "plugins",
+      "requirement_refs": [
+        "REQ-plugins"
+      ],
+      "description": "The strikethrough plugin registers inline syntax and HTML rendering.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nprint(Markdown(plugins=['strikethrough'])('~~gone & back~~'))\n",
+      "expected_output": "<p><del>gone &amp; back</del></p>",
+      "passed": true,
+      "actual": "<p><del>gone &amp; back</del></p>",
+      "expected": "<p><del>gone &amp; back</del></p>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU015",
+      "layer": "unit",
+      "type": "unit",
+      "category": "plugins",
+      "dimension": "plugins",
+      "requirement_refs": [
+        "REQ-plugins"
+      ],
+      "description": "The table plugin recognizes pipe table block shape and alignments.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nt = Markdown('ast', plugins=['table'])('| A | B | C |\\n| :--- | :---: | ---: |\\n| 1 | 2 | 3 |')[0]\nprint(t['type'], t['align'])\nprint([c['text'] for c in t['header']])\nprint([c['text'] for c in t['rows'][0]])\n",
+      "expected_output": "table ['left', 'center', 'right']\n['A', 'B', 'C']\n['1', '2', '3']",
+      "passed": true,
+      "actual": "table ['left', 'center', 'right']\n['A', 'B', 'C']\n['1', '2', '3']",
+      "expected": "table ['left', 'center', 'right']\n['A', 'B', 'C']\n['1', '2', '3']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU016",
+      "layer": "unit",
+      "type": "unit",
+      "category": "plugins",
+      "dimension": "plugins",
+      "requirement_refs": [
+        "REQ-plugins"
+      ],
+      "description": "The task list plugin recognizes checked and unchecked item markers.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\nitems = Markdown('ast', plugins=['task_list'])('- [x] done\\n- [ ] todo')[0]['items']\nprint([(i.get('checked'), i.get('text')) for i in items])\n",
+      "expected_output": "[(True, 'done'), (False, 'todo')]",
+      "passed": false,
+      "actual": "[(True, None), (False, None)]",
+      "expected": "[(True, 'done'), (False, 'todo')]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMU017",
+      "layer": "unit",
+      "type": "unit",
+      "category": "plugins",
+      "dimension": "plugins",
+      "requirement_refs": [
+        "REQ-plugins"
+      ],
+      "description": "Custom inline plugin callables can register parse and render handlers.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\n\ndef mark_plugin(md):\n    md.register_inline('mark', r'==([^=]+)==', lambda m: {'text': m.group(1)}, lambda r, t: '<mark>' + r.render_inlines([{'type':'text','text':t['text']}]) + '</mark>')\n\nprint(Markdown(plugins=[mark_plugin])('A ==hit & run=='))\n",
+      "expected_output": "<p>A <mark>hit &amp; run</mark></p>",
+      "passed": false,
+      "actual": "",
+      "expected": "<p>A <mark>hit &amp; run</mark></p>",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmprx1ht0ez\\case.py\", line 6, in <module>\n    print(Markdown(plugins=[mark_plugin])('A ==hit & run=='))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 191, in __call__\n    tokens = self.parse(text)\n             ^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 242, in parse\n    return self._parse_blocks(normalized.split(\"\\n\"))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 272, in _parse_blocks\n    tokens.append(self._finalize_block_token(token))\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 280, in _finalize_block_token\n    token[\"children\"] = self.parse_inlines(token.get(\"text\", \"\"))\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\solution-codex-subagent-001\\minimarkdown.py\", line 479, in parse_inlines\n    parsed = parse_func(self, match)\n             ^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: mark_plugin.<locals>.<lambda>() takes 1 positional argument but 2 were given",
+      "exit_code": 1
+    },
+    {
+      "id": "MMU018",
+      "layer": "unit",
+      "type": "unit",
+      "category": "error_behavior",
+      "dimension": "error_behavior",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Malformed inline constructs remain literal and unknown plugin names raise ValueError.",
+      "weight": 4,
+      "test_code": "from minimarkdown import Markdown\ntry:\n    Markdown(plugins=['missing'])\nexcept ValueError:\n    print('ValueError')\nprint(Markdown()('bad **strong and [link](nope then *ok*'))\n",
+      "expected_output": "ValueError\n<p>bad **strong and [link](nope then <em>ok</em></p>",
+      "passed": false,
+      "actual": "ValueError\n<p>bad <em>*strong and [link](nope then </em>ok*</p>",
+      "expected": "ValueError\n<p>bad **strong and [link](nope then <em>ok</em></p>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS001",
+      "layer": "system",
+      "type": "system",
+      "category": "parser_reuse_projection_stability",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-inline",
+        "REQ-render-html",
+        "REQ-plugins",
+        "INV-round-trip-stability"
+      ],
+      "description": "Repeated parse and render calls on one parser preserve semantic projections and plugin dispatch across block and inline features.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\nm = Markdown(plugins=['strikethrough', 'table'])\ndoc = '''Para ~~*gone*~~.\n\n| A | B |\n| --- | --- |\n| `x` | [y](https://e.test) |'''\nbefore = m.parse(doc)\nhtml1 = m(doc)\nafter = m.parse(doc)\nhtml2 = m(doc)\nprint(before == after, html1 == html2)\nprint('<del><em>gone</em></del>' in html1, '<table>' in html1, '<code>x</code>' in html1)\n",
+      "expected_output": "True True\nTrue True True",
+      "passed": true,
+      "actual": "True True\nTrue True True",
+      "expected": "True True\nTrue True True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS002",
+      "layer": "system",
+      "type": "system",
+      "category": "heading_anchor_toc_projection",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-inline",
+        "REQ-render-html",
+        "REQ-heading-index",
+        "INV-heading-projection"
+      ],
+      "description": "Heading AST ids, rendered HTML anchors, and TOC entries project the same inline-derived heading text and duplicate slug state without relying on private helpers.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef safe_toc(md, text):\n    try:\n        return md.toc(text)\n    except Exception:\n        return []\n\ndoc = '''# API & **SDK**\n\n## API `SDK`\n\n# API SDK'''\nhtml = Markdown()(doc)\nast = Markdown('ast')(doc)\ntoc = safe_toc(Markdown(), doc)\nheads = [t for t in ast if isinstance(t, dict) and t.get('type') == 'heading']\nast_ids = [h.get('attrs', {}).get('id') for h in heads]\ntoc_ids = [entry.get('id') for entry in toc]\nexpected_ids = ['api-sdk', 'api-sdk-2', 'api-sdk-3']\nprint(ast_ids == expected_ids, toc_ids == expected_ids)\nprint([entry.get('text') for entry in toc] == ['API & SDK', 'API SDK', 'API SDK'])\nprint(all(('id=\"%s\"' % anchor) in html for anchor in expected_ids))\n",
+      "expected_output": "True True\nTrue\nTrue",
+      "passed": false,
+      "actual": "False False\nFalse\nFalse",
+      "expected": "True True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS003",
+      "layer": "system",
+      "type": "system",
+      "category": "nested_inline_block_nodes",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-inline",
+        "REQ-render-html",
+        "REQ-render-ast",
+        "INV-nested-inline-containers"
+      ],
+      "description": "Block quote and list containers preserve nested inline token trees in AST and render equivalent HTML without assuming fixed child indexes.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef contains_type(value, target):\n    if isinstance(value, dict):\n        return value.get('type') == target or any(contains_type(v, target) for v in value.values())\n    if isinstance(value, list):\n        return any(contains_type(v, target) for v in value)\n    return False\n\ndoc = '''> ## Inner *Head*\n> quoted **text**\n>\n> - item [one](https://e.test)'''\nhtml = Markdown()(doc)\nast = Markdown('ast')(doc)\nquote = ast[0] if ast else {}\nprint(isinstance(quote, dict) and quote.get('type') == 'block_quote')\nprint(contains_type(quote, 'emphasis'), contains_type(quote, 'strong'), contains_type(quote, 'link'))\nprint('<h2 id=\"inner-head\">Inner <em>Head</em></h2>' in html)\nprint('<li>item <a href=\"https://e.test\">one</a></li>' in html)\n",
+      "expected_output": "True\nTrue True True\nTrue\nTrue",
+      "passed": false,
+      "actual": "False\nTrue True True\nFalse\nTrue",
+      "expected": "True\nTrue True True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS004",
+      "layer": "system",
+      "type": "system",
+      "category": "code_literal_escaping",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-inline",
+        "REQ-render-html",
+        "INV-code-literal"
+      ],
+      "description": "Code spans inside prose and fenced code blocks both escape HTML while suppressing nested inline parsing.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\nhtml = Markdown()('Inline `**<x>**` here.\\n\\n```html\\n<strong>& raw</strong>\\n```')\nprint('<code>**&lt;x&gt;**</code>' in html)\nprint('<strong>& raw</strong>' in html)\nprint('&lt;strong&gt;&amp; raw&lt;/strong&gt;' in html)\n",
+      "expected_output": "True\nFalse\nTrue",
+      "passed": true,
+      "actual": "True\nFalse\nTrue",
+      "expected": "True\nFalse\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS005",
+      "layer": "system",
+      "type": "system",
+      "category": "link_nested_escape",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-inline",
+        "REQ-render-html",
+        "INV-escaping"
+      ],
+      "description": "Link labels can contain nested inline emphasis while href and title attributes are escaped independently.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\nhtml = Markdown()('[*A & B*](https://e.test?q=1&v=\"x\" \"T & C\")')\nprint('<em>A &amp; B</em>' in html)\nprint('href=\"https://e.test?q=1&amp;v=&quot;x&quot;\"' in html)\nprint('title=\"T &amp; C\"' in html)\n",
+      "expected_output": "True\nTrue\nTrue",
+      "passed": true,
+      "actual": "True\nTrue\nTrue",
+      "expected": "True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS006",
+      "layer": "system",
+      "type": "system",
+      "category": "renderer_toc_ast_consistency",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-render-ast",
+        "REQ-render-html",
+        "REQ-heading-index",
+        "INV-renderer-independent-tokens",
+        "INV-heading-projection"
+      ],
+      "description": "AST, HTML, and TOC projections agree on headings and list item semantic text in one mixed document.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef plain(value):\n    if isinstance(value, str):\n        return value\n    if isinstance(value, dict):\n        if 'children' in value:\n            return ''.join(plain(child) for child in value['children'])\n        return value.get('text', '')\n    if isinstance(value, list):\n        return ''.join(plain(item) for item in value)\n    return ''\n\ndef safe_toc(md, text):\n    try:\n        return md.toc(text)\n    except Exception:\n        return []\n\ndoc = '''# H\n\n- *one*\n- `two`\n\n## H'''\nhtml = Markdown()(doc)\nast = Markdown('ast')(doc)\ntoc = safe_toc(Markdown(), doc)\nheads = [t for t in ast if isinstance(t, dict) and t.get('type') == 'heading']\nlists = [t for t in ast if isinstance(t, dict) and t.get('type') == 'list']\nitem_texts = [plain(item) for item in (lists[0].get('items', []) if lists else [])]\nprint([h.get('attrs', {}).get('id') for h in heads] == [entry.get('id') for entry in toc] == ['h', 'h-2'])\nprint(item_texts == ['one', 'two'])\nprint('<h1 id=\"h\">H</h1>' in html, '<em>one</em>' in html, '<code>two</code>' in html, '<h2 id=\"h-2\">H</h2>' in html)\n",
+      "expected_output": "True\nTrue\nTrue True True True",
+      "passed": false,
+      "actual": "False\nTrue\nFalse True True False",
+      "expected": "True\nTrue\nTrue True True True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS007",
+      "layer": "system",
+      "type": "system",
+      "category": "plugin_inline_projection",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-plugins",
+        "REQ-inline",
+        "REQ-blocks",
+        "REQ-render-ast",
+        "INV-plugin-shared-dispatch",
+        "INV-plugin-projection"
+      ],
+      "description": "Strikethrough plugin tokens compose with core inline syntax inside block containers and appear in both AST and HTML projections.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef count_type(value, target):\n    if isinstance(value, dict):\n        return (1 if value.get('type') == target else 0) + sum(count_type(v, target) for v in value.values())\n    if isinstance(value, list):\n        return sum(count_type(v, target) for v in value)\n    return 0\n\ndoc = '''Para ~~*gone*~~.\n\n- keep ~~**this**~~'''\nhtml = Markdown(plugins=['strikethrough'])(doc)\nast = Markdown('ast', plugins=['strikethrough'])(doc)\nprint(count_type(ast, 'strikethrough') == 2)\nprint('<p>Para <del><em>gone</em></del>.</p>' in html)\nprint('<li>keep <del><strong>this</strong></del></li>' in html)\n",
+      "expected_output": "True\nTrue\nTrue",
+      "passed": true,
+      "actual": "True\nTrue\nTrue",
+      "expected": "True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS008",
+      "layer": "system",
+      "type": "system",
+      "category": "table_cell_inline_projection",
+      "dimension": "boundary_crossing",
+      "system_dimension": "boundary_crossing",
+      "requirement_refs": [
+        "REQ-plugins",
+        "REQ-inline",
+        "REQ-render-ast",
+        "INV-inline-scope",
+        "INV-nested-inline-containers"
+      ],
+      "description": "Table cell boundaries come from the block plugin, and each cell projects independent inline semantics to AST and HTML.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef count_type(value, target):\n    if isinstance(value, dict):\n        return (1 if value.get('type') == target else 0) + sum(count_type(v, target) for v in value.values())\n    if isinstance(value, list):\n        return sum(count_type(v, target) for v in value)\n    return 0\n\ndoc = '''| A | B |\n| --- | --- |\n| *x* | **y** |\n| `a` | [z](https://e.test) |'''\nhtml = Markdown(plugins=['table'])(doc)\nast_doc = Markdown('ast', plugins=['table'])(doc)\ntable = ast_doc[0] if ast_doc else {}\nprint(isinstance(table, dict) and table.get('type') == 'table')\nprint(count_type(table, 'emphasis') == 1, count_type(table, 'strong') == 1, count_type(table, 'code_span') == 1, count_type(table, 'link') == 1)\nprint('<td><em>x</em></td><td><strong>y</strong></td>' in html)\nprint('<td><code>a</code></td><td><a href=\"https://e.test\">z</a></td>' in html)\n",
+      "expected_output": "True\nTrue True True True\nTrue\nTrue",
+      "passed": false,
+      "actual": "True\nTrue True False True\nTrue\nTrue",
+      "expected": "True\nTrue True True True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS009",
+      "layer": "system",
+      "type": "system",
+      "category": "task_list_inline_state",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-plugins",
+        "REQ-blocks",
+        "REQ-inline",
+        "REQ-render-ast",
+        "INV-plugin-projection"
+      ],
+      "description": "Task-list checked state is plugin metadata while item text remains normal inline-parsed list content in AST and HTML.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef count_type(value, target):\n    if isinstance(value, dict):\n        return (1 if value.get('type') == target else 0) + sum(count_type(v, target) for v in value.values())\n    if isinstance(value, list):\n        return sum(count_type(v, target) for v in value)\n    return 0\n\ndoc = '''- [x] **Done**\n- [ ] [Todo](https://e.test)'''\nhtml = Markdown(plugins=['task_list'])(doc)\nast = Markdown('ast', plugins=['task_list'])(doc)\nitems = ast[0].get('items', []) if ast and isinstance(ast[0], dict) else []\nprint([item.get('checked') for item in items] == [True, False])\nprint(count_type(items, 'strong') == 1, count_type(items, 'link') == 1)\nprint('<input type=\"checkbox\" disabled checked> <strong>Done</strong>' in html)\nprint('<input type=\"checkbox\" disabled> <a href=\"https://e.test\">Todo</a>' in html)\n",
+      "expected_output": "True\nTrue True\nTrue\nTrue",
+      "passed": true,
+      "actual": "True\nTrue True\nTrue\nTrue",
+      "expected": "True\nTrue True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS010",
+      "layer": "system",
+      "type": "system",
+      "category": "custom_plugin_ast_html_dispatch",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-plugins",
+        "REQ-render-html",
+        "REQ-render-ast",
+        "INV-plugin-shared-dispatch",
+        "INV-plugin-projection"
+      ],
+      "description": "A custom inline plugin registered once is dispatched through both HTML and AST renderers from the shared parser pipeline.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown, escape_html\n\ndef badge_plugin(md):\n    md.register_inline('badge', r'\\[\\[([^\\]]+)\\]\\]', lambda m: {'text': m.group(1)}, lambda r, t: '<span class=\"badge\">' + escape_html(t['text']) + '</span>')\n\ndef count_badges(value):\n    if isinstance(value, dict):\n        return (1 if value.get('type') == 'badge' and value.get('text') == 'v1 & beta' else 0) + sum(count_badges(v) for v in value.values())\n    if isinstance(value, list):\n        return sum(count_badges(v) for v in value)\n    return 0\n\ntry:\n    html = Markdown(plugins=[badge_plugin])('Ship [[v1 & beta]]')\n    ast = Markdown('ast', plugins=[badge_plugin])('Ship [[v1 & beta]]')\nexcept Exception:\n    html = ''\n    ast = []\nprint(html == '<p>Ship <span class=\"badge\">v1 &amp; beta</span></p>')\nprint(count_badges(ast) == 1)\n",
+      "expected_output": "True\nTrue",
+      "passed": false,
+      "actual": "False\nFalse",
+      "expected": "True\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS011",
+      "layer": "system",
+      "type": "system",
+      "category": "table_order_sensitivity",
+      "dimension": "operation_order_sensitivity",
+      "system_dimension": "operation_order_sensitivity",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-plugins",
+        "INV-inline-scope"
+      ],
+      "description": "Table recognition is order-sensitive: a delimiter row must immediately follow a table header at a block boundary, while later pipe text remains paragraph content.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\n\ndef ast_types(src):\n    try:\n        return [t.get('type') for t in Markdown('ast', plugins=['table'])(src) if isinstance(t, dict)]\n    except Exception:\n        return ['ERROR']\n\nnot_table = ast_types('''Intro paragraph\nA | B\n| --- | --- |''')\nyes_table = ast_types('''| A | B |\n| --- | --- |\n| 1 | 2 |''')\nreordered = ast_types('''| --- | --- |\n| A | B |\n| 1 | 2 |''')\nprint('table' not in not_table, 'paragraph' in not_table)\nprint(yes_table[:1] == ['table'])\nprint('table' not in reordered)\n",
+      "expected_output": "True True\nTrue\nTrue",
+      "passed": false,
+      "actual": "False True\nTrue\nTrue",
+      "expected": "True True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MMS012",
+      "layer": "system",
+      "type": "system",
+      "category": "error_recovery_reuse",
+      "dimension": "error_atomicity",
+      "system_dimension": "error_atomicity",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-inline",
+        "REQ-plugins",
+        "INV-error-recovery",
+        "INV-round-trip-stability"
+      ],
+      "description": "Malformed inline/plugin syntax remains literal and repeated parsing of a later valid document on the same parser is stable.",
+      "weight": 8,
+      "test_code": "from minimarkdown import Markdown\nm = Markdown(plugins=['strikethrough'])\nbad = 'Bad ~~strike and [link](oops then **ok**'\ngood = 'Next ~~good~~ and *fine*'\nfirst = m(bad)\nsecond = m(good)\nthird = m(good)\nast1 = m.parse(good)\nast2 = m.parse(good)\nprint('~~strike' in first, '<strong>ok</strong>' in first)\nprint(second == third, ast1 == ast2)\nprint('<del>good</del>' in second, '<em>fine</em>' in second)\n",
+      "expected_output": "True True\nTrue True\nTrue True",
+      "passed": true,
+      "actual": "True True\nTrue True\nTrue True",
+      "expected": "True True\nTrue True\nTrue True",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

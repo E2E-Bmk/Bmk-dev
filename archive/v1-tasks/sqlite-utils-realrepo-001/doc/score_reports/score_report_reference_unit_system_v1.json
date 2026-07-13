@@ -1,0 +1,2904 @@
+{
+  "total_cases": 28,
+  "passed_cases": 28,
+  "total_weight": 160,
+  "passed_weight": 160,
+  "score": 1.0,
+  "unit_score": {
+    "weight": 64,
+    "passed_weight": 64,
+    "score": 1.0,
+    "cases": 16,
+    "passed_cases": 16
+  },
+  "system_score": {
+    "weight": 96,
+    "passed_weight": 96,
+    "score": 1.0,
+    "cases": 12,
+    "passed_cases": 12
+  },
+  "unit_system_gap": 0.0,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 96,
+      "cases": 12,
+      "passed": 12
+    },
+    "unit": {
+      "weight": 64,
+      "passed_weight": 64,
+      "cases": 16,
+      "passed": 16
+    }
+  },
+  "categories": {
+    "compound_transform": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "csv_upsert_transform_types": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "error_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "extract": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "extract_then_transform": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "extract_to_fts": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "extract_transform_query": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "fts": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "fts_rebuild": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "insert": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "insert_upsert_query": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "multi_table_invariant": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "query": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "schema_metadata": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "transform": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "transform_atomicity_after_extract": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "transform_then_extract": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "upsert": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "upsert_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "system_dimensions": {
+    "boundary_crossing": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 2,
+      "passed": 2
+    },
+    "cross_feature_dataflow": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 2,
+      "passed": 2
+    },
+    "error_atomicity": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 2,
+      "passed": 2
+    },
+    "global_invariant": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 2,
+      "passed": 2
+    },
+    "operation_order_sensitivity": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 2,
+      "passed": 2
+    },
+    "state_accumulation": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 2,
+      "passed": 2
+    }
+  },
+  "failed_cases": [],
+  "all_cases": [
+    {
+      "id": "SQU001",
+      "layer": "unit",
+      "category": "insert",
+      "requirement_refs": [
+        "REQ-import"
+      ],
+      "description": "JSON insert creates a typed table with a single-column primary key.",
+      "weight": 4,
+      "setup_files": {
+        "pets.json": "[{\"id\":1,\"name\":\"Cleo\",\"age\":4,\"weight\":12.5,\"good\":true,\"tags\":[\"cat\",\"tabby\"]},{\"id\":2,\"name\":\"Pancakes\",\"age\":2,\"weight\":8.0,\"good\":false,\"tags\":[\"dog\"]}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "pets",
+          "pets.json",
+          "--json",
+          "--pk",
+          "id"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select id, name, typeof(age), typeof(weight), good, tags from pets order by id": [
+            [
+              1,
+              "Cleo",
+              "integer",
+              "real",
+              1,
+              "[\"cat\",\"tabby\"]"
+            ],
+            [
+              2,
+              "Pancakes",
+              "integer",
+              "real",
+              0,
+              "[\"dog\"]"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "pets",
+            "pets.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU002",
+      "layer": "unit",
+      "category": "insert",
+      "requirement_refs": [
+        "REQ-import"
+      ],
+      "description": "CSV insert infers integer, real, boolean, and text columns.",
+      "weight": 4,
+      "setup_files": {
+        "inventory.csv": "id,name,qty,price,active,note\n1,Hammer,3,12.5,true,none\n2,Nail,40,0.1,false,small\n"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "inventory",
+          "inventory.csv",
+          "--csv",
+          "--pk",
+          "id"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select id, typeof(id), qty, typeof(qty), price, typeof(price), active, typeof(active), note from inventory order by id": [
+            [
+              1,
+              "integer",
+              3,
+              "integer",
+              12.5,
+              "real",
+              1,
+              "integer",
+              "none"
+            ],
+            [
+              2,
+              "integer",
+              40,
+              "integer",
+              0.1,
+              "real",
+              0,
+              "integer",
+              "small"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "inventory",
+            "inventory.csv",
+            "--csv",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU003",
+      "layer": "unit",
+      "category": "upsert",
+      "requirement_refs": [
+        "REQ-upsert"
+      ],
+      "description": "Upsert updates matching primary-key rows while preserving omitted old values.",
+      "weight": 4,
+      "setup_sql": [
+        "create table dogs(id integer primary key, name text, age integer, breed text);",
+        "insert into dogs(id,name,age,breed) values (1,'Cleo',4,'tabby'),(2,'Nixie',2,null);"
+      ],
+      "setup_files": {
+        "updates.json": "[{\"id\":1,\"age\":5},{\"id\":3,\"name\":\"Marnie\",\"age\":1,\"breed\":\"mix\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "upsert",
+          "dogs",
+          "updates.json",
+          "--json",
+          "--pk",
+          "id"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select id, name, age, breed from dogs order by id": [
+            [
+              1,
+              "Cleo",
+              5,
+              "tabby"
+            ],
+            [
+              2,
+              "Nixie",
+              2,
+              null
+            ],
+            [
+              3,
+              "Marnie",
+              1,
+              "mix"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "upsert",
+            "dogs",
+            "updates.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU004",
+      "layer": "unit",
+      "category": "upsert",
+      "requirement_refs": [
+        "REQ-upsert"
+      ],
+      "description": "Compound-key upsert with alter adds new columns and preserves omitted values.",
+      "weight": 4,
+      "setup_sql": [
+        "create table scores(team text, week integer, score integer, note text, primary key(team, week));",
+        "insert into scores(team,week,score,note) values ('red',1,10,'keep'),('red',2,11,'old'),('blue',1,7,'blue');"
+      ],
+      "setup_files": {
+        "updates.json": "[{\"team\":\"red\",\"week\":1,\"score\":12,\"flag\":true},{\"team\":\"blue\",\"week\":2,\"score\":9,\"note\":\"new\",\"flag\":false}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "upsert",
+          "scores",
+          "updates.json",
+          "--json",
+          "--pk",
+          "team,week",
+          "--alter"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select team, week, score, note, flag from scores order by team, week": [
+            [
+              "blue",
+              1,
+              7,
+              "blue",
+              null
+            ],
+            [
+              "blue",
+              2,
+              9,
+              "new",
+              0
+            ],
+            [
+              "red",
+              1,
+              12,
+              "keep",
+              1
+            ],
+            [
+              "red",
+              2,
+              11,
+              "old",
+              null
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "upsert",
+            "scores",
+            "updates.json",
+            "--json",
+            "--pk",
+            "team,week",
+            "--alter"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU005",
+      "layer": "unit",
+      "category": "query",
+      "requirement_refs": [
+        "REQ-query"
+      ],
+      "description": "Rows command applies where, order, and limit to an existing table.",
+      "weight": 4,
+      "setup_sql": [
+        "create table pets(id integer primary key, name text, age integer);",
+        "insert into pets(id,name,age) values (1,'Cleo',4),(2,'Pancakes',2),(3,'Miso',7);"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "rows",
+          "pets",
+          "--where",
+          "age >= 3",
+          "--order",
+          "age desc",
+          "--limit",
+          "2"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "0": [
+            {
+              "id": 3,
+              "name": "Miso",
+              "age": 7
+            },
+            {
+              "id": 1,
+              "name": "Cleo",
+              "age": 4
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "rows",
+            "pets",
+            "--where",
+            "age >= 3",
+            "--order",
+            "age desc",
+            "--limit",
+            "2"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":3,\"name\":\"Miso\",\"age\":7},{\"id\":1,\"name\":\"Cleo\",\"age\":4}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU006",
+      "layer": "unit",
+      "category": "query",
+      "requirement_refs": [
+        "REQ-query"
+      ],
+      "description": "Query command returns JSON row objects for arbitrary SQL.",
+      "weight": 4,
+      "setup_sql": [
+        "create table pets(id integer primary key, name text, age integer);",
+        "insert into pets(id,name,age) values (1,'Cleo',4),(2,'Pancakes',2),(3,'Miso',7);"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "query",
+          "select name, age from pets where age > 3 order by name"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "0": [
+            {
+              "name": "Cleo",
+              "age": 4
+            },
+            {
+              "name": "Miso",
+              "age": 7
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "query",
+            "select name, age from pets where age > 3 order by name"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"name\":\"Cleo\",\"age\":4},{\"name\":\"Miso\",\"age\":7}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU007",
+      "layer": "unit",
+      "category": "metadata",
+      "requirement_refs": [
+        "REQ-query"
+      ],
+      "description": "Tables with counts and schema reflect existing database metadata.",
+      "weight": 4,
+      "setup_sql": [
+        "create table pets(id integer primary key, name text);",
+        "insert into pets(id,name) values (1,'Cleo'),(2,'Miso');"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "tables",
+          "--counts"
+        ],
+        [
+          "data.db",
+          "schema",
+          "pets"
+        ]
+      ],
+      "checks": {
+        "stdout_json_contains": {
+          "0": [
+            {
+              "table": "pets",
+              "count": 2
+            }
+          ]
+        },
+        "stdout_contains": {
+          "1": [
+            "CREATE TABLE",
+            "pets",
+            "id",
+            "name"
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "tables",
+            "--counts"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"table\":\"pets\",\"count\":2}]\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "schema",
+            "pets"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "CREATE TABLE pets(id integer primary key, name text)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU008",
+      "layer": "unit",
+      "category": "extract",
+      "requirement_refs": [
+        "REQ-extract"
+      ],
+      "description": "Extract normalizes repeated text values into a lookup table.",
+      "weight": 4,
+      "setup_sql": [
+        "create table orders(id integer primary key, customer text, total integer);",
+        "insert into orders(id,customer,total) values (1,'Ada',10),(2,'Lin',15),(3,'Ada',7);"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "extract",
+          "orders",
+          "customer",
+          "customers"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select id, value from customers order by id": [
+            [
+              1,
+              "Ada"
+            ],
+            [
+              2,
+              "Lin"
+            ]
+          ],
+          "select id, customer_id, total from orders order by id": [
+            [
+              1,
+              1,
+              10
+            ],
+            [
+              2,
+              2,
+              15
+            ],
+            [
+              3,
+              1,
+              7
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "extract",
+            "orders",
+            "customer",
+            "customers"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU009",
+      "layer": "unit",
+      "category": "extract",
+      "requirement_refs": [
+        "REQ-extract"
+      ],
+      "description": "Extract ignores null values and assigns lookup IDs in first-seen order.",
+      "weight": 4,
+      "setup_sql": [
+        "create table events(id integer primary key, kind text);",
+        "insert into events(id,kind) values (1,'beta'),(2,null),(3,'alpha'),(4,'beta');"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "extract",
+          "events",
+          "kind",
+          "kinds"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select id, value from kinds order by id": [
+            [
+              1,
+              "beta"
+            ],
+            [
+              2,
+              "alpha"
+            ]
+          ],
+          "select id, kind_id from events order by id": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              null
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              4,
+              1
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "extract",
+            "events",
+            "kind",
+            "kinds"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU010",
+      "layer": "unit",
+      "category": "fts",
+      "requirement_refs": [
+        "REQ-fts"
+      ],
+      "description": "Enable-FTS builds an FTS table for an existing document table.",
+      "weight": 4,
+      "setup_sql": [
+        "create table docs(id integer primary key, title text, body text);",
+        "insert into docs(id,title,body) values (1,'Alpha','red apple harvest'),(2,'Beta','green pear orchard');"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "enable-fts",
+          "docs",
+          "title",
+          "body"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select count(*) from docs_fts": [
+            [
+              2
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "enable-fts",
+            "docs",
+            "title",
+            "body"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU011",
+      "layer": "unit",
+      "category": "fts",
+      "requirement_refs": [
+        "REQ-fts"
+      ],
+      "description": "Search returns original rows from an existing FTS index.",
+      "weight": 4,
+      "setup_sql": [
+        "create table docs(id integer primary key, title text, body text);",
+        "insert into docs(id,title,body) values (1,'Alpha','red apple harvest'),(2,'Beta','green pear orchard');",
+        "create virtual table docs_fts using fts5(title, body, content='docs', content_rowid='id');",
+        "insert into docs_fts(rowid,title,body) values (1,'Alpha','red apple harvest'),(2,'Beta','green pear orchard');"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "search",
+          "docs",
+          "apple",
+          "--limit",
+          "5"
+        ]
+      ],
+      "checks": {
+        "stdout_json_contains": {
+          "0": [
+            {
+              "id": 1,
+              "title": "Alpha",
+              "body": "red apple harvest"
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "search",
+            "docs",
+            "apple",
+            "--limit",
+            "5"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"title\":\"Alpha\",\"body\":\"red apple harvest\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU012",
+      "layer": "unit",
+      "category": "transform",
+      "requirement_refs": [
+        "REQ-transform"
+      ],
+      "description": "Transform renames, drops, and adds JSON-parsed default columns.",
+      "weight": 4,
+      "setup_sql": [
+        "create table tasks(id integer primary key, name text, scratch text);",
+        "insert into tasks(id,name,scratch) values (1,'One','x'),(2,'Two','y');"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "transform",
+          "tasks",
+          "--rename",
+          "name:title",
+          "--drop",
+          "scratch",
+          "--default",
+          "priority=1",
+          "--default",
+          "done=false"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select id, title, priority, typeof(priority), done, typeof(done) from tasks order by id": [
+            [
+              1,
+              "One",
+              1,
+              "integer",
+              0,
+              "integer"
+            ],
+            [
+              2,
+              "Two",
+              1,
+              "integer",
+              0,
+              "integer"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "tasks",
+            "--rename",
+            "name:title",
+            "--drop",
+            "scratch",
+            "--default",
+            "priority=1",
+            "--default",
+            "done=false"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQU013",
+      "layer": "unit",
+      "category": "transform",
+      "requirement_refs": [
+        "REQ-transform",
+        "REQ-atomic"
+      ],
+      "description": "Invalid not-null transform fails without changing table rows.",
+      "weight": 4,
+      "setup_sql": [
+        "create table items(id integer primary key, name text, code text);",
+        "insert into items(id,name,code) values (1,'A',null),(2,'B','b');"
+      ],
+      "commands": [
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "items",
+            "--not-null",
+            "code"
+          ],
+          "expect_error": true
+        }
+      ],
+      "checks": {
+        "sql": {
+          "select id, name, code from items order by id": [
+            [
+              1,
+              "A",
+              null
+            ],
+            [
+              2,
+              "B",
+              "b"
+            ]
+          ],
+          "select name from pragma_table_info('items') order by cid": [
+            [
+              "id"
+            ],
+            [
+              "name"
+            ],
+            [
+              "code"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "items",
+            "--not-null",
+            "code"
+          ],
+          "expect_error": true,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "not-null would be violated\n"
+        }
+      ]
+    },
+    {
+      "id": "SQU014",
+      "layer": "unit",
+      "category": "error_atomicity",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-atomic"
+      ],
+      "description": "Insert with unknown columns fails without --alter and preserves existing rows.",
+      "weight": 4,
+      "setup_sql": [
+        "create table dogs(id integer primary key, name text);",
+        "insert into dogs(id,name) values (1,'Cleo');"
+      ],
+      "setup_files": {
+        "incoming.json": "[{\"id\":2,\"name\":\"Miso\",\"breed\":\"tabby\"}]"
+      },
+      "commands": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "dogs",
+            "incoming.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": true
+        }
+      ],
+      "checks": {
+        "sql": {
+          "select id, name from dogs order by id": [
+            [
+              1,
+              "Cleo"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "dogs",
+            "incoming.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": true,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "unknown columns: breed\n"
+        }
+      ]
+    },
+    {
+      "id": "SQU015",
+      "layer": "unit",
+      "category": "error_atomicity",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-atomic"
+      ],
+      "description": "Invalid JSON import fails nonzero.",
+      "weight": 4,
+      "setup_files": {
+        "bad.json": "[{\"id\":1,\"name\":\"A\"}"
+      },
+      "commands": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "bad",
+            "bad.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": true
+        }
+      ],
+      "checks": {},
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "bad",
+            "bad.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": true,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "Expecting ',' delimiter: line 1 column 21 (char 20)\n"
+        }
+      ]
+    },
+    {
+      "id": "SQU016",
+      "layer": "unit",
+      "category": "query",
+      "requirement_refs": [
+        "REQ-query"
+      ],
+      "description": "Rows command returns an empty JSON list when no rows match.",
+      "weight": 4,
+      "setup_sql": [
+        "create table pets(id integer primary key, name text, age integer);",
+        "insert into pets(id,name,age) values (1,'Cleo',4),(2,'Pancakes',2);"
+      ],
+      "commands": [
+        [
+          "data.db",
+          "rows",
+          "pets",
+          "--where",
+          "age > 10",
+          "--order",
+          "id"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "0": []
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "rows",
+            "pets",
+            "--where",
+            "age > 10",
+            "--order",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS001",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "insert_upsert_query",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-upsert",
+        "REQ-query"
+      ],
+      "description": "CSV type inference flows through upsert-alter and rows/query output.",
+      "weight": 8,
+      "setup_files": {
+        "inventory.csv": "id,name,qty,price,active,note\n1,Hammer,3,12.5,true,none\n2,Nail,40,0.1,false,small\n",
+        "updates.json": "[{\"id\":1,\"qty\":4,\"tag\":\"tool\"},{\"id\":3,\"name\":\"Saw\",\"qty\":2,\"price\":5.5,\"active\":true,\"note\":\"new\",\"tag\":\"cut\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "inventory",
+          "inventory.csv",
+          "--csv",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "upsert",
+          "inventory",
+          "updates.json",
+          "--json",
+          "--pk",
+          "id",
+          "--alter"
+        ],
+        [
+          "data.db",
+          "rows",
+          "inventory",
+          "--where",
+          "active = 1",
+          "--order",
+          "id"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "2": [
+            {
+              "id": 1,
+              "name": "Hammer",
+              "qty": 4,
+              "price": 12.5,
+              "active": 1,
+              "note": "none",
+              "tag": "tool"
+            },
+            {
+              "id": 3,
+              "name": "Saw",
+              "qty": 2,
+              "price": 5.5,
+              "active": 1,
+              "note": "new",
+              "tag": "cut"
+            }
+          ]
+        },
+        "sql": {
+          "select id, typeof(qty), typeof(price), typeof(active), note, tag from inventory order by id": [
+            [
+              1,
+              "integer",
+              "real",
+              "integer",
+              "none",
+              "tool"
+            ],
+            [
+              2,
+              "integer",
+              "real",
+              "integer",
+              "small",
+              null
+            ],
+            [
+              3,
+              "integer",
+              "real",
+              "integer",
+              "new",
+              "cut"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "inventory",
+            "inventory.csv",
+            "--csv",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "upsert",
+            "inventory",
+            "updates.json",
+            "--json",
+            "--pk",
+            "id",
+            "--alter"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "rows",
+            "inventory",
+            "--where",
+            "active = 1",
+            "--order",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"name\":\"Hammer\",\"qty\":4,\"price\":12.5,\"active\":1,\"note\":\"none\",\"tag\":\"tool\"},{\"id\":3,\"name\":\"Saw\",\"qty\":2,\"price\":5.5,\"active\":1,\"note\":\"new\",\"tag\":\"cut\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS002",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "extract_transform_query",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-extract",
+        "REQ-transform",
+        "REQ-query"
+      ],
+      "description": "Inserted rows are normalized, transformed, and queried without losing lookup relationships.",
+      "weight": 8,
+      "setup_files": {
+        "orders.json": "[{\"id\":1,\"customer\":\"Ada\",\"total\":10,\"scratch\":\"x\"},{\"id\":2,\"customer\":\"Lin\",\"total\":15,\"scratch\":\"y\"},{\"id\":3,\"customer\":\"Ada\",\"total\":7,\"scratch\":\"z\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "orders",
+          "orders.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "extract",
+          "orders",
+          "customer",
+          "customers"
+        ],
+        [
+          "data.db",
+          "transform",
+          "orders",
+          "--rename",
+          "total:amount",
+          "--drop",
+          "scratch",
+          "--default",
+          "status=open"
+        ],
+        [
+          "data.db",
+          "query",
+          "select o.id, c.value as customer, o.amount, o.status from orders o join customers c on o.customer_id = c.id order by o.id"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "3": [
+            {
+              "id": 1,
+              "customer": "Ada",
+              "amount": 10,
+              "status": "open"
+            },
+            {
+              "id": 2,
+              "customer": "Lin",
+              "amount": 15,
+              "status": "open"
+            },
+            {
+              "id": 3,
+              "customer": "Ada",
+              "amount": 7,
+              "status": "open"
+            }
+          ]
+        },
+        "sql": {
+          "select id, value from customers order by id": [
+            [
+              1,
+              "Ada"
+            ],
+            [
+              2,
+              "Lin"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "orders",
+            "orders.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "extract",
+            "orders",
+            "customer",
+            "customers"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "orders",
+            "--rename",
+            "total:amount",
+            "--drop",
+            "scratch",
+            "--default",
+            "status=open"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "query",
+            "select o.id, c.value as customer, o.amount, o.status from orders o join customers c on o.customer_id = c.id order by o.id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"customer\":\"Ada\",\"amount\":10,\"status\":\"open\"},{\"id\":2,\"customer\":\"Lin\",\"amount\":15,\"status\":\"open\"},{\"id\":3,\"customer\":\"Ada\",\"amount\":7,\"status\":\"open\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS003",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "fts_rebuild",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-upsert",
+        "REQ-fts",
+        "REQ-query"
+      ],
+      "description": "FTS rebuild after upsert reflects updated original rows.",
+      "weight": 8,
+      "setup_files": {
+        "docs.json": "[{\"id\":1,\"title\":\"One\",\"body\":\"alpha apple\"},{\"id\":2,\"title\":\"Two\",\"body\":\"banana pear\"}]",
+        "updates.json": "[{\"id\":2,\"body\":\"banana apple updated\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "docs",
+          "docs.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "enable-fts",
+          "docs",
+          "title",
+          "body"
+        ],
+        [
+          "data.db",
+          "upsert",
+          "docs",
+          "updates.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "enable-fts",
+          "docs",
+          "title",
+          "body"
+        ],
+        [
+          "data.db",
+          "search",
+          "docs",
+          "updated",
+          "--limit",
+          "2"
+        ]
+      ],
+      "checks": {
+        "stdout_json_contains": {
+          "4": [
+            {
+              "id": 2,
+              "title": "Two",
+              "body": "banana apple updated"
+            }
+          ]
+        },
+        "sql": {
+          "select count(*) from docs_fts": [
+            [
+              2
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "docs",
+            "docs.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "enable-fts",
+            "docs",
+            "title",
+            "body"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "upsert",
+            "docs",
+            "updates.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "enable-fts",
+            "docs",
+            "title",
+            "body"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "search",
+            "docs",
+            "updated",
+            "--limit",
+            "2"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":2,\"title\":\"Two\",\"body\":\"banana apple updated\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS004",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "schema_metadata",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-transform",
+        "REQ-query"
+      ],
+      "description": "Transform preserves primary key, row count, metadata, and query behavior.",
+      "weight": 8,
+      "setup_files": {
+        "items.json": "[{\"id\":1,\"name\":\"Hammer\",\"notes\":\"old\"},{\"id\":2,\"name\":\"Nail\",\"notes\":\"tiny\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "items",
+          "items.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "transform",
+          "items",
+          "--rename",
+          "name:title",
+          "--drop",
+          "notes",
+          "--default",
+          "status=active"
+        ],
+        [
+          "data.db",
+          "tables",
+          "--counts"
+        ],
+        [
+          "data.db",
+          "schema",
+          "items"
+        ],
+        [
+          "data.db",
+          "rows",
+          "items",
+          "--order",
+          "id"
+        ]
+      ],
+      "checks": {
+        "stdout_json_contains": {
+          "2": [
+            {
+              "table": "items",
+              "count": 2
+            }
+          ]
+        },
+        "stdout_contains": {
+          "3": [
+            "PRIMARY KEY",
+            "title",
+            "status"
+          ]
+        },
+        "stdout_json": {
+          "4": [
+            {
+              "id": 1,
+              "title": "Hammer",
+              "status": "active"
+            },
+            {
+              "id": 2,
+              "title": "Nail",
+              "status": "active"
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "items",
+            "items.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "items",
+            "--rename",
+            "name:title",
+            "--drop",
+            "notes",
+            "--default",
+            "status=active"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "tables",
+            "--counts"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"table\":\"items\",\"count\":2}]\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "schema",
+            "items"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "CREATE TABLE \"items\" (\"id\" INTEGER, \"title\" TEXT, \"status\" TEXT, PRIMARY KEY (\"id\"))\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "rows",
+            "items",
+            "--order",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"title\":\"Hammer\",\"status\":\"active\"},{\"id\":2,\"title\":\"Nail\",\"status\":\"active\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS005",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "transform_atomicity_after_extract",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-extract",
+        "REQ-transform",
+        "REQ-atomic"
+      ],
+      "description": "Invalid transform after extract leaves original table and lookup table intact.",
+      "weight": 8,
+      "setup_files": {
+        "orders.json": "[{\"id\":1,\"customer\":\"Ada\",\"total\":10},{\"id\":2,\"customer\":\"Lin\",\"total\":15}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "orders",
+          "orders.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "extract",
+          "orders",
+          "customer",
+          "customers"
+        ],
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "orders",
+            "--drop",
+            "missing"
+          ],
+          "expect_error": true
+        }
+      ],
+      "checks": {
+        "sql": {
+          "select id, customer_id, total from orders order by id": [
+            [
+              1,
+              1,
+              10
+            ],
+            [
+              2,
+              2,
+              15
+            ]
+          ],
+          "select id, value from customers order by id": [
+            [
+              1,
+              "Ada"
+            ],
+            [
+              2,
+              "Lin"
+            ]
+          ],
+          "select name from pragma_table_info('orders') order by cid": [
+            [
+              "id"
+            ],
+            [
+              "customer_id"
+            ],
+            [
+              "total"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "orders",
+            "orders.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "extract",
+            "orders",
+            "customer",
+            "customers"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "orders",
+            "--drop",
+            "missing"
+          ],
+          "expect_error": true,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "missing drop column\n"
+        }
+      ]
+    },
+    {
+      "id": "SQS006",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "upsert_atomicity",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-upsert",
+        "REQ-query",
+        "REQ-atomic"
+      ],
+      "description": "Upsert with unknown columns and no alter fails without corrupting queryable rows.",
+      "weight": 8,
+      "setup_files": {
+        "base.json": "[{\"id\":1,\"name\":\"Cleo\"},{\"id\":2,\"name\":\"Miso\"}]",
+        "bad.json": "[{\"id\":2,\"name\":\"Miso\",\"breed\":\"tabby\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "dogs",
+          "base.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        {
+          "args": [
+            "data.db",
+            "upsert",
+            "dogs",
+            "bad.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": true
+        },
+        [
+          "data.db",
+          "rows",
+          "dogs",
+          "--order",
+          "id"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "2": [
+            {
+              "id": 1,
+              "name": "Cleo"
+            },
+            {
+              "id": 2,
+              "name": "Miso"
+            }
+          ]
+        },
+        "sql": {
+          "select name from pragma_table_info('dogs') order by cid": [
+            [
+              "id"
+            ],
+            [
+              "name"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "dogs",
+            "base.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "upsert",
+            "dogs",
+            "bad.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": true,
+          "exit_code": 2,
+          "stdout": "",
+          "stderr": "unknown columns: breed\n"
+        },
+        {
+          "args": [
+            "data.db",
+            "rows",
+            "dogs",
+            "--order",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"name\":\"Cleo\"},{\"id\":2,\"name\":\"Miso\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS007",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "compound_transform",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-upsert",
+        "REQ-transform"
+      ],
+      "description": "Compound-key upsert output survives transform defaults and dropped columns.",
+      "weight": 8,
+      "setup_files": {
+        "base.json": "[{\"team\":\"red\",\"week\":1,\"score\":10,\"note\":\"keep\"},{\"team\":\"red\",\"week\":2,\"score\":11,\"note\":\"old\"},{\"team\":\"blue\",\"week\":1,\"score\":7,\"note\":\"blue\"}]",
+        "updates.json": "[{\"team\":\"red\",\"week\":1,\"score\":12,\"flag\":true},{\"team\":\"blue\",\"week\":2,\"score\":9,\"note\":\"new\",\"flag\":false}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "scores",
+          "base.json",
+          "--json",
+          "--pk",
+          "team,week"
+        ],
+        [
+          "data.db",
+          "upsert",
+          "scores",
+          "updates.json",
+          "--json",
+          "--pk",
+          "team,week",
+          "--alter"
+        ],
+        [
+          "data.db",
+          "transform",
+          "scores",
+          "--drop",
+          "note",
+          "--default",
+          "reviewed=false"
+        ]
+      ],
+      "checks": {
+        "sql": {
+          "select team, week, score, flag, reviewed from scores order by team, week": [
+            [
+              "blue",
+              1,
+              7,
+              null,
+              0
+            ],
+            [
+              "blue",
+              2,
+              9,
+              0,
+              0
+            ],
+            [
+              "red",
+              1,
+              12,
+              1,
+              0
+            ],
+            [
+              "red",
+              2,
+              11,
+              null,
+              0
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "scores",
+            "base.json",
+            "--json",
+            "--pk",
+            "team,week"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "upsert",
+            "scores",
+            "updates.json",
+            "--json",
+            "--pk",
+            "team,week",
+            "--alter"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "scores",
+            "--drop",
+            "note",
+            "--default",
+            "reviewed=false"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS008",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "extract_to_fts",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-extract",
+        "REQ-fts",
+        "REQ-query"
+      ],
+      "description": "Extracted lookup table can become an FTS source and return lookup rows.",
+      "weight": 8,
+      "setup_files": {
+        "posts.json": "[{\"id\":1,\"topic\":\"apple pie\",\"body\":\"a\"},{\"id\":2,\"topic\":\"pear tart\",\"body\":\"b\"},{\"id\":3,\"topic\":\"apple pie\",\"body\":\"c\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "posts",
+          "posts.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "extract",
+          "posts",
+          "topic",
+          "topics"
+        ],
+        [
+          "data.db",
+          "enable-fts",
+          "topics",
+          "value"
+        ],
+        [
+          "data.db",
+          "search",
+          "topics",
+          "apple",
+          "--limit",
+          "5"
+        ]
+      ],
+      "checks": {
+        "stdout_json_contains": {
+          "3": [
+            {
+              "id": 1,
+              "value": "apple pie"
+            }
+          ]
+        },
+        "sql": {
+          "select topic_id, count(*) from posts group by topic_id order by topic_id": [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              1
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "posts",
+            "posts.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "extract",
+            "posts",
+            "topic",
+            "topics"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "enable-fts",
+            "topics",
+            "value"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "search",
+            "topics",
+            "apple",
+            "--limit",
+            "5"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"value\":\"apple pie\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS009",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "multi_table_invariant",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-transform",
+        "REQ-query"
+      ],
+      "description": "Transforming one table does not alter unrelated tables or metadata counts.",
+      "weight": 8,
+      "setup_files": {
+        "items.json": "[{\"id\":1,\"name\":\"Hammer\",\"category_id\":1},{\"id\":2,\"name\":\"Nail\",\"category_id\":1}]",
+        "categories.json": "[{\"id\":1,\"name\":\"Tools\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "categories",
+          "categories.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "insert",
+          "items",
+          "items.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "transform",
+          "items",
+          "--rename",
+          "name:title"
+        ],
+        [
+          "data.db",
+          "tables",
+          "--counts"
+        ]
+      ],
+      "checks": {
+        "stdout_json_contains": {
+          "3": [
+            {
+              "table": "categories",
+              "count": 1
+            },
+            {
+              "table": "items",
+              "count": 2
+            }
+          ]
+        },
+        "sql": {
+          "select id, name from categories order by id": [
+            [
+              1,
+              "Tools"
+            ]
+          ],
+          "select id, title, category_id from items order by id": [
+            [
+              1,
+              "Hammer",
+              1
+            ],
+            [
+              2,
+              "Nail",
+              1
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "categories",
+            "categories.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "items",
+            "items.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "items",
+            "--rename",
+            "name:title"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "tables",
+            "--counts"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"table\":\"categories\",\"count\":1},{\"table\":\"items\",\"count\":2}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS010",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "csv_upsert_transform_types",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-upsert",
+        "REQ-transform",
+        "REQ-query"
+      ],
+      "description": "CSV inferred types, omitted upsert values, and JSON-parsed transform defaults compose.",
+      "weight": 8,
+      "setup_files": {
+        "tasks.csv": "id,name,done,priority\n1,Write,false,2\n2,Ship,true,1\n",
+        "updates.json": "[{\"id\":1,\"name\":\"Write docs\"},{\"id\":3,\"name\":\"Review\",\"done\":false,\"priority\":3}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "tasks",
+          "tasks.csv",
+          "--csv",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "upsert",
+          "tasks",
+          "updates.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "transform",
+          "tasks",
+          "--rename",
+          "name:title",
+          "--default",
+          "status=\"open\""
+        ],
+        [
+          "data.db",
+          "rows",
+          "tasks",
+          "--order",
+          "id"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "3": [
+            {
+              "id": 1,
+              "title": "Write docs",
+              "done": 0,
+              "priority": 2,
+              "status": "open"
+            },
+            {
+              "id": 2,
+              "title": "Ship",
+              "done": 1,
+              "priority": 1,
+              "status": "open"
+            },
+            {
+              "id": 3,
+              "title": "Review",
+              "done": 0,
+              "priority": 3,
+              "status": "open"
+            }
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "tasks",
+            "tasks.csv",
+            "--csv",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "upsert",
+            "tasks",
+            "updates.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "tasks",
+            "--rename",
+            "name:title",
+            "--default",
+            "status=\"open\""
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "rows",
+            "tasks",
+            "--order",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"title\":\"Write docs\",\"done\":0,\"priority\":2,\"status\":\"open\"},{\"id\":2,\"title\":\"Ship\",\"done\":1,\"priority\":1,\"status\":\"open\"},{\"id\":3,\"title\":\"Review\",\"done\":0,\"priority\":3,\"status\":\"open\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS011",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "transform_then_extract",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-transform",
+        "REQ-extract",
+        "REQ-query"
+      ],
+      "description": "A transform rename changes the column name that a later extract must normalize.",
+      "weight": 8,
+      "setup_files": {
+        "books.json": "[{\"id\":1,\"title\":\"A\",\"genre\":\"sci-fi\"},{\"id\":2,\"title\":\"B\",\"genre\":\"memoir\"},{\"id\":3,\"title\":\"C\",\"genre\":\"sci-fi\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "books",
+          "books.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "transform",
+          "books",
+          "--rename",
+          "genre:category",
+          "--default",
+          "status=active"
+        ],
+        [
+          "data.db",
+          "extract",
+          "books",
+          "category",
+          "categories"
+        ],
+        [
+          "data.db",
+          "query",
+          "select b.id, b.title, c.value as category, b.status from books b join categories c on b.category_id = c.id order by b.id"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "3": [
+            {
+              "id": 1,
+              "title": "A",
+              "category": "sci-fi",
+              "status": "active"
+            },
+            {
+              "id": 2,
+              "title": "B",
+              "category": "memoir",
+              "status": "active"
+            },
+            {
+              "id": 3,
+              "title": "C",
+              "category": "sci-fi",
+              "status": "active"
+            }
+          ]
+        },
+        "sql": {
+          "select id, value from categories order by id": [
+            [
+              1,
+              "sci-fi"
+            ],
+            [
+              2,
+              "memoir"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "books",
+            "books.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "books",
+            "--rename",
+            "genre:category",
+            "--default",
+            "status=active"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "extract",
+            "books",
+            "category",
+            "categories"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "query",
+            "select b.id, b.title, c.value as category, b.status from books b join categories c on b.category_id = c.id order by b.id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"title\":\"A\",\"category\":\"sci-fi\",\"status\":\"active\"},{\"id\":2,\"title\":\"B\",\"category\":\"memoir\",\"status\":\"active\"},{\"id\":3,\"title\":\"C\",\"category\":\"sci-fi\",\"status\":\"active\"}]\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "SQS012",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "extract_then_transform",
+      "requirement_refs": [
+        "REQ-import",
+        "REQ-extract",
+        "REQ-transform",
+        "REQ-query"
+      ],
+      "description": "An extract-created lookup id column can be renamed by a later transform while preserving the lookup relationship.",
+      "weight": 8,
+      "setup_files": {
+        "issues.json": "[{\"id\":1,\"summary\":\"One\",\"state\":\"open\"},{\"id\":2,\"summary\":\"Two\",\"state\":\"closed\"},{\"id\":3,\"summary\":\"Three\",\"state\":\"open\"}]"
+      },
+      "commands": [
+        [
+          "data.db",
+          "insert",
+          "issues",
+          "issues.json",
+          "--json",
+          "--pk",
+          "id"
+        ],
+        [
+          "data.db",
+          "extract",
+          "issues",
+          "state",
+          "states"
+        ],
+        [
+          "data.db",
+          "transform",
+          "issues",
+          "--rename",
+          "state_id:workflow_state_id",
+          "--default",
+          "triaged=false"
+        ],
+        [
+          "data.db",
+          "query",
+          "select i.id, i.summary, s.value as state, i.triaged from issues i join states s on i.workflow_state_id = s.id order by i.id"
+        ]
+      ],
+      "checks": {
+        "stdout_json": {
+          "3": [
+            {
+              "id": 1,
+              "summary": "One",
+              "state": "open",
+              "triaged": 0
+            },
+            {
+              "id": 2,
+              "summary": "Two",
+              "state": "closed",
+              "triaged": 0
+            },
+            {
+              "id": 3,
+              "summary": "Three",
+              "state": "open",
+              "triaged": 0
+            }
+          ]
+        },
+        "sql": {
+          "select id, value from states order by id": [
+            [
+              1,
+              "open"
+            ],
+            [
+              2,
+              "closed"
+            ]
+          ]
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "command_results": [
+        {
+          "args": [
+            "data.db",
+            "insert",
+            "issues",
+            "issues.json",
+            "--json",
+            "--pk",
+            "id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "extract",
+            "issues",
+            "state",
+            "states"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "transform",
+            "issues",
+            "--rename",
+            "state_id:workflow_state_id",
+            "--default",
+            "triaged=false"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "ok\n",
+          "stderr": ""
+        },
+        {
+          "args": [
+            "data.db",
+            "query",
+            "select i.id, i.summary, s.value as state, i.triaged from issues i join states s on i.workflow_state_id = s.id order by i.id"
+          ],
+          "expect_error": false,
+          "exit_code": 0,
+          "stdout": "[{\"id\":1,\"summary\":\"One\",\"state\":\"open\",\"triaged\":0},{\"id\":2,\"summary\":\"Two\",\"state\":\"closed\",\"triaged\":0},{\"id\":3,\"summary\":\"Three\",\"state\":\"open\",\"triaged\":0}]\n",
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

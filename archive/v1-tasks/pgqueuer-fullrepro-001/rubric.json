@@ -1,0 +1,47 @@
+{
+  "task_id": "pgqueuer-fullrepro-001",
+  "source_repo": "janbjorge/pgqueuer",
+  "source_commit": "b475e4b9afbed1834cd7c478f1eec9d59ec0c5cd",
+  "status": "repair_v2_reference_100_fairness_pending",
+  "gates": {
+    "reference_required_score": 100.0,
+    "candidate_runs_allowed": false,
+    "reason": "Reference passes repaired v2 scorer, but candidate runs remain blocked pending a new fairness judge."
+  },
+  "layers": {
+    "unit": {
+      "count": 28,
+      "purpose": "Feature-pure checks for models, store, retry, registry, worker, completion, metrics."
+    },
+    "integration": {
+      "count": 18,
+      "purpose": "Cross public module/API/CLI/persistence/concurrency checks."
+    },
+    "system": {
+      "count": 9,
+      "purpose": "Cross-feature projection consistency after realistic operation sequences."
+    }
+  },
+  "agreement_surface": [
+    "claim ordering and eligibility",
+    "entrypoint/global concurrency limits",
+    "transaction rollback visibility",
+    "retry materialization",
+    "schedule due-work creation",
+    "completion watcher terminal boundaries",
+    "metrics/dashboard aggregation",
+    "stale heartbeat recovery",
+    "file-backed replay"
+  ],
+  "executable_scorer": "scoring/run_executable_checks.py",
+  "check_ids": [
+    "PQL-U001", "PQL-U002", "PQL-U003", "PQL-U004", "PQL-U005", "PQL-U006", "PQL-U007", "PQL-U008",
+    "PQL-U009", "PQL-U010", "PQL-U011", "PQL-U012", "PQL-U013", "PQL-U014", "PQL-U015",
+    "PQL-U020", "PQL-U021", "PQL-U022", "PQL-U023", "PQL-U024", "PQL-U025", "PQL-U026", "PQL-U027",
+    "PQL-U028", "PQL-U029", "PQL-U030", "PQL-U031", "PQL-U032",
+    "PQL-I001", "PQL-I002", "PQL-I003", "PQL-I004", "PQL-I005", "PQL-I006", "PQL-I007", "PQL-I008",
+    "PQL-I009", "PQL-I010", "PQL-I011", "PQL-I012", "PQL-I013", "PQL-I014", "PQL-I015", "PQL-I016",
+    "PQL-I017", "PQL-I018",
+    "PQL-S001", "PQL-S002", "PQL-S003", "PQL-S004", "PQL-S005", "PQL-S006", "PQL-S007", "PQL-S008", "PQL-S009"
+  ]
+}

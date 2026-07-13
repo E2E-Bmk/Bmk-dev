@@ -1,0 +1,580 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minikv-realrepo-submit\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minikv-realrepo-submit\\solution-codex-subagent-001",
+  "total_cases": 25,
+  "passed_cases": 25,
+  "total_weight": 128,
+  "passed_weight": 128,
+  "score": 1.0,
+  "unit_score": 1.0,
+  "system_score": 1.0,
+  "gap_pp": 0.0,
+  "layers": {
+    "system": {
+      "weight": 56,
+      "passed_weight": 56,
+      "cases": 7,
+      "passed": 7
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 72,
+      "cases": 18,
+      "passed": 18
+    }
+  },
+  "categories": {
+    "bulk_ops": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "bulk_type_projection": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "delete_reuse_flush_projection": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "expired_persistence_reuse": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "expiry_clears_type_projection": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "hash_ops": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "key_mgmt": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "list_ops": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "mixed_namespace_projection": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "persistence_round_trip_all_views": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "set_ops": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "string_ops": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "type_detection": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "wrong_type_atomic_namespace": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "failed_cases": [],
+  "all_cases": [
+    {
+      "id": "MKVU001",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "kv_set, kv_get, kv_exists, and kv_delete expose the scalar key contract.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nprint(s.kv_set('name', 'Alice'))\nprint(s.kv_get('name'))\nprint(s.kv_exists('name'))\nprint(s.kv_delete('name'))\nprint(s.kv_exists('name'))\nprint(s.kv_get('missing'))\n",
+      "expected_output": "1\nAlice\n1\n1\n0\nNone",
+      "passed": true,
+      "actual": "1\nAlice\n1\n1\n0\nNone",
+      "expected": "1\nAlice\n1\n1\n0\nNone",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU002",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "kv_incr auto-creates at 0, increments to 1, and then accumulates.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nprint(s.kv_incr('c'))\nprint(s.kv_incr('c'))\nprint(s.kv_get('c'))\n",
+      "expected_output": "1\n2\n2",
+      "passed": true,
+      "actual": "1\n2\n2",
+      "expected": "1\n2\n2",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU003",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "kv_decr auto-creates at 0, decrements to -1, and then accumulates.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nprint(s.kv_decr('score'))\nprint(s.kv_decr('score'))\nprint(s.kv_get('score'))\n",
+      "expected_output": "-1\n-2\n-2",
+      "passed": true,
+      "actual": "-1\n-2\n-2",
+      "expected": "-1\n-2\n-2",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU004",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-errors"
+      ],
+      "description": "kv_incr rejects a non-numeric scalar and preserves the value.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer, CommandError\ns = QueueServer(use_gevent=False)\ns.kv_set('name', 'Alice')\ntry:\n    s.kv_incr('name')\n    print('no-error')\nexcept CommandError:\n    print('value-error')\nprint(s.kv_get('name'))\n",
+      "expected_output": "value-error\nAlice",
+      "passed": true,
+      "actual": "value-error\nAlice",
+      "expected": "value-error\nAlice",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU005",
+      "layer": "unit",
+      "category": "bulk_ops",
+      "requirement_refs": [
+        "REQ-bulk-ops"
+      ],
+      "description": "kv_mset sets scalar keys and kv_mget returns values in request order with None for missing keys.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nprint(s.kv_mset({'x': '10', 'y': 'hello'}, z='last'))\nprint(s.kv_mget('x', 'missing', 'y', 'z'))\n",
+      "expected_output": "3\n['10', None, 'hello', 'last']",
+      "passed": true,
+      "actual": "3\n['10', None, 'hello', 'last']",
+      "expected": "3\n['10', None, 'hello', 'last']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU006",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "lpush prepends, rpush appends, and lrange uses Python slice semantics.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nprint(s.lpush('items', 'c', 'b'))\nprint(s.rpush('items', 'd'))\nprint(s.lrange('items', 0, None))\nprint(s.lrange('items', 1, 3))\n",
+      "expected_output": "2\n1\n['b', 'c', 'd']\n['c', 'd']",
+      "passed": true,
+      "actual": "2\n1\n['b', 'c', 'd']\n['c', 'd']",
+      "expected": "2\n1\n['b', 'c', 'd']\n['c', 'd']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU007",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "lpop and rpop remove from opposite ends and missing lists pop as None.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\ns.rpush('q', 'one', 'two', 'three')\nprint(s.lpop('q'))\nprint(s.rpop('q'))\nprint(s.lrange('q', 0, None))\nprint(s.lpop('empty'))\n",
+      "expected_output": "one\nthree\n['two']\nNone",
+      "passed": true,
+      "actual": "one\nthree\n['two']\nNone",
+      "expected": "one\nthree\n['two']\nNone",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU008",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "lrange on a missing key returns an empty list.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nprint(s.lrange('missing', 0, None))\nprint(s.lrange('missing', 1, 2))\n",
+      "expected_output": "[]\n[]",
+      "passed": true,
+      "actual": "[]\n[]",
+      "expected": "[]\n[]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU009",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops",
+        "REQ-errors"
+      ],
+      "description": "List operations reject scalar keys without changing the scalar value.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer, CommandError\ns = QueueServer(use_gevent=False)\ns.kv_set('name', 'Alice')\ntry:\n    s.lpush('name', 'x')\n    print('no-error')\nexcept CommandError:\n    print('type-error')\nprint(s.kv_get('name'))\n",
+      "expected_output": "type-error\nAlice",
+      "passed": true,
+      "actual": "type-error\nAlice",
+      "expected": "type-error\nAlice",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU010",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "sadd deduplicates, srem counts removed members, smembers returns members, and scard reports cardinality.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nprint(s.sadd('colors', 'red', 'green', 'blue', 'red'))\nprint(sorted(s.smembers('colors')))\nprint(s.scard('colors'))\nprint(s.srem('colors', 'red', 'missing'))\nprint(sorted(s.smembers('colors')))\n",
+      "expected_output": "3\n['blue', 'green', 'red']\n3\n1\n['blue', 'green']",
+      "passed": true,
+      "actual": "3\n['blue', 'green', 'red']\n3\n1\n['blue', 'green']",
+      "expected": "3\n['blue', 'green', 'red']\n3\n1\n['blue', 'green']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU011",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "smembers returns a mutable stored set view.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nview = s.smembers('tags')\nview.add('python')\nview.add('redis')\nprint(sorted(s.smembers('tags')))\nprint(s.scard('tags'))\nprint(sorted(s.kv_get('tags')))\n",
+      "expected_output": "['python', 'redis']\n2\n['python', 'redis']",
+      "passed": true,
+      "actual": "['python', 'redis']\n2\n['python', 'redis']",
+      "expected": "['python', 'redis']\n2\n['python', 'redis']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU012",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops",
+        "REQ-errors"
+      ],
+      "description": "Set operations reject list keys without changing the list.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer, CommandError\ns = QueueServer(use_gevent=False)\ns.rpush('items', 'a', 'b')\ntry:\n    s.sadd('items', 'x')\n    print('no-error')\nexcept CommandError:\n    print('type-error')\nprint(s.lrange('items', 0, None))\n",
+      "expected_output": "type-error\n['a', 'b']",
+      "passed": true,
+      "actual": "type-error\n['a', 'b']",
+      "expected": "type-error\n['a', 'b']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU013",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "hset, hget, hdel, and hgetall expose the hash method contract.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nprint(s.hset('user:1', 'name', 'Alice'))\nprint(s.hset('user:1', 'age', '30'))\nprint(s.hget('user:1', 'name'))\nprint(s.hdel('user:1', 'age'))\nprint(s.hgetall('user:1'))\nprint(s.hget('user:1', 'missing'))\n",
+      "expected_output": "1\n1\nAlice\n1\n{'name': 'Alice'}\nNone",
+      "passed": true,
+      "actual": "1\n1\nAlice\n1\n{'name': 'Alice'}\nNone",
+      "expected": "1\n1\nAlice\n1\n{'name': 'Alice'}\nNone",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU014",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "hgetall returns a mutable stored dict view.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\nview = s.hgetall('profile')\nview['name'] = 'Ada'\nview['role'] = 'admin'\nprint(s.hget('profile', 'name'))\nprint(s.hgetall('profile'))\nprint(s.kv_get('profile'))\n",
+      "expected_output": "Ada\n{'name': 'Ada', 'role': 'admin'}\n{'name': 'Ada', 'role': 'admin'}",
+      "passed": true,
+      "actual": "Ada\n{'name': 'Ada', 'role': 'admin'}\n{'name': 'Ada', 'role': 'admin'}",
+      "expected": "Ada\n{'name': 'Ada', 'role': 'admin'}\n{'name': 'Ada', 'role': 'admin'}",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU015",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops",
+        "REQ-errors"
+      ],
+      "description": "Hash operations reject set keys without changing the set.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer, CommandError\ns = QueueServer(use_gevent=False)\ns.sadd('tags', 'python')\ntry:\n    s.hset('tags', 'name', 'Ada')\n    print('no-error')\nexcept CommandError:\n    print('type-error')\nprint(sorted(s.smembers('tags')))\n",
+      "expected_output": "type-error\n['python']",
+      "passed": true,
+      "actual": "type-error\n['python']",
+      "expected": "type-error\n['python']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU016",
+      "layer": "unit",
+      "category": "type_detection",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops"
+      ],
+      "description": "kv_set type-detects list, set, and dict values for their type-specific APIs.",
+      "weight": 4,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\ns.kv_set('lst', ['x', 'y'])\ns.kv_set('st', {'b', 'a'})\ns.kv_set('h', {'k': 'v'})\nprint(s.lrange('lst', 0, None))\nprint(sorted(s.smembers('st')))\nprint(s.hget('h', 'k'))\n",
+      "expected_output": "['x', 'y']\n['a', 'b']\nv",
+      "passed": true,
+      "actual": "['x', 'y']\n['a', 'b']\nv",
+      "expected": "['x', 'y']\n['a', 'b']\nv",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU017",
+      "layer": "unit",
+      "category": "key_mgmt",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "expire lazily removes a key from direct reads and existence checks.",
+      "weight": 4,
+      "test_code": "import time\nfrom minikv import QueueServer\ns = QueueServer(use_gevent=False)\ns.kv_set('k', 'v')\nprint(s.expire('k', 1))\ntime.sleep(1.2)\nprint(s.kv_get('k'))\nprint(s.kv_exists('k'))\n",
+      "expected_output": "None\nNone\n0",
+      "passed": true,
+      "actual": "None\nNone\n0",
+      "expected": "None\nNone\n0",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVU018",
+      "layer": "unit",
+      "category": "key_mgmt",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "save_to_disk and restore_from_disk round-trip a small stored state.",
+      "weight": 4,
+      "test_code": "import os, tempfile\nfrom minikv import QueueServer\nfd, f = tempfile.mkstemp(prefix='minikv_unit_roundtrip_', suffix='.db')\nos.close(fd)\ns = QueueServer(use_gevent=False)\ns.kv_set('name', 'Alice')\ns.kv_incr('c')\nprint(s.save_to_disk(f))\ns2 = QueueServer(use_gevent=False)\nprint(s2.restore_from_disk(f))\nprint(s2.kv_get('name'))\nprint(s2.kv_get('c'))\nos.remove(f)\n",
+      "expected_output": "True\nTrue\nAlice\n1",
+      "passed": true,
+      "actual": "True\nTrue\nAlice\n1",
+      "expected": "True\nTrue\nAlice\n1",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVS001",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "mixed_namespace_projection",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops"
+      ],
+      "description": "After mixed valid operations whose local primitives have already succeeded, direct reads and type-specific views agree on the same typed key namespace.",
+      "weight": 8,
+      "test_code": "from minikv import QueueServer\ns = QueueServer(use_gevent=False)\ns.kv_set('plain', 'alpha')\ns.kv_set('counter', 40)\ncount = s.kv_incr('counter')\ns.rpush('queue', 'tail-a', 'tail-b')\ns.lpush('queue', 'head')\ns.sadd('tags', 'red', 'blue', 'red')\ns.hset('profile', 'name', 'Ada')\ns.hset('profile', 'counter', str(count))\nset_view = s.smembers('tags')\nset_view.add('green')\nhash_view = s.hgetall('profile')\nhash_view['role'] = 'admin'\nassert s.kv_get('plain') == 'alpha'\nassert s.kv_exists('counter') == 1\nassert s.kv_get('counter') == 41\nassert s.hget('profile', 'counter') == '41'\nassert s.lrange('queue', 0, None) == list(s.kv_get('queue')) == ['head', 'tail-a', 'tail-b']\nassert sorted(s.smembers('tags')) == sorted(s.kv_get('tags')) == ['blue', 'green', 'red']\nassert s.scard('tags') == 3\nassert s.hgetall('profile') == s.kv_get('profile') == {'name': 'Ada', 'counter': '41', 'role': 'admin'}\nprint('ok')\n",
+      "expected_output": "ok",
+      "passed": true,
+      "actual": "ok",
+      "expected": "ok",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVS002",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "wrong_type_atomic_namespace",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-errors"
+      ],
+      "description": "Wrong-type and non-numeric operations leave every public projection of the affected keys unchanged.",
+      "weight": 8,
+      "test_code": "from minikv import QueueServer, CommandError\ns = QueueServer(use_gevent=False)\ns.kv_set('plain', 'value')\ns.rpush('queue', 'a', 'b')\ns.sadd('tags', 'red', 'blue')\ns.hset('profile', 'name', 'Ada')\ns.kv_set('numeric_text', '10')\ndef snapshot():\n    return {\n        'plain': (s.kv_exists('plain'), s.kv_get('plain')),\n        'queue': (s.kv_exists('queue'), list(s.kv_get('queue')), s.lrange('queue', 0, None)),\n        'tags': (s.kv_exists('tags'), sorted(s.kv_get('tags')), sorted(s.smembers('tags')), s.scard('tags')),\n        'profile': (s.kv_exists('profile'), dict(s.kv_get('profile')), dict(s.hgetall('profile'))),\n        'numeric_text': (s.kv_exists('numeric_text'), s.kv_get('numeric_text')),\n    }\nbefore = snapshot()\nfor op in [\n    lambda: s.lpush('plain', 'x'),\n    lambda: s.hset('queue', 'bad', 'x'),\n    lambda: s.sadd('profile', 'bad'),\n    lambda: s.kv_incr('tags'),\n    lambda: s.kv_incr('numeric_text'),\n]:\n    try:\n        op()\n    except CommandError:\n        pass\n    else:\n        raise AssertionError('expected CommandError')\nassert snapshot() == before\nprint('ok')\n",
+      "expected_output": "ok",
+      "passed": true,
+      "actual": "ok",
+      "expected": "ok",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVS003",
+      "layer": "system",
+      "system_dimension": "lifecycle_consistency",
+      "category": "delete_reuse_flush_projection",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt"
+      ],
+      "description": "Delete and flush clear value/type metadata consistently, allowing names to be reused with fresh type-specific projections.",
+      "weight": 8,
+      "test_code": "from minikv import QueueServer, CommandError\ns = QueueServer(use_gevent=False)\ns.kv_set('plain', 'v')\ns.lpush('swap', 'old')\ns.sadd('tags', 'x')\ns.hset('meta', 'a', '1')\ns.kv_set('counter', 10)\nassert s.kv_decr('counter') == 9\nassert s.kv_delete('swap') == 1\nassert s.kv_exists('swap') == 0\nassert s.kv_get('swap') is None\ns.hset('swap', 'new', 'hash')\nassert s.hgetall('swap') == {'new': 'hash'}\ntry:\n    s.lrange('swap', 0, None)\nexcept CommandError:\n    pass\nelse:\n    raise AssertionError('old list projection should reject reused hash key')\nassert s.kv_delete('missing') == 0\nassert s.kv_flush() == 5\nfor key in ['plain', 'swap', 'tags', 'meta', 'counter']:\n    assert s.kv_exists(key) == 0\n    assert s.kv_get(key) is None\nassert s.rpush('swap', 'fresh') == 1\nassert s.lrange('swap', 0, None) == s.kv_get('swap') == ['fresh']\nassert s.sadd('tags', 'fresh') == 1\nassert sorted(s.smembers('tags')) == sorted(s.kv_get('tags')) == ['fresh']\nassert s.hset('meta', 'fresh', 'hash') == 1\nassert s.hgetall('meta') == s.kv_get('meta') == {'fresh': 'hash'}\nprint('ok')\n",
+      "expected_output": "ok",
+      "passed": true,
+      "actual": "ok",
+      "expected": "ok",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVS004",
+      "layer": "system",
+      "system_dimension": "expiry_consistency",
+      "category": "expiry_clears_type_projection",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt"
+      ],
+      "description": "Expiry removes value and type metadata so direct reads, existence, reuse, and flush agree.",
+      "weight": 8,
+      "test_code": "import time\nfrom minikv import QueueServer\ns = QueueServer(use_gevent=False)\ns.rpush('soon', 'old')\ns.sadd('keep_set', 'a')\ns.hset('keep_hash', 'k', 'v')\ns.expire('soon', 1)\ntime.sleep(1.2)\nassert s.kv_exists('soon') == 0\nassert s.kv_get('soon') is None\ns.hset('soon', 'field', 'fresh')\nassert s.hget('soon', 'field') == 'fresh'\nassert s.kv_get('soon') == {'field': 'fresh'}\nassert sorted(s.smembers('keep_set')) == ['a']\nassert s.hgetall('keep_hash') == {'k': 'v'}\nassert s.kv_flush() == 3\nprint('ok')\n",
+      "expected_output": "ok",
+      "passed": true,
+      "actual": "ok",
+      "expected": "ok",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVS005",
+      "layer": "system",
+      "system_dimension": "round_trip",
+      "category": "persistence_round_trip_all_views",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-errors"
+      ],
+      "description": "Save/load/save/load preserves direct reads, type-specific views, mutable set/hash edits, existing counters, and wrong-type behavior.",
+      "weight": 8,
+      "test_code": "import os, tempfile\nfrom minikv import QueueServer, CommandError\nfd1, f1 = tempfile.mkstemp(prefix='minikv_system_roundtrip_1_', suffix='.db')\nfd2, f2 = tempfile.mkstemp(prefix='minikv_system_roundtrip_2_', suffix='.db')\nos.close(fd1)\nos.close(fd2)\ns = QueueServer(use_gevent=False)\ns.kv_set('plain', 'alpha')\ns.kv_set('counter', 40)\nassert s.kv_incr('counter') == 41\ns.rpush('queue', 'a', 'b')\ns.sadd('tags', 'red')\ns.smembers('tags').add('blue')\ns.hset('profile', 'name', 'Ada')\ns.hgetall('profile')['role'] = 'admin'\ndef projection(store):\n    return {\n        'plain': store.kv_get('plain'),\n        'counter': store.kv_get('counter'),\n        'queue_direct': list(store.kv_get('queue')),\n        'queue_view': store.lrange('queue', 0, None),\n        'tags_direct': sorted(store.kv_get('tags')),\n        'tags_view': sorted(store.smembers('tags')),\n        'tags_card': store.scard('tags'),\n        'profile_direct': dict(store.kv_get('profile')),\n        'profile_view': dict(store.hgetall('profile')),\n    }\nexpected = {\n    'plain': 'alpha',\n    'counter': 41,\n    'queue_direct': ['a', 'b'],\n    'queue_view': ['a', 'b'],\n    'tags_direct': ['blue', 'red'],\n    'tags_view': ['blue', 'red'],\n    'tags_card': 2,\n    'profile_direct': {'name': 'Ada', 'role': 'admin'},\n    'profile_view': {'name': 'Ada', 'role': 'admin'},\n}\nassert projection(s) == expected\nassert s.save_to_disk(f1) is True\ns.kv_flush()\ns2 = QueueServer(use_gevent=False)\nassert s2.restore_from_disk(f1) is True\nassert projection(s2) == expected\nfor op in [lambda: s2.lpush('plain', 'x'), lambda: s2.hset('queue', 'bad', 'x')]:\n    try:\n        op()\n    except CommandError:\n        pass\n    else:\n        raise AssertionError('expected CommandError after restore')\nassert projection(s2) == expected\nassert s2.save_to_disk(f2) is True\ns3 = QueueServer(use_gevent=False)\nassert s3.restore_from_disk(f2) is True\nassert projection(s3) == expected\nfor f in [f1, f2]:\n    os.remove(f)\nprint('ok')\n",
+      "expected_output": "ok",
+      "passed": true,
+      "actual": "ok",
+      "expected": "ok",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVS006",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "bulk_type_projection",
+      "requirement_refs": [
+        "REQ-bulk-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt"
+      ],
+      "description": "Bulk writes use the same type-detection path as direct writes and survive persistence as typed views.",
+      "weight": 8,
+      "test_code": "import os, tempfile\nfrom minikv import QueueServer\nfd, f = tempfile.mkstemp(prefix='minikv_bulk_projection_', suffix='.db')\nos.close(fd)\ns = QueueServer(use_gevent=False)\nassert s.kv_mset({'queue': ['a', 'b'], 'tags': {'x', 'y'}}, profile={'name': 'Ada'}) == 3\nassert s.lrange('queue', 0, None) == ['a', 'b']\nassert sorted(s.smembers('tags')) == ['x', 'y']\nassert s.hget('profile', 'name') == 'Ada'\nassert s.save_to_disk(f) is True\ns2 = QueueServer(use_gevent=False)\nassert s2.restore_from_disk(f) is True\nassert s2.lrange('queue', 0, None) == list(s2.kv_get('queue')) == ['a', 'b']\nassert sorted(s2.smembers('tags')) == sorted(s2.kv_get('tags')) == ['x', 'y']\nassert s2.hgetall('profile') == s2.kv_get('profile') == {'name': 'Ada'}\nos.remove(f)\nprint('ok')\n",
+      "expected_output": "ok",
+      "passed": true,
+      "actual": "ok",
+      "expected": "ok",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MKVS007",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "expired_persistence_reuse",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-set-ops",
+        "REQ-key-mgmt"
+      ],
+      "description": "Persisted expiry metadata still expires lazily after restore, and the expired name can be reused with a different type.",
+      "weight": 8,
+      "test_code": "import os, tempfile, time\nfrom minikv import QueueServer\nfd, f = tempfile.mkstemp(prefix='minikv_expiry_restore_', suffix='.db')\nos.close(fd)\ns = QueueServer(use_gevent=False)\ns.kv_set('token', 'secret')\ns.expire('token', 1)\ns.kv_set('keep', 'stable')\nassert s.save_to_disk(f) is True\ntime.sleep(1.2)\ns2 = QueueServer(use_gevent=False)\nassert s2.restore_from_disk(f) is True\nassert s2.kv_exists('token') == 0\nassert s2.kv_get('token') is None\nassert s2.kv_get('keep') == 'stable'\ns2.sadd('token', 'reused')\nassert sorted(s2.smembers('token')) == ['reused']\nassert s2.kv_flush() == 2\nos.remove(f)\nprint('ok')\n",
+      "expected_output": "ok",
+      "passed": true,
+      "actual": "ok",
+      "expected": "ok",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

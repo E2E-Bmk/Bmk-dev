@@ -1,0 +1,1721 @@
+{
+    "rubrics":  "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\bitcask-realrepo-001\\rubric.json",
+    "solution_dir":  "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\bitcask-realrepo-001\\solution-openhands-deepseek-v4-pro-001",
+    "total_cases":  29,
+    "passed_cases":  29,
+    "total_weight":  164,
+    "passed_weight":  164,
+    "score":  1.0,
+    "unit_score":  1.0,
+    "system_score":  1.0,
+    "gap_pp":  0.0,
+    "layers":  {
+                   "system":  {
+                                  "weight":  96,
+                                  "passed_weight":  96,
+                                  "cases":  12,
+                                  "passed":  12
+                              },
+                   "unit":  {
+                                "weight":  68,
+                                "passed_weight":  68,
+                                "cases":  17,
+                                "passed":  17
+                            }
+               },
+    "categories":  {
+                       "compact":  {
+                                       "weight":  8,
+                                       "passed_weight":  8,
+                                       "cases":  2,
+                                       "passed":  2
+                                   },
+                       "compaction_no_resurrection":  {
+                                                          "weight":  8,
+                                                          "passed_weight":  8,
+                                                          "cases":  1,
+                                                          "passed":  1
+                                                      },
+                       "cross_segment_compaction":  {
+                                                        "weight":  8,
+                                                        "passed_weight":  8,
+                                                        "cases":  1,
+                                                        "passed":  1
+                                                    },
+                       "delete":  {
+                                      "weight":  8,
+                                      "passed_weight":  8,
+                                      "cases":  2,
+                                      "passed":  2
+                                  },
+                       "delete_then_put_resurrection":  {
+                                                            "weight":  8,
+                                                            "passed_weight":  8,
+                                                            "cases":  1,
+                                                            "passed":  1
+                                                        },
+                       "durability":  {
+                                          "weight":  4,
+                                          "passed_weight":  4,
+                                          "cases":  1,
+                                          "passed":  1
+                                      },
+                       "error":  {
+                                     "weight":  4,
+                                     "passed_weight":  4,
+                                     "cases":  1,
+                                     "passed":  1
+                                 },
+                       "failed_delete_no_append":  {
+                                                       "weight":  8,
+                                                       "passed_weight":  8,
+                                                       "cases":  1,
+                                                       "passed":  1
+                                                   },
+                       "failed_update_preserves_state":  {
+                                                             "weight":  8,
+                                                             "passed_weight":  8,
+                                                             "cases":  1,
+                                                             "passed":  1
+                                                         },
+                       "get":  {
+                                   "weight":  8,
+                                   "passed_weight":  8,
+                                   "cases":  2,
+                                   "passed":  2
+                               },
+                       "metadata":  {
+                                        "weight":  20,
+                                        "passed_weight":  20,
+                                        "cases":  5,
+                                        "passed":  5
+                                    },
+                       "metadata_consistency":  {
+                                                    "weight":  8,
+                                                    "passed_weight":  8,
+                                                    "cases":  1,
+                                                    "passed":  1
+                                                },
+                       "mget_across_mutations":  {
+                                                     "weight":  8,
+                                                     "passed_weight":  8,
+                                                     "cases":  1,
+                                                     "passed":  1
+                                                 },
+                       "mixed_mutation_lifecycle":  {
+                                                        "weight":  8,
+                                                        "passed_weight":  8,
+                                                        "cases":  1,
+                                                        "passed":  1
+                                                    },
+                       "overwrite_delete_compact":  {
+                                                        "weight":  8,
+                                                        "passed_weight":  8,
+                                                        "cases":  1,
+                                                        "passed":  1
+                                                    },
+                       "persist_across_invocations":  {
+                                                          "weight":  8,
+                                                          "passed_weight":  8,
+                                                          "cases":  1,
+                                                          "passed":  1
+                                                      },
+                       "put":  {
+                                   "weight":  8,
+                                   "passed_weight":  8,
+                                   "cases":  2,
+                                   "passed":  2
+                               },
+                       "put_compact_query":  {
+                                                 "weight":  8,
+                                                 "passed_weight":  8,
+                                                 "cases":  1,
+                                                 "passed":  1
+                                             },
+                       "update":  {
+                                      "weight":  8,
+                                      "passed_weight":  8,
+                                      "cases":  2,
+                                      "passed":  2
+                                  },
+                       "writes_after_compaction":  {
+                                                       "weight":  8,
+                                                       "passed_weight":  8,
+                                                       "cases":  1,
+                                                       "passed":  1
+                                                   }
+                   },
+    "failed_cases":  [
+
+                     ],
+    "all_cases":  [
+                      {
+                          "id":  "KVU001",
+                          "layer":  "unit",
+                          "category":  "put",
+                          "requirement_refs":  [
+                                                   "REQ-put"
+                                               ],
+                          "description":  "put then get returns the stored value.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "alpha"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "a"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "1":  "alpha"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: alpha",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU002",
+                          "layer":  "unit",
+                          "category":  "put",
+                          "requirement_refs":  [
+                                                   "REQ-put"
+                                               ],
+                          "description":  "Re-putting a key overwrites it; latest value wins.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "one"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "two"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "a"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "2":  "two"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: two",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU003",
+                          "layer":  "unit",
+                          "category":  "get",
+                          "requirement_refs":  [
+                                                   "REQ-get"
+                                               ],
+                          "description":  "get on a missing key fails nonzero.",
+                          "weight":  4,
+                          "commands":  [
+                                           {
+                                               "args":  [
+                                                            "store",
+                                                            "get",
+                                                            "x"
+                                                        ],
+                                               "expect_error":  true
+                                           }
+                                       ],
+                          "checks":  {
+
+                                     },
+                          "passed":  true,
+                          "actual":  "",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "step 0: error: key \u0027x\u0027 does not exist",
+                          "exit_code":  1
+                      },
+                      {
+                          "id":  "KVU004",
+                          "layer":  "unit",
+                          "category":  "update",
+                          "requirement_refs":  [
+                                                   "REQ-update"
+                                               ],
+                          "description":  "update on an existing key writes the new value.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "old"
+                                           ],
+                                           [
+                                               "store",
+                                               "update",
+                                               "a",
+                                               "new"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "a"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "2":  "new"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: new",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU005",
+                          "layer":  "unit",
+                          "category":  "update",
+                          "requirement_refs":  [
+                                                   "REQ-update",
+                                                   "REQ-atomic"
+                                               ],
+                          "description":  "update on a missing key fails and preserves existing state.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "keep"
+                                           ],
+                                           {
+                                               "args":  [
+                                                            "store",
+                                                            "update",
+                                                            "b",
+                                                            "x"
+                                                        ],
+                                               "expect_error":  true
+                                           },
+                                           [
+                                               "store",
+                                               "list"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "2":  {
+                                                                       "a":  "keep"
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n2: {\"a\":\"keep\"}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "step 1: error: key \u0027b\u0027 does not exist",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU006",
+                          "layer":  "unit",
+                          "category":  "delete",
+                          "requirement_refs":  [
+                                                   "REQ-delete"
+                                               ],
+                          "description":  "delete removes a key from the live set.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "delete",
+                                               "a"
+                                           ],
+                                           [
+                                               "store",
+                                               "keys"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "3":  [
+                                                                       "b"
+                                                                   ]
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: [\"b\"]",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU007",
+                          "layer":  "unit",
+                          "category":  "delete",
+                          "requirement_refs":  [
+                                                   "REQ-delete",
+                                                   "REQ-atomic"
+                                               ],
+                          "description":  "delete on a missing key fails and preserves state.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           {
+                                               "args":  [
+                                                            "store",
+                                                            "delete",
+                                                            "z"
+                                                        ],
+                                               "expect_error":  true
+                                           },
+                                           [
+                                               "store",
+                                               "count"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "2":  "1"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n2: 1",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "step 1: error: key \u0027z\u0027 does not exist",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU008",
+                          "layer":  "unit",
+                          "category":  "metadata",
+                          "requirement_refs":  [
+                                                   "REQ-metadata"
+                                               ],
+                          "description":  "keys returns live keys sorted lexicographically.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "c",
+                                               "3"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "keys"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "3":  [
+                                                                       "a",
+                                                                       "b",
+                                                                       "c"
+                                                                   ]
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: [\"a\",\"b\",\"c\"]",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU009",
+                          "layer":  "unit",
+                          "category":  "metadata",
+                          "requirement_refs":  [
+                                                   "REQ-metadata"
+                                               ],
+                          "description":  "count returns the number of live keys.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "c",
+                                               "3"
+                                           ],
+                                           [
+                                               "store",
+                                               "count"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "3":  "3"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: 3",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU010",
+                          "layer":  "unit",
+                          "category":  "metadata",
+                          "requirement_refs":  [
+                                                   "REQ-metadata"
+                                               ],
+                          "description":  "list returns the full live key/value map.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "2":  {
+                                                                       "a":  "1",
+                                                                       "b":  "2"
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: {\"a\":\"1\",\"b\":\"2\"}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU011",
+                          "layer":  "unit",
+                          "category":  "get",
+                          "requirement_refs":  [
+                                                   "REQ-get"
+                                               ],
+                          "description":  "mget returns found keys and omits missing ones.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "mget",
+                                               "a",
+                                               "b",
+                                               "zzz"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "2":  {
+                                                                       "a":  "1",
+                                                                       "b":  "2"
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: {\"a\":\"1\",\"b\":\"2\"}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU012",
+                          "layer":  "unit",
+                          "category":  "metadata",
+                          "requirement_refs":  [
+                                                   "REQ-metadata"
+                                               ],
+                          "description":  "stats reports live_keys and on-disk log_entries.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "2":  {
+                                                                       "live_keys":  2,
+                                                                       "log_entries":  2
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: {\"live_keys\":2,\"log_entries\":2}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU013",
+                          "layer":  "unit",
+                          "category":  "compact",
+                          "requirement_refs":  [
+                                                   "REQ-compact"
+                                               ],
+                          "description":  "compact drops superseded records and keeps latest values.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "9"
+                                           ],
+                                           [
+                                               "store",
+                                               "compact"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "a"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "4":  {
+                                                                       "live_keys":  2,
+                                                                       "log_entries":  2
+                                                                   }
+                                                         },
+                                         "stdout_equals":  {
+                                                               "5":  "2"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: {\"live_keys\":2,\"log_entries\":2}\n5: 2",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU014",
+                          "layer":  "unit",
+                          "category":  "durability",
+                          "requirement_refs":  [
+                                                   "REQ-durability"
+                                               ],
+                          "description":  "a value written by one invocation is readable by a later one.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "k",
+                                               "v"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "k2",
+                                               "v2"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "k"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "2":  "v"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: v",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU015",
+                          "layer":  "unit",
+                          "category":  "compact",
+                          "requirement_refs":  [
+                                                   "REQ-compact"
+                                               ],
+                          "description":  "compact removes tombstoned keys entirely.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "delete",
+                                               "a"
+                                           ],
+                                           [
+                                               "store",
+                                               "compact"
+                                           ],
+                                           [
+                                               "store",
+                                               "count"
+                                           ],
+                                           [
+                                               "store",
+                                               "keys"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "3":  "0"
+                                                           },
+                                         "stdout_json":  {
+                                                             "4":  [
+
+                                                                   ]
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: 0\n4: []",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU016",
+                          "layer":  "unit",
+                          "category":  "metadata",
+                          "requirement_refs":  [
+                                                   "REQ-metadata"
+                                               ],
+                          "description":  "metadata on an empty store is consistent and empty.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "keys"
+                                           ],
+                                           [
+                                               "store",
+                                               "count"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "0":  [
+
+                                                                   ],
+                                                             "2":  {
+
+                                                                   },
+                                                             "3":  {
+                                                                       "live_keys":  0,
+                                                                       "log_entries":  0
+                                                                   }
+                                                         },
+                                         "stdout_equals":  {
+                                                               "1":  "0"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: []\n1: 0\n2: {}\n3: {\"live_keys\":0,\"log_entries\":0}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVU017",
+                          "layer":  "unit",
+                          "category":  "error",
+                          "requirement_refs":  [
+                                                   "REQ-atomic"
+                                               ],
+                          "description":  "malformed command lines fail nonzero and append nothing.",
+                          "weight":  4,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           {
+                                               "args":  [
+                                                            "store",
+                                                            "put",
+                                                            "b"
+                                                        ],
+                                               "expect_error":  true
+                                           },
+                                           [
+                                               "store",
+                                               "stats"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "2":  {
+                                                                       "live_keys":  1,
+                                                                       "log_entries":  1
+                                                                   },
+                                                             "3":  {
+                                                                       "a":  "1"
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n2: {\"live_keys\":1,\"log_entries\":1}\n3: {\"a\":\"1\"}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "step 1: usage: kvmini.py DBDIR put KEY VALUE",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS001",
+                          "layer":  "system",
+                          "system_dimension":  "cross_feature_dataflow",
+                          "category":  "put_compact_query",
+                          "requirement_refs":  [
+                                                   "REQ-put",
+                                                   "REQ-compact",
+                                                   "REQ-metadata",
+                                                   "REQ-global-invariants"
+                                               ],
+                          "description":  "Overwritten values flow through compaction into list/stats.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "9"
+                                           ],
+                                           [
+                                               "store",
+                                               "compact"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "4":  {
+                                                                       "a":  "2",
+                                                                       "b":  "9"
+                                                                   },
+                                                             "5":  {
+                                                                       "live_keys":  2,
+                                                                       "log_entries":  2
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: {\"a\":\"2\",\"b\":\"9\"}\n5: {\"live_keys\":2,\"log_entries\":2}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS002",
+                          "layer":  "system",
+                          "system_dimension":  "state_accumulation",
+                          "category":  "mixed_mutation_lifecycle",
+                          "requirement_refs":  [
+                                                   "REQ-put",
+                                                   "REQ-update",
+                                                   "REQ-delete",
+                                                   "REQ-metadata",
+                                                   "REQ-global-invariants"
+                                               ],
+                          "description":  "Interleaved put/update/delete accumulate to latest live state.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "update",
+                                               "a",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "delete",
+                                               "b"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "c",
+                                               "7"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ],
+                                           [
+                                               "store",
+                                               "count"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "5":  {
+                                                                       "a":  "2",
+                                                                       "c":  "7"
+                                                                   }
+                                                         },
+                                         "stdout_equals":  {
+                                                               "6":  "2"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: OK\n5: {\"a\":\"2\",\"c\":\"7\"}\n6: 2",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS003",
+                          "layer":  "system",
+                          "system_dimension":  "global_invariant",
+                          "category":  "metadata_consistency",
+                          "requirement_refs":  [
+                                                   "REQ-put",
+                                                   "REQ-delete",
+                                                   "REQ-get",
+                                                   "REQ-metadata",
+                                                   "REQ-global-invariants"
+                                               ],
+                          "description":  "keys, count and get stay mutually consistent after a delete.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "x",
+                                               "10"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "y",
+                                               "20"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "z",
+                                               "30"
+                                           ],
+                                           [
+                                               "store",
+                                               "delete",
+                                               "y"
+                                           ],
+                                           [
+                                               "store",
+                                               "keys"
+                                           ],
+                                           [
+                                               "store",
+                                               "count"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "x"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "z"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "4":  [
+                                                                       "x",
+                                                                       "z"
+                                                                   ]
+                                                         },
+                                         "stdout_equals":  {
+                                                               "5":  "2",
+                                                               "6":  "10",
+                                                               "7":  "30"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: [\"x\",\"z\"]\n5: 2\n6: 10\n7: 30",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS004",
+                          "layer":  "system",
+                          "system_dimension":  "error_atomicity",
+                          "category":  "failed_update_preserves_state",
+                          "requirement_refs":  [
+                                                   "REQ-update",
+                                                   "REQ-atomic",
+                                                   "REQ-metadata",
+                                                   "REQ-global-invariants"
+                                               ],
+                          "description":  "A failed update leaves prior rows and count unchanged.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           {
+                                               "args":  [
+                                                            "store",
+                                                            "update",
+                                                            "c",
+                                                            "9"
+                                                        ],
+                                               "expect_error":  true
+                                           },
+                                           [
+                                               "store",
+                                               "list"
+                                           ],
+                                           [
+                                               "store",
+                                               "count"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "3":  {
+                                                                       "a":  "1",
+                                                                       "b":  "2"
+                                                                   }
+                                                         },
+                                         "stdout_equals":  {
+                                                               "4":  "2"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n3: {\"a\":\"1\",\"b\":\"2\"}\n4: 2",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "step 2: error: key \u0027c\u0027 does not exist",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS005",
+                          "layer":  "system",
+                          "system_dimension":  "error_atomicity",
+                          "category":  "failed_delete_no_append",
+                          "requirement_refs":  [
+                                                   "REQ-delete",
+                                                   "REQ-atomic",
+                                                   "REQ-metadata"
+                                               ],
+                          "description":  "A failed delete appends no record; log and value are intact.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ],
+                                           {
+                                               "args":  [
+                                                            "store",
+                                                            "delete",
+                                                            "z"
+                                                        ],
+                                               "expect_error":  true
+                                           },
+                                           [
+                                               "store",
+                                               "stats"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "a"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "1":  {
+                                                                       "live_keys":  1,
+                                                                       "log_entries":  1
+                                                                   },
+                                                             "3":  {
+                                                                       "live_keys":  1,
+                                                                       "log_entries":  1
+                                                                   }
+                                                         },
+                                         "stdout_equals":  {
+                                                               "4":  "1"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: {\"live_keys\":1,\"log_entries\":1}\n3: {\"live_keys\":1,\"log_entries\":1}\n4: 1",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "step 2: error: key \u0027z\u0027 does not exist",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS006",
+                          "layer":  "system",
+                          "system_dimension":  "operation_order_sensitivity",
+                          "category":  "delete_then_put_resurrection",
+                          "requirement_refs":  [
+                                                   "REQ-put",
+                                                   "REQ-delete",
+                                                   "REQ-get",
+                                                   "REQ-metadata"
+                                               ],
+                          "description":  "put after delete resurrects the key with the new value.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "delete",
+                                               "a"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "a"
+                                           ],
+                                           [
+                                               "store",
+                                               "keys"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "3":  "2"
+                                                           },
+                                         "stdout_json":  {
+                                                             "4":  [
+                                                                       "a"
+                                                                   ]
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: 2\n4: [\"a\"]",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS007",
+                          "layer":  "system",
+                          "system_dimension":  "operation_order_sensitivity",
+                          "category":  "writes_after_compaction",
+                          "requirement_refs":  [
+                                                   "REQ-compact",
+                                                   "REQ-update",
+                                                   "REQ-put",
+                                                   "REQ-metadata",
+                                                   "REQ-global-invariants"
+                                               ],
+                          "description":  "Writes after a compaction append cleanly and latest wins.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "compact"
+                                           ],
+                                           [
+                                               "store",
+                                               "update",
+                                               "a",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "c",
+                                               "3"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "5":  {
+                                                                       "a":  "2",
+                                                                       "b":  "1",
+                                                                       "c":  "3"
+                                                                   },
+                                                             "6":  {
+                                                                       "live_keys":  3,
+                                                                       "log_entries":  4
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: OK\n5: {\"a\":\"2\",\"b\":\"1\",\"c\":\"3\"}\n6: {\"live_keys\":3,\"log_entries\":4}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS008",
+                          "layer":  "system",
+                          "system_dimension":  "durability_reload",
+                          "category":  "persist_across_invocations",
+                          "requirement_refs":  [
+                                                   "REQ-durability",
+                                                   "REQ-compact",
+                                                   "REQ-get",
+                                                   "REQ-metadata"
+                                               ],
+                          "description":  "Values persist across separate invocations, including post-compact.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "compact"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "a"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "b"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_equals":  {
+                                                               "3":  "1",
+                                                               "4":  "2"
+                                                           },
+                                         "stdout_json":  {
+                                                             "5":  {
+                                                                       "a":  "1",
+                                                                       "b":  "2"
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: 1\n4: 2\n5: {\"a\":\"1\",\"b\":\"2\"}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS009",
+                          "layer":  "system",
+                          "system_dimension":  "boundary_crossing",
+                          "category":  "overwrite_delete_compact",
+                          "requirement_refs":  [
+                                                   "REQ-put",
+                                                   "REQ-delete",
+                                                   "REQ-compact",
+                                                   "REQ-metadata",
+                                                   "REQ-global-invariants"
+                                               ],
+                          "description":  "Overwrite, delete and compaction compose to a clean final state.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "5"
+                                           ],
+                                           [
+                                               "store",
+                                               "delete",
+                                               "b"
+                                           ],
+                                           [
+                                               "store",
+                                               "compact"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ],
+                                           [
+                                               "store",
+                                               "count"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "5":  {
+                                                                       "a":  "2"
+                                                                   },
+                                                             "7":  {
+                                                                       "live_keys":  1,
+                                                                       "log_entries":  1
+                                                                   }
+                                                         },
+                                         "stdout_equals":  {
+                                                               "6":  "1"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: OK\n5: {\"a\":\"2\"}\n6: 1\n7: {\"live_keys\":1,\"log_entries\":1}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS010",
+                          "layer":  "system",
+                          "system_dimension":  "global_invariant",
+                          "category":  "compaction_no_resurrection",
+                          "requirement_refs":  [
+                                                   "REQ-compact",
+                                                   "REQ-delete",
+                                                   "REQ-put",
+                                                   "REQ-get",
+                                                   "REQ-global-invariants"
+                                               ],
+                          "description":  "Compaction never resurrects deleted keys or reverts values.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "delete",
+                                               "b"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "9"
+                                           ],
+                                           [
+                                               "store",
+                                               "compact"
+                                           ],
+                                           [
+                                               "store",
+                                               "keys"
+                                           ],
+                                           [
+                                               "store",
+                                               "get",
+                                               "a"
+                                           ],
+                                           {
+                                               "args":  [
+                                                            "store",
+                                                            "get",
+                                                            "b"
+                                                        ],
+                                               "expect_error":  true
+                                           }
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "5":  [
+                                                                       "a"
+                                                                   ]
+                                                         },
+                                         "stdout_equals":  {
+                                                               "6":  "9"
+                                                           }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: OK\n5: [\"a\"]\n6: 9",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "step 7: error: key \u0027b\u0027 does not exist",
+                          "exit_code":  1
+                      },
+                      {
+                          "id":  "KVS011",
+                          "layer":  "system",
+                          "system_dimension":  "state_accumulation",
+                          "category":  "cross_segment_compaction",
+                          "requirement_refs":  [
+                                                   "REQ-put",
+                                                   "REQ-compact",
+                                                   "REQ-metadata",
+                                                   "REQ-durability"
+                                               ],
+                          "description":  "Correctness holds when writes span multiple rolled segments.",
+                          "weight":  8,
+                          "env":  {
+                                      "KVMINI_MAX_SEGMENT_BYTES":  "48"
+                                  },
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "k1",
+                                               "v1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "k2",
+                                               "v2"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "k3",
+                                               "v3"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "k1",
+                                               "v1new"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ],
+                                           [
+                                               "store",
+                                               "compact"
+                                           ],
+                                           [
+                                               "store",
+                                               "stats"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "4":  {
+                                                                       "live_keys":  3,
+                                                                       "log_entries":  4
+                                                                   },
+                                                             "6":  {
+                                                                       "live_keys":  3,
+                                                                       "log_entries":  3
+                                                                   },
+                                                             "7":  {
+                                                                       "k1":  "v1new",
+                                                                       "k2":  "v2",
+                                                                       "k3":  "v3"
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: {\"live_keys\":3,\"log_entries\":4}\n5: OK\n6: {\"live_keys\":3,\"log_entries\":3}\n7: {\"k1\":\"v1new\",\"k2\":\"v2\",\"k3\":\"v3\"}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      },
+                      {
+                          "id":  "KVS012",
+                          "layer":  "system",
+                          "system_dimension":  "boundary_crossing",
+                          "category":  "mget_across_mutations",
+                          "requirement_refs":  [
+                                                   "REQ-get",
+                                                   "REQ-update",
+                                                   "REQ-delete",
+                                                   "REQ-metadata",
+                                                   "REQ-global-invariants"
+                                               ],
+                          "description":  "mget reflects updates and deletions and matches list.",
+                          "weight":  8,
+                          "commands":  [
+                                           [
+                                               "store",
+                                               "put",
+                                               "a",
+                                               "1"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "b",
+                                               "2"
+                                           ],
+                                           [
+                                               "store",
+                                               "put",
+                                               "c",
+                                               "3"
+                                           ],
+                                           [
+                                               "store",
+                                               "update",
+                                               "b",
+                                               "22"
+                                           ],
+                                           [
+                                               "store",
+                                               "delete",
+                                               "c"
+                                           ],
+                                           [
+                                               "store",
+                                               "mget",
+                                               "a",
+                                               "b",
+                                               "c"
+                                           ],
+                                           [
+                                               "store",
+                                               "list"
+                                           ]
+                                       ],
+                          "checks":  {
+                                         "stdout_json":  {
+                                                             "5":  {
+                                                                       "a":  "1",
+                                                                       "b":  "22"
+                                                                   },
+                                                             "6":  {
+                                                                       "a":  "1",
+                                                                       "b":  "22"
+                                                                   }
+                                                         }
+                                     },
+                          "passed":  true,
+                          "actual":  "0: OK\n1: OK\n2: OK\n3: OK\n4: OK\n5: {\"a\":\"1\",\"b\":\"22\"}\n6: {\"a\":\"1\",\"b\":\"22\"}",
+                          "expected":  "all rubric checks pass",
+                          "stderr":  "",
+                          "exit_code":  0
+                      }
+                  ],
+    "provenance":  "OpenHands headless DeepSeek V4 Pro scoreable artifact",
+    "trace":  "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\bitcask-realrepo-001\\openhands_deepseek_v4_pro_001.log",
+    "conversation_id":  "90f7e307-93e6-4282-95c7-674543deb384",
+    "completion_status":  "agent_finished_scoreable_artifact"
+}

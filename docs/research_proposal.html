@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Proposal — E2ECodeBench</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-light: #eff6ff;
+    --primary-dark: #1e40af;
+    --accent: #7c3aed;
+    --accent-light: #f5f3ff;
+    --success: #059669;
+    --success-light: #ecfdf5;
+    --warning: #d97706;
+    --warning-light: #fffbeb;
+    --danger: #dc2626;
+    --danger-light: #fef2f2;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-400: #9ca3af;
+    --gray-600: #4b5563;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --font-sans: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--gray-800);
+    background: var(--gray-50);
+    line-height: 1.75;
+    font-size: 15px;
+  }
+  /* Layout */
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 32px 96px; }
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1e40af 0%, #4338ca 60%, #7c3aed 100%);
+    color: white;
+    padding: 56px 40px 48px;
+    border-radius: 16px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    background: rgba(255,255,255,.06);
+    border-radius: 50%;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 20px;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,.04);
+    border-radius: 50%;
+  }
+  .tag {
+    display: inline-block;
+    background: rgba(255,255,255,.2);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  .header .subtitle {
+    font-size: 16px;
+    opacity: .85;
+    max-width: 600px;
+  }
+  .meta-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .meta-item { font-size: 13px; opacity: .8; }
+  .meta-item strong { opacity: 1; font-weight: 600; }
+  /* TOC */
+  .toc {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    box-shadow: var(--shadow);
+  }
+  .toc-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gray-400); margin-bottom: 12px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 4px 0; }
+  .toc a { color: var(--primary); text-decoration: none; font-size: 14px; }
+  .toc a:hover { text-decoration: underline; }
+  /* Section */
+  .section { margin-bottom: 52px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  .section-num {
+    width: 32px; height: 32px;
+    background: var(--primary);
+    color: white;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  h2 { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+  h3 { font-size: 16px; font-weight: 700; color: var(--gray-800); margin: 24px 0 10px; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--gray-700); margin: 16px 0 8px; }
+  p { margin-bottom: 12px; color: var(--gray-700); }
+  /* Cards */
+  .card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  /* Callout */
+  .callout {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex; gap: 12px;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { flex: 1; }
+  .callout-body p { margin: 0; font-size: 14px; }
+  .callout.blue { background: var(--primary-light); border-left: 3px solid var(--primary); }
+  .callout.purple { background: var(--accent-light); border-left: 3px solid var(--accent); }
+  .callout.green { background: var(--success-light); border-left: 3px solid var(--success); }
+  .callout.yellow { background: var(--warning-light); border-left: 3px solid var(--warning); }
+  /* Table */
+  .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: var(--radius); box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; background: white; font-size: 13.5px; }
+  th { background: var(--gray-800); color: white; padding: 11px 14px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--gray-200); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--gray-50); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--success-light); color: var(--success); }
+  .badge-red { background: var(--danger-light); color: var(--danger); }
+  .badge-yellow { background: var(--warning-light); color: var(--warning); }
+  .badge-blue { background: var(--primary-light); color: var(--primary); }
+  /* Code */
+  pre, code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-radius: 6px;
+  }
+  pre { padding: 16px 20px; overflow-x: auto; margin: 12px 0; line-height: 1.6; }
+  code { padding: 2px 6px; font-size: 12.5px; }
+  .code-comment { color: #6c7086; }
+  .code-key { color: #cba6f7; }
+  .code-str { color: #a6e3a1; }
+  .code-num { color: #fab387; }
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  .flow-box {
+    background: white;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 120px;
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+  }
+  .flow-box.primary { background: var(--primary); color: white; border-color: var(--primary); }
+  .flow-box.accent { background: var(--accent); color: white; border-color: var(--accent); }
+  .flow-box.green { background: var(--success); color: white; border-color: var(--success); }
+  .flow-arrow {
+    color: var(--gray-400);
+    font-size: 18px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  /* List */
+  ul.styled, ol.styled { padding-left: 20px; margin: 8px 0 16px; }
+  ul.styled li, ol.styled li { margin: 6px 0; color: var(--gray-700); }
+  /* Highlight */
+  .highlight { background: #fef9c3; padding: 1px 4px; border-radius: 3px; }
+  /* Gap comparison */
+  .gap-viz {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .gap-bad, .gap-good {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 13px;
+  }
+  .gap-bad { background: var(--danger-light); border: 1px solid #fca5a5; }
+  .gap-good { background: var(--success-light); border: 1px solid #6ee7b7; }
+  .gap-label { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .gap-bad .gap-label { color: var(--danger); }
+  .gap-good .gap-label { color: var(--success); }
+  /* Footer */
+  .footer { text-align: center; color: var(--gray-400); font-size: 13px; margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--gray-200); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="tag">Research Proposal</div>
+  <h1>E2ECodeBench<br>端到端完整项目交付能力基准</h1>
+  <div class="subtitle">评测大语言模型从产品规格到可运行完整项目的端到端实现能力</div>
+  <div class="meta-row">
+    <div class="meta-item"><strong>研究方向</strong> 代码生成 · AI 软件工程</div>
+    <div class="meta-item"><strong>状态</strong> 提案阶段</div>
+    <div class="meta-item"><strong>版本</strong> v0.1 · 2026-06</div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">目录</div>
+  <ol>
+    <li><a href="#abstract">摘要</a></li>
+    <li><a href="#background">背景与动机</a></li>
+    <li><a href="#problem">问题陈述</a></li>
+    <li><a href="#related">相关工作与现有基准分析</a></li>
+    <li><a href="#approach">核心设计</a></li>
+    <li><a href="#dataset">数据集构建方法</a></li>
+    <li><a href="#eval">评测设计</a></li>
+    <li><a href="#contribution">预期贡献</a></li>
+    <li><a href="#challenges">挑战与局限性</a></li>
+  </ol>
+</div>
+
+<!-- 1. ABSTRACT -->
+<div class="section" id="abstract">
+  <div class="section-header">
+    <div class="section-num">摘</div>
+    <h2>摘要</h2>
+  </div>
+  <div class="callout purple">
+    <div class="callout-icon">📋</div>
+    <div class="callout-body">
+      <p>我们提出 <strong>E2ECodeBench</strong>，一个专门评测大语言模型<strong>端到端完整项目交付能力</strong>的基准。给定中等信息量的产品规格文档（包含行为约束、全局不变量与制品结构），模型需要交付一个可安装、可运行的完整 Python 项目。评测采用<strong>过滤后的原始仓库测试套件</strong>作为 oracle，分为单元测试与集成测试两层，通过二者 pass rate 的差值揭示模型在跨模块一致性上的能力边界。相较于现有基准，E2ECodeBench 在任务规模、评测信号质量与对真实工程能力的对齐程度上均有显著提升。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 2. BACKGROUND -->
+<div class="section" id="background">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2>背景与动机</h2>
+  </div>
+  <p>大语言模型在代码生成领域取得了显著进展，但现有评测体系存在一个系统性盲区：几乎所有主流基准测试的都是<strong>局部代码片段</strong>或<strong>单一功能点</strong>，而非软件工程师在实际工作中面对的核心挑战——从产品需求到可交付的完整项目。</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🔬 学术基准的局限</h4>
+      <p>HumanEval、MBPP 等基准以函数级代码片段为单位，与真实工程场景相差甚远，无法反映模型处理系统复杂性的能力。</p>
+    </div>
+    <div class="card">
+      <h4>🏗️ 工程实践的核心挑战</h4>
+      <p>真实项目要求：跨模块状态一致性、持久化与进程边界处理、错误原子性、完整的 artifact 结构、依赖管理等——这些能力至今缺乏系统评测。</p>
+    </div>
+  </div>
+
+  <p>随着 AI 编程助手（Cursor、GitHub Copilot 等）向"项目级自动化"演进，评测模型<strong>端到端交付完整项目</strong>的能力变得迫切。我们需要一个能够回答以下问题的基准：</p>
+
+  <div class="callout blue">
+    <div class="callout-icon">❓</div>
+    <div class="callout-body">
+      <p><strong>核心研究问题</strong>：给定足以启动项目的产品规格信息，当前最优模型能否交付一个真实可用的、完整的软件项目？其能力瓶颈在哪里？</p>
+    </div>
+  </div>
+</div>
+
+<!-- 3. PROBLEM STATEMENT -->
+<div class="section" id="problem">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <h2>问题陈述</h2>
+  </div>
+
+  <h3>2.1 目标能力定义</h3>
+  <p>本基准测试的核心能力定义为 <strong>Definition C：端到端交付能力</strong>：</p>
+  <div class="callout green">
+    <div class="callout-icon">🎯</div>
+    <div class="callout-body">
+      <p>给定足以启动项目的信息（功能规格 + 行为约束 + 制品结构），模型能否交付一个真实可用的完整项目——即结构完整、行为正确、跨模块一致、可直接安装运行。</p>
+    </div>
+  </div>
+
+  <h3>2.2 现有方法的失效模式</h3>
+  <p>我们在前期工作中构建了基于 PRD 文档派生测试的评测方案，发现两个系统性失效：</p>
+
+  <div class="gap-viz">
+    <div class="gap-bad">
+      <div class="gap-label">❌ 失效模式一：LOC 过低</div>
+      <p>文档未指定 artifact shape → 模型默认输出单文件迷你实现 → 无法反映完整项目交付能力。</p>
+      <pre style="margin-top:8px;font-size:12px;padding:10px"><span class="code-comment"># 模型产出：kvmini.py (300行)
+# 期望：src/kvstore/__init__.py
+#       models.py / store.py / cli.py</span></pre>
+    </div>
+    <div class="gap-bad">
+      <div class="gap-label">❌ 失效模式二：评测信号弱</div>
+      <p>测试由模型从文档生成 → 仅覆盖文档显式描述的行为 → SOTA pass rate 过高，无法区分模型能力差异。</p>
+      <pre style="margin-top:8px;font-size:12px;padding:10px"><span class="code-comment"># oracle 信息量 ≤ 文档信息量
+# 文档描述了 X%，测试只能测 X%
+# SOTA 轻松通过，无区分度</span></pre>
+    </div>
+  </div>
+
+  <h3>2.3 问题根因</h3>
+  <div class="flow">
+    <div class="flow-box">原始项目<br><small style="opacity:.7">完整实现</small></div>
+    <div class="flow-arrow">→ <span style="font-size:11px;color:#dc2626">信息损失</span> →</div>
+    <div class="flow-box">文档<br><small style="opacity:.7">部分规格</small></div>
+    <div class="flow-arrow">→ <span style="font-size:11px;color:#dc2626">再次损失</span> →</div>
+    <div class="flow-box">模型生成测试<br><small style="opacity:.7">弱 oracle</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:var(--danger);color:white;border-color:var(--danger)">评测失效</div>
+  </div>
+  <p style="font-size:13px;color:var(--gray-600)">oracle 的信息量上界被文档限定，文档的信息量上界被原始项目限定。两次损失叠加导致评测信号趋于无效。</p>
+</div>
+
+<!-- 4. RELATED WORK -->
+<div class="section" id="related">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2>相关工作与现有基准分析</h2>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>基准</th>
+          <th>输入</th>
+          <th>Oracle 来源</th>
+          <th>任务粒度</th>
+          <th>测 Definition C？</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>NL2RepoBench</strong></td>
+          <td>自然语言描述 + 目录结构 + API 文档（~6000词）</td>
+          <td>原始测试套件（直接使用）</td>
+          <td>完整 Python 库</td>
+          <td><span class="badge badge-yellow">部分</span> 信息量过大，近于蓝图</td>
+        </tr>
+        <tr>
+          <td><strong>PRDBench</strong></td>
+          <td>PRD 文档（~400词）</td>
+          <td>人工编写 + shell 交互测试</td>
+          <td>CLI 应用</td>
+          <td><span class="badge badge-yellow">部分</span> 构建成本高，难以规模化</td>
+        </tr>
+        <tr>
+          <td><strong>ProgramBench</strong></td>
+          <td>编译二进制 + 文档</td>
+          <td>原始测试套件（完整）</td>
+          <td>完整程序（多语言）</td>
+          <td><span class="badge badge-green">接近</span> 逆向工程而非产品开发</td>
+        </tr>
+        <tr>
+          <td><strong>RepoZero</strong></td>
+          <td>源语言完整仓库</td>
+          <td>黑盒 I/O 测试</td>
+          <td>仓库级翻译</td>
+          <td><span class="badge badge-red">否</span> 翻译任务，非生成任务</td>
+        </tr>
+        <tr>
+          <td><strong>SWE-bench</strong></td>
+          <td>已有仓库 + Issue</td>
+          <td>原始测试套件</td>
+          <td>Bug 修复 / 功能补丁</td>
+          <td><span class="badge badge-red">否</span> 局部修改，非完整项目</td>
+        </tr>
+        <tr>
+          <td><strong>E2ECodeBench（本工作）</strong></td>
+          <td>行为规格文档（~1000-1500词）</td>
+          <td>过滤后的原始测试套件</td>
+          <td>完整 Python 包</td>
+          <td><span class="badge badge-green">是</span> 核心设计目标</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>关键差异化点</h3>
+  <ul class="styled">
+    <li><strong>vs NL2RepoBench</strong>：文档信息量大幅减少，不提供 API 文档与代码示例，oracle 增加过滤步骤以排除文档外信息</li>
+    <li><strong>vs PRDBench</strong>：测试 oracle 来自原始仓库而非人工编写，大幅降低构建成本，支持规模化</li>
+    <li><strong>vs ProgramBench</strong>：输入是自然语言规格而非二进制，测试的是产品开发能力而非逆向工程能力</li>
+  </ul>
+</div>
+
+
+<!-- 5. CORE DESIGN -->
+<div class="section" id="approach">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2>核心设计</h2>
+  </div>
+
+  <h3>4.1 总体架构</h3>
+  <div style="background:white;border:1px solid var(--gray-200);border-radius:var(--radius);padding:24px;margin:16px 0;box-shadow:var(--shadow)">
+    <p style="font-size:13px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">构建阶段</p>
+    <div class="flow">
+      <div class="flow-box primary">原始仓库<br><small>真实 Python 库</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">提取行为规格<br><small>人工编写 PRD</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">测试套件过滤<br><small>文档一致性判断</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">Task 构建完成<br><small>文档 + Oracle</small></div>
+    </div>
+    <p style="font-size:13px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 16px">评测阶段</p>
+    <div class="flow">
+      <div class="flow-box accent">模型实现<br><small>完整 Python 包</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">Docker 容器执行<br><small>隔离环境</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">单元 / 集成测试<br><small>两层评测</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">Pass Rate + Gap<br><small>最终指标</small></div>
+    </div>
+  </div>
+
+  <h3>4.2 两个核心杠杆</h3>
+  <div class="card-grid">
+    <div class="card" style="border-top:3px solid var(--primary)">
+      <h4>杠杆一：文档信息量</h4>
+      <p>解决 <strong>LOC 过低</strong> 问题。文档必须包含 artifact shape（目录结构），驱动模型产出完整包结构而非单文件实现。</p>
+      <ul class="styled" style="font-size:13px">
+        <li>功能行为描述（不含实现细节）</li>
+        <li>全局不变量（跨模块约束）</li>
+        <li><strong>制品结构</strong>（包名、目录树、入口文件）</li>
+        <li>关键公共接口签名</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <h4>杠杆二：Oracle 来源</h4>
+      <p>解决 <strong>评测信号弱</strong> 问题。Oracle 来自原始仓库测试套件（过滤后），覆盖文档未明说的行为，制造模型难以逾越的能力上界。</p>
+      <ul class="styled" style="font-size:13px">
+        <li>原始测试：人工编写，高质量</li>
+        <li>过滤：移除与文档矛盾的测试</li>
+        <li>保留：文档未禁止但未明说的行为</li>
+        <li>上界：原始代码 pass rate（近 100%）</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>4.3 文档信息量校准原则</h3>
+  <div class="callout blue">
+    <div class="callout-icon">⚖️</div>
+    <div class="callout-body">
+      <p><strong>判断原则</strong>：文档应包含"一位 Senior Engineer 开始项目第一天必须知道的信息"，不包含"有经验的工程师应自行决策的实现细节"。</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>信息类型</th><th>是否包含</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>项目概述 + 类比已知系统</td><td><span class="badge badge-green">✓ 包含</span></td><td>激活模型训练知识，无需详述</td></tr>
+        <tr><td>Feature 行为描述（输入/输出/副作用）</td><td><span class="badge badge-green">✓ 包含</span></td><td>定义实现范围，是最基本的需求</td></tr>
+        <tr><td>全局不变量（跨模块约束）</td><td><span class="badge badge-green">✓ 包含</span></td><td>强制真实集成，防止独立 stub</td></tr>
+        <tr><td>制品结构（目录树、包名）</td><td><span class="badge badge-green">✓ 包含</span></td><td>LOC 最强杠杆，必须包含</td></tr>
+        <tr><td>关键公共接口签名</td><td><span class="badge badge-green">✓ 包含</span></td><td>Oracle 可调用的必要条件</td></tr>
+        <tr><td>错误行为类别</td><td><span class="badge badge-green">✓ 包含</span></td><td>非 happy path 是集成测试重点</td></tr>
+        <tr><td>内部类结构、算法选择</td><td><span class="badge badge-red">✗ 排除</span></td><td>工程师自行决策的实现细节</td></tr>
+        <tr><td>代码示例、API 使用教程</td><td><span class="badge badge-red">✗ 排除</span></td><td>接近实现蓝图，降低难度</td></tr>
+        <tr><td>测试用例、评测 checklist</td><td><span class="badge badge-red">✗ 排除</span></td><td>直接泄漏 oracle 信号</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 6. DATASET -->
+<div class="section" id="dataset">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2>数据集构建方法</h2>
+  </div>
+
+  <h3>5.1 仓库选择标准</h3>
+  <ul class="styled">
+    <li><strong>纯 Python 包</strong>：依赖可用 venv/pip 隔离，Docker image 构建成本低</li>
+    <li><strong>有完整测试套件</strong>：原始 pytest 套件覆盖率充分，单元测试与集成测试均存在</li>
+    <li><strong>有清晰的公开文档</strong>：README 或官方文档足以提取功能规格</li>
+    <li><strong>中等复杂度</strong>：项目包含 3-6 个主要模块，存在跨模块状态交互</li>
+    <li><strong>无外部服务依赖</strong>：测试可在无网络的 Docker 容器中独立运行</li>
+  </ul>
+
+  <h3>5.2 文档构建流程</h3>
+  <ol class="styled">
+    <li>阅读原始仓库的 README、官方文档、源码注释</li>
+    <li>提取功能模块划分及各模块的行为描述</li>
+    <li>识别并显式化全局不变量（原始代码中隐含但文档未明说的约束）</li>
+    <li>确定 artifact shape：根据原始包结构简化为合理的目录树</li>
+    <li>提取关键公共接口签名（供 Oracle 调用的最小集合）</li>
+    <li>人工校验：Senior Engineer 能否从该文档合理开始实现？</li>
+  </ol>
+
+  <h3>5.3 测试套件过滤流程</h3>
+  <div class="card">
+    <p style="margin-bottom:12px">对原始测试套件中的每个 test case，使用如下判断标准：</p>
+    <div class="callout green" style="margin-bottom:10px">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body"><p><strong>保留</strong>：测试的行为与文档描述一致，或文档未提及但未禁止（文档不矛盾标准）</p></div>
+    </div>
+    <div class="callout yellow" style="margin-bottom:10px">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><p><strong>人工审查</strong>：测试涉及文档边界情况，需判断是否属于合理的工程推断</p></div>
+    </div>
+    <div class="callout" style="background:var(--danger-light);border-left:3px solid var(--danger)">
+      <div class="callout-icon">❌</div>
+      <div class="callout-body"><p><strong>过滤掉</strong>：测试私有 API、内部实现细节，或与文档描述明确矛盾</p></div>
+    </div>
+  </div>
+
+  <h3>5.4 Oracle 校验</h3>
+  <p>过滤后的测试套件在原始代码上运行，预期 pass rate ≥ 95%。若低于此阈值，说明过滤标准需要调整（可能过滤过严或文档描述有歧义）。此 pass rate 作为评测的满分上界。</p>
+</div>
+
+<!-- 7. EVALUATION -->
+<div class="section" id="eval">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2>评测设计</h2>
+  </div>
+
+  <h3>6.1 评测流程</h3>
+  <div class="flow">
+    <div class="flow-box" style="min-width:110px">模型产出<br><small>完整 Python 包</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="min-width:130px">mount 到 Docker<br><small>预建任务镜像</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="min-width:110px">pip install -e .<br><small>安装验证</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="min-width:110px">pytest 两层<br><small>单元 + 集成</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green" style="min-width:100px">指标输出</div>
+  </div>
+
+  <h3>6.2 指标体系</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>指标</th><th>计算方式</th><th>测量的能力维度</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Unit Pass Rate</strong></td>
+          <td>单元测试通过数 / 单元测试总数</td>
+          <td>各功能点的独立正确性</td>
+        </tr>
+        <tr>
+          <td><strong>Integration Pass Rate</strong></td>
+          <td>集成测试通过数 / 集成测试总数</td>
+          <td>跨模块一致性与系统整体正确性</td>
+        </tr>
+        <tr>
+          <td><strong>Overall Pass Rate</strong></td>
+          <td>全部通过数 / 全部测试数（加权）</td>
+          <td>整体实现完整度</td>
+        </tr>
+        <tr>
+          <td><strong>Integration Gap</strong></td>
+          <td>Unit Pass Rate − Integration Pass Rate</td>
+          <td>模型是否只实现孤立功能，无法处理系统集成</td>
+        </tr>
+        <tr>
+          <td><strong>Normalized Score</strong></td>
+          <td>Overall / Oracle Pass Rate</td>
+          <td>相对于原始实现的完整度</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout blue">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <p><strong>Integration Gap</strong> 是本基准的核心发现指标。我们假设当前模型在 Unit Pass Rate 较高的情况下，Integration Pass Rate 会显著下降——这一差值反映了模型在系统集成维度上的能力缺口。</p>
+    </div>
+  </div>
+
+  <h3>6.3 Docker 评测环境</h3>
+  <p>每个 task 对应一个预构建的 Docker 镜像，镜像中已安装原始仓库的所有依赖和过滤后的测试套件。评测时将模型产出 mount 到容器中执行，保证：</p>
+  <ul class="styled">
+    <li>跨 task 依赖隔离（不同项目的依赖版本不冲突）</li>
+    <li>跨机器结果一致性</li>
+    <li>模型产出代码的安全隔离</li>
+    <li>可并发执行多个 task</li>
+  </ul>
+</div>
+
+<!-- 8. CONTRIBUTIONS -->
+<div class="section" id="contribution">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <h2>预期贡献</h2>
+  </div>
+
+  <div class="card-grid">
+    <div class="card" style="border-left:4px solid var(--primary)">
+      <h4>🗂️ 新基准数据集</h4>
+      <p>首个专注于端到端完整项目交付能力的 Python 代码生成基准，任务规模达到真实项目级别（多模块、多文件、可安装包）。</p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--accent)">
+      <h4>🔬 双层评测框架</h4>
+      <p>单元测试 vs 集成测试的两层评测体系，通过 Integration Gap 揭示模型在系统集成维度上的能力边界，提供超越 pass rate 的诊断信息。</p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--success)">
+      <h4>📐 文档设计方法论</h4>
+      <p>建立"启动项目必要信息"的文档校准原则，为后续基准构建提供可复用的规格文档设计框架。</p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--warning)">
+      <h4>🏗️ 可扩展构建流程</h4>
+      <p>测试套件过滤流程将人工构建成本降低到可接受范围，相比全手写 rubric 方案，规模化成本显著下降。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 9. CHALLENGES -->
+<div class="section" id="challenges">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <h2>挑战与局限性</h2>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>挑战</th><th>具体表现</th><th>缓解策略</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>过滤标准主观性</strong></td>
+          <td>判断某测试是否"与文档矛盾"存在边界情况，不同标注者结论可能不一致</td>
+          <td>建立过滤决策树；多人独立标注取一致集；发布完整过滤记录</td>
+        </tr>
+        <tr>
+          <td><strong>文档信息量校准</strong></td>
+          <td>文档过详则难度下降；过略则模型产出混乱，无法对齐测试接口</td>
+          <td>用 baseline 模型实验验证：产出结构是否完整、接口是否可调用</td>
+        </tr>
+        <tr>
+          <td><strong>接口对齐问题</strong></td>
+          <td>模型产出的包接口与测试期望不匹配（函数名、参数不同）</td>
+          <td>文档中明确必须遵守的公共接口签名；测试 harness 增加接口检查层</td>
+        </tr>
+        <tr>
+          <td><strong>任务覆盖多样性</strong></td>
+          <td>初期任务可能集中在特定领域，泛化性待验证</td>
+          <td>扩展任务至网络库、数据处理、调度系统等多个领域</td>
+        </tr>
+        <tr>
+          <td><strong>仅限 Python</strong></td>
+          <td>当前设计针对 Python 包，不涵盖其他语言</td>
+          <td>第一版专注 Python；后续版本扩展至 Go、Rust 等</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  E2ECodeBench Research Proposal &middot; v0.1 &middot; 2026-06 &middot; 内部讨论稿
+</div>
+
+</div><!-- .page -->
+</body>
+</html>

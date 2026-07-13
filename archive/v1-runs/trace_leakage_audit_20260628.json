@@ -1,0 +1,1034 @@
+{
+  "summary": {
+    "files_scanned": 100,
+    "non_strict_direct_surface": 4,
+    "non_strict_observed_surface": 10,
+    "clean": 86
+  },
+  "results": [
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\bitcask-realrepo-001\\openhands_deepseek_v4_pro_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniaptly-realrepo-001\\openhands_deepseek_v4_pro_001_authfail_openai_endpoint.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniaptly-realrepo-001\\openhands_deepseek_v4_pro_001_launchfail_gbk.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniaptly-realrepo-001\\openhands_deepseek_v4_pro_002.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniaptly-realrepo-001\\openhands_deepseek_v4_pro_003.log",
+      "severity": "non_strict_direct_surface",
+      "counts": {
+        "direct_or_tool_visible": 3,
+        "observed_access_surface": 0
+      },
+      "examples": [
+        {
+          "line": 47,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"bb4b05f3-6151-4c6c-a885-4fc6938403f8\", \"timestamp\": \"2026-06-28T15:30:49.217115\", \"source\": \"environment\", \"tool_name\": \"file_editor\", \"tool_call_id\": \"call_00_TTUVOSZK5MF36BYQX4fD1931\", \"observation\": {\"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Here's the files and directories up to 2 levels deep in G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\task\\\\miniaptly-realrepo-001, excluding hidden items:\\nG:/research/01_agents/swe-e2e/Bmk-dev/task/miniaptly-realrepo-001/\\nG:/res"
+        },
+        {
+          "line": 49,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"5a4b003f-fe7d-4fd9-87ec-b98d86781f4b\", \"timestamp\": \"2026-06-28T15:31:51.577205\", \"source\": \"agent\", \"thought\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Now let me look at the doc files that are part of the public packet (not scoring infrastructure):\"}], \"reasoning_content\": \"The output directory doesn't exist yet. Let me also look at the doc files for more context, but the PRD explicitly says \\\"Do not inspect source repositories, scoring directories, hidden rubrics, score repor"
+        },
+        {
+          "line": 51,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"0cc7796c-13a6-4c62-8379-1a2c0ad14907\", \"timestamp\": \"2026-06-28T15:31:51.669409\", \"source\": \"environment\", \"tool_name\": \"file_editor\", \"tool_call_id\": \"call_00_nlOsk8XgNnqqZcP84Xxi4969\", \"observation\": {\"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Here's the result of running `cat -n` on G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\task\\\\miniaptly-realrepo-001\\\\doc\\\\requirement_map.md:\\n     1\\t# MiniAptly Requirement Map\\n     2\\t\\n     3\\t## Requirements\\n     4\\t\\n     5"
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_deepseek_v4_pro_001.log",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 2
+      },
+      "examples": [
+        {
+          "line": 41,
+          "kind": "observed_access_surface",
+          "text": "{\"id\": \"8b87c5cf-dbbf-4379-8aa9-070679775478\", \"timestamp\": \"2026-06-27T20:47:44.091303\", \"source\": \"user\", \"llm_message\": {\"role\": \"user\", \"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Starting this session with file context.\\n\\nFile path: G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\runs\\\\minidynaconf-realrepo-001\\\\openhands_deepseek_v4_pro_task.txt\\n\\nFile contents:\\n--------------------\\nYou are an OpenHands coding agent running a benchmark candidate task.\\n\\nWorkspace:\\nG:\\\\res"
+        },
+        {
+          "line": 45,
+          "kind": "observed_access_surface",
+          "text": "{\"id\": \"3444a62f-060c-4b78-89eb-33f35a47d8b4\", \"timestamp\": \"2026-06-27T20:49:16.077604\", \"source\": \"agent\", \"thought\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Now I understand the full requirements. Let me plan and implement this module.\"}], \"reasoning_content\": \"Let me analyze the PRD carefully and plan my implementation.\\n\\nKey requirements:\\n1. `minidynaconf.py` - a single module, dependency-free (stdlib only)\\n2. Exports: `MiniDynaconf`, `Validator`, `ValidationError`, `SettingsEr"
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_deepseek_v4_pro_lifecycle_v3_001.log",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 50,
+          "kind": "observed_access_surface",
+          "text": "{\"id\": \"f49abf6f-cdab-45a9-b3f9-6d802c49b055\", \"timestamp\": \"2026-06-28T07:39:20.939840\", \"source\": \"user\", \"llm_message\": {\"role\": \"user\", \"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Starting this session with file context.\\n\\nFile path: G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\runs\\\\minidynaconf-realrepo-001\\\\openhands_deepseek_v4_pro_lifecycle_v3_001_task.txt\\n\\nFile contents:\\n--------------------\\nYou are an OpenHands coding agent running a benchmark candidate task.\\n\\nWo"
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_deepseek_v4_pro_v2_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_qwen_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minikv-realrepo-submit\\openhands_deepseek_v4_pro_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minikv-realrepo-submit\\openhands_qwen_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_deepseek_v4_pro_001.log",
+      "severity": "non_strict_direct_surface",
+      "counts": {
+        "direct_or_tool_visible": 4,
+        "observed_access_surface": 2
+      },
+      "examples": [
+        {
+          "line": 41,
+          "kind": "observed_access_surface",
+          "text": "{\"id\": \"8500c3d7-ee83-4788-92c6-c0a02ff281a7\", \"timestamp\": \"2026-06-27T21:47:12.879509\", \"source\": \"user\", \"llm_message\": {\"role\": \"user\", \"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Starting this session with file context.\\n\\nFile path: G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\runs\\\\minimarkdown-realrepo-001\\\\openhands_deepseek_v4_pro_task.txt\\n\\nFile contents:\\n--------------------\\nYou are an OpenHands coding agent running a benchmark candidate task.\\n\\nWorkspace:\\nG:\\\\res"
+        },
+        {
+          "line": 43,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"12fd0c76-3a2e-430d-8487-c3aeaaef3b31\", \"timestamp\": \"2026-06-27T21:47:21.095774\", \"source\": \"agent\", \"thought\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"\"}], \"reasoning_content\": \"Let me analyze this task. I need to:\\n\\n1. Read the public PRD at `G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\task\\\\minimarkdown-realrepo-001\\\\prd.md`\\n2. Implement a dependency-free Python module named `minimarkdown.py` in the output directory\\n3. Only use Python standard library\\n4. Not read rubric.j"
+        },
+        {
+          "line": 46,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"48398c14-b0d8-465c-8368-118c956ebe8e\", \"timestamp\": \"2026-06-27T21:48:12.748436\", \"source\": \"environment\", \"tool_name\": \"file_editor\", \"tool_call_id\": \"call_00_ga9sCI0EIsQfUkcsrGWF3846\", \"observation\": {\"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Here's the files and directories up to 2 levels deep in G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\runs\\\\minimarkdown-realrepo-001, excluding hidden items:\\nG:/research/01_agents/swe-e2e/Bmk-dev/runs/minimarkdown-realrepo-001/\\n"
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_deepseek_v4_pro_canonical_tree_v3_001.log",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 50,
+          "kind": "observed_access_surface",
+          "text": "{\"id\": \"91ce6b6d-12ce-48bf-a097-2ad3bf53f8d3\", \"timestamp\": \"2026-06-28T07:56:00.880525\", \"source\": \"user\", \"llm_message\": {\"role\": \"user\", \"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Starting this session with file context.\\n\\nFile path: G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\runs\\\\minimarkdown-realrepo-001\\\\openhands_deepseek_v4_pro_canonical_tree_v3_001_task.txt\\n\\nFile contents:\\n--------------------\\nYou are an OpenHands coding agent running a benchmark candidate task.\\"
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_001_utf8.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_002.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_003.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_004.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_005.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_006.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_007.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_008.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_009.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_010_cleanhome.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_011.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_012.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_013.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_014.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_001.log",
+      "severity": "non_strict_direct_surface",
+      "counts": {
+        "direct_or_tool_visible": 1,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 41,
+          "kind": "observed_access_surface",
+          "text": "{\"id\": \"b33589bc-675d-4f20-84e4-d805104634dc\", \"timestamp\": \"2026-06-27T21:03:44.068484\", \"source\": \"user\", \"llm_message\": {\"role\": \"user\", \"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Starting this session with file context.\\n\\nFile path: G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\runs\\\\minipackaging-realrepo-001\\\\openhands_deepseek_v4_pro_task.txt\\n\\nFile contents:\\n--------------------\\nYou are an OpenHands coding agent running a benchmark candidate task.\\n\\nWorkspace:\\nG:\\\\re"
+        },
+        {
+          "line": 46,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"c4849ae7-d158-4b3d-8047-2ee5bcc17168\", \"timestamp\": \"2026-06-27T21:06:02.592293\", \"source\": \"environment\", \"tool_name\": \"file_editor\", \"tool_call_id\": \"call_00_9nnSVI6cPFW31mvjrgUD8164\", \"observation\": {\"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Here's the files and directories up to 2 levels deep in G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\runs\\\\minipackaging-realrepo-001, excluding hidden items:\\nG:/research/01_agents/swe-e2e/Bmk-dev/runs/minipackaging-realrepo-001/"
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_metadata_index_lifecycle_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_metadata_index_lifecycle_001_utf8.log",
+      "severity": "non_strict_direct_surface",
+      "counts": {
+        "direct_or_tool_visible": 9,
+        "observed_access_surface": 10
+      },
+      "examples": [
+        {
+          "line": 53,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"e3d1f2ea-ac03-4a05-b152-659be7ad0e7e\", \"timestamp\": \"2026-06-28T12:52:22.115630\", \"source\": \"environment\", \"tool_name\": \"file_editor\", \"tool_call_id\": \"call_00_7tHiQOZlF0uJc9VPgoXv6632\", \"observation\": {\"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Here's the files and directories up to 2 levels deep in G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\task\\\\minipackaging-realrepo-001, excluding hidden items:\\nG:/research/01_agents/swe-e2e/Bmk-dev/task/minipackaging-realrepo-001/"
+        },
+        {
+          "line": 56,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"83289f10-af7d-493c-a32b-d57af1038e77\", \"timestamp\": \"2026-06-28T12:52:29.604809\", \"source\": \"agent\", \"thought\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"\"}], \"reasoning_content\": \"This is a significant implementation task. Let me also read the supporting documents to understand the requirements better.\\n\\nThe task is to build `minipackaging.py`, a dependency-free Python module that implements:\\n1. Version parsing, normalization, and ordering (PEP 440 subset)\\n2. Version specifie"
+        },
+        {
+          "line": 59,
+          "kind": "direct_or_tool_visible",
+          "text": "{\"id\": \"22ea20ec-3180-4e03-910f-ea46101a47b9\", \"timestamp\": \"2026-06-28T12:52:29.670179\", \"source\": \"environment\", \"tool_name\": \"file_editor\", \"tool_call_id\": \"call_00_3pzb6izRCwdZ0IZMUZUA3884\", \"observation\": {\"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Here's the result of running `cat -n` on G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\task\\\\minipackaging-realrepo-001\\\\doc\\\\requirement_map.md:\\n     1\\t# MiniPackaging Unit/System Requirement Map\\n     2\\t\\n     3\\tDate: 2026-06"
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_redesign_v2_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_redesign_v2_001_utf8.log",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 58,
+          "kind": "observed_access_surface",
+          "text": "{\"id\": \"17f5d9ce-abb6-4aef-a754-ef0f3888a414\", \"timestamp\": \"2026-06-27T23:57:16.500294\", \"source\": \"user\", \"llm_message\": {\"role\": \"user\", \"content\": [{\"cache_prompt\": false, \"type\": \"text\", \"text\": \"Starting this session with file context.\\n\\nFile path: G:\\\\research\\\\01_agents\\\\swe-e2e\\\\Bmk-dev\\\\runs\\\\minipackaging-realrepo-001\\\\openhands_deepseek_v4_pro_redesign_v2_task.txt\\n\\nFile contents:\\n--------------------\\nYou are an OpenHands coding agent running a benchmark candidate task.\\n\\nWorksp"
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_resolve_metadata_v3_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_qwen_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_qwen_resolve_metadata_v3_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_qwen_resolve_metadata_v3_002.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniredis-realrepo-submit\\openhands_deepseek_v4_pro_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniredis-realrepo-submit\\openhands_qwen_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\entrypoint_probe.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_deepseek_v4_pro_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_deepseek_v4_pro_v2_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_001.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_001_startfail_20260628_032019.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_rerun_001_utf8.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_rerun_002.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_rerun_004.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_rerun_005.log",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\.openhands-qwen-empty-home-010\\.openhands\\cache\\skills\\public-skills\\skills\\frontend-design\\LICENSE.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\.openhands-qwen-empty-home-010\\.openhands\\cache\\skills\\public-skills\\skills\\skill-creator\\LICENSE.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\.openhands-qwen-empty-home-010\\.openhands\\cache\\skills\\public-skills\\skills\\theme-factory\\LICENSE.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\bitcask-realrepo-001\\openhands_deepseek_v4_pro_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\cleanroom\\miniaptly-cleanroom-smoke-001\\task_prompt.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniaptly-realrepo-001\\openhands_deepseek_v4_pro_001_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniaptly-realrepo-001\\openhands_deepseek_v4_pro_002_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniaptly-realrepo-001\\openhands_deepseek_v4_pro_003_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_deepseek_v4_pro_lifecycle_v3_001_task.txt",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 18,
+          "kind": "observed_access_surface",
+          "text": "- Do not read rubric.json, doc files, score reports, reference solutions, or other candidate solutions."
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_deepseek_v4_pro_task.txt",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 18,
+          "kind": "observed_access_surface",
+          "text": "- Do not read rubric.json, doc files, score reports, reference solutions, or other candidate solutions."
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_deepseek_v4_pro_task_v2_001.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_qwen_001.status.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\openhands_qwen_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minikv-realrepo-submit\\openhands_deepseek_v4_pro_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minikv-realrepo-submit\\openhands_qwen_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_deepseek_v4_pro_canonical_tree_v3_001_task.txt",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 18,
+          "kind": "observed_access_surface",
+          "text": "- Do not read rubric.json, doc files, score reports, reference solutions, or other candidate solutions."
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_deepseek_v4_pro_task.txt",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 18,
+          "kind": "observed_access_surface",
+          "text": "- Do not read rubric.json, doc files, score reports, reference solutions, or other candidate solutions."
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_001_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_002_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_003_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_004_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_005_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_006_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_007_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_008_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_009_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_010_cleanhome_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_013_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_rerun_014_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimarkdown-realrepo-001\\openhands_qwen_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minimigrationmanager-realrepo-001\\openhands_deepseek_v4_pro_001_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_metadata_index_lifecycle_001_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_redesign_v2_task.txt",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 18,
+          "kind": "observed_access_surface",
+          "text": "- Do not read rubric.json, doc files, score reports, reference solutions, prior candidate solution directories, source repositories, or iteration reports."
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_resolve_metadata_v3_001_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_deepseek_v4_pro_task.txt",
+      "severity": "non_strict_observed_surface",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 1
+      },
+      "examples": [
+        {
+          "line": 18,
+          "kind": "observed_access_surface",
+          "text": "- Do not read rubric.json, doc files, score reports, reference solutions, or other candidate solutions."
+        }
+      ]
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_qwen_resolve_metadata_v3_001_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\openhands_qwen_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniredis-realrepo-submit\\openhands_deepseek_v4_pro_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniredis-realrepo-submit\\openhands_qwen_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniredis-realrepo-submit\\solution-openhands-qwen-001\\test_commands.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_deepseek_v4_pro_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_deepseek_v4_pro_task_v2_001.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_rerun_001_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_rerun_002_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_rerun_004_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_rerun_005_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\openhands_qwen_task.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\qwen25_siliconflow_probe_20260628_latest.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\qwen_siliconflow_models_20260628_latest.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\qwen_siliconflow_probe_20260628_latest.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    },
+    {
+      "path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\qwen_siliconflow_probe_20260628_latest_2.txt",
+      "severity": "clean",
+      "counts": {
+        "direct_or_tool_visible": 0,
+        "observed_access_surface": 0
+      },
+      "examples": []
+    }
+  ]
+}

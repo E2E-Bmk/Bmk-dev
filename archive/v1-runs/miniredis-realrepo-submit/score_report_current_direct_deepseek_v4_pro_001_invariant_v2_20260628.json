@@ -1,0 +1,4333 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\miniredis-realrepo-submit\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniredis-realrepo-submit\\solution-deepseek-v4-pro-001",
+  "total_cases": 28,
+  "passed_cases": 12,
+  "total_weight": 152,
+  "passed_weight": 48,
+  "score": 0.3157894736842105,
+  "unit_score": 0.6666666666666666,
+  "system_score": 0.0,
+  "gap_pp": 66.66666666666666,
+  "layers": {
+    "system": {
+      "weight": 80,
+      "passed_weight": 0,
+      "cases": 10,
+      "passed": 0
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 48,
+      "cases": 18,
+      "passed": 12
+    }
+  },
+  "categories": {
+    "db_management": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "delete_invisibility_and_reuse": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "errors": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "expiry_invisibility_all_views": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "failed_commands_do_not_create_or_shadow_keys": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "flushdb_invisibility_and_reuse": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "glob_namespace_projection_after_removal": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "hash_ops": {
+      "weight": 12,
+      "passed_weight": 0,
+      "cases": 3,
+      "passed": 0
+    },
+    "invalid_commands_preserve_namespace": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "key_management": {
+      "weight": 12,
+      "passed_weight": 8,
+      "cases": 3,
+      "passed": 2
+    },
+    "list_ops": {
+      "weight": 16,
+      "passed_weight": 12,
+      "cases": 4,
+      "passed": 3
+    },
+    "mixed_mutation_projection_consistency": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "namespace_projection_consistency": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "overwrite_resets_type_and_ttl": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "set_ops": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "string_ops": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "wrong_type_preserves_string_projection": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    }
+  },
+  "failed_cases": [
+    {
+      "id": "MDRU004",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LPUSH prepends elements; LRANGE shows correct LIFO-style head order.",
+      "weight": 4,
+      "commands": [
+        [
+          "LPUSH",
+          "items",
+          "c",
+          "b",
+          "a"
+        ],
+        [
+          "LRANGE",
+          "items",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ]
+        },
+        "step_stdout_json": {
+          "1": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "3\n[\"c\",\"b\",\"a\"]",
+      "expected": "step 1: expected JSON ['a', 'b', 'c'], got ['c', 'b', 'a']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU011",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HSET sets a field and HGET retrieves it.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "user:1",
+          "name",
+          "Alice"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "name"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "email"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "1"
+          ],
+          "1": [
+            "Alice"
+          ],
+          "2": [
+            "(nil)"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "(nil)\n(nil)",
+      "expected": "step 0: expected stdout '1', got '(nil)'\nstep 1: expected stdout 'Alice', got '(nil)'\nstep 2: expected stdout '(nil)', got ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU012",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HSET multi-field; HDEL removes fields; HGETALL returns all fields.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "user:1",
+          "name",
+          "Alice",
+          "age",
+          "30",
+          "city",
+          "NYC"
+        ],
+        [
+          "HGETALL",
+          "user:1"
+        ],
+        [
+          "HDEL",
+          "user:1",
+          "age",
+          "phone"
+        ],
+        [
+          "HGETALL",
+          "user:1"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "age"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ],
+          "2": [
+            "1"
+          ],
+          "4": [
+            "(nil)"
+          ]
+        },
+        "step_stdout_json": {
+          "1": {
+            "name": "Alice",
+            "age": "30",
+            "city": "NYC"
+          },
+          "3": {
+            "name": "Alice",
+            "city": "NYC"
+          }
+        }
+      },
+      "passed": false,
+      "actual": "{}\n0\n{}\n(nil)",
+      "expected": "step 0: expected stdout '3', got '{}'\nstep 2: expected stdout '1', got '{}'\nstep 4: expected stdout '(nil)', got ''\nstep 1: expected JSON {'name': 'Alice', 'age': '30', 'city': 'NYC'}, got 0\nstep 3: stdout is not JSON: '(nil)'",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU013",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HEXISTS returns 1 for existing fields and 0 for missing fields.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "config",
+          "theme",
+          "dark"
+        ],
+        [
+          "HEXISTS",
+          "config",
+          "theme"
+        ],
+        [
+          "HEXISTS",
+          "config",
+          "lang"
+        ],
+        [
+          "HEXISTS",
+          "nokey",
+          "field"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "1"
+          ],
+          "2": [
+            "0"
+          ],
+          "3": [
+            "0"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "0\n0\n0",
+      "expected": "step 1: expected stdout '1', got '0'\nstep 3: expected stdout '0', got ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU014",
+      "layer": "unit",
+      "category": "key_management",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "TYPE returns correct type for all four data structures and none for missing keys.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "s",
+          "v"
+        ],
+        [
+          "LPUSH",
+          "l",
+          "x"
+        ],
+        [
+          "SADD",
+          "set",
+          "y"
+        ],
+        [
+          "HSET",
+          "h",
+          "f",
+          "z"
+        ],
+        [
+          "TYPE",
+          "s"
+        ],
+        [
+          "TYPE",
+          "l"
+        ],
+        [
+          "TYPE",
+          "set"
+        ],
+        [
+          "TYPE",
+          "h"
+        ],
+        [
+          "TYPE",
+          "nope"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "string"
+          ],
+          "5": [
+            "list"
+          ],
+          "6": [
+            "set"
+          ],
+          "7": [
+            "hash"
+          ],
+          "8": [
+            "none"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n1\n\"string\"\n\"list\"\n\"set\"\n\"none\"\n\"none\"",
+      "expected": "step 4: expected stdout 'string', got '\"list\"'\nstep 5: expected stdout 'list', got '\"set\"'\nstep 6: expected stdout 'set', got '\"none\"'\nstep 7: expected stdout 'hash', got '\"none\"'\nstep 8: expected stdout 'none', got ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU018",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-list-ops"
+      ],
+      "description": "LPOP on a string key fails non-zero and preserves the original value.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "name",
+          "Alice"
+        ],
+        {
+          "args": [
+            "LPOP",
+            "name"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "name"
+        ],
+        [
+          "TYPE",
+          "name"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "1"
+        ],
+        "step_stderr_contains_any": {
+          "1": [
+            "type",
+            "string",
+            "list",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "2": [
+            "Alice"
+          ],
+          "3": [
+            "string"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\nAlice\n\"string\"",
+      "expected": "step 3: expected stdout 'string', got '\"string\"'",
+      "stderr": "(error) WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS001",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "namespace_projection_consistency",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "One type-tagged namespace, including shell-quoted batch values, projects the same live keys, types, values, and persistent TTL state through KEYS/DBSIZE/TYPE/read commands.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "ns:string",
+          "alpha beta"
+        ],
+        [
+          "RPUSH",
+          "ns:list",
+          "first",
+          "second"
+        ],
+        [
+          "SADD",
+          "ns:set",
+          "red",
+          "blue",
+          "red"
+        ],
+        [
+          "HSET",
+          "ns:hash",
+          "owner",
+          "Ada Lovelace",
+          "mode",
+          "prod"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "ns:string"
+        ],
+        [
+          "TYPE",
+          "ns:list"
+        ],
+        [
+          "TYPE",
+          "ns:set"
+        ],
+        [
+          "TYPE",
+          "ns:hash"
+        ],
+        [
+          "GET",
+          "ns:string"
+        ],
+        [
+          "LRANGE",
+          "ns:list",
+          "0",
+          "-1"
+        ],
+        [
+          "SMEMBERS",
+          "ns:set"
+        ],
+        [
+          "HGETALL",
+          "ns:hash"
+        ],
+        [
+          "TTL",
+          "ns:string"
+        ],
+        [
+          "TTL",
+          "ns:list"
+        ],
+        [
+          "TTL",
+          "ns:set"
+        ],
+        [
+          "TTL",
+          "ns:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "5": [
+            "4"
+          ],
+          "6": [
+            "string"
+          ],
+          "7": [
+            "list"
+          ],
+          "8": [
+            "set"
+          ],
+          "9": [
+            "hash"
+          ],
+          "10": [
+            "alpha beta"
+          ],
+          "14": [
+            "-1"
+          ],
+          "15": [
+            "-1"
+          ],
+          "16": [
+            "-1"
+          ],
+          "17": [
+            "-1"
+          ]
+        },
+        "step_stdout_json": {
+          "4": [
+            "ns:string",
+            "ns:list",
+            "ns:set",
+            "ns:hash"
+          ],
+          "11": [
+            "first",
+            "second"
+          ],
+          "12": [
+            "blue",
+            "red"
+          ],
+          "13": {
+            "owner": "Ada Lovelace",
+            "mode": "prod"
+          }
+        }
+      },
+      "passed": false,
+      "actual": "OK\n2\n2\n[\"ns:list\",\"ns:set\",\"ns:string\"]\n3\n\"string\"\n\"list\"\n\"set\"\n\"none\"\nalpha beta\n[\"first\",\"second\"]\n[\"blue\",\"red\"]\n{}\n-1\n-1\n-1\n-2",
+      "expected": "step 5: expected stdout '4', got '\"string\"'\nstep 6: expected stdout 'string', got '\"list\"'\nstep 7: expected stdout 'list', got '\"set\"'\nstep 8: expected stdout 'set', got '\"none\"'\nstep 9: expected stdout 'hash', got 'alpha beta'\nstep 10: expected stdout 'alpha beta', got '[\"first\",\"second\"]'\nstep 16: expected stdout '-1', got '-2'\nstep 17: expected stdout '-1', got ''\nstep 4: expected JSON ['ns:string', 'ns:list', 'ns:set', 'ns:hash'], got 3\nstep 11: expected JSON ['first', 'second'], got ['blue', 'red']\nstep 12: expected JSON ['blue', 'red'], got {}\nstep 13: expected JSON {'owner': 'Ada Lovelace', 'mode': 'prod'}, got -1",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS002",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "delete_invisibility_and_reuse",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "DEL immediately removes keys from every projection and the same names can be reused with different types.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "tenant:string",
+          "old"
+        ],
+        [
+          "RPUSH",
+          "tenant:list",
+          "a",
+          "b"
+        ],
+        [
+          "SADD",
+          "tenant:set",
+          "x",
+          "y"
+        ],
+        [
+          "HSET",
+          "tenant:hash",
+          "f",
+          "v"
+        ],
+        [
+          "DEL",
+          "tenant:list",
+          "tenant:hash",
+          "tenant:missing"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "tenant:list"
+        ],
+        [
+          "LRANGE",
+          "tenant:list",
+          "0",
+          "-1"
+        ],
+        [
+          "TTL",
+          "tenant:list"
+        ],
+        [
+          "HGETALL",
+          "tenant:hash"
+        ],
+        [
+          "TYPE",
+          "tenant:hash"
+        ],
+        [
+          "SET",
+          "tenant:list",
+          "reused-string"
+        ],
+        [
+          "SADD",
+          "tenant:hash",
+          "z"
+        ],
+        [
+          "TYPE",
+          "tenant:list"
+        ],
+        [
+          "GET",
+          "tenant:list"
+        ],
+        [
+          "TYPE",
+          "tenant:hash"
+        ],
+        [
+          "SMEMBERS",
+          "tenant:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "2"
+          ],
+          "6": [
+            "2"
+          ],
+          "7": [
+            "none"
+          ],
+          "9": [
+            "-2"
+          ],
+          "11": [
+            "none"
+          ],
+          "14": [
+            "string"
+          ],
+          "15": [
+            "reused-string"
+          ],
+          "16": [
+            "set"
+          ]
+        },
+        "step_stdout_json": {
+          "5": [
+            "tenant:string",
+            "tenant:set"
+          ],
+          "8": [],
+          "10": {},
+          "17": [
+            "z"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n2\n2\n1\n[\"tenant:set\",\"tenant:string\"]\n2\n\"none\"\n[]\n-2\n{}\n\"none\"\nOK\n1\n\"string\"\nreused-string\n\"set\"\n[\"z\"]",
+      "expected": "step 4: expected stdout '2', got '[\"tenant:set\",\"tenant:string\"]'\nstep 6: expected stdout '2', got '\"none\"'\nstep 7: expected stdout 'none', got '[]'\nstep 9: expected stdout '-2', got '{}'\nstep 11: expected stdout 'none', got 'OK'\nstep 14: expected stdout 'string', got 'reused-string'\nstep 15: expected stdout 'reused-string', got '\"set\"'\nstep 16: expected stdout 'set', got '[\"z\"]'\nstep 5: expected JSON ['tenant:string', 'tenant:set'], got 2\nstep 8: expected JSON [], got -2\nstep 10: expected JSON {}, got 'none'\nstep 17: stdout is not JSON: ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS003",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "expiry_invisibility_all_views",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "Immediate expiry removes keys from all type-specific readers, key listings, TTL, and database size in the same batch-visible state.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "exp:string",
+          "gone"
+        ],
+        [
+          "RPUSH",
+          "exp:list",
+          "a",
+          "b"
+        ],
+        [
+          "SADD",
+          "exp:set",
+          "x"
+        ],
+        [
+          "HSET",
+          "exp:hash",
+          "f",
+          "v"
+        ],
+        [
+          "EXPIRE",
+          "exp:string",
+          "0"
+        ],
+        [
+          "EXPIRE",
+          "exp:list",
+          "0"
+        ],
+        [
+          "EXPIRE",
+          "exp:set",
+          "0"
+        ],
+        [
+          "EXPIRE",
+          "exp:hash",
+          "0"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "exp:string"
+        ],
+        [
+          "GET",
+          "exp:string"
+        ],
+        [
+          "TTL",
+          "exp:string"
+        ],
+        [
+          "TYPE",
+          "exp:list"
+        ],
+        [
+          "LRANGE",
+          "exp:list",
+          "0",
+          "-1"
+        ],
+        [
+          "TTL",
+          "exp:list"
+        ],
+        [
+          "SMEMBERS",
+          "exp:set"
+        ],
+        [
+          "HGETALL",
+          "exp:hash"
+        ],
+        [
+          "TYPE",
+          "exp:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "1"
+          ],
+          "5": [
+            "1"
+          ],
+          "6": [
+            "1"
+          ],
+          "7": [
+            "1"
+          ],
+          "9": [
+            "0"
+          ],
+          "10": [
+            "none"
+          ],
+          "11": [
+            "(nil)"
+          ],
+          "12": [
+            "-2"
+          ],
+          "13": [
+            "none"
+          ],
+          "15": [
+            "-2"
+          ],
+          "18": [
+            "none"
+          ]
+        },
+        "step_stdout_json": {
+          "8": [],
+          "14": [],
+          "16": [],
+          "17": {}
+        }
+      },
+      "passed": false,
+      "actual": "OK\n2\n1\n1\n1\n1\n0\n[]\n0\n\"none\"\n(nil)\n-2\n\"none\"\n[]\n-2\n[]\n{}\n\"none\"",
+      "expected": "step 6: expected stdout '1', got '0'\nstep 7: expected stdout '1', got '[]'\nstep 9: expected stdout '0', got '\"none\"'\nstep 10: expected stdout 'none', got '(nil)'\nstep 11: expected stdout '(nil)', got '-2'\nstep 12: expected stdout '-2', got '\"none\"'\nstep 13: expected stdout 'none', got '[]'\nstep 15: expected stdout '-2', got '[]'\nstep 18: expected stdout 'none', got ''\nstep 8: expected JSON [], got 0\nstep 14: expected JSON [], got -2\nstep 16: expected JSON [], got {}\nstep 17: expected JSON {}, got 'none'",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS004",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "wrong_type_preserves_string_projection",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-errors",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "A wrong-type list write against a string preserves value, type, key listing, DBSIZE, and TTL.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "atom:string",
+          "payload"
+        ],
+        [
+          "EXPIRE",
+          "atom:string",
+          "120"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "TTL",
+          "atom:string"
+        ],
+        {
+          "args": [
+            "RPUSH",
+            "atom:string",
+            "new"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "atom:string"
+        ],
+        [
+          "TYPE",
+          "atom:string"
+        ],
+        [
+          "TTL",
+          "atom:string"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "4"
+        ],
+        "step_stderr_contains_any": {
+          "4": [
+            "type",
+            "string",
+            "list",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "1": [
+            "1"
+          ],
+          "5": [
+            "payload"
+          ],
+          "6": [
+            "string"
+          ],
+          "9": [
+            "1"
+          ]
+        },
+        "step_stdout_json": {
+          "2": [
+            "atom:string"
+          ],
+          "8": [
+            "atom:string"
+          ]
+        },
+        "step_stdout_in_range": {
+          "3": [
+            1,
+            120
+          ],
+          "7": [
+            1,
+            120
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n[\"atom:string\"]\n119\npayload\n\"string\"\n119\n[\"atom:string\"]\n1",
+      "expected": "step 6: expected stdout 'string', got '\"string\"'",
+      "stderr": "(error) WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS006",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "invalid_commands_preserve_namespace",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-hash-ops",
+        "REQ-errors",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "Invalid SET, HSET, EXPIRE, and LRANGE commands leave value projections, type projections, key listings, DBSIZE, and TTL unchanged.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "inv:string",
+          "stable"
+        ],
+        [
+          "EXPIRE",
+          "inv:string",
+          "80"
+        ],
+        [
+          "HSET",
+          "inv:hash",
+          "a",
+          "1",
+          "b",
+          "2"
+        ],
+        [
+          "RPUSH",
+          "inv:list",
+          "one",
+          "two"
+        ],
+        {
+          "args": [
+            "SET",
+            "inv:string",
+            "mutated",
+            "extra"
+          ],
+          "expect_error": true
+        },
+        {
+          "args": [
+            "HSET",
+            "inv:hash",
+            "c"
+          ],
+          "expect_error": true
+        },
+        {
+          "args": [
+            "EXPIRE",
+            "inv:string",
+            "nope"
+          ],
+          "expect_error": true
+        },
+        {
+          "args": [
+            "LRANGE",
+            "inv:list",
+            "zero",
+            "-1"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "inv:string"
+        ],
+        [
+          "TYPE",
+          "inv:string"
+        ],
+        [
+          "TTL",
+          "inv:string"
+        ],
+        [
+          "HGETALL",
+          "inv:hash"
+        ],
+        [
+          "TYPE",
+          "inv:hash"
+        ],
+        [
+          "LRANGE",
+          "inv:list",
+          "0",
+          "-1"
+        ],
+        [
+          "TYPE",
+          "inv:list"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "step_stderr_contains_any": {
+          "4": [
+            "argument",
+            "pair",
+            "integer",
+            "error"
+          ],
+          "5": [
+            "argument",
+            "pair",
+            "integer",
+            "error"
+          ],
+          "6": [
+            "argument",
+            "pair",
+            "integer",
+            "error"
+          ],
+          "7": [
+            "argument",
+            "pair",
+            "integer",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "8": [
+            "stable"
+          ],
+          "9": [
+            "string"
+          ],
+          "12": [
+            "hash"
+          ],
+          "14": [
+            "list"
+          ],
+          "16": [
+            "3"
+          ]
+        },
+        "step_stdout_json": {
+          "11": {
+            "a": "1",
+            "b": "2"
+          },
+          "13": [
+            "one",
+            "two"
+          ],
+          "15": [
+            "inv:string",
+            "inv:hash",
+            "inv:list"
+          ]
+        },
+        "step_stdout_in_range": {
+          "10": [
+            1,
+            80
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n2\nstable\n\"string\"\n79\n{}\n\"none\"\n[\"one\",\"two\"]\n\"list\"\n[\"inv:list\",\"inv:string\"]\n2",
+      "expected": "step 8: expected stdout 'stable', got '\"string\"'\nstep 9: expected stdout 'string', got '79'\nstep 12: expected stdout 'hash', got '[\"one\",\"two\"]'\nstep 14: expected stdout 'list', got '[\"inv:list\",\"inv:string\"]'\nstep 16: expected stdout '3', got ''\nstep 11: expected JSON {'a': '1', 'b': '2'}, got 'none'\nstep 13: expected JSON ['one', 'two'], got 'list'\nstep 15: expected JSON ['inv:string', 'inv:hash', 'inv:list'], got 2\nstep 10: stdout is not numeric: '{}'",
+      "stderr": "(error) wrong number of arguments for 'HSET' command\n(error) wrong number of arguments for 'SET' command\n(error) wrong number of arguments for 'HSET' command\n(error) value is not an integer\n(error) value is not an integer or out of range",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS007",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "overwrite_resets_type_and_ttl",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-errors",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "SET after a typed expiring key replaces the canonical value, resets type and TTL, and subsequent wrong-type reads do not corrupt it.",
+      "weight": 8,
+      "commands": [
+        [
+          "LPUSH",
+          "shape:key",
+          "a",
+          "b"
+        ],
+        [
+          "EXPIRE",
+          "shape:key",
+          "70"
+        ],
+        [
+          "TTL",
+          "shape:key"
+        ],
+        [
+          "SET",
+          "shape:key",
+          "scalar"
+        ],
+        [
+          "TYPE",
+          "shape:key"
+        ],
+        [
+          "GET",
+          "shape:key"
+        ],
+        [
+          "TTL",
+          "shape:key"
+        ],
+        {
+          "args": [
+            "LRANGE",
+            "shape:key",
+            "0",
+            "-1"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "shape:key"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "7"
+        ],
+        "step_stderr_contains_any": {
+          "7": [
+            "type",
+            "string",
+            "list",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "4": [
+            "string"
+          ],
+          "5": [
+            "scalar"
+          ],
+          "6": [
+            "-1"
+          ],
+          "8": [
+            "scalar"
+          ],
+          "10": [
+            "1"
+          ]
+        },
+        "step_stdout_json": {
+          "9": [
+            "shape:key"
+          ]
+        },
+        "step_stdout_in_range": {
+          "2": [
+            1,
+            70
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "2\n1\n69\nOK\n\"string\"\nscalar\n-1\nscalar\n[\"shape:key\"]\n1",
+      "expected": "step 4: expected stdout 'string', got '\"string\"'",
+      "stderr": "(error) WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS008",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "mixed_mutation_projection_consistency",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "After mixed deletion and type-specific mutations, KEYS/DBSIZE/TYPE/read projections agree on the remaining namespace state.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "mix:string",
+          "v"
+        ],
+        [
+          "RPUSH",
+          "mix:list",
+          "a",
+          "b",
+          "c"
+        ],
+        [
+          "SADD",
+          "mix:set",
+          "red",
+          "blue",
+          "red"
+        ],
+        [
+          "HSET",
+          "mix:hash",
+          "a",
+          "1",
+          "b",
+          "2",
+          "c",
+          "3"
+        ],
+        [
+          "DEL",
+          "mix:string"
+        ],
+        [
+          "LPOP",
+          "mix:list"
+        ],
+        [
+          "SREM",
+          "mix:set",
+          "red"
+        ],
+        [
+          "HDEL",
+          "mix:hash",
+          "b",
+          "missing"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "mix:string"
+        ],
+        [
+          "GET",
+          "mix:string"
+        ],
+        [
+          "TYPE",
+          "mix:list"
+        ],
+        [
+          "LRANGE",
+          "mix:list",
+          "0",
+          "-1"
+        ],
+        [
+          "SMEMBERS",
+          "mix:set"
+        ],
+        [
+          "HGETALL",
+          "mix:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "1"
+          ],
+          "5": [
+            "a"
+          ],
+          "6": [
+            "1"
+          ],
+          "7": [
+            "1"
+          ],
+          "9": [
+            "3"
+          ],
+          "10": [
+            "none"
+          ],
+          "11": [
+            "(nil)"
+          ],
+          "12": [
+            "list"
+          ]
+        },
+        "step_stdout_json": {
+          "8": [
+            "mix:list",
+            "mix:set",
+            "mix:hash"
+          ],
+          "13": [
+            "b",
+            "c"
+          ],
+          "14": [
+            "blue"
+          ],
+          "15": {
+            "a": "1",
+            "c": "3"
+          }
+        }
+      },
+      "passed": false,
+      "actual": "OK\n3\n2\n1\na\n1\n0\n[\"mix:list\",\"mix:set\"]\n2\n\"none\"\n(nil)\n\"list\"\n[\"b\",\"c\"]\n[\"blue\"]\n{}",
+      "expected": "step 4: expected stdout '1', got 'a'\nstep 5: expected stdout 'a', got '1'\nstep 6: expected stdout '1', got '0'\nstep 7: expected stdout '1', got '[\"mix:list\",\"mix:set\"]'\nstep 9: expected stdout '3', got '\"none\"'\nstep 10: expected stdout 'none', got '(nil)'\nstep 11: expected stdout '(nil)', got '\"list\"'\nstep 12: expected stdout 'list', got '[\"b\",\"c\"]'\nstep 8: expected JSON ['mix:list', 'mix:set', 'mix:hash'], got 2\nstep 13: expected JSON ['b', 'c'], got ['blue']\nstep 14: expected JSON ['blue'], got {}\nstep 15: stdout is not JSON: ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS010",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "glob_namespace_projection_after_removal",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "Pattern-based key projections agree with type-specific readers after mixed create, delete, and immediate expiry in a tagged namespace.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "tenant:a:string",
+          "A"
+        ],
+        [
+          "RPUSH",
+          "tenant:a:list",
+          "a"
+        ],
+        [
+          "SADD",
+          "tenant:b:set",
+          "b"
+        ],
+        [
+          "HSET",
+          "tenant:b:hash",
+          "h",
+          "v"
+        ],
+        [
+          "SET",
+          "other:string",
+          "O"
+        ],
+        [
+          "EXPIRE",
+          "tenant:b:set",
+          "0"
+        ],
+        [
+          "DEL",
+          "tenant:a:string"
+        ],
+        [
+          "KEYS",
+          "tenant:?:*"
+        ],
+        [
+          "KEYS",
+          "tenant:*:string"
+        ],
+        [
+          "KEYS",
+          "*:hash"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "tenant:b:set"
+        ],
+        [
+          "SMEMBERS",
+          "tenant:b:set"
+        ],
+        [
+          "TYPE",
+          "tenant:a:string"
+        ],
+        [
+          "LRANGE",
+          "tenant:a:list",
+          "0",
+          "-1"
+        ],
+        [
+          "HGETALL",
+          "tenant:b:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "5": [
+            "1"
+          ],
+          "6": [
+            "1"
+          ],
+          "10": [
+            "3"
+          ],
+          "11": [
+            "none"
+          ],
+          "13": [
+            "none"
+          ]
+        },
+        "step_stdout_json": {
+          "7": [
+            "tenant:a:list",
+            "tenant:b:hash"
+          ],
+          "8": [],
+          "9": [
+            "tenant:b:hash"
+          ],
+          "12": [],
+          "14": [
+            "a"
+          ],
+          "15": {
+            "h": "v"
+          }
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n1\nOK\n1\n1\n[\"tenant:a:list\"]\n[]\n[]\n2\n\"none\"\n[]\n\"none\"\n[\"a\"]\n{}",
+      "expected": "step 6: expected stdout '1', got '[\"tenant:a:list\"]'\nstep 10: expected stdout '3', got '\"none\"'\nstep 11: expected stdout 'none', got '[]'\nstep 13: expected stdout 'none', got '[\"a\"]'\nstep 7: expected JSON ['tenant:a:list', 'tenant:b:hash'], got []\nstep 9: expected JSON ['tenant:b:hash'], got 2\nstep 12: expected JSON [], got 'none'\nstep 14: expected JSON ['a'], got {}\nstep 15: stdout is not JSON: ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS011",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "failed_commands_do_not_create_or_shadow_keys",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-hash-ops",
+        "REQ-list-ops",
+        "REQ-errors",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "Invalid and wrong-type writes do not create missing keys, shadow existing keys, or change namespace projections.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "guard:string",
+          "base"
+        ],
+        [
+          "KEYS"
+        ],
+        {
+          "args": [
+            "HSET",
+            "guard:hash",
+            "lonely"
+          ],
+          "expect_error": true
+        },
+        {
+          "args": [
+            "LPUSH",
+            "guard:string",
+            "x"
+          ],
+          "expect_error": true
+        },
+        [
+          "TYPE",
+          "guard:hash"
+        ],
+        [
+          "HGETALL",
+          "guard:hash"
+        ],
+        [
+          "GET",
+          "guard:string"
+        ],
+        [
+          "TYPE",
+          "guard:string"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TTL",
+          "guard:string"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "2",
+          "3"
+        ],
+        "step_stderr_contains_any": {
+          "2": [
+            "argument",
+            "pair",
+            "type",
+            "wrong",
+            "error"
+          ],
+          "3": [
+            "argument",
+            "pair",
+            "type",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "4": [
+            "none"
+          ],
+          "6": [
+            "base"
+          ],
+          "7": [
+            "string"
+          ],
+          "9": [
+            "1"
+          ],
+          "10": [
+            "-1"
+          ]
+        },
+        "step_stdout_json": {
+          "1": [
+            "guard:string"
+          ],
+          "5": {},
+          "8": [
+            "guard:string"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n[\"guard:string\"]\n\"none\"\n{}\nbase\n\"string\"\n[\"guard:string\"]\n1\n-1",
+      "expected": "step 4: expected stdout 'none', got '\"none\"'\nstep 7: expected stdout 'string', got '\"string\"'",
+      "stderr": "(error) wrong number of arguments for 'HSET' command\n(error) WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS012",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "flushdb_invisibility_and_reuse",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-db-mgmt",
+        "REQ-key-mgmt"
+      ],
+      "description": "FLUSHDB clears every type and expiry projection immediately, after which names can be reused under a new type.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "clear:string",
+          "v"
+        ],
+        [
+          "LPUSH",
+          "clear:list",
+          "x"
+        ],
+        [
+          "SADD",
+          "clear:set",
+          "y"
+        ],
+        [
+          "HSET",
+          "clear:hash",
+          "f",
+          "z"
+        ],
+        [
+          "EXPIRE",
+          "clear:list",
+          "40"
+        ],
+        [
+          "FLUSHDB"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "TYPE",
+          "clear:string"
+        ],
+        [
+          "GET",
+          "clear:string"
+        ],
+        [
+          "TYPE",
+          "clear:list"
+        ],
+        [
+          "LRANGE",
+          "clear:list",
+          "0",
+          "-1"
+        ],
+        [
+          "TTL",
+          "clear:list"
+        ],
+        [
+          "SMEMBERS",
+          "clear:set"
+        ],
+        [
+          "HGETALL",
+          "clear:hash"
+        ],
+        [
+          "SADD",
+          "clear:string",
+          "reused"
+        ],
+        [
+          "TYPE",
+          "clear:string"
+        ],
+        [
+          "SMEMBERS",
+          "clear:string"
+        ],
+        [
+          "KEYS"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "5": [
+            "OK"
+          ],
+          "6": [
+            "0"
+          ],
+          "8": [
+            "none"
+          ],
+          "9": [
+            "(nil)"
+          ],
+          "10": [
+            "none"
+          ],
+          "12": [
+            "-2"
+          ],
+          "15": [
+            "1"
+          ],
+          "16": [
+            "set"
+          ]
+        },
+        "step_stdout_json": {
+          "7": [],
+          "11": [],
+          "13": [],
+          "14": {},
+          "17": [
+            "reused"
+          ],
+          "18": [
+            "clear:string"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n1\n1\nOK\n0\n[]\n\"none\"\n(nil)\n\"none\"\n[]\n-2\n[]\n{}\n1\n\"set\"\n[\"reused\"]\n[\"clear:string\"]",
+      "expected": "step 5: expected stdout 'OK', got '0'\nstep 6: expected stdout '0', got '[]'\nstep 8: expected stdout 'none', got '(nil)'\nstep 9: expected stdout '(nil)', got '\"none\"'\nstep 10: expected stdout 'none', got '[]'\nstep 12: expected stdout '-2', got '[]'\nstep 15: expected stdout '1', got '\"set\"'\nstep 16: expected stdout 'set', got '[\"reused\"]'\nstep 7: expected JSON [], got 'none'\nstep 11: expected JSON [], got -2\nstep 13: expected JSON [], got {}\nstep 14: expected JSON {}, got 1\nstep 17: expected JSON ['reused'], got ['clear:string']\nstep 18: stdout is not JSON: ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    }
+  ],
+  "all_cases": [
+    {
+      "id": "MDRU001",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "SET stores a value and GET retrieves it exactly.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "name",
+          "Alice"
+        ],
+        [
+          "GET",
+          "name"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "OK"
+          ],
+          "1": [
+            "Alice"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nAlice",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU002",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "DEL returns count of removed keys; EXISTS returns 0 after delete.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "a",
+          "1"
+        ],
+        [
+          "SET",
+          "b",
+          "2"
+        ],
+        [
+          "SET",
+          "c",
+          "3"
+        ],
+        [
+          "DEL",
+          "a",
+          "x",
+          "b"
+        ],
+        [
+          "EXISTS",
+          "a"
+        ],
+        [
+          "EXISTS",
+          "b"
+        ],
+        [
+          "EXISTS",
+          "c"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "3": [
+            "2"
+          ],
+          "4": [
+            "0"
+          ],
+          "5": [
+            "0"
+          ],
+          "6": [
+            "1"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nOK\nOK\n2\n0\n0\n1",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU003",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "SET overwrites previous value of same key.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "k",
+          "first"
+        ],
+        [
+          "SET",
+          "k",
+          "second"
+        ],
+        [
+          "GET",
+          "k"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "2": [
+            "second"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nOK\nsecond",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU004",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LPUSH prepends elements; LRANGE shows correct LIFO-style head order.",
+      "weight": 4,
+      "commands": [
+        [
+          "LPUSH",
+          "items",
+          "c",
+          "b",
+          "a"
+        ],
+        [
+          "LRANGE",
+          "items",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ]
+        },
+        "step_stdout_json": {
+          "1": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "3\n[\"c\",\"b\",\"a\"]",
+      "expected": "step 1: expected JSON ['a', 'b', 'c'], got ['c', 'b', 'a']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU005",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "RPUSH appends elements preserving insertion order.",
+      "weight": 4,
+      "commands": [
+        [
+          "RPUSH",
+          "queue",
+          "a",
+          "b",
+          "c"
+        ],
+        [
+          "LRANGE",
+          "queue",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ]
+        },
+        "step_stdout_json": {
+          "1": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n[\"a\",\"b\",\"c\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU006",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LPOP removes and returns first element; LLEN reflects updated size.",
+      "weight": 4,
+      "commands": [
+        [
+          "RPUSH",
+          "items",
+          "one",
+          "two",
+          "three"
+        ],
+        [
+          "LLEN",
+          "items"
+        ],
+        [
+          "LPOP",
+          "items"
+        ],
+        [
+          "LLEN",
+          "items"
+        ],
+        [
+          "LRANGE",
+          "items",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "3"
+          ],
+          "2": [
+            "one"
+          ],
+          "3": [
+            "2"
+          ]
+        },
+        "step_stdout_json": {
+          "4": [
+            "two",
+            "three"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n3\none\n2\n[\"two\",\"three\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU007",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LRANGE with negative indices and subrange works correctly.",
+      "weight": 4,
+      "commands": [
+        [
+          "RPUSH",
+          "nums",
+          "10",
+          "20",
+          "30",
+          "40",
+          "50"
+        ],
+        [
+          "LRANGE",
+          "nums",
+          "1",
+          "3"
+        ],
+        [
+          "LRANGE",
+          "nums",
+          "-2",
+          "-1"
+        ],
+        [
+          "LRANGE",
+          "nums",
+          "0",
+          "0"
+        ]
+      ],
+      "checks": {
+        "step_stdout_json": {
+          "1": [
+            "20",
+            "30",
+            "40"
+          ],
+          "2": [
+            "40",
+            "50"
+          ],
+          "3": [
+            "10"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "5\n[\"20\",\"30\",\"40\"]\n[\"40\",\"50\"]\n[\"10\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU008",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "SADD adds members and SMEMBERS returns them as a JSON array.",
+      "weight": 4,
+      "commands": [
+        [
+          "SADD",
+          "colors",
+          "red",
+          "green",
+          "blue"
+        ],
+        [
+          "SMEMBERS",
+          "colors"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "1": [
+            "red",
+            "green",
+            "blue"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n[\"blue\",\"green\",\"red\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU009",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "SADD deduplicates; SREM removes members; SISMEMBER checks membership.",
+      "weight": 4,
+      "commands": [
+        [
+          "SADD",
+          "tags",
+          "a",
+          "b",
+          "a",
+          "c"
+        ],
+        [
+          "SMEMBERS",
+          "tags"
+        ],
+        [
+          "SISMEMBER",
+          "tags",
+          "b"
+        ],
+        [
+          "SISMEMBER",
+          "tags",
+          "x"
+        ],
+        [
+          "SREM",
+          "tags",
+          "a",
+          "x"
+        ],
+        [
+          "SMEMBERS",
+          "tags"
+        ],
+        [
+          "SISMEMBER",
+          "tags",
+          "a"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ],
+          "2": [
+            "1"
+          ],
+          "3": [
+            "0"
+          ],
+          "4": [
+            "1"
+          ],
+          "6": [
+            "0"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "1": [
+            "a",
+            "b",
+            "c"
+          ],
+          "5": [
+            "b",
+            "c"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n[\"a\",\"b\",\"c\"]\n1\n0\n1\n[\"b\",\"c\"]\n0",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU010",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "SCARD returns correct cardinality after SADD and SREM.",
+      "weight": 4,
+      "commands": [
+        [
+          "SADD",
+          "s",
+          "x",
+          "y",
+          "z"
+        ],
+        [
+          "SCARD",
+          "s"
+        ],
+        [
+          "SREM",
+          "s",
+          "y"
+        ],
+        [
+          "SCARD",
+          "s"
+        ],
+        [
+          "SCARD",
+          "no-key"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "3"
+          ],
+          "3": [
+            "2"
+          ],
+          "4": [
+            "0"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n3\n1\n2\n0",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU011",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HSET sets a field and HGET retrieves it.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "user:1",
+          "name",
+          "Alice"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "name"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "email"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "1"
+          ],
+          "1": [
+            "Alice"
+          ],
+          "2": [
+            "(nil)"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "(nil)\n(nil)",
+      "expected": "step 0: expected stdout '1', got '(nil)'\nstep 1: expected stdout 'Alice', got '(nil)'\nstep 2: expected stdout '(nil)', got ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU012",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HSET multi-field; HDEL removes fields; HGETALL returns all fields.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "user:1",
+          "name",
+          "Alice",
+          "age",
+          "30",
+          "city",
+          "NYC"
+        ],
+        [
+          "HGETALL",
+          "user:1"
+        ],
+        [
+          "HDEL",
+          "user:1",
+          "age",
+          "phone"
+        ],
+        [
+          "HGETALL",
+          "user:1"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "age"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ],
+          "2": [
+            "1"
+          ],
+          "4": [
+            "(nil)"
+          ]
+        },
+        "step_stdout_json": {
+          "1": {
+            "name": "Alice",
+            "age": "30",
+            "city": "NYC"
+          },
+          "3": {
+            "name": "Alice",
+            "city": "NYC"
+          }
+        }
+      },
+      "passed": false,
+      "actual": "{}\n0\n{}\n(nil)",
+      "expected": "step 0: expected stdout '3', got '{}'\nstep 2: expected stdout '1', got '{}'\nstep 4: expected stdout '(nil)', got ''\nstep 1: expected JSON {'name': 'Alice', 'age': '30', 'city': 'NYC'}, got 0\nstep 3: stdout is not JSON: '(nil)'",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU013",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HEXISTS returns 1 for existing fields and 0 for missing fields.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "config",
+          "theme",
+          "dark"
+        ],
+        [
+          "HEXISTS",
+          "config",
+          "theme"
+        ],
+        [
+          "HEXISTS",
+          "config",
+          "lang"
+        ],
+        [
+          "HEXISTS",
+          "nokey",
+          "field"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "1"
+          ],
+          "2": [
+            "0"
+          ],
+          "3": [
+            "0"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "0\n0\n0",
+      "expected": "step 1: expected stdout '1', got '0'\nstep 3: expected stdout '0', got ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU014",
+      "layer": "unit",
+      "category": "key_management",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "TYPE returns correct type for all four data structures and none for missing keys.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "s",
+          "v"
+        ],
+        [
+          "LPUSH",
+          "l",
+          "x"
+        ],
+        [
+          "SADD",
+          "set",
+          "y"
+        ],
+        [
+          "HSET",
+          "h",
+          "f",
+          "z"
+        ],
+        [
+          "TYPE",
+          "s"
+        ],
+        [
+          "TYPE",
+          "l"
+        ],
+        [
+          "TYPE",
+          "set"
+        ],
+        [
+          "TYPE",
+          "h"
+        ],
+        [
+          "TYPE",
+          "nope"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "string"
+          ],
+          "5": [
+            "list"
+          ],
+          "6": [
+            "set"
+          ],
+          "7": [
+            "hash"
+          ],
+          "8": [
+            "none"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n1\n\"string\"\n\"list\"\n\"set\"\n\"none\"\n\"none\"",
+      "expected": "step 4: expected stdout 'string', got '\"list\"'\nstep 5: expected stdout 'list', got '\"set\"'\nstep 6: expected stdout 'set', got '\"none\"'\nstep 7: expected stdout 'hash', got '\"none\"'\nstep 8: expected stdout 'none', got ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU015",
+      "layer": "unit",
+      "category": "key_management",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "KEYS returns all keys without pattern; filters with glob pattern.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "user:1",
+          "Alice"
+        ],
+        [
+          "SET",
+          "user:2",
+          "Bob"
+        ],
+        [
+          "LPUSH",
+          "items",
+          "x"
+        ],
+        [
+          "SADD",
+          "tags",
+          "y"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "KEYS",
+          "user:*"
+        ]
+      ],
+      "checks": {
+        "step_stdout_json_contains": {
+          "4": [
+            "user:1",
+            "user:2",
+            "items",
+            "tags"
+          ]
+        },
+        "step_stdout_json": {
+          "5": [
+            "user:1",
+            "user:2"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nOK\n1\n1\n[\"items\",\"tags\",\"user:1\",\"user:2\"]\n[\"user:1\",\"user:2\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU016",
+      "layer": "unit",
+      "category": "key_management",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "EXPIRE sets TTL; TTL reads it; TTL returns -2 for missing key and -1 for persistent key.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "temp",
+          "val"
+        ],
+        [
+          "EXPIRE",
+          "temp",
+          "300"
+        ],
+        [
+          "TTL",
+          "temp"
+        ],
+        [
+          "TTL",
+          "no-key"
+        ],
+        [
+          "SET",
+          "perm",
+          "forever"
+        ],
+        [
+          "TTL",
+          "perm"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "OK"
+          ],
+          "1": [
+            "1"
+          ],
+          "3": [
+            "-2"
+          ],
+          "5": [
+            "-1"
+          ]
+        },
+        "step_stdout_in_range": {
+          "2": [
+            1,
+            300
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n299\n-2\nOK\n-1",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU017",
+      "layer": "unit",
+      "category": "db_management",
+      "requirement_refs": [
+        "REQ-db-mgmt"
+      ],
+      "description": "FLUSHDB removes all keys; DBSIZE becomes 0; KEYS returns empty.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "a",
+          "1"
+        ],
+        [
+          "LPUSH",
+          "b",
+          "x"
+        ],
+        [
+          "SADD",
+          "c",
+          "y"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "FLUSHDB"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "KEYS"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "3": [
+            "3"
+          ],
+          "4": [
+            "OK"
+          ],
+          "5": [
+            "0"
+          ]
+        },
+        "step_stdout_json": {
+          "6": []
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n1\n3\nOK\n0\n[]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU018",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-list-ops"
+      ],
+      "description": "LPOP on a string key fails non-zero and preserves the original value.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "name",
+          "Alice"
+        ],
+        {
+          "args": [
+            "LPOP",
+            "name"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "name"
+        ],
+        [
+          "TYPE",
+          "name"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "1"
+        ],
+        "step_stderr_contains_any": {
+          "1": [
+            "type",
+            "string",
+            "list",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "2": [
+            "Alice"
+          ],
+          "3": [
+            "string"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\nAlice\n\"string\"",
+      "expected": "step 3: expected stdout 'string', got '\"string\"'",
+      "stderr": "(error) WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS001",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "namespace_projection_consistency",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "One type-tagged namespace, including shell-quoted batch values, projects the same live keys, types, values, and persistent TTL state through KEYS/DBSIZE/TYPE/read commands.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "ns:string",
+          "alpha beta"
+        ],
+        [
+          "RPUSH",
+          "ns:list",
+          "first",
+          "second"
+        ],
+        [
+          "SADD",
+          "ns:set",
+          "red",
+          "blue",
+          "red"
+        ],
+        [
+          "HSET",
+          "ns:hash",
+          "owner",
+          "Ada Lovelace",
+          "mode",
+          "prod"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "ns:string"
+        ],
+        [
+          "TYPE",
+          "ns:list"
+        ],
+        [
+          "TYPE",
+          "ns:set"
+        ],
+        [
+          "TYPE",
+          "ns:hash"
+        ],
+        [
+          "GET",
+          "ns:string"
+        ],
+        [
+          "LRANGE",
+          "ns:list",
+          "0",
+          "-1"
+        ],
+        [
+          "SMEMBERS",
+          "ns:set"
+        ],
+        [
+          "HGETALL",
+          "ns:hash"
+        ],
+        [
+          "TTL",
+          "ns:string"
+        ],
+        [
+          "TTL",
+          "ns:list"
+        ],
+        [
+          "TTL",
+          "ns:set"
+        ],
+        [
+          "TTL",
+          "ns:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "5": [
+            "4"
+          ],
+          "6": [
+            "string"
+          ],
+          "7": [
+            "list"
+          ],
+          "8": [
+            "set"
+          ],
+          "9": [
+            "hash"
+          ],
+          "10": [
+            "alpha beta"
+          ],
+          "14": [
+            "-1"
+          ],
+          "15": [
+            "-1"
+          ],
+          "16": [
+            "-1"
+          ],
+          "17": [
+            "-1"
+          ]
+        },
+        "step_stdout_json": {
+          "4": [
+            "ns:string",
+            "ns:list",
+            "ns:set",
+            "ns:hash"
+          ],
+          "11": [
+            "first",
+            "second"
+          ],
+          "12": [
+            "blue",
+            "red"
+          ],
+          "13": {
+            "owner": "Ada Lovelace",
+            "mode": "prod"
+          }
+        }
+      },
+      "passed": false,
+      "actual": "OK\n2\n2\n[\"ns:list\",\"ns:set\",\"ns:string\"]\n3\n\"string\"\n\"list\"\n\"set\"\n\"none\"\nalpha beta\n[\"first\",\"second\"]\n[\"blue\",\"red\"]\n{}\n-1\n-1\n-1\n-2",
+      "expected": "step 5: expected stdout '4', got '\"string\"'\nstep 6: expected stdout 'string', got '\"list\"'\nstep 7: expected stdout 'list', got '\"set\"'\nstep 8: expected stdout 'set', got '\"none\"'\nstep 9: expected stdout 'hash', got 'alpha beta'\nstep 10: expected stdout 'alpha beta', got '[\"first\",\"second\"]'\nstep 16: expected stdout '-1', got '-2'\nstep 17: expected stdout '-1', got ''\nstep 4: expected JSON ['ns:string', 'ns:list', 'ns:set', 'ns:hash'], got 3\nstep 11: expected JSON ['first', 'second'], got ['blue', 'red']\nstep 12: expected JSON ['blue', 'red'], got {}\nstep 13: expected JSON {'owner': 'Ada Lovelace', 'mode': 'prod'}, got -1",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS002",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "delete_invisibility_and_reuse",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "DEL immediately removes keys from every projection and the same names can be reused with different types.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "tenant:string",
+          "old"
+        ],
+        [
+          "RPUSH",
+          "tenant:list",
+          "a",
+          "b"
+        ],
+        [
+          "SADD",
+          "tenant:set",
+          "x",
+          "y"
+        ],
+        [
+          "HSET",
+          "tenant:hash",
+          "f",
+          "v"
+        ],
+        [
+          "DEL",
+          "tenant:list",
+          "tenant:hash",
+          "tenant:missing"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "tenant:list"
+        ],
+        [
+          "LRANGE",
+          "tenant:list",
+          "0",
+          "-1"
+        ],
+        [
+          "TTL",
+          "tenant:list"
+        ],
+        [
+          "HGETALL",
+          "tenant:hash"
+        ],
+        [
+          "TYPE",
+          "tenant:hash"
+        ],
+        [
+          "SET",
+          "tenant:list",
+          "reused-string"
+        ],
+        [
+          "SADD",
+          "tenant:hash",
+          "z"
+        ],
+        [
+          "TYPE",
+          "tenant:list"
+        ],
+        [
+          "GET",
+          "tenant:list"
+        ],
+        [
+          "TYPE",
+          "tenant:hash"
+        ],
+        [
+          "SMEMBERS",
+          "tenant:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "2"
+          ],
+          "6": [
+            "2"
+          ],
+          "7": [
+            "none"
+          ],
+          "9": [
+            "-2"
+          ],
+          "11": [
+            "none"
+          ],
+          "14": [
+            "string"
+          ],
+          "15": [
+            "reused-string"
+          ],
+          "16": [
+            "set"
+          ]
+        },
+        "step_stdout_json": {
+          "5": [
+            "tenant:string",
+            "tenant:set"
+          ],
+          "8": [],
+          "10": {},
+          "17": [
+            "z"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n2\n2\n1\n[\"tenant:set\",\"tenant:string\"]\n2\n\"none\"\n[]\n-2\n{}\n\"none\"\nOK\n1\n\"string\"\nreused-string\n\"set\"\n[\"z\"]",
+      "expected": "step 4: expected stdout '2', got '[\"tenant:set\",\"tenant:string\"]'\nstep 6: expected stdout '2', got '\"none\"'\nstep 7: expected stdout 'none', got '[]'\nstep 9: expected stdout '-2', got '{}'\nstep 11: expected stdout 'none', got 'OK'\nstep 14: expected stdout 'string', got 'reused-string'\nstep 15: expected stdout 'reused-string', got '\"set\"'\nstep 16: expected stdout 'set', got '[\"z\"]'\nstep 5: expected JSON ['tenant:string', 'tenant:set'], got 2\nstep 8: expected JSON [], got -2\nstep 10: expected JSON {}, got 'none'\nstep 17: stdout is not JSON: ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS003",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "expiry_invisibility_all_views",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "Immediate expiry removes keys from all type-specific readers, key listings, TTL, and database size in the same batch-visible state.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "exp:string",
+          "gone"
+        ],
+        [
+          "RPUSH",
+          "exp:list",
+          "a",
+          "b"
+        ],
+        [
+          "SADD",
+          "exp:set",
+          "x"
+        ],
+        [
+          "HSET",
+          "exp:hash",
+          "f",
+          "v"
+        ],
+        [
+          "EXPIRE",
+          "exp:string",
+          "0"
+        ],
+        [
+          "EXPIRE",
+          "exp:list",
+          "0"
+        ],
+        [
+          "EXPIRE",
+          "exp:set",
+          "0"
+        ],
+        [
+          "EXPIRE",
+          "exp:hash",
+          "0"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "exp:string"
+        ],
+        [
+          "GET",
+          "exp:string"
+        ],
+        [
+          "TTL",
+          "exp:string"
+        ],
+        [
+          "TYPE",
+          "exp:list"
+        ],
+        [
+          "LRANGE",
+          "exp:list",
+          "0",
+          "-1"
+        ],
+        [
+          "TTL",
+          "exp:list"
+        ],
+        [
+          "SMEMBERS",
+          "exp:set"
+        ],
+        [
+          "HGETALL",
+          "exp:hash"
+        ],
+        [
+          "TYPE",
+          "exp:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "1"
+          ],
+          "5": [
+            "1"
+          ],
+          "6": [
+            "1"
+          ],
+          "7": [
+            "1"
+          ],
+          "9": [
+            "0"
+          ],
+          "10": [
+            "none"
+          ],
+          "11": [
+            "(nil)"
+          ],
+          "12": [
+            "-2"
+          ],
+          "13": [
+            "none"
+          ],
+          "15": [
+            "-2"
+          ],
+          "18": [
+            "none"
+          ]
+        },
+        "step_stdout_json": {
+          "8": [],
+          "14": [],
+          "16": [],
+          "17": {}
+        }
+      },
+      "passed": false,
+      "actual": "OK\n2\n1\n1\n1\n1\n0\n[]\n0\n\"none\"\n(nil)\n-2\n\"none\"\n[]\n-2\n[]\n{}\n\"none\"",
+      "expected": "step 6: expected stdout '1', got '0'\nstep 7: expected stdout '1', got '[]'\nstep 9: expected stdout '0', got '\"none\"'\nstep 10: expected stdout 'none', got '(nil)'\nstep 11: expected stdout '(nil)', got '-2'\nstep 12: expected stdout '-2', got '\"none\"'\nstep 13: expected stdout 'none', got '[]'\nstep 15: expected stdout '-2', got '[]'\nstep 18: expected stdout 'none', got ''\nstep 8: expected JSON [], got 0\nstep 14: expected JSON [], got -2\nstep 16: expected JSON [], got {}\nstep 17: expected JSON {}, got 'none'",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS004",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "wrong_type_preserves_string_projection",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-errors",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "A wrong-type list write against a string preserves value, type, key listing, DBSIZE, and TTL.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "atom:string",
+          "payload"
+        ],
+        [
+          "EXPIRE",
+          "atom:string",
+          "120"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "TTL",
+          "atom:string"
+        ],
+        {
+          "args": [
+            "RPUSH",
+            "atom:string",
+            "new"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "atom:string"
+        ],
+        [
+          "TYPE",
+          "atom:string"
+        ],
+        [
+          "TTL",
+          "atom:string"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "4"
+        ],
+        "step_stderr_contains_any": {
+          "4": [
+            "type",
+            "string",
+            "list",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "1": [
+            "1"
+          ],
+          "5": [
+            "payload"
+          ],
+          "6": [
+            "string"
+          ],
+          "9": [
+            "1"
+          ]
+        },
+        "step_stdout_json": {
+          "2": [
+            "atom:string"
+          ],
+          "8": [
+            "atom:string"
+          ]
+        },
+        "step_stdout_in_range": {
+          "3": [
+            1,
+            120
+          ],
+          "7": [
+            1,
+            120
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n[\"atom:string\"]\n119\npayload\n\"string\"\n119\n[\"atom:string\"]\n1",
+      "expected": "step 6: expected stdout 'string', got '\"string\"'",
+      "stderr": "(error) WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS006",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "invalid_commands_preserve_namespace",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-hash-ops",
+        "REQ-errors",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "Invalid SET, HSET, EXPIRE, and LRANGE commands leave value projections, type projections, key listings, DBSIZE, and TTL unchanged.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "inv:string",
+          "stable"
+        ],
+        [
+          "EXPIRE",
+          "inv:string",
+          "80"
+        ],
+        [
+          "HSET",
+          "inv:hash",
+          "a",
+          "1",
+          "b",
+          "2"
+        ],
+        [
+          "RPUSH",
+          "inv:list",
+          "one",
+          "two"
+        ],
+        {
+          "args": [
+            "SET",
+            "inv:string",
+            "mutated",
+            "extra"
+          ],
+          "expect_error": true
+        },
+        {
+          "args": [
+            "HSET",
+            "inv:hash",
+            "c"
+          ],
+          "expect_error": true
+        },
+        {
+          "args": [
+            "EXPIRE",
+            "inv:string",
+            "nope"
+          ],
+          "expect_error": true
+        },
+        {
+          "args": [
+            "LRANGE",
+            "inv:list",
+            "zero",
+            "-1"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "inv:string"
+        ],
+        [
+          "TYPE",
+          "inv:string"
+        ],
+        [
+          "TTL",
+          "inv:string"
+        ],
+        [
+          "HGETALL",
+          "inv:hash"
+        ],
+        [
+          "TYPE",
+          "inv:hash"
+        ],
+        [
+          "LRANGE",
+          "inv:list",
+          "0",
+          "-1"
+        ],
+        [
+          "TYPE",
+          "inv:list"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "step_stderr_contains_any": {
+          "4": [
+            "argument",
+            "pair",
+            "integer",
+            "error"
+          ],
+          "5": [
+            "argument",
+            "pair",
+            "integer",
+            "error"
+          ],
+          "6": [
+            "argument",
+            "pair",
+            "integer",
+            "error"
+          ],
+          "7": [
+            "argument",
+            "pair",
+            "integer",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "8": [
+            "stable"
+          ],
+          "9": [
+            "string"
+          ],
+          "12": [
+            "hash"
+          ],
+          "14": [
+            "list"
+          ],
+          "16": [
+            "3"
+          ]
+        },
+        "step_stdout_json": {
+          "11": {
+            "a": "1",
+            "b": "2"
+          },
+          "13": [
+            "one",
+            "two"
+          ],
+          "15": [
+            "inv:string",
+            "inv:hash",
+            "inv:list"
+          ]
+        },
+        "step_stdout_in_range": {
+          "10": [
+            1,
+            80
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n2\nstable\n\"string\"\n79\n{}\n\"none\"\n[\"one\",\"two\"]\n\"list\"\n[\"inv:list\",\"inv:string\"]\n2",
+      "expected": "step 8: expected stdout 'stable', got '\"string\"'\nstep 9: expected stdout 'string', got '79'\nstep 12: expected stdout 'hash', got '[\"one\",\"two\"]'\nstep 14: expected stdout 'list', got '[\"inv:list\",\"inv:string\"]'\nstep 16: expected stdout '3', got ''\nstep 11: expected JSON {'a': '1', 'b': '2'}, got 'none'\nstep 13: expected JSON ['one', 'two'], got 'list'\nstep 15: expected JSON ['inv:string', 'inv:hash', 'inv:list'], got 2\nstep 10: stdout is not numeric: '{}'",
+      "stderr": "(error) wrong number of arguments for 'HSET' command\n(error) wrong number of arguments for 'SET' command\n(error) wrong number of arguments for 'HSET' command\n(error) value is not an integer\n(error) value is not an integer or out of range",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS007",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "overwrite_resets_type_and_ttl",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-errors",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "SET after a typed expiring key replaces the canonical value, resets type and TTL, and subsequent wrong-type reads do not corrupt it.",
+      "weight": 8,
+      "commands": [
+        [
+          "LPUSH",
+          "shape:key",
+          "a",
+          "b"
+        ],
+        [
+          "EXPIRE",
+          "shape:key",
+          "70"
+        ],
+        [
+          "TTL",
+          "shape:key"
+        ],
+        [
+          "SET",
+          "shape:key",
+          "scalar"
+        ],
+        [
+          "TYPE",
+          "shape:key"
+        ],
+        [
+          "GET",
+          "shape:key"
+        ],
+        [
+          "TTL",
+          "shape:key"
+        ],
+        {
+          "args": [
+            "LRANGE",
+            "shape:key",
+            "0",
+            "-1"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "shape:key"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "7"
+        ],
+        "step_stderr_contains_any": {
+          "7": [
+            "type",
+            "string",
+            "list",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "4": [
+            "string"
+          ],
+          "5": [
+            "scalar"
+          ],
+          "6": [
+            "-1"
+          ],
+          "8": [
+            "scalar"
+          ],
+          "10": [
+            "1"
+          ]
+        },
+        "step_stdout_json": {
+          "9": [
+            "shape:key"
+          ]
+        },
+        "step_stdout_in_range": {
+          "2": [
+            1,
+            70
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "2\n1\n69\nOK\n\"string\"\nscalar\n-1\nscalar\n[\"shape:key\"]\n1",
+      "expected": "step 4: expected stdout 'string', got '\"string\"'",
+      "stderr": "(error) WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS008",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "mixed_mutation_projection_consistency",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "After mixed deletion and type-specific mutations, KEYS/DBSIZE/TYPE/read projections agree on the remaining namespace state.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "mix:string",
+          "v"
+        ],
+        [
+          "RPUSH",
+          "mix:list",
+          "a",
+          "b",
+          "c"
+        ],
+        [
+          "SADD",
+          "mix:set",
+          "red",
+          "blue",
+          "red"
+        ],
+        [
+          "HSET",
+          "mix:hash",
+          "a",
+          "1",
+          "b",
+          "2",
+          "c",
+          "3"
+        ],
+        [
+          "DEL",
+          "mix:string"
+        ],
+        [
+          "LPOP",
+          "mix:list"
+        ],
+        [
+          "SREM",
+          "mix:set",
+          "red"
+        ],
+        [
+          "HDEL",
+          "mix:hash",
+          "b",
+          "missing"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "mix:string"
+        ],
+        [
+          "GET",
+          "mix:string"
+        ],
+        [
+          "TYPE",
+          "mix:list"
+        ],
+        [
+          "LRANGE",
+          "mix:list",
+          "0",
+          "-1"
+        ],
+        [
+          "SMEMBERS",
+          "mix:set"
+        ],
+        [
+          "HGETALL",
+          "mix:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "1"
+          ],
+          "5": [
+            "a"
+          ],
+          "6": [
+            "1"
+          ],
+          "7": [
+            "1"
+          ],
+          "9": [
+            "3"
+          ],
+          "10": [
+            "none"
+          ],
+          "11": [
+            "(nil)"
+          ],
+          "12": [
+            "list"
+          ]
+        },
+        "step_stdout_json": {
+          "8": [
+            "mix:list",
+            "mix:set",
+            "mix:hash"
+          ],
+          "13": [
+            "b",
+            "c"
+          ],
+          "14": [
+            "blue"
+          ],
+          "15": {
+            "a": "1",
+            "c": "3"
+          }
+        }
+      },
+      "passed": false,
+      "actual": "OK\n3\n2\n1\na\n1\n0\n[\"mix:list\",\"mix:set\"]\n2\n\"none\"\n(nil)\n\"list\"\n[\"b\",\"c\"]\n[\"blue\"]\n{}",
+      "expected": "step 4: expected stdout '1', got 'a'\nstep 5: expected stdout 'a', got '1'\nstep 6: expected stdout '1', got '0'\nstep 7: expected stdout '1', got '[\"mix:list\",\"mix:set\"]'\nstep 9: expected stdout '3', got '\"none\"'\nstep 10: expected stdout 'none', got '(nil)'\nstep 11: expected stdout '(nil)', got '\"list\"'\nstep 12: expected stdout 'list', got '[\"b\",\"c\"]'\nstep 8: expected JSON ['mix:list', 'mix:set', 'mix:hash'], got 2\nstep 13: expected JSON ['b', 'c'], got ['blue']\nstep 14: expected JSON ['blue'], got {}\nstep 15: stdout is not JSON: ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS010",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "glob_namespace_projection_after_removal",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "Pattern-based key projections agree with type-specific readers after mixed create, delete, and immediate expiry in a tagged namespace.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "tenant:a:string",
+          "A"
+        ],
+        [
+          "RPUSH",
+          "tenant:a:list",
+          "a"
+        ],
+        [
+          "SADD",
+          "tenant:b:set",
+          "b"
+        ],
+        [
+          "HSET",
+          "tenant:b:hash",
+          "h",
+          "v"
+        ],
+        [
+          "SET",
+          "other:string",
+          "O"
+        ],
+        [
+          "EXPIRE",
+          "tenant:b:set",
+          "0"
+        ],
+        [
+          "DEL",
+          "tenant:a:string"
+        ],
+        [
+          "KEYS",
+          "tenant:?:*"
+        ],
+        [
+          "KEYS",
+          "tenant:*:string"
+        ],
+        [
+          "KEYS",
+          "*:hash"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TYPE",
+          "tenant:b:set"
+        ],
+        [
+          "SMEMBERS",
+          "tenant:b:set"
+        ],
+        [
+          "TYPE",
+          "tenant:a:string"
+        ],
+        [
+          "LRANGE",
+          "tenant:a:list",
+          "0",
+          "-1"
+        ],
+        [
+          "HGETALL",
+          "tenant:b:hash"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "5": [
+            "1"
+          ],
+          "6": [
+            "1"
+          ],
+          "10": [
+            "3"
+          ],
+          "11": [
+            "none"
+          ],
+          "13": [
+            "none"
+          ]
+        },
+        "step_stdout_json": {
+          "7": [
+            "tenant:a:list",
+            "tenant:b:hash"
+          ],
+          "8": [],
+          "9": [
+            "tenant:b:hash"
+          ],
+          "12": [],
+          "14": [
+            "a"
+          ],
+          "15": {
+            "h": "v"
+          }
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n1\nOK\n1\n1\n[\"tenant:a:list\"]\n[]\n[]\n2\n\"none\"\n[]\n\"none\"\n[\"a\"]\n{}",
+      "expected": "step 6: expected stdout '1', got '[\"tenant:a:list\"]'\nstep 10: expected stdout '3', got '\"none\"'\nstep 11: expected stdout 'none', got '[]'\nstep 13: expected stdout 'none', got '[\"a\"]'\nstep 7: expected JSON ['tenant:a:list', 'tenant:b:hash'], got []\nstep 9: expected JSON ['tenant:b:hash'], got 2\nstep 12: expected JSON [], got 'none'\nstep 14: expected JSON ['a'], got {}\nstep 15: stdout is not JSON: ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS011",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "failed_commands_do_not_create_or_shadow_keys",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-hash-ops",
+        "REQ-list-ops",
+        "REQ-errors",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "Invalid and wrong-type writes do not create missing keys, shadow existing keys, or change namespace projections.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "guard:string",
+          "base"
+        ],
+        [
+          "KEYS"
+        ],
+        {
+          "args": [
+            "HSET",
+            "guard:hash",
+            "lonely"
+          ],
+          "expect_error": true
+        },
+        {
+          "args": [
+            "LPUSH",
+            "guard:string",
+            "x"
+          ],
+          "expect_error": true
+        },
+        [
+          "TYPE",
+          "guard:hash"
+        ],
+        [
+          "HGETALL",
+          "guard:hash"
+        ],
+        [
+          "GET",
+          "guard:string"
+        ],
+        [
+          "TYPE",
+          "guard:string"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "TTL",
+          "guard:string"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "2",
+          "3"
+        ],
+        "step_stderr_contains_any": {
+          "2": [
+            "argument",
+            "pair",
+            "type",
+            "wrong",
+            "error"
+          ],
+          "3": [
+            "argument",
+            "pair",
+            "type",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "4": [
+            "none"
+          ],
+          "6": [
+            "base"
+          ],
+          "7": [
+            "string"
+          ],
+          "9": [
+            "1"
+          ],
+          "10": [
+            "-1"
+          ]
+        },
+        "step_stdout_json": {
+          "1": [
+            "guard:string"
+          ],
+          "5": {},
+          "8": [
+            "guard:string"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n[\"guard:string\"]\n\"none\"\n{}\nbase\n\"string\"\n[\"guard:string\"]\n1\n-1",
+      "expected": "step 4: expected stdout 'none', got '\"none\"'\nstep 7: expected stdout 'string', got '\"string\"'",
+      "stderr": "(error) wrong number of arguments for 'HSET' command\n(error) WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS012",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "flushdb_invisibility_and_reuse",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-db-mgmt",
+        "REQ-key-mgmt"
+      ],
+      "description": "FLUSHDB clears every type and expiry projection immediately, after which names can be reused under a new type.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "clear:string",
+          "v"
+        ],
+        [
+          "LPUSH",
+          "clear:list",
+          "x"
+        ],
+        [
+          "SADD",
+          "clear:set",
+          "y"
+        ],
+        [
+          "HSET",
+          "clear:hash",
+          "f",
+          "z"
+        ],
+        [
+          "EXPIRE",
+          "clear:list",
+          "40"
+        ],
+        [
+          "FLUSHDB"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "TYPE",
+          "clear:string"
+        ],
+        [
+          "GET",
+          "clear:string"
+        ],
+        [
+          "TYPE",
+          "clear:list"
+        ],
+        [
+          "LRANGE",
+          "clear:list",
+          "0",
+          "-1"
+        ],
+        [
+          "TTL",
+          "clear:list"
+        ],
+        [
+          "SMEMBERS",
+          "clear:set"
+        ],
+        [
+          "HGETALL",
+          "clear:hash"
+        ],
+        [
+          "SADD",
+          "clear:string",
+          "reused"
+        ],
+        [
+          "TYPE",
+          "clear:string"
+        ],
+        [
+          "SMEMBERS",
+          "clear:string"
+        ],
+        [
+          "KEYS"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "5": [
+            "OK"
+          ],
+          "6": [
+            "0"
+          ],
+          "8": [
+            "none"
+          ],
+          "9": [
+            "(nil)"
+          ],
+          "10": [
+            "none"
+          ],
+          "12": [
+            "-2"
+          ],
+          "15": [
+            "1"
+          ],
+          "16": [
+            "set"
+          ]
+        },
+        "step_stdout_json": {
+          "7": [],
+          "11": [],
+          "13": [],
+          "14": {},
+          "17": [
+            "reused"
+          ],
+          "18": [
+            "clear:string"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\n1\n1\n1\nOK\n0\n[]\n\"none\"\n(nil)\n\"none\"\n[]\n-2\n[]\n{}\n1\n\"set\"\n[\"reused\"]\n[\"clear:string\"]",
+      "expected": "step 5: expected stdout 'OK', got '0'\nstep 6: expected stdout '0', got '[]'\nstep 8: expected stdout 'none', got '(nil)'\nstep 9: expected stdout '(nil)', got '\"none\"'\nstep 10: expected stdout 'none', got '[]'\nstep 12: expected stdout '-2', got '[]'\nstep 15: expected stdout '1', got '\"set\"'\nstep 16: expected stdout 'set', got '[\"reused\"]'\nstep 7: expected JSON [], got 'none'\nstep 11: expected JSON [], got -2\nstep 13: expected JSON [], got {}\nstep 14: expected JSON {}, got 1\nstep 17: expected JSON ['reused'], got ['clear:string']\nstep 18: stdout is not JSON: ''",
+      "stderr": "(error) wrong number of arguments for 'HSET' command",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,1059 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minidynaconf-realrepo-001\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001",
+  "total_cases": 30,
+  "passed_cases": 10,
+  "total_weight": 168,
+  "passed_weight": 52,
+  "score": 0.30952380952380953,
+  "unit_score": 0.3888888888888889,
+  "system_score": 0.25,
+  "gap_pp": 13.88888888888889,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 24,
+      "cases": 12,
+      "passed": 3
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 28,
+      "cases": 18,
+      "passed": 7
+    }
+  },
+  "categories": {
+    "access_consistency": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "cast_before_validation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "configure_resets_loader_state": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "dotenv_secrets_priority": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "env_loader": {
+      "weight": 12,
+      "passed_weight": 8,
+      "cases": 3,
+      "passed": 2
+    },
+    "environment_then_runtime": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "falsey_values_exist": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "file_loader": {
+      "weight": 12,
+      "passed_weight": 4,
+      "cases": 3,
+      "passed": 1
+    },
+    "load_file_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "priority_cast_validation": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "recursive_merge": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "reload_rebuilds_sources": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "runtime_api": {
+      "weight": 16,
+      "passed_weight": 8,
+      "cases": 4,
+      "passed": 2
+    },
+    "runtime_update_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "secrets_loader": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 2,
+      "passed": 0
+    },
+    "type_casting": {
+      "weight": 12,
+      "passed_weight": 0,
+      "cases": 3,
+      "passed": 0
+    },
+    "validator_defaults_final_state": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "validators": {
+      "weight": 12,
+      "passed_weight": 8,
+      "cases": 3,
+      "passed": 2
+    }
+  },
+  "failed_cases": [
+    {
+      "id": "MDU002",
+      "layer": "unit",
+      "category": "runtime_api",
+      "requirement_refs": [
+        "REQ-runtime-api",
+        "REQ-data-model"
+      ],
+      "description": "Defaults are visible through attribute, item, dotted get, exists, and as_dict.",
+      "weight": 4,
+      "test_code": "import json\nfrom minidynaconf import MiniDynaconf\ns = MiniDynaconf(defaults={'database': {'host':'localhost', 'port': 5432}, 'debug': False})\nprint(s.database.host)\nprint(s['DATABASE.PORT'])\nprint(s.get('database.host'))\nprint(s.exists('debug'), s.exists('missing'))\nprint(json.dumps(s.as_dict(), sort_keys=True))\n",
+      "expected_output": "localhost\n5432\nlocalhost\nTrue False\n{\"DATABASE\": {\"HOST\": \"localhost\", \"PORT\": 5432}, \"DEBUG\": false}",
+      "passed": false,
+      "actual": "",
+      "expected": "localhost\n5432\nlocalhost\nTrue False\n{\"DATABASE\": {\"HOST\": \"localhost\", \"PORT\": 5432}, \"DEBUG\": false}",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpj21n_7ki\\case.py\", line 4, in <module>\n    print(s.database.host)\n          ^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'host'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU005",
+      "layer": "unit",
+      "category": "file_loader",
+      "requirement_refs": [
+        "REQ-file-loading"
+      ],
+      "description": "TOML sections become nested settings.",
+      "weight": 4,
+      "test_code": "import tempfile, pathlib\nfrom minidynaconf import MiniDynaconf\np = pathlib.Path(tempfile.mkdtemp())/'settings.toml'\np.write_text('[database]\\nhost=\"db\"\\nport=5432\\n[feature]\\nenabled=true\\n', encoding='utf-8')\ns = MiniDynaconf(settings_files=p)\nprint(s.database.host)\nprint(s['database.port'])\nprint(s.feature.enabled)\n",
+      "expected_output": "db\n5432\nTrue",
+      "passed": false,
+      "actual": "",
+      "expected": "db\n5432\nTrue",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpahrovltr\\case.py\", line 5, in <module>\n    s = MiniDynaconf(settings_files=p)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU006",
+      "layer": "unit",
+      "category": "file_loader",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-environments"
+      ],
+      "description": "Environment sections load default then active overlay.",
+      "weight": 4,
+      "test_code": "import tempfile, pathlib\nfrom minidynaconf import MiniDynaconf\np = pathlib.Path(tempfile.mkdtemp())/'settings.toml'\np.write_text('[default]\\nname=\"base\"\\nport=1\\n[testing]\\nport=2\\nflag=true\\n', encoding='utf-8')\ns = MiniDynaconf(settings_files=p, environments=True, env='testing')\nprint(s.name, s.port, s.flag)\n",
+      "expected_output": "base 2 True",
+      "passed": false,
+      "actual": "",
+      "expected": "base 2 True",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp2vv7ndo7\\case.py\", line 5, in <module>\n    s = MiniDynaconf(settings_files=p, environments=True, env='testing')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU008",
+      "layer": "unit",
+      "category": "env_loader",
+      "requirement_refs": [
+        "REQ-env-overrides",
+        "REQ-data-model"
+      ],
+      "description": "Double underscores in env vars create nested keys.",
+      "weight": 4,
+      "test_code": "import os, json\nfrom minidynaconf import MiniDynaconf\nos.environ['APP_DATABASE__HOST']='env-db'\nos.environ['APP_DATABASE__PORT']='5433'\ns = MiniDynaconf(envvar_prefix='APP')\nprint(s.database.host, s.database.port)\nprint(json.dumps(s.as_dict()['DATABASE'], sort_keys=True))\n",
+      "expected_output": "env-db 5433\n{\"HOST\": \"env-db\", \"PORT\": 5433}",
+      "passed": false,
+      "actual": "",
+      "expected": "env-db 5433\n{\"HOST\": \"env-db\", \"PORT\": 5433}",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp2d75zb4_\\case.py\", line 6, in <module>\n    print(s.database.host, s.database.port)\n          ^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'host'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU010",
+      "layer": "unit",
+      "category": "secrets_loader",
+      "requirement_refs": [
+        "REQ-secrets"
+      ],
+      "description": "Secrets files load into the shared namespace.",
+      "weight": 4,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\np = pathlib.Path(tempfile.mkdtemp())/'secrets.json'\np.write_text('{\"token\":\"abc\", \"database\":{\"password\":\"pw\"}}', encoding='utf-8')\ns = MiniDynaconf(secrets_files=p)\nprint(s.token, s.database.password)\n",
+      "expected_output": "abc pw",
+      "passed": false,
+      "actual": "",
+      "expected": "abc pw",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmph8xefzrv\\case.py\", line 5, in <module>\n    s = MiniDynaconf(secrets_files=p)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 731, in __init__\n    'secrets_files': self._normalize_path_list(secrets_files),\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU011",
+      "layer": "unit",
+      "category": "secrets_loader",
+      "requirement_refs": [
+        "REQ-secrets"
+      ],
+      "description": "Later secrets files override earlier secrets files.",
+      "weight": 4,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd = pathlib.Path(tempfile.mkdtemp())\np1=d/'a.json'; p2=d/'b.json'\np1.write_text('{\"token\":\"old\", \"keep\":\"yes\"}', encoding='utf-8')\np2.write_text('{\"token\":\"new\"}', encoding='utf-8')\ns = MiniDynaconf(secrets_files=[p1,p2])\nprint(s.token, s.keep)\n",
+      "expected_output": "new True",
+      "passed": false,
+      "actual": "new yes",
+      "expected": "new True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU012",
+      "layer": "unit",
+      "category": "type_casting",
+      "requirement_refs": [
+        "REQ-type-casting"
+      ],
+      "description": "Automatic casts handle booleans, numbers, none, lists, and dictionaries.",
+      "weight": 4,
+      "test_code": "import os, json\nfrom minidynaconf import MiniDynaconf\nos.environ['APP_BOOL']='true'; os.environ['APP_INT']='7'; os.environ['APP_FLOAT']='1.5'; os.environ['APP_NONE']='null'; os.environ['APP_LIST']='[1,2]'; os.environ['APP_DICT']='{\"a\":1}'\ns = MiniDynaconf(envvar_prefix='APP')\nprint(type(s.bool).__name__, s.bool)\nprint(type(s.int).__name__, s.int)\nprint(type(s.float).__name__, s.float)\nprint(s.none is None, s.list, json.dumps(s.get('dict'), sort_keys=True))\n",
+      "expected_output": "bool True\nint 7\nfloat 1.5\nTrue [1, 2] {\"A\": 1}",
+      "passed": false,
+      "actual": "bool True\nint 7\nfloat 1.5\nTrue [1, 2] {\"a\": 1}",
+      "expected": "bool True\nint 7\nfloat 1.5\nTrue [1, 2] {\"A\": 1}",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU013",
+      "layer": "unit",
+      "category": "type_casting",
+      "requirement_refs": [
+        "REQ-type-casting"
+      ],
+      "description": "Explicit cast tokens override automatic casting.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf\ns = MiniDynaconf(defaults={})\ns.set('a', '@int 5')\ns.set('b', '@str 5')\ns.set('c', '@json {\"x\": 1}')\ns.set('d', '@none null')\nprint(type(s.a).__name__, s.a)\nprint(type(s.b).__name__, s.b)\nprint(s.c.x, s.d is None)\n",
+      "expected_output": "int 5\nstr 5\n1 True",
+      "passed": false,
+      "actual": "str @int 5\nstr @str 5",
+      "expected": "int 5\nstr 5\n1 True",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpun428ukb\\case.py\", line 9, in <module>\n    print(s.c.x, s.d is None)\n          ^^^^^\nAttributeError: 'str' object has no attribute 'x'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU014",
+      "layer": "unit",
+      "category": "type_casting",
+      "requirement_refs": [
+        "REQ-type-casting",
+        "REQ-error-atomicity"
+      ],
+      "description": "Invalid explicit casts raise SettingsError without changing prior values.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf, SettingsError\ns = MiniDynaconf(defaults={'a': 1})\ntry:\n    s.set('a', '@int nope')\nexcept SettingsError:\n    print('cast-error')\nprint(s.a)\n",
+      "expected_output": "cast-error\n1",
+      "passed": false,
+      "actual": "@int nope",
+      "expected": "cast-error\n1",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU016",
+      "layer": "unit",
+      "category": "validators",
+      "requirement_refs": [
+        "REQ-validators"
+      ],
+      "description": "Validator condition receives the value and settings object.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf, Validator\ns = MiniDynaconf(defaults={'port': 443, 'ssl': True}, validators=[Validator('port', condition=lambda value, settings: (value == 443) == settings.ssl)])\ns.validate()\nprint('condition-ok')\n",
+      "expected_output": "condition-ok",
+      "passed": false,
+      "actual": "",
+      "expected": "condition-ok",
+      "stderr": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 687, in check\n    if not self.condition(value, settings):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp3dz7s15d\\case.py\", line 2, in <lambda>\n    s = MiniDynaconf(defaults={'port': 443, 'ssl': True}, validators=[Validator('port', condition=lambda value, settings: (value == 443) == settings.ssl)])\n                                                                                                                                            ^^^^^^^^^^^^\nAttributeError: '_SnapshotSettings' object has no attribute 'ssl'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp3dz7s15d\\case.py\", line 2, in <module>\n    s = MiniDynaconf(defaults={'port': 443, 'ssl': True}, validators=[Validator('port', condition=lambda value, settings: (value == 443) == settings.ssl)])\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 741, in __init__\n    self._load_all()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 771, in _load_all\n    self._run_validators()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 953, in _run_validators\n    v.check(snapshot_settings)\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 694, in check\n    raise ValidationError(\nminidynaconf.ValidationError: Key 'port' condition raised: '_SnapshotSettings' object has no attribute 'ssl'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU018",
+      "layer": "unit",
+      "category": "runtime_api",
+      "requirement_refs": [
+        "REQ-runtime-api"
+      ],
+      "description": "reload drops ad hoc runtime assignments while configure reloads new files.",
+      "weight": 4,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd = pathlib.Path(tempfile.mkdtemp())\np1=d/'a.json'; p2=d/'b.json'\np1.write_text('{\"name\":\"one\"}', encoding='utf-8')\np2.write_text('{\"name\":\"two\"}', encoding='utf-8')\ns = MiniDynaconf(settings_files=p1)\ns.set('runtime', 'x')\ns.reload()\nprint(s.name, s.exists('runtime'))\ns.configure(settings_files=p2)\nprint(s.name)\n",
+      "expected_output": "one False\ntwo",
+      "passed": false,
+      "actual": "",
+      "expected": "one False\ntwo",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpwucxvy8g\\case.py\", line 7, in <module>\n    s = MiniDynaconf(settings_files=p1)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS001",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "priority_cast_validation",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-env-overrides",
+        "REQ-secrets",
+        "REQ-type-casting",
+        "REQ-validators"
+      ],
+      "description": "Files, env, and secrets merge by priority; env text is cast before validation.",
+      "weight": 8,
+      "test_code": "import os, pathlib, tempfile\nfrom minidynaconf import MiniDynaconf, Validator\nd = pathlib.Path(tempfile.mkdtemp())\nf=d/'settings.json'; sec=d/'secrets.json'\nf.write_text('{\"database\":{\"host\":\"file\",\"port\":1000},\"debug\":false}', encoding='utf-8')\nsec.write_text('{\"database\":{\"password\":\"secret\"}}', encoding='utf-8')\nos.environ['APP_DATABASE__PORT']='5432'\ns = MiniDynaconf(settings_files=f, secrets_files=sec, validators=[Validator('database.port', is_type_of=int, gt=1000)])\nprint(s.database.host, s.database.port, s.database.password, s.debug)\n",
+      "expected_output": "file 5432 secret False",
+      "passed": false,
+      "actual": "",
+      "expected": "file 5432 secret False",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp686kwgvp\\case.py\", line 8, in <module>\n    s = MiniDynaconf(settings_files=f, secrets_files=sec, validators=[Validator('database.port', is_type_of=int, gt=1000)])\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS002",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "recursive_merge",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-env-overrides",
+        "REQ-secrets",
+        "REQ-runtime-api"
+      ],
+      "description": "Nested mappings recursively merge across defaults, file, env, secrets, and runtime update.",
+      "weight": 8,
+      "test_code": "import os, pathlib, tempfile, json\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\nf=d/'s.json'; sec=d/'sec.json'\nf.write_text('{\"database\":{\"host\":\"file\",\"port\":1}}', encoding='utf-8')\nsec.write_text('{\"database\":{\"password\":\"pw\"}}', encoding='utf-8')\nos.environ['APP_DATABASE__PORT']='2'\ns=MiniDynaconf(defaults={'database': {'engine':'pg'}}, settings_files=f, secrets_files=sec)\ns.update({'database': {'pool': 5}})\nprint(json.dumps(s.as_dict()['DATABASE'], sort_keys=True))\n",
+      "expected_output": "{\"ENGINE\": \"pg\", \"HOST\": \"file\", \"PASSWORD\": \"pw\", \"POOL\": 5, \"PORT\": 2}",
+      "passed": false,
+      "actual": "",
+      "expected": "{\"ENGINE\": \"pg\", \"HOST\": \"file\", \"PASSWORD\": \"pw\", \"POOL\": 5, \"PORT\": 2}",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp8m08qdb3\\case.py\", line 8, in <module>\n    s=MiniDynaconf(defaults={'database': {'engine':'pg'}}, settings_files=f, secrets_files=sec)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS005",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "dotenv_secrets_priority",
+      "requirement_refs": [
+        "REQ-env-overrides",
+        "REQ-secrets",
+        "REQ-type-casting"
+      ],
+      "description": "Dotenv env values use prefix/casting but secrets override them.",
+      "weight": 8,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\nenv=d/'.env'; sec=d/'sec.json'\nenv.write_text('APP_TOKEN=from-env\\nAPP_FLAG=true\\n', encoding='utf-8')\nsec.write_text('{\"token\":\"from-secret\"}', encoding='utf-8')\ns=MiniDynaconf(secrets_files=sec)\ns.load_env_file(env)\ns.load_file(sec)\nprint(s.token, s.flag)\n",
+      "expected_output": "from-secret True",
+      "passed": false,
+      "actual": "",
+      "expected": "from-secret True",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpo8xhjnzy\\case.py\", line 7, in <module>\n    s=MiniDynaconf(secrets_files=sec)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 731, in __init__\n    'secrets_files': self._normalize_path_list(secrets_files),\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS006",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "environment_then_runtime",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-environments",
+        "REQ-runtime-api"
+      ],
+      "description": "Active environment overlays default, and runtime assignment then overrides both.",
+      "weight": 8,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\np=d/'s.toml'\np.write_text('[default]\\nname=\"base\"\\nport=1\\n[production]\\nport=2\\n', encoding='utf-8')\ns=MiniDynaconf(settings_files=p, environments=True, env='production')\nprint(s.name, s.port)\ns.set('port', 3)\nprint(s.port)\n",
+      "expected_output": "base 2\n3",
+      "passed": false,
+      "actual": "",
+      "expected": "base 2\n3",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpdhffpq9u\\case.py\", line 6, in <module>\n    s=MiniDynaconf(settings_files=p, environments=True, env='production')\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS007",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "access_consistency",
+      "requirement_refs": [
+        "REQ-data-model",
+        "REQ-runtime-api"
+      ],
+      "description": "Case-insensitive attribute, item, get, exists, and as_dict agree on nested keys.",
+      "weight": 8,
+      "test_code": "from minidynaconf import MiniDynaconf\ns=MiniDynaconf(defaults={'Service': {'URL':'http://x'}})\nprint(s.service.url)\nprint(s['SERVICE.URL'])\nprint(s.get('service.url'))\nprint(s.exists('service.url'))\nprint(s.as_dict()['SERVICE']['URL'])\n",
+      "expected_output": "http://x\nhttp://x\nhttp://x\nTrue\nhttp://x",
+      "passed": false,
+      "actual": "",
+      "expected": "http://x\nhttp://x\nhttp://x\nTrue\nhttp://x",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp2x7eni6m\\case.py\", line 3, in <module>\n    print(s.service.url)\n          ^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'url'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS008",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "reload_rebuilds_sources",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-env-overrides",
+        "REQ-runtime-api"
+      ],
+      "description": "Reload rebuilds from current file/env sources and drops runtime-only state.",
+      "weight": 8,
+      "test_code": "import os, pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\np=d/'s.json'\np.write_text('{\"name\":\"file\"}', encoding='utf-8')\nos.environ['APP_COUNT']='1'\ns=MiniDynaconf(settings_files=p)\ns.set('runtime','x')\nos.environ['APP_COUNT']='2'\ns.reload()\nprint(s.name, s.count, s.exists('runtime'))\n",
+      "expected_output": "file 2 False",
+      "passed": false,
+      "actual": "",
+      "expected": "file 2 False",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpaauutg3d\\case.py\", line 7, in <module>\n    s=MiniDynaconf(settings_files=p)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS009",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "configure_resets_loader_state",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-runtime-api"
+      ],
+      "description": "configure changes file sources and clears previously loaded derived state.",
+      "weight": 8,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\na=d/'a.json'; b=d/'b.json'\na.write_text('{\"old\":1}', encoding='utf-8')\nb.write_text('{\"new\":2}', encoding='utf-8')\ns=MiniDynaconf(settings_files=a)\nprint(s.old)\ns.configure(settings_files=b)\nprint(s.exists('old'), s.new)\n",
+      "expected_output": "1\nFalse 2",
+      "passed": false,
+      "actual": "",
+      "expected": "1\nFalse 2",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmptaml0827\\case.py\", line 7, in <module>\n    s=MiniDynaconf(settings_files=a)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS011",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "validator_defaults_final_state",
+      "requirement_refs": [
+        "REQ-validators",
+        "REQ-runtime-api"
+      ],
+      "description": "Validator defaults become part of the final shared namespace and can be used by later runtime operations.",
+      "weight": 8,
+      "test_code": "from minidynaconf import MiniDynaconf, Validator\ns=MiniDynaconf(defaults={'name':'app'}, validators=[Validator('database.port', default=5432, is_type_of=int)])\nprint(s.database.port)\ns.set('database.host', 'db')\nprint(s.database.host, s.database.port)\n",
+      "expected_output": "5432\ndb 5432",
+      "passed": false,
+      "actual": "",
+      "expected": "5432\ndb 5432",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp76gt3p7v\\case.py\", line 3, in <module>\n    print(s.database.port)\n          ^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'port'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS012",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "falsey_values_exist",
+      "requirement_refs": [
+        "REQ-data-model",
+        "REQ-runtime-api"
+      ],
+      "description": "Falsey values from mixed sources are existing settings, not missing settings.",
+      "weight": 8,
+      "test_code": "import os, pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\nf=d/'s.json'\nf.write_text('{\"empty\":\"\", \"items\": []}', encoding='utf-8')\nos.environ['APP_ZERO']='0'; os.environ['APP_FLAG']='false'\ns=MiniDynaconf(settings_files=f)\nprint(s.exists('empty'), repr(s.empty))\nprint(s.exists('items'), s.items)\nprint(s.exists('zero'), s.zero)\nprint(s.exists('flag'), s.flag)\n",
+      "expected_output": "True ''\nTrue []\nTrue 0\nTrue False",
+      "passed": false,
+      "actual": "",
+      "expected": "True ''\nTrue []\nTrue 0\nTrue False",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpeciviyqg\\case.py\", line 7, in <module>\n    s=MiniDynaconf(settings_files=f)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    }
+  ],
+  "all_cases": [
+    {
+      "id": "MDU001",
+      "layer": "unit",
+      "category": "runtime_api",
+      "requirement_refs": [
+        "REQ-package-shape"
+      ],
+      "description": "Public classes import and construct.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf, Validator, ValidationError, SettingsError\ns = MiniDynaconf(defaults={'name':'app'})\nprint(type(s).__name__)\nprint(Validator('name').name)\nprint(issubclass(ValidationError, Exception), issubclass(SettingsError, Exception))\n",
+      "expected_output": "MiniDynaconf\nname\nTrue True",
+      "passed": true,
+      "actual": "MiniDynaconf\nname\nTrue True",
+      "expected": "MiniDynaconf\nname\nTrue True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU002",
+      "layer": "unit",
+      "category": "runtime_api",
+      "requirement_refs": [
+        "REQ-runtime-api",
+        "REQ-data-model"
+      ],
+      "description": "Defaults are visible through attribute, item, dotted get, exists, and as_dict.",
+      "weight": 4,
+      "test_code": "import json\nfrom minidynaconf import MiniDynaconf\ns = MiniDynaconf(defaults={'database': {'host':'localhost', 'port': 5432}, 'debug': False})\nprint(s.database.host)\nprint(s['DATABASE.PORT'])\nprint(s.get('database.host'))\nprint(s.exists('debug'), s.exists('missing'))\nprint(json.dumps(s.as_dict(), sort_keys=True))\n",
+      "expected_output": "localhost\n5432\nlocalhost\nTrue False\n{\"DATABASE\": {\"HOST\": \"localhost\", \"PORT\": 5432}, \"DEBUG\": false}",
+      "passed": false,
+      "actual": "",
+      "expected": "localhost\n5432\nlocalhost\nTrue False\n{\"DATABASE\": {\"HOST\": \"localhost\", \"PORT\": 5432}, \"DEBUG\": false}",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpj21n_7ki\\case.py\", line 4, in <module>\n    print(s.database.host)\n          ^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'host'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU003",
+      "layer": "unit",
+      "category": "runtime_api",
+      "requirement_refs": [
+        "REQ-runtime-api"
+      ],
+      "description": "set, update, delete, and deep-copy as_dict operate on dotted keys.",
+      "weight": 4,
+      "test_code": "import json\nfrom minidynaconf import MiniDynaconf\ns = MiniDynaconf(defaults={'a': {'b': 1}})\ns.set('a.c', '2')\ns.update({'a': {'d': 3}})\nd = s.as_dict(); d['A']['B'] = 99\nprint(s.get('a.b'), s.get('a.c'), s.get('a.d'))\nprint(s.delete('a.c'), s.exists('a.c'))\nprint(json.dumps(s.as_dict(), sort_keys=True))\n",
+      "expected_output": "1 2 3\nTrue False\n{\"A\": {\"B\": 1, \"D\": 3}}",
+      "passed": true,
+      "actual": "1 2 3\nTrue False\n{\"A\": {\"B\": 1, \"D\": 3}}",
+      "expected": "1 2 3\nTrue False\n{\"A\": {\"B\": 1, \"D\": 3}}",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU004",
+      "layer": "unit",
+      "category": "file_loader",
+      "requirement_refs": [
+        "REQ-file-loading"
+      ],
+      "description": "JSON file loading reads nested mappings.",
+      "weight": 4,
+      "test_code": "import json, tempfile, pathlib\nfrom minidynaconf import MiniDynaconf\np = pathlib.Path(tempfile.mkdtemp())/'settings.json'\np.write_text('{\"database\":{\"host\":\"db\",\"port\":5432},\"debug\":true}', encoding='utf-8')\ns = MiniDynaconf(settings_files=[p])\nprint(s.get('database.host'), s.get('database.port'), s.get('debug'))\nprint(json.dumps(s.as_dict(), sort_keys=True))\n",
+      "expected_output": "db 5432 True\n{\"DATABASE\": {\"HOST\": \"db\", \"PORT\": 5432}, \"DEBUG\": true}",
+      "passed": true,
+      "actual": "db 5432 True\n{\"DATABASE\": {\"HOST\": \"db\", \"PORT\": 5432}, \"DEBUG\": true}",
+      "expected": "db 5432 True\n{\"DATABASE\": {\"HOST\": \"db\", \"PORT\": 5432}, \"DEBUG\": true}",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU005",
+      "layer": "unit",
+      "category": "file_loader",
+      "requirement_refs": [
+        "REQ-file-loading"
+      ],
+      "description": "TOML sections become nested settings.",
+      "weight": 4,
+      "test_code": "import tempfile, pathlib\nfrom minidynaconf import MiniDynaconf\np = pathlib.Path(tempfile.mkdtemp())/'settings.toml'\np.write_text('[database]\\nhost=\"db\"\\nport=5432\\n[feature]\\nenabled=true\\n', encoding='utf-8')\ns = MiniDynaconf(settings_files=p)\nprint(s.database.host)\nprint(s['database.port'])\nprint(s.feature.enabled)\n",
+      "expected_output": "db\n5432\nTrue",
+      "passed": false,
+      "actual": "",
+      "expected": "db\n5432\nTrue",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpahrovltr\\case.py\", line 5, in <module>\n    s = MiniDynaconf(settings_files=p)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU006",
+      "layer": "unit",
+      "category": "file_loader",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-environments"
+      ],
+      "description": "Environment sections load default then active overlay.",
+      "weight": 4,
+      "test_code": "import tempfile, pathlib\nfrom minidynaconf import MiniDynaconf\np = pathlib.Path(tempfile.mkdtemp())/'settings.toml'\np.write_text('[default]\\nname=\"base\"\\nport=1\\n[testing]\\nport=2\\nflag=true\\n', encoding='utf-8')\ns = MiniDynaconf(settings_files=p, environments=True, env='testing')\nprint(s.name, s.port, s.flag)\n",
+      "expected_output": "base 2 True",
+      "passed": false,
+      "actual": "",
+      "expected": "base 2 True",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp2vv7ndo7\\case.py\", line 5, in <module>\n    s = MiniDynaconf(settings_files=p, environments=True, env='testing')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU007",
+      "layer": "unit",
+      "category": "env_loader",
+      "requirement_refs": [
+        "REQ-env-overrides"
+      ],
+      "description": "Environment loader imports only prefixed variables.",
+      "weight": 4,
+      "test_code": "import os\nfrom minidynaconf import MiniDynaconf\nos.environ['APP_NAME']='demo'\nos.environ['OTHER_NAME']='ignored'\ns = MiniDynaconf(envvar_prefix='APP')\nprint(s.name)\nprint(s.exists('other.name'), s.exists('name'))\n",
+      "expected_output": "demo\nFalse True",
+      "passed": true,
+      "actual": "demo\nFalse True",
+      "expected": "demo\nFalse True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU008",
+      "layer": "unit",
+      "category": "env_loader",
+      "requirement_refs": [
+        "REQ-env-overrides",
+        "REQ-data-model"
+      ],
+      "description": "Double underscores in env vars create nested keys.",
+      "weight": 4,
+      "test_code": "import os, json\nfrom minidynaconf import MiniDynaconf\nos.environ['APP_DATABASE__HOST']='env-db'\nos.environ['APP_DATABASE__PORT']='5433'\ns = MiniDynaconf(envvar_prefix='APP')\nprint(s.database.host, s.database.port)\nprint(json.dumps(s.as_dict()['DATABASE'], sort_keys=True))\n",
+      "expected_output": "env-db 5433\n{\"HOST\": \"env-db\", \"PORT\": 5433}",
+      "passed": false,
+      "actual": "",
+      "expected": "env-db 5433\n{\"HOST\": \"env-db\", \"PORT\": 5433}",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp2d75zb4_\\case.py\", line 6, in <module>\n    print(s.database.host, s.database.port)\n          ^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'host'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU009",
+      "layer": "unit",
+      "category": "env_loader",
+      "requirement_refs": [
+        "REQ-env-overrides"
+      ],
+      "description": "Dotenv loader parses comments, blanks, quoted values, and prefix rules.",
+      "weight": 4,
+      "test_code": "import tempfile, pathlib\nfrom minidynaconf import MiniDynaconf\np = pathlib.Path(tempfile.mkdtemp())/'.env'\np.write_text('# c\\nAPP_NAME=\"quoted\"\\nAPP_COUNT=3\\nOTHER=skip\\n', encoding='utf-8')\ns = MiniDynaconf(envvar_prefix='APP')\ns.load_env_file(p)\nprint(s.name, s.count, s.exists('other'))\n",
+      "expected_output": "quoted 3 False",
+      "passed": true,
+      "actual": "quoted 3 False",
+      "expected": "quoted 3 False",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU010",
+      "layer": "unit",
+      "category": "secrets_loader",
+      "requirement_refs": [
+        "REQ-secrets"
+      ],
+      "description": "Secrets files load into the shared namespace.",
+      "weight": 4,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\np = pathlib.Path(tempfile.mkdtemp())/'secrets.json'\np.write_text('{\"token\":\"abc\", \"database\":{\"password\":\"pw\"}}', encoding='utf-8')\ns = MiniDynaconf(secrets_files=p)\nprint(s.token, s.database.password)\n",
+      "expected_output": "abc pw",
+      "passed": false,
+      "actual": "",
+      "expected": "abc pw",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmph8xefzrv\\case.py\", line 5, in <module>\n    s = MiniDynaconf(secrets_files=p)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 731, in __init__\n    'secrets_files': self._normalize_path_list(secrets_files),\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU011",
+      "layer": "unit",
+      "category": "secrets_loader",
+      "requirement_refs": [
+        "REQ-secrets"
+      ],
+      "description": "Later secrets files override earlier secrets files.",
+      "weight": 4,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd = pathlib.Path(tempfile.mkdtemp())\np1=d/'a.json'; p2=d/'b.json'\np1.write_text('{\"token\":\"old\", \"keep\":\"yes\"}', encoding='utf-8')\np2.write_text('{\"token\":\"new\"}', encoding='utf-8')\ns = MiniDynaconf(secrets_files=[p1,p2])\nprint(s.token, s.keep)\n",
+      "expected_output": "new True",
+      "passed": false,
+      "actual": "new yes",
+      "expected": "new True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU012",
+      "layer": "unit",
+      "category": "type_casting",
+      "requirement_refs": [
+        "REQ-type-casting"
+      ],
+      "description": "Automatic casts handle booleans, numbers, none, lists, and dictionaries.",
+      "weight": 4,
+      "test_code": "import os, json\nfrom minidynaconf import MiniDynaconf\nos.environ['APP_BOOL']='true'; os.environ['APP_INT']='7'; os.environ['APP_FLOAT']='1.5'; os.environ['APP_NONE']='null'; os.environ['APP_LIST']='[1,2]'; os.environ['APP_DICT']='{\"a\":1}'\ns = MiniDynaconf(envvar_prefix='APP')\nprint(type(s.bool).__name__, s.bool)\nprint(type(s.int).__name__, s.int)\nprint(type(s.float).__name__, s.float)\nprint(s.none is None, s.list, json.dumps(s.get('dict'), sort_keys=True))\n",
+      "expected_output": "bool True\nint 7\nfloat 1.5\nTrue [1, 2] {\"A\": 1}",
+      "passed": false,
+      "actual": "bool True\nint 7\nfloat 1.5\nTrue [1, 2] {\"a\": 1}",
+      "expected": "bool True\nint 7\nfloat 1.5\nTrue [1, 2] {\"A\": 1}",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU013",
+      "layer": "unit",
+      "category": "type_casting",
+      "requirement_refs": [
+        "REQ-type-casting"
+      ],
+      "description": "Explicit cast tokens override automatic casting.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf\ns = MiniDynaconf(defaults={})\ns.set('a', '@int 5')\ns.set('b', '@str 5')\ns.set('c', '@json {\"x\": 1}')\ns.set('d', '@none null')\nprint(type(s.a).__name__, s.a)\nprint(type(s.b).__name__, s.b)\nprint(s.c.x, s.d is None)\n",
+      "expected_output": "int 5\nstr 5\n1 True",
+      "passed": false,
+      "actual": "str @int 5\nstr @str 5",
+      "expected": "int 5\nstr 5\n1 True",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpun428ukb\\case.py\", line 9, in <module>\n    print(s.c.x, s.d is None)\n          ^^^^^\nAttributeError: 'str' object has no attribute 'x'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU014",
+      "layer": "unit",
+      "category": "type_casting",
+      "requirement_refs": [
+        "REQ-type-casting",
+        "REQ-error-atomicity"
+      ],
+      "description": "Invalid explicit casts raise SettingsError without changing prior values.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf, SettingsError\ns = MiniDynaconf(defaults={'a': 1})\ntry:\n    s.set('a', '@int nope')\nexcept SettingsError:\n    print('cast-error')\nprint(s.a)\n",
+      "expected_output": "cast-error\n1",
+      "passed": false,
+      "actual": "@int nope",
+      "expected": "cast-error\n1",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU015",
+      "layer": "unit",
+      "category": "validators",
+      "requirement_refs": [
+        "REQ-validators"
+      ],
+      "description": "Validators enforce default, type, equality, and comparison checks.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf, Validator\ns = MiniDynaconf(defaults={'mode':'prod','port':8080}, validators=[Validator('debug', default=False, is_type_of=bool), Validator('mode', eq='prod'), Validator('port', gt=1000, lt=9000)])\nprint(s.debug, s.mode, s.port)\ns.validate()\nprint('valid')\n",
+      "expected_output": "False prod 8080\nvalid",
+      "passed": true,
+      "actual": "False prod 8080\nvalid",
+      "expected": "False prod 8080\nvalid",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU016",
+      "layer": "unit",
+      "category": "validators",
+      "requirement_refs": [
+        "REQ-validators"
+      ],
+      "description": "Validator condition receives the value and settings object.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf, Validator\ns = MiniDynaconf(defaults={'port': 443, 'ssl': True}, validators=[Validator('port', condition=lambda value, settings: (value == 443) == settings.ssl)])\ns.validate()\nprint('condition-ok')\n",
+      "expected_output": "condition-ok",
+      "passed": false,
+      "actual": "",
+      "expected": "condition-ok",
+      "stderr": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 687, in check\n    if not self.condition(value, settings):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp3dz7s15d\\case.py\", line 2, in <lambda>\n    s = MiniDynaconf(defaults={'port': 443, 'ssl': True}, validators=[Validator('port', condition=lambda value, settings: (value == 443) == settings.ssl)])\n                                                                                                                                            ^^^^^^^^^^^^\nAttributeError: '_SnapshotSettings' object has no attribute 'ssl'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp3dz7s15d\\case.py\", line 2, in <module>\n    s = MiniDynaconf(defaults={'port': 443, 'ssl': True}, validators=[Validator('port', condition=lambda value, settings: (value == 443) == settings.ssl)])\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 741, in __init__\n    self._load_all()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 771, in _load_all\n    self._run_validators()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 953, in _run_validators\n    v.check(snapshot_settings)\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 694, in check\n    raise ValidationError(\nminidynaconf.ValidationError: Key 'port' condition raised: '_SnapshotSettings' object has no attribute 'ssl'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDU017",
+      "layer": "unit",
+      "category": "validators",
+      "requirement_refs": [
+        "REQ-validators",
+        "REQ-error-atomicity"
+      ],
+      "description": "Runtime validation failure leaves previous settings intact.",
+      "weight": 4,
+      "test_code": "from minidynaconf import MiniDynaconf, Validator, ValidationError\ns = MiniDynaconf(defaults={'port': 8000}, validators=[Validator('port', gte=1, lte=9000)])\ntry:\n    s.set('port', 99999, validate=True)\nexcept ValidationError:\n    print('validation-error')\nprint(s.port)\n",
+      "expected_output": "validation-error\n8000",
+      "passed": true,
+      "actual": "validation-error\n8000",
+      "expected": "validation-error\n8000",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDU018",
+      "layer": "unit",
+      "category": "runtime_api",
+      "requirement_refs": [
+        "REQ-runtime-api"
+      ],
+      "description": "reload drops ad hoc runtime assignments while configure reloads new files.",
+      "weight": 4,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd = pathlib.Path(tempfile.mkdtemp())\np1=d/'a.json'; p2=d/'b.json'\np1.write_text('{\"name\":\"one\"}', encoding='utf-8')\np2.write_text('{\"name\":\"two\"}', encoding='utf-8')\ns = MiniDynaconf(settings_files=p1)\ns.set('runtime', 'x')\ns.reload()\nprint(s.name, s.exists('runtime'))\ns.configure(settings_files=p2)\nprint(s.name)\n",
+      "expected_output": "one False\ntwo",
+      "passed": false,
+      "actual": "",
+      "expected": "one False\ntwo",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpwucxvy8g\\case.py\", line 7, in <module>\n    s = MiniDynaconf(settings_files=p1)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS001",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "priority_cast_validation",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-env-overrides",
+        "REQ-secrets",
+        "REQ-type-casting",
+        "REQ-validators"
+      ],
+      "description": "Files, env, and secrets merge by priority; env text is cast before validation.",
+      "weight": 8,
+      "test_code": "import os, pathlib, tempfile\nfrom minidynaconf import MiniDynaconf, Validator\nd = pathlib.Path(tempfile.mkdtemp())\nf=d/'settings.json'; sec=d/'secrets.json'\nf.write_text('{\"database\":{\"host\":\"file\",\"port\":1000},\"debug\":false}', encoding='utf-8')\nsec.write_text('{\"database\":{\"password\":\"secret\"}}', encoding='utf-8')\nos.environ['APP_DATABASE__PORT']='5432'\ns = MiniDynaconf(settings_files=f, secrets_files=sec, validators=[Validator('database.port', is_type_of=int, gt=1000)])\nprint(s.database.host, s.database.port, s.database.password, s.debug)\n",
+      "expected_output": "file 5432 secret False",
+      "passed": false,
+      "actual": "",
+      "expected": "file 5432 secret False",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp686kwgvp\\case.py\", line 8, in <module>\n    s = MiniDynaconf(settings_files=f, secrets_files=sec, validators=[Validator('database.port', is_type_of=int, gt=1000)])\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS002",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "recursive_merge",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-env-overrides",
+        "REQ-secrets",
+        "REQ-runtime-api"
+      ],
+      "description": "Nested mappings recursively merge across defaults, file, env, secrets, and runtime update.",
+      "weight": 8,
+      "test_code": "import os, pathlib, tempfile, json\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\nf=d/'s.json'; sec=d/'sec.json'\nf.write_text('{\"database\":{\"host\":\"file\",\"port\":1}}', encoding='utf-8')\nsec.write_text('{\"database\":{\"password\":\"pw\"}}', encoding='utf-8')\nos.environ['APP_DATABASE__PORT']='2'\ns=MiniDynaconf(defaults={'database': {'engine':'pg'}}, settings_files=f, secrets_files=sec)\ns.update({'database': {'pool': 5}})\nprint(json.dumps(s.as_dict()['DATABASE'], sort_keys=True))\n",
+      "expected_output": "{\"ENGINE\": \"pg\", \"HOST\": \"file\", \"PASSWORD\": \"pw\", \"POOL\": 5, \"PORT\": 2}",
+      "passed": false,
+      "actual": "",
+      "expected": "{\"ENGINE\": \"pg\", \"HOST\": \"file\", \"PASSWORD\": \"pw\", \"POOL\": 5, \"PORT\": 2}",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp8m08qdb3\\case.py\", line 8, in <module>\n    s=MiniDynaconf(defaults={'database': {'engine':'pg'}}, settings_files=f, secrets_files=sec)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS003",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "cast_before_validation",
+      "requirement_refs": [
+        "REQ-env-overrides",
+        "REQ-type-casting",
+        "REQ-validators"
+      ],
+      "description": "Validators inspect the cast final value from an env override.",
+      "weight": 8,
+      "test_code": "import os\nfrom minidynaconf import MiniDynaconf, Validator\nos.environ['APP_WORKERS']='@int 4'\ns = MiniDynaconf(defaults={'workers': 1}, validators=[Validator('workers', is_type_of=int, gte=2)])\nprint(s.workers, type(s.workers).__name__)\n",
+      "expected_output": "4 int",
+      "passed": true,
+      "actual": "4 int",
+      "expected": "4 int",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDS004",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "runtime_update_atomicity",
+      "requirement_refs": [
+        "REQ-runtime-api",
+        "REQ-validators",
+        "REQ-error-atomicity"
+      ],
+      "description": "Failed validating update does not partially apply sibling keys.",
+      "weight": 8,
+      "test_code": "from minidynaconf import MiniDynaconf, Validator, ValidationError\ns = MiniDynaconf(defaults={'port': 8000, 'name':'old'}, validators=[Validator('port', lt=9000)])\ntry:\n    s.update({'port': 99999, 'name':'new'}, validate=True)\nexcept ValidationError:\n    print('failed')\nprint(s.port, s.name)\n",
+      "expected_output": "failed\n8000 old",
+      "passed": true,
+      "actual": "failed\n8000 old",
+      "expected": "failed\n8000 old",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDS005",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "dotenv_secrets_priority",
+      "requirement_refs": [
+        "REQ-env-overrides",
+        "REQ-secrets",
+        "REQ-type-casting"
+      ],
+      "description": "Dotenv env values use prefix/casting but secrets override them.",
+      "weight": 8,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\nenv=d/'.env'; sec=d/'sec.json'\nenv.write_text('APP_TOKEN=from-env\\nAPP_FLAG=true\\n', encoding='utf-8')\nsec.write_text('{\"token\":\"from-secret\"}', encoding='utf-8')\ns=MiniDynaconf(secrets_files=sec)\ns.load_env_file(env)\ns.load_file(sec)\nprint(s.token, s.flag)\n",
+      "expected_output": "from-secret True",
+      "passed": false,
+      "actual": "",
+      "expected": "from-secret True",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpo8xhjnzy\\case.py\", line 7, in <module>\n    s=MiniDynaconf(secrets_files=sec)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 731, in __init__\n    'secrets_files': self._normalize_path_list(secrets_files),\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS006",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "environment_then_runtime",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-environments",
+        "REQ-runtime-api"
+      ],
+      "description": "Active environment overlays default, and runtime assignment then overrides both.",
+      "weight": 8,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\np=d/'s.toml'\np.write_text('[default]\\nname=\"base\"\\nport=1\\n[production]\\nport=2\\n', encoding='utf-8')\ns=MiniDynaconf(settings_files=p, environments=True, env='production')\nprint(s.name, s.port)\ns.set('port', 3)\nprint(s.port)\n",
+      "expected_output": "base 2\n3",
+      "passed": false,
+      "actual": "",
+      "expected": "base 2\n3",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpdhffpq9u\\case.py\", line 6, in <module>\n    s=MiniDynaconf(settings_files=p, environments=True, env='production')\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS007",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "access_consistency",
+      "requirement_refs": [
+        "REQ-data-model",
+        "REQ-runtime-api"
+      ],
+      "description": "Case-insensitive attribute, item, get, exists, and as_dict agree on nested keys.",
+      "weight": 8,
+      "test_code": "from minidynaconf import MiniDynaconf\ns=MiniDynaconf(defaults={'Service': {'URL':'http://x'}})\nprint(s.service.url)\nprint(s['SERVICE.URL'])\nprint(s.get('service.url'))\nprint(s.exists('service.url'))\nprint(s.as_dict()['SERVICE']['URL'])\n",
+      "expected_output": "http://x\nhttp://x\nhttp://x\nTrue\nhttp://x",
+      "passed": false,
+      "actual": "",
+      "expected": "http://x\nhttp://x\nhttp://x\nTrue\nhttp://x",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp2x7eni6m\\case.py\", line 3, in <module>\n    print(s.service.url)\n          ^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'url'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS008",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "reload_rebuilds_sources",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-env-overrides",
+        "REQ-runtime-api"
+      ],
+      "description": "Reload rebuilds from current file/env sources and drops runtime-only state.",
+      "weight": 8,
+      "test_code": "import os, pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\np=d/'s.json'\np.write_text('{\"name\":\"file\"}', encoding='utf-8')\nos.environ['APP_COUNT']='1'\ns=MiniDynaconf(settings_files=p)\ns.set('runtime','x')\nos.environ['APP_COUNT']='2'\ns.reload()\nprint(s.name, s.count, s.exists('runtime'))\n",
+      "expected_output": "file 2 False",
+      "passed": false,
+      "actual": "",
+      "expected": "file 2 False",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpaauutg3d\\case.py\", line 7, in <module>\n    s=MiniDynaconf(settings_files=p)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS009",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "configure_resets_loader_state",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-runtime-api"
+      ],
+      "description": "configure changes file sources and clears previously loaded derived state.",
+      "weight": 8,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\na=d/'a.json'; b=d/'b.json'\na.write_text('{\"old\":1}', encoding='utf-8')\nb.write_text('{\"new\":2}', encoding='utf-8')\ns=MiniDynaconf(settings_files=a)\nprint(s.old)\ns.configure(settings_files=b)\nprint(s.exists('old'), s.new)\n",
+      "expected_output": "1\nFalse 2",
+      "passed": false,
+      "actual": "",
+      "expected": "1\nFalse 2",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmptaml0827\\case.py\", line 7, in <module>\n    s=MiniDynaconf(settings_files=a)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS010",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "load_file_atomicity",
+      "requirement_refs": [
+        "REQ-file-loading",
+        "REQ-error-atomicity"
+      ],
+      "description": "Malformed later file raises SettingsError without corrupting existing state.",
+      "weight": 8,
+      "test_code": "import pathlib, tempfile\nfrom minidynaconf import MiniDynaconf, SettingsError\nd=pathlib.Path(tempfile.mkdtemp())\nbad=d/'bad.json'\nbad.write_text('{not-json', encoding='utf-8')\ns=MiniDynaconf(defaults={'name':'ok'})\ntry:\n    s.load_file(bad, silent=False)\nexcept SettingsError:\n    print('bad-file')\nprint(s.name)\n",
+      "expected_output": "bad-file\nok",
+      "passed": true,
+      "actual": "bad-file\nok",
+      "expected": "bad-file\nok",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDS011",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "validator_defaults_final_state",
+      "requirement_refs": [
+        "REQ-validators",
+        "REQ-runtime-api"
+      ],
+      "description": "Validator defaults become part of the final shared namespace and can be used by later runtime operations.",
+      "weight": 8,
+      "test_code": "from minidynaconf import MiniDynaconf, Validator\ns=MiniDynaconf(defaults={'name':'app'}, validators=[Validator('database.port', default=5432, is_type_of=int)])\nprint(s.database.port)\ns.set('database.host', 'db')\nprint(s.database.host, s.database.port)\n",
+      "expected_output": "5432\ndb 5432",
+      "passed": false,
+      "actual": "",
+      "expected": "5432\ndb 5432",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp76gt3p7v\\case.py\", line 3, in <module>\n    print(s.database.port)\n          ^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'port'",
+      "exit_code": 1
+    },
+    {
+      "id": "MDS012",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "falsey_values_exist",
+      "requirement_refs": [
+        "REQ-data-model",
+        "REQ-runtime-api"
+      ],
+      "description": "Falsey values from mixed sources are existing settings, not missing settings.",
+      "weight": 8,
+      "test_code": "import os, pathlib, tempfile\nfrom minidynaconf import MiniDynaconf\nd=pathlib.Path(tempfile.mkdtemp())\nf=d/'s.json'\nf.write_text('{\"empty\":\"\", \"items\": []}', encoding='utf-8')\nos.environ['APP_ZERO']='0'; os.environ['APP_FLAG']='false'\ns=MiniDynaconf(settings_files=f)\nprint(s.exists('empty'), repr(s.empty))\nprint(s.exists('items'), s.items)\nprint(s.exists('zero'), s.zero)\nprint(s.exists('flag'), s.flag)\n",
+      "expected_output": "True ''\nTrue []\nTrue 0\nTrue False",
+      "passed": false,
+      "actual": "",
+      "expected": "True ''\nTrue []\nTrue 0\nTrue False",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpeciviyqg\\case.py\", line 7, in <module>\n    s=MiniDynaconf(settings_files=f)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 726, in __init__\n    'settings_files': self._normalize_path_list(settings_files),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minidynaconf-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minidynaconf.py\", line 751, in _normalize_path_list\n    return list(value)\n           ^^^^^^^^^^^\nTypeError: 'WindowsPath' object is not iterable",
+      "exit_code": 1
+    }
+  ]
+}

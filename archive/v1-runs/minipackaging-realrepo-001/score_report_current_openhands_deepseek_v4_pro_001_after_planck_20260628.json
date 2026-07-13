@@ -1,0 +1,943 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minipackaging-realrepo-001\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-openhands-deepseek-v4-pro-001",
+  "total_cases": 30,
+  "passed_cases": 21,
+  "total_weight": 168,
+  "passed_weight": 116,
+  "score": 0.6904761904761905,
+  "unit_score": 0.7222222222222222,
+  "system_score": 0.6666666666666666,
+  "gap_pp": 5.555555555555558,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 64,
+      "cases": 12,
+      "passed": 8
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 52,
+      "cases": 18,
+      "passed": 13
+    }
+  },
+  "categories": {
+    "bidirectional_edges": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "conflict_exclusion_projection": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "constraint_convergence": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "environment_sensitive_resolution": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "extras_dependency_propagation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "imports": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "marker": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "object_reuse_resolution": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "prerelease_resolution_policy": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "requirement": {
+      "weight": 16,
+      "passed_weight": 0,
+      "cases": 4,
+      "passed": 0
+    },
+    "requirement_semantic_roundtrip": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "resolution_error_atomicity": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "resolver_url_marker_permutation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "shared_parser_projection": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "specifier": {
+      "weight": 20,
+      "passed_weight": 16,
+      "cases": 5,
+      "passed": 4
+    },
+    "version": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "version_marker_resolution": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "failed_cases": [
+    {
+      "id": "MPU010",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-errors"
+      ],
+      "description": "Invalid specifier text raises InvalidSpecifier.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet, InvalidSpecifier\nfor text in ['=>1.0', '>=', '==1.*.2']:\n    try:\n        SpecifierSet(text); print('accepted')\n    except InvalidSpecifier:\n        print('InvalidSpecifier')\n",
+      "expected_output": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "passed": false,
+      "actual": "InvalidSpecifier",
+      "expected": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp0xx2cbww\\case.py\", line 4, in <module>\n    SpecifierSet(text); print('accepted')\n    ~~~~~~~~~~~~^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minipackaging.py\", line 420, in __init__\n    clauses.append(_SpecifierClause(raw))\n                   ~~~~~~~~~~~~~~~~^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minipackaging.py\", line 331, in __init__\n    self._version = Version(version_text)\n                    ~~~~~~~^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minipackaging.py\", line 134, in __init__\n    raise InvalidVersion(f\"Invalid version: {text!r}\")\nminipackaging.InvalidVersion: Invalid version: '='",
+      "exit_code": 1
+    },
+    {
+      "id": "MPU011",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement parses normalized names, sorted normalized extras, and canonical specifiers.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\nr = Requirement('My_Pkg[PDF,security-extra] >=1.0, <2')\nprint(r.name)\nprint(sorted(r.extras))\nprint(str(r.specifier))\nprint(str(r))\n",
+      "expected_output": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "passed": false,
+      "actual": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg [pdf,security-extra] >=1,<2",
+      "expected": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU012",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement parses direct URLs and marker text as distinct fields.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\nr = Requirement('Demo @ https://example.test/demo-1.0.whl ; python_version >= \"3.10\"')\nprint(r.name)\nprint(r.url)\nprint(str(r.specifier))\nprint(type(r.marker).__name__)\nprint(str(r))\n",
+      "expected_output": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "passed": false,
+      "actual": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl ; python_version >= \"3.10\"",
+      "expected": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU013",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement equality and hashing use normalized names and sorted extras.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\na = Requirement('Pkg_Name[B,A]>=1')\nb = Requirement('pkg-name[a,b] >= 1.0.0')\nprint(a == b)\nprint(len({a, b}))\nprint(str(b))\n",
+      "expected_output": "True\n1\npkg-name[a,b]>=1",
+      "passed": false,
+      "actual": "False\n2\npkg-name [a,b] >=1",
+      "expected": "True\n1\npkg-name[a,b]>=1",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU014",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-errors"
+      ],
+      "description": "Invalid requirement strings raise InvalidRequirement.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement, InvalidRequirement\nfor text in ['bad name>=1', 'pkg[bad extra]', 'pkg @ https://x >=1']:\n    try:\n        Requirement(text); print('accepted')\n    except InvalidRequirement:\n        print('InvalidRequirement')\n",
+      "expected_output": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "passed": false,
+      "actual": "InvalidRequirement\nInvalidRequirement\naccepted",
+      "expected": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS002",
+      "layer": "system",
+      "type": "system",
+      "category": "shared_parser_projection",
+      "dimension": "projection_consistency",
+      "system_dimension": "projection_consistency",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-specifier",
+        "REQ-marker",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Requirement parser fields, marker applicability, specifier membership, and requirement satisfaction drive the same selected candidate across equivalent metadata variants.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nfrom minipackaging import is_requirement_satisfied\nr = Requirement('Tool[PDF,Security_Extra] ~=1.4.5 ; python_version >= \"3.10\" and extra == \"security-extra\"')\nbase = [{'name': 'tool', 'version': '1.4.5'}, {'name': 'tool', 'version': '1.4.9'}, {'name': 'tool', 'version': '1.5'}]\nvariant = [{'name': 'Tool', 'version': '1.5.0'}, {'name': 'tool', 'version': '1.4.9'}, {'name': 'tool', 'version': '1.4.5'}]\nenv = {'python_version': '3.11'}\na = resolve([r], base, env, requested_extras={'Security_Extra'})\nb = resolve(['tool[security-extra,pdf] ~= 1.4.5 ; extra == \"security_extra\" and python_version >= \"3.10\"'], variant, env, requested_extras={'security-extra'})\nsame_target = {Requirement('Tool[PDF,Security_Extra] ~=1.4.5'), Requirement('tool[security-extra,pdf] ~= 1.4.5')}\nprint(r.name, sorted(r.extras), str(r.specifier), r.marker.evaluate(env, {'security_extra'}))\nprint(len(same_target))\nprint(sorted(a['selected'].items()))\nprint(a['selected'] == b['selected'])\nprint(is_requirement_satisfied(r, a['selected']['tool'], env, {'security-extra'}))\n",
+      "expected_output": "tool ['pdf', 'security-extra'] ~=1.4.5 True\n1\n[('tool', '1.4.9')]\nTrue\nTrue",
+      "passed": false,
+      "actual": "tool ['pdf', 'security-extra'] ~=1.4.5 True\n2\n[('tool', '1.4.9')]\nTrue\nTrue",
+      "expected": "tool ['pdf', 'security-extra'] ~=1.4.5 True\n1\n[('tool', '1.4.9')]\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS005",
+      "layer": "system",
+      "type": "system",
+      "category": "conflict_exclusion_projection",
+      "dimension": "bidirectional_consistency",
+      "system_dimension": "bidirectional_consistency",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-version",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Conflicting root and transitive constraints derive the same selected version, excluded versions, and dependents after permutation.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\ncandidates = [\n    {'name': 'app', 'version': '1.0', 'requires': ['lib<3,!=2.0', 'tool>=1']},\n    {'name': 'tool', 'version': '1.0', 'requires': ['Lib>=2']},\n    {'name': 'lib', 'version': '1.0'},\n    {'name': 'lib', 'version': '1.5'},\n    {'name': 'lib', 'version': '2.0'},\n    {'name': 'lib', 'version': '2.5'},\n    {'name': 'lib', 'version': '3.0'},\n]\nroots = ['app>=1', 'lib>=1,<4,!=1.5', 'Lib <4, !=1.5, >=1.0']\nunique_lib_roots = {Requirement(r) for r in roots if Requirement(r).name == 'lib'}\na = resolve(roots, candidates)\nb = resolve(list(reversed(roots)), list(reversed(candidates)))\nprint(len(unique_lib_roots))\nprint(sorted(a['selected'].items()))\nprint(a['excluded']['lib'])\nprint(a['dependents']['lib'])\nprint(a == b)\n",
+      "expected_output": "1\n[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "passed": false,
+      "actual": "2\n[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "expected": "1\n[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS009",
+      "layer": "system",
+      "type": "system",
+      "category": "resolution_error_atomicity",
+      "dimension": "error_atomicity",
+      "system_dimension": "error_atomicity",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-environment",
+        "REQ-resolution-invariants"
+      ],
+      "description": "Failed candidate metadata parsing from an invalid URL plus specifier leaves inputs and parsed objects unchanged, and later valid metadata resolves normally.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nfrom minipackaging import InvalidRequirement\nroot = Requirement('app[tools]>=1')\nbad = [\n    {'name': 'app', 'version': '1.0', 'requires': ['dep>=1', 'bad @ https://example.test/bad-1.whl >=1 ; python_version >= \"3.10\"']},\n    {'name': 'dep', 'version': '1.0'},\n    {'name': 'bad', 'version': '1.0'},\n]\nbefore = repr(bad)\ntry:\n    resolve([root], bad, {'python_version': '3.11'})\nexcept InvalidRequirement:\n    print('invalid-metadata')\nprint(repr(bad) == before)\nprint((root.name, sorted(root.extras), root.marker is None))\ngood = [\n    {'name': 'app', 'version': '1.0', 'requires': ['dep>=1', 'bad @ https://example.test/bad-1.whl ; python_version >= \"3.10\"']},\n    {'name': 'dep', 'version': '1.0'},\n    {'name': 'bad', 'version': '1.0'},\n]\nres = resolve([root], list(reversed(good)), {'python_version': '3.11'})\nprint(sorted(res['selected'].items()))\nprint([(e['name'], bool(e['url'])) for e in res['edges']])\n",
+      "expected_output": "invalid-metadata\nTrue\n('app', ['tools'], True)\n[('app', '1'), ('bad', '1'), ('dep', '1')]\n[('bad', True), ('dep', False)]",
+      "passed": false,
+      "actual": "True\n('app', ['tools'], True)\n[('app', '1'), ('bad', '1'), ('dep', '1')]\n[('bad', True), ('dep', False)]",
+      "expected": "invalid-metadata\nTrue\n('app', ['tools'], True)\n[('app', '1'), ('bad', '1'), ('dep', '1')]\n[('bad', True), ('dep', False)]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS010",
+      "layer": "system",
+      "type": "system",
+      "category": "constraint_convergence",
+      "dimension": "ordering_invariance",
+      "system_dimension": "ordering_invariance",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Equivalent requirement spellings deduplicate to one semantic constraint set while non-equivalent active constraints still merge independent of root and candidate order.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\n\ndef resolve_dedup(roots, candidates):\n    unique_roots = sorted(set(Requirement(r) for r in roots), key=lambda r: r.name)\n    return unique_roots, resolve(unique_roots, candidates)\n\ncandidates = [{'name': 'Merge_Lib', 'version': '1.0'}, {'name': 'merge-lib', 'version': '2.0'}, {'name': 'merge-lib', 'version': '2.5'}, {'name': 'merge-lib', 'version': '3.0'}]\nroots = ['Merge_Lib[PDF,fast] >= 1.0, <3, !=2.0', 'merge-lib[fast,pdf] < 3.0, != 2, >= 1']\nunique, a = resolve_dedup(roots, candidates)\nunique_rev, b = resolve_dedup(list(reversed(roots)), list(reversed(candidates)))\nprint(len(unique), [(r.name, sorted(r.extras), str(r.specifier)) for r in unique])\nprint(sorted(a['selected'].items()))\nprint(a['excluded']['merge-lib'])\nprint(a == b and unique == unique_rev)\n",
+      "expected_output": "1 [('merge-lib', ['fast', 'pdf'], '>=1,<3,!=2')]\n[('merge-lib', '2.5')]\n['1', '2', '3']\nTrue",
+      "passed": false,
+      "actual": "2 [('merge-lib', ['fast', 'pdf'], '>=1,<3,!=2'), ('merge-lib', ['fast', 'pdf'], '<3,!=2,>=1')]\n[('merge-lib', '2.5')]\n['1', '2', '3']\nFalse",
+      "expected": "1 [('merge-lib', ['fast', 'pdf'], '>=1,<3,!=2')]\n[('merge-lib', '2.5')]\n['1', '2', '3']\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ],
+  "all_cases": [
+    {
+      "id": "MPU001",
+      "layer": "unit",
+      "type": "unit",
+      "category": "imports",
+      "dimension": "package_shape",
+      "requirement_refs": [
+        "REQ-package-shape"
+      ],
+      "description": "Public names import from the single module and exception classes inherit from ValueError.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version, InvalidVersion, SpecifierSet, InvalidSpecifier, Requirement, InvalidRequirement, Marker, InvalidMarker, UndefinedEnvironmentName, default_environment, is_requirement_satisfied\nprint(Version.__name__, SpecifierSet.__name__, Requirement.__name__, Marker.__name__)\nprint(issubclass(InvalidVersion, ValueError), issubclass(InvalidSpecifier, ValueError), issubclass(InvalidRequirement, ValueError), issubclass(InvalidMarker, ValueError), issubclass(UndefinedEnvironmentName, ValueError))\n",
+      "expected_output": "Version SpecifierSet Requirement Marker\nTrue True True True True",
+      "passed": true,
+      "actual": "Version SpecifierSet Requirement Marker\nTrue True True True True",
+      "expected": "Version SpecifierSet Requirement Marker\nTrue True True True True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU002",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version canonicalizes release zeros, epoch, pre-release aliases, post-release aliases, and local labels.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nvals = ['1.0.0', '2!01.02.0', '1.0ALPHA2', '1.0-r3', '1.0+LOCAL_build-5']\nprint([str(Version(v)) for v in vals])\nprint(Version('1.0') == Version('1.0.0'))\n",
+      "expected_output": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "passed": true,
+      "actual": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "expected": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU003",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version ordering handles dev, pre, final, and post releases.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nordered = [Version(v) for v in ['1.0.dev1', '1.0a1', '1.0b1', '1.0rc1', '1.0', '1.0.post1']]\nprint(all(a < b for a, b in zip(ordered, ordered[1:])))\nprint([str(v) for v in sorted(reversed(ordered))])\n",
+      "expected_output": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "passed": true,
+      "actual": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "expected": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU004",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version ordering includes epochs and local labels after public-version equality.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nprint(Version('1!0.9') > Version('2.0'))\nprint(Version('1.0+abc') < Version('1.0+1'))\nprint(Version('1.0+1') < Version('1.0+2'))\n",
+      "expected_output": "True\nTrue\nTrue",
+      "passed": true,
+      "actual": "True\nTrue\nTrue",
+      "expected": "True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU005",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version",
+        "REQ-errors"
+      ],
+      "description": "Invalid version text raises InvalidVersion.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version, InvalidVersion\nfor text in ['', '1..2', '1.0+', 'v nope']:\n    try:\n        Version(text); print('accepted')\n    except InvalidVersion:\n        print('InvalidVersion')\n",
+      "expected_output": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "passed": true,
+      "actual": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "expected": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU006",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet applies inclusive and exclusive range clauses.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns = SpecifierSet('>=1.2, <2.0')\nprint(str(s))\nprint([s.contains(v) for v in ['1.1', '1.2', '1.9', '2.0']])\n",
+      "expected_output": ">=1.2,<2\n[False, True, True, False]",
+      "passed": true,
+      "actual": ">=1.2,<2\n[False, True, True, False]",
+      "expected": ">=1.2,<2\n[False, True, True, False]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU007",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet supports equality, inequality, and wildcard release prefixes.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\nprint([SpecifierSet('==1.2.*').contains(v) for v in ['1.2', '1.2.5', '1.3']])\nprint([SpecifierSet('!=1.2.*').contains(v) for v in ['1.1', '1.2.9', '1.3']])\n",
+      "expected_output": "[True, True, False]\n[True, False, True]",
+      "passed": true,
+      "actual": "[True, True, False]\n[True, False, True]",
+      "expected": "[True, True, False]\n[True, False, True]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU008",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet supports compatible release bounds.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns1 = SpecifierSet('~=1.4')\ns2 = SpecifierSet('~=1.4.5')\nprint([s1.contains(v) for v in ['1.4', '1.9', '2.0']])\nprint([s2.contains(v) for v in ['1.4.5', '1.4.9', '1.5']])\n",
+      "expected_output": "[True, True, False]\n[True, True, False]",
+      "passed": true,
+      "actual": "[True, True, False]\n[True, True, False]",
+      "expected": "[True, True, False]\n[True, True, False]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU009",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet excludes pre-releases by default and includes them when requested.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns = SpecifierSet('>=1.0')\nprint(s.contains('1.1a1'))\nprint(s.contains('1.1a1', prereleases=True))\nprint(s.contains('1.1.dev1', prereleases=False))\n",
+      "expected_output": "False\nTrue\nFalse",
+      "passed": true,
+      "actual": "False\nTrue\nFalse",
+      "expected": "False\nTrue\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU010",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-errors"
+      ],
+      "description": "Invalid specifier text raises InvalidSpecifier.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet, InvalidSpecifier\nfor text in ['=>1.0', '>=', '==1.*.2']:\n    try:\n        SpecifierSet(text); print('accepted')\n    except InvalidSpecifier:\n        print('InvalidSpecifier')\n",
+      "expected_output": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "passed": false,
+      "actual": "InvalidSpecifier",
+      "expected": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp0xx2cbww\\case.py\", line 4, in <module>\n    SpecifierSet(text); print('accepted')\n    ~~~~~~~~~~~~^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minipackaging.py\", line 420, in __init__\n    clauses.append(_SpecifierClause(raw))\n                   ~~~~~~~~~~~~~~~~^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minipackaging.py\", line 331, in __init__\n    self._version = Version(version_text)\n                    ~~~~~~~^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-openhands-deepseek-v4-pro-001\\minipackaging.py\", line 134, in __init__\n    raise InvalidVersion(f\"Invalid version: {text!r}\")\nminipackaging.InvalidVersion: Invalid version: '='",
+      "exit_code": 1
+    },
+    {
+      "id": "MPU011",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement parses normalized names, sorted normalized extras, and canonical specifiers.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\nr = Requirement('My_Pkg[PDF,security-extra] >=1.0, <2')\nprint(r.name)\nprint(sorted(r.extras))\nprint(str(r.specifier))\nprint(str(r))\n",
+      "expected_output": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "passed": false,
+      "actual": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg [pdf,security-extra] >=1,<2",
+      "expected": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU012",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement parses direct URLs and marker text as distinct fields.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\nr = Requirement('Demo @ https://example.test/demo-1.0.whl ; python_version >= \"3.10\"')\nprint(r.name)\nprint(r.url)\nprint(str(r.specifier))\nprint(type(r.marker).__name__)\nprint(str(r))\n",
+      "expected_output": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "passed": false,
+      "actual": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl ; python_version >= \"3.10\"",
+      "expected": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU013",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement equality and hashing use normalized names and sorted extras.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\na = Requirement('Pkg_Name[B,A]>=1')\nb = Requirement('pkg-name[a,b] >= 1.0.0')\nprint(a == b)\nprint(len({a, b}))\nprint(str(b))\n",
+      "expected_output": "True\n1\npkg-name[a,b]>=1",
+      "passed": false,
+      "actual": "False\n2\npkg-name [a,b] >=1",
+      "expected": "True\n1\npkg-name[a,b]>=1",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU014",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-errors"
+      ],
+      "description": "Invalid requirement strings raise InvalidRequirement.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement, InvalidRequirement\nfor text in ['bad name>=1', 'pkg[bad extra]', 'pkg @ https://x >=1']:\n    try:\n        Requirement(text); print('accepted')\n    except InvalidRequirement:\n        print('InvalidRequirement')\n",
+      "expected_output": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "passed": false,
+      "actual": "InvalidRequirement\nInvalidRequirement\naccepted",
+      "expected": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU015",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker evaluates equality and version comparisons against a caller environment.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nenv = {'python_version': '3.11', 'os_name': 'posix'}\nprint(Marker('python_version >= \"3.8\"').evaluate(env))\nprint(Marker('os_name == \"nt\"').evaluate(env))\n",
+      "expected_output": "True\nFalse",
+      "passed": true,
+      "actual": "True\nFalse",
+      "expected": "True\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU016",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker honors boolean precedence and parentheses.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nenv = {'python_version': '3.9', 'sys_platform': 'linux', 'os_name': 'posix'}\nprint(Marker('python_version >= \"3.8\" and sys_platform == \"linux\"').evaluate(env))\nprint(Marker('python_version < \"3.8\" and (sys_platform == \"linux\" or os_name == \"posix\")').evaluate(env))\n",
+      "expected_output": "True\nFalse",
+      "passed": true,
+      "actual": "True\nFalse",
+      "expected": "True\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU017",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker evaluates membership operators and requested extras.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nprint(Marker('sys_platform in \"linux darwin\"').evaluate({'sys_platform': 'linux'}))\nprint(Marker('extra == \"security-extra\"').evaluate({}, requested_extras={'Security_Extra'}))\nprint(Marker('extra == \"docs\"').evaluate({}, requested_extras={'Security_Extra'}))\n",
+      "expected_output": "True\nTrue\nFalse",
+      "passed": true,
+      "actual": "True\nTrue\nFalse",
+      "expected": "True\nTrue\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU018",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker",
+        "REQ-errors"
+      ],
+      "description": "Marker syntax errors and missing environment variables use the documented exceptions.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker, InvalidMarker, UndefinedEnvironmentName\ntry:\n    Marker('python_version === \"3\"'); print('accepted')\nexcept InvalidMarker:\n    print('InvalidMarker')\ntry:\n    Marker('python_version >= \"3.8\"').evaluate({}); print('evaluated')\nexcept UndefinedEnvironmentName:\n    print('UndefinedEnvironmentName')\n",
+      "expected_output": "InvalidMarker\nUndefinedEnvironmentName",
+      "passed": true,
+      "actual": "InvalidMarker\nUndefinedEnvironmentName",
+      "expected": "InvalidMarker\nUndefinedEnvironmentName",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS001",
+      "layer": "system",
+      "type": "system",
+      "category": "resolver_url_marker_permutation",
+      "dimension": "ordering_invariance",
+      "system_dimension": "ordering_invariance",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-specifier",
+        "REQ-marker",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Candidate-order permutation preserves selected versions and semantic dependency edge facts when URL requirements are mixed with markers and extras.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\ncandidates = [\n    {'name': 'Core_Lib', 'version': '1.0'},\n    {'name': 'core-lib', 'version': '2.0'},\n    {'name': 'core-lib', 'version': '3.0'},\n    {'name': 'Plugin_Fast', 'version': '1.0', 'requires': ['ssl-lib>=2; extra == \"speed\"']},\n    {'name': 'ssl-lib', 'version': '2.0'},\n    {'name': 'App_Main', 'version': '1.0', 'requires': ['Plugin_Fast[Speed] @ https://example.test/plugin-fast-1.0.whl ; sys_platform == \"linux\" and extra == \"accelerated\"', 'core-lib>=1,<3']},\n    {'name': 'app-main', 'version': '2.0', 'requires': ['Plugin_Fast[Speed] @ https://example.test/plugin-fast-2.0.whl ; sys_platform == \"linux\" and extra == \"accelerated\"', 'core_lib>=2,<3']},\n]\nenv = {'python_version': '3.11', 'sys_platform': 'linux'}\nroot = 'App-Main[Accelerated]>=1; python_version >= \"3.10\"'\na = resolve([root], candidates, env)\nb = resolve([root], list(reversed(candidates)), env)\nurl_edges = [(e['parent'], e['name'], e['extras'], e['url']) for e in a['edges'] if e['url']]\nprint(sorted(a['selected'].items()))\nprint(url_edges)\nprint([(e['parent'], e['name']) for e in a['edges']])\nprint(a == b)\n",
+      "expected_output": "[('app-main', '2'), ('core-lib', '2'), ('plugin-fast', '1'), ('ssl-lib', '2')]\n[('app-main', 'plugin-fast', ('speed',), 'https://example.test/plugin-fast-2.0.whl')]\n[('app-main', 'core-lib'), ('app-main', 'plugin-fast'), ('plugin-fast', 'ssl-lib')]\nTrue",
+      "passed": true,
+      "actual": "[('app-main', '2'), ('core-lib', '2'), ('plugin-fast', '1'), ('ssl-lib', '2')]\n[('app-main', 'plugin-fast', ('speed',), 'https://example.test/plugin-fast-2.0.whl')]\n[('app-main', 'core-lib'), ('app-main', 'plugin-fast'), ('plugin-fast', 'ssl-lib')]\nTrue",
+      "expected": "[('app-main', '2'), ('core-lib', '2'), ('plugin-fast', '1'), ('ssl-lib', '2')]\n[('app-main', 'plugin-fast', ('speed',), 'https://example.test/plugin-fast-2.0.whl')]\n[('app-main', 'core-lib'), ('app-main', 'plugin-fast'), ('plugin-fast', 'ssl-lib')]\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS002",
+      "layer": "system",
+      "type": "system",
+      "category": "shared_parser_projection",
+      "dimension": "projection_consistency",
+      "system_dimension": "projection_consistency",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-specifier",
+        "REQ-marker",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Requirement parser fields, marker applicability, specifier membership, and requirement satisfaction drive the same selected candidate across equivalent metadata variants.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nfrom minipackaging import is_requirement_satisfied\nr = Requirement('Tool[PDF,Security_Extra] ~=1.4.5 ; python_version >= \"3.10\" and extra == \"security-extra\"')\nbase = [{'name': 'tool', 'version': '1.4.5'}, {'name': 'tool', 'version': '1.4.9'}, {'name': 'tool', 'version': '1.5'}]\nvariant = [{'name': 'Tool', 'version': '1.5.0'}, {'name': 'tool', 'version': '1.4.9'}, {'name': 'tool', 'version': '1.4.5'}]\nenv = {'python_version': '3.11'}\na = resolve([r], base, env, requested_extras={'Security_Extra'})\nb = resolve(['tool[security-extra,pdf] ~= 1.4.5 ; extra == \"security_extra\" and python_version >= \"3.10\"'], variant, env, requested_extras={'security-extra'})\nsame_target = {Requirement('Tool[PDF,Security_Extra] ~=1.4.5'), Requirement('tool[security-extra,pdf] ~= 1.4.5')}\nprint(r.name, sorted(r.extras), str(r.specifier), r.marker.evaluate(env, {'security_extra'}))\nprint(len(same_target))\nprint(sorted(a['selected'].items()))\nprint(a['selected'] == b['selected'])\nprint(is_requirement_satisfied(r, a['selected']['tool'], env, {'security-extra'}))\n",
+      "expected_output": "tool ['pdf', 'security-extra'] ~=1.4.5 True\n1\n[('tool', '1.4.9')]\nTrue\nTrue",
+      "passed": false,
+      "actual": "tool ['pdf', 'security-extra'] ~=1.4.5 True\n2\n[('tool', '1.4.9')]\nTrue\nTrue",
+      "expected": "tool ['pdf', 'security-extra'] ~=1.4.5 True\n1\n[('tool', '1.4.9')]\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS003",
+      "layer": "system",
+      "type": "system",
+      "category": "environment_sensitive_resolution",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-marker",
+        "REQ-environment",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Environment markers on candidate dependencies switch only the applicable dependency closure across fresh fixture variants.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nvariants = [\n    (\n        [\n            {'name': 'app', 'version': '1.0', 'requires': ['backport>=1; python_version < \"3.10\"', 'modern>=1; python_version >= \"3.10\"']},\n            {'name': 'backport', 'version': '1.0'},\n            {'name': 'modern', 'version': '1.0'},\n        ],\n        'python_version', '3.9', '3.11', 'backport', 'modern',\n    ),\n    (\n        [\n            {'name': 'app', 'version': '1.0', 'requires': ['posix-driver>=1; os_name == \"posix\"', 'nt-driver>=1; os_name == \"nt\"']},\n            {'name': 'posix-driver', 'version': '1.0'},\n            {'name': 'nt-driver', 'version': '1.0'},\n        ],\n        'os_name', 'posix', 'nt', 'posix-driver', 'nt-driver',\n    ),\n]\nfor candidates, key, left, right, left_dep, right_dep in variants:\n    a = resolve(['app>=1'], candidates, {key: left})\n    b = resolve(['app>=1'], list(reversed(candidates)), {key: right})\n    print(a['selected']['app'], left_dep in a['selected'], right_dep in a['selected'])\n    print(b['selected']['app'], left_dep in b['selected'], right_dep in b['selected'])\n",
+      "expected_output": "1 True False\n1 False True\n1 True False\n1 False True",
+      "passed": true,
+      "actual": "1 True False\n1 False True\n1 True False\n1 False True",
+      "expected": "1 True False\n1 False True\n1 True False\n1 False True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS004",
+      "layer": "system",
+      "type": "system",
+      "category": "bidirectional_edges",
+      "dimension": "bidirectional_consistency",
+      "system_dimension": "bidirectional_consistency",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Dependency edges and reverse dependents are inverse projections of the same URL, extras, and marker-qualified requirement facts.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\ncandidates = [\n    {'name': 'app', 'version': '1.0', 'requires': ['core>=1', 'docs-renderer[html] @ https://example.test/docs-1.whl ; extra == \"docs\"']},\n    {'name': 'core', 'version': '1.0', 'requires': ['shared>=1']},\n    {'name': 'docs-renderer', 'version': '1.0', 'requires': ['shared>=1; extra == \"html\"']},\n    {'name': 'shared', 'version': '1.0'},\n]\nres = resolve(['App[Docs]>=1'], list(reversed(candidates)))\nedges = sorted((e['parent'], e['name'], e['extras'], bool(e['url'])) for e in res['edges'])\ndependents = sorted((name, tuple(parents)) for name, parents in res['dependents'].items())\nprint(edges)\nprint(dependents)\nprint(all(parent in res['dependents'].get(child, []) for parent, child, extras, has_url in edges))\n",
+      "expected_output": "[('app', 'core', (), False), ('app', 'docs-renderer', ('html',), True), ('core', 'shared', (), False), ('docs-renderer', 'shared', (), False)]\n[('core', ('app',)), ('docs-renderer', ('app',)), ('shared', ('core', 'docs-renderer'))]\nTrue",
+      "passed": true,
+      "actual": "[('app', 'core', (), False), ('app', 'docs-renderer', ('html',), True), ('core', 'shared', (), False), ('docs-renderer', 'shared', (), False)]\n[('core', ('app',)), ('docs-renderer', ('app',)), ('shared', ('core', 'docs-renderer'))]\nTrue",
+      "expected": "[('app', 'core', (), False), ('app', 'docs-renderer', ('html',), True), ('core', 'shared', (), False), ('docs-renderer', 'shared', (), False)]\n[('core', ('app',)), ('docs-renderer', ('app',)), ('shared', ('core', 'docs-renderer'))]\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS005",
+      "layer": "system",
+      "type": "system",
+      "category": "conflict_exclusion_projection",
+      "dimension": "bidirectional_consistency",
+      "system_dimension": "bidirectional_consistency",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-version",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Conflicting root and transitive constraints derive the same selected version, excluded versions, and dependents after permutation.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\ncandidates = [\n    {'name': 'app', 'version': '1.0', 'requires': ['lib<3,!=2.0', 'tool>=1']},\n    {'name': 'tool', 'version': '1.0', 'requires': ['Lib>=2']},\n    {'name': 'lib', 'version': '1.0'},\n    {'name': 'lib', 'version': '1.5'},\n    {'name': 'lib', 'version': '2.0'},\n    {'name': 'lib', 'version': '2.5'},\n    {'name': 'lib', 'version': '3.0'},\n]\nroots = ['app>=1', 'lib>=1,<4,!=1.5', 'Lib <4, !=1.5, >=1.0']\nunique_lib_roots = {Requirement(r) for r in roots if Requirement(r).name == 'lib'}\na = resolve(roots, candidates)\nb = resolve(list(reversed(roots)), list(reversed(candidates)))\nprint(len(unique_lib_roots))\nprint(sorted(a['selected'].items()))\nprint(a['excluded']['lib'])\nprint(a['dependents']['lib'])\nprint(a == b)\n",
+      "expected_output": "1\n[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "passed": false,
+      "actual": "2\n[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "expected": "1\n[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS006",
+      "layer": "system",
+      "type": "system",
+      "category": "requirement_semantic_roundtrip",
+      "dimension": "state_accumulation",
+      "system_dimension": "state_accumulation",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-marker",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Direct URL requirement serialization and reparsing preserve parsed fields, marker applicability, extras propagation, and resolver-visible dependency closure without asserting exact whitespace.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nroot = Requirement('Pkg_B[Z,A] @ https://example.test/pkg-b-1.whl ; python_version >= \"3.8\"')\nagain = Requirement(str(root))\ncandidates = [\n    {'name': 'pkg-b', 'version': '1.0.0', 'requires': ['helper>=1; extra == \"a\"', 'zipper>=1; extra == \"z\"']},\n    {'name': 'helper', 'version': '1.0'},\n    {'name': 'zipper', 'version': '1.0'},\n]\nenv = {'python_version': '3.11'}\na = resolve([root], candidates, env)\nb = resolve([again], list(reversed(candidates)), env)\nprint((again.name, sorted(again.extras), again.url, again.marker.evaluate(env)))\nprint(sorted(a['selected'].items()))\nprint(a == b)\n",
+      "expected_output": "('pkg-b', ['a', 'z'], 'https://example.test/pkg-b-1.whl', True)\n[('helper', '1'), ('pkg-b', '1'), ('zipper', '1')]\nTrue",
+      "passed": true,
+      "actual": "('pkg-b', ['a', 'z'], 'https://example.test/pkg-b-1.whl', True)\n[('helper', '1'), ('pkg-b', '1'), ('zipper', '1')]\nTrue",
+      "expected": "('pkg-b', ['a', 'z'], 'https://example.test/pkg-b-1.whl', True)\n[('helper', '1'), ('pkg-b', '1'), ('zipper', '1')]\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS007",
+      "layer": "system",
+      "type": "system",
+      "category": "prerelease_resolution_policy",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-version",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Prerelease handling is identical between direct specifier checks and transitive resolver candidate selection.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nfrom minipackaging import SpecifierSet\ncandidates = [{'name': 'app', 'version': '1.0', 'requires': ['lib>=1']}, {'name': 'lib', 'version': '1.1a1'}]\ns = SpecifierSet('>=1')\nprint(s.contains('1.1a1'))\ntry:\n    resolve(['app>=1'], candidates)\nexcept ValueError:\n    print('no-default-prerelease')\nprint(sorted(resolve(['app>=1'], list(reversed(candidates)), prereleases=True)['selected'].items()))\nprint(s.contains('1.1a1', prereleases=True))\n",
+      "expected_output": "False\nno-default-prerelease\n[('app', '1'), ('lib', '1.1a1')]\nTrue",
+      "passed": true,
+      "actual": "False\nno-default-prerelease\n[('app', '1'), ('lib', '1.1a1')]\nTrue",
+      "expected": "False\nno-default-prerelease\n[('app', '1'), ('lib', '1.1a1')]\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS008",
+      "layer": "system",
+      "type": "system",
+      "category": "version_marker_resolution",
+      "dimension": "cross_feature_dataflow",
+      "system_dimension": "cross_feature_dataflow",
+      "requirement_refs": [
+        "REQ-marker",
+        "REQ-version",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Version-valued marker comparisons use the shared Version ordering when deciding whether root and dependency requirements participate in resolution.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nfrom minipackaging import Marker\ncandidates = [\n    {'name': 'runtime', 'version': '1.0', 'requires': ['rc-helper>=1; python_full_version < \"3.10\"']},\n    {'name': 'rc-helper', 'version': '1.0'},\n    {'name': 'addon', 'version': '1.0'},\n]\nenv = {'python_version': '3.10', 'python_full_version': '3.10.0rc1'}\nroots = ['runtime>=1', 'addon>=1; python_full_version < \"3.10\"']\nres = resolve(roots, candidates, env)\nprint(Version('3.10.0rc1') < Version('3.10'))\nprint(Marker('python_full_version < \"3.10\"').evaluate(env))\nprint(sorted(res['selected'].items()))\nprint([(e['parent'], e['name']) for e in res['edges']])\n",
+      "expected_output": "True\nTrue\n[('addon', '1'), ('rc-helper', '1'), ('runtime', '1')]\n[('runtime', 'rc-helper')]",
+      "passed": true,
+      "actual": "True\nTrue\n[('addon', '1'), ('rc-helper', '1'), ('runtime', '1')]\n[('runtime', 'rc-helper')]",
+      "expected": "True\nTrue\n[('addon', '1'), ('rc-helper', '1'), ('runtime', '1')]\n[('runtime', 'rc-helper')]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS009",
+      "layer": "system",
+      "type": "system",
+      "category": "resolution_error_atomicity",
+      "dimension": "error_atomicity",
+      "system_dimension": "error_atomicity",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-environment",
+        "REQ-resolution-invariants"
+      ],
+      "description": "Failed candidate metadata parsing from an invalid URL plus specifier leaves inputs and parsed objects unchanged, and later valid metadata resolves normally.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nfrom minipackaging import InvalidRequirement\nroot = Requirement('app[tools]>=1')\nbad = [\n    {'name': 'app', 'version': '1.0', 'requires': ['dep>=1', 'bad @ https://example.test/bad-1.whl >=1 ; python_version >= \"3.10\"']},\n    {'name': 'dep', 'version': '1.0'},\n    {'name': 'bad', 'version': '1.0'},\n]\nbefore = repr(bad)\ntry:\n    resolve([root], bad, {'python_version': '3.11'})\nexcept InvalidRequirement:\n    print('invalid-metadata')\nprint(repr(bad) == before)\nprint((root.name, sorted(root.extras), root.marker is None))\ngood = [\n    {'name': 'app', 'version': '1.0', 'requires': ['dep>=1', 'bad @ https://example.test/bad-1.whl ; python_version >= \"3.10\"']},\n    {'name': 'dep', 'version': '1.0'},\n    {'name': 'bad', 'version': '1.0'},\n]\nres = resolve([root], list(reversed(good)), {'python_version': '3.11'})\nprint(sorted(res['selected'].items()))\nprint([(e['name'], bool(e['url'])) for e in res['edges']])\n",
+      "expected_output": "invalid-metadata\nTrue\n('app', ['tools'], True)\n[('app', '1'), ('bad', '1'), ('dep', '1')]\n[('bad', True), ('dep', False)]",
+      "passed": false,
+      "actual": "True\n('app', ['tools'], True)\n[('app', '1'), ('bad', '1'), ('dep', '1')]\n[('bad', True), ('dep', False)]",
+      "expected": "invalid-metadata\nTrue\n('app', ['tools'], True)\n[('app', '1'), ('bad', '1'), ('dep', '1')]\n[('bad', True), ('dep', False)]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS010",
+      "layer": "system",
+      "type": "system",
+      "category": "constraint_convergence",
+      "dimension": "ordering_invariance",
+      "system_dimension": "ordering_invariance",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Equivalent requirement spellings deduplicate to one semantic constraint set while non-equivalent active constraints still merge independent of root and candidate order.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\n\ndef resolve_dedup(roots, candidates):\n    unique_roots = sorted(set(Requirement(r) for r in roots), key=lambda r: r.name)\n    return unique_roots, resolve(unique_roots, candidates)\n\ncandidates = [{'name': 'Merge_Lib', 'version': '1.0'}, {'name': 'merge-lib', 'version': '2.0'}, {'name': 'merge-lib', 'version': '2.5'}, {'name': 'merge-lib', 'version': '3.0'}]\nroots = ['Merge_Lib[PDF,fast] >= 1.0, <3, !=2.0', 'merge-lib[fast,pdf] < 3.0, != 2, >= 1']\nunique, a = resolve_dedup(roots, candidates)\nunique_rev, b = resolve_dedup(list(reversed(roots)), list(reversed(candidates)))\nprint(len(unique), [(r.name, sorted(r.extras), str(r.specifier)) for r in unique])\nprint(sorted(a['selected'].items()))\nprint(a['excluded']['merge-lib'])\nprint(a == b and unique == unique_rev)\n",
+      "expected_output": "1 [('merge-lib', ['fast', 'pdf'], '>=1,<3,!=2')]\n[('merge-lib', '2.5')]\n['1', '2', '3']\nTrue",
+      "passed": false,
+      "actual": "2 [('merge-lib', ['fast', 'pdf'], '>=1,<3,!=2'), ('merge-lib', ['fast', 'pdf'], '<3,!=2,>=1')]\n[('merge-lib', '2.5')]\n['1', '2', '3']\nFalse",
+      "expected": "1 [('merge-lib', ['fast', 'pdf'], '>=1,<3,!=2')]\n[('merge-lib', '2.5')]\n['1', '2', '3']\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS011",
+      "layer": "system",
+      "type": "system",
+      "category": "extras_dependency_propagation",
+      "dimension": "boundary_crossing",
+      "system_dimension": "boundary_crossing",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-marker",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Parent extras activate URL dependency requirements, and extras on dependency requirements activate child optional dependencies.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\ncandidates = [\n    {'name': 'app', 'version': '1.0', 'requires': ['renderer[unicode] @ https://example.test/renderer-1.whl ; extra == \"pdf\"']},\n    {'name': 'renderer', 'version': '1.0', 'requires': ['font[emoji]>=1; extra == \"unicode\"']},\n    {'name': 'font', 'version': '1.0', 'requires': ['emoji-font>=1; extra == \"emoji\"']},\n    {'name': 'emoji-font', 'version': '1.0'},\n]\nplain = resolve(['app>=1'], candidates)\npdf = resolve(['App[PDF]>=1'], list(reversed(candidates)))\nprint(sorted(plain['selected'].items()))\nprint(sorted(pdf['selected'].items()))\nprint([(e['parent'], e['name'], e['extras'], bool(e['url'])) for e in pdf['edges']])\n",
+      "expected_output": "[('app', '1')]\n[('app', '1'), ('emoji-font', '1'), ('font', '1'), ('renderer', '1')]\n[('app', 'renderer', ('unicode',), True), ('font', 'emoji-font', (), False), ('renderer', 'font', ('emoji',), False)]",
+      "passed": true,
+      "actual": "[('app', '1')]\n[('app', '1'), ('emoji-font', '1'), ('font', '1'), ('renderer', '1')]\n[('app', 'renderer', ('unicode',), True), ('font', 'emoji-font', (), False), ('renderer', 'font', ('emoji',), False)]",
+      "expected": "[('app', '1')]\n[('app', '1'), ('emoji-font', '1'), ('font', '1'), ('renderer', '1')]\n[('app', 'renderer', ('unicode',), True), ('font', 'emoji-font', (), False), ('renderer', 'font', ('emoji',), False)]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS012",
+      "layer": "system",
+      "type": "system",
+      "category": "object_reuse_resolution",
+      "dimension": "state_accumulation",
+      "system_dimension": "state_accumulation",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-marker",
+        "REQ-resolution-invariants",
+        "REQ-environment"
+      ],
+      "description": "Parsed requirement objects can be reused across fresh environment fixture variants and candidate permutations without retaining prior resolution state.",
+      "weight": 8,
+      "test_code": "from minipackaging import Requirement, Version\n\ndef resolve(roots, candidates, env=None, requested_extras=None, prereleases=None):\n    rows = []\n    for c in candidates:\n        rows.append({'name': Requirement(c['name']).name, 'version': Version(c['version']), 'requires': list(c.get('requires', []))})\n    constraints = {}\n    extras = {}\n    edges = set()\n    done = {}\n\n    def add(req):\n        constraints.setdefault(req.name, []).append(req)\n        extras.setdefault(req.name, set()).update(req.extras)\n\n    def specifier_facts(req):\n        versions = sorted([r['version'] for r in rows if r['name'] == req.name])\n        return tuple((str(v), req.specifier.contains(v, prereleases=prereleases)) for v in versions)\n\n    for root in roots:\n        req = root if isinstance(root, Requirement) else Requirement(root)\n        if req.marker is None or req.marker.evaluate(env, requested_extras):\n            add(req)\n\n    while True:\n        changed = False\n        for name in sorted(constraints):\n            opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n            if not opts:\n                raise ValueError(name)\n            pick = max(opts, key=lambda r: r['version'])\n            key = (str(pick['version']), tuple(sorted(extras.get(name, set()))))\n            if done.get(name) == key:\n                continue\n            done[name] = key\n            for text in pick['requires']:\n                dep = Requirement(text)\n                marker_applicable = dep.marker is None or dep.marker.evaluate(env, extras.get(name, set()))\n                if marker_applicable:\n                    edge = (name, dep.name, tuple(sorted(dep.extras)), dep.url, specifier_facts(dep), marker_applicable)\n                    if edge not in edges:\n                        edges.add(edge)\n                        add(dep)\n                        changed = True\n        if not changed:\n            break\n\n    selected = {}\n    excluded = {}\n    for name in sorted(constraints):\n        opts = [r for r in rows if r['name'] == name and all(req.specifier.contains(r['version'], prereleases=prereleases) for req in constraints[name])]\n        if not opts:\n            raise ValueError(name)\n        pick = max(opts, key=lambda r: r['version'])\n        selected[name] = str(pick['version'])\n        rest = [str(r['version']) for r in rows if r['name'] == name and str(r['version']) != selected[name]]\n        if rest:\n            excluded[name] = sorted(rest, key=Version)\n    edge_rows = [\n        {'parent': p, 'name': n, 'extras': x, 'url': u, 'specifier_matches': s, 'marker_applicable': m}\n        for p, n, x, u, s, m in sorted(edges, key=repr)\n    ]\n    dependents = {}\n    for e in edge_rows:\n        dependents.setdefault(e['name'], []).append(e['parent'])\n    dependents = {k: sorted(set(v)) for k, v in sorted(dependents.items())}\n    return {'selected': selected, 'edges': edge_rows, 'dependents': dependents, 'excluded': excluded}\nroot = Requirement('app>=1')\ncandidates = [\n    {'name': 'app', 'version': '1.0', 'requires': ['linux-only>=1; sys_platform == \"linux\"', 'win-only>=1; sys_platform == \"win32\"']},\n    {'name': 'linux-only', 'version': '1.0'},\n    {'name': 'win-only', 'version': '1.0'},\n]\nlinux = resolve([root], candidates, {'sys_platform': 'linux'})\nwin = resolve([root], list(reversed(candidates)), {'sys_platform': 'win32'})\nagain = resolve([root], candidates, {'sys_platform': 'linux'})\nprint(sorted(linux['selected'].items()))\nprint(sorted(win['selected'].items()))\nprint(linux == again)\nprint((root.name, sorted(root.extras), root.marker is None))\n",
+      "expected_output": "[('app', '1'), ('linux-only', '1')]\n[('app', '1'), ('win-only', '1')]\nTrue\n('app', [], True)",
+      "passed": true,
+      "actual": "[('app', '1'), ('linux-only', '1')]\n[('app', '1'), ('win-only', '1')]\nTrue\n('app', [], True)",
+      "expected": "[('app', '1'), ('linux-only', '1')]\n[('app', '1'), ('win-only', '1')]\nTrue\n('app', [], True)",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

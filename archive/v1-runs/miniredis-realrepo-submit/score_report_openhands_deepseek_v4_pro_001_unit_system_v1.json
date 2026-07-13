@@ -1,0 +1,2501 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\miniredis-realrepo-submit\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\miniredis-realrepo-submit\\solution-openhands-deepseek-v4-pro-001",
+  "total_cases": 30,
+  "passed_cases": 26,
+  "total_weight": 168,
+  "passed_weight": 144,
+  "score": 0.8571428571428571,
+  "unit_score": 0.8888888888888888,
+  "system_score": 0.8333333333333334,
+  "gap_pp": 5.5555555555555465,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 80,
+      "cases": 12,
+      "passed": 10
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 64,
+      "cases": 18,
+      "passed": 16
+    }
+  },
+  "categories": {
+    "db_management": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "del_type_reset": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "errors": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "expire_set_ttl_order": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "flush_all_types": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "hash_expiry_flow": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "hash_op_on_set_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "hash_ops": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "key_management": {
+      "weight": 12,
+      "passed_weight": 8,
+      "cases": 3,
+      "passed": 2
+    },
+    "keys_dbsize_agreement": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "keys_pattern_type_dbsize": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "list_mixed_push": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "list_op_on_string_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "list_ops": {
+      "weight": 16,
+      "passed_weight": 12,
+      "cases": 4,
+      "passed": 3
+    },
+    "push_pop_order": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "set_accumulate_remove": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "set_ops": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "string_ops": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "type_creation_flow": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "failed_cases": [
+    {
+      "id": "MDRU004",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LPUSH prepends elements; LRANGE shows correct LIFO-style head order.",
+      "weight": 4,
+      "commands": [
+        [
+          "LPUSH",
+          "items",
+          "c",
+          "b",
+          "a"
+        ],
+        [
+          "LRANGE",
+          "items",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ]
+        },
+        "step_stdout_json": {
+          "1": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "3\n[\"c\", \"b\", \"a\"]",
+      "expected": "step 1: expected JSON ['a', 'b', 'c'], got ['c', 'b', 'a']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU015",
+      "layer": "unit",
+      "category": "key_management",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "KEYS returns all keys without pattern; filters with glob pattern.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "user:1",
+          "Alice"
+        ],
+        [
+          "SET",
+          "user:2",
+          "Bob"
+        ],
+        [
+          "LPUSH",
+          "items",
+          "x"
+        ],
+        [
+          "SADD",
+          "tags",
+          "y"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "KEYS",
+          "user:*"
+        ]
+      ],
+      "checks": {
+        "step_stdout_json_contains": {
+          "4": [
+            "user:1",
+            "user:2",
+            "items",
+            "tags"
+          ]
+        },
+        "step_stdout_json": {
+          "5": [
+            "user:1",
+            "user:2"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\nOK\n1\n1\n[\"items\", \"tags\", \"user:1\", \"user:2\"]\n[]",
+      "expected": "step 5: expected JSON ['user:1', 'user:2'], got []",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS010",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "push_pop_order",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LPUSH→LPOP gives LIFO; RPUSH→LPOP gives FIFO. Pop order depends on push direction.",
+      "weight": 8,
+      "commands": [
+        [
+          "LPUSH",
+          "stack",
+          "1",
+          "2",
+          "3"
+        ],
+        [
+          "LPOP",
+          "stack"
+        ],
+        [
+          "LPOP",
+          "stack"
+        ],
+        [
+          "RPUSH",
+          "queue",
+          "A",
+          "B",
+          "C"
+        ],
+        [
+          "LPOP",
+          "queue"
+        ],
+        [
+          "LPOP",
+          "queue"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "3"
+          ],
+          "2": [
+            "2"
+          ],
+          "4": [
+            "A"
+          ],
+          "5": [
+            "B"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "3\n1\n2\n3\nA\nB",
+      "expected": "step 1: expected stdout '3', got '1'",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS011",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "keys_pattern_type_dbsize",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "KEYS pattern, TYPE, and DBSIZE compose after mixed operations and DEL across all four types.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "user:1",
+          "A"
+        ],
+        [
+          "SET",
+          "user:2",
+          "B"
+        ],
+        [
+          "LPUSH",
+          "queue:tasks",
+          "x"
+        ],
+        [
+          "SADD",
+          "group:admins",
+          "y"
+        ],
+        [
+          "HSET",
+          "config:app",
+          "ver",
+          "1"
+        ],
+        [
+          "KEYS",
+          "user:*"
+        ],
+        [
+          "KEYS",
+          "*:*"
+        ],
+        [
+          "TYPE",
+          "queue:tasks"
+        ],
+        [
+          "TYPE",
+          "group:admins"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "DEL",
+          "user:1"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ]
+      ],
+      "checks": {
+        "step_stdout_json": {
+          "5": [
+            "user:1",
+            "user:2"
+          ],
+          "6": [
+            "user:1",
+            "user:2",
+            "queue:tasks",
+            "group:admins",
+            "config:app"
+          ]
+        },
+        "step_stdout": {
+          "7": [
+            "list"
+          ],
+          "8": [
+            "set"
+          ],
+          "9": [
+            "5"
+          ],
+          "12": [
+            "4"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "11": [
+            "user:2",
+            "queue:tasks",
+            "group:admins",
+            "config:app"
+          ]
+        },
+        "step_stdout_json_len": {
+          "11": 4
+        }
+      },
+      "passed": false,
+      "actual": "OK\nOK\n1\n1\n1\n[]\n[]\nlist\nset\n5\n1\n[\"config:app\", \"group:admins\", \"queue:tasks\", \"user:2\"]\n4",
+      "expected": "step 5: expected JSON ['user:1', 'user:2'], got []\nstep 6: expected JSON ['user:1', 'user:2', 'queue:tasks', 'group:admins', 'config:app'], got []",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ],
+  "all_cases": [
+    {
+      "id": "MDRU001",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "SET stores a value and GET retrieves it exactly.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "name",
+          "Alice"
+        ],
+        [
+          "GET",
+          "name"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "OK"
+          ],
+          "1": [
+            "Alice"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nAlice",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU002",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "DEL returns count of removed keys; EXISTS returns 0 after delete.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "a",
+          "1"
+        ],
+        [
+          "SET",
+          "b",
+          "2"
+        ],
+        [
+          "SET",
+          "c",
+          "3"
+        ],
+        [
+          "DEL",
+          "a",
+          "x",
+          "b"
+        ],
+        [
+          "EXISTS",
+          "a"
+        ],
+        [
+          "EXISTS",
+          "b"
+        ],
+        [
+          "EXISTS",
+          "c"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "3": [
+            "2"
+          ],
+          "4": [
+            "0"
+          ],
+          "5": [
+            "0"
+          ],
+          "6": [
+            "1"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nOK\nOK\n2\n0\n0\n1",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU003",
+      "layer": "unit",
+      "category": "string_ops",
+      "requirement_refs": [
+        "REQ-string-ops"
+      ],
+      "description": "SET overwrites previous value of same key.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "k",
+          "first"
+        ],
+        [
+          "SET",
+          "k",
+          "second"
+        ],
+        [
+          "GET",
+          "k"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "2": [
+            "second"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nOK\nsecond",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU004",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LPUSH prepends elements; LRANGE shows correct LIFO-style head order.",
+      "weight": 4,
+      "commands": [
+        [
+          "LPUSH",
+          "items",
+          "c",
+          "b",
+          "a"
+        ],
+        [
+          "LRANGE",
+          "items",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ]
+        },
+        "step_stdout_json": {
+          "1": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "3\n[\"c\", \"b\", \"a\"]",
+      "expected": "step 1: expected JSON ['a', 'b', 'c'], got ['c', 'b', 'a']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU005",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "RPUSH appends elements preserving insertion order.",
+      "weight": 4,
+      "commands": [
+        [
+          "RPUSH",
+          "queue",
+          "a",
+          "b",
+          "c"
+        ],
+        [
+          "LRANGE",
+          "queue",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ]
+        },
+        "step_stdout_json": {
+          "1": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n[\"a\", \"b\", \"c\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU006",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LPOP removes and returns first element; LLEN reflects updated size.",
+      "weight": 4,
+      "commands": [
+        [
+          "RPUSH",
+          "items",
+          "one",
+          "two",
+          "three"
+        ],
+        [
+          "LLEN",
+          "items"
+        ],
+        [
+          "LPOP",
+          "items"
+        ],
+        [
+          "LLEN",
+          "items"
+        ],
+        [
+          "LRANGE",
+          "items",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "3"
+          ],
+          "2": [
+            "one"
+          ],
+          "3": [
+            "2"
+          ]
+        },
+        "step_stdout_json": {
+          "4": [
+            "two",
+            "three"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n3\none\n2\n[\"two\", \"three\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU007",
+      "layer": "unit",
+      "category": "list_ops",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LRANGE with negative indices and subrange works correctly.",
+      "weight": 4,
+      "commands": [
+        [
+          "RPUSH",
+          "nums",
+          "10",
+          "20",
+          "30",
+          "40",
+          "50"
+        ],
+        [
+          "LRANGE",
+          "nums",
+          "1",
+          "3"
+        ],
+        [
+          "LRANGE",
+          "nums",
+          "-2",
+          "-1"
+        ],
+        [
+          "LRANGE",
+          "nums",
+          "0",
+          "0"
+        ]
+      ],
+      "checks": {
+        "step_stdout_json": {
+          "1": [
+            "20",
+            "30",
+            "40"
+          ],
+          "2": [
+            "40",
+            "50"
+          ],
+          "3": [
+            "10"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "5\n[\"20\", \"30\", \"40\"]\n[\"40\", \"50\"]\n[\"10\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU008",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "SADD adds members and SMEMBERS returns them as a JSON array.",
+      "weight": 4,
+      "commands": [
+        [
+          "SADD",
+          "colors",
+          "red",
+          "green",
+          "blue"
+        ],
+        [
+          "SMEMBERS",
+          "colors"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "1": [
+            "red",
+            "green",
+            "blue"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n[\"blue\", \"green\", \"red\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU009",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "SADD deduplicates; SREM removes members; SISMEMBER checks membership.",
+      "weight": 4,
+      "commands": [
+        [
+          "SADD",
+          "tags",
+          "a",
+          "b",
+          "a",
+          "c"
+        ],
+        [
+          "SMEMBERS",
+          "tags"
+        ],
+        [
+          "SISMEMBER",
+          "tags",
+          "b"
+        ],
+        [
+          "SISMEMBER",
+          "tags",
+          "x"
+        ],
+        [
+          "SREM",
+          "tags",
+          "a",
+          "x"
+        ],
+        [
+          "SMEMBERS",
+          "tags"
+        ],
+        [
+          "SISMEMBER",
+          "tags",
+          "a"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ],
+          "2": [
+            "1"
+          ],
+          "3": [
+            "0"
+          ],
+          "4": [
+            "1"
+          ],
+          "6": [
+            "0"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "1": [
+            "a",
+            "b",
+            "c"
+          ],
+          "5": [
+            "b",
+            "c"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n[\"a\", \"b\", \"c\"]\n1\n0\n1\n[\"b\", \"c\"]\n0",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU010",
+      "layer": "unit",
+      "category": "set_ops",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "SCARD returns correct cardinality after SADD and SREM.",
+      "weight": 4,
+      "commands": [
+        [
+          "SADD",
+          "s",
+          "x",
+          "y",
+          "z"
+        ],
+        [
+          "SCARD",
+          "s"
+        ],
+        [
+          "SREM",
+          "s",
+          "y"
+        ],
+        [
+          "SCARD",
+          "s"
+        ],
+        [
+          "SCARD",
+          "no-key"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "3"
+          ],
+          "3": [
+            "2"
+          ],
+          "4": [
+            "0"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n3\n1\n2\n0",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU011",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HSET sets a field and HGET retrieves it.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "user:1",
+          "name",
+          "Alice"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "name"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "email"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "1"
+          ],
+          "1": [
+            "Alice"
+          ],
+          "2": [
+            "(nil)"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "1\nAlice\n(nil)",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU012",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HSET multi-field; HDEL removes fields; HGETALL returns all fields.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "user:1",
+          "name",
+          "Alice",
+          "age",
+          "30",
+          "city",
+          "NYC"
+        ],
+        [
+          "HGETALL",
+          "user:1"
+        ],
+        [
+          "HDEL",
+          "user:1",
+          "age",
+          "phone"
+        ],
+        [
+          "HGETALL",
+          "user:1"
+        ],
+        [
+          "HGET",
+          "user:1",
+          "age"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ],
+          "2": [
+            "1"
+          ],
+          "4": [
+            "(nil)"
+          ]
+        },
+        "step_stdout_json": {
+          "1": {
+            "name": "Alice",
+            "age": "30",
+            "city": "NYC"
+          },
+          "3": {
+            "name": "Alice",
+            "city": "NYC"
+          }
+        }
+      },
+      "passed": true,
+      "actual": "3\n{\"name\": \"Alice\", \"age\": \"30\", \"city\": \"NYC\"}\n1\n{\"name\": \"Alice\", \"city\": \"NYC\"}\n(nil)",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU013",
+      "layer": "unit",
+      "category": "hash_ops",
+      "requirement_refs": [
+        "REQ-hash-ops"
+      ],
+      "description": "HEXISTS returns 1 for existing fields and 0 for missing fields.",
+      "weight": 4,
+      "commands": [
+        [
+          "HSET",
+          "config",
+          "theme",
+          "dark"
+        ],
+        [
+          "HEXISTS",
+          "config",
+          "theme"
+        ],
+        [
+          "HEXISTS",
+          "config",
+          "lang"
+        ],
+        [
+          "HEXISTS",
+          "nokey",
+          "field"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "1"
+          ],
+          "2": [
+            "0"
+          ],
+          "3": [
+            "0"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "1\n1\n0\n0",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU014",
+      "layer": "unit",
+      "category": "key_management",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "TYPE returns correct type for all four data structures and none for missing keys.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "s",
+          "v"
+        ],
+        [
+          "LPUSH",
+          "l",
+          "x"
+        ],
+        [
+          "SADD",
+          "set",
+          "y"
+        ],
+        [
+          "HSET",
+          "h",
+          "f",
+          "z"
+        ],
+        [
+          "TYPE",
+          "s"
+        ],
+        [
+          "TYPE",
+          "l"
+        ],
+        [
+          "TYPE",
+          "set"
+        ],
+        [
+          "TYPE",
+          "h"
+        ],
+        [
+          "TYPE",
+          "nope"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "string"
+          ],
+          "5": [
+            "list"
+          ],
+          "6": [
+            "set"
+          ],
+          "7": [
+            "hash"
+          ],
+          "8": [
+            "none"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n1\n1\nstring\nlist\nset\nhash\nnone",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU015",
+      "layer": "unit",
+      "category": "key_management",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "KEYS returns all keys without pattern; filters with glob pattern.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "user:1",
+          "Alice"
+        ],
+        [
+          "SET",
+          "user:2",
+          "Bob"
+        ],
+        [
+          "LPUSH",
+          "items",
+          "x"
+        ],
+        [
+          "SADD",
+          "tags",
+          "y"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "KEYS",
+          "user:*"
+        ]
+      ],
+      "checks": {
+        "step_stdout_json_contains": {
+          "4": [
+            "user:1",
+            "user:2",
+            "items",
+            "tags"
+          ]
+        },
+        "step_stdout_json": {
+          "5": [
+            "user:1",
+            "user:2"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "OK\nOK\n1\n1\n[\"items\", \"tags\", \"user:1\", \"user:2\"]\n[]",
+      "expected": "step 5: expected JSON ['user:1', 'user:2'], got []",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU016",
+      "layer": "unit",
+      "category": "key_management",
+      "requirement_refs": [
+        "REQ-key-mgmt"
+      ],
+      "description": "EXPIRE sets TTL; TTL reads it; TTL returns -2 for missing key and -1 for persistent key.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "temp",
+          "val"
+        ],
+        [
+          "EXPIRE",
+          "temp",
+          "300"
+        ],
+        [
+          "TTL",
+          "temp"
+        ],
+        [
+          "TTL",
+          "no-key"
+        ],
+        [
+          "SET",
+          "perm",
+          "forever"
+        ],
+        [
+          "TTL",
+          "perm"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "OK"
+          ],
+          "1": [
+            "1"
+          ],
+          "3": [
+            "-2"
+          ],
+          "5": [
+            "-1"
+          ]
+        },
+        "step_stdout_in_range": {
+          "2": [
+            1,
+            300
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n300\n-2\nOK\n-1",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU017",
+      "layer": "unit",
+      "category": "db_management",
+      "requirement_refs": [
+        "REQ-db-mgmt"
+      ],
+      "description": "FLUSHDB removes all keys; DBSIZE becomes 0; KEYS returns empty.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "a",
+          "1"
+        ],
+        [
+          "LPUSH",
+          "b",
+          "x"
+        ],
+        [
+          "SADD",
+          "c",
+          "y"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "FLUSHDB"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "KEYS"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "3": [
+            "3"
+          ],
+          "4": [
+            "OK"
+          ],
+          "5": [
+            "0"
+          ]
+        },
+        "step_stdout_json": {
+          "6": []
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n1\n3\nOK\n0\n[]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRU018",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-list-ops"
+      ],
+      "description": "LPOP on a string key fails non-zero and preserves the original value.",
+      "weight": 4,
+      "commands": [
+        [
+          "SET",
+          "name",
+          "Alice"
+        ],
+        {
+          "args": [
+            "LPOP",
+            "name"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "name"
+        ],
+        [
+          "TYPE",
+          "name"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "1"
+        ],
+        "step_stderr_contains_any": {
+          "1": [
+            "type",
+            "string",
+            "list",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "2": [
+            "Alice"
+          ],
+          "3": [
+            "string"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nAlice\nstring",
+      "expected": "all rubric checks pass",
+      "stderr": "ERR WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 1
+    },
+    {
+      "id": "MDRS001",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "type_creation_flow",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt"
+      ],
+      "description": "Keys created by SET/LPUSH/SADD/HSET report correct TYPE; data flows correctly through GET/LRANGE/SMEMBERS/HGET.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "str",
+          "hello"
+        ],
+        [
+          "LPUSH",
+          "lst",
+          "world"
+        ],
+        [
+          "SADD",
+          "st",
+          "member1"
+        ],
+        [
+          "HSET",
+          "hash",
+          "field1",
+          "val1"
+        ],
+        [
+          "TYPE",
+          "str"
+        ],
+        [
+          "TYPE",
+          "lst"
+        ],
+        [
+          "TYPE",
+          "st"
+        ],
+        [
+          "TYPE",
+          "hash"
+        ],
+        [
+          "GET",
+          "str"
+        ],
+        [
+          "LRANGE",
+          "lst",
+          "0",
+          "-1"
+        ],
+        [
+          "SMEMBERS",
+          "st"
+        ],
+        [
+          "HGET",
+          "hash",
+          "field1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "string"
+          ],
+          "5": [
+            "list"
+          ],
+          "6": [
+            "set"
+          ],
+          "7": [
+            "hash"
+          ],
+          "8": [
+            "hello"
+          ],
+          "11": [
+            "val1"
+          ]
+        },
+        "step_stdout_json": {
+          "9": [
+            "world"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "10": [
+            "member1"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n1\n1\nstring\nlist\nset\nhash\nhello\n[\"world\"]\n[\"member1\"]\nval1",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS002",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "hash_expiry_flow",
+      "requirement_refs": [
+        "REQ-hash-ops",
+        "REQ-key-mgmt"
+      ],
+      "description": "HSET data flows through HGETALL; EXPIRE is reflected in TTL while hash data remains accessible.",
+      "weight": 8,
+      "commands": [
+        [
+          "HSET",
+          "session",
+          "user",
+          "alice",
+          "role",
+          "admin"
+        ],
+        [
+          "HGETALL",
+          "session"
+        ],
+        [
+          "EXPIRE",
+          "session",
+          "600"
+        ],
+        [
+          "TTL",
+          "session"
+        ],
+        [
+          "HGET",
+          "session",
+          "user"
+        ],
+        [
+          "HEXISTS",
+          "session",
+          "role"
+        ],
+        [
+          "TYPE",
+          "session"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "2"
+          ],
+          "2": [
+            "1"
+          ],
+          "4": [
+            "alice"
+          ],
+          "5": [
+            "1"
+          ],
+          "6": [
+            "hash"
+          ]
+        },
+        "step_stdout_json": {
+          "1": {
+            "user": "alice",
+            "role": "admin"
+          }
+        },
+        "step_stdout_in_range": {
+          "3": [
+            1,
+            600
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "2\n{\"user\": \"alice\", \"role\": \"admin\"}\n1\n600\nalice\n1\nhash",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS003",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "list_mixed_push",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "Mixed LPUSH and RPUSH accumulate correctly; element order reflects insertion history.",
+      "weight": 8,
+      "commands": [
+        [
+          "LPUSH",
+          "mylist",
+          "A"
+        ],
+        [
+          "RPUSH",
+          "mylist",
+          "B"
+        ],
+        [
+          "LPUSH",
+          "mylist",
+          "C"
+        ],
+        [
+          "RPUSH",
+          "mylist",
+          "D"
+        ],
+        [
+          "LLEN",
+          "mylist"
+        ],
+        [
+          "LRANGE",
+          "mylist",
+          "0",
+          "-1"
+        ],
+        [
+          "LPOP",
+          "mylist"
+        ],
+        [
+          "RPOP",
+          "mylist"
+        ],
+        [
+          "LRANGE",
+          "mylist",
+          "0",
+          "-1"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "4"
+          ],
+          "6": [
+            "C"
+          ],
+          "7": [
+            "D"
+          ]
+        },
+        "step_stdout_json": {
+          "5": [
+            "C",
+            "A",
+            "B",
+            "D"
+          ],
+          "8": [
+            "A",
+            "B"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "1\n2\n3\n4\n4\n[\"C\", \"A\", \"B\", \"D\"]\nC\nD\n[\"A\", \"B\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS004",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "set_accumulate_remove",
+      "requirement_refs": [
+        "REQ-set-ops"
+      ],
+      "description": "SADD accumulates with dedup; SREM removes; SCARD/SMEMBERS/SISMEMBER all reflect accumulated state.",
+      "weight": 8,
+      "commands": [
+        [
+          "SADD",
+          "langs",
+          "python",
+          "java",
+          "rust"
+        ],
+        [
+          "SADD",
+          "langs",
+          "python",
+          "go",
+          "rust"
+        ],
+        [
+          "SCARD",
+          "langs"
+        ],
+        [
+          "SISMEMBER",
+          "langs",
+          "python"
+        ],
+        [
+          "SISMEMBER",
+          "langs",
+          "ruby"
+        ],
+        [
+          "SREM",
+          "langs",
+          "java",
+          "ruby"
+        ],
+        [
+          "SCARD",
+          "langs"
+        ],
+        [
+          "SISMEMBER",
+          "langs",
+          "java"
+        ],
+        [
+          "SMEMBERS",
+          "langs"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "0": [
+            "3"
+          ],
+          "1": [
+            "1"
+          ],
+          "2": [
+            "4"
+          ],
+          "3": [
+            "1"
+          ],
+          "4": [
+            "0"
+          ],
+          "5": [
+            "1"
+          ],
+          "6": [
+            "3"
+          ],
+          "7": [
+            "0"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "8": [
+            "python",
+            "go",
+            "rust"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "3\n1\n4\n1\n0\n1\n3\n0\n[\"go\", \"python\", \"rust\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS005",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "keys_dbsize_agreement",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "DBSIZE and KEYS length agree after mixed operations across all four types.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "a",
+          "1"
+        ],
+        [
+          "LPUSH",
+          "b",
+          "x"
+        ],
+        [
+          "SADD",
+          "c",
+          "y"
+        ],
+        [
+          "HSET",
+          "d",
+          "f",
+          "z"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DEL",
+          "a",
+          "c"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "FLUSHDB"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "KEYS"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "4"
+          ],
+          "7": [
+            "2"
+          ],
+          "10": [
+            "0"
+          ]
+        },
+        "step_stdout_json_len": {
+          "5": 4,
+          "8": 2,
+          "11": 0
+        },
+        "step_stdout_json_contains": {
+          "5": [
+            "a",
+            "b",
+            "c",
+            "d"
+          ],
+          "8": [
+            "b",
+            "d"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n1\n1\n4\n[\"a\", \"b\", \"c\", \"d\"]\n2\n2\n[\"b\", \"d\"]\nOK\n0\n[]",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS006",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "del_type_reset",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-key-mgmt"
+      ],
+      "description": "DEL removes a key entirely; the same name can be reused with a different type.",
+      "weight": 8,
+      "commands": [
+        [
+          "LPUSH",
+          "x",
+          "a",
+          "b"
+        ],
+        [
+          "TYPE",
+          "x"
+        ],
+        [
+          "DEL",
+          "x"
+        ],
+        [
+          "EXISTS",
+          "x"
+        ],
+        [
+          "TYPE",
+          "x"
+        ],
+        [
+          "SET",
+          "x",
+          "now-string"
+        ],
+        [
+          "TYPE",
+          "x"
+        ],
+        [
+          "GET",
+          "x"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "list"
+          ],
+          "2": [
+            "1"
+          ],
+          "3": [
+            "0"
+          ],
+          "4": [
+            "none"
+          ],
+          "6": [
+            "string"
+          ],
+          "7": [
+            "now-string"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "2\nlist\n1\n0\nnone\nOK\nstring\nnow-string",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS007",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "list_op_on_string_atomicity",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-errors",
+        "REQ-key-mgmt"
+      ],
+      "description": "Failed RPUSH on a string key preserves the string value and type.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "data",
+          "important-value"
+        ],
+        {
+          "args": [
+            "RPUSH",
+            "data",
+            "new-element"
+          ],
+          "expect_error": true
+        },
+        [
+          "GET",
+          "data"
+        ],
+        [
+          "TYPE",
+          "data"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "1"
+        ],
+        "step_stderr_contains_any": {
+          "1": [
+            "type",
+            "string",
+            "list",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "2": [
+            "important-value"
+          ],
+          "3": [
+            "string"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\nimportant-value\nstring",
+      "expected": "all rubric checks pass",
+      "stderr": "ERR WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 1
+    },
+    {
+      "id": "MDRS008",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "hash_op_on_set_atomicity",
+      "requirement_refs": [
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-errors",
+        "REQ-key-mgmt"
+      ],
+      "description": "Failed HSET on a set key preserves set members, cardinality, and type.",
+      "weight": 8,
+      "commands": [
+        [
+          "SADD",
+          "config",
+          "debug",
+          "verbose"
+        ],
+        [
+          "SCARD",
+          "config"
+        ],
+        {
+          "args": [
+            "HSET",
+            "config",
+            "theme",
+            "dark"
+          ],
+          "expect_error": true
+        },
+        [
+          "TYPE",
+          "config"
+        ],
+        [
+          "SCARD",
+          "config"
+        ],
+        [
+          "SMEMBERS",
+          "config"
+        ]
+      ],
+      "checks": {
+        "step_expect_error": [
+          "2"
+        ],
+        "step_stderr_contains_any": {
+          "2": [
+            "type",
+            "set",
+            "hash",
+            "wrong",
+            "error"
+          ]
+        },
+        "step_stdout": {
+          "1": [
+            "2"
+          ],
+          "3": [
+            "set"
+          ],
+          "4": [
+            "2"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "5": [
+            "debug",
+            "verbose"
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "2\n2\nset\n2\n[\"debug\", \"verbose\"]",
+      "expected": "all rubric checks pass",
+      "stderr": "ERR WRONGTYPE Operation against a key holding the wrong kind of value",
+      "exit_code": 1
+    },
+    {
+      "id": "MDRS009",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "expire_set_ttl_order",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-key-mgmt"
+      ],
+      "description": "SET after EXPIRE removes expiry (TTL=-1); EXPIRE after SET sets expiry (TTL>0).",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "k",
+          "v1"
+        ],
+        [
+          "EXPIRE",
+          "k",
+          "100"
+        ],
+        [
+          "TTL",
+          "k"
+        ],
+        [
+          "SET",
+          "k",
+          "v2"
+        ],
+        [
+          "TTL",
+          "k"
+        ],
+        [
+          "EXPIRE",
+          "k",
+          "200"
+        ],
+        [
+          "TTL",
+          "k"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "4": [
+            "-1"
+          ]
+        },
+        "step_stdout_in_range": {
+          "2": [
+            1,
+            100
+          ],
+          "6": [
+            1,
+            200
+          ]
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n100\nOK\n-1\n1\n200",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS010",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "push_pop_order",
+      "requirement_refs": [
+        "REQ-list-ops"
+      ],
+      "description": "LPUSH→LPOP gives LIFO; RPUSH→LPOP gives FIFO. Pop order depends on push direction.",
+      "weight": 8,
+      "commands": [
+        [
+          "LPUSH",
+          "stack",
+          "1",
+          "2",
+          "3"
+        ],
+        [
+          "LPOP",
+          "stack"
+        ],
+        [
+          "LPOP",
+          "stack"
+        ],
+        [
+          "RPUSH",
+          "queue",
+          "A",
+          "B",
+          "C"
+        ],
+        [
+          "LPOP",
+          "queue"
+        ],
+        [
+          "LPOP",
+          "queue"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "1": [
+            "3"
+          ],
+          "2": [
+            "2"
+          ],
+          "4": [
+            "A"
+          ],
+          "5": [
+            "B"
+          ]
+        }
+      },
+      "passed": false,
+      "actual": "3\n1\n2\n3\nA\nB",
+      "expected": "step 1: expected stdout '3', got '1'",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS011",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "keys_pattern_type_dbsize",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-key-mgmt",
+        "REQ-db-mgmt"
+      ],
+      "description": "KEYS pattern, TYPE, and DBSIZE compose after mixed operations and DEL across all four types.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "user:1",
+          "A"
+        ],
+        [
+          "SET",
+          "user:2",
+          "B"
+        ],
+        [
+          "LPUSH",
+          "queue:tasks",
+          "x"
+        ],
+        [
+          "SADD",
+          "group:admins",
+          "y"
+        ],
+        [
+          "HSET",
+          "config:app",
+          "ver",
+          "1"
+        ],
+        [
+          "KEYS",
+          "user:*"
+        ],
+        [
+          "KEYS",
+          "*:*"
+        ],
+        [
+          "TYPE",
+          "queue:tasks"
+        ],
+        [
+          "TYPE",
+          "group:admins"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "DEL",
+          "user:1"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "DBSIZE"
+        ]
+      ],
+      "checks": {
+        "step_stdout_json": {
+          "5": [
+            "user:1",
+            "user:2"
+          ],
+          "6": [
+            "user:1",
+            "user:2",
+            "queue:tasks",
+            "group:admins",
+            "config:app"
+          ]
+        },
+        "step_stdout": {
+          "7": [
+            "list"
+          ],
+          "8": [
+            "set"
+          ],
+          "9": [
+            "5"
+          ],
+          "12": [
+            "4"
+          ]
+        },
+        "step_stdout_json_contains": {
+          "11": [
+            "user:2",
+            "queue:tasks",
+            "group:admins",
+            "config:app"
+          ]
+        },
+        "step_stdout_json_len": {
+          "11": 4
+        }
+      },
+      "passed": false,
+      "actual": "OK\nOK\n1\n1\n1\n[]\n[]\nlist\nset\n5\n1\n[\"config:app\", \"group:admins\", \"queue:tasks\", \"user:2\"]\n4",
+      "expected": "step 5: expected JSON ['user:1', 'user:2'], got []\nstep 6: expected JSON ['user:1', 'user:2', 'queue:tasks', 'group:admins', 'config:app'], got []",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MDRS012",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "flush_all_types",
+      "requirement_refs": [
+        "REQ-string-ops",
+        "REQ-list-ops",
+        "REQ-set-ops",
+        "REQ-hash-ops",
+        "REQ-db-mgmt",
+        "REQ-key-mgmt"
+      ],
+      "description": "FLUSHDB clears all types; all subsequent data access commands return nil/empty regardless of type.",
+      "weight": 8,
+      "commands": [
+        [
+          "SET",
+          "s",
+          "v"
+        ],
+        [
+          "LPUSH",
+          "l",
+          "x"
+        ],
+        [
+          "SADD",
+          "st",
+          "y"
+        ],
+        [
+          "HSET",
+          "h",
+          "f",
+          "z"
+        ],
+        [
+          "FLUSHDB"
+        ],
+        [
+          "DBSIZE"
+        ],
+        [
+          "KEYS"
+        ],
+        [
+          "GET",
+          "s"
+        ],
+        [
+          "LRANGE",
+          "l",
+          "0",
+          "-1"
+        ],
+        [
+          "SMEMBERS",
+          "st"
+        ],
+        [
+          "HGETALL",
+          "h"
+        ],
+        [
+          "TYPE",
+          "s"
+        ]
+      ],
+      "checks": {
+        "step_stdout": {
+          "5": [
+            "0"
+          ],
+          "7": [
+            "(nil)"
+          ],
+          "11": [
+            "none"
+          ]
+        },
+        "step_stdout_json": {
+          "6": [],
+          "8": [],
+          "9": [],
+          "10": {}
+        }
+      },
+      "passed": true,
+      "actual": "OK\n1\n1\n1\nOK\n0\n[]\n(nil)\n[]\n[]\n{}\nnone",
+      "expected": "all rubric checks pass",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+from __future__ import annotations
+
+from typing import Protocol
+
+from .models import CompletionEvent, Job, QueueReport, Schedule
+
+
+class Store(Protocol):
+    def put_job(self, job: Job) -> Job: ...
+    def get_job(self, job_id: str) -> Job | None: ...
+    def list_jobs(self) -> list[Job]: ...
+    def put_schedule(self, schedule: Schedule) -> Schedule: ...
+    def list_schedules(self) -> list[Schedule]: ...
+    def append_completion(self, event: CompletionEvent) -> None: ...
+    def completions_since(self, offset: int = 0) -> list[CompletionEvent]: ...
+    def queue_report(self) -> QueueReport: ...
+
+
+class InMemoryStore:
+    """Implement the public Store contract without durability."""
+
+    pass
+
+
+class FileStore:
+    """Implement the public Store contract with durable local files."""
+
+    def __init__(self, root: str) -> None:
+        self.root = root

@@ -1,0 +1,775 @@
+{
+  "candidate": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\workflowscheduler-fullrepro-001\\solution-reference",
+  "checks": [
+    {
+      "category": "spec",
+      "description": "Normalizes minimal graph workflow defaults.",
+      "feature_pure_notes": "Feature-pure: spec module only.",
+      "id": "WSU001",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-spec-model"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "spec",
+      "description": "Rejects duplicate step ids and unknown dependencies atomically.",
+      "feature_pure_notes": "Feature-pure: spec validation only.",
+      "id": "WSU002",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-validation",
+        "REQ-errors"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "spec",
+      "description": "Distinguishes graph mode dependencies from chain mode ordering.",
+      "feature_pure_notes": "Feature-pure: spec fixtures only.",
+      "id": "WSU003",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-spec-model"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "spec",
+      "description": "Validates fake action names and public action arguments.",
+      "feature_pure_notes": "Feature-pure: spec validation only.",
+      "id": "WSU004",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-runner",
+        "REQ-validation"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "scheduler",
+      "description": "Computes due slots with catchup skip policy.",
+      "feature_pure_notes": "Feature-pure: scheduler plus direct spec fixture.",
+      "id": "WSU005",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-schedule-ledger",
+        "REQ-virtual-clock"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "scheduler",
+      "description": "Computes due slots with catchup latest policy.",
+      "feature_pure_notes": "Feature-pure: scheduler only.",
+      "id": "WSU006",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-schedule-ledger"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "scheduler",
+      "description": "Computes due slots with catchup all policy.",
+      "feature_pure_notes": "Feature-pure: scheduler only.",
+      "id": "WSU007",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-schedule-ledger"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "scheduler",
+      "description": "Applies overlap skip, latest, and all decisions.",
+      "feature_pure_notes": "Feature-pure: scheduler decision only.",
+      "id": "WSU008",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-overlap-policy"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "queue",
+      "description": "Enqueues and claims queue item with owner lease metadata.",
+      "feature_pure_notes": "Feature-pure: queue store mock allowed.",
+      "id": "WSU009",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-queue-lease"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "queue",
+      "description": "Rejects ack by non-owner worker and preserves lease state.",
+      "feature_pure_notes": "Feature-pure: queue fixture only.",
+      "id": "WSU010",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-queue-lease",
+        "REQ-errors"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "queue",
+      "description": "Expires leases using virtual time and returns timeout records.",
+      "feature_pure_notes": "Feature-pure: queue fixture only.",
+      "id": "WSU011",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-queue-lease",
+        "REQ-virtual-clock"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "retry",
+      "description": "Creates retry_wait decision before retry limit is exhausted.",
+      "feature_pure_notes": "Feature-pure: retry policy only.",
+      "id": "WSU012",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-retry"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "retry",
+      "description": "Creates exhausted decision after retry limit is reached.",
+      "feature_pure_notes": "Feature-pure: retry policy only.",
+      "id": "WSU013",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-retry"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "runner",
+      "description": "Runs ok, fail, emit, and wait fake actions deterministically.",
+      "feature_pure_notes": "Feature-pure: runner only.",
+      "id": "WSU014",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-runner"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "logs",
+      "description": "Orders logs and events by recorded_at and sequence.",
+      "feature_pure_notes": "Feature-pure: log/event fixture only.",
+      "id": "WSU015",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-logs-events"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "history",
+      "description": "Rolls up step attempt statuses into run status.",
+      "feature_pure_notes": "Feature-pure: history fixture only.",
+      "id": "WSU016",
+      "layer": "unit",
+      "message": "list indices must be integers or slices, not str",
+      "requirement_refs": [
+        "REQ-run-state",
+        "REQ-history"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 517, in _\n    store[\"runs\"][\"r1\"] = {\"id\": \"r1\", \"workflow\": \"wf\", \"status\": \"failed\", \"created_at\": utc(), \"updated_at\": utc()}\n    ~~~~~~~~~~~~~^^^^^^\nTypeError: list indices must be integers or slices, not str\n",
+      "weight": 2
+    },
+    {
+      "category": "history",
+      "description": "Reports next-runs from spec schedules and last schedule ledger.",
+      "feature_pure_notes": "Feature-pure: history/scheduler fixture only.",
+      "id": "WSU017",
+      "layer": "unit",
+      "message": "'list' object has no attribute 'values'",
+      "requirement_refs": [
+        "REQ-next-run"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 537, in _\n    report = normalize(hist.next_runs_report(store, utc(1)))\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\workflowscheduler-fullrepro-001\\solution-reference\\src\\flowledger\\history.py\", line 65, in next_runs_report\n    for r in data.get(\"runs\", {}).values()\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'list' object has no attribute 'values'\n",
+      "weight": 2
+    },
+    {
+      "category": "recovery",
+      "description": "Classifies expired leases, due retries, and orphaned queue rows.",
+      "feature_pure_notes": "Feature-pure: recovery fixture only.",
+      "id": "WSU018",
+      "layer": "unit",
+      "message": "list indices must be integers or slices, not str",
+      "requirement_refs": [
+        "REQ-recovery"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 548, in _\n    store[\"runs\"][\"r1\"] = {\"id\": \"r1\", \"workflow\": \"wf\", \"status\": \"running\", \"created_at\": utc(), \"updated_at\": utc()}\n    ~~~~~~~~~~~~~^^^^^^\nTypeError: list indices must be integers or slices, not str\n",
+      "weight": 2
+    },
+    {
+      "category": "export",
+      "description": "Rejects import into non-empty store atomically.",
+      "feature_pure_notes": "Feature-pure: export/import store mock allowed.",
+      "id": "WSU019",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-export-import",
+        "REQ-errors"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "models",
+      "description": "Public errors serialize to deterministic JSON-compatible dictionaries.",
+      "feature_pure_notes": "Feature-pure: model error only.",
+      "id": "WSU020",
+      "layer": "unit",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "status": "pass",
+      "weight": 2
+    },
+    {
+      "category": "api_persistence",
+      "description": "init and put-spec persist normalized workflow and status reports.",
+      "feature_pure_notes": "Integration: crosses API and persistence.",
+      "id": "WSI001",
+      "layer": "integration",
+      "message": "put-spec status missing normalized workflow",
+      "requirement_refs": [
+        "REQ-artifact-shape",
+        "REQ-spec-model",
+        "REQ-history"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 587, in _\n    ensure(has_text(reports, \"persisted\", \"queued\") or has_text(reports, \"persisted\", \"pending\"), \"put-spec status missing normalized workflow\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: put-spec status missing normalized workflow\n",
+      "weight": 3
+    },
+    {
+      "category": "cli_api",
+      "description": "CLI put-spec and API status produce equivalent JSON projections.",
+      "feature_pure_notes": "Integration: CLI/API boundary.",
+      "id": "WSI002",
+      "layer": "integration",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-cli-json",
+        "REQ-spec-model"
+      ],
+      "status": "pass",
+      "weight": 3
+    },
+    {
+      "category": "schedule_queue",
+      "description": "tick materializes due scheduled run into queue and next-run report.",
+      "feature_pure_notes": "Integration: scheduler plus queue plus API.",
+      "id": "WSI003",
+      "layer": "integration",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-schedule-ledger",
+        "REQ-queue-lease",
+        "REQ-next-run"
+      ],
+      "status": "pass",
+      "weight": 3
+    },
+    {
+      "category": "overlap",
+      "description": "overlap skip leaves active run and records skipped due slot without duplicate queue item.",
+      "feature_pure_notes": "Integration: schedule and queue.",
+      "id": "WSI004",
+      "layer": "integration",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-overlap-policy",
+        "REQ-schedule-ledger"
+      ],
+      "status": "pass",
+      "weight": 3
+    },
+    {
+      "category": "queue_runner",
+      "description": "claim and complete successful item updates attempt, queue, logs, events, and status.",
+      "feature_pure_notes": "Integration: queue/runner/history.",
+      "id": "WSI005",
+      "layer": "integration",
+      "message": "missing status succeeded",
+      "requirement_refs": [
+        "REQ-queue-lease",
+        "REQ-runner",
+        "REQ-run-state",
+        "REQ-logs-events"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 642, in _\n    require_status(reports, \"succeeded\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 156, in require_status\n    ensure(status.lower() in status_values(value) or f'\"{status.lower()}\"' in blob(value), f\"missing status {status}\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: missing status succeeded\n",
+      "weight": 3
+    },
+    {
+      "category": "retry",
+      "description": "fail step with retries records retry_wait, retry event, and due retry timestamp.",
+      "feature_pure_notes": "Integration: runner/retry/history.",
+      "id": "WSI006",
+      "layer": "integration",
+      "message": "missing status retry_wait",
+      "requirement_refs": [
+        "REQ-retry",
+        "REQ-logs-events",
+        "REQ-history"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 659, in _\n    require_status(reports, \"retry_wait\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 156, in require_status\n    ensure(status.lower() in status_values(value) or f'\"{status.lower()}\"' in blob(value), f\"missing status {status}\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: missing status retry_wait\n",
+      "weight": 3
+    },
+    {
+      "category": "retry_queue",
+      "description": "due retry returns failed step to queue and preserves prior attempt history.",
+      "feature_pure_notes": "Integration: retry and queue.",
+      "id": "WSI007",
+      "layer": "integration",
+      "message": "due retry was not returned to queue",
+      "requirement_refs": [
+        "REQ-retry",
+        "REQ-queue-lease",
+        "REQ-history"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 678, in _\n    ensure(has_text(queue, \"queued\", \"a\"), \"due retry was not returned to queue\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: due retry was not returned to queue\n",
+      "weight": 3
+    },
+    {
+      "category": "cancel",
+      "description": "cancel run removes queued visibility while retaining terminal history and event.",
+      "feature_pure_notes": "Integration: API and queue/history.",
+      "id": "WSI008",
+      "layer": "integration",
+      "message": "'ApiHarness' object has no attribute 'cancel'",
+      "requirement_refs": [
+        "REQ-run-state",
+        "REQ-queue-lease",
+        "REQ-logs-events"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 689, in _\n    api.cancel(rid, utc(seconds=1))\n    ^^^^^^^^^^\nAttributeError: 'ApiHarness' object has no attribute 'cancel'\n",
+      "weight": 3
+    },
+    {
+      "category": "logs",
+      "description": "emit action output appears in step attempt, log stream, and history report.",
+      "feature_pure_notes": "Integration: runner/log/history.",
+      "id": "WSI009",
+      "layer": "integration",
+      "message": "emit output not projected to logs and history",
+      "requirement_refs": [
+        "REQ-runner",
+        "REQ-logs-events",
+        "REQ-history"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 710, in _\n    ensure(has_text(reports[\"logs\"], \"hello-log\") and has_text(reports[\"history\"], \"hello-log\"), \"emit output not projected to logs and history\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: emit output not projected to logs and history\n",
+      "weight": 3
+    },
+    {
+      "category": "recovery",
+      "description": "recover expires stale lease and requeues work with recovery report.",
+      "feature_pure_notes": "Integration: recovery and queue.",
+      "id": "WSI010",
+      "layer": "integration",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-recovery",
+        "REQ-queue-lease"
+      ],
+      "status": "pass",
+      "weight": 3
+    },
+    {
+      "category": "export_import",
+      "description": "export/import round trip preserves status, history, queue, logs, and next-runs.",
+      "feature_pure_notes": "Integration: export/import plus reports.",
+      "id": "WSI011",
+      "layer": "integration",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-export-import",
+        "REQ-history",
+        "REQ-next-run"
+      ],
+      "status": "pass",
+      "weight": 3
+    },
+    {
+      "category": "atomicity",
+      "description": "invalid complete by wrong worker does not change queue, attempt, logs, or status.",
+      "feature_pure_notes": "Integration: API with queue/history/logs.",
+      "id": "WSI012",
+      "layer": "integration",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-queue-lease",
+        "REQ-errors"
+      ],
+      "status": "pass",
+      "weight": 3
+    },
+    {
+      "category": "chain",
+      "description": "chain mode queues steps strictly in listed order after each success.",
+      "feature_pure_notes": "Integration: spec/queue/history.",
+      "id": "WSI013",
+      "layer": "integration",
+      "message": "chain did not expose only first step",
+      "requirement_refs": [
+        "REQ-spec-model",
+        "REQ-run-state"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 771, in _\n    ensure(first is not None and has_text(first, \"first\") and not has_text(first, \"second\"), \"chain did not expose only first step\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: chain did not expose only first step\n",
+      "weight": 3
+    },
+    {
+      "category": "graph",
+      "description": "graph mode queues independent steps and then dependent step after prerequisites succeed.",
+      "feature_pure_notes": "Integration: spec/queue/history.",
+      "id": "WSI014",
+      "layer": "integration",
+      "message": "graph did not expose both independent steps",
+      "requirement_refs": [
+        "REQ-spec-model",
+        "REQ-run-state"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 787, in _\n    ensure(first is not None and second is not None, \"graph did not expose both independent steps\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: graph did not expose both independent steps\n",
+      "weight": 3
+    },
+    {
+      "category": "cli_recovery",
+      "description": "CLI recover and API recovery report expose equivalent records.",
+      "feature_pure_notes": "Integration: CLI/API/recovery.",
+      "id": "WSI015",
+      "layer": "integration",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-cli-json",
+        "REQ-recovery"
+      ],
+      "status": "pass",
+      "weight": 3
+    },
+    {
+      "category": "workflow_success",
+      "description": "Graph workflow success keeps status, attempts, queue, logs, events, and history coherent.",
+      "feature_pure_notes": "System: multi-step workflow; ignore primitive parser roots if unit fails.",
+      "id": "WSS001",
+      "layer": "system",
+      "message": "successful workflow projections are incoherent",
+      "requirement_refs": [
+        "REQ-system-invariants",
+        "REQ-run-state",
+        "REQ-logs-events"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 826, in _\n    ensure(has_text(reports[\"history\"], \"a\", \"b\") and has_text(reports[\"logs\"], \"alpha\") and not has_text(reports[\"queue\"], \"leased\"), \"successful workflow projections are incoherent\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: successful workflow projections are incoherent\n",
+      "weight": 4
+    },
+    {
+      "category": "failure_retry_success",
+      "description": "Failed step retries under virtual time and later succeeds with complete history.",
+      "feature_pure_notes": "System: retry lifecycle.",
+      "id": "WSS002",
+      "layer": "system",
+      "message": "retry attempt not claimable",
+      "requirement_refs": [
+        "REQ-retry",
+        "REQ-queue-lease",
+        "REQ-history"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 840, in _\n    ensure(second is not None, \"retry attempt not claimable\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: retry attempt not claimable\n",
+      "weight": 4
+    },
+    {
+      "category": "retry_exhaustion",
+      "description": "Exhausted retry fails run and leaves queue empty while preserving attempts and errors.",
+      "feature_pure_notes": "System: retry exhaustion.",
+      "id": "WSS003",
+      "layer": "system",
+      "message": "no retry attempt",
+      "requirement_refs": [
+        "REQ-retry",
+        "REQ-run-state"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 860, in _\n    ensure(second is not None, \"no retry attempt\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: no retry attempt\n",
+      "weight": 4
+    },
+    {
+      "category": "scheduled_catchup_latest",
+      "description": "Downtime with catchup latest materializes one due run and correct next-run view.",
+      "feature_pure_notes": "System: schedule lifecycle.",
+      "id": "WSS004",
+      "layer": "system",
+      "message": "catchup latest did not materialize exactly one due run with next-run view",
+      "requirement_refs": [
+        "REQ-schedule-ledger",
+        "REQ-next-run"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 878, in _\n    ensure(count_text(reports[\"queue\"], \"queued\") == 1 and has_text(reports[\"next_runs\"], \"catch_latest\"), \"catchup latest did not materialize exactly one due run with next-run view\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: catchup latest did not materialize exactly one due run with next-run view\n",
+      "weight": 4
+    },
+    {
+      "category": "scheduled_catchup_all",
+      "description": "Downtime with catchup all materializes every missed slot without duplicate slot ids.",
+      "feature_pure_notes": "System: schedule lifecycle.",
+      "id": "WSS005",
+      "layer": "system",
+      "message": "catchup all did not materialize every missed slot",
+      "requirement_refs": [
+        "REQ-schedule-ledger"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 890, in _\n    ensure(count_text(queue, \"queued\") >= 4, \"catchup all did not materialize every missed slot\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: catchup all did not materialize every missed slot\n",
+      "weight": 4
+    },
+    {
+      "category": "overlap_latest",
+      "description": "Overlap latest cancels older queued due run and keeps newest visible with audit event.",
+      "feature_pure_notes": "System: overlap lifecycle.",
+      "id": "WSS006",
+      "layer": "system",
+      "message": "overlap latest did not cancel older queued due run and keep newest visible",
+      "requirement_refs": [
+        "REQ-overlap-policy",
+        "REQ-logs-events"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 904, in _\n    ensure(count_text(reports[\"queue\"], \"queued\") == 1 and has_text(reports[\"events\"], \"cancel\"), \"overlap latest did not cancel older queued due run and keep newest visible\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: overlap latest did not cancel older queued due run and keep newest visible\n",
+      "weight": 4
+    },
+    {
+      "category": "lease_recovery",
+      "description": "Worker lease expires across restart and recovery requeues work without losing logs/history.",
+      "feature_pure_notes": "System: recovery lifecycle.",
+      "id": "WSS007",
+      "layer": "system",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-recovery",
+        "REQ-queue-lease"
+      ],
+      "status": "pass",
+      "weight": 4
+    },
+    {
+      "category": "cancel_running",
+      "description": "Cancelling running workflow marks pending/running steps and queue items consistently.",
+      "feature_pure_notes": "System: cancellation lifecycle.",
+      "id": "WSS008",
+      "layer": "system",
+      "message": "'ApiHarness' object has no attribute 'cancel'",
+      "requirement_refs": [
+        "REQ-run-state",
+        "REQ-queue-lease"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 937, in _\n    api.cancel(rid, utc(seconds=1))\n    ^^^^^^^^^^\nAttributeError: 'ApiHarness' object has no attribute 'cancel'\n",
+      "weight": 4
+    },
+    {
+      "category": "export_import_replay",
+      "description": "Export/import after mixed schedule, retry, and logs preserves every public projection.",
+      "feature_pure_notes": "System: replay metamorphic.",
+      "id": "WSS009",
+      "layer": "system",
+      "message": "no scheduled item",
+      "requirement_refs": [
+        "REQ-export-import",
+        "REQ-system-invariants"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 953, in _\n    ensure(item is not None, \"no scheduled item\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: no scheduled item\n",
+      "weight": 4
+    },
+    {
+      "category": "cli_api_parity",
+      "description": "A workflow driven by CLI commands has the same final reports as API-driven workflow.",
+      "feature_pure_notes": "System: black-box CLI/API parity.",
+      "id": "WSS010",
+      "layer": "system",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-cli-json",
+        "REQ-system-invariants"
+      ],
+      "status": "pass",
+      "weight": 4
+    },
+    {
+      "category": "chain_vs_graph",
+      "description": "Equivalent chain and graph workflows expose different legal queue sequences but same terminal output.",
+      "feature_pure_notes": "System: spec/runner/history composition.",
+      "id": "WSS011",
+      "layer": "system",
+      "message": "equivalent chain/graph terminal output not preserved",
+      "requirement_refs": [
+        "REQ-spec-model",
+        "REQ-history"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1004, in _\n    ensure(has_text(chain_reports, \"same\", \"succeeded\") and has_text(graph_reports, \"same\", \"succeeded\"), \"equivalent chain/graph terminal output not preserved\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: equivalent chain/graph terminal output not preserved\n",
+      "weight": 4
+    },
+    {
+      "category": "wait_action",
+      "description": "wait action blocks dependent step until virtual time advances, then resumes consistently.",
+      "feature_pure_notes": "System: virtual-time wait lifecycle.",
+      "id": "WSS012",
+      "layer": "system",
+      "message": "wait step not claimable",
+      "requirement_refs": [
+        "REQ-runner",
+        "REQ-virtual-clock",
+        "REQ-history"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1014, in _\n    ensure(first is not None and has_text(first, \"waiter\"), \"wait step not claimable\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: wait step not claimable\n",
+      "weight": 4
+    },
+    {
+      "category": "partial_event_recovery",
+      "description": "Recovery classifies partial event/log marker and preserves deterministic streams.",
+      "feature_pure_notes": "System: recovery marker lifecycle; public marker setup required.",
+      "id": "WSS013",
+      "layer": "system",
+      "message": "No public API exists to create a partial log/event write marker without inspecting private storage layout.",
+      "requirement_refs": [
+        "REQ-recovery",
+        "REQ-logs-events"
+      ],
+      "status": "skip",
+      "weight": 4
+    },
+    {
+      "category": "queue_concurrency",
+      "description": "max_active_runs prevents excess active runs while queue/history/next-runs remain coherent.",
+      "feature_pure_notes": "System: queue/history/schedule composition.",
+      "id": "WSS014",
+      "layer": "system",
+      "message": "max_active_runs allowed excess active runs without public audit",
+      "requirement_refs": [
+        "REQ-queue-lease",
+        "REQ-run-state",
+        "REQ-next-run"
+      ],
+      "status": "fail",
+      "traceback": "Traceback (most recent call last):\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1140, in main\n    fn()\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 1041, in _\n    ensure(active_count <= 1 or has_text(reports[\"events\"], \"max_active\"), \"max_active_runs allowed excess active runs without public audit\")\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\workflowscheduler-fullrepro-001\\scoring\\run_executable_checks.py\", line 84, in ensure\n    raise CheckFail(message)\nCheckFail: max_active_runs allowed excess active runs without public audit\n",
+      "weight": 4
+    },
+    {
+      "category": "atomic_failed_import",
+      "description": "Failed import into non-empty ledger leaves all existing reports byte-equivalent.",
+      "feature_pure_notes": "System: atomicity/replay composition.",
+      "id": "WSS015",
+      "layer": "system",
+      "message": "passed",
+      "requirement_refs": [
+        "REQ-export-import",
+        "REQ-errors",
+        "REQ-system-invariants"
+      ],
+      "status": "pass",
+      "weight": 4
+    }
+  ],
+  "non_executable_rows": [
+    {
+      "id": "WSS013",
+      "layer": "system",
+      "reason": "No public API exists to create a partial log/event write marker without inspecting private storage layout."
+    }
+  ],
+  "summary": {
+    "by_layer": {
+      "integration": {
+        "executable": 15,
+        "failed": 8,
+        "passed": 7,
+        "percent_executable_passed": 46.67,
+        "percent_total_passed": 46.67,
+        "skipped": 0,
+        "total": 15
+      },
+      "system": {
+        "executable": 14,
+        "failed": 11,
+        "passed": 3,
+        "percent_executable_passed": 21.43,
+        "percent_total_passed": 20.0,
+        "skipped": 1,
+        "total": 15
+      },
+      "unit": {
+        "executable": 20,
+        "failed": 3,
+        "passed": 17,
+        "percent_executable_passed": 85.0,
+        "percent_total_passed": 85.0,
+        "skipped": 0,
+        "total": 20
+      }
+    },
+    "executable_checks": 49,
+    "failed": 22,
+    "passed": 27,
+    "percent_executable_passed": 55.1,
+    "percent_total_passed": 54.0,
+    "skipped": 1,
+    "total_checks": 50,
+    "weighted_percent_executable_passed": 47.52,
+    "weighted_percent_total_passed": 46.21
+  },
+  "task_id": "workflowscheduler-fullrepro-001"
+}

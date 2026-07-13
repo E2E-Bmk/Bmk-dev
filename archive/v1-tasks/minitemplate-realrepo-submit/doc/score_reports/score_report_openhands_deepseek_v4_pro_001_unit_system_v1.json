@@ -1,0 +1,688 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minitemplate-realrepo-submit\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-001",
+  "total_cases": 30,
+  "passed_cases": 30,
+  "total_weight": 168,
+  "passed_weight": 168,
+  "score": 1.0,
+  "unit_score": 1.0,
+  "system_score": 1.0,
+  "gap_pp": 0.0,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 96,
+      "cases": 12,
+      "passed": 12
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 72,
+      "cases": 18,
+      "passed": 18
+    }
+  },
+  "categories": {
+    "all_features_compose": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "block_re_render": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "block_with_accumulate": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "blocks": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "conditionals": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "env_template_equiv": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "environment": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "errors": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "for_else_branching": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "if_for_var_compose": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "loops": {
+      "weight": 12,
+      "passed_weight": 12,
+      "cases": 3,
+      "passed": 3
+    },
+    "parse_error_recovery": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "render_idempotent": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "render_order_independent": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "syntax_error_recovery": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "variables": {
+      "weight": 24,
+      "passed_weight": 24,
+      "cases": 6,
+      "passed": 6
+    },
+    "with_block": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "with_block_undefined": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "with_scope_isolation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "failed_cases": [],
+  "all_cases": [
+    {
+      "id": "MTEU001",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Template renders a single variable.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('Hello {{ name }}!')\nprint(t.render(name='Alice'))\n",
+      "expected_output": "Hello Alice!",
+      "passed": true,
+      "actual": "Hello Alice!",
+      "expected": "Hello Alice!",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU002",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Template supports dot notation for attribute and key access.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nclass Obj:\n    x = 'attr_val'\nt = Template('{{ obj.x }} and {{ d.key }}')\nprint(t.render(obj=Obj(), d={'key': 'dict_val'}))\n",
+      "expected_output": "attr_val and dict_val",
+      "passed": true,
+      "actual": "attr_val and dict_val",
+      "expected": "attr_val and dict_val",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU003",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Template substitutes multiple variables at once.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{{ a }} {{ b }} {{ c }}')\nprint(t.render(a='1', b='2', c='3'))\n",
+      "expected_output": "1 2 3",
+      "passed": true,
+      "actual": "1 2 3",
+      "expected": "1 2 3",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU004",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Template renders static text unchanged.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('no variables here')\nprint(t.render())\n",
+      "expected_output": "no variables here",
+      "passed": true,
+      "actual": "no variables here",
+      "expected": "no variables here",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU005",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals"
+      ],
+      "description": "If block renders content when truthy; else branch when falsy.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if x %}yes{% else %}no{% endif %}')\nprint(t.render(x=1))\nprint(t.render(x=0))\n",
+      "expected_output": "yes\nno",
+      "passed": true,
+      "actual": "yes\nno",
+      "expected": "yes\nno",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU006",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals"
+      ],
+      "description": "If/elif/else chain selects first truthy branch.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if a %}A{% elif b %}B{% else %}C{% endif %}')\nprint(t.render(a=0, b=1))\nprint(t.render(a=0, b=0))\n",
+      "expected_output": "B\nC",
+      "passed": true,
+      "actual": "B\nC",
+      "expected": "B\nC",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU007",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals"
+      ],
+      "description": "If supports comparison operators (== and <).",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt1 = Template('{% if a == b %}equal{% else %}diff{% endif %}')\nprint(t1.render(a=1, b=1))\nprint(t1.render(a=1, b=2))\nt2 = Template('{% if x < y %}less{% endif %}')\nprint('[' + t2.render(x=1, y=2) + ']')\nprint('[' + t2.render(x=2, y=1) + ']')\n",
+      "expected_output": "equal\ndiff\n[less]\n[]",
+      "passed": true,
+      "actual": "equal\ndiff\n[less]\n[]",
+      "expected": "equal\ndiff\n[less]\n[]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU008",
+      "layer": "unit",
+      "category": "loops",
+      "requirement_refs": [
+        "REQ-loops"
+      ],
+      "description": "For loop iterates over a list and renders each item.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% for i in items %}{{ i }},{% endfor %}')\nprint('[' + t.render(items=[1, 2, 3]) + ']')\nprint('[' + t.render(items=[]) + ']')\n",
+      "expected_output": "[1,2,3,]\n[]",
+      "passed": true,
+      "actual": "[1,2,3,]\n[]",
+      "expected": "[1,2,3,]\n[]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU009",
+      "layer": "unit",
+      "category": "loops",
+      "requirement_refs": [
+        "REQ-loops"
+      ],
+      "description": "For loop with else branch renders else on empty sequence.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% for i in items %}{{ i }}{% else %}empty{% endfor %}')\nprint(t.render(items=[1, 2]))\nprint(t.render(items=[]))\n",
+      "expected_output": "12\nempty",
+      "passed": true,
+      "actual": "12\nempty",
+      "expected": "12\nempty",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU010",
+      "layer": "unit",
+      "category": "blocks",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "Block definition renders its body content.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('before{% block main %}content{% endblock %}after')\nprint(t.render())\n",
+      "expected_output": "beforecontentafter",
+      "passed": true,
+      "actual": "beforecontentafter",
+      "expected": "beforecontentafter",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU011",
+      "layer": "unit",
+      "category": "with_block",
+      "requirement_refs": [
+        "REQ-with-block"
+      ],
+      "description": "With block creates scoped variable binding.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% with x = 5 %}X={{ x }}{% endwith %}')\nprint(t.render())\n",
+      "expected_output": "X=5",
+      "passed": true,
+      "actual": "X=5",
+      "expected": "X=5",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU012",
+      "layer": "unit",
+      "category": "environment",
+      "requirement_refs": [
+        "REQ-environment"
+      ],
+      "description": "Environment.from_string produces a Template with same render behavior.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template, Environment\nt1 = Template('{{ x }}')\nt2 = Environment().from_string('{{ x }}')\nprint(t1.render(x='A'), t2.render(x='A'))\nprint(t1.render(x='X'), t2.render(x='X'))\n",
+      "expected_output": "A A\nX X",
+      "passed": true,
+      "actual": "A A\nX X",
+      "expected": "A A\nX X",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU013",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Undefined variable renders as empty string.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('[{{ missing }}]')\nprint(t.render())\n",
+      "expected_output": "[]",
+      "passed": true,
+      "actual": "[]",
+      "expected": "[]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU014",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Unclosed if block raises syntax error at parse time.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\ntry:\n    t = Template('{% if x %}no end')\n    print('no-error')\nexcept Exception:\n    print('caught')\n",
+      "expected_output": "caught",
+      "passed": true,
+      "actual": "caught",
+      "expected": "caught",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU015",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Unclosed for block raises syntax error at parse time.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\ntry:\n    t = Template('{% for i in items %}no end')\n    print('no-error')\nexcept Exception:\n    print('caught')\n",
+      "expected_output": "caught",
+      "passed": true,
+      "actual": "caught",
+      "expected": "caught",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU016",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Template re-renders with different contexts producing independent output.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{{ name }} is {{ age }}')\nprint(t.render(name='Alice', age='30'))\nprint(t.render(name='Bob', age='25'))\nprint(t.render(name='Carol', age='40'))\n",
+      "expected_output": "Alice is 30\nBob is 25\nCarol is 40",
+      "passed": true,
+      "actual": "Alice is 30\nBob is 25\nCarol is 40",
+      "expected": "Alice is 30\nBob is 25\nCarol is 40",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU017",
+      "layer": "unit",
+      "category": "loops",
+      "requirement_refs": [
+        "REQ-loops"
+      ],
+      "description": "For loop renders each element from a list.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% for x in xs %}[{{ x }}]{% endfor %}')\nprint(t.render(xs=['a', 'b']))\n",
+      "expected_output": "[a][b]",
+      "passed": true,
+      "actual": "[a][b]",
+      "expected": "[a][b]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU018",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals"
+      ],
+      "description": "Undefined variable in if condition is treated as falsy.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if missing %}yes{% else %}no{% endif %}')\nprint(t.render())\n",
+      "expected_output": "no",
+      "passed": true,
+      "actual": "no",
+      "expected": "no",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES001",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "if_for_var_compose",
+      "requirement_refs": [
+        "REQ-conditionals",
+        "REQ-loops",
+        "REQ-variables"
+      ],
+      "description": "Conditional gates a for loop whose items are rendered via variable substitution.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{% if show %}{% for i in items %}{{ i }}{% endfor %}{% endif %}')\nprint('[' + t.render(show=True, items=['a', 'b']) + ']')\nprint('[' + t.render(show=False, items=['a', 'b']) + ']')\n",
+      "expected_output": "[ab]\n[]",
+      "passed": true,
+      "actual": "[ab]\n[]",
+      "expected": "[ab]\n[]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES002",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "env_template_equiv",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-variables",
+        "REQ-conditionals"
+      ],
+      "description": "Environment.from_string and Template produce identical complex renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template, Environment\ntext = '{% if x %}{{ x }}{% else %}none{% endif %}'\nt1 = Template(text)\nt2 = Environment().from_string(text)\nprint(t1.render(x='A'), t2.render(x='A'))\nprint(t1.render(x=''), t2.render(x=''))\nprint(t1.render(x='B') == t2.render(x='B'))\n",
+      "expected_output": "A A\nnone none\nTrue",
+      "passed": true,
+      "actual": "A A\nnone none\nTrue",
+      "expected": "A A\nnone none\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES003",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "block_with_accumulate",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-with-block",
+        "REQ-variables"
+      ],
+      "description": "Block and with-block both render; accumulated state across re-renders stays consistent.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{% block a %}{{ x }}{% endblock %}{% with y = 2 %}{{ y }}{% endwith %}')\nprint(t.render(x='1'))\nprint(t.render(x='A'))\nprint(t.render(x='9'))\n",
+      "expected_output": "12\nA2\n92",
+      "passed": true,
+      "actual": "12\nA2\n92",
+      "expected": "12\nA2\n92",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES004",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "block_re_render",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-variables"
+      ],
+      "description": "Block with variables renders correctly on each call with different values.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{% block title %}{{ name }}{% endblock %}')\nprint(t.render(name='Page1'))\nprint(t.render(name='Page2'))\n",
+      "expected_output": "Page1\nPage2",
+      "passed": true,
+      "actual": "Page1\nPage2",
+      "expected": "Page1\nPage2",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES005",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "render_idempotent",
+      "requirement_refs": [
+        "REQ-blocks",
+        "REQ-variables"
+      ],
+      "description": "Same context always produces same output regardless of prior renders with different values.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{% block main %}{{ title }}{% endblock %}')\nr1 = t.render(title='A')\nt.render(title='B')\nr3 = t.render(title='A')\nprint(r1)\nprint(r3)\nprint(r1 == r3)\n",
+      "expected_output": "A\nA\nTrue",
+      "passed": true,
+      "actual": "A\nA\nTrue",
+      "expected": "A\nA\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES006",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "with_scope_isolation",
+      "requirement_refs": [
+        "REQ-with-block",
+        "REQ-variables"
+      ],
+      "description": "With block variable does not leak to outer scope.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{{ x }}{% with x = 5 %}X={{ x }}{% endwith %}{{ x }}')\nprint(t.render(x='outer'))\n",
+      "expected_output": "outerX=5outer",
+      "passed": true,
+      "actual": "outerX=5outer",
+      "expected": "outerX=5outer",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES007",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "parse_error_recovery",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-errors",
+        "REQ-variables"
+      ],
+      "description": "Parse error does not prevent subsequent valid template creation and render.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template, Environment\ntry:\n    t = Template('{% if x %}bad')\nexcept Exception:\n    print('parse-error')\nt = Template('{{ ok }}')\nprint(t.render(ok='fine'))\n",
+      "expected_output": "parse-error\nfine",
+      "passed": true,
+      "actual": "parse-error\nfine",
+      "expected": "parse-error\nfine",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES008",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "syntax_error_recovery",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-conditionals",
+        "REQ-variables"
+      ],
+      "description": "After a syntax error, a correct template with conditionals still works.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\ntry:\n    t = Template('{% for x in xs %}no end')\nexcept Exception:\n    print('err')\nt = Template('{% if show %}yes{% endif %}')\nprint(t.render(show=1))\n",
+      "expected_output": "err\nyes",
+      "passed": true,
+      "actual": "err\nyes",
+      "expected": "err\nyes",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES009",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "render_order_independent",
+      "requirement_refs": [
+        "REQ-variables",
+        "REQ-conditionals"
+      ],
+      "description": "Render output depends only on context, not on order of prior calls.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{% if x %}X{% else %}O{% endif %}')\nprint(t.render(x=1))\nprint(t.render(x=0))\nprint(t.render(x=1))\nprint(t.render(x=0))\n",
+      "expected_output": "X\nO\nX\nO",
+      "passed": true,
+      "actual": "X\nO\nX\nO",
+      "expected": "X\nO\nX\nO",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES010",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "for_else_branching",
+      "requirement_refs": [
+        "REQ-loops",
+        "REQ-variables"
+      ],
+      "description": "For-else branch depends on whether sequence is empty; result changes with data.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{% for i in items %}{{ i }}{% else %}E{% endfor %}')\nprint(t.render(items=['a']))\nprint(t.render(items=[]))\nprint(t.render(items=['x', 'y']))\n",
+      "expected_output": "a\nE\nxy",
+      "passed": true,
+      "actual": "a\nE\nxy",
+      "expected": "a\nE\nxy",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES011",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "all_features_compose",
+      "requirement_refs": [
+        "REQ-variables",
+        "REQ-conditionals",
+        "REQ-loops",
+        "REQ-blocks",
+        "REQ-with-block"
+      ],
+      "description": "If, for, block, with, and variables all compose in one complex template.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{% block head %}{% if show %}{% for i in items %}{% with v = i %}{{ v }}{% endwith %}{% endfor %}{% endif %}{% endblock %}')\nprint(t.render(show=1, items=['a', 'b', 'c']))\n",
+      "expected_output": "abc",
+      "passed": true,
+      "actual": "abc",
+      "expected": "abc",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES012",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "with_block_undefined",
+      "requirement_refs": [
+        "REQ-with-block",
+        "REQ-blocks",
+        "REQ-variables"
+      ],
+      "description": "With-block with undefined value renders empty; block renders defined vars; both compose.",
+      "weight": 8,
+      "test_code": "from minitemplate import Template\nt = Template('{% with v = extra %}[{{ v }}]{% endwith %}{% block b %}{{ name }}{% endblock %}')\nprint(t.render(name='Alice'))\nprint('<' + t.render() + '>')\n",
+      "expected_output": "[]Alice\n<[]>",
+      "passed": true,
+      "actual": "[]Alice\n<[]>",
+      "expected": "[]Alice\n<[]>",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

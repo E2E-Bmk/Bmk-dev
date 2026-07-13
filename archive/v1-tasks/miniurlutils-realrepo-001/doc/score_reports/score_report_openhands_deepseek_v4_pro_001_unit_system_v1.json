@@ -1,0 +1,655 @@
+{
+  "total_cases": 19,
+  "passed_cases": 15,
+  "total_weight": 116,
+  "passed_weight": 84,
+  "score": 0.7241379310344828,
+  "unit_score": {
+    "weight": 36,
+    "passed_weight": 36,
+    "score": 1.0,
+    "cases": 9,
+    "passed_cases": 9
+  },
+  "system_score": {
+    "weight": 80,
+    "passed_weight": 48,
+    "score": 0.6,
+    "cases": 10,
+    "passed_cases": 6
+  },
+  "unit_system_gap": 0.4,
+  "layers": {
+    "system": {
+      "weight": 80,
+      "passed_weight": 48,
+      "cases": 10,
+      "passed": 6
+    },
+    "unit": {
+      "weight": 36,
+      "passed_weight": 36,
+      "cases": 9,
+      "passed": 9
+    }
+  },
+  "categories": {
+    "authority_userinfo_consistency": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "error_recovery": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "errors": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "extract_edit_serialize": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "from_parts_navigate_query": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "imports": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "ipv6_authority_normalize": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "link_extraction": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "navigation": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "normalization": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "normalize_before_relative_navigation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "normalize_edit_navigate": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "parse_url": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "query_params": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "query_replace_order": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "scheme_relative_and_path_only": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "sorted_query_copy_invariant": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "url_object": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "system_dimensions": {
+    "boundary_crossing": {
+      "weight": 16,
+      "passed_weight": 0,
+      "cases": 2,
+      "passed": 0
+    },
+    "cross_feature_dataflow": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 2,
+      "passed": 2
+    },
+    "error_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "global_invariant": {
+      "weight": 16,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 1
+    },
+    "operation_order_sensitivity": {
+      "weight": 16,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 1
+    },
+    "state_accumulation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "failed_cases": [
+    {
+      "id": "MUS001",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "authority_userinfo_consistency",
+      "requirement_refs": [
+        "REQ-parse",
+        "REQ-url-object"
+      ],
+      "description": "Userinfo is preserved in full URL serialization while host authority remains host-plus-port.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL, parse_url\nsrc = 'http://user:pass@example.com:8080/a?x=1#f'\np = parse_url(src)\nu = URL(src)\nprint(p['username'], p['password'], p['host'], p['port'])\nprint(u.username, u.password, u.get_authority())\nprint(u.to_text())\n",
+      "expected_output": "user pass example.com 8080\nuser pass example.com:8080\nhttp://user:pass@example.com:8080/a?x=1#f",
+      "passed": false,
+      "errors": [
+        "expected 'user pass example.com 8080\\nuser pass example.com:8080\\nhttp://user:pass@example.com:8080/a?x=1#f', got 'user pass example.com 8080\\nuser pass user:pass@example.com:8080\\nhttp://user:pass@example.com:8080/a?x=1#f'"
+      ],
+      "actual": "user pass example.com 8080\nuser pass user:pass@example.com:8080\nhttp://user:pass@example.com:8080/a?x=1#f",
+      "expected": "user pass example.com 8080\nuser pass example.com:8080\nhttp://user:pass@example.com:8080/a?x=1#f",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS002",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "scheme_relative_and_path_only",
+      "requirement_refs": [
+        "REQ-parse",
+        "REQ-url-object",
+        "REQ-navigation"
+      ],
+      "description": "Scheme-relative and path-only URLs preserve their absent scheme/authority state through parsing and navigation.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL, parse_url\nfor src in ['//example.com/path', 'example.com/path']:\n    p = parse_url(src)\n    print(src, repr(p['scheme']), repr(p['_netloc_sep']), repr(p['host']), repr(p['path']))\nbase = URL('https://root.test/a/b/')\nprint(base.navigate('//cdn.test/lib.js').to_text())\nprint(base.navigate('child').to_text())\n",
+      "expected_output": "//example.com/path None '//' 'example.com' '/path'\nexample.com/path None None None 'example.com/path'\nhttps://cdn.test/lib.js\nhttps://root.test/a/b/child",
+      "passed": false,
+      "errors": [
+        "expected \"//example.com/path None '//' 'example.com' '/path'\\nexample.com/path None None None 'example.com/path'\\nhttps://cdn.test/lib.js\\nhttps://root.test/a/b/child\", got \"//example.com/path '' '//' 'example.com' '/path'\\nexample.com/path '' '' '' 'example.com/path'\\nhttps://cdn.test/lib.js\\nhttps://root.test/a/b/child\""
+      ],
+      "actual": "//example.com/path '' '//' 'example.com' '/path'\nexample.com/path '' '' '' 'example.com/path'\nhttps://cdn.test/lib.js\nhttps://root.test/a/b/child",
+      "expected": "//example.com/path None '//' 'example.com' '/path'\nexample.com/path None None None 'example.com/path'\nhttps://cdn.test/lib.js\nhttps://root.test/a/b/child",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS003",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "query_replace_order",
+      "requirement_refs": [
+        "REQ-query-params",
+        "REQ-url-object"
+      ],
+      "description": "Query mutation order is reflected in URL serialization after appending and replacing repeated keys.",
+      "weight": 8,
+      "test_code": "from miniurlutils import QueryParamDict, URL\nq = QueryParamDict([('b','2'), ('a','1'), ('a','3')])\nq.add('empty', '')\nq['a'] = 'last'\nprint(list(q.items(multi=True)))\nu = URL('https://ex.test/path')\nu.query_params = q\nprint(u.to_text())\n",
+      "expected_output": "[('b', '2'), ('empty', ''), ('a', 'last')]\nhttps://ex.test/path?b=2&empty=&a=last",
+      "passed": false,
+      "errors": [
+        "expected \"[('b', '2'), ('empty', ''), ('a', 'last')]\\nhttps://ex.test/path?b=2&empty=&a=last\", got \"[('b', '2'), ('a', 'last'), ('empty', '')]\\nhttps://ex.test/path?b=2&a=last&empty=\""
+      ],
+      "actual": "[('b', '2'), ('a', 'last'), ('empty', '')]\nhttps://ex.test/path?b=2&a=last&empty=",
+      "expected": "[('b', '2'), ('empty', ''), ('a', 'last')]\nhttps://ex.test/path?b=2&empty=&a=last",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS007",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "ipv6_authority_normalize",
+      "requirement_refs": [
+        "REQ-parse",
+        "REQ-url-object",
+        "REQ-navigation"
+      ],
+      "description": "IPv6 host parsing, family detection, authority serialization, and normalization agree.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL, parse_url\np = parse_url('HTTP://[::1]:80/a/../p')\nfam = getattr(p['family'], 'name', None)\nu = URL('HTTP://[::1]:80/a/../p')\nu.normalize()\nprint(p['host'], p['port'], fam)\nprint(u.host, u.get_authority())\nprint(u.to_text())\n",
+      "expected_output": "::1 80 AF_INET6\n::1 [::1]\nhttp://[::1]/p",
+      "passed": false,
+      "errors": [
+        "expected '::1 80 AF_INET6\\n::1 [::1]\\nhttp://[::1]/p', got '::1 80 None\\n::1 [::1]\\nhttp://[::1]/p'"
+      ],
+      "actual": "::1 80 None\n::1 [::1]\nhttp://[::1]/p",
+      "expected": "::1 80 AF_INET6\n::1 [::1]\nhttp://[::1]/p",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ],
+  "all_cases": [
+    {
+      "id": "MUU001",
+      "layer": "unit",
+      "category": "imports",
+      "requirement_refs": [
+        "REQ-package-shape"
+      ],
+      "description": "Public names import from the single module.",
+      "weight": 4,
+      "test_code": "from miniurlutils import URL, QueryParamDict, parse_url, find_all_links, URLParseError\nprint(URL.__name__, QueryParamDict.__name__, parse_url.__name__, find_all_links.__name__)\nprint(issubclass(URLParseError, ValueError))\n",
+      "expected_output": "URL QueryParamDict parse_url find_all_links\nTrue",
+      "passed": true,
+      "errors": [],
+      "actual": "URL QueryParamDict parse_url find_all_links\nTrue",
+      "expected": "URL QueryParamDict parse_url find_all_links\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUU002",
+      "layer": "unit",
+      "category": "parse_url",
+      "requirement_refs": [
+        "REQ-parse"
+      ],
+      "description": "parse_url decomposes a normal absolute URL into public components.",
+      "weight": 4,
+      "test_code": "from miniurlutils import parse_url\np = parse_url('https://example.com:8443/a/b?x=1#frag')\nprint(p['scheme'], p['_netloc_sep'], p['host'], p['port'])\nprint(p['path'], p['query'], p['fragment'])\n",
+      "expected_output": "https // example.com 8443\n/a/b x=1 frag",
+      "passed": true,
+      "errors": [],
+      "actual": "https // example.com 8443\n/a/b x=1 frag",
+      "expected": "https // example.com 8443\n/a/b x=1 frag",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUU003",
+      "layer": "unit",
+      "category": "url_object",
+      "requirement_refs": [
+        "REQ-url-object"
+      ],
+      "description": "URL exposes basic attributes and serializes unchanged input.",
+      "weight": 4,
+      "test_code": "from miniurlutils import URL\nu = URL('https://example.com/a/b?x=1#frag')\nprint(u.scheme, u.host, u.path, u.fragment, u.port, u.uses_netloc)\nprint(list(u.query_params.items(multi=True)))\nprint(u.to_text())\nprint(u.get_authority())\n",
+      "expected_output": "https example.com /a/b frag None True\n[('x', '1')]\nhttps://example.com/a/b?x=1#frag\nexample.com",
+      "passed": true,
+      "errors": [],
+      "actual": "https example.com /a/b frag None True\n[('x', '1')]\nhttps://example.com/a/b?x=1#frag\nexample.com",
+      "expected": "https example.com /a/b frag None True\n[('x', '1')]\nhttps://example.com/a/b?x=1#frag\nexample.com",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUU004",
+      "layer": "unit",
+      "category": "query_params",
+      "requirement_refs": [
+        "REQ-query-params"
+      ],
+      "description": "QueryParamDict parses repeated and bare keys without losing order.",
+      "weight": 4,
+      "test_code": "from miniurlutils import QueryParamDict\nq = QueryParamDict.from_text('a=1&a=2&empty&b=')\nprint(list(q.items(multi=True)))\nprint(q.getlist('a'))\nprint(q.to_text())\n",
+      "expected_output": "[('a', '1'), ('a', '2'), ('empty', None), ('b', '')]\n['1', '2']\na=1&a=2&empty&b=",
+      "passed": true,
+      "errors": [],
+      "actual": "[('a', '1'), ('a', '2'), ('empty', None), ('b', '')]\n['1', '2']\na=1&a=2&empty&b=",
+      "expected": "[('a', '1'), ('a', '2'), ('empty', None), ('b', '')]\n['1', '2']\na=1&a=2&empty&b=",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUU005",
+      "layer": "unit",
+      "category": "query_params",
+      "requirement_refs": [
+        "REQ-query-params"
+      ],
+      "description": "QueryParamDict add and assignment expose the documented multi-value API.",
+      "weight": 4,
+      "test_code": "from miniurlutils import QueryParamDict\nq = QueryParamDict([('a','1')])\nq.add('a', '2')\nq['b'] = '3'\nprint(list(q.items(multi=True)))\nprint(q.getlist('a'), q.getlist('b'))\n",
+      "expected_output": "[('a', '1'), ('a', '2'), ('b', '3')]\n['1', '2'] ['3']",
+      "passed": true,
+      "errors": [],
+      "actual": "[('a', '1'), ('a', '2'), ('b', '3')]\n['1', '2'] ['3']",
+      "expected": "[('a', '1'), ('a', '2'), ('b', '3')]\n['1', '2'] ['3']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUU006",
+      "layer": "unit",
+      "category": "navigation",
+      "requirement_refs": [
+        "REQ-navigation",
+        "REQ-url-object"
+      ],
+      "description": "URL.navigate resolves a simple relative reference.",
+      "weight": 4,
+      "test_code": "from miniurlutils import URL\nu = URL('https://ex.com/a/b/c')\nprint(u.navigate('../d?x=1#f').to_text())\n",
+      "expected_output": "https://ex.com/a/d?x=1#f",
+      "passed": true,
+      "errors": [],
+      "actual": "https://ex.com/a/d?x=1#f",
+      "expected": "https://ex.com/a/d?x=1#f",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUU007",
+      "layer": "unit",
+      "category": "normalization",
+      "requirement_refs": [
+        "REQ-navigation"
+      ],
+      "description": "normalize mutates a URL in place for common scheme, host, port, and dot-segment cases.",
+      "weight": 4,
+      "test_code": "from miniurlutils import URL\nu = URL('HTTP://Example.COM:80/a/../b/%7Eme')\nret = u.normalize()\nprint(ret)\nprint(u.to_text())\n",
+      "expected_output": "None\nhttp://example.com/b/~me",
+      "passed": true,
+      "errors": [],
+      "actual": "None\nhttp://example.com/b/~me",
+      "expected": "None\nhttp://example.com/b/~me",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUU008",
+      "layer": "unit",
+      "category": "link_extraction",
+      "requirement_refs": [
+        "REQ-link-extraction"
+      ],
+      "description": "find_all_links extracts common HTTP(S) links from prose.",
+      "weight": 4,
+      "test_code": "from miniurlutils import find_all_links\nlinks = find_all_links('go http://example.com/a and https://host/path. email x@y.com')\nprint([u.to_text() for u in links])\n",
+      "expected_output": "['http://example.com/a', 'https://host/path']",
+      "passed": true,
+      "errors": [],
+      "actual": "['http://example.com/a', 'https://host/path']",
+      "expected": "['http://example.com/a', 'https://host/path']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUU009",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Malformed URLs raise useful Python exceptions.",
+      "weight": 4,
+      "test_code": "from miniurlutils import URL, parse_url\nfor op in [lambda: parse_url('http://[::1'), lambda: URL('http://host:badport/')]:\n    try:\n        op(); print('accepted')\n    except Exception:\n        print('Error')\n",
+      "expected_output": "Error\nError",
+      "passed": true,
+      "errors": [],
+      "actual": "Error\nError",
+      "expected": "Error\nError",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS001",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "authority_userinfo_consistency",
+      "requirement_refs": [
+        "REQ-parse",
+        "REQ-url-object"
+      ],
+      "description": "Userinfo is preserved in full URL serialization while host authority remains host-plus-port.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL, parse_url\nsrc = 'http://user:pass@example.com:8080/a?x=1#f'\np = parse_url(src)\nu = URL(src)\nprint(p['username'], p['password'], p['host'], p['port'])\nprint(u.username, u.password, u.get_authority())\nprint(u.to_text())\n",
+      "expected_output": "user pass example.com 8080\nuser pass example.com:8080\nhttp://user:pass@example.com:8080/a?x=1#f",
+      "passed": false,
+      "errors": [
+        "expected 'user pass example.com 8080\\nuser pass example.com:8080\\nhttp://user:pass@example.com:8080/a?x=1#f', got 'user pass example.com 8080\\nuser pass user:pass@example.com:8080\\nhttp://user:pass@example.com:8080/a?x=1#f'"
+      ],
+      "actual": "user pass example.com 8080\nuser pass user:pass@example.com:8080\nhttp://user:pass@example.com:8080/a?x=1#f",
+      "expected": "user pass example.com 8080\nuser pass example.com:8080\nhttp://user:pass@example.com:8080/a?x=1#f",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS002",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "scheme_relative_and_path_only",
+      "requirement_refs": [
+        "REQ-parse",
+        "REQ-url-object",
+        "REQ-navigation"
+      ],
+      "description": "Scheme-relative and path-only URLs preserve their absent scheme/authority state through parsing and navigation.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL, parse_url\nfor src in ['//example.com/path', 'example.com/path']:\n    p = parse_url(src)\n    print(src, repr(p['scheme']), repr(p['_netloc_sep']), repr(p['host']), repr(p['path']))\nbase = URL('https://root.test/a/b/')\nprint(base.navigate('//cdn.test/lib.js').to_text())\nprint(base.navigate('child').to_text())\n",
+      "expected_output": "//example.com/path None '//' 'example.com' '/path'\nexample.com/path None None None 'example.com/path'\nhttps://cdn.test/lib.js\nhttps://root.test/a/b/child",
+      "passed": false,
+      "errors": [
+        "expected \"//example.com/path None '//' 'example.com' '/path'\\nexample.com/path None None None 'example.com/path'\\nhttps://cdn.test/lib.js\\nhttps://root.test/a/b/child\", got \"//example.com/path '' '//' 'example.com' '/path'\\nexample.com/path '' '' '' 'example.com/path'\\nhttps://cdn.test/lib.js\\nhttps://root.test/a/b/child\""
+      ],
+      "actual": "//example.com/path '' '//' 'example.com' '/path'\nexample.com/path '' '' '' 'example.com/path'\nhttps://cdn.test/lib.js\nhttps://root.test/a/b/child",
+      "expected": "//example.com/path None '//' 'example.com' '/path'\nexample.com/path None None None 'example.com/path'\nhttps://cdn.test/lib.js\nhttps://root.test/a/b/child",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS003",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "query_replace_order",
+      "requirement_refs": [
+        "REQ-query-params",
+        "REQ-url-object"
+      ],
+      "description": "Query mutation order is reflected in URL serialization after appending and replacing repeated keys.",
+      "weight": 8,
+      "test_code": "from miniurlutils import QueryParamDict, URL\nq = QueryParamDict([('b','2'), ('a','1'), ('a','3')])\nq.add('empty', '')\nq['a'] = 'last'\nprint(list(q.items(multi=True)))\nu = URL('https://ex.test/path')\nu.query_params = q\nprint(u.to_text())\n",
+      "expected_output": "[('b', '2'), ('empty', ''), ('a', 'last')]\nhttps://ex.test/path?b=2&empty=&a=last",
+      "passed": false,
+      "errors": [
+        "expected \"[('b', '2'), ('empty', ''), ('a', 'last')]\\nhttps://ex.test/path?b=2&empty=&a=last\", got \"[('b', '2'), ('a', 'last'), ('empty', '')]\\nhttps://ex.test/path?b=2&a=last&empty=\""
+      ],
+      "actual": "[('b', '2'), ('a', 'last'), ('empty', '')]\nhttps://ex.test/path?b=2&a=last&empty=",
+      "expected": "[('b', '2'), ('empty', ''), ('a', 'last')]\nhttps://ex.test/path?b=2&empty=&a=last",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS004",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "from_parts_navigate_query",
+      "requirement_refs": [
+        "REQ-url-object",
+        "REQ-query-params",
+        "REQ-navigation"
+      ],
+      "description": "URL.from_parts output can be navigated from and keeps query-param state coherent.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL, QueryParamDict\nq = QueryParamDict([('a','1')]); q.add('a','2')\nu = URL.from_parts('https', host='example.com', path_parts=['api','v1'], query_params=q)\nprint(u.to_text())\nprint(u.navigate('../v2/users?active=true').to_text())\n",
+      "expected_output": "https://example.com/api/v1?a=1&a=2\nhttps://example.com/v2/users?active=true",
+      "passed": true,
+      "errors": [],
+      "actual": "https://example.com/api/v1?a=1&a=2\nhttps://example.com/v2/users?active=true",
+      "expected": "https://example.com/api/v1?a=1&a=2\nhttps://example.com/v2/users?active=true",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS005",
+      "layer": "system",
+      "system_dimension": "state_accumulation",
+      "category": "normalize_edit_navigate",
+      "requirement_refs": [
+        "REQ-url-object",
+        "REQ-query-params",
+        "REQ-navigation"
+      ],
+      "description": "A normalized URL can be edited through query params and used as the base for later navigation.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL\nu = URL('HTTPS://Example.com:443/app/../search?q=old&q=older#Top')\nu.normalize()\nu.query_params['q'] = 'new'\nu.query_params.add('page', '1')\nprint(u.to_text())\nprint(u.navigate('../item/42?view=full').to_text())\n",
+      "expected_output": "https://example.com/search?q=new&page=1#Top\nhttps://example.com/item/42?view=full",
+      "passed": true,
+      "errors": [],
+      "actual": "https://example.com/search?q=new&page=1#Top\nhttps://example.com/item/42?view=full",
+      "expected": "https://example.com/search?q=new&page=1#Top\nhttps://example.com/item/42?view=full",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS006",
+      "layer": "system",
+      "system_dimension": "cross_feature_dataflow",
+      "category": "extract_edit_serialize",
+      "requirement_refs": [
+        "REQ-link-extraction",
+        "REQ-query-params",
+        "REQ-url-object"
+      ],
+      "description": "Extracted URL objects can be sorted, edited with query params, and serialized.",
+      "weight": 8,
+      "test_code": "from miniurlutils import find_all_links\ntext = 'A https://b.test/path?z=9 and http://a.test/root.'\nlinks = sorted(find_all_links(text), key=lambda u: (u.host, u.path))\nfor idx, u in enumerate(links, 1):\n    u.query_params.add('seen', str(idx))\n    print(u.to_text())\n",
+      "expected_output": "http://a.test/root?seen=1\nhttps://b.test/path?z=9&seen=2",
+      "passed": true,
+      "errors": [],
+      "actual": "http://a.test/root?seen=1\nhttps://b.test/path?z=9&seen=2",
+      "expected": "http://a.test/root?seen=1\nhttps://b.test/path?z=9&seen=2",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS007",
+      "layer": "system",
+      "system_dimension": "boundary_crossing",
+      "category": "ipv6_authority_normalize",
+      "requirement_refs": [
+        "REQ-parse",
+        "REQ-url-object",
+        "REQ-navigation"
+      ],
+      "description": "IPv6 host parsing, family detection, authority serialization, and normalization agree.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL, parse_url\np = parse_url('HTTP://[::1]:80/a/../p')\nfam = getattr(p['family'], 'name', None)\nu = URL('HTTP://[::1]:80/a/../p')\nu.normalize()\nprint(p['host'], p['port'], fam)\nprint(u.host, u.get_authority())\nprint(u.to_text())\n",
+      "expected_output": "::1 80 AF_INET6\n::1 [::1]\nhttp://[::1]/p",
+      "passed": false,
+      "errors": [
+        "expected '::1 80 AF_INET6\\n::1 [::1]\\nhttp://[::1]/p', got '::1 80 None\\n::1 [::1]\\nhttp://[::1]/p'"
+      ],
+      "actual": "::1 80 None\n::1 [::1]\nhttp://[::1]/p",
+      "expected": "::1 80 AF_INET6\n::1 [::1]\nhttp://[::1]/p",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS008",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "error_recovery",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-url-object",
+        "REQ-query-params"
+      ],
+      "description": "A failed parse does not corrupt later URL and query-param operations in the same process.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL, QueryParamDict, parse_url\ntry:\n    parse_url('http://[::1')\nexcept Exception:\n    print('parse-error')\nu = URL('https://ok.test/a?x=1')\nu.query_params.add('y', '2')\nprint(u.to_text())\nprint(QueryParamDict.from_text('a=1&a=2').getlist('a'))\n",
+      "expected_output": "parse-error\nhttps://ok.test/a?x=1&y=2\n['1', '2']",
+      "passed": true,
+      "errors": [],
+      "actual": "parse-error\nhttps://ok.test/a?x=1&y=2\n['1', '2']",
+      "expected": "parse-error\nhttps://ok.test/a?x=1&y=2\n['1', '2']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS009",
+      "layer": "system",
+      "system_dimension": "global_invariant",
+      "category": "sorted_query_copy_invariant",
+      "requirement_refs": [
+        "REQ-query-params",
+        "REQ-url-object"
+      ],
+      "description": "Sorted query-param copies serialize predictably without mutating the original URL query order.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL\nu = URL('https://ex.test/path?b=2&a=1&a=3')\nsorted_q = u.query_params.sorted()\nprint(sorted_q.to_text())\nprint(u.query_params.to_text())\nprint(u.to_text())\n",
+      "expected_output": "a=1&a=3&b=2\nb=2&a=1&a=3\nhttps://ex.test/path?b=2&a=1&a=3",
+      "passed": true,
+      "errors": [],
+      "actual": "a=1&a=3&b=2\nb=2&a=1&a=3\nhttps://ex.test/path?b=2&a=1&a=3",
+      "expected": "a=1&a=3&b=2\nb=2&a=1&a=3\nhttps://ex.test/path?b=2&a=1&a=3",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MUS010",
+      "layer": "system",
+      "system_dimension": "operation_order_sensitivity",
+      "category": "normalize_before_relative_navigation",
+      "requirement_refs": [
+        "REQ-url-object",
+        "REQ-navigation"
+      ],
+      "description": "Normalizing a base URL before relative navigation changes the base path used for the later resolution.",
+      "weight": 8,
+      "test_code": "from miniurlutils import URL\nu = URL('HTTP://Example.COM:80/a/x/../b/')\nu.normalize()\nprint(u.to_text())\nprint(u.navigate('../c').to_text())\n",
+      "expected_output": "http://example.com/a/b/\nhttp://example.com/a/c",
+      "passed": true,
+      "errors": [],
+      "actual": "http://example.com/a/b/\nhttp://example.com/a/c",
+      "expected": "http://example.com/a/b/\nhttp://example.com/a/c",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

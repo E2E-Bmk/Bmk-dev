@@ -1,0 +1,834 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minitemplate-realrepo-submit\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001",
+  "total_cases": 30,
+  "passed_cases": 26,
+  "total_weight": 168,
+  "passed_weight": 144,
+  "score": 0.8571428571428571,
+  "unit_score": 0.8888888888888888,
+  "system_score": 0.8333333333333334,
+  "gap_pp": 5.5555555555555465,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 80,
+      "cases": 12,
+      "passed": 10
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 64,
+      "cases": 18,
+      "passed": 16
+    }
+  },
+  "categories": {
+    "autoescape": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "autoescape_policy_across_inheritance_include_macro": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "blocks": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "conditionals": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 2,
+      "passed": 2
+    },
+    "environment": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "errors": {
+      "weight": 8,
+      "passed_weight": 4,
+      "cases": 2,
+      "passed": 1
+    },
+    "failed_update_preserves_environment_views": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "filters": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "global_mutation_and_template_invalidation_ordering": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "imported_macro_uses_current_environment_policy": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "include_import": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "inheritance": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "inheritance_blocks_include_globals": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "loader_cache": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "loader_cache_invalidation_projection": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "loops": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "macro_include_loop_scope_isolation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "missing_template_does_not_poison_cache_or_registry": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "registries": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "registry_mutation_reaches_cached_templates": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "rerender_independence_after_nested_inheritance": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "undefined": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "undefined_tests_filters_across_views": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "variables": {
+      "weight": 8,
+      "passed_weight": 4,
+      "cases": 2,
+      "passed": 1
+    },
+    "whitespace": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "whitespace_trim_survives_template_boundaries": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "with_block": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    }
+  },
+  "failed_cases": [
+    {
+      "id": "MTEU002",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Dot notation resolves attributes, dictionary keys, and integer indexes.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nclass Obj:\n    x = 'attr'\nt = Template('{{ obj.x }} {{ d.key }} {{ xs.1 }}')\nprint(t.render(obj=Obj(), d={'key': 'dict'}, xs=['zero', 'one']))\n",
+      "expected_output": "attr dict one",
+      "passed": false,
+      "actual": "",
+      "expected": "attr dict one",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpkui08fow\\case.py\", line 4, in <module>\n    t = Template('{{ obj.x }} {{ d.key }} {{ xs.1 }}')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 1502, in __init__\n    ast = _compile(source)\n          ^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 917, in _compile\n    return parser.parse()\n           ^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 702, in parse\n    expr, _ = _parse_expr(tokens)\n              ^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 505, in _parse_expr\n    return _parse_or(tokens, pos)\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 509, in _parse_or\n    left, pos = _parse_and(tokens, pos)\n                ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 518, in _parse_and\n    left, pos = _parse_not(tokens, pos)\n                ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 531, in _parse_not\n    return _parse_comp(tokens, pos)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 535, in _parse_comp\n    left, pos = _parse_filter(tokens, pos)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 557, in _parse_filter\n    left, pos = _parse_primary(tokens, pos)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 623, in _parse_primary\n    raise TemplateSyntaxError(\"Expected attribute name after '.'\")\nminitemplate.TemplateSyntaxError: Expected attribute name after '.'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU017",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Malformed control blocks raise TemplateSyntaxError at parse time.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template, TemplateSyntaxError\nfor source in ['{% if x %}no end', '{% for x in xs %}no end']:\n    try:\n        Template(source)\n        print('no-error')\n    except TemplateSyntaxError:\n        print('syntax')\n",
+      "expected_output": "syntax\nsyntax",
+      "passed": false,
+      "actual": "no-error\nno-error",
+      "expected": "syntax\nsyntax",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES005",
+      "layer": "system",
+      "system_dimension": "policy_projection",
+      "category": "autoescape_policy_across_inheritance_include_macro",
+      "requirement_refs": [
+        "REQ-autoescape",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-filters"
+      ],
+      "description": "Autoescape policy is shared by inherited blocks, includes, and imported macros while local safe/autoescape controls remain scoped.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': '<main>{% block body %}{{ value }}{% endblock %}|{% include \"tail\" %}</main>',\n    'tail': '{{ value }}',\n    'mac': '{% macro show(x) %}<b>{{ x }}</b>{% endmacro %}',\n    'child': '{% extends \"base\" %}{% block body %}{% import \"mac\" as m %}{{ m.show(value) }}|{{ value|safe }}|{% autoescape false %}{{ value }}{% endautoescape %}{% endblock %}',\n}, autoescape=True)\nprint(env.get_template('child').render(value='<x>'))\n",
+      "expected_output": "<main><b>&lt;x&gt;</b>|<x>|<x>|&lt;x&gt;</main>",
+      "passed": false,
+      "actual": "<main>&lt;b&gt;&amp;lt;x&amp;gt;&lt;/b&gt;|<x>|<x>|&lt;x&gt;</main>",
+      "expected": "<main><b>&lt;x&gt;</b>|<x>|<x>|&lt;x&gt;</main>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES011",
+      "layer": "system",
+      "system_dimension": "registry_lifecycle",
+      "category": "imported_macro_uses_current_environment_policy",
+      "requirement_refs": [
+        "REQ-include-import",
+        "REQ-filters",
+        "REQ-autoescape",
+        "REQ-globals"
+      ],
+      "description": "Imported macros share caller environment filters, globals, and autoescape policy across calls.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'mac': '{% macro label(v) %}{{ prefix }}={{ v|decorate }}{% endmacro %}', 'page': '{% import \"mac\" as m %}{{ m.label(value) }}|{{ m.label(other) }}'}, autoescape=True, globals={'prefix': 'P'})\nenv.filters['decorate'] = lambda value: '<' + str(value) + '>'\nprint(env.get_template('page').render(value='a', other='<b>'))\nenv.filters['decorate'] = lambda value: '[' + str(value) + ']'\nenv.globals['prefix'] = 'Q'\nprint(env.get_template('page').render(value='c', other='<d>'))\n",
+      "expected_output": "P=&lt;a&gt;|P=&lt;&lt;b&gt;&gt;\nQ=[c]|Q=[&lt;d&gt;]",
+      "passed": false,
+      "actual": "P=&amp;lt;a&amp;gt;|P=&amp;lt;&amp;lt;b&amp;gt;&amp;gt;\nQ=[c]|Q=[&amp;lt;d&amp;gt;]",
+      "expected": "P=&lt;a&gt;|P=&lt;&lt;b&gt;&gt;\nQ=[c]|Q=[&lt;d&gt;]",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ],
+  "all_cases": [
+    {
+      "id": "MTEU001",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Template renders variables and static text.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('Hello {{ name }}!')\nprint(t.render(name='Alice'))\nprint(Template('plain').render())\n",
+      "expected_output": "Hello Alice!\nplain",
+      "passed": true,
+      "actual": "Hello Alice!\nplain",
+      "expected": "Hello Alice!\nplain",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU002",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Dot notation resolves attributes, dictionary keys, and integer indexes.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nclass Obj:\n    x = 'attr'\nt = Template('{{ obj.x }} {{ d.key }} {{ xs.1 }}')\nprint(t.render(obj=Obj(), d={'key': 'dict'}, xs=['zero', 'one']))\n",
+      "expected_output": "attr dict one",
+      "passed": false,
+      "actual": "",
+      "expected": "attr dict one",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpkui08fow\\case.py\", line 4, in <module>\n    t = Template('{{ obj.x }} {{ d.key }} {{ xs.1 }}')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 1502, in __init__\n    ast = _compile(source)\n          ^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 917, in _compile\n    return parser.parse()\n           ^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 702, in parse\n    expr, _ = _parse_expr(tokens)\n              ^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 505, in _parse_expr\n    return _parse_or(tokens, pos)\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 509, in _parse_or\n    left, pos = _parse_and(tokens, pos)\n                ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 518, in _parse_and\n    left, pos = _parse_not(tokens, pos)\n                ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 531, in _parse_not\n    return _parse_comp(tokens, pos)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 535, in _parse_comp\n    left, pos = _parse_filter(tokens, pos)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 557, in _parse_filter\n    left, pos = _parse_primary(tokens, pos)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-deepseek-v4-pro-v2-001\\minitemplate.py\", line 623, in _parse_primary\n    raise TemplateSyntaxError(\"Expected attribute name after '.'\")\nminitemplate.TemplateSyntaxError: Expected attribute name after '.'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU003",
+      "layer": "unit",
+      "category": "filters",
+      "requirement_refs": [
+        "REQ-filters"
+      ],
+      "description": "Built-in filters transform a single value.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nprint(Template('{{ name|upper }} {{ missing|default(\"guest\") }} {{ items|join(\"-\") }}').render(name='ada', items=['a', 'b']))\n",
+      "expected_output": "ADA guest a-b",
+      "passed": true,
+      "actual": "ADA guest a-b",
+      "expected": "ADA guest a-b",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU004",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals"
+      ],
+      "description": "If, elif, and else select the first true branch.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if a %}A{% elif b %}B{% else %}C{% endif %}')\nprint(t.render(a=0, b=1))\nprint(t.render(a=0, b=0))\n",
+      "expected_output": "B\nC",
+      "passed": true,
+      "actual": "B\nC",
+      "expected": "B\nC",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU005",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals",
+        "REQ-tests"
+      ],
+      "description": "Comparisons and built-in tests work inside conditions.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if x > y %}bad{% elif n is odd %}odd{% else %}other{% endif %}')\nprint(t.render(x=1, y=2, n=3))\nprint(Template('{% if missing is undefined %}missing{% endif %}').render())\n",
+      "expected_output": "odd\nmissing",
+      "passed": true,
+      "actual": "odd\nmissing",
+      "expected": "odd\nmissing",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU006",
+      "layer": "unit",
+      "category": "loops",
+      "requirement_refs": [
+        "REQ-loops"
+      ],
+      "description": "For loops render items and else branches render for empty sequences.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% for item in items %}[{{ item }}]{% else %}empty{% endfor %}')\nprint(t.render(items=['a', 'b']))\nprint(t.render(items=[]))\n",
+      "expected_output": "[a][b]\nempty",
+      "passed": true,
+      "actual": "[a][b]\nempty",
+      "expected": "[a][b]\nempty",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU007",
+      "layer": "unit",
+      "category": "with_block",
+      "requirement_refs": [
+        "REQ-scope"
+      ],
+      "description": "With blocks create scoped variable bindings.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{{ x }}|{% with x = \"inner\" %}{{ x }}{% endwith %}|{{ x }}')\nprint(t.render(x='outer'))\n",
+      "expected_output": "outer|inner|outer",
+      "passed": true,
+      "actual": "outer|inner|outer",
+      "expected": "outer|inner|outer",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU008",
+      "layer": "unit",
+      "category": "blocks",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "A standalone block renders its body at the block location.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('before{% block main %}content{% endblock %}after')\nprint(t.render())\n",
+      "expected_output": "beforecontentafter",
+      "passed": true,
+      "actual": "beforecontentafter",
+      "expected": "beforecontentafter",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU009",
+      "layer": "unit",
+      "category": "environment",
+      "requirement_refs": [
+        "REQ-environment"
+      ],
+      "description": "Environment.from_string creates templates bound to environment globals.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment(globals={'site': 'Docs'})\nt = env.from_string('{{ site }}:{{ page }}')\nprint(t.render(page='Intro'))\n",
+      "expected_output": "Docs:Intro",
+      "passed": true,
+      "actual": "Docs:Intro",
+      "expected": "Docs:Intro",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU010",
+      "layer": "unit",
+      "category": "loader_cache",
+      "requirement_refs": [
+        "REQ-loader-cache"
+      ],
+      "description": "Environment.get_template loads templates by name from a dictionary loader.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'a.html': 'A={{ value }}'})\nprint(env.get_template('a.html').render(value=7))\n",
+      "expected_output": "A=7",
+      "passed": true,
+      "actual": "A=7",
+      "expected": "A=7",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU011",
+      "layer": "unit",
+      "category": "inheritance",
+      "requirement_refs": [
+        "REQ-inheritance"
+      ],
+      "description": "A child template overrides a named parent block.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'base': 'H[{% block body %}base{% endblock %}]F', 'child': '{% extends \"base\" %}{% block body %}child{% endblock %}'})\nprint(env.get_template('child').render())\n",
+      "expected_output": "H[child]F",
+      "passed": true,
+      "actual": "H[child]F",
+      "expected": "H[child]F",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU012",
+      "layer": "unit",
+      "category": "include_import",
+      "requirement_refs": [
+        "REQ-include-import"
+      ],
+      "description": "Includes render named templates and imports expose macro namespaces.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'part': 'P={{ x }}', 'mac': '{% macro wrap(v) %}[{{ v }}]{% endmacro %}'})\nprint(env.from_string('{% include \"part\" %}').render(x='one'))\nprint(env.from_string('{% import \"mac\" as m %}{{ m.wrap(x) }}').render(x='two'))\n",
+      "expected_output": "P=one\n[two]",
+      "passed": true,
+      "actual": "P=one\n[two]",
+      "expected": "P=one\n[two]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU013",
+      "layer": "unit",
+      "category": "registries",
+      "requirement_refs": [
+        "REQ-filters",
+        "REQ-tests"
+      ],
+      "description": "Custom filters and tests are read from the environment registries.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment()\nenv.filters['bracket'] = lambda value: '[' + str(value) + ']'\nenv.tests['short'] = lambda value: len(value) < 4\nt = env.from_string('{{ name|bracket }}:{% if name is short %}short{% else %}long{% endif %}')\nprint(t.render(name='Ada'))\nprint(t.render(name='Grace'))\n",
+      "expected_output": "[Ada]:short\n[Grace]:long",
+      "passed": true,
+      "actual": "[Ada]:short\n[Grace]:long",
+      "expected": "[Ada]:short\n[Grace]:long",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU014",
+      "layer": "unit",
+      "category": "undefined",
+      "requirement_refs": [
+        "REQ-undefined"
+      ],
+      "description": "Undefined values render empty, are falsy, and can be tested.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('[{{ missing }}]{% if missing %}T{% else %}F{% endif %}:{% if missing is undefined %}U{% endif %}')\nprint(t.render())\n",
+      "expected_output": "[]F:U",
+      "passed": true,
+      "actual": "[]F:U",
+      "expected": "[]F:U",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU015",
+      "layer": "unit",
+      "category": "autoescape",
+      "requirement_refs": [
+        "REQ-autoescape"
+      ],
+      "description": "Autoescape escapes variables unless values are marked safe.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment(autoescape=True)\nprint(env.from_string('{{ x }}|{{ x|safe }}').render(x='<b>'))\n",
+      "expected_output": "&lt;b&gt;|<b>",
+      "passed": true,
+      "actual": "&lt;b&gt;|<b>",
+      "expected": "&lt;b&gt;|<b>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU016",
+      "layer": "unit",
+      "category": "whitespace",
+      "requirement_refs": [
+        "REQ-whitespace"
+      ],
+      "description": "Whitespace trim markers trim adjacent spaces around expressions.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nprint(Template('A {{- x -}} B').render(x='X'))\nprint(Template('A {% if ok -%} X {%- endif %} B').render(ok=True))\n",
+      "expected_output": "AXB\nA X B",
+      "passed": true,
+      "actual": "AXB\nA X B",
+      "expected": "AXB\nA X B",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU017",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Malformed control blocks raise TemplateSyntaxError at parse time.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template, TemplateSyntaxError\nfor source in ['{% if x %}no end', '{% for x in xs %}no end']:\n    try:\n        Template(source)\n        print('no-error')\n    except TemplateSyntaxError:\n        print('syntax')\n",
+      "expected_output": "syntax\nsyntax",
+      "passed": false,
+      "actual": "no-error\nno-error",
+      "expected": "syntax\nsyntax",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTEU018",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache"
+      ],
+      "description": "Missing named templates raise TemplateNotFound.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({})\ntry:\n    env.get_template('missing')\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\n",
+      "expected_output": "missing",
+      "passed": true,
+      "actual": "missing",
+      "expected": "missing",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES001",
+      "layer": "system",
+      "system_dimension": "cache_lifecycle",
+      "category": "loader_cache_invalidation_projection",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-loader-cache",
+        "REQ-include-import",
+        "REQ-globals"
+      ],
+      "description": "Updating a loaded template invalidates the cache so direct loads and includes project the same new environment state.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'item': 'v1 {{ site }}', 'page': '[{% include \"item\" %}]'}, globals={'site': 'Docs'})\nprint(env.get_template('page').render())\nprint(env.get_template('item').render())\nenv.set_template('item', 'v2 {{ site|upper }}')\nprint(env.get_template('page').render())\nprint(env.get_template('item').render())\n",
+      "expected_output": "[v1 Docs]\nv1 Docs\n[v2 DOCS]\nv2 DOCS",
+      "passed": true,
+      "actual": "[v1 Docs]\nv1 Docs\n[v2 DOCS]\nv2 DOCS",
+      "expected": "[v1 Docs]\nv1 Docs\n[v2 DOCS]\nv2 DOCS",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES002",
+      "layer": "system",
+      "system_dimension": "inheritance_lifecycle",
+      "category": "inheritance_blocks_include_globals",
+      "requirement_refs": [
+        "REQ-inheritance",
+        "REQ-blocks",
+        "REQ-include-import",
+        "REQ-globals",
+        "REQ-filters"
+      ],
+      "description": "Inherited blocks, parent includes, globals, and filters must all read from the same environment during render.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': 'Title:{% block title %}{{ site }}{% endblock %}|{% include \"nav\" %}|Body:{% block body %}base{% endblock %}',\n    'nav': 'Nav={{ site|lower }}',\n    'child': '{% extends \"base\" %}{% block title %}{{ page|title }}{% endblock %}{% block body %}{% for item in items %}{{ item|upper }}{% endfor %}{% endblock %}',\n}, globals={'site': 'DOCS'})\nprint(env.get_template('child').render(page='api guide', items=['a', 'b']))\n",
+      "expected_output": "Title:Api Guide|Nav=docs|Body:AB",
+      "passed": true,
+      "actual": "Title:Api Guide|Nav=docs|Body:AB",
+      "expected": "Title:Api Guide|Nav=docs|Body:AB",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES003",
+      "layer": "system",
+      "system_dimension": "registry_lifecycle",
+      "category": "registry_mutation_reaches_cached_templates",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-filters",
+        "REQ-tests",
+        "REQ-loader-cache"
+      ],
+      "description": "Cached templates must consult current filter and test registries at render time rather than freezing registry functions at compile time.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'page': '{{ name|decorate }}:{% if name is selected %}Y{% else %}N{% endif %}'})\nenv.filters['decorate'] = lambda value: '<' + str(value) + '>'\nenv.tests['selected'] = lambda value: value.startswith('A')\nt = env.get_template('page')\nprint(t.render(name='Ada'))\nenv.filters['decorate'] = lambda value: '[' + str(value).upper() + ']'\nenv.tests['selected'] = lambda value: value.endswith('e')\nprint(t.render(name='Grace'))\nprint(env.get_template('page').render(name='Bob'))\n",
+      "expected_output": "<Ada>:Y\n[GRACE]:Y\n[BOB]:N",
+      "passed": true,
+      "actual": "<Ada>:Y\n[GRACE]:Y\n[BOB]:N",
+      "expected": "<Ada>:Y\n[GRACE]:Y\n[BOB]:N",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES004",
+      "layer": "system",
+      "system_dimension": "scope_lifecycle",
+      "category": "macro_include_loop_scope_isolation",
+      "requirement_refs": [
+        "REQ-include-import",
+        "REQ-scope",
+        "REQ-loops",
+        "REQ-globals"
+      ],
+      "description": "Macro arguments, loop variables, includes, globals, and caller values passed as arguments remain correctly scoped across repeated renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'macros': '{% macro row(item, p) %}{{ p }}:{{ item }}{% endmacro %}',\n    'footer': '({{ item|default(\"none\") }}|{{ prefix }})'\n}, globals={'prefix': 'G'})\nt = env.from_string('{% import \"macros\" as ui %}{% for item in items %}[{{ ui.row(item, prefix) }}]{% endfor %}{% include \"footer\" %}')\nprint(t.render(items=['a', 'b'], prefix='R'))\nprint(t.render(items=[], prefix='S'))\n",
+      "expected_output": "[R:a][R:b](none|R)\n(none|S)",
+      "passed": true,
+      "actual": "[R:a][R:b](none|R)\n(none|S)",
+      "expected": "[R:a][R:b](none|R)\n(none|S)",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES005",
+      "layer": "system",
+      "system_dimension": "policy_projection",
+      "category": "autoescape_policy_across_inheritance_include_macro",
+      "requirement_refs": [
+        "REQ-autoescape",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-filters"
+      ],
+      "description": "Autoescape policy is shared by inherited blocks, includes, and imported macros while local safe/autoescape controls remain scoped.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': '<main>{% block body %}{{ value }}{% endblock %}|{% include \"tail\" %}</main>',\n    'tail': '{{ value }}',\n    'mac': '{% macro show(x) %}<b>{{ x }}</b>{% endmacro %}',\n    'child': '{% extends \"base\" %}{% block body %}{% import \"mac\" as m %}{{ m.show(value) }}|{{ value|safe }}|{% autoescape false %}{{ value }}{% endautoescape %}{% endblock %}',\n}, autoescape=True)\nprint(env.get_template('child').render(value='<x>'))\n",
+      "expected_output": "<main><b>&lt;x&gt;</b>|<x>|<x>|&lt;x&gt;</main>",
+      "passed": false,
+      "actual": "<main>&lt;b&gt;&amp;lt;x&amp;gt;&lt;/b&gt;|<x>|<x>|&lt;x&gt;</main>",
+      "expected": "<main><b>&lt;x&gt;</b>|<x>|<x>|&lt;x&gt;</main>",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES006",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "failed_update_preserves_environment_views",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-globals"
+      ],
+      "description": "A failed template load/update must not corrupt cached templates, globals, or later inherited/include renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({'base': 'A{% block body %}{{ site }}{% endblock %}Z', 'child': '{% extends \"base\" %}{% block body %}{% include \"part\" %}{% endblock %}', 'part': 'P={{ site }}'}, globals={'site': 'Docs'})\nprint(env.get_template('child').render())\nenv.set_template('part', '{% include \"missing\" %}')\ntry:\n    env.get_template('child').render()\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\nenv.set_template('part', 'Q={{ site|upper }}')\nprint(env.get_template('child').render())\nprint(env.get_template('part').render())\n",
+      "expected_output": "AP=DocsZ\nmissing\nAQ=DOCSZ\nQ=DOCS",
+      "passed": true,
+      "actual": "AP=DocsZ\nmissing\nAQ=DOCSZ\nQ=DOCS",
+      "expected": "AP=DocsZ\nmissing\nAQ=DOCSZ\nQ=DOCS",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES007",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "undefined_tests_filters_across_views",
+      "requirement_refs": [
+        "REQ-undefined",
+        "REQ-filters",
+        "REQ-tests",
+        "REQ-include-import",
+        "REQ-inheritance"
+      ],
+      "description": "Undefined handling is consistent through direct render, include, inherited block, filters, and tests.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': '{% block body %}base{% endblock %}|{% include \"probe\" %}',\n    'probe': '[{{ missing|default(\"fallback\") }}:{% if missing is undefined %}U{% endif %}]',\n    'child': '{% extends \"base\" %}{% block body %}{{ missing }}:{% if missing %}T{% else %}F{% endif %}{% endblock %}',\n})\nprint(env.from_string('{{ missing|default(\"fallback\") }}:{% if missing is undefined %}U{% endif %}').render())\nprint(env.get_template('child').render())\n",
+      "expected_output": "fallback:U\n:F|[fallback:U]",
+      "passed": true,
+      "actual": "fallback:U\n:F|[fallback:U]",
+      "expected": "fallback:U\n:F|[fallback:U]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES008",
+      "layer": "system",
+      "system_dimension": "policy_projection",
+      "category": "whitespace_trim_survives_template_boundaries",
+      "requirement_refs": [
+        "REQ-whitespace",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-loader-cache"
+      ],
+      "description": "Whitespace trim markers preserve their semantics across parent blocks, includes, and cache reuse after source replacement.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': 'A {% block body %} B {% endblock %} C',\n    'part': ' I {{- value -}} J ',\n    'child': '{% extends \"base\" %}{% block body -%}{% include \"part\" %}{%- endblock %}',\n})\nprint(env.get_template('child').render(value='X'))\nenv.set_template('part', ' K {{- value -}} L ')\nprint(env.get_template('child').render(value='Y'))\n",
+      "expected_output": "A  IXJ  C\nA  KYL  C",
+      "passed": true,
+      "actual": "A  IXJ  C\nA  KYL  C",
+      "expected": "A  IXJ  C\nA  KYL  C",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES009",
+      "layer": "system",
+      "system_dimension": "cache_lifecycle",
+      "category": "global_mutation_and_template_invalidation_ordering",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-loader-cache",
+        "REQ-globals",
+        "REQ-filters"
+      ],
+      "description": "Global and source mutations are observed consistently regardless of previous cache population order.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'card': '{{ site }}:{{ title|upper }}', 'page': '<{% include \"card\" %}>'}, globals={'site': 'One'})\npage = env.get_template('page')\nprint(page.render(title='alpha'))\nenv.globals['site'] = 'Two'\nprint(page.render(title='beta'))\nenv.set_template('card', '{{ site|lower }}={{ title|title }}')\nprint(page.render(title='gamma ray'))\nprint(env.get_template('card').render(title='delta'))\n",
+      "expected_output": "<One:ALPHA>\n<Two:BETA>\n<two=Gamma Ray>\ntwo=Delta",
+      "passed": true,
+      "actual": "<One:ALPHA>\n<Two:BETA>\n<two=Gamma Ray>\ntwo=Delta",
+      "expected": "<One:ALPHA>\n<Two:BETA>\n<two=Gamma Ray>\ntwo=Delta",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES010",
+      "layer": "system",
+      "system_dimension": "scope_lifecycle",
+      "category": "rerender_independence_after_nested_inheritance",
+      "requirement_refs": [
+        "REQ-inheritance",
+        "REQ-scope",
+        "REQ-loops",
+        "REQ-undefined"
+      ],
+      "description": "Repeated renders of an inherited template depend only on the current context after nested loops and scoped assignments.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'base': 'H{% block body %}base{% endblock %}F', 'child': '{% extends \"base\" %}{% block body %}{% for item in items %}{% with label = item %}[{{ label }}]{% endwith %}{% else %}{{ label|default(\"empty\") }}{% endfor %}{% endblock %}'})\nt = env.get_template('child')\nprint(t.render(items=['a', 'b'], label='outer'))\nprint(t.render(items=[], label='outer'))\nprint(t.render(items=['x']))\n",
+      "expected_output": "H[a][b]F\nHouterF\nH[x]F",
+      "passed": true,
+      "actual": "H[a][b]F\nHouterF\nH[x]F",
+      "expected": "H[a][b]F\nHouterF\nH[x]F",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES011",
+      "layer": "system",
+      "system_dimension": "registry_lifecycle",
+      "category": "imported_macro_uses_current_environment_policy",
+      "requirement_refs": [
+        "REQ-include-import",
+        "REQ-filters",
+        "REQ-autoescape",
+        "REQ-globals"
+      ],
+      "description": "Imported macros share caller environment filters, globals, and autoescape policy across calls.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'mac': '{% macro label(v) %}{{ prefix }}={{ v|decorate }}{% endmacro %}', 'page': '{% import \"mac\" as m %}{{ m.label(value) }}|{{ m.label(other) }}'}, autoescape=True, globals={'prefix': 'P'})\nenv.filters['decorate'] = lambda value: '<' + str(value) + '>'\nprint(env.get_template('page').render(value='a', other='<b>'))\nenv.filters['decorate'] = lambda value: '[' + str(value) + ']'\nenv.globals['prefix'] = 'Q'\nprint(env.get_template('page').render(value='c', other='<d>'))\n",
+      "expected_output": "P=&lt;a&gt;|P=&lt;&lt;b&gt;&gt;\nQ=[c]|Q=[&lt;d&gt;]",
+      "passed": false,
+      "actual": "P=&amp;lt;a&amp;gt;|P=&amp;lt;&amp;lt;b&amp;gt;&amp;gt;\nQ=[c]|Q=[&amp;lt;d&amp;gt;]",
+      "expected": "P=&lt;a&gt;|P=&lt;&lt;b&gt;&gt;\nQ=[c]|Q=[&lt;d&gt;]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MTES012",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "missing_template_does_not_poison_cache_or_registry",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache",
+        "REQ-include-import",
+        "REQ-filters"
+      ],
+      "description": "A missing include raises through the environment without corrupting cache entries or registry mutations used by later renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({'page': 'A{% include \"missing\" %}Z', 'ok': '{{ value|mark }}'}, globals={'value': 'g'})\nenv.filters['mark'] = lambda value: '<' + str(value) + '>'\ntry:\n    env.get_template('page').render()\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\nprint(env.get_template('ok').render(value='x'))\nenv.set_template('missing', 'M={{ value|mark }}')\nprint(env.get_template('page').render(value='y'))\n",
+      "expected_output": "missing\n<x>\nAM=<y>Z",
+      "passed": true,
+      "actual": "missing\n<x>\nAM=<y>Z",
+      "expected": "missing\n<x>\nAM=<y>Z",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,1322 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minitemplate-realrepo-submit\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minitemplate-realrepo-submit\\solution-openhands-qwen-rerun-001",
+  "total_cases": 30,
+  "passed_cases": 0,
+  "total_weight": 168,
+  "passed_weight": 0,
+  "score": 0.0,
+  "unit_score": 0.0,
+  "system_score": 0.0,
+  "gap_pp": 0.0,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 0,
+      "cases": 12,
+      "passed": 0
+    },
+    "unit": {
+      "weight": 72,
+      "passed_weight": 0,
+      "cases": 18,
+      "passed": 0
+    }
+  },
+  "categories": {
+    "autoescape": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "autoescape_policy_across_inheritance_include_macro": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "blocks": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "conditionals": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 2,
+      "passed": 0
+    },
+    "environment": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "errors": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 2,
+      "passed": 0
+    },
+    "failed_update_preserves_environment_views": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "filters": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "global_mutation_and_template_invalidation_ordering": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "imported_macro_uses_current_environment_policy": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "include_import": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "inheritance": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "inheritance_blocks_include_globals": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "loader_cache": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "loader_cache_invalidation_projection": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "loops": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "macro_include_loop_scope_isolation": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "missing_template_does_not_poison_cache_or_registry": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "registries": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "registry_mutation_reaches_cached_templates": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "rerender_independence_after_nested_inheritance": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "undefined": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "undefined_tests_filters_across_views": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "variables": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 2,
+      "passed": 0
+    },
+    "whitespace": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "whitespace_trim_survives_template_boundaries": {
+      "weight": 8,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    },
+    "with_block": {
+      "weight": 4,
+      "passed_weight": 0,
+      "cases": 1,
+      "passed": 0
+    }
+  },
+  "failed_cases": [
+    {
+      "id": "MTEU001",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Template renders variables and static text.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('Hello {{ name }}!')\nprint(t.render(name='Alice'))\nprint(Template('plain').render())\n",
+      "expected_output": "Hello Alice!\nplain",
+      "passed": false,
+      "actual": "",
+      "expected": "Hello Alice!\nplain",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp7z3vs22a\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU002",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Dot notation resolves attributes, dictionary keys, and integer indexes.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nclass Obj:\n    x = 'attr'\nt = Template('{{ obj.x }} {{ d.key }} {{ xs.1 }}')\nprint(t.render(obj=Obj(), d={'key': 'dict'}, xs=['zero', 'one']))\n",
+      "expected_output": "attr dict one",
+      "passed": false,
+      "actual": "",
+      "expected": "attr dict one",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpqiwqmgs8\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU003",
+      "layer": "unit",
+      "category": "filters",
+      "requirement_refs": [
+        "REQ-filters"
+      ],
+      "description": "Built-in filters transform a single value.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nprint(Template('{{ name|upper }} {{ missing|default(\"guest\") }} {{ items|join(\"-\") }}').render(name='ada', items=['a', 'b']))\n",
+      "expected_output": "ADA guest a-b",
+      "passed": false,
+      "actual": "",
+      "expected": "ADA guest a-b",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpjthflp1m\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU004",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals"
+      ],
+      "description": "If, elif, and else select the first true branch.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if a %}A{% elif b %}B{% else %}C{% endif %}')\nprint(t.render(a=0, b=1))\nprint(t.render(a=0, b=0))\n",
+      "expected_output": "B\nC",
+      "passed": false,
+      "actual": "",
+      "expected": "B\nC",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpb4c2lsfw\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU005",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals",
+        "REQ-tests"
+      ],
+      "description": "Comparisons and built-in tests work inside conditions.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if x > y %}bad{% elif n is odd %}odd{% else %}other{% endif %}')\nprint(t.render(x=1, y=2, n=3))\nprint(Template('{% if missing is undefined %}missing{% endif %}').render())\n",
+      "expected_output": "odd\nmissing",
+      "passed": false,
+      "actual": "",
+      "expected": "odd\nmissing",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpw3iffbqq\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU006",
+      "layer": "unit",
+      "category": "loops",
+      "requirement_refs": [
+        "REQ-loops"
+      ],
+      "description": "For loops render items and else branches render for empty sequences.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% for item in items %}[{{ item }}]{% else %}empty{% endfor %}')\nprint(t.render(items=['a', 'b']))\nprint(t.render(items=[]))\n",
+      "expected_output": "[a][b]\nempty",
+      "passed": false,
+      "actual": "",
+      "expected": "[a][b]\nempty",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp2zub9otb\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU007",
+      "layer": "unit",
+      "category": "with_block",
+      "requirement_refs": [
+        "REQ-scope"
+      ],
+      "description": "With blocks create scoped variable bindings.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{{ x }}|{% with x = \"inner\" %}{{ x }}{% endwith %}|{{ x }}')\nprint(t.render(x='outer'))\n",
+      "expected_output": "outer|inner|outer",
+      "passed": false,
+      "actual": "",
+      "expected": "outer|inner|outer",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmph3jixf72\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU008",
+      "layer": "unit",
+      "category": "blocks",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "A standalone block renders its body at the block location.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('before{% block main %}content{% endblock %}after')\nprint(t.render())\n",
+      "expected_output": "beforecontentafter",
+      "passed": false,
+      "actual": "",
+      "expected": "beforecontentafter",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpavxegdqk\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU009",
+      "layer": "unit",
+      "category": "environment",
+      "requirement_refs": [
+        "REQ-environment"
+      ],
+      "description": "Environment.from_string creates templates bound to environment globals.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment(globals={'site': 'Docs'})\nt = env.from_string('{{ site }}:{{ page }}')\nprint(t.render(page='Intro'))\n",
+      "expected_output": "Docs:Intro",
+      "passed": false,
+      "actual": "",
+      "expected": "Docs:Intro",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmptwbs1aqh\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU010",
+      "layer": "unit",
+      "category": "loader_cache",
+      "requirement_refs": [
+        "REQ-loader-cache"
+      ],
+      "description": "Environment.get_template loads templates by name from a dictionary loader.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'a.html': 'A={{ value }}'})\nprint(env.get_template('a.html').render(value=7))\n",
+      "expected_output": "A=7",
+      "passed": false,
+      "actual": "",
+      "expected": "A=7",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmplvpxmqbd\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU011",
+      "layer": "unit",
+      "category": "inheritance",
+      "requirement_refs": [
+        "REQ-inheritance"
+      ],
+      "description": "A child template overrides a named parent block.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'base': 'H[{% block body %}base{% endblock %}]F', 'child': '{% extends \"base\" %}{% block body %}child{% endblock %}'})\nprint(env.get_template('child').render())\n",
+      "expected_output": "H[child]F",
+      "passed": false,
+      "actual": "",
+      "expected": "H[child]F",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpp4ohs_0q\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU012",
+      "layer": "unit",
+      "category": "include_import",
+      "requirement_refs": [
+        "REQ-include-import"
+      ],
+      "description": "Includes render named templates and imports expose macro namespaces.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'part': 'P={{ x }}', 'mac': '{% macro wrap(v) %}[{{ v }}]{% endmacro %}'})\nprint(env.from_string('{% include \"part\" %}').render(x='one'))\nprint(env.from_string('{% import \"mac\" as m %}{{ m.wrap(x) }}').render(x='two'))\n",
+      "expected_output": "P=one\n[two]",
+      "passed": false,
+      "actual": "",
+      "expected": "P=one\n[two]",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp4tzanuqq\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU013",
+      "layer": "unit",
+      "category": "registries",
+      "requirement_refs": [
+        "REQ-filters",
+        "REQ-tests"
+      ],
+      "description": "Custom filters and tests are read from the environment registries.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment()\nenv.filters['bracket'] = lambda value: '[' + str(value) + ']'\nenv.tests['short'] = lambda value: len(value) < 4\nt = env.from_string('{{ name|bracket }}:{% if name is short %}short{% else %}long{% endif %}')\nprint(t.render(name='Ada'))\nprint(t.render(name='Grace'))\n",
+      "expected_output": "[Ada]:short\n[Grace]:long",
+      "passed": false,
+      "actual": "",
+      "expected": "[Ada]:short\n[Grace]:long",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp4btqrw17\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU014",
+      "layer": "unit",
+      "category": "undefined",
+      "requirement_refs": [
+        "REQ-undefined"
+      ],
+      "description": "Undefined values render empty, are falsy, and can be tested.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('[{{ missing }}]{% if missing %}T{% else %}F{% endif %}:{% if missing is undefined %}U{% endif %}')\nprint(t.render())\n",
+      "expected_output": "[]F:U",
+      "passed": false,
+      "actual": "",
+      "expected": "[]F:U",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpmc5h9qeu\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU015",
+      "layer": "unit",
+      "category": "autoescape",
+      "requirement_refs": [
+        "REQ-autoescape"
+      ],
+      "description": "Autoescape escapes variables unless values are marked safe.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment(autoescape=True)\nprint(env.from_string('{{ x }}|{{ x|safe }}').render(x='<b>'))\n",
+      "expected_output": "&lt;b&gt;|<b>",
+      "passed": false,
+      "actual": "",
+      "expected": "&lt;b&gt;|<b>",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpg1muyuee\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU016",
+      "layer": "unit",
+      "category": "whitespace",
+      "requirement_refs": [
+        "REQ-whitespace"
+      ],
+      "description": "Whitespace trim markers trim adjacent spaces around expressions.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nprint(Template('A {{- x -}} B').render(x='X'))\nprint(Template('A {% if ok -%} X {%- endif %} B').render(ok=True))\n",
+      "expected_output": "AXB\nA X B",
+      "passed": false,
+      "actual": "",
+      "expected": "AXB\nA X B",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp876bvfo_\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU017",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Malformed control blocks raise TemplateSyntaxError at parse time.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template, TemplateSyntaxError\nfor source in ['{% if x %}no end', '{% for x in xs %}no end']:\n    try:\n        Template(source)\n        print('no-error')\n    except TemplateSyntaxError:\n        print('syntax')\n",
+      "expected_output": "syntax\nsyntax",
+      "passed": false,
+      "actual": "",
+      "expected": "syntax\nsyntax",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpojr_vlit\\case.py\", line 1, in <module>\n    from minitemplate import Template, TemplateSyntaxError\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU018",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache"
+      ],
+      "description": "Missing named templates raise TemplateNotFound.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({})\ntry:\n    env.get_template('missing')\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\n",
+      "expected_output": "missing",
+      "passed": false,
+      "actual": "",
+      "expected": "missing",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpeuv8o3mh\\case.py\", line 1, in <module>\n    from minitemplate import Environment, TemplateNotFound\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES001",
+      "layer": "system",
+      "system_dimension": "cache_lifecycle",
+      "category": "loader_cache_invalidation_projection",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-loader-cache",
+        "REQ-include-import",
+        "REQ-globals"
+      ],
+      "description": "Updating a loaded template invalidates the cache so direct loads and includes project the same new environment state.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'item': 'v1 {{ site }}', 'page': '[{% include \"item\" %}]'}, globals={'site': 'Docs'})\nprint(env.get_template('page').render())\nprint(env.get_template('item').render())\nenv.set_template('item', 'v2 {{ site|upper }}')\nprint(env.get_template('page').render())\nprint(env.get_template('item').render())\n",
+      "expected_output": "[v1 Docs]\nv1 Docs\n[v2 DOCS]\nv2 DOCS",
+      "passed": false,
+      "actual": "",
+      "expected": "[v1 Docs]\nv1 Docs\n[v2 DOCS]\nv2 DOCS",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpulihqj6w\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES002",
+      "layer": "system",
+      "system_dimension": "inheritance_lifecycle",
+      "category": "inheritance_blocks_include_globals",
+      "requirement_refs": [
+        "REQ-inheritance",
+        "REQ-blocks",
+        "REQ-include-import",
+        "REQ-globals",
+        "REQ-filters"
+      ],
+      "description": "Inherited blocks, parent includes, globals, and filters must all read from the same environment during render.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': 'Title:{% block title %}{{ site }}{% endblock %}|{% include \"nav\" %}|Body:{% block body %}base{% endblock %}',\n    'nav': 'Nav={{ site|lower }}',\n    'child': '{% extends \"base\" %}{% block title %}{{ page|title }}{% endblock %}{% block body %}{% for item in items %}{{ item|upper }}{% endfor %}{% endblock %}',\n}, globals={'site': 'DOCS'})\nprint(env.get_template('child').render(page='api guide', items=['a', 'b']))\n",
+      "expected_output": "Title:Api Guide|Nav=docs|Body:AB",
+      "passed": false,
+      "actual": "",
+      "expected": "Title:Api Guide|Nav=docs|Body:AB",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp3h12j87j\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES003",
+      "layer": "system",
+      "system_dimension": "registry_lifecycle",
+      "category": "registry_mutation_reaches_cached_templates",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-filters",
+        "REQ-tests",
+        "REQ-loader-cache"
+      ],
+      "description": "Cached templates must consult current filter and test registries at render time rather than freezing registry functions at compile time.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'page': '{{ name|decorate }}:{% if name is selected %}Y{% else %}N{% endif %}'})\nenv.filters['decorate'] = lambda value: '<' + str(value) + '>'\nenv.tests['selected'] = lambda value: value.startswith('A')\nt = env.get_template('page')\nprint(t.render(name='Ada'))\nenv.filters['decorate'] = lambda value: '[' + str(value).upper() + ']'\nenv.tests['selected'] = lambda value: value.endswith('e')\nprint(t.render(name='Grace'))\nprint(env.get_template('page').render(name='Bob'))\n",
+      "expected_output": "<Ada>:Y\n[GRACE]:Y\n[BOB]:N",
+      "passed": false,
+      "actual": "",
+      "expected": "<Ada>:Y\n[GRACE]:Y\n[BOB]:N",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp0siiw759\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES004",
+      "layer": "system",
+      "system_dimension": "scope_lifecycle",
+      "category": "macro_include_loop_scope_isolation",
+      "requirement_refs": [
+        "REQ-include-import",
+        "REQ-scope",
+        "REQ-loops",
+        "REQ-globals"
+      ],
+      "description": "Macro arguments, loop variables, includes, globals, and caller values passed as arguments remain correctly scoped across repeated renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'macros': '{% macro row(item, p) %}{{ p }}:{{ item }}{% endmacro %}',\n    'footer': '({{ item|default(\"none\") }}|{{ prefix }})'\n}, globals={'prefix': 'G'})\nt = env.from_string('{% import \"macros\" as ui %}{% for item in items %}[{{ ui.row(item, prefix) }}]{% endfor %}{% include \"footer\" %}')\nprint(t.render(items=['a', 'b'], prefix='R'))\nprint(t.render(items=[], prefix='S'))\n",
+      "expected_output": "[R:a][R:b](none|R)\n(none|S)",
+      "passed": false,
+      "actual": "",
+      "expected": "[R:a][R:b](none|R)\n(none|S)",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpjemjs2zy\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES005",
+      "layer": "system",
+      "system_dimension": "policy_projection",
+      "category": "autoescape_policy_across_inheritance_include_macro",
+      "requirement_refs": [
+        "REQ-autoescape",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-filters"
+      ],
+      "description": "Autoescape policy is shared by inherited blocks, includes, and imported macros while local safe/autoescape controls remain scoped.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': '<main>{% block body %}{{ value }}{% endblock %}|{% include \"tail\" %}</main>',\n    'tail': '{{ value }}',\n    'mac': '{% macro show(x) %}<b>{{ x }}</b>{% endmacro %}',\n    'child': '{% extends \"base\" %}{% block body %}{% import \"mac\" as m %}{{ m.show(value) }}|{{ value|safe }}|{% autoescape false %}{{ value }}{% endautoescape %}{% endblock %}',\n}, autoescape=True)\nprint(env.get_template('child').render(value='<x>'))\n",
+      "expected_output": "<main><b>&lt;x&gt;</b>|<x>|<x>|&lt;x&gt;</main>",
+      "passed": false,
+      "actual": "",
+      "expected": "<main><b>&lt;x&gt;</b>|<x>|<x>|&lt;x&gt;</main>",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp1ic8o7c5\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES006",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "failed_update_preserves_environment_views",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-globals"
+      ],
+      "description": "A failed template load/update must not corrupt cached templates, globals, or later inherited/include renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({'base': 'A{% block body %}{{ site }}{% endblock %}Z', 'child': '{% extends \"base\" %}{% block body %}{% include \"part\" %}{% endblock %}', 'part': 'P={{ site }}'}, globals={'site': 'Docs'})\nprint(env.get_template('child').render())\nenv.set_template('part', '{% include \"missing\" %}')\ntry:\n    env.get_template('child').render()\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\nenv.set_template('part', 'Q={{ site|upper }}')\nprint(env.get_template('child').render())\nprint(env.get_template('part').render())\n",
+      "expected_output": "AP=DocsZ\nmissing\nAQ=DOCSZ\nQ=DOCS",
+      "passed": false,
+      "actual": "",
+      "expected": "AP=DocsZ\nmissing\nAQ=DOCSZ\nQ=DOCS",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp9ma6mqmf\\case.py\", line 1, in <module>\n    from minitemplate import Environment, TemplateNotFound\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES007",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "undefined_tests_filters_across_views",
+      "requirement_refs": [
+        "REQ-undefined",
+        "REQ-filters",
+        "REQ-tests",
+        "REQ-include-import",
+        "REQ-inheritance"
+      ],
+      "description": "Undefined handling is consistent through direct render, include, inherited block, filters, and tests.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': '{% block body %}base{% endblock %}|{% include \"probe\" %}',\n    'probe': '[{{ missing|default(\"fallback\") }}:{% if missing is undefined %}U{% endif %}]',\n    'child': '{% extends \"base\" %}{% block body %}{{ missing }}:{% if missing %}T{% else %}F{% endif %}{% endblock %}',\n})\nprint(env.from_string('{{ missing|default(\"fallback\") }}:{% if missing is undefined %}U{% endif %}').render())\nprint(env.get_template('child').render())\n",
+      "expected_output": "fallback:U\n:F|[fallback:U]",
+      "passed": false,
+      "actual": "",
+      "expected": "fallback:U\n:F|[fallback:U]",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpni3fx7d9\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES008",
+      "layer": "system",
+      "system_dimension": "policy_projection",
+      "category": "whitespace_trim_survives_template_boundaries",
+      "requirement_refs": [
+        "REQ-whitespace",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-loader-cache"
+      ],
+      "description": "Whitespace trim markers preserve their semantics across parent blocks, includes, and cache reuse after source replacement.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': 'A {% block body %} B {% endblock %} C',\n    'part': ' I {{- value -}} J ',\n    'child': '{% extends \"base\" %}{% block body -%}{% include \"part\" %}{%- endblock %}',\n})\nprint(env.get_template('child').render(value='X'))\nenv.set_template('part', ' K {{- value -}} L ')\nprint(env.get_template('child').render(value='Y'))\n",
+      "expected_output": "A  IXJ  C\nA  KYL  C",
+      "passed": false,
+      "actual": "",
+      "expected": "A  IXJ  C\nA  KYL  C",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp6f0cwk69\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES009",
+      "layer": "system",
+      "system_dimension": "cache_lifecycle",
+      "category": "global_mutation_and_template_invalidation_ordering",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-loader-cache",
+        "REQ-globals",
+        "REQ-filters"
+      ],
+      "description": "Global and source mutations are observed consistently regardless of previous cache population order.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'card': '{{ site }}:{{ title|upper }}', 'page': '<{% include \"card\" %}>'}, globals={'site': 'One'})\npage = env.get_template('page')\nprint(page.render(title='alpha'))\nenv.globals['site'] = 'Two'\nprint(page.render(title='beta'))\nenv.set_template('card', '{{ site|lower }}={{ title|title }}')\nprint(page.render(title='gamma ray'))\nprint(env.get_template('card').render(title='delta'))\n",
+      "expected_output": "<One:ALPHA>\n<Two:BETA>\n<two=Gamma Ray>\ntwo=Delta",
+      "passed": false,
+      "actual": "",
+      "expected": "<One:ALPHA>\n<Two:BETA>\n<two=Gamma Ray>\ntwo=Delta",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpziz3ae33\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES010",
+      "layer": "system",
+      "system_dimension": "scope_lifecycle",
+      "category": "rerender_independence_after_nested_inheritance",
+      "requirement_refs": [
+        "REQ-inheritance",
+        "REQ-scope",
+        "REQ-loops",
+        "REQ-undefined"
+      ],
+      "description": "Repeated renders of an inherited template depend only on the current context after nested loops and scoped assignments.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'base': 'H{% block body %}base{% endblock %}F', 'child': '{% extends \"base\" %}{% block body %}{% for item in items %}{% with label = item %}[{{ label }}]{% endwith %}{% else %}{{ label|default(\"empty\") }}{% endfor %}{% endblock %}'})\nt = env.get_template('child')\nprint(t.render(items=['a', 'b'], label='outer'))\nprint(t.render(items=[], label='outer'))\nprint(t.render(items=['x']))\n",
+      "expected_output": "H[a][b]F\nHouterF\nH[x]F",
+      "passed": false,
+      "actual": "",
+      "expected": "H[a][b]F\nHouterF\nH[x]F",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpugcm0mwf\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES011",
+      "layer": "system",
+      "system_dimension": "registry_lifecycle",
+      "category": "imported_macro_uses_current_environment_policy",
+      "requirement_refs": [
+        "REQ-include-import",
+        "REQ-filters",
+        "REQ-autoescape",
+        "REQ-globals"
+      ],
+      "description": "Imported macros share caller environment filters, globals, and autoescape policy across calls.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'mac': '{% macro label(v) %}{{ prefix }}={{ v|decorate }}{% endmacro %}', 'page': '{% import \"mac\" as m %}{{ m.label(value) }}|{{ m.label(other) }}'}, autoescape=True, globals={'prefix': 'P'})\nenv.filters['decorate'] = lambda value: '<' + str(value) + '>'\nprint(env.get_template('page').render(value='a', other='<b>'))\nenv.filters['decorate'] = lambda value: '[' + str(value) + ']'\nenv.globals['prefix'] = 'Q'\nprint(env.get_template('page').render(value='c', other='<d>'))\n",
+      "expected_output": "P=&lt;a&gt;|P=&lt;&lt;b&gt;&gt;\nQ=[c]|Q=[&lt;d&gt;]",
+      "passed": false,
+      "actual": "",
+      "expected": "P=&lt;a&gt;|P=&lt;&lt;b&gt;&gt;\nQ=[c]|Q=[&lt;d&gt;]",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpvzycrjd8\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES012",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "missing_template_does_not_poison_cache_or_registry",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache",
+        "REQ-include-import",
+        "REQ-filters"
+      ],
+      "description": "A missing include raises through the environment without corrupting cache entries or registry mutations used by later renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({'page': 'A{% include \"missing\" %}Z', 'ok': '{{ value|mark }}'}, globals={'value': 'g'})\nenv.filters['mark'] = lambda value: '<' + str(value) + '>'\ntry:\n    env.get_template('page').render()\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\nprint(env.get_template('ok').render(value='x'))\nenv.set_template('missing', 'M={{ value|mark }}')\nprint(env.get_template('page').render(value='y'))\n",
+      "expected_output": "missing\n<x>\nAM=<y>Z",
+      "passed": false,
+      "actual": "",
+      "expected": "missing\n<x>\nAM=<y>Z",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp_n2epcqk\\case.py\", line 1, in <module>\n    from minitemplate import Environment, TemplateNotFound\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    }
+  ],
+  "all_cases": [
+    {
+      "id": "MTEU001",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Template renders variables and static text.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('Hello {{ name }}!')\nprint(t.render(name='Alice'))\nprint(Template('plain').render())\n",
+      "expected_output": "Hello Alice!\nplain",
+      "passed": false,
+      "actual": "",
+      "expected": "Hello Alice!\nplain",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp7z3vs22a\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU002",
+      "layer": "unit",
+      "category": "variables",
+      "requirement_refs": [
+        "REQ-variables"
+      ],
+      "description": "Dot notation resolves attributes, dictionary keys, and integer indexes.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nclass Obj:\n    x = 'attr'\nt = Template('{{ obj.x }} {{ d.key }} {{ xs.1 }}')\nprint(t.render(obj=Obj(), d={'key': 'dict'}, xs=['zero', 'one']))\n",
+      "expected_output": "attr dict one",
+      "passed": false,
+      "actual": "",
+      "expected": "attr dict one",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpqiwqmgs8\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU003",
+      "layer": "unit",
+      "category": "filters",
+      "requirement_refs": [
+        "REQ-filters"
+      ],
+      "description": "Built-in filters transform a single value.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nprint(Template('{{ name|upper }} {{ missing|default(\"guest\") }} {{ items|join(\"-\") }}').render(name='ada', items=['a', 'b']))\n",
+      "expected_output": "ADA guest a-b",
+      "passed": false,
+      "actual": "",
+      "expected": "ADA guest a-b",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpjthflp1m\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU004",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals"
+      ],
+      "description": "If, elif, and else select the first true branch.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if a %}A{% elif b %}B{% else %}C{% endif %}')\nprint(t.render(a=0, b=1))\nprint(t.render(a=0, b=0))\n",
+      "expected_output": "B\nC",
+      "passed": false,
+      "actual": "",
+      "expected": "B\nC",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpb4c2lsfw\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU005",
+      "layer": "unit",
+      "category": "conditionals",
+      "requirement_refs": [
+        "REQ-conditionals",
+        "REQ-tests"
+      ],
+      "description": "Comparisons and built-in tests work inside conditions.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% if x > y %}bad{% elif n is odd %}odd{% else %}other{% endif %}')\nprint(t.render(x=1, y=2, n=3))\nprint(Template('{% if missing is undefined %}missing{% endif %}').render())\n",
+      "expected_output": "odd\nmissing",
+      "passed": false,
+      "actual": "",
+      "expected": "odd\nmissing",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpw3iffbqq\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU006",
+      "layer": "unit",
+      "category": "loops",
+      "requirement_refs": [
+        "REQ-loops"
+      ],
+      "description": "For loops render items and else branches render for empty sequences.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{% for item in items %}[{{ item }}]{% else %}empty{% endfor %}')\nprint(t.render(items=['a', 'b']))\nprint(t.render(items=[]))\n",
+      "expected_output": "[a][b]\nempty",
+      "passed": false,
+      "actual": "",
+      "expected": "[a][b]\nempty",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp2zub9otb\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU007",
+      "layer": "unit",
+      "category": "with_block",
+      "requirement_refs": [
+        "REQ-scope"
+      ],
+      "description": "With blocks create scoped variable bindings.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('{{ x }}|{% with x = \"inner\" %}{{ x }}{% endwith %}|{{ x }}')\nprint(t.render(x='outer'))\n",
+      "expected_output": "outer|inner|outer",
+      "passed": false,
+      "actual": "",
+      "expected": "outer|inner|outer",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmph3jixf72\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU008",
+      "layer": "unit",
+      "category": "blocks",
+      "requirement_refs": [
+        "REQ-blocks"
+      ],
+      "description": "A standalone block renders its body at the block location.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('before{% block main %}content{% endblock %}after')\nprint(t.render())\n",
+      "expected_output": "beforecontentafter",
+      "passed": false,
+      "actual": "",
+      "expected": "beforecontentafter",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpavxegdqk\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU009",
+      "layer": "unit",
+      "category": "environment",
+      "requirement_refs": [
+        "REQ-environment"
+      ],
+      "description": "Environment.from_string creates templates bound to environment globals.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment(globals={'site': 'Docs'})\nt = env.from_string('{{ site }}:{{ page }}')\nprint(t.render(page='Intro'))\n",
+      "expected_output": "Docs:Intro",
+      "passed": false,
+      "actual": "",
+      "expected": "Docs:Intro",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmptwbs1aqh\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU010",
+      "layer": "unit",
+      "category": "loader_cache",
+      "requirement_refs": [
+        "REQ-loader-cache"
+      ],
+      "description": "Environment.get_template loads templates by name from a dictionary loader.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'a.html': 'A={{ value }}'})\nprint(env.get_template('a.html').render(value=7))\n",
+      "expected_output": "A=7",
+      "passed": false,
+      "actual": "",
+      "expected": "A=7",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmplvpxmqbd\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU011",
+      "layer": "unit",
+      "category": "inheritance",
+      "requirement_refs": [
+        "REQ-inheritance"
+      ],
+      "description": "A child template overrides a named parent block.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'base': 'H[{% block body %}base{% endblock %}]F', 'child': '{% extends \"base\" %}{% block body %}child{% endblock %}'})\nprint(env.get_template('child').render())\n",
+      "expected_output": "H[child]F",
+      "passed": false,
+      "actual": "",
+      "expected": "H[child]F",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpp4ohs_0q\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU012",
+      "layer": "unit",
+      "category": "include_import",
+      "requirement_refs": [
+        "REQ-include-import"
+      ],
+      "description": "Includes render named templates and imports expose macro namespaces.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'part': 'P={{ x }}', 'mac': '{% macro wrap(v) %}[{{ v }}]{% endmacro %}'})\nprint(env.from_string('{% include \"part\" %}').render(x='one'))\nprint(env.from_string('{% import \"mac\" as m %}{{ m.wrap(x) }}').render(x='two'))\n",
+      "expected_output": "P=one\n[two]",
+      "passed": false,
+      "actual": "",
+      "expected": "P=one\n[two]",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp4tzanuqq\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU013",
+      "layer": "unit",
+      "category": "registries",
+      "requirement_refs": [
+        "REQ-filters",
+        "REQ-tests"
+      ],
+      "description": "Custom filters and tests are read from the environment registries.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment()\nenv.filters['bracket'] = lambda value: '[' + str(value) + ']'\nenv.tests['short'] = lambda value: len(value) < 4\nt = env.from_string('{{ name|bracket }}:{% if name is short %}short{% else %}long{% endif %}')\nprint(t.render(name='Ada'))\nprint(t.render(name='Grace'))\n",
+      "expected_output": "[Ada]:short\n[Grace]:long",
+      "passed": false,
+      "actual": "",
+      "expected": "[Ada]:short\n[Grace]:long",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp4btqrw17\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU014",
+      "layer": "unit",
+      "category": "undefined",
+      "requirement_refs": [
+        "REQ-undefined"
+      ],
+      "description": "Undefined values render empty, are falsy, and can be tested.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nt = Template('[{{ missing }}]{% if missing %}T{% else %}F{% endif %}:{% if missing is undefined %}U{% endif %}')\nprint(t.render())\n",
+      "expected_output": "[]F:U",
+      "passed": false,
+      "actual": "",
+      "expected": "[]F:U",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpmc5h9qeu\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU015",
+      "layer": "unit",
+      "category": "autoescape",
+      "requirement_refs": [
+        "REQ-autoescape"
+      ],
+      "description": "Autoescape escapes variables unless values are marked safe.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment\nenv = Environment(autoescape=True)\nprint(env.from_string('{{ x }}|{{ x|safe }}').render(x='<b>'))\n",
+      "expected_output": "&lt;b&gt;|<b>",
+      "passed": false,
+      "actual": "",
+      "expected": "&lt;b&gt;|<b>",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpg1muyuee\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU016",
+      "layer": "unit",
+      "category": "whitespace",
+      "requirement_refs": [
+        "REQ-whitespace"
+      ],
+      "description": "Whitespace trim markers trim adjacent spaces around expressions.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template\nprint(Template('A {{- x -}} B').render(x='X'))\nprint(Template('A {% if ok -%} X {%- endif %} B').render(ok=True))\n",
+      "expected_output": "AXB\nA X B",
+      "passed": false,
+      "actual": "",
+      "expected": "AXB\nA X B",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp876bvfo_\\case.py\", line 1, in <module>\n    from minitemplate import Template\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU017",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors"
+      ],
+      "description": "Malformed control blocks raise TemplateSyntaxError at parse time.",
+      "weight": 4,
+      "test_code": "from minitemplate import Template, TemplateSyntaxError\nfor source in ['{% if x %}no end', '{% for x in xs %}no end']:\n    try:\n        Template(source)\n        print('no-error')\n    except TemplateSyntaxError:\n        print('syntax')\n",
+      "expected_output": "syntax\nsyntax",
+      "passed": false,
+      "actual": "",
+      "expected": "syntax\nsyntax",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpojr_vlit\\case.py\", line 1, in <module>\n    from minitemplate import Template, TemplateSyntaxError\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTEU018",
+      "layer": "unit",
+      "category": "errors",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache"
+      ],
+      "description": "Missing named templates raise TemplateNotFound.",
+      "weight": 4,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({})\ntry:\n    env.get_template('missing')\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\n",
+      "expected_output": "missing",
+      "passed": false,
+      "actual": "",
+      "expected": "missing",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpeuv8o3mh\\case.py\", line 1, in <module>\n    from minitemplate import Environment, TemplateNotFound\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES001",
+      "layer": "system",
+      "system_dimension": "cache_lifecycle",
+      "category": "loader_cache_invalidation_projection",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-loader-cache",
+        "REQ-include-import",
+        "REQ-globals"
+      ],
+      "description": "Updating a loaded template invalidates the cache so direct loads and includes project the same new environment state.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'item': 'v1 {{ site }}', 'page': '[{% include \"item\" %}]'}, globals={'site': 'Docs'})\nprint(env.get_template('page').render())\nprint(env.get_template('item').render())\nenv.set_template('item', 'v2 {{ site|upper }}')\nprint(env.get_template('page').render())\nprint(env.get_template('item').render())\n",
+      "expected_output": "[v1 Docs]\nv1 Docs\n[v2 DOCS]\nv2 DOCS",
+      "passed": false,
+      "actual": "",
+      "expected": "[v1 Docs]\nv1 Docs\n[v2 DOCS]\nv2 DOCS",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpulihqj6w\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES002",
+      "layer": "system",
+      "system_dimension": "inheritance_lifecycle",
+      "category": "inheritance_blocks_include_globals",
+      "requirement_refs": [
+        "REQ-inheritance",
+        "REQ-blocks",
+        "REQ-include-import",
+        "REQ-globals",
+        "REQ-filters"
+      ],
+      "description": "Inherited blocks, parent includes, globals, and filters must all read from the same environment during render.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': 'Title:{% block title %}{{ site }}{% endblock %}|{% include \"nav\" %}|Body:{% block body %}base{% endblock %}',\n    'nav': 'Nav={{ site|lower }}',\n    'child': '{% extends \"base\" %}{% block title %}{{ page|title }}{% endblock %}{% block body %}{% for item in items %}{{ item|upper }}{% endfor %}{% endblock %}',\n}, globals={'site': 'DOCS'})\nprint(env.get_template('child').render(page='api guide', items=['a', 'b']))\n",
+      "expected_output": "Title:Api Guide|Nav=docs|Body:AB",
+      "passed": false,
+      "actual": "",
+      "expected": "Title:Api Guide|Nav=docs|Body:AB",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp3h12j87j\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES003",
+      "layer": "system",
+      "system_dimension": "registry_lifecycle",
+      "category": "registry_mutation_reaches_cached_templates",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-filters",
+        "REQ-tests",
+        "REQ-loader-cache"
+      ],
+      "description": "Cached templates must consult current filter and test registries at render time rather than freezing registry functions at compile time.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'page': '{{ name|decorate }}:{% if name is selected %}Y{% else %}N{% endif %}'})\nenv.filters['decorate'] = lambda value: '<' + str(value) + '>'\nenv.tests['selected'] = lambda value: value.startswith('A')\nt = env.get_template('page')\nprint(t.render(name='Ada'))\nenv.filters['decorate'] = lambda value: '[' + str(value).upper() + ']'\nenv.tests['selected'] = lambda value: value.endswith('e')\nprint(t.render(name='Grace'))\nprint(env.get_template('page').render(name='Bob'))\n",
+      "expected_output": "<Ada>:Y\n[GRACE]:Y\n[BOB]:N",
+      "passed": false,
+      "actual": "",
+      "expected": "<Ada>:Y\n[GRACE]:Y\n[BOB]:N",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp0siiw759\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES004",
+      "layer": "system",
+      "system_dimension": "scope_lifecycle",
+      "category": "macro_include_loop_scope_isolation",
+      "requirement_refs": [
+        "REQ-include-import",
+        "REQ-scope",
+        "REQ-loops",
+        "REQ-globals"
+      ],
+      "description": "Macro arguments, loop variables, includes, globals, and caller values passed as arguments remain correctly scoped across repeated renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'macros': '{% macro row(item, p) %}{{ p }}:{{ item }}{% endmacro %}',\n    'footer': '({{ item|default(\"none\") }}|{{ prefix }})'\n}, globals={'prefix': 'G'})\nt = env.from_string('{% import \"macros\" as ui %}{% for item in items %}[{{ ui.row(item, prefix) }}]{% endfor %}{% include \"footer\" %}')\nprint(t.render(items=['a', 'b'], prefix='R'))\nprint(t.render(items=[], prefix='S'))\n",
+      "expected_output": "[R:a][R:b](none|R)\n(none|S)",
+      "passed": false,
+      "actual": "",
+      "expected": "[R:a][R:b](none|R)\n(none|S)",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpjemjs2zy\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES005",
+      "layer": "system",
+      "system_dimension": "policy_projection",
+      "category": "autoescape_policy_across_inheritance_include_macro",
+      "requirement_refs": [
+        "REQ-autoescape",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-filters"
+      ],
+      "description": "Autoescape policy is shared by inherited blocks, includes, and imported macros while local safe/autoescape controls remain scoped.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': '<main>{% block body %}{{ value }}{% endblock %}|{% include \"tail\" %}</main>',\n    'tail': '{{ value }}',\n    'mac': '{% macro show(x) %}<b>{{ x }}</b>{% endmacro %}',\n    'child': '{% extends \"base\" %}{% block body %}{% import \"mac\" as m %}{{ m.show(value) }}|{{ value|safe }}|{% autoescape false %}{{ value }}{% endautoescape %}{% endblock %}',\n}, autoescape=True)\nprint(env.get_template('child').render(value='<x>'))\n",
+      "expected_output": "<main><b>&lt;x&gt;</b>|<x>|<x>|&lt;x&gt;</main>",
+      "passed": false,
+      "actual": "",
+      "expected": "<main><b>&lt;x&gt;</b>|<x>|<x>|&lt;x&gt;</main>",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp1ic8o7c5\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES006",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "failed_update_preserves_environment_views",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-globals"
+      ],
+      "description": "A failed template load/update must not corrupt cached templates, globals, or later inherited/include renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({'base': 'A{% block body %}{{ site }}{% endblock %}Z', 'child': '{% extends \"base\" %}{% block body %}{% include \"part\" %}{% endblock %}', 'part': 'P={{ site }}'}, globals={'site': 'Docs'})\nprint(env.get_template('child').render())\nenv.set_template('part', '{% include \"missing\" %}')\ntry:\n    env.get_template('child').render()\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\nenv.set_template('part', 'Q={{ site|upper }}')\nprint(env.get_template('child').render())\nprint(env.get_template('part').render())\n",
+      "expected_output": "AP=DocsZ\nmissing\nAQ=DOCSZ\nQ=DOCS",
+      "passed": false,
+      "actual": "",
+      "expected": "AP=DocsZ\nmissing\nAQ=DOCSZ\nQ=DOCS",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp9ma6mqmf\\case.py\", line 1, in <module>\n    from minitemplate import Environment, TemplateNotFound\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES007",
+      "layer": "system",
+      "system_dimension": "projection_consistency",
+      "category": "undefined_tests_filters_across_views",
+      "requirement_refs": [
+        "REQ-undefined",
+        "REQ-filters",
+        "REQ-tests",
+        "REQ-include-import",
+        "REQ-inheritance"
+      ],
+      "description": "Undefined handling is consistent through direct render, include, inherited block, filters, and tests.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': '{% block body %}base{% endblock %}|{% include \"probe\" %}',\n    'probe': '[{{ missing|default(\"fallback\") }}:{% if missing is undefined %}U{% endif %}]',\n    'child': '{% extends \"base\" %}{% block body %}{{ missing }}:{% if missing %}T{% else %}F{% endif %}{% endblock %}',\n})\nprint(env.from_string('{{ missing|default(\"fallback\") }}:{% if missing is undefined %}U{% endif %}').render())\nprint(env.get_template('child').render())\n",
+      "expected_output": "fallback:U\n:F|[fallback:U]",
+      "passed": false,
+      "actual": "",
+      "expected": "fallback:U\n:F|[fallback:U]",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpni3fx7d9\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES008",
+      "layer": "system",
+      "system_dimension": "policy_projection",
+      "category": "whitespace_trim_survives_template_boundaries",
+      "requirement_refs": [
+        "REQ-whitespace",
+        "REQ-inheritance",
+        "REQ-include-import",
+        "REQ-loader-cache"
+      ],
+      "description": "Whitespace trim markers preserve their semantics across parent blocks, includes, and cache reuse after source replacement.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({\n    'base': 'A {% block body %} B {% endblock %} C',\n    'part': ' I {{- value -}} J ',\n    'child': '{% extends \"base\" %}{% block body -%}{% include \"part\" %}{%- endblock %}',\n})\nprint(env.get_template('child').render(value='X'))\nenv.set_template('part', ' K {{- value -}} L ')\nprint(env.get_template('child').render(value='Y'))\n",
+      "expected_output": "A  IXJ  C\nA  KYL  C",
+      "passed": false,
+      "actual": "",
+      "expected": "A  IXJ  C\nA  KYL  C",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp6f0cwk69\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES009",
+      "layer": "system",
+      "system_dimension": "cache_lifecycle",
+      "category": "global_mutation_and_template_invalidation_ordering",
+      "requirement_refs": [
+        "REQ-environment",
+        "REQ-loader-cache",
+        "REQ-globals",
+        "REQ-filters"
+      ],
+      "description": "Global and source mutations are observed consistently regardless of previous cache population order.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'card': '{{ site }}:{{ title|upper }}', 'page': '<{% include \"card\" %}>'}, globals={'site': 'One'})\npage = env.get_template('page')\nprint(page.render(title='alpha'))\nenv.globals['site'] = 'Two'\nprint(page.render(title='beta'))\nenv.set_template('card', '{{ site|lower }}={{ title|title }}')\nprint(page.render(title='gamma ray'))\nprint(env.get_template('card').render(title='delta'))\n",
+      "expected_output": "<One:ALPHA>\n<Two:BETA>\n<two=Gamma Ray>\ntwo=Delta",
+      "passed": false,
+      "actual": "",
+      "expected": "<One:ALPHA>\n<Two:BETA>\n<two=Gamma Ray>\ntwo=Delta",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpziz3ae33\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES010",
+      "layer": "system",
+      "system_dimension": "scope_lifecycle",
+      "category": "rerender_independence_after_nested_inheritance",
+      "requirement_refs": [
+        "REQ-inheritance",
+        "REQ-scope",
+        "REQ-loops",
+        "REQ-undefined"
+      ],
+      "description": "Repeated renders of an inherited template depend only on the current context after nested loops and scoped assignments.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'base': 'H{% block body %}base{% endblock %}F', 'child': '{% extends \"base\" %}{% block body %}{% for item in items %}{% with label = item %}[{{ label }}]{% endwith %}{% else %}{{ label|default(\"empty\") }}{% endfor %}{% endblock %}'})\nt = env.get_template('child')\nprint(t.render(items=['a', 'b'], label='outer'))\nprint(t.render(items=[], label='outer'))\nprint(t.render(items=['x']))\n",
+      "expected_output": "H[a][b]F\nHouterF\nH[x]F",
+      "passed": false,
+      "actual": "",
+      "expected": "H[a][b]F\nHouterF\nH[x]F",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpugcm0mwf\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES011",
+      "layer": "system",
+      "system_dimension": "registry_lifecycle",
+      "category": "imported_macro_uses_current_environment_policy",
+      "requirement_refs": [
+        "REQ-include-import",
+        "REQ-filters",
+        "REQ-autoescape",
+        "REQ-globals"
+      ],
+      "description": "Imported macros share caller environment filters, globals, and autoescape policy across calls.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment\nenv = Environment({'mac': '{% macro label(v) %}{{ prefix }}={{ v|decorate }}{% endmacro %}', 'page': '{% import \"mac\" as m %}{{ m.label(value) }}|{{ m.label(other) }}'}, autoescape=True, globals={'prefix': 'P'})\nenv.filters['decorate'] = lambda value: '<' + str(value) + '>'\nprint(env.get_template('page').render(value='a', other='<b>'))\nenv.filters['decorate'] = lambda value: '[' + str(value) + ']'\nenv.globals['prefix'] = 'Q'\nprint(env.get_template('page').render(value='c', other='<d>'))\n",
+      "expected_output": "P=&lt;a&gt;|P=&lt;&lt;b&gt;&gt;\nQ=[c]|Q=[&lt;d&gt;]",
+      "passed": false,
+      "actual": "",
+      "expected": "P=&lt;a&gt;|P=&lt;&lt;b&gt;&gt;\nQ=[c]|Q=[&lt;d&gt;]",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmpvzycrjd8\\case.py\", line 1, in <module>\n    from minitemplate import Environment\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    },
+    {
+      "id": "MTES012",
+      "layer": "system",
+      "system_dimension": "error_atomicity",
+      "category": "missing_template_does_not_poison_cache_or_registry",
+      "requirement_refs": [
+        "REQ-errors",
+        "REQ-loader-cache",
+        "REQ-include-import",
+        "REQ-filters"
+      ],
+      "description": "A missing include raises through the environment without corrupting cache entries or registry mutations used by later renders.",
+      "weight": 8,
+      "test_code": "from minitemplate import Environment, TemplateNotFound\nenv = Environment({'page': 'A{% include \"missing\" %}Z', 'ok': '{{ value|mark }}'}, globals={'value': 'g'})\nenv.filters['mark'] = lambda value: '<' + str(value) + '>'\ntry:\n    env.get_template('page').render()\n    print('no-error')\nexcept TemplateNotFound:\n    print('missing')\nprint(env.get_template('ok').render(value='x'))\nenv.set_template('missing', 'M={{ value|mark }}')\nprint(env.get_template('page').render(value='y'))\n",
+      "expected_output": "missing\n<x>\nAM=<y>Z",
+      "passed": false,
+      "actual": "",
+      "expected": "missing\n<x>\nAM=<y>Z",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\12547\\AppData\\Local\\Temp\\tmp_n2epcqk\\case.py\", line 1, in <module>\n    from minitemplate import Environment, TemplateNotFound\nModuleNotFoundError: No module named 'minitemplate'",
+      "exit_code": 1
+    }
+  ]
+}

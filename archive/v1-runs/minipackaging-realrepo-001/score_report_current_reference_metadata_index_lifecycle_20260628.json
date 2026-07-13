@@ -1,0 +1,780 @@
+{
+  "rubrics": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\task\\minipackaging-realrepo-001\\rubric.json",
+  "solution_dir": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\runs\\minipackaging-realrepo-001\\solution-reference",
+  "total_cases": 31,
+  "passed_cases": 31,
+  "total_weight": 172,
+  "passed_weight": 172,
+  "score": 1.0,
+  "unit_score": 1.0,
+  "system_score": 1.0,
+  "gap_pp": 0.0,
+  "layers": {
+    "system": {
+      "weight": 96,
+      "passed_weight": 96,
+      "cases": 12,
+      "passed": 12
+    },
+    "unit": {
+      "weight": 76,
+      "passed_weight": 76,
+      "cases": 19,
+      "passed": 19
+    }
+  },
+  "categories": {
+    "imports": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "marker": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "metadata_batch_apply_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_export_import_replay": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_index_add_copy_resolve": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_index_environment_reuse": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_index_exclusion_projection": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_index_resolver_projection_equivalence": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_index_reverse_dependents": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_index_update_remove_invalidation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_lock_environment_revalidation": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_lock_replay": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "metadata_single_mutation_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "requirement": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    },
+    "resolve_metadata_schema": {
+      "weight": 4,
+      "passed_weight": 4,
+      "cases": 1,
+      "passed": 1
+    },
+    "specifier": {
+      "weight": 20,
+      "passed_weight": 20,
+      "cases": 5,
+      "passed": 5
+    },
+    "stale_lock_rejection_atomicity": {
+      "weight": 8,
+      "passed_weight": 8,
+      "cases": 1,
+      "passed": 1
+    },
+    "version": {
+      "weight": 16,
+      "passed_weight": 16,
+      "cases": 4,
+      "passed": 4
+    }
+  },
+  "failed_cases": [],
+  "all_cases": [
+    {
+      "id": "MPU001",
+      "layer": "unit",
+      "type": "unit",
+      "category": "imports",
+      "dimension": "package_shape",
+      "requirement_refs": [
+        "REQ-package-shape"
+      ],
+      "description": "Public names import from the single module, including MetadataIndex and resolve_metadata, and exception classes inherit from ValueError.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version, InvalidVersion, SpecifierSet, InvalidSpecifier, Requirement, InvalidRequirement, Marker, InvalidMarker, UndefinedEnvironmentName, default_environment, is_requirement_satisfied, MetadataIndex, resolve_metadata\nprint(Version.__name__, SpecifierSet.__name__, Requirement.__name__, Marker.__name__, MetadataIndex.__name__, resolve_metadata.__name__)\nprint(issubclass(InvalidVersion, ValueError), issubclass(InvalidSpecifier, ValueError), issubclass(InvalidRequirement, ValueError), issubclass(InvalidMarker, ValueError), issubclass(UndefinedEnvironmentName, ValueError))\n",
+      "expected_output": "Version SpecifierSet Requirement Marker MetadataIndex resolve_metadata\nTrue True True True True",
+      "passed": true,
+      "actual": "Version SpecifierSet Requirement Marker MetadataIndex resolve_metadata\nTrue True True True True",
+      "expected": "Version SpecifierSet Requirement Marker MetadataIndex resolve_metadata\nTrue True True True True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU002",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version canonicalizes release zeros, epoch, pre-release aliases, post-release aliases, and local labels.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nvals = ['1.0.0', '2!01.02.0', '1.0ALPHA2', '1.0-r3', '1.0+LOCAL_build-5']\nprint([str(Version(v)) for v in vals])\nprint(Version('1.0') == Version('1.0.0'))\n",
+      "expected_output": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "passed": true,
+      "actual": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "expected": "['1', '2!1.2', '1a2', '1.post3', '1+local.build.5']\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU003",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version ordering handles dev, pre, final, and post releases.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nordered = [Version(v) for v in ['1.0.dev1', '1.0a1', '1.0b1', '1.0rc1', '1.0', '1.0.post1']]\nprint(all(a < b for a, b in zip(ordered, ordered[1:])))\nprint([str(v) for v in sorted(reversed(ordered))])\n",
+      "expected_output": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "passed": true,
+      "actual": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "expected": "True\n['1.dev1', '1a1', '1b1', '1rc1', '1', '1.post1']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU004",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version"
+      ],
+      "description": "Version ordering includes epochs and local labels after public-version equality.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version\nprint(Version('1!0.9') > Version('2.0'))\nprint(Version('1.0+abc') < Version('1.0+1'))\nprint(Version('1.0+1') < Version('1.0+2'))\n",
+      "expected_output": "True\nTrue\nTrue",
+      "passed": true,
+      "actual": "True\nTrue\nTrue",
+      "expected": "True\nTrue\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU005",
+      "layer": "unit",
+      "type": "unit",
+      "category": "version",
+      "dimension": "version",
+      "requirement_refs": [
+        "REQ-version",
+        "REQ-errors"
+      ],
+      "description": "Invalid version text raises InvalidVersion.",
+      "weight": 4,
+      "test_code": "from minipackaging import Version, InvalidVersion\nfor text in ['', '1..2', '1.0+', 'v nope']:\n    try:\n        Version(text); print('accepted')\n    except InvalidVersion:\n        print('InvalidVersion')\n",
+      "expected_output": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "passed": true,
+      "actual": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "expected": "InvalidVersion\nInvalidVersion\nInvalidVersion\nInvalidVersion",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU006",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet applies inclusive and exclusive range clauses.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns = SpecifierSet('>=1.2, <2.0')\nprint(str(s))\nprint([s.contains(v) for v in ['1.1', '1.2', '1.9', '2.0']])\n",
+      "expected_output": ">=1.2,<2\n[False, True, True, False]",
+      "passed": true,
+      "actual": ">=1.2,<2\n[False, True, True, False]",
+      "expected": ">=1.2,<2\n[False, True, True, False]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU007",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet supports equality, inequality, and wildcard release prefixes.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\nprint([SpecifierSet('==1.2.*').contains(v) for v in ['1.2', '1.2.5', '1.3']])\nprint([SpecifierSet('!=1.2.*').contains(v) for v in ['1.1', '1.2.9', '1.3']])\n",
+      "expected_output": "[True, True, False]\n[True, False, True]",
+      "passed": true,
+      "actual": "[True, True, False]\n[True, False, True]",
+      "expected": "[True, True, False]\n[True, False, True]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU008",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet supports compatible release bounds.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns1 = SpecifierSet('~=1.4')\ns2 = SpecifierSet('~=1.4.5')\nprint([s1.contains(v) for v in ['1.4', '1.9', '2.0']])\nprint([s2.contains(v) for v in ['1.4.5', '1.4.9', '1.5']])\n",
+      "expected_output": "[True, True, False]\n[True, True, False]",
+      "passed": true,
+      "actual": "[True, True, False]\n[True, True, False]",
+      "expected": "[True, True, False]\n[True, True, False]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU009",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier"
+      ],
+      "description": "SpecifierSet excludes pre-releases by default and includes them when requested.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet\ns = SpecifierSet('>=1.0')\nprint(s.contains('1.1a1'))\nprint(s.contains('1.1a1', prereleases=True))\nprint(s.contains('1.1.dev1', prereleases=False))\n",
+      "expected_output": "False\nTrue\nFalse",
+      "passed": true,
+      "actual": "False\nTrue\nFalse",
+      "expected": "False\nTrue\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU010",
+      "layer": "unit",
+      "type": "unit",
+      "category": "specifier",
+      "dimension": "specifier",
+      "requirement_refs": [
+        "REQ-specifier",
+        "REQ-errors"
+      ],
+      "description": "Invalid specifier text raises InvalidSpecifier.",
+      "weight": 4,
+      "test_code": "from minipackaging import SpecifierSet, InvalidSpecifier\nfor text in ['=>1.0', '>=', '==1.*.2']:\n    try:\n        SpecifierSet(text); print('accepted')\n    except InvalidSpecifier:\n        print('InvalidSpecifier')\n",
+      "expected_output": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "passed": true,
+      "actual": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "expected": "InvalidSpecifier\nInvalidSpecifier\nInvalidSpecifier",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU011",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement parses normalized names, sorted normalized extras, and canonical specifiers.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\nr = Requirement('My_Pkg[PDF,security-extra] >=1.0, <2')\nprint(r.name)\nprint(sorted(r.extras))\nprint(str(r.specifier))\nprint(str(r))\n",
+      "expected_output": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "passed": true,
+      "actual": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "expected": "my-pkg\n['pdf', 'security-extra']\n>=1,<2\nmy-pkg[pdf,security-extra]>=1,<2",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU012",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement parses direct URLs and marker text as distinct fields.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\nr = Requirement('Demo @ https://example.test/demo-1.0.whl ; python_version >= \"3.10\"')\nprint(r.name)\nprint(r.url)\nprint(str(r.specifier))\nprint(type(r.marker).__name__)\nprint(str(r))\n",
+      "expected_output": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "passed": true,
+      "actual": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "expected": "demo\nhttps://example.test/demo-1.0.whl\n\nMarker\ndemo @ https://example.test/demo-1.0.whl; python_version >= \"3.10\"",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU013",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement"
+      ],
+      "description": "Requirement equality and hashing use normalized names and sorted extras.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement\na = Requirement('Pkg_Name[B,A]>=1')\nb = Requirement('pkg-name[a,b] >= 1.0.0')\nprint(a == b)\nprint(len({a, b}))\nprint(str(b))\n",
+      "expected_output": "True\n1\npkg-name[a,b]>=1",
+      "passed": true,
+      "actual": "True\n1\npkg-name[a,b]>=1",
+      "expected": "True\n1\npkg-name[a,b]>=1",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU014",
+      "layer": "unit",
+      "type": "unit",
+      "category": "requirement",
+      "dimension": "requirement",
+      "requirement_refs": [
+        "REQ-requirement",
+        "REQ-errors"
+      ],
+      "description": "Invalid requirement strings raise InvalidRequirement.",
+      "weight": 4,
+      "test_code": "from minipackaging import Requirement, InvalidRequirement\nfor text in ['bad name>=1', 'pkg[bad extra]', 'pkg @ https://x >=1']:\n    try:\n        Requirement(text); print('accepted')\n    except InvalidRequirement:\n        print('InvalidRequirement')\n",
+      "expected_output": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "passed": true,
+      "actual": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "expected": "InvalidRequirement\nInvalidRequirement\nInvalidRequirement",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU015",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker evaluates equality and version comparisons against a caller environment.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nenv = {'python_version': '3.11', 'os_name': 'posix'}\nprint(Marker('python_version >= \"3.8\"').evaluate(env))\nprint(Marker('os_name == \"nt\"').evaluate(env))\n",
+      "expected_output": "True\nFalse",
+      "passed": true,
+      "actual": "True\nFalse",
+      "expected": "True\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU016",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker honors boolean precedence and parentheses.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nenv = {'python_version': '3.9', 'sys_platform': 'linux', 'os_name': 'posix'}\nprint(Marker('python_version >= \"3.8\" and sys_platform == \"linux\"').evaluate(env))\nprint(Marker('python_version < \"3.8\" and (sys_platform == \"linux\" or os_name == \"posix\")').evaluate(env))\n",
+      "expected_output": "True\nFalse",
+      "passed": true,
+      "actual": "True\nFalse",
+      "expected": "True\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU017",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker"
+      ],
+      "description": "Marker evaluates membership operators and requested extras.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker\nprint(Marker('sys_platform in \"linux darwin\"').evaluate({'sys_platform': 'linux'}))\nprint(Marker('extra == \"security-extra\"').evaluate({}, requested_extras={'Security_Extra'}))\nprint(Marker('extra == \"docs\"').evaluate({}, requested_extras={'Security_Extra'}))\n",
+      "expected_output": "True\nTrue\nFalse",
+      "passed": true,
+      "actual": "True\nTrue\nFalse",
+      "expected": "True\nTrue\nFalse",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU018",
+      "layer": "unit",
+      "type": "unit",
+      "category": "marker",
+      "dimension": "marker",
+      "requirement_refs": [
+        "REQ-marker",
+        "REQ-errors"
+      ],
+      "description": "Marker syntax errors and missing environment variables use the documented exceptions.",
+      "weight": 4,
+      "test_code": "from minipackaging import Marker, InvalidMarker, UndefinedEnvironmentName\ntry:\n    Marker('python_version === \"3\"'); print('accepted')\nexcept InvalidMarker:\n    print('InvalidMarker')\ntry:\n    Marker('python_version >= \"3.8\"').evaluate({}); print('evaluated')\nexcept UndefinedEnvironmentName:\n    print('UndefinedEnvironmentName')\n",
+      "expected_output": "InvalidMarker\nUndefinedEnvironmentName",
+      "passed": true,
+      "actual": "InvalidMarker\nUndefinedEnvironmentName",
+      "expected": "InvalidMarker\nUndefinedEnvironmentName",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPU019",
+      "layer": "unit",
+      "type": "unit",
+      "category": "resolve_metadata_schema",
+      "dimension": "package_shape",
+      "requirement_refs": [
+        "REQ-resolution-api",
+        "REQ-resolution-invariants"
+      ],
+      "description": "resolve_metadata exposes the documented projection keys and a simple semantic schema without mutating caller metadata.",
+      "weight": 4,
+      "test_code": "from minipackaging import resolve_metadata\ncandidates = [\n    {'name': 'app', 'version': '1.0', 'requires': ['dep>=1; extra == \"pdf\"']},\n    {'name': 'dep', 'version': '1.0'},\n]\nbefore = repr(candidates)\nres = resolve_metadata(['App[PDF]>=1'], candidates)\nprint(sorted(res))\nprint(sorted(res['selected'].items()))\nprint(sorted((e['parent'], e['name'], tuple(e['extras'])) for e in res['edges']))\nprint(sorted((k, tuple(v)) for k, v in res['requested_extras'].items()))\nprint(sorted((r['source'], r['parent'], r['name'], tuple(r['extras'])) for r in res['requirements']))\nprint(repr(candidates) == before)\n",
+      "expected_output": "['dependents', 'edges', 'excluded', 'requested_extras', 'requirements', 'selected']\n[('app', '1'), ('dep', '1')]\n[('app', 'dep', ())]\n[('app', ('pdf',)), ('dep', ())]\n[('app', 'app', 'dep', ()), ('root', None, 'app', ('pdf',))]\nTrue",
+      "passed": true,
+      "actual": "['dependents', 'edges', 'excluded', 'requested_extras', 'requirements', 'selected']\n[('app', '1'), ('dep', '1')]\n[('app', 'dep', ())]\n[('app', ('pdf',)), ('dep', ())]\n[('app', 'app', 'dep', ()), ('root', None, 'app', ('pdf',))]\nTrue",
+      "expected": "['dependents', 'edges', 'excluded', 'requested_extras', 'requirements', 'selected']\n[('app', '1'), ('dep', '1')]\n[('app', 'dep', ())]\n[('app', ('pdf',)), ('dep', ())]\n[('app', 'app', 'dep', ()), ('root', None, 'app', ('pdf',))]\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS001",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_index_add_copy_resolve",
+      "dimension": "state_accumulation",
+      "system_dimension": "state_accumulation",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "MetadataIndex add_candidate copies caller metadata and resolves selected versions, dependency edges, reverse dependents, and requested extras from the stored fact table.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex()\napp = {'name': 'App_Main', 'version': '1.0', 'requires': ['Core_Lib>=1,<3', 'Plugin[Fast]>=1; extra == \"speed\"']}\nidx.add_candidate(app)\nidx.add_candidate({'name': 'core-lib', 'version': '1.0'})\nidx.add_candidate({'name': 'core-lib', 'version': '2.0'})\nidx.add_candidate({'name': 'core-lib', 'version': '3.0'})\nidx.add_candidate({'name': 'plugin', 'version': '1.0', 'requires': ['speed-lib>=1; extra == \"fast\"']})\nidx.add_candidate({'name': 'speed-lib', 'version': '1.0'})\napp['requires'].append('leak>=1')\nres = idx.resolve(['App-Main[Speed]>=1'])\nprint(sorted(res['selected'].items()))\nprint(sorted((e['parent'], e['name'], tuple(e.get('extras') or ())) for e in res['edges']))\nprint(sorted((k, tuple(v)) for k, v in res['requested_extras'].items()))\nprint(res['dependents'].get('leak'), res['revision'] >= 6)\n",
+      "expected_output": "[('app-main', '1'), ('core-lib', '2'), ('plugin', '1'), ('speed-lib', '1')]\n[('app-main', 'core-lib', ()), ('app-main', 'plugin', ('fast',)), ('plugin', 'speed-lib', ())]\n[('app-main', ('speed',)), ('core-lib', ()), ('plugin', ('fast',)), ('speed-lib', ())]\nNone True",
+      "passed": true,
+      "actual": "[('app-main', '1'), ('core-lib', '2'), ('plugin', '1'), ('speed-lib', '1')]\n[('app-main', 'core-lib', ()), ('app-main', 'plugin', ('fast',)), ('plugin', 'speed-lib', ())]\n[('app-main', ('speed',)), ('core-lib', ()), ('plugin', ('fast',)), ('speed-lib', ())]\nNone True",
+      "expected": "[('app-main', '1'), ('core-lib', '2'), ('plugin', '1'), ('speed-lib', '1')]\n[('app-main', 'core-lib', ()), ('app-main', 'plugin', ('fast',)), ('plugin', 'speed-lib', ())]\n[('app-main', ('speed',)), ('core-lib', ()), ('plugin', ('fast',)), ('speed-lib', ())]\nNone True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS002",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_index_update_remove_invalidation",
+      "dimension": "projection_consistency",
+      "system_dimension": "projection_consistency",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "A batch update and remove invalidates stale selection, exclusion, index, and reverse-dependent projections together.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['lib<4']},\n    {'name': 'lib', 'version': '1.0'},\n    {'name': 'lib', 'version': '2.0'},\n    {'name': 'lib', 'version': '3.0'},\n])\nfirst = idx.resolve(['app>=1'])\nidx.apply([\n    {'action': 'update', 'candidate': {'name': 'app', 'version': '1.0', 'requires': ['lib<3']}},\n    {'action': 'remove', 'name': 'lib', 'version': '1.0'},\n])\nsecond = idx.resolve(['app>=1'])\nprint(sorted(first['selected'].items()), first['excluded']['lib'])\nprint(sorted(second['selected'].items()), second['excluded']['lib'])\nprint(idx.index()['lib'])\nprint(second['dependents']['lib'])\n",
+      "expected_output": "[('app', '1'), ('lib', '3')] ['1', '2']\n[('app', '1'), ('lib', '2')] ['3']\n[{'name': 'lib', 'version': '2', 'requires': []}, {'name': 'lib', 'version': '3', 'requires': []}]\n['app']",
+      "passed": true,
+      "actual": "[('app', '1'), ('lib', '3')] ['1', '2']\n[('app', '1'), ('lib', '2')] ['3']\n[{'name': 'lib', 'version': '2', 'requires': []}, {'name': 'lib', 'version': '3', 'requires': []}]\n['app']",
+      "expected": "[('app', '1'), ('lib', '3')] ['1', '2']\n[('app', '1'), ('lib', '2')] ['3']\n[{'name': 'lib', 'version': '2', 'requires': []}, {'name': 'lib', 'version': '3', 'requires': []}]\n['app']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS003",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_index_reverse_dependents",
+      "dimension": "bidirectional_consistency",
+      "system_dimension": "bidirectional_consistency",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "dependents_of is a reverse projection of the same active graph used by resolve, including transitive parent lookup.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['core>=1']},\n    {'name': 'core', 'version': '1.0', 'requires': ['shared>=1']},\n    {'name': 'shared', 'version': '1.0'},\n    {'name': 'plugin', 'version': '1.0', 'requires': ['shared>=1']},\n])\nres = idx.resolve(['app>=1'])\nprint(sorted((k, tuple(v)) for k, v in res['dependents'].items()))\nprint(idx.dependents_of('shared', roots=['app>=1']))\nprint(idx.dependents_of('shared', roots=['app>=1'], transitive=True))\nprint(idx.dependents_of('Shared', roots=['plugin>=1']))\n",
+      "expected_output": "[('core', ('app',)), ('shared', ('core',))]\n['core']\n['app', 'core']\n['plugin']",
+      "passed": true,
+      "actual": "[('core', ('app',)), ('shared', ('core',))]\n['core']\n['app', 'core']\n['plugin']",
+      "expected": "[('core', ('app',)), ('shared', ('core',))]\n['core']\n['app', 'core']\n['plugin']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS004",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_index_environment_reuse",
+      "dimension": "boundary_crossing",
+      "system_dimension": "boundary_crossing",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-marker",
+        "REQ-environment",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "The same MetadataIndex can be resolved repeatedly under different environments and requested extras without leaking stale marker or extras state.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['linux-driver>=1; sys_platform == \"linux\"', 'win-driver>=1; sys_platform == \"win32\"', 'pdf-renderer>=1; extra == \"pdf\"']},\n    {'name': 'linux-driver', 'version': '1.0'},\n    {'name': 'win-driver', 'version': '1.0'},\n    {'name': 'pdf-renderer', 'version': '1.0'},\n])\nlinux_pdf = idx.resolve(['App[PDF]>=1'], {'sys_platform': 'linux'})\nwin_plain = idx.resolve(['app>=1'], {'sys_platform': 'win32'})\nlinux_again = idx.resolve(['app>=1'], {'sys_platform': 'linux'})\nprint(sorted(linux_pdf['selected'].items()))\nprint(sorted(win_plain['selected'].items()))\nprint(sorted(linux_again['selected'].items()))\nprint(sorted((k, tuple(v)) for k, v in linux_pdf['requested_extras'].items()))\n",
+      "expected_output": "[('app', '1'), ('linux-driver', '1'), ('pdf-renderer', '1')]\n[('app', '1'), ('win-driver', '1')]\n[('app', '1'), ('linux-driver', '1')]\n[('app', ('pdf',)), ('linux-driver', ()), ('pdf-renderer', ())]",
+      "passed": true,
+      "actual": "[('app', '1'), ('linux-driver', '1'), ('pdf-renderer', '1')]\n[('app', '1'), ('win-driver', '1')]\n[('app', '1'), ('linux-driver', '1')]\n[('app', ('pdf',)), ('linux-driver', ()), ('pdf-renderer', ())]",
+      "expected": "[('app', '1'), ('linux-driver', '1'), ('pdf-renderer', '1')]\n[('app', '1'), ('win-driver', '1')]\n[('app', '1'), ('linux-driver', '1')]\n[('app', ('pdf',)), ('linux-driver', ()), ('pdf-renderer', ())]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS005",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_lock_replay",
+      "dimension": "state_accumulation",
+      "system_dimension": "state_accumulation",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-lock-lifecycle",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "resolve_lock and apply_lock replay the same selected graph after unrelated candidate additions while fresh resolve can select a newer version.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['lib>=1']},\n    {'name': 'lib', 'version': '1.0'},\n    {'name': 'lib', 'version': '2.0'},\n])\nlock = idx.resolve_lock(['app>=1'])\nidx.add_candidate({'name': 'lib', 'version': '3.0'})\nidx.add_candidate({'name': 'other', 'version': '9.0'})\nfresh = idx.resolve(['app>=1'])\nreplayed = idx.apply_lock(lock)\nprint(sorted(lock['selected'].items()))\nprint(sorted(fresh['selected'].items()))\nprint(sorted(replayed['selected'].items()))\nprint(replayed['lock_revision'] == lock['revision'], replayed['revision'] == idx.resolve(['app>=1'])['revision'])\n",
+      "expected_output": "[('app', '1'), ('lib', '2')]\n[('app', '1'), ('lib', '3')]\n[('app', '1'), ('lib', '2')]\nTrue True",
+      "passed": true,
+      "actual": "[('app', '1'), ('lib', '2')]\n[('app', '1'), ('lib', '3')]\n[('app', '1'), ('lib', '2')]\nTrue True",
+      "expected": "[('app', '1'), ('lib', '2')]\n[('app', '1'), ('lib', '3')]\n[('app', '1'), ('lib', '2')]\nTrue True",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS006",
+      "layer": "system",
+      "type": "system",
+      "category": "stale_lock_rejection_atomicity",
+      "dimension": "error_atomicity",
+      "system_dimension": "error_atomicity",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-lock-lifecycle",
+        "REQ-errors",
+        "REQ-global-invariants"
+      ],
+      "description": "A stale lock whose selected candidate metadata changed is rejected without mutating the index, revision, or exported state.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['lib>=1']},\n    {'name': 'lib', 'version': '1.0'},\n])\nlock = idx.resolve_lock(['app>=1'])\nidx.apply([{'action': 'update', 'candidate': {'name': 'app', 'version': '1.0', 'requires': ['missing>=1']}}])\nbefore = idx.export_state()\ntry:\n    idx.apply_lock(lock)\n    print('accepted')\nexcept ValueError:\n    print('stale-lock')\nprint(idx.export_state() == before)\nprint(idx.index()['app'])\n",
+      "expected_output": "stale-lock\nTrue\n[{'name': 'app', 'version': '1', 'requires': ['missing>=1']}]",
+      "passed": true,
+      "actual": "stale-lock\nTrue\n[{'name': 'app', 'version': '1', 'requires': ['missing>=1']}]",
+      "expected": "stale-lock\nTrue\n[{'name': 'app', 'version': '1', 'requires': ['missing>=1']}]",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS007",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_export_import_replay",
+      "dimension": "boundary_crossing",
+      "system_dimension": "boundary_crossing",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-lock-lifecycle",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "export_state/import_state replay the candidate table, resolver projections, reverse dependents, and lock behavior without relying on object identity.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['core>=1', 'docs[html]>=1; extra == \"docs\"']},\n    {'name': 'core', 'version': '1.0'},\n    {'name': 'docs', 'version': '1.0', 'requires': ['renderer>=1; extra == \"html\"']},\n    {'name': 'renderer', 'version': '1.0'},\n])\nlock = idx.resolve_lock(['App[Docs]>=1'])\nclone = MetadataIndex.import_state(idx.export_state())\na = idx.resolve(['App[Docs]>=1'])\nb = clone.resolve(['App[Docs]>=1'])\nreplay = clone.apply_lock(lock)\nprint(clone.index() == idx.index())\nprint(a['selected'] == b['selected'], a['dependents'] == b['dependents'], a['requested_extras'] == b['requested_extras'])\nprint(sorted(replay['selected'].items()))\nprint(clone.dependents_of('renderer', roots=['app[docs]>=1'], transitive=True))\n",
+      "expected_output": "True\nTrue True True\n[('app', '1'), ('core', '1'), ('docs', '1'), ('renderer', '1')]\n['app', 'docs']",
+      "passed": true,
+      "actual": "True\nTrue True True\n[('app', '1'), ('core', '1'), ('docs', '1'), ('renderer', '1')]\n['app', 'docs']",
+      "expected": "True\nTrue True True\n[('app', '1'), ('core', '1'), ('docs', '1'), ('renderer', '1')]\n['app', 'docs']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS008",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_batch_apply_atomicity",
+      "dimension": "error_atomicity",
+      "system_dimension": "error_atomicity",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-errors",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "A failed mixed apply batch leaves export, revision, and resolver projections unchanged; a later valid batch updates all views together.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['lib>=1']},\n    {'name': 'lib', 'version': '1.0'},\n])\nbefore_state = idx.export_state()\nbefore_res = idx.resolve(['app>=1'])\ntry:\n    idx.apply([\n        {'action': 'add', 'candidate': {'name': 'tool', 'version': '1.0'}},\n        {'action': 'update', 'candidate': {'name': 'missing', 'version': '1.0'}},\n    ])\n    print('accepted')\nexcept ValueError:\n    print('batch-failed')\nprint(idx.export_state() == before_state, idx.resolve(['app>=1'])['selected'] == before_res['selected'])\nidx.apply([\n    {'action': 'add', 'candidate': {'name': 'tool', 'version': '1.0'}},\n    {'action': 'update', 'candidate': {'name': 'app', 'version': '1.0', 'requires': ['lib>=1', 'tool>=1']}},\n])\nprint(sorted(idx.resolve(['app>=1'])['selected'].items()))\nprint(idx.dependents_of('tool', roots=['app>=1']))\n",
+      "expected_output": "batch-failed\nTrue True\n[('app', '1'), ('lib', '1'), ('tool', '1')]\n['app']",
+      "passed": true,
+      "actual": "batch-failed\nTrue True\n[('app', '1'), ('lib', '1'), ('tool', '1')]\n['app']",
+      "expected": "batch-failed\nTrue True\n[('app', '1'), ('lib', '1'), ('tool', '1')]\n['app']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS009",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_single_mutation_atomicity",
+      "dimension": "error_atomicity",
+      "system_dimension": "error_atomicity",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-errors",
+        "REQ-global-invariants"
+      ],
+      "description": "Failed remove and failed update operations do not change index projection or revision, and a later valid remove invalidates resolver views.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['lib>=1']},\n    {'name': 'lib', 'version': '1.0'},\n    {'name': 'lib', 'version': '2.0'},\n])\nbefore = idx.export_state()\nfor change in ([{'action': 'remove', 'name': 'lib', 'version': '9.0'}], [{'action': 'update', 'candidate': {'name': 'ghost', 'version': '1.0'}}]):\n    try:\n        idx.apply(change)\n        print('accepted')\n    except ValueError:\n        print(idx.export_state() == before)\nidx.remove_candidate('lib', '2.0')\nres = idx.resolve(['app>=1'])\nprint(sorted(res['selected'].items()))\nprint(res.get('excluded', {}).get('lib'))\n",
+      "expected_output": "True\nTrue\n[('app', '1'), ('lib', '1')]\nNone",
+      "passed": true,
+      "actual": "True\nTrue\n[('app', '1'), ('lib', '1')]\nNone",
+      "expected": "True\nTrue\n[('app', '1'), ('lib', '1')]\nNone",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS010",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_index_exclusion_projection",
+      "dimension": "bidirectional_consistency",
+      "system_dimension": "bidirectional_consistency",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-specifier",
+        "REQ-version",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "Root and transitive constraints in MetadataIndex derive selected versions, exclusions, and reverse dependents from the same normalized constraint facts.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['lib<3,!=2.0', 'tool>=1']},\n    {'name': 'tool', 'version': '1.0', 'requires': ['Lib>=2']},\n    {'name': 'lib', 'version': '1.0'},\n    {'name': 'lib', 'version': '1.5'},\n    {'name': 'lib', 'version': '2.0'},\n    {'name': 'lib', 'version': '2.5'},\n    {'name': 'lib', 'version': '3.0'},\n])\nroots = ['app>=1', 'lib>=1,<4,!=1.5', 'Lib <4, !=1.5, >=1.0']\na = idx.resolve(roots)\nb = idx.resolve(list(reversed(roots)))\nprint(sorted(a['selected'].items()))\nprint(a['excluded']['lib'])\nprint(a['dependents']['lib'])\nprint(a['selected'] == b['selected'] and a['excluded'] == b['excluded'] and a['dependents'] == b['dependents'])\n",
+      "expected_output": "[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "passed": true,
+      "actual": "[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "expected": "[('app', '1'), ('lib', '2.5'), ('tool', '1')]\n['1', '1.5', '2', '3']\n['app', 'tool']\nTrue",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS011",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_lock_environment_revalidation",
+      "dimension": "global_invariant",
+      "system_dimension": "global_invariant",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-lock-lifecycle",
+        "REQ-marker",
+        "REQ-environment",
+        "REQ-global-invariants"
+      ],
+      "description": "apply_lock revalidates environment-sensitive dependency metadata instead of reusing stale marker decisions across environments.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex\nidx = MetadataIndex([\n    {'name': 'app', 'version': '1.0', 'requires': ['linux-driver>=1; sys_platform == \"linux\"', 'win-driver>=1; sys_platform == \"win32\"']},\n    {'name': 'linux-driver', 'version': '1.0'},\n    {'name': 'win-driver', 'version': '1.0'},\n])\nlinux_lock = idx.resolve_lock(['app>=1'], {'sys_platform': 'linux'})\nprint(sorted(idx.apply_lock(linux_lock, {'sys_platform': 'linux'})['selected'].items()))\ntry:\n    idx.apply_lock(linux_lock, {'sys_platform': 'win32'})\n    print('accepted')\nexcept ValueError:\n    print('environment-mismatch')\nprint(sorted(idx.resolve(['app>=1'], {'sys_platform': 'win32'})['selected'].items()))\nprint(idx.dependents_of('win-driver', roots=['app>=1'], transitive=True, environment={'sys_platform': 'win32'}))\n",
+      "expected_output": "[('app', '1'), ('linux-driver', '1')]\nenvironment-mismatch\n[('app', '1'), ('win-driver', '1')]\n['app']",
+      "passed": true,
+      "actual": "[('app', '1'), ('linux-driver', '1')]\nenvironment-mismatch\n[('app', '1'), ('win-driver', '1')]\n['app']",
+      "expected": "[('app', '1'), ('linux-driver', '1')]\nenvironment-mismatch\n[('app', '1'), ('win-driver', '1')]\n['app']",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "id": "MPS012",
+      "layer": "system",
+      "type": "system",
+      "category": "metadata_index_resolver_projection_equivalence",
+      "dimension": "projection_consistency",
+      "system_dimension": "projection_consistency",
+      "requirement_refs": [
+        "REQ-index-api",
+        "REQ-resolution-api",
+        "REQ-resolution-invariants",
+        "REQ-global-invariants"
+      ],
+      "description": "The stateless resolve_metadata convenience API and MetadataIndex.resolve expose equivalent semantic projections from the same candidate facts, while the index adds only lifecycle metadata.",
+      "weight": 8,
+      "test_code": "from minipackaging import MetadataIndex, resolve_metadata\ncandidates = [\n    {'name': 'app', 'version': '1.0', 'requires': ['addon[fast]>=1; extra == \"speed\"']},\n    {'name': 'addon', 'version': '1.0', 'requires': ['fast-lib>=1; extra == \"fast\"']},\n    {'name': 'fast-lib', 'version': '1.0'},\n]\nroots = ['App[Speed]>=1']\nstateless = resolve_metadata(roots, candidates)\nidx = MetadataIndex(reversed(candidates))\nstateful = idx.resolve(roots)\nkeys = ['selected', 'excluded', 'dependents', 'requested_extras']\nprint(all(stateless[k] == stateful[k] for k in keys))\nprint(sorted((e['parent'], e['name'], tuple(e.get('extras') or ())) for e in stateless['edges']) == sorted((e['parent'], e['name'], tuple(e.get('extras') or ())) for e in stateful['edges']))\nprint('revision' in stateful and 'index' in stateful and 'revision' not in stateless)\nprint(sorted(stateful['selected'].items()))\n",
+      "expected_output": "True\nTrue\nTrue\n[('addon', '1'), ('app', '1'), ('fast-lib', '1')]",
+      "passed": true,
+      "actual": "True\nTrue\nTrue\n[('addon', '1'), ('app', '1'), ('fast-lib', '1')]",
+      "expected": "True\nTrue\nTrue\n[('addon', '1'), ('app', '1'), ('fast-lib', '1')]",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

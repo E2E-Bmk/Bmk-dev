@@ -1,0 +1,1632 @@
+[
+  {
+    "id": "XITU001",
+    "layer": "unit",
+    "category": "parse_statuses",
+    "requirement_refs": [
+      "REQ-parse-status",
+      "REQ-list"
+    ],
+    "description": "Parses all five public checkbox statuses.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] Open item\n[x] Done item\n[@] Doing item\n[~] Old item\n[?] Question item\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 1,
+            "status": "open",
+            "description": "Open item"
+          },
+          {
+            "id": 2,
+            "status": "done",
+            "description": "Done item"
+          },
+          {
+            "id": 3,
+            "status": "ongoing",
+            "description": "Doing item"
+          },
+          {
+            "id": 4,
+            "status": "obsolete",
+            "description": "Old item"
+          },
+          {
+            "id": 5,
+            "status": "question",
+            "description": "Question item"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 5
+      }
+    }
+  },
+  {
+    "id": "XITU002",
+    "layer": "unit",
+    "category": "ignore_invalid_lines",
+    "requirement_refs": [
+      "REQ-parse-status",
+      "REQ-list"
+    ],
+    "description": "Ignores invalid checkboxes and indented task-like lines.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[*] Invalid\n [x] Indented invalid\n[ ]Valid missing separator\n[ ] Valid\nnotes\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 1,
+            "status": "open",
+            "description": "Valid"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 1
+      }
+    }
+  },
+  {
+    "id": "XITU003",
+    "layer": "unit",
+    "category": "priority_parse",
+    "requirement_refs": [
+      "REQ-parse-priority",
+      "REQ-list"
+    ],
+    "description": "Extracts priority tokens while leaving invalid tokens in description.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] ! One\n[ ] ..!! Two\n[ ] !!!... Three\n[ ] .!. Not priority\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 1,
+            "priority": 1,
+            "description": "One"
+          },
+          {
+            "id": 2,
+            "priority": 2,
+            "description": "Two"
+          },
+          {
+            "id": 3,
+            "priority": 3,
+            "description": "Three"
+          },
+          {
+            "id": 4,
+            "priority": 0,
+            "description": ".!. Not priority"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 4
+      }
+    }
+  },
+  {
+    "id": "XITU004",
+    "layer": "unit",
+    "category": "due_parse",
+    "requirement_refs": [
+      "REQ-parse-due",
+      "REQ-list"
+    ],
+    "description": "Normalizes supported day, month, year, week, quarter, and slash due dates.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] Day -> 2026-03-04\n[ ] Month -> 2026-02\n[ ] Year -> 2026\n[ ] Week -> 2026-W01\n[ ] Quarter -> 2026-Q2\n[ ] Slash -> 2026/05/06\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 1,
+            "due": "2026-03-04"
+          },
+          {
+            "id": 2,
+            "due": "2026-02-28"
+          },
+          {
+            "id": 3,
+            "due": "2026-12-31"
+          },
+          {
+            "id": 4,
+            "due": "2026-01-04"
+          },
+          {
+            "id": 5,
+            "due": "2026-06-30"
+          },
+          {
+            "id": 6,
+            "due": "2026-05-06"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 6
+      }
+    }
+  },
+  {
+    "id": "XITU005",
+    "layer": "unit",
+    "category": "tag_parse",
+    "requirement_refs": [
+      "REQ-parse-tags",
+      "REQ-list"
+    ],
+    "description": "Extracts tags with null, plain, quoted, empty, and unicode values.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] Tags #work #area=lab #note=\"hello world\" #empty=\"\" #国=日本\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 1,
+            "tags": {
+              "work": null,
+              "area": "lab",
+              "note": "hello world",
+              "empty": "",
+              "国": "日本"
+            }
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 1
+      }
+    }
+  },
+  {
+    "id": "XITU006",
+    "layer": "unit",
+    "category": "continuation_parse",
+    "requirement_refs": [
+      "REQ-parse-description",
+      "REQ-list"
+    ],
+    "description": "Parses exactly four-space continuation lines into multiline descriptions.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] First line\n    second line\n   not continuation\n[ ] Next\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 1,
+            "description": "First line\nsecond line"
+          },
+          {
+            "id": 2,
+            "description": "Next"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 2
+      }
+    }
+  },
+  {
+    "id": "XITU007",
+    "layer": "unit",
+    "category": "status_filter",
+    "requirement_refs": [
+      "REQ-filter"
+    ],
+    "description": "Filters by status.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] A\n[x] B\n[@] C\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--status",
+        "done"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 2,
+            "status": "done",
+            "description": "B"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 1
+      }
+    }
+  },
+  {
+    "id": "XITU008",
+    "layer": "unit",
+    "category": "tag_filter",
+    "requirement_refs": [
+      "REQ-filter",
+      "REQ-parse-tags"
+    ],
+    "description": "Composes multiple tag filters as intersection.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] A #work\n[ ] B #work #urgent\n[ ] C #urgent\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--tag",
+        "work",
+        "--tag",
+        "urgent"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 2,
+            "description": "B #work #urgent"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 1
+      }
+    }
+  },
+  {
+    "id": "XITU009",
+    "layer": "unit",
+    "category": "priority_filter",
+    "requirement_refs": [
+      "REQ-filter",
+      "REQ-parse-priority"
+    ],
+    "description": "Filters by minimum priority.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] ! Low\n[ ] !! Mid\n[ ] !!! High\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--priority-min",
+        "2"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 2,
+            "priority": 2
+          },
+          {
+            "id": 3,
+            "priority": 3
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 2
+      }
+    }
+  },
+  {
+    "id": "XITU010",
+    "layer": "unit",
+    "category": "due_filter",
+    "requirement_refs": [
+      "REQ-filter",
+      "REQ-parse-due"
+    ],
+    "description": "Filters by exact due date and by due-by cutoff.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] A -> 2026-01-02\n[ ] B -> 2026-01-03\n[ ] C\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--due-on",
+        "2026-01-02"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--due-by",
+        "2026-01-02"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 1,
+            "description": "A -> 2026-01-02"
+          }
+        ],
+        "1": [
+          {
+            "id": 1,
+            "description": "A -> 2026-01-02"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 1,
+        "1": 1
+      }
+    }
+  },
+  {
+    "id": "XITU011",
+    "layer": "unit",
+    "category": "priority_sort",
+    "requirement_refs": [
+      "REQ-sort",
+      "REQ-parse-priority"
+    ],
+    "description": "Sorts by priority with id tie-breaks.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] ! A\n[ ] !!! B\n[ ] !! C\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--sort",
+        "priority",
+        "--order",
+        "desc"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 2
+          },
+          {
+            "id": 3
+          },
+          {
+            "id": 1
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 3
+      }
+    }
+  },
+  {
+    "id": "XITU012",
+    "layer": "unit",
+    "category": "due_sort",
+    "requirement_refs": [
+      "REQ-sort",
+      "REQ-parse-due"
+    ],
+    "description": "Sorts by due date with undated tasks last in ascending order.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] No date\n[ ] Later -> 2026-05-01\n[ ] Earlier -> 2026-01-01\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--sort",
+        "due",
+        "--order",
+        "asc"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 3
+          },
+          {
+            "id": 2
+          },
+          {
+            "id": 1
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 3
+      }
+    }
+  },
+  {
+    "id": "XITU013",
+    "layer": "unit",
+    "category": "stats_counts",
+    "requirement_refs": [
+      "REQ-stats"
+    ],
+    "description": "Reports status, priority, file, tag, and due counts.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] ! A #x -> 2026-01-01\n[x] B\n[@] !! C #y\n"
+    },
+    "commands": [
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": {
+          "total": 3,
+          "by_status": {
+            "open": 1,
+            "done": 1,
+            "ongoing": 1
+          },
+          "by_priority": {
+            "0": 1,
+            "1": 1,
+            "2": 1
+          },
+          "by_file": {
+            "tasks.xit": 3
+          },
+          "with_tags": 2,
+          "with_due": 1
+        }
+      }
+    }
+  },
+  {
+    "id": "XITU014",
+    "layer": "unit",
+    "category": "add_writeback",
+    "requirement_refs": [
+      "REQ-write-add",
+      "REQ-list"
+    ],
+    "description": "Adds a parseable task and returns it.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": ""
+    },
+    "commands": [
+      [
+        "add",
+        "--file",
+        "tasks.xit",
+        "--text",
+        "Ship report",
+        "--priority",
+        "2",
+        "--due",
+        "2026-02-01",
+        "--tag",
+        "work"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "file_contains": {
+        "tasks.xit": [
+          "[ ] !! Ship report -> 2026-02-01 #work"
+        ]
+      },
+      "stdout_json_contains": {
+        "0": {
+          "id": 1,
+          "description": "Ship report -> 2026-02-01 #work",
+          "priority": 2,
+          "due": "2026-02-01"
+        },
+        "1": [
+          {
+            "id": 1,
+            "priority": 2,
+            "tags": {
+              "work": null
+            }
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "1": 1
+      }
+    }
+  },
+  {
+    "id": "XITU015",
+    "layer": "unit",
+    "category": "mark_writeback",
+    "requirement_refs": [
+      "REQ-write-update",
+      "REQ-list"
+    ],
+    "description": "Marks a task without losing other fields.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] !! Fix bug #work -> 2026-03-01\n"
+    },
+    "commands": [
+      [
+        "mark",
+        "--file",
+        "tasks.xit",
+        "1",
+        "--status",
+        "done"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "file_contains": {
+        "tasks.xit": [
+          "[x] !! Fix bug #work -> 2026-03-01"
+        ]
+      },
+      "stdout_json_contains": {
+        "0": {
+          "id": 1,
+          "status": "done",
+          "priority": 2,
+          "due": "2026-03-01",
+          "tags": {
+            "work": null
+          }
+        },
+        "1": [
+          {
+            "id": 1,
+            "status": "done",
+            "priority": 2
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "1": 1
+      }
+    }
+  },
+  {
+    "id": "XITU016",
+    "layer": "unit",
+    "category": "tag_untag_writeback",
+    "requirement_refs": [
+      "REQ-write-update",
+      "REQ-parse-tags"
+    ],
+    "description": "Adds and removes tags through writeback.",
+    "weight": 4,
+    "setup_files": {
+      "tasks.xit": "[ ] Task #old\n"
+    },
+    "commands": [
+      [
+        "tag",
+        "--file",
+        "tasks.xit",
+        "1",
+        "new=blue"
+      ],
+      [
+        "untag",
+        "--file",
+        "tasks.xit",
+        "1",
+        "old"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "file_contains": {
+        "tasks.xit": [
+          "#new=blue"
+        ]
+      },
+      "file_not_contains": {
+        "tasks.xit": [
+          "#old"
+        ]
+      },
+      "stdout_json_contains": {
+        "2": [
+          {
+            "id": 1,
+            "tags": {
+              "new": "blue"
+            }
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "2": 1
+      }
+    }
+  },
+  {
+    "id": "XITS001",
+    "layer": "system",
+    "system_dimension": "cross_feature_dataflow",
+    "category": "parse_filter_sort_stats",
+    "requirement_refs": [
+      "REQ-list",
+      "REQ-filter",
+      "REQ-sort",
+      "REQ-stats",
+      "REQ-system-invariants"
+    ],
+    "description": "Parsed fields drive filters, sorted views, and stats consistently.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": "[ ] ! Alpha #work -> 2026-02-01\n[@] !!! Beta #work #urgent -> 2026-01-01\n[x] Gamma #home\n[ ] !! Delta #work -> 2026-03-01\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--status",
+        "open",
+        "--tag",
+        "work",
+        "--priority-min",
+        "2",
+        "--sort",
+        "due"
+      ],
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 4,
+            "description": "Delta #work -> 2026-03-01"
+          }
+        ],
+        "1": {
+          "total": 4,
+          "by_status": {
+            "open": 2,
+            "ongoing": 1,
+            "done": 1
+          },
+          "with_tags": 4,
+          "with_due": 3
+        }
+      },
+      "stdout_json_length": {
+        "0": 1
+      }
+    }
+  },
+  {
+    "id": "XITS002",
+    "layer": "system",
+    "system_dimension": "writeback_consistency",
+    "category": "add_list_stats_file",
+    "requirement_refs": [
+      "REQ-write-add",
+      "REQ-list",
+      "REQ-stats",
+      "REQ-system-invariants"
+    ],
+    "description": "An added task appears in list, stats, and file state.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": "[ ] Existing\n"
+    },
+    "commands": [
+      [
+        "add",
+        "--file",
+        "tasks.xit",
+        "--text",
+        "New task",
+        "--status",
+        "ongoing",
+        "--priority",
+        "3",
+        "--due",
+        "2026-Q1",
+        "--tag",
+        "release"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--sort",
+        "priority",
+        "--order",
+        "desc"
+      ],
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "file_contains": {
+        "tasks.xit": [
+          "[@] !!! New task -> 2026-03-31 #release"
+        ]
+      },
+      "stdout_json_contains": {
+        "1": [
+          {
+            "id": 2,
+            "status": "ongoing",
+            "priority": 3,
+            "due": "2026-03-31"
+          },
+          {
+            "id": 1
+          }
+        ],
+        "2": {
+          "total": 2,
+          "by_status": {
+            "open": 1,
+            "ongoing": 1
+          },
+          "with_tags": 1,
+          "with_due": 1
+        }
+      },
+      "stdout_json_length": {
+        "1": 2
+      }
+    }
+  },
+  {
+    "id": "XITS003",
+    "layer": "system",
+    "system_dimension": "writeback_consistency",
+    "category": "mark_filter_stats_file",
+    "requirement_refs": [
+      "REQ-write-update",
+      "REQ-filter",
+      "REQ-stats",
+      "REQ-system-invariants"
+    ],
+    "description": "Marking a task changes filtered views, stats, and file state.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": "[ ] A #work\n[ ] B #work\n[x] C\n"
+    },
+    "commands": [
+      [
+        "mark",
+        "--file",
+        "tasks.xit",
+        "2",
+        "--status",
+        "done"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--status",
+        "open",
+        "--tag",
+        "work"
+      ],
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "file_contains": {
+        "tasks.xit": [
+          "[x] B #work"
+        ]
+      },
+      "stdout_json_contains": {
+        "1": [
+          {
+            "id": 1,
+            "description": "A #work"
+          }
+        ],
+        "2": {
+          "total": 3,
+          "by_status": {
+            "open": 1,
+            "done": 2
+          }
+        }
+      },
+      "stdout_json_length": {
+        "1": 1
+      }
+    }
+  },
+  {
+    "id": "XITS004",
+    "layer": "system",
+    "system_dimension": "derived_view_consistency",
+    "category": "tag_untag_filters_stats",
+    "requirement_refs": [
+      "REQ-write-update",
+      "REQ-filter",
+      "REQ-stats",
+      "REQ-system-invariants"
+    ],
+    "description": "Tag mutations affect tag filters and tag-related stats.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": "[ ] A #old\n[ ] B\n"
+    },
+    "commands": [
+      [
+        "tag",
+        "--file",
+        "tasks.xit",
+        "2",
+        "new"
+      ],
+      [
+        "untag",
+        "--file",
+        "tasks.xit",
+        "1",
+        "old"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--tag",
+        "new"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--tag",
+        "old"
+      ],
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json": {
+        "3": []
+      },
+      "stdout_json_contains": {
+        "2": [
+          {
+            "id": 2,
+            "tags": {
+              "new": null
+            }
+          }
+        ],
+        "4": {
+          "total": 2,
+          "with_tags": 1
+        }
+      },
+      "stdout_json_length": {
+        "2": 1,
+        "3": 0
+      }
+    }
+  },
+  {
+    "id": "XITS005",
+    "layer": "system",
+    "system_dimension": "operation_order_sensitivity",
+    "category": "reschedule_due_views",
+    "requirement_refs": [
+      "REQ-write-update",
+      "REQ-filter",
+      "REQ-sort",
+      "REQ-system-invariants"
+    ],
+    "description": "Rescheduling changes due filters and due sort order.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": "[ ] Later -> 2026-05-01\n[ ] No date\n[ ] Early -> 2026-01-01\n"
+    },
+    "commands": [
+      [
+        "reschedule",
+        "--file",
+        "tasks.xit",
+        "2",
+        "2025-Q4"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--due-by",
+        "2025-12-31"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--sort",
+        "due",
+        "--order",
+        "asc"
+      ]
+    ],
+    "checks": {
+      "file_contains": {
+        "tasks.xit": [
+          "No date -> 2025-12-31"
+        ]
+      },
+      "stdout_json_contains": {
+        "1": [
+          {
+            "id": 2,
+            "due": "2025-12-31"
+          }
+        ],
+        "2": [
+          {
+            "id": 2
+          },
+          {
+            "id": 3
+          },
+          {
+            "id": 1
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "1": 1,
+        "2": 3
+      }
+    }
+  },
+  {
+    "id": "XITS006",
+    "layer": "system",
+    "system_dimension": "cross_file_consistency",
+    "category": "move_source_target_stats",
+    "requirement_refs": [
+      "REQ-move",
+      "REQ-list",
+      "REQ-stats",
+      "REQ-system-invariants"
+    ],
+    "description": "Moving a task updates source list, target list, and multi-file stats.",
+    "weight": 8,
+    "setup_files": {
+      "inbox.xit": "[ ] A\n[ ] !! Move me #work -> 2026-01-01\n",
+      "done.xit": "[x] Existing\n"
+    },
+    "commands": [
+      [
+        "move",
+        "--from",
+        "inbox.xit",
+        "--to",
+        "done.xit",
+        "2"
+      ],
+      [
+        "list",
+        "--file",
+        "inbox.xit"
+      ],
+      [
+        "list",
+        "--file",
+        "done.xit"
+      ],
+      [
+        "stats",
+        "--file",
+        "inbox.xit",
+        "--file",
+        "done.xit"
+      ]
+    ],
+    "checks": {
+      "file_not_contains": {
+        "inbox.xit": [
+          "Move me"
+        ]
+      },
+      "file_contains": {
+        "done.xit": [
+          "[ ] !! Move me #work -> 2026-01-01"
+        ]
+      },
+      "stdout_json_contains": {
+        "1": [
+          {
+            "id": 1,
+            "description": "A"
+          }
+        ],
+        "2": [
+          {
+            "id": 1,
+            "description": "Existing"
+          },
+          {
+            "id": 2,
+            "description": "Move me #work -> 2026-01-01",
+            "priority": 2
+          }
+        ],
+        "3": {
+          "total": 3,
+          "by_file": {
+            "inbox.xit": 1,
+            "done.xit": 2
+          },
+          "with_tags": 1,
+          "with_due": 1
+        }
+      },
+      "stdout_json_length": {
+        "1": 1,
+        "2": 2
+      }
+    }
+  },
+  {
+    "id": "XITS007",
+    "layer": "system",
+    "system_dimension": "stable_identity",
+    "category": "multi_file_ids_move_relist",
+    "requirement_refs": [
+      "REQ-list",
+      "REQ-move",
+      "REQ-system-invariants"
+    ],
+    "description": "IDs are stable by supplied file order and movement uses the selected source-file ID.",
+    "weight": 8,
+    "setup_files": {
+      "a.xit": "[ ] A1\n[ ] A2\n",
+      "b.xit": "[ ] B1\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "a.xit",
+        "--file",
+        "b.xit"
+      ],
+      [
+        "move",
+        "--from",
+        "a.xit",
+        "--to",
+        "b.xit",
+        "2"
+      ],
+      [
+        "list",
+        "--file",
+        "a.xit",
+        "--file",
+        "b.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 1,
+            "description": "A1"
+          },
+          {
+            "id": 2,
+            "description": "A2"
+          },
+          {
+            "id": 3,
+            "description": "B1"
+          }
+        ],
+        "2": [
+          {
+            "id": 1,
+            "description": "A1"
+          },
+          {
+            "id": 2,
+            "description": "B1"
+          },
+          {
+            "id": 3,
+            "description": "A2"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "0": 3,
+        "2": 3
+      }
+    }
+  },
+  {
+    "id": "XITS008",
+    "layer": "system",
+    "system_dimension": "roundtrip_preservation",
+    "category": "continuation_mark_move",
+    "requirement_refs": [
+      "REQ-parse-description",
+      "REQ-write-update",
+      "REQ-move"
+    ],
+    "description": "Continuation descriptions survive mark and cross-file move.",
+    "weight": 8,
+    "setup_files": {
+      "a.xit": "[ ] Write docs\n    include examples\n",
+      "b.xit": ""
+    },
+    "commands": [
+      [
+        "mark",
+        "--file",
+        "a.xit",
+        "1",
+        "--status",
+        "ongoing"
+      ],
+      [
+        "move",
+        "--from",
+        "a.xit",
+        "--to",
+        "b.xit",
+        "1"
+      ],
+      [
+        "list",
+        "--file",
+        "b.xit"
+      ]
+    ],
+    "checks": {
+      "file_contains": {
+        "b.xit": [
+          "[@] Write docs",
+          "    include examples"
+        ]
+      },
+      "stdout_json_contains": {
+        "2": [
+          {
+            "id": 1,
+            "status": "ongoing",
+            "description": "Write docs\ninclude examples"
+          }
+        ]
+      },
+      "stdout_json_length": {
+        "2": 1
+      }
+    }
+  },
+  {
+    "id": "XITS009",
+    "layer": "system",
+    "system_dimension": "date_lifecycle",
+    "category": "add_reschedule_date_views",
+    "requirement_refs": [
+      "REQ-parse-due",
+      "REQ-write-add",
+      "REQ-write-update",
+      "REQ-filter",
+      "REQ-stats"
+    ],
+    "description": "Added and rescheduled dates normalize consistently across list, filters, and stats.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": ""
+    },
+    "commands": [
+      [
+        "add",
+        "--file",
+        "tasks.xit",
+        "--text",
+        "Plan",
+        "--due",
+        "2026"
+      ],
+      [
+        "reschedule",
+        "--file",
+        "tasks.xit",
+        "1",
+        "2026-W02"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--due-on",
+        "2026-01-11"
+      ],
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "2": [
+          {
+            "id": 1,
+            "due": "2026-01-11"
+          }
+        ],
+        "3": {
+          "total": 1,
+          "with_due": 1
+        }
+      },
+      "stdout_json_length": {
+        "2": 1
+      }
+    }
+  },
+  {
+    "id": "XITS010",
+    "layer": "system",
+    "system_dimension": "error_atomicity",
+    "category": "failed_update_preserves_state",
+    "requirement_refs": [
+      "REQ-error-atomic",
+      "REQ-list",
+      "REQ-stats"
+    ],
+    "description": "A failed update leaves parsed views, stats, and file contents unchanged.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": "[ ] A\n[ ] B\n"
+    },
+    "commands": [
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ],
+      {
+        "args": [
+          "mark",
+          "--file",
+          "tasks.xit",
+          "9",
+          "--status",
+          "done"
+        ],
+        "expect_error": true
+      },
+      [
+        "list",
+        "--file",
+        "tasks.xit"
+      ],
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "file_not_contains": {
+        "tasks.xit": [
+          "[x]"
+        ]
+      },
+      "stdout_json_contains": {
+        "0": {
+          "total": 2,
+          "by_status": {
+            "open": 2
+          }
+        },
+        "2": [
+          {
+            "id": 1,
+            "status": "open"
+          },
+          {
+            "id": 2,
+            "status": "open"
+          }
+        ],
+        "3": {
+          "total": 2,
+          "by_status": {
+            "open": 2
+          }
+        }
+      },
+      "stdout_json_length": {
+        "2": 2
+      }
+    }
+  },
+  {
+    "id": "XITS011",
+    "layer": "system",
+    "system_dimension": "global_invariant",
+    "category": "mixed_filters_stats_unchanged",
+    "requirement_refs": [
+      "REQ-filter",
+      "REQ-stats",
+      "REQ-system-invariants"
+    ],
+    "description": "Different filtered views are derived from the same unmodified parsed state.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": "[ ] ! A #work -> 2026-01-01\n[ ] !! B #work #urgent -> 2026-02-01\n[x] !!! C #urgent -> 2026-03-01\n"
+    },
+    "commands": [
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--tag",
+        "work",
+        "--priority-min",
+        "2"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--status",
+        "done",
+        "--tag",
+        "urgent"
+      ],
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "0": [
+          {
+            "id": 2,
+            "description": "B #work #urgent -> 2026-02-01"
+          }
+        ],
+        "1": [
+          {
+            "id": 3,
+            "description": "C #urgent -> 2026-03-01"
+          }
+        ],
+        "2": {
+          "total": 3,
+          "with_tags": 3,
+          "with_due": 3,
+          "by_status": {
+            "open": 2,
+            "done": 1
+          }
+        }
+      },
+      "stdout_json_length": {
+        "0": 1,
+        "1": 1
+      }
+    }
+  },
+  {
+    "id": "XITS012",
+    "layer": "system",
+    "system_dimension": "roundtrip_preservation",
+    "category": "multiple_writes_then_views",
+    "requirement_refs": [
+      "REQ-write-add",
+      "REQ-write-update",
+      "REQ-sort",
+      "REQ-filter",
+      "REQ-system-invariants"
+    ],
+    "description": "Multiple writes round-trip into sorted and filtered views.",
+    "weight": 8,
+    "setup_files": {
+      "tasks.xit": "[ ] Base #seed\n"
+    },
+    "commands": [
+      [
+        "add",
+        "--file",
+        "tasks.xit",
+        "--text",
+        "Second",
+        "--priority",
+        "1",
+        "--tag",
+        "work"
+      ],
+      [
+        "tag",
+        "--file",
+        "tasks.xit",
+        "1",
+        "work"
+      ],
+      [
+        "reschedule",
+        "--file",
+        "tasks.xit",
+        "2",
+        "2026-04"
+      ],
+      [
+        "mark",
+        "--file",
+        "tasks.xit",
+        "1",
+        "--status",
+        "question"
+      ],
+      [
+        "list",
+        "--file",
+        "tasks.xit",
+        "--tag",
+        "work",
+        "--sort",
+        "due",
+        "--order",
+        "asc"
+      ],
+      [
+        "stats",
+        "--file",
+        "tasks.xit"
+      ]
+    ],
+    "checks": {
+      "stdout_json_contains": {
+        "4": [
+          {
+            "id": 2,
+            "due": "2026-04-30"
+          },
+          {
+            "id": 1,
+            "status": "question"
+          }
+        ],
+        "5": {
+          "total": 2,
+          "by_status": {
+            "question": 1,
+            "open": 1
+          },
+          "with_tags": 2,
+          "with_due": 1
+        }
+      },
+      "stdout_json_length": {
+        "4": 2
+      }
+    }
+  }
+]

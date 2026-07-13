@@ -1,0 +1,428 @@
+{
+  "task_id": "tork-fullrepro-001",
+  "status": "implemented_check_catalog",
+  "candidate_runs_allowed": false,
+  "check_count": 60,
+  "checks": [
+    {
+      "id": "TW-U001",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-001",
+      "contract": "parse YAML job spec into normalized JobSpec"
+    },
+    {
+      "id": "TW-U002",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-001",
+      "contract": "parse JSON job spec into normalized JobSpec"
+    },
+    {
+      "id": "TW-U003",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-001",
+      "contract": "reject malformed task records without running workflow"
+    },
+    {
+      "id": "TW-U004",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-004",
+      "contract": "preserve job output expression in normalized spec"
+    },
+    {
+      "id": "TW-U005",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-005",
+      "contract": "expand parallel children without executing runtime"
+    },
+    {
+      "id": "TW-U006",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-005",
+      "contract": "expand each task with stable child metadata"
+    },
+    {
+      "id": "TW-U007",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-006",
+      "contract": "evaluate false condition as SKIPPED primitive"
+    },
+    {
+      "id": "TW-U008",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-007",
+      "contract": "plan subjob parent/child records without flattening identity"
+    },
+    {
+      "id": "TW-U009",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-008",
+      "contract": "compute retry eligibility from attempt history"
+    },
+    {
+      "id": "TW-U010",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-008",
+      "contract": "compute retry available_at using fake clock"
+    },
+    {
+      "id": "TW-U011",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-008",
+      "contract": "timeout/progress primitive can mark non-completed task below full progress"
+    },
+    {
+      "id": "TW-U012",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-003",
+      "contract": "broker enqueue/claim/ack primitive removes exactly one item"
+    },
+    {
+      "id": "TW-U013",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-003",
+      "contract": "broker requeue preserves attempt and available_at"
+    },
+    {
+      "id": "TW-U014",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-002",
+      "contract": "store create/get/list job primitives preserve IDs"
+    },
+    {
+      "id": "TW-U015",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-002",
+      "contract": "store task update does not mutate unrelated jobs"
+    },
+    {
+      "id": "TW-U016",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-011",
+      "contract": "log append/page primitive preserves stream and timestamp"
+    },
+    {
+      "id": "TW-U017",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-011",
+      "contract": "log search primitive filters without changing task history"
+    },
+    {
+      "id": "TW-U018",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-010",
+      "contract": "schedule due/not-due primitive uses fake clock"
+    },
+    {
+      "id": "TW-U019",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-010",
+      "contract": "schedule mark_run advances next_due_at once"
+    },
+    {
+      "id": "TW-U020",
+      "layer": "unit",
+      "weight": 1.0,
+      "requirement": "TW-REQ-005",
+      "contract": "job progress rollup uses child task states"
+    },
+    {
+      "id": "TW-I001",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-001",
+      "contract": "API submit writes job and tasks to store"
+    },
+    {
+      "id": "TW-I002",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-001",
+      "contract": "API list/detail projections agree after submit"
+    },
+    {
+      "id": "TW-I003",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-003",
+      "contract": "worker claims broker item and updates task state"
+    },
+    {
+      "id": "TW-I004",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-004",
+      "contract": "runtime output is stored as task var and job output input"
+    },
+    {
+      "id": "TW-I005",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-008",
+      "contract": "failed runtime attempt creates retry queue item"
+    },
+    {
+      "id": "TW-I006",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-008",
+      "contract": "retry exhaustion marks task and job failed"
+    },
+    {
+      "id": "TW-I007",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-011",
+      "contract": "worker stdout/stderr appears in log page and task detail"
+    },
+    {
+      "id": "TW-I008",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-002",
+      "contract": "durable reopen preserves job/task/log projections"
+    },
+    {
+      "id": "TW-I009",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-010",
+      "contract": "scheduler tick submits due job through API/store"
+    },
+    {
+      "id": "TW-I010",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-010",
+      "contract": "second tick before due time creates no duplicate job"
+    },
+    {
+      "id": "TW-I011",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-009",
+      "contract": "cancel API removes queued work and records canceled tasks"
+    },
+    {
+      "id": "TW-I012",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-009",
+      "contract": "restart API creates runnable work without deleting old history"
+    },
+    {
+      "id": "TW-I013",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-012",
+      "contract": "recovery requeues unfinished active tasks after reopen"
+    },
+    {
+      "id": "TW-I014",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-012",
+      "contract": "recovery leaves completed tasks terminal"
+    },
+    {
+      "id": "TW-I015",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-005",
+      "contract": "parallel child detail and parent progress agree"
+    },
+    {
+      "id": "TW-I016",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-006",
+      "contract": "skipped conditional appears in detail and unblocks dependents"
+    },
+    {
+      "id": "TW-I017",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-007",
+      "contract": "subjob terminal state updates parent task projection"
+    },
+    {
+      "id": "TW-I018",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-003",
+      "contract": "queue status agrees with broker and store after claim"
+    },
+    {
+      "id": "TW-I019",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-002",
+      "contract": "CLI/facade jobs output agrees with API list"
+    },
+    {
+      "id": "TW-I020",
+      "layer": "integration",
+      "weight": 1.5,
+      "requirement": "TW-REQ-011",
+      "contract": "log pagination remains stable after reopen"
+    },
+    {
+      "id": "TW-S001",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-001",
+      "contract": "submit-run-complete: summary/detail/tasks/logs/progress/queue agree"
+    },
+    {
+      "id": "TW-S002",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-004",
+      "contract": "task output feeds downstream expression and final job output"
+    },
+    {
+      "id": "TW-S003",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-008",
+      "contract": "retry-then-success: attempts/logs/progress/final status agree"
+    },
+    {
+      "id": "TW-S004",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-008",
+      "contract": "timeout terminal failure visible across projections"
+    },
+    {
+      "id": "TW-S005",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-009",
+      "contract": "cancel queued and active work updates queue/logs/detail/summary"
+    },
+    {
+      "id": "TW-S006",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-009",
+      "contract": "restart terminal workflow preserves old history and new run state"
+    },
+    {
+      "id": "TW-S007",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-005",
+      "contract": "parallel workflow parent rollup matches child histories and logs"
+    },
+    {
+      "id": "TW-S008",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-005",
+      "contract": "each workflow creates stable child records and final aggregate progress"
+    },
+    {
+      "id": "TW-S009",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-006",
+      "contract": "conditional skip advances downstream task without fake success output"
+    },
+    {
+      "id": "TW-S010",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-007",
+      "contract": "subjob parent/child status and output agree after completion"
+    },
+    {
+      "id": "TW-S011",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-010",
+      "contract": "schedule tick creates one run with schedule provenance"
+    },
+    {
+      "id": "TW-S012",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-010",
+      "contract": "not-due schedule avoids duplicate run"
+    },
+    {
+      "id": "TW-S013",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-012",
+      "contract": "worker loss recovery rebuilds queue and reports recovered tasks"
+    },
+    {
+      "id": "TW-S014",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-002",
+      "contract": "durable reopen after completion preserves all projections"
+    },
+    {
+      "id": "TW-S015",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-011",
+      "contract": "log search/page agrees with task attempts after retries"
+    },
+    {
+      "id": "TW-S016",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-003",
+      "contract": "two workers cannot complete same queued task twice"
+    },
+    {
+      "id": "TW-S017",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-002",
+      "contract": "mixed workflow histories remain isolated by job id"
+    },
+    {
+      "id": "TW-S018",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-005",
+      "contract": "pre/post failure propagates to parent task and job projections"
+    },
+    {
+      "id": "TW-S019",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-012",
+      "contract": "recovery report, queue view, and job detail agree after crash"
+    },
+    {
+      "id": "TW-S020",
+      "layer": "system",
+      "weight": 3.0,
+      "requirement": "TW-REQ-001",
+      "contract": "CLI/facade and importable API produce same machine-readable projections"
+    }
+  ]
+}

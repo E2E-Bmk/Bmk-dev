@@ -1,0 +1,262 @@
+{
+  "items": [
+    {
+      "id": "MMU001",
+      "layer": "unit",
+      "category": "revision_graph",
+      "dimension": "revision_graph",
+      "description": "Creates a linear revision chain and reports semantic history.",
+      "requirement_refs": [
+        "REQ-revision-graph"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('add_name', parents=['root'], ops=['add_column users name:text'])\nprint(hist_summary(m))\nprint(m.heads())\n",
+      "expected_output": "[('add_name', ('root',), ()), ('root', ('base',), ('add_name',))]\n['add_name']"
+    },
+    {
+      "id": "MMU002",
+      "layer": "unit",
+      "category": "revision_graph",
+      "dimension": "revision_graph",
+      "description": "Reports independent branch heads and a merge node.",
+      "requirement_refs": [
+        "REQ-revision-graph"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('branch_a', parents=['root'], ops=['add_column users email:text'])\nm.revision('branch_b', parents=['root'], ops=['add_column users team:text'])\nprint(m.heads())\nm.merge('merge_ab', ['branch_a', 'branch_b'])\nprint(m.heads())\n",
+      "expected_output": "['branch_a', 'branch_b']\n['merge_ab']"
+    },
+    {
+      "id": "MMU003",
+      "layer": "unit",
+      "category": "revision_graph",
+      "dimension": "revision_graph",
+      "description": "Rejects duplicate revisions and unknown parents atomically.",
+      "requirement_refs": [
+        "REQ-revision-graph",
+        "REQ-atomicity"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=[])\ndup = failed(lambda: m.revision('root', parents=['base'], ops=[]))\nmissing = failed(lambda: m.revision('later', parents=['ghost'], ops=[]))\nprint(dup, missing, [n['id'] for n in m.history()])\n",
+      "expected_output": "True True ['root']"
+    },
+    {
+      "id": "MMU004",
+      "layer": "unit",
+      "category": "schema_engine",
+      "dimension": "schema_engine",
+      "description": "Applies create_table and add_column operations to a minimal linear fixture.",
+      "requirement_refs": [
+        "REQ-schema-engine"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('add_name', parents=['root'], ops=['add_column users name:text'])\nm.upgrade('add_name')\nprint(schema_items(m))\n",
+      "expected_output": "[('users', (('id', 'int'), ('name', 'text')))]"
+    },
+    {
+      "id": "MMU005",
+      "layer": "unit",
+      "category": "schema_engine",
+      "dimension": "schema_engine",
+      "description": "Renames a table and reverses it through downgrade.",
+      "requirement_refs": [
+        "REQ-schema-engine",
+        "REQ-downgrade"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('rename_users', parents=['root'], ops=['rename_table users accounts'])\nm.upgrade('rename_users')\nprint(schema_items(m))\nm.downgrade('root')\nprint(schema_items(m))\n",
+      "expected_output": "[('accounts', (('id', 'int'),))]\n[('users', (('id', 'int'),))]"
+    },
+    {
+      "id": "MMU006",
+      "layer": "unit",
+      "category": "schema_engine",
+      "dimension": "schema_engine",
+      "description": "Rejects duplicate columns without mutating schema.",
+      "requirement_refs": [
+        "REQ-schema-engine",
+        "REQ-atomicity"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('bad_col', parents=['root'], ops=['add_column users id:int'])\nm.upgrade('root')\nbad = failed(lambda: m.upgrade('bad_col'))\nprint(bad, schema_items(m))\n",
+      "expected_output": "True [('users', (('id', 'int'),))]"
+    },
+    {
+      "id": "MMU007",
+      "layer": "unit",
+      "category": "planner",
+      "dimension": "planner",
+      "description": "Builds a semantic linear upgrade plan from current to target.",
+      "requirement_refs": [
+        "REQ-planner"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('add_name', parents=['root'], ops=['add_column users name:text'])\nprint(plan_ids(m, 'upgrade', 'add_name'))\n",
+      "expected_output": "[('upgrade', 'root'), ('upgrade', 'add_name')]"
+    },
+    {
+      "id": "MMU008",
+      "layer": "unit",
+      "category": "planner",
+      "dimension": "planner",
+      "description": "Plans a merge target by including missing branch history.",
+      "requirement_refs": [
+        "REQ-planner"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('branch_a', parents=['root'], ops=['add_column users email:text'])\nm.revision('branch_b', parents=['root'], ops=['add_column users team:text'])\nm.merge('merge_ab', ['branch_a', 'branch_b'])\nm.upgrade('branch_a')\nprint(plan_ids(m, 'upgrade', 'merge_ab'))\n",
+      "expected_output": "[('upgrade', 'branch_b'), ('upgrade', 'merge_ab')]"
+    },
+    {
+      "id": "MMU009",
+      "layer": "unit",
+      "category": "stamp",
+      "dimension": "stamp",
+      "description": "Stamp changes current revisions without applying schema operations.",
+      "requirement_refs": [
+        "REQ-stamp",
+        "REQ-version-current"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.stamp('root')\nprint(revs(m), schema_items(m), ledger_kinds(m))\n",
+      "expected_output": "['root'] [] [('stamp', None, (), ('root',))]"
+    },
+    {
+      "id": "MMU010",
+      "layer": "unit",
+      "category": "downgrade",
+      "dimension": "downgrade",
+      "description": "Downgrades a reversible linear revision and updates direct schema/current state.",
+      "requirement_refs": [
+        "REQ-downgrade"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('add_name', parents=['root'], ops=['add_column users name:text'])\nm.upgrade('add_name')\nm.downgrade('root')\nprint(schema_items(m), revs(m))\n",
+      "expected_output": "[('users', (('id', 'int'),))] ['root']"
+    },
+    {
+      "id": "MMU011",
+      "layer": "unit",
+      "category": "downgrade",
+      "dimension": "downgrade",
+      "description": "Rejects irreversible downgrade before mutating public state.",
+      "requirement_refs": [
+        "REQ-downgrade",
+        "REQ-atomicity"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int name:text'])\nm.revision('drop_name', parents=['root'], ops=['drop_column users name'])\nm.upgrade('drop_name')\nbad = failed(lambda: m.downgrade('root'))\nprint(bad, schema_items(m), revs(m), len(m.ledger()['entries']))\n",
+      "expected_output": "True [('users', (('id', 'int'),))] ['drop_name'] 2"
+    },
+    {
+      "id": "MMU012",
+      "layer": "unit",
+      "category": "recovery",
+      "dimension": "recovery",
+      "description": "Creates pending recovery state and recovers idempotently.",
+      "requirement_refs": [
+        "REQ-recovery"
+      ],
+      "weight": 4,
+      "type": "unit",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('add_name', parents=['root'], ops=['add_column users name:text'])\nm.upgrade('root')\nbad = failed(lambda: m.upgrade('add_name', fail_at='after_schema'))\nblocked = failed(lambda: m.stamp('add_name'))\nprint(bad, m.current()['pending'] is not None, revs(m), schema_items(m), blocked)\nprint(m.recover()['status'], m.recover()['status'], revs(m), schema_items(m))\n",
+      "expected_output": "True True ['root'] [('users', (('id', 'int'),))] True\nrolled_back no_pending ['root'] [('users', (('id', 'int'),))]"
+    },
+    {
+      "id": "MMS001",
+      "layer": "system",
+      "category": "branch_upgrade_consistency",
+      "dimension": "branch_upgrade_consistency",
+      "description": "Branch upgrade through merge keeps history, heads, current, schema, plan, and ledger consistent.",
+      "requirement_refs": [
+        "REQ-revision-graph",
+        "REQ-planner",
+        "REQ-schema-engine",
+        "REQ-ledger"
+      ],
+      "weight": 8,
+      "type": "system",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('branch_a', parents=['root'], ops=['add_column users email:text'])\nm.revision('branch_b', parents=['root'], ops=['create_table teams id:int'])\nm.merge('merge_ab', ['branch_a', 'branch_b'])\nm.upgrade('merge_ab')\nprint(m.heads(), revs(m))\nprint(schema_items(m))\nprint(plan_ids(m, 'upgrade', 'merge_ab'))\nprint(apply_ledger_shape(m))\n",
+      "expected_output": "['merge_ab'] ['merge_ab']\n[('teams', (('id', 'int'),)), ('users', (('id', 'int'), ('email', 'text')))]\n[]\n['root', ['branch_a', 'branch_b'], 'merge_ab']"
+    },
+    {
+      "id": "MMS002",
+      "layer": "system",
+      "category": "stamp_lifecycle",
+      "dimension": "stamp_lifecycle",
+      "description": "Stamp updates version projections and future plans without mutating schema.",
+      "requirement_refs": [
+        "REQ-stamp",
+        "REQ-version-current",
+        "REQ-planner",
+        "REQ-ledger"
+      ],
+      "weight": 8,
+      "type": "system",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('add_name', parents=['root'], ops=['add_column users name:text'])\nm.stamp('add_name')\nprint(schema_items(m), revs(m))\nprint(plan_ids(m, 'downgrade', 'root'))\nprint(plan_ids(m, 'upgrade', 'heads'))\nprint(ledger_kinds(m))\n",
+      "expected_output": "[] ['add_name']\n[('downgrade', 'add_name')]\n[]\n[('stamp', None, (), ('add_name',))]"
+    },
+    {
+      "id": "MMS003",
+      "layer": "system",
+      "category": "downgrade_consistency",
+      "dimension": "downgrade_consistency",
+      "description": "Downgrade reverts schema, current, ledger, and next upgrade plan together.",
+      "requirement_refs": [
+        "REQ-downgrade",
+        "REQ-schema-engine",
+        "REQ-planner",
+        "REQ-ledger"
+      ],
+      "weight": 8,
+      "type": "system",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('add_name', parents=['root'], ops=['add_column users name:text'])\nm.revision('rename_users', parents=['add_name'], ops=['rename_table users accounts'])\nm.upgrade('rename_users')\nm.downgrade('root')\nprint(schema_items(m), revs(m))\nprint(plan_ids(m, 'upgrade', 'rename_users'))\nprint(ledger_kinds(m))\n",
+      "expected_output": "[('users', (('id', 'int'),))] ['root']\n[('upgrade', 'add_name'), ('upgrade', 'rename_users')]\n[('apply', 'root', (), ('root',)), ('apply', 'add_name', ('root',), ('add_name',)), ('apply', 'rename_users', ('add_name',), ('rename_users',)), ('downgrade', 'rename_users', ('rename_users',), ('add_name',)), ('downgrade', 'add_name', ('add_name',), ('root',))]"
+    },
+    {
+      "id": "MMS004",
+      "layer": "system",
+      "category": "failed_migration_recovery",
+      "dimension": "failed_migration_recovery",
+      "description": "Failed migration exposes no mixed public state and is recoverable.",
+      "requirement_refs": [
+        "REQ-recovery",
+        "REQ-atomicity",
+        "REQ-planner",
+        "REQ-ledger"
+      ],
+      "weight": 8,
+      "type": "system",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('add_name', parents=['root'], ops=['add_column users name:text'])\nm.upgrade('root')\nbad = failed(lambda: m.upgrade('add_name', fail_at='after_schema'))\nblocked = failed(lambda: m.revision('extra', parents=['root'], ops=[]))\nprint(bad, blocked, m.current()['pending'] is not None)\nprint(schema_items(m), revs(m), plan_ids(m, 'upgrade', 'add_name'))\nprint(m.recover()['status'], revs(m), schema_items(m), ledger_kinds(m))\n",
+      "expected_output": "True True True\n[('users', (('id', 'int'),))] ['root'] [('upgrade', 'add_name')]\nrolled_back ['root'] [('users', (('id', 'int'),))] [('apply', 'root', (), ('root',)), ('recover', None, ('root',), ('root',))]"
+    },
+    {
+      "id": "MMS005",
+      "layer": "system",
+      "category": "merge_target_completeness",
+      "dimension": "merge_target_completeness",
+      "description": "Merge upgrade from one applied branch does not skip the other branch.",
+      "requirement_refs": [
+        "REQ-revision-graph",
+        "REQ-planner",
+        "REQ-schema-engine",
+        "REQ-ledger"
+      ],
+      "weight": 8,
+      "type": "system",
+      "test_code": "\nfrom minimigrate import MiniMigrationManager, MigrationError\n\ndef clean_current(values):\n    return tuple(sorted(v for v in values if v != 'base'))\n\ndef hist_summary(m):\n    return sorted((n['id'], tuple(n['parents']), tuple(n['children'])) for n in m.history())\n\ndef schema_items(m):\n    return [(name, tuple((col, typ) for col, typ in cols)) for name, cols in sorted(m.schema()['tables'].items())]\n\ndef revs(m):\n    return m.current()['revisions']\n\ndef plan_ids(m, direction, target):\n    return [(s['direction'], s['revision']) for s in m.plan(direction, target)]\n\ndef ledger_kinds(m):\n    rows = []\n    for e in m.ledger()['entries']:\n        kind = e.get('kind')\n        revision = None if kind == 'stamp' else e.get('revision')\n        rows.append((kind, revision, clean_current(e.get('before_current', [])), clean_current(e.get('after_current', []))))\n    return rows\n\ndef apply_ledger_shape(m):\n    entries = [e for e in m.ledger()['entries'] if e.get('kind') == 'apply']\n    if not entries:\n        return []\n    first = entries[0].get('revision')\n    last = entries[-1].get('revision')\n    middle = sorted(e.get('revision') for e in entries[1:-1])\n    return [first, middle, last]\n\ndef failed(fn):\n    try:\n        fn()\n    except MigrationError:\n        return True\n    return False\n\nm = MiniMigrationManager()\nm.revision('root', parents=['base'], ops=['create_table users id:int'])\nm.revision('branch_a', parents=['root'], ops=['add_column users email:text'])\nm.revision('branch_b', parents=['root'], ops=['add_column users team:text'])\nm.merge('merge_ab', ['branch_a', 'branch_b'])\nm.upgrade('branch_a')\nprint(plan_ids(m, 'upgrade', 'merge_ab'))\nm.upgrade('merge_ab')\nprint(schema_items(m), revs(m))\nprint([(n['id'], tuple(n['parents'])) for n in m.history() if n['id'] == 'merge_ab'])\nprint(apply_ledger_shape(m))\n",
+      "expected_output": "[('upgrade', 'branch_b'), ('upgrade', 'merge_ab')]\n[('users', (('id', 'int'), ('email', 'text'), ('team', 'text')))] ['merge_ab']\n[('merge_ab', ('branch_a', 'branch_b'))]\n['root', ['branch_a', 'branch_b'], 'merge_ab']"
+    }
+  ]
+}

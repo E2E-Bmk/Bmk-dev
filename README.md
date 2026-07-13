@@ -1,6 +1,6 @@
 # SpecBench — 任务构建工作台
 
-从真实开源 Python 库出发，构建"按行为规格重建完整项目"的评测任务。核心指标：Integration Gap = 单元通过率 − 集成通过率。
+从真实开源 Python 库出发，构建"按行为规格重建完整项目"的评测任务。
 
 ## 快速开始
 
@@ -11,7 +11,7 @@
 ## 目录结构
 
 ```
-├── tasks/{task-id}/              # 已合格的 benchmark 任务（34 个）
+├── tasks/{task-id}/              # 已合格的 benchmark 任务
 │   ├── spec.md                   # 行为规格（模型唯一输入）
 │   ├── task.json                 # 元数据（taxonomy、scorer 参数、得分）
 │   ├── spec_test_map.md          # 测试↔spec 映射（审计用）
@@ -27,12 +27,11 @@
 ├── scripts/                      # 辅助工具
 ├── skills/                       # 流水线各阶段 SKILL 定义
 │
-├── REPO_STATUS.md                # 组员认领参考
-├── CANDIDATES.md                 # 候选库选择/退休历史
+├── REPO_STATUS.md                # 认领参考
+├── CANDIDATES.md                 # 候选库选择
 └── AGENTS.md
 ```
 
-本地还有（未提交）：`wip/`（流水线工作区）、`runs/`（评测记录）、`repo-pool/`（上游克隆）、`.envs/`（评分环境）
 
 ## Task 结构
 
@@ -67,18 +66,3 @@ candidate-selector → spec-writer → test-filter → evaluation → task-judge
 1. **Like a developer** — spec 读起来像库作者写的文档，不像 benchmark
 2. **Spec-driven** — 每条测试可追溯到 spec 某个章节
 3. **Behavioral** — 测试检查可观测行为，不检查内部实现
-
-## 评分
-
-```bash
-# WSL 环境下
-python harness/score_pytest_original.py \
-  --source-repo wip/{task}/filter \
-  --solution-dir <candidate_output> \
-  --nodeids <nodeids_file> \
-  --taxonomy <taxonomy_file> \
-  --remove-path <pkg> \
-  --timeout 300
-```
-
-模型可自由使用任何 PyPI 包。评分环境会安装模型声明的依赖后运行测试。

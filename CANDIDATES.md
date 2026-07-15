@@ -73,3 +73,5 @@
 | rich | QUALIFIED | spec_v1 / candidate 293-981 (29.87%, upstream_only) / reference 293-293 (100%) | 2026-07-07 |
 | csvkit | QUALIFIED | spec_v3 / candidate 45-395 (11.39%, generated_only) / reference 45-45 (100%) | 2026-07-07 |
 | loguru | RETIRED | Stage 1 | hard gate failed: test suite >70% exact-output/snapshot-style assertions; no git provenance |
+| astroid | SELECTED | 30479 LOC / 1605 tests | Large documented static-analysis library with shared AST/inference facts across public API, CLI repr_tree output, node APIs, manager import/file behavior, and broad behavioral tests; private astroid._ import pre-screen clean with Stage 3 risks from network benchmarks and internal-helper imports. |
+| astroid | QUALIFIED | spec_v2 / candidate 73-79 (92.41%, generated_only_filter_iter1) / reference 79-79 (100%) | 2026-07-08 |

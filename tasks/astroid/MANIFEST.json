@@ -1,0 +1,89 @@
+{
+  "task_id": "astroid",
+  "package_name": "astroid",
+  "spec_version": "spec_v2",
+  "stage": "QUALIFIED",
+  "oracle": {
+    "source": "generated_only",
+    "nodeids": "filter/kept_nodeids.txt",
+    "taxonomy": "filter/taxonomy.jsonl",
+    "spec_test_map": "filter/spec_test_map.md",
+    "generated_tests": "filter/generated_tests.py",
+    "source_repo_overlay": "filter/oracle_source_with_generated",
+    "oracle_count": 79,
+    "by_layer": {
+      "atomic": 51,
+      "integration": 18,
+      "system_e2e": 10
+    },
+    "coverage_gate": {
+      "verdict": "FULL",
+      "coverage_targets": "filter/coverage_targets.md",
+      "reason": "Track A produced zero scoreable upstream tests after full function-level accounting; Track B repaired the generated-only oracle for spec_v2/filter_iter1. Every non-exempt H2/H3 target meets per-section floors and the global oracle floor."
+    }
+  },
+  "track_a": {
+    "functions_in_scope": 1591,
+    "functions_kept": 0,
+    "functions_excluded": 1591,
+    "kept_upstream": "filter/kept_upstream.txt",
+    "rewrite_audit": "filter/rewrite_audit.md",
+    "candidate_filter_map": "filter/candidate_filter_map.md"
+  },
+  "track_b": {
+    "triggered": true,
+    "trigger_reason": "Track A kept count 0 < 30 after fairness and dummy filtering",
+    "coverage_json": "filter/coverage.json",
+    "coverage_gaps": "filter/coverage_gaps.txt",
+    "generated_tests": "filter/generated_tests.py",
+    "dummy_score": "filter/dummy_score.json",
+    "reference_score": "filter/reference_score.json",
+    "filter_iter": 1,
+    "repair_summary": [
+      "rewrote detached StatementMissing setup to avoid direct nodes.Const constructor assumption",
+      "replaced remaining nodes.Const constructor-based parentless frame test with public extraction plus parentless scope error semantics",
+      "rewrote repr_tree assertions to check source-position and depth semantics without exact label/body fragments",
+      "removed two dummy-pass CLI negative tests that only checked exit code plus nonempty output",
+      "added two spec_v2 installable-surface namespace tests for documented public node classes",
+      "kept missing-name lookup as spec_v2 builtins scope with empty statements behavior"
+    ]
+  },
+  "scorer_isolation": {
+    "harness": "harness/score_pytest_original.py",
+    "runner_python": "Bmk-dev/.venv-pyramid/bin/python",
+    "remove_path": "astroid",
+    "solution_dir_for_reference": "/Users/zijian/bench/repo-pool/astroid-main",
+    "solution_dir_for_dummy": "/Users/zijian/bench/Bmk-dev/wip/astroid/filter/dummy_solution",
+    "source_repo_overlay": "/Users/zijian/bench/Bmk-dev/wip/astroid/filter/oracle_source_with_generated",
+    "reference_score": "filter/reference_score.json",
+    "reference_run_dir": "filter/reference_run_filter_iter1",
+    "reference_result": "79/79 passed",
+    "dummy_score": "filter/dummy_score.json",
+    "dummy_run_dir": "filter/dummy_run_filter_iter1",
+    "dummy_result": "0/79 passed"
+  },
+  "judge": {
+    "candidate_run": "/Users/zijian/bench/Bmk-dev/candidate-runs/codex-astroid-specv2-20260708-002",
+    "candidate_result": "73/79 passed",
+    "candidate_observed_score": "73/79",
+    "candidate_layer_breakdown": {
+      "atomic": "47/51",
+      "integration": "18/18",
+      "system_e2e": "8/10"
+    },
+    "verdict": "QUALIFIED",
+    "route": "terminal",
+    "diagnosis_report": "judge/diagnosis_report.md",
+    "correction_request": null,
+    "labels": [
+      "generated-only-oracle",
+      "spec-v2-aligned",
+      "fairness-repaired",
+      "no-coverage-gap",
+      "discriminating",
+      "composition-signal",
+      "non-saturated-candidate-score"
+    ],
+    "notes": "Stage 5 task-judge accepted spec_v2/run 002 as QUALIFIED. Hard checks passed: candidate import preflight points into output, reference 79/79, dummy 0/79, scorer used --remove-path astroid isolation. Gate A/B/C/D passed; six remaining failures are real public behavior gaps across statement selection, unresolved-name error semantics, extract_node wrapper cross-view consistency, and class/instance attribute lookup."
+  }
+}

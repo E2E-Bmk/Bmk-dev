@@ -75,3 +75,5 @@
 | loguru | RETIRED | Stage 1 | hard gate failed: test suite >70% exact-output/snapshot-style assertions; no git provenance |
 | astroid | SELECTED | 30479 LOC / 1605 tests | Large documented static-analysis library with shared AST/inference facts across public API, CLI repr_tree output, node APIs, manager import/file behavior, and broad behavioral tests; private astroid._ import pre-screen clean with Stage 3 risks from network benchmarks and internal-helper imports. |
 | astroid | QUALIFIED | spec_v2 / candidate 73-79 (92.41%, generated_only_filter_iter1) / reference 79-79 (100%) | 2026-07-08 |
+| structlog | SELECTED | 5407 LOC / 516 test functions | Documented structured-log event/context state projects through public bound-loggers, capture API, rendered output, standard-library integration, and context APIs; module-level private `structlog._*` import pre-screen is HIGH_RISK at 11/17 test modules, requiring Stage 3 rewrite or generated verifier work. |
+| structlog | QUALIFIED | spec_v3 | 63/64 (98.44%) | 64/64 (100%) | 2026-07-14 |

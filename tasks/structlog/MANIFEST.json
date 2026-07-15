@@ -1,0 +1,19 @@
+{
+  "task_id": "structlog",
+  "package_name": "structlog",
+  "spec_version": "v3",
+  "oracle_count": 64,
+  "scorer_isolation": {
+    "method": "The scorer copies the oracle-only wip tree, removes a root-level structlog path before every grouped pytest run, and supplies the reference solution only through PYTHONPATH.",
+    "command": "/Users/zijian/bench/Bmk-dev/wip/quart/.venv-reference/bin/python /Users/zijian/bench/Bmk-dev/harness/score_pytest_original.py --source-repo /Users/zijian/bench/Bmk-dev/wip/structlog --solution-dir /Users/zijian/bench/repo-pool/structlog-main/src --nodeids /Users/zijian/bench/Bmk-dev/wip/structlog/filter/kept_nodeids.txt --taxonomy /Users/zijian/bench/Bmk-dev/wip/structlog/filter/taxonomy.jsonl --run-dir /private/tmp/structlog_s3_v3_reference_score --remove-path structlog --pytest-arg=--rootdir=. --json-out /Users/zijian/bench/Bmk-dev/wip/structlog/filter/reference_score.json",
+    "remove_path": ["structlog"],
+    "oracle_source": "/Users/zijian/bench/Bmk-dev/wip/structlog",
+    "reference_solution": "/Users/zijian/bench/repo-pool/structlog-main/src",
+    "import_provenance": "/Users/zijian/bench/repo-pool/structlog-main/src/structlog/__init__.py"
+  },
+  "reference_score": {
+    "passed": 64,
+    "total": 64,
+    "pass_rate_excluding_skips": 1.0
+  }
+}

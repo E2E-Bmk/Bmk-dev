@@ -1,10 +1,3 @@
-<!-- INTERNAL
-task_id: anyio
-spec_version: v1
-delta: Initial Stage 2 specification. Built from public exports, public docstrings, README and docs body; tests were not used as a source for spec content. The typed-attribute override rule was verified against the reference implementation with conflicting provider values.
-source_boundary: /Users/zijian/bench/repo-pool/anyio-master/src/anyio/__init__.py; /Users/zijian/bench/repo-pool/anyio-master/src/anyio/abc/__init__.py; public modules under src/anyio/from_thread.py, to_thread.py, to_process.py, to_interpreter.py, lowlevel.py, pytest_plugin.py, functools.py, itertools.py, streams/*.py; public docstrings in src/anyio/_core; README.rst; docs/api.rst, basics.rst, tasks.rst, cancellation.rst, streams.rst, networking.rst, threads.rst, subprocesses.rst, subinterpreters.rst, fileio.rst, tempfile.rst, testing.rst, typedattrs.rst, signals.rst, synchronization.rst; reference check: wrapper provider value overrides wrapped provider value for the same typed attribute key.
--->
-
 # AnyIO Specification
 
 ## Product Overview

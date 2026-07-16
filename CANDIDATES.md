@@ -2,6 +2,8 @@
 
 | repo | status | metric | detail |
 |------|--------|--------|--------|
+| rq__rq | SELECTED | 12681 LOC / 41 tests | Redis-backed task queue with CLI (rq worker/cron), Python API (queue.enqueue, @job), and persistent Redis state across queue/worker/job projections. Pure Python 99.8%. Private import pre-screen clean (0/41 files). |
+| getnikola__nikola | SELECTED | 28422 LOC / 57 tests | Static site generator with CLI (nikola build/new_post), Python API (plugin system), and generated HTML file tree output. doit-based incremental build. Private import pre-screen clean (1/57, public plugin imports only). |
 | sqlalchemy__alembic | QUALIFIED | spec_v3 / 30 tests / reference 30-30 | Candidate codex-alembic-specv3-20260630-001 scored 29-30 after filter_v2; durable migration state with CLI, command API, Operations API, ScriptDirectory, autogenerate, and offline SQL projections. |
 | sqlalchemy__alembic | RETIRED | Stage 5 / filter_iter 2 | WSL re-judge of the required 50-node Gate-D-expanded oracle found 20 collection errors caused by generated oracle imports outside the public spec surface (`alembic.migration.MigrationContext`, `alembic.util.exc.CommandError`); another filter repair loop would exceed the cap. |
 | pre-commit__pre-commit | SELECTED | 5577 LOC / 679 tests | Durable git/config/cache/hook state with CLI, config validation, installed hook files, git selection, and hook execution projections; private pre_commit import pre-screen clean. |

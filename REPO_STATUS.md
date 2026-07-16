@@ -56,9 +56,11 @@
 | griffe-apimodel-fullrepro-001 | mkdocstrings/griffe | S1 刚选上 |
 | pyfilesystem-fs-fullrepro-001 | PyFilesystem/pyfilesystem2 | S1 刚选上 |
 | watchdog-fsevents-fullrepro-001 | gorakhargosh/watchdog | S1 刚选上 |
-| werkzeug-fullrepro-001 | pallets/werkzeug | S1 筛选中 |
-| structlog-fullrepro-001 | hynek/structlog | S1 筛选中 |
-| pygments-fullrepro-001 | pygments/pygments | S1 筛选中 |
+| rq-fullrepro-001 | rq/rq | S1 刚选上 |
+| nikola-fullrepro-001 | getnikola/nikola | S1 刚选上 |
+| werkzeug-fullrepro-001 | pallets/werkzeug | S1 已退休 |
+| structlog-fullrepro-001 | hynek/structlog | S1 已退休 |
+| pygments-fullrepro-001 | pygments/pygments | S1 已退休 |
 | scrapy-fullrepro-001 | scrapy/scrapy | 已退休 |
 | sphinx-docbuild-fullrepro-001 | sphinx-doc/sphinx | 已退休 |
 | pdm-fullrepro-001 | pdm-project/pdm | 已退休 |

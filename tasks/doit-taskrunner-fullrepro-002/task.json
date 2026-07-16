@@ -1,0 +1,80 @@
+{
+  "instance_id": "doit-taskrunner-fullrepro-002",
+  "status": "QUALIFIED",
+  "repo": "",
+  "repo_commit": "",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 51,
+    "scorer_isolation": [
+      "--remove-path"
+    ]
+  },
+  "taxonomy": {
+    "generated_tests::test_get_var_reads_cli_variable_during_task_loading": "atomic",
+    "generated_tests::test_get_var_uses_default_for_absent_initialized_variable": "atomic",
+    "generated_tests::test_task_params_long_option_is_injected_into_task_creator": "atomic",
+    "generated_tests::test_create_after_materializes_selected_delayed_task": "integration",
+    "generated_tests::test_module_task_loader_runs_dictionary_namespace_with_doitmain": "integration",
+    "generated_tests::test_generator_subtasks_are_runnable_and_visible_when_requested": "integration",
+    "generated_tests::test_python_action_dictionary_result_feeds_getargs": "integration",
+    "generated_tests::test_cmdaction_save_out_stores_stdout_for_later_getargs": "integration",
+    "generated_tests::test_python_action_receives_declared_dependencies_and_targets": "atomic",
+    "generated_tests::test_file_dependency_unchanged_second_run_is_reported_up_to_date": "integration",
+    "generated_tests::test_file_dependency_content_change_reruns_task": "integration",
+    "generated_tests::test_modifying_target_without_input_change_does_not_force_rerun": "integration",
+    "generated_tests::test_missing_target_forces_rerun_and_restores_file": "integration",
+    "generated_tests::test_setup_task_runs_only_when_selected_task_will_execute": "integration",
+    "generated_tests::test_implicit_target_dependency_runs_producer_before_consumer": "system_e2e",
+    "generated_tests::test_reset_dep_records_changed_dependency_state_without_action_execution": "integration",
+    "generated_tests::test_clean_dry_run_reports_without_removing_target": "integration",
+    "generated_tests::test_clean_callable_receives_dryrun_when_declared": "atomic",
+    "generated_tests::test_list_status_changes_from_run_to_up_to_date": "integration",
+    "generated_tests::test_ignore_persists_skip_and_forget_clears_it": "integration",
+    "generated_tests::test_forget_makes_successful_task_run_again": "integration",
+    "generated_tests::test_dumpdb_exposes_success_state_and_saved_values": "atomic",
+    "generated_tests::test_default_command_and_explicit_run_execute_same_default_task": "system_e2e",
+    "generated_tests::test_selecting_by_target_runs_owning_task": "integration",
+    "generated_tests::test_wildcard_selection_runs_matching_tasks_only": "integration",
+    "generated_tests::test_single_option_skips_task_dependencies": "integration",
+    "generated_tests::test_json_reporter_reports_same_task_success_as_console_side_effect": "system_e2e",
+    "generated_tests::test_run_once_skips_after_success_but_missing_target_still_runs": "integration",
+    "generated_tests::test_config_changed_treats_same_dictionary_content_as_up_to_date": "atomic",
+    "generated_tests::test_config_changed_reruns_when_configuration_changes": "atomic",
+    "generated_tests::test_result_dep_reruns_consumer_when_producer_result_changes": "system_e2e",
+    "generated_tests::test_create_folder_action_helper_creates_nested_directory": "atomic",
+    "generated_tests::test_string_command_action_creates_target_file": "atomic",
+    "generated_tests::test_list_command_action_without_shell_accepts_pathlike_arguments": "atomic",
+    "generated_tests::test_python_action_returning_false_reports_task_failure": "atomic",
+    "generated_tests::test_python_action_exception_reports_task_error": "atomic",
+    "generated_tests::test_command_action_nonzero_exit_reports_failure": "atomic",
+    "generated_tests::test_verbosity_two_displays_python_action_stdout": "integration",
+    "generated_tests::test_positional_arguments_are_passed_to_declared_action_name": "integration",
+    "generated_tests::test_task_params_short_boolean_inverse_can_disable_default": "atomic",
+    "generated_tests::test_list_hides_private_tasks_until_requested": "integration",
+    "generated_tests::test_help_task_prints_supported_task_dictionary_fields": "atomic",
+    "generated_tests::test_always_execute_forces_rerun_even_when_up_to_date": "integration",
+    "generated_tests::test_continue_runs_independent_task_after_failure": "system_e2e",
+    "generated_tests::test_clean_true_removes_target_file": "integration",
+    "generated_tests::test_clean_forget_clears_success_state_so_task_runs_again": "integration",
+    "generated_tests::test_doit_config_verbosity_changes_action_output_capture": "integration",
+    "generated_tests::test_pyproject_default_tasks_selects_configured_task": "system_e2e",
+    "generated_tests::test_action_string_new_format_uses_dependencies_placeholder": "integration",
+    "generated_tests::test_calc_dep_adds_late_file_dependency": "system_e2e",
+    "generated_tests::test_teardown_runs_after_selected_task": "integration"
+  },
+  "stats": {
+    "atomic": 16,
+    "integration": 28,
+    "system_e2e": 7
+  },
+  "reference_pass_rate": 0.9607843137254902,
+  "candidate_score": {
+    "passed": 47,
+    "total": 53
+  }
+}

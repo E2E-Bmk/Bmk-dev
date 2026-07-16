@@ -39,6 +39,10 @@ A failure on a test that violates either condition is a **verifier failure**, no
 
 All three must pass for any results to be considered valid.
 
+### 0. Role Boundary
+
+The judge reads artifacts and produces verdicts. The judge does not modify oracle files, add test cases, or strengthen kept_nodeids.txt. Any gap found during judging must be returned to test-filter via `filter_correction_request.md` (filter_iter + 1). Adding a test case to the oracle and then judging against it in the same pass is invalid.
+
 ### 1. Anti-Cheat
 
 Before reading any score, run an import provenance preflight:
@@ -50,6 +54,8 @@ python -c "import <pkg>; print(<pkg>.__file__)"
 **Write the literal output of this command into your diagnosis report as a `Preflight output` block before opening any score file or quoting any score value.** If this block is absent from your report, the report is structurally invalid — do not proceed.
 
 This must point into the candidate solution directory, not the oracle worktree or any installed package. If running pytest from a copied source worktree, `sys.path[0]` may shadow `PYTHONPATH` — use `--remove-path <package>` when invoking pytest, or confirm via the preflight above before accepting any score. If provenance check fails, fix the environment and re-run.
+
+**High-score mandatory probe:** for any run where candidate pass rate ≥ 95%, the preflight probe is not optional — it is a prerequisite for reading any score value. If the probe output shows `__file__` pointing outside the candidate solution directory, the run is invalid regardless of score. Record the probe output verbatim in the diagnosis report before citing any number.
 
 Then scan the agent's full trajectory/log for any access to information the model should not have. Any match -> mark run `CHEAT_DETECTED`, discard score.
 
@@ -82,7 +88,14 @@ The reference pass rate establishes the ceiling: the task is only valid if the o
 
 **Gate A — Spec mapping spot-check**
 
-Sample a subset of `covered` rows from `spec_test_map.md`. For each sampled test, verify the spec_section mapping is correct — that a senior engineer reading only that spec section could predict the test outcome. If spot-check finds incorrect mappings -> return to test-filter to correct the map.
+Sample a subset of `covered` rows from `spec_test_map.md`. For each sampled test, record a four-column table:
+
+| nodeid | assertion summary | spec_section | verdict |
+|--------|------------------|--------------|---------|
+
+The `spec_section` cell must quote the exact heading from the spec file. The `verdict` cell is `derivable` only if a senior engineer reading that section could predict the test outcome without any other information. Writing `derivable` without quoting the spec section is invalid — the row must be completed in full or the spot-check does not count.
+
+If spot-check finds incorrect mappings → return to test-filter to correct the map.
 
 **Gate B — Failure pattern audit**
 
@@ -94,11 +107,16 @@ If the majority of failures cluster around undocumented atomic internal shapes, 
 
 **Gate C — Generated-only oracle spot-check**
 
-If `spec_test_map.md` header contains `oracle_source: generated_only`, the tests were machine-generated and have not been author-validated. Manually sample >= 5 generated tests and re-apply the two core principles to each:
-- **Spec-driven**: is the assertion's expected value derivable from a specific spec section? Or did the generator infer it from its own spec reading (circular)?
-- **Behavioral**: would a correct reimplementation with different internals pass this test? Or does it check repr format, internal field names, or exact error message text?
+If `spec_test_map.md` header contains `oracle_source: generated_only`, manually sample >= 5 generated tests and record a four-column table for each:
 
-If Gate C fails, return `filter_correction_request.md` to test-filter for regeneration.
+| nodeid | assertion summary | spec_section | verdict |
+|--------|------------------|--------------|---------|
+
+Apply both core principles per row:
+- **Spec-driven**: is the assertion's expected value derivable from the quoted `spec_section`? Mark `circular` if the generator inferred the value from its own spec reading rather than from reference execution.
+- **Behavioral**: would a correct reimplementation with different internals pass this test? Mark `internal-shape` if the test checks repr format, internal field names, or exact error message text.
+
+Any `circular` or `internal-shape` verdict → return `filter_correction_request.md` to test-filter for regeneration.
 
 **Gate D — Coverage Gap Audit**
 
@@ -137,6 +155,19 @@ These are examples, not an exhaustive set. If the evidence suggests a label not 
 
 ---
 
+## REOPENED_S3 Protocol
+
+If any oracle file (kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md) is modified after a task has reached QUALIFIED status:
+
+1. Set `state → REOPENED_S3` in PIPELINE_STATE.md.
+2. Add `superseded_by: {new_oracle_version}` to the existing CANDIDATES.md QUALIFIED row — do not overwrite it.
+3. Invalidate the existing score_result.json by renaming it `score_result_superseded_{date}.json`.
+4. Re-run Stage 4 → Stage 5 against the new oracle before reinstating QUALIFIED.
+
+The transition `QUALIFIED → QUALIFIED` (same state, updated oracle, no re-run) is explicitly forbidden.
+
+---
+
 ## Diagnostic Procedure
 
 Work through failures in two passes.
@@ -152,6 +183,14 @@ Before attributing any failure to the model, verify each failure cluster satisfi
 | Both yes | — | Proceed to Pass 2 |
 
 If a significant share of failures fail Pass 1, set task status to `BROKEN` (fairness) and issue `filter_correction_request.md`. Do not score the run as QUALIFIED difficulty evidence.
+
+**Negative Gap diagnostic:** If the candidate's atomic pass rate is lower than its integration pass rate, diagnose the cause before finalizing:
+- Are atomic failures caused by ImportError/collection errors on paths not in spec? → Flag as Q1 violation, return to Stage 3 for test cleanup
+- Are atomic failures genuine assertion errors (model implemented the function but got behavior wrong)? → Normal model weakness, proceed
+- Are integration tests passing because they're too weak (only check "no exception" without verifying behavior)? → Flag as test quality issue, return to Stage 3
+Document the diagnosis in the judge report.
+
+**Spec adequacy check for integration failures:** For each failed integration/system_e2e test, verify that the spec contains the cross-module constraint being tested. If the spec does not describe the interaction that failed, this is a spec gap (not a model failure) — issue a spec_patch_request to add the missing constraint, then re-evaluate.
 
 **Pass 2 — Model failure analysis**
 
@@ -225,6 +264,17 @@ Per evaluation run, a structured narrative covering:
 4. Protocol issues found and actions taken
 5. Real failure clusters with root cause and dimension
 6. Cascade analysis: how many failures root in how many root causes
+
+### Weakness Recording
+
+**Weakness recording:** When the verdict is QUALIFIED, identify model failure dimensions from the candidate score and write them directly into task.json as:
+```json
+"weaknesses": [
+  {"dimension": "cross-view-consistency", "description": "...", "affected_tests": N},
+  ...
+]
+```
+Do not maintain a separate weakness_table file.
 
 ### Weakness Table
 

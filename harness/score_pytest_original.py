@@ -12,6 +12,7 @@ import argparse
 import csv
 import json
 import os
+import platform as _platform
 import re
 import shutil
 import subprocess
@@ -64,6 +65,18 @@ def load_taxonomy(path: Path | None) -> dict[str, str]:
     return mapping
 
 
+def json_safe(value):
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    if isinstance(value, dict):
+        return {str(k): json_safe(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [json_safe(v) for v in value]
+    if isinstance(value, tuple):
+        return [json_safe(v) for v in value]
+    return value
+
+
 def copy_oracle_tree(source_repo: Path, worktree: Path, remove_paths: list[str]) -> None:
     if worktree.exists():
         shutil.rmtree(worktree)
@@ -104,7 +117,12 @@ def run_group(
         *nodeids,
     ]
     env = os.environ.copy()
-    env["PYTHONPATH"] = str(solution_dir.resolve())
+    extra_pythonpath = env.get("PYTHONPATH")
+    env["PYTHONPATH"] = (
+        str(solution_dir.resolve())
+        if not extra_pythonpath
+        else os.pathsep.join([str(solution_dir.resolve()), extra_pythonpath])
+    )
     proc = subprocess.run(
         cmd,
         cwd=worktree,
@@ -138,13 +156,15 @@ def summarize(
         report = payload.get("json_report") or {}
         tests = report.get("tests") or []
         if not tests:
+            rc = payload.get("returncode", -1)
+            outcome = "timeout" if rc == 124 else "collection_error"
             for nodeid in group_by_file(nodeids).get(file_name, []):
                 cases.append(
                     {
                         "nodeid": nodeid,
                         "base_nodeid": nodeid,
                         "layer": taxonomy_layer(taxonomy, nodeid),
-                        "outcome": "collection_error",
+                        "outcome": outcome,
                         "stdout": payload.get("stdout", ""),
                         "stderr": payload.get("stderr", ""),
                     }
@@ -229,14 +249,43 @@ def main() -> int:
                 args.pytest_arg,
             )
         except subprocess.TimeoutExpired as exc:
+            tests = []
+            stdout_parts = [exc.stdout or ""]
+            stderr_parts = [exc.stderr or "timeout"]
+            for node_index, nodeid in enumerate(file_nodeids, start=1):
+                single_report = run_dir / (
+                    f"pytest_report_{index:03d}_{node_index:03d}_{Path(file_name).stem}.json"
+                )
+                try:
+                    _, single_payload = run_group(
+                        worktree,
+                        args.solution_dir,
+                        [nodeid],
+                        single_report,
+                        args.timeout,
+                        args.pytest_arg,
+                    )
+                except subprocess.TimeoutExpired as single_exc:
+                    tests.append({"nodeid": nodeid, "outcome": "timeout"})
+                    stdout_parts.append(single_exc.stdout or "")
+                    stderr_parts.append(single_exc.stderr or "timeout")
+                    continue
+                stdout_parts.append(single_payload.get("stdout", ""))
+                stderr_parts.append(single_payload.get("stderr", ""))
+                tests.extend((single_payload.get("json_report") or {}).get("tests") or [])
             payload = {
                 "returncode": 124,
-                "stdout": exc.stdout or "",
-                "stderr": exc.stderr or "timeout",
+                "stdout": "\n".join(str(part) for part in stdout_parts if part),
+                "stderr": "\n".join(str(part) for part in stderr_parts if part),
+                "json_report": {"tests": tests},
             }
         grouped_results[file_name] = payload
 
     report = {
+        "platform": _platform.platform(),
+        "python_version": sys.version,
+        "timeout_seconds": args.timeout,
+        "remove_paths": args.remove_path,
         "source_repo": str(args.source_repo.resolve()),
         "solution_dir": str(args.solution_dir.resolve()),
         "nodeids": str(args.nodeids.resolve()),
@@ -247,6 +296,7 @@ def main() -> int:
     }
     out = args.json_out or run_dir / "score.json"
     out.parent.mkdir(parents=True, exist_ok=True)
+    report = json_safe(report)
     out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps({k: report[k] for k in ("summary", "pass_rate_excluding_skips", "by_layer")}, indent=2))
     return 0

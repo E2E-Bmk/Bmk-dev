@@ -26,6 +26,8 @@ Every filtering decision reduces to two questions. Both must be true to keep a t
 
 A test that checks exact field names, repr strings, internal maps, exception message wording, or singleton shapes answers No — a correct reimplementation with different internals would fail it. Exclude these regardless of import visibility.
 
+**Q1 strict enforcement for atomic tests:** Atomic tests may only import through entry points explicitly described in the spec's prose (the "Installable Surface" or equivalent section). If a test imports from a sub-module path not mentioned in the spec text, it violates Q1 regardless of whether the path has an underscore prefix. The test: "if the model puts this function in a different sub-module (behavior identical), would this test fail due to ImportError?" — if yes, exclude.
+
 **Q2 — Spec-derivable?**
 > Can a senior engineer who has only read the spec infer what this test expects?
 
@@ -113,7 +115,11 @@ Total: N | kept (covered): N | spec_gap: N | source-only: N | excluded: N | fina
 3. Accept a lower count for high unit-test style libraries
 4. None of the above -> retire candidate
 
+**Kept set too large:** if the kept set exceeds ~150 base nodeids, provide an explicit argument that the spec can cover the entire retained surface in behavioral language. A large oracle forces the candidate to reconstruct a near-complete API in one pass — if the spec cannot describe all of it without becoming a fill-in-the-blanks template, scope down to a core workflow subset and re-filter. The oracle size should match what the spec can honestly specify, not the full upstream test suite.
+
 **Preserved rate is not sufficient alone.** A high preserved rate can be misleading if failures cluster around a few broken primitives or if import provenance was not fully audited. Audit by failure surface and cascade root count, not just the percentage of retained tests.
+
+**Per-layer minimum count:** The final oracle must contain at least 15 atomic tests AND at least 15 integration+system_e2e tests. If either layer falls below 15 after filtering, return to Track B generation targeting the deficient layer until the minimum is met. This ensures Integration Gap computation has statistical significance (each layer needs enough samples to avoid >10% random fluctuation from a single test).
 
 **Coverage too low:** if a significant share of kept tests are `source-only` after resolution, the library may not be viable - its tests cover behavior that cannot be fairly specified.
 
@@ -146,6 +152,32 @@ When a large share of nodeids come from parametrized expansion of few functions,
 {"taxonomy_key": "test_foo::test_bar", "layer": "atomic"}
 {"taxonomy_key": "test_baz::test_workflow", "layer": "system_e2e"}
 ```
+
+### Oracle File Layout (tasks/{task-id}/oracle/)
+
+When a task graduates to `tasks/`, its oracle directory must contain exactly two test files split by taxonomy layer:
+
+```
+oracle/
+├── test_atomic.py        # all "atomic" layer tests
+├── test_integration.py   # all "integration" + "system_e2e" layer tests
+├── conftest.py           # shared fixtures (optional, only if needed)
+└── requirements.txt      # test runtime dependencies (pytest, mocks, etc.)
+```
+
+**Split rules:**
+- Each test function goes into the file matching its taxonomy layer
+- Helper functions, fixtures, and imports used by both files may be duplicated in each, or placed in `conftest.py`
+- Test function names must not change (must still match `kept_nodeids.txt`)
+- File headers: `# Spec2Repo oracle - atomic tests for {task-id}` / `# Spec2Repo oracle - integration tests for {task-id}`
+
+**Rationale:** This split enables direct computation of Integration Gap = (atomic pass rate) − (integration pass rate) without post-hoc taxonomy lookup. The scorer can run each file independently.
+
+**Oracle atomic update rule:** whenever any oracle file is modified after Stage 3 completes (including retro additions), all four files (kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md, reference_score) must be updated together and assigned a new `oracle_version` timestamp in spec_test_map.md header. Partial updates that leave counts inconsistent across files are invalid.
+
+**Dependency extraction (required before leaving Stage 3):** Extract test runtime dependencies from the upstream repository's `pyproject.toml` (test extras or dev dependencies). Write these to `oracle/requirements.txt`, excluding the target package itself (that's what the candidate implements). If the upstream repo has no explicit test extras, inspect test file imports for third-party packages and list them manually.
+
+**Preservation rule:** do not delete the `wip/{task}/` directory after a task reaches QUALIFIED. The wip directory is the audit trail. Its removal makes evaluation scores permanently unverifiable.
 
 Key generation algorithm: strip parameter suffixes (e.g. `[case0]`), replace the file path with its stem, and for nested nodeid parts after the file (class name, method name) join them with `.` — e.g. `tests/test_req.py::TestParsing::test_valid` → `test_req.TestParsing.test_valid`.
 
@@ -228,7 +260,11 @@ For each retained nodeid, compare assertion surface against public docs:
 
 ### Step 3: Dummy gate
 
-Run the entire kept set against a dummy implementation (every public function `return None` / `raise NotImplementedError`). Discard any test that passes the dummy - these are structurally trivial, not difficulty evidence.
+Run the entire kept set against a dummy implementation (every public function `return None` / `raise NotImplementedError`). Discard any test that passes the dummy — these are structurally trivial, not difficulty evidence.
+
+**Execution requirement:** the dummy gate must be a real pytest invocation — not a structural code review or manual inspection. A "structural audit" does not substitute.
+
+**Interpretation rule:** if the dummy run produces collection errors (not just failures), this is a carrier-block signal, not a pass. A dummy that cannot even import means the test harness depends on private implementation details that will not exist in any clean candidate environment. Treat this as a hard blocker: diagnose the carrier dependency before continuing. Do not record collection errors as "passed dummy gate."
 
 **Output:** `filter/kept_upstream.txt`
 
@@ -293,8 +329,8 @@ A flat target of 12–30 total tests is insufficient for any library with more t
 
 Generation protocol:
 1. Call `reference_pkg.fn(input)` and record the real return value / side effect
-2. Write the test assertion from the observed result, not from spec inference
-3. For each generated test, verify: is this I/O relationship derivable from the spec? If not, discard the test — do not add spec content to compensate
+2. Write the test assertion from the observed result, not from spec inference. Keep test code natural — do not embed spec phrases or section names inside test code.
+3. For each generated test, fill its `spec_test_map.md` row immediately: identify the `spec_section` heading it maps to. If the row cannot be completed (no spec section covers this behavior), discard the test — do not add spec content to compensate. The derivability check lives in the map row, not in the test code.
 4. After generation, verify each mandatory target section meets its per-section minimum and total oracle ≥ 50. If either fails, return to generation.
 
 Enforce in prompt:

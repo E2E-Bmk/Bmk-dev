@@ -71,8 +71,14 @@ Bmk-dev/
 |       `-- diagnosis_report.md
 |-- tasks/{task-id}/             <- QUALIFIED tasks (graduated from wip/)
 |   |-- spec.md
-|   |-- kept_nodeids.txt
-|   |-- taxonomy.jsonl
+|   |-- oracle/
+|   |   |-- test_atomic.py       <- atomic layer tests
+|   |   |-- test_integration.py  <- integration + system_e2e tests
+|   |   |-- conftest.py          <- shared fixtures (optional)
+|   |   `-- requirements.txt     <- test dependencies
+|   |-- task.json                <- metadata (taxonomy, nodeids, manifest combined)
+|   |-- kept_nodeids.txt         <- (legacy, to be replaced by task.json)
+|   |-- taxonomy.jsonl           <- (legacy, to be replaced by task.json)
 |   `-- spec_test_map.md
 |-- candidate-runs/              <- evaluation runs
 |   `-- {model}-{task}-{spec}-{date}-{run}/
@@ -139,8 +145,10 @@ Review against principles 2 and 3 before proceeding:
 - If `filter/oracle_source: generated_only` in spec_test_map.md: flag for task-judge additional spot-check
 
 ### After evaluation
-- Always proceed to task-judge
-- If run was interrupted or environment anomaly detected: note in diagnosis, re-run if needed
+- Before proceeding to task-judge, verify the score JSON contains a `platform` field and its value does not contain `Windows` (case-insensitive). If it does, the run is invalid — re-run on Linux or WSL.
+- If the score JSON does not contain a `platform` field (produced by an older harness version), check the `solution_dir` path in the JSON for a Windows-style path (`C:\`, `D:\`, etc.). If found, treat as Windows run and re-run.
+- Always proceed to task-judge after platform verification passes.
+- If run was interrupted or environment anomaly detected: note in diagnosis, re-run if needed.
 
 ### After task-judge
 
@@ -156,7 +164,18 @@ Before accepting any verdict, verify diagnosis report structural validity:
 | `BROKEN` (fairness) | Process `filter_correction_request.md` via test-filter; re-evaluate |
 | `BROKEN` (spec gap) | Process `spec_patch_request.md` (type=spec_gap) via spec-writer → test-filter → re-evaluate |
 | `BROKEN` (spec error) | Process `spec_patch_request.md` (type=spec_error) via spec-writer → test-filter → re-evaluate |
-| `QUALIFIED` | Record in CANDIDATES.md, append to weakness table, done |
+| `QUALIFIED` | Complete the QUALIFIED exit checklist (below), then record in CANDIDATES.md, append to weakness table |
+
+**QUALIFIED exit checklist (all must pass before writing QUALIFIED to PIPELINE_STATE.md):**
+
+1. CANDIDATES.md has a SELECTED row for this repo
+2. `tasks/{task_id}/` directory exists and contains: `spec.md`, `oracle/test_atomic.py`, `oracle/test_integration.py`, `kept_nodeids.txt`, `taxonomy.jsonl`, `spec_test_map.md`
+3. `kept_nodeids.txt` line count matches `oracle_count` in PIPELINE_STATE.md
+4. `spec.md` candidate-visible body contains none of: `task_id`, `delta:`, `source_boundary:`, `benchmark`, `oracle`, `judge`
+5. Score JSON `platform` field confirms Linux/WSL evaluation
+6. Diagnosis report contains a `Preflight output` block with `__file__` path inside candidate solution directory
+
+If any item fails, do not write QUALIFIED — resolve the item first.
 
 ---
 
@@ -180,7 +199,21 @@ A feedback loop terminates when:
 - The requested artifact is updated and all downstream checks pass, or
 - The root cause is determined to require candidate retirement
 
-Cycles through the same loop more than twice without resolution -> retire candidate.
+Cycles through the same loop more than twice without resolution → retire candidate.
+
+**Spec change linkage rule:** Whenever spec.md is modified after Stage 3 has completed (including post-QUALIFIED patches):
+1. Re-validate spec_test_map.md: every "covered" test must still map to an existing spec section
+2. Remove orphaned tests (those whose spec_section no longer exists) from the oracle
+3. Update task.json taxonomy and stats to reflect removals
+4. Re-run reference gate to confirm ≥95% on the updated oracle
+Partial spec edits that leave orphaned tests in the oracle are invalid.
+
+**Rescue prohibition:** once a task reaches `RETIRED`, it cannot be reopened under the same task_id. If the root cause is fixable and worth retrying, open a new task_id (e.g. `-002`). The new task must:
+- Inherit iter counters from the predecessor (do not reset to 0)
+- Have a `predecessor_task` field in its INTERNAL spec header
+- Begin with a CANDIDATES.md row: `| {repo} | REOPENED | predecessor={old_task_id} | {root_cause} |`
+
+Switching to a new task_id while resetting counters to 0 is the same as rescue — it is not permitted.
 
 ---
 

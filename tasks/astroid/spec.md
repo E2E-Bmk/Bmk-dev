@@ -299,9 +299,3 @@ This workflow must parse source, infer a constant result, extract marked nodes, 
 - astroid does not promise stable memory addresses, object ids, or exact `repr()` addresses.
 - astroid does not require applications to use private modules or non-public utilities.
 - astroid does not promise to import arbitrary third-party C extensions unless manager settings allow that import path.
-
-## Evaluation Notes
-
-Evaluation checks the public behavior described here through importability, parsing, extraction, node traversal, source rendering, structural rendering, lookup, inference, manager cache behavior, transform behavior, module extenders, failed-import hooks, exception classes, and CLI exit behavior.
-
-Scoring rewards implementations that satisfy the public contract across independent workflows. It does not require a particular internal representation, non-public utility name, algorithm sequence, or dependency layout. Failures are evaluated by observable public results: returned object categories, yielded inference values, raised exception classes, warning categories, rendered strings, cache-visible behavior, and command exit codes.

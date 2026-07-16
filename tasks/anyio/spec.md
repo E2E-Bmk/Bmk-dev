@@ -210,7 +210,3 @@ This workflow must start a listener inside a task group, report readiness throug
 ## Non-Goals
 
 This specification does not require re-creating internal backend modules, private helper names, private attributes, private task scheduling details, or exact internal data structures. It does not require support for raw sockets, SCTP, Windows signal behavior beyond Python platform errors, optional third-party backends that are not installed, or network access outside local resources. It does not require exact debug string formatting except where an exception class, warning class, return type or documented status value is part of the public API.
-
-## Evaluation Notes
-
-Evaluation exercises public behavior through imports, async execution on available backends, cancellation and task-group workflows, stream and networking operations, subprocess and worker bridges, file and temporary-file APIs, synchronization primitives, pytest plugin behavior, typed attributes, async helper functions and public exception paths. Scoring rewards conformance to the documented public contract, including failure modes and cross-view invariants, rather than internal implementation structure. Tests are expected to avoid relying on private modules and to account for platform availability of optional features such as Trio, UNIX sockets, signals, TLS environment details, subprocess behavior and subinterpreters.

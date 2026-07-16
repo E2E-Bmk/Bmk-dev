@@ -580,9 +580,3 @@ This workflow relies on these guarantees: cache values persist in their director
 - DiskCache does not use Python's `hash()` or object `__eq__` protocol for general key lookup; lookup is based on disk serialization.
 - `FanoutCache` and `DjangoCache` do not provide single-shard `Cache` transactions over arbitrary sharded keys except through `FanoutCache.transact()` locking all shards or through named shard-local structures.
 - Eviction policies are cache policies, not durability guarantees; use eviction policy `"none"` for persistent containers and recipe coordination keys that must not be culled.
-
-## Evaluation Notes
-
-Review focuses on public behavior, not private file layout. The covered dimensions are package imports, core cache mapping behavior, persistence across reopened instances, expiration and lazy cleanup, tag eviction, culling and settings, queue helpers, file-backed reads, transactions, memoization, fanout sharding behavior, Django backend behavior when Django is available, persistent `Deque` and `Index` behavior, recipe coordination semantics, serialization customization, warning/error semantics, and cross-process or cross-instance consistency.
-
-Conformance means matching the documented public contract across normal cases, boundary cases, and error cases. Temporary directories and multiple cache instances may be used to observe persistence and shared-state behavior, but implementation-only state, helper methods, and internal database schema details are outside the contract beyond the public effects described here.

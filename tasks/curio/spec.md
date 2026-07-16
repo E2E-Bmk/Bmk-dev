@@ -288,14 +288,3 @@ asynchronous file objects, worker pools, monitors, debugging hooks, process
 execution, asynchronous-thread bridging, platform-specific behavior, timing
 or performance guarantees, object representations, or private implementation
 details.
-
-## Evaluation Notes
-
-Implementations are exercised through the documented imports and observable
-outcomes: normal and failing task completion, cancellation and nested timeout
-boundaries, queue ordering and unfinished-work completion, synchronization
-preconditions, and shared universal-object behavior across supported execution
-environments. Correctness is determined from returned values, raised exception
-classes and causes, blocking or wake-up effects, and public state properties.
-The checks do not require a particular internal design or depend on object
-representation formatting.

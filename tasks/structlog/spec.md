@@ -126,7 +126,3 @@ The context-local field must disappear from later merged events after `clear_con
 ## Non-Goals
 
 This specification does not require exact console spacing, colors, `repr` output, timestamp values, traceback-frame schemas, deprecated thread-local implementation behavior, Twisted behavior beyond optional namespace availability, Rich-specific rendering, or complete standard-library formatter layouts.  It does not require private modules, private attributes, package metadata compatibility aliases, or a command-line interface.
-
-## Evaluation Notes
-
-Evaluation exercises public imports, logger construction, local and context-local state, event assembly, verified precedence rules, processor delivery and failure behavior, global configuration, filtering, capture utilities, and output type boundaries.  It evaluates observable results through public APIs and accepts implementations that preserve this contract without matching internal class layout, private state, or presentation-only rendering details.

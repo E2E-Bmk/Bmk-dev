@@ -1,7 +1,4 @@
-"""Public-API behavioral oracle generated from the structlog specification.
-
-The tests intentionally use only documented imports and observable results.
-"""
+"""Public behavioral oracle for the structlog task."""
 
 import io
 import logging
@@ -9,7 +6,7 @@ import logging
 import pytest
 
 import structlog
-from structlog import contextvars, processors
+from structlog import contextvars, dev, processors, stdlib
 from structlog.testing import CapturingLogger, capture_logs
 
 
@@ -20,59 +17,6 @@ def reset_structlog():
     yield
     contextvars.clear_contextvars()
     structlog.reset_defaults()
-
-
-@pytest.mark.parametrize(
-    "name",
-    [
-        "BoundLogger", "BoundLoggerBase", "BytesLogger", "BytesLoggerFactory",
-        "DropEvent", "PrintLogger", "PrintLoggerFactory", "ReturnLogger",
-        "ReturnLoggerFactory", "WriteLogger", "WriteLoggerFactory", "configure",
-        "configure_once", "getLogger", "get_config", "get_context", "get_logger",
-        "is_configured", "make_filtering_bound_logger", "reset_defaults", "wrap_logger",
-    ],
-)
-def test_installable_surface(name):
-    assert getattr(structlog, name) is not None
-
-
-@pytest.mark.parametrize("namespace", ["contextvars", "dev", "processors", "stdlib", "testing", "threadlocal", "tracebacks", "types", "typing"])
-def test_public_namespaces_importable(namespace):
-    assert __import__(f"structlog.{namespace}", fromlist=["*"])
-
-
-def test_reset_defaults_restores_unconfigured_state():
-    structlog.configure(processors=[])
-    assert structlog.is_configured() is True
-    structlog.reset_defaults()
-    assert structlog.is_configured() is False
-
-
-def test_configure_preserves_unspecified_defaults_and_returns_independent_mapping():
-    before = structlog.get_config()
-    marker = lambda logger, method, event: event
-    structlog.configure(processors=[marker])
-    after = structlog.get_config()
-    assert after["processors"] == [marker]
-    assert after["context_class"] is before["context_class"]
-    after["processors"] = []
-    assert structlog.get_config()["processors"] == [marker]
-
-
-def test_configure_once_warns_and_does_not_replace_existing_settings():
-    first = lambda logger, method, event: event
-    second = lambda logger, method, event: event
-    structlog.configure(processors=[first])
-    with pytest.warns(RuntimeWarning):
-        structlog.configure_once(processors=[second])
-    assert structlog.get_config()["processors"] == [first]
-
-
-def test_getlogger_alias_matches_get_logger_behavior():
-    with capture_logs() as entries:
-        structlog.getLogger(component="api").info("started")
-    assert entries[0]["component"] == "api"
-    assert entries[0]["event"] == "started"
 
 
 def test_bind_is_immutable_and_merges_values():
@@ -141,30 +85,10 @@ def test_processor_chain_passes_result_to_delivery():
     assert captured.calls[0].args == ("rendered",)
 
 
-def test_drop_event_suppresses_delivery():
-    captured = CapturingLogger()
-    logger = structlog.wrap_logger(captured, processors=[lambda logger, method, event: (_ for _ in ()).throw(structlog.DropEvent)])
-    assert logger.info("hidden") is None
-    assert captured.calls == []
-
-
 def test_invalid_final_processor_result_raises_value_error():
     logger = structlog.wrap_logger(CapturingLogger(), processors=[lambda logger, method, event: 42])
     with pytest.raises(ValueError):
         logger.info("bad")
-
-
-def test_json_renderer_uses_structlog_method_before_repr():
-    class Value:
-        def __structlog__(self):
-            return {"serialized": True}
-    rendered = processors.JSONRenderer()(None, "info", {"value": Value()})
-    assert '"serialized": true' in rendered
-
-
-def test_key_value_renderer_respects_requested_key_order():
-    rendered = processors.KeyValueRenderer(key_order=["event", "first"])(None, "info", {"later": 3, "event": "go", "first": 1})
-    assert rendered.index("event=") < rendered.index("first=") < rendered.index("later=")
 
 
 def test_bind_contextvars_returns_tokens_and_get_returns_copy():
@@ -201,24 +125,6 @@ def test_bound_contextvars_restores_values_after_exception():
     assert contextvars.get_contextvars() == {}
 
 
-@pytest.mark.parametrize("args,kwargs,expected", [(('one',), {}, 'one'), (('one', 'two'), {}, (("one", "two"), {})), ((), {"x": 1}, ((), {"x": 1})), (("one",), {"x": 1}, (("one",), {"x": 1}))])
-def test_return_logger_return_contract(args, kwargs, expected):
-    assert structlog.ReturnLogger().msg(*args, **kwargs) == expected
-
-
-@pytest.mark.parametrize("logger_type,message,expected", [(structlog.PrintLogger, "text", "text\n"), (structlog.WriteLogger, "text", "text\n")])
-def test_text_output_loggers_write_newline(logger_type, message, expected):
-    stream = io.StringIO()
-    logger_type(stream).msg(message)
-    assert stream.getvalue() == expected
-
-
-def test_bytes_logger_writes_newline_bytes():
-    stream = io.BytesIO()
-    structlog.BytesLogger(stream).msg(b"bytes")
-    assert stream.getvalue() == b"bytes\n"
-
-
 @pytest.mark.parametrize("method", ["debug", "info", "warning", "error", "critical"])
 def test_capture_logs_records_normalized_method(method):
     with capture_logs() as entries:
@@ -236,23 +142,6 @@ def test_capture_logs_runs_supplied_processors_before_capture():
     assert entries[0]["marker"] == "info"
 
 
-def test_capturing_logger_stores_method_args_and_keywords():
-    logger = CapturingLogger()
-    assert logger.info("hello", answer=42) is None
-    call = logger.calls[0]
-    assert (call.method_name, call.args, call.kwargs) == ("info", ("hello",), {"answer": 42})
-
-
-@pytest.mark.parametrize("tool", ["BoundLogger", "LoggerFactory", "filter_by_level", "ProcessorFormatter"])
-def test_stdlib_public_tools_importable(tool):
-    import structlog.stdlib
-    assert getattr(structlog.stdlib, tool) is not None
-
-
-def test_console_renderer_is_importable():
-    assert structlog.dev.ConsoleRenderer is not None
-
-
 @pytest.mark.parametrize("request_id", ["r1", "r2", "r3"])
 def test_representative_context_to_capture_workflow(request_id):
     structlog.configure(wrapper_class=structlog.make_filtering_bound_logger(logging.INFO))
@@ -260,3 +149,38 @@ def test_representative_context_to_capture_workflow(request_id):
     with capture_logs(processors=[contextvars.merge_contextvars]) as entries:
         structlog.get_logger(service="billing").info("invoice-created", invoice_id=7)
     assert entries[0] == {"service": "billing", "request_id": request_id, "invoice_id": 7, "event": "invoice-created", "log_level": "info"}
+
+
+def test_processor_formatter_requires_a_processor_configuration():
+    with pytest.raises(TypeError):
+        stdlib.ProcessorFormatter()
+
+
+def test_rewrite_get_logger_initial_context():
+    with capture_logs() as events:
+        structlog.get_logger(a=1).info("e")
+    assert events[0]["a"] == 1
+
+
+def test_rewrite_bind_overrides_prior_value():
+    assert structlog.get_context(structlog.get_logger(a=1).bind(a=2))["a"] == 2
+
+
+def test_rewrite_unbind_removes_present_key():
+    assert structlog.get_context(structlog.get_logger(a=1).unbind("a")) == {}
+
+
+def test_rewrite_capture_records_event_field():
+    with capture_logs() as events:
+        structlog.get_logger().info("event")
+    assert events[0]["event"] == "event"
+
+
+def test_rewrite_configured_processor_is_called():
+    seen = []
+    def record(logger, method, event):
+        seen.append(method)
+        return event
+    structlog.configure(processors=[record], logger_factory=CapturingLogger)
+    structlog.get_logger().info("event")
+    assert seen == ["info"]

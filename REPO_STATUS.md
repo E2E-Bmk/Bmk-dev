@@ -1,11 +1,11 @@
 # Repo Status
 
-> 最后更新：2026-07-15
+> 最后更新：2026-07-17
 > 用途：组员认领 task 前查阅，避免重复工作
 
 ---
 
-## 已完成（tasks/ 中，34 个）
+## 已完成（tasks/ 中，35 个）
 
 | # | Task ID | 上游 Repo | 测试数 |
 |---|---------|-----------|--------|
@@ -43,6 +43,7 @@
 | 32 | starlette-asgi-fullrepro-001 | encode/starlette | 64 |
 | 33 | tox-envrunner-fullrepro-001 | tox-dev/tox | 46 |
 | 34 | vcrpy-fullrepro-001 | kevin1024/vcrpy | 41 |
+| 35 | rq-001 | rq/rq | 56 |
 
 ---
 
@@ -56,7 +57,6 @@
 | griffe-apimodel-fullrepro-001 | mkdocstrings/griffe | S1 刚选上 |
 | pyfilesystem-fs-fullrepro-001 | PyFilesystem/pyfilesystem2 | S1 刚选上 |
 | watchdog-fsevents-fullrepro-001 | gorakhargosh/watchdog | S1 刚选上 |
-| rq-fullrepro-001 | rq/rq | S1 刚选上 |
 | nikola-fullrepro-001 | getnikola/nikola | S1 刚选上 |
 | werkzeug-fullrepro-001 | pallets/werkzeug | S1 已退休 |
 | structlog-fullrepro-001 | hynek/structlog | S1 已退休 |

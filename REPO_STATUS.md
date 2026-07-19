@@ -1,11 +1,11 @@
 # Repo Status
 
-> 最后更新：2026-07-18
+> 最后更新：2026-07-19
 > 用途：组员认领 task 前查阅，避免重复工作
 
 ---
 
-## 已完成（tasks/ 中，36 个）
+## 已完成（tasks/ 中，37 个）
 
 | # | Task ID | 上游 Repo | 测试数 |
 |---|---------|-----------|--------|
@@ -45,6 +45,7 @@
 | 34 | vcrpy-fullrepro-001 | kevin1024/vcrpy | 41 |
 | 35 | rq-fullrepro-001 | rq/rq | 56 |
 | 36 | nikola-fullrepro-001 | getnikola/nikola | 84 |
+| 37 | loguru-fullrepro-001 | Delgan/loguru | 133 |
 
 ---
 
@@ -92,7 +93,6 @@
 | gatewayconfig-fullrepro-001 | — | 已退休 |
 | towncrier-changelog-fullrepro-001 | twisted/towncrier | 已退休 |
 | asynq-fullrepro-001 | — | 已退休 |
-| loguru-fullrepro-001 | Delgan/loguru | S1 新候选 |
 | authlib-jose-fullrepro-001 | lepture/authlib | S1 新候选 |
 | typer-cli-fullrepro-001 | fastapi/typer | S1 新候选 |
 

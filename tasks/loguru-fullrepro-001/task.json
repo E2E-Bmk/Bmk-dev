@@ -1,0 +1,105 @@
+{
+  "candidate_evaluation": {
+    "by_layer": {
+      "atomic": {
+        "failed": 2,
+        "passed": 71,
+        "total": 73
+      },
+      "integration": {
+        "failed": 4,
+        "passed": 44,
+        "total": 48
+      },
+      "system_e2e": {
+        "failed": 1,
+        "passed": 11,
+        "total": 12
+      }
+    },
+    "failed": 7,
+    "integration_gap_percentage_points": 5.59,
+    "model": "gpt5.4-loguru-fullrepro-001-specv3-20260719-001",
+    "pass_rate": 0.947368,
+    "passed": 126,
+    "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "preflight_output": "/mnt/g/AAAI2026/Bmk-dev/candidate-runs/gpt5.4-loguru-fullrepro-001-specv3-20260719-001/output/loguru/__init__.py",
+    "python_version": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "run_dir": "candidate-runs/gpt5.4-loguru-fullrepro-001-specv3-20260719-001",
+    "score_result": "candidate-runs/gpt5.4-loguru-fullrepro-001-specv3-20260719-001/score_result.json",
+    "total": 133
+  },
+  "judge": {
+    "date": "2026-07-19",
+    "diagnosis_report": "wip/loguru-fullrepro-001/judge/diagnosis_report.md",
+    "fairness_gates": {
+      "A_spec_mapping_spot_check": "passed",
+      "B_failure_pattern_audit": "passed",
+      "C_generated_only_spot_check": "not_applicable_mixed_oracle",
+      "D_coverage_gap_audit": "FULL"
+    },
+    "labels": [
+      "mixed-oracle",
+      "discriminating",
+      "non-saturated-candidate-score",
+      "high-performing-candidate",
+      "targeted-workflow-signal",
+      "low-integration-gap"
+    ],
+    "verdict": "QUALIFIED"
+  },
+  "oracle": {
+    "count": 133,
+    "dummy_gate": "0 passed, 0 failed, 133 errors",
+    "generated_retained": 82,
+    "nodeid_file": "kept_nodeids.txt",
+    "reference_gate": "133/133 passed",
+    "scorer_isolation": [
+      "--remove-path",
+      "loguru"
+    ],
+    "source": "mixed",
+    "spec_test_map": "spec_test_map.md",
+    "taxonomy_file": "taxonomy.jsonl",
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "upstream_rewritten_retained": 51
+  },
+  "oracle_version": "2026-07-19-stage3-mixed-v6-specv3",
+  "reference": {
+    "pass_rate": 1.0,
+    "passed": 133,
+    "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python_version": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "total": 133
+  },
+  "repo": "Delgan/loguru",
+  "repo_commit": "2a17be730e111cf874d0bf967c4c5da15b7e4670",
+  "source_path": "repo-pool/loguru-fullrepro-001",
+  "spec_version": "v3",
+  "task_id": "loguru-fullrepro-001",
+  "weaknesses": [
+    {
+      "affected_tests": 2,
+      "description": "Callable formatter and serialized JSON record outputs have wrong observable shapes, including an extra formatter newline and list-shaped serialized record level data.",
+      "dimension": "atomic-behavior"
+    },
+    {
+      "affected_tests": 1,
+      "description": "Bound logger extra isolation is incomplete: a handler registered through a bound view can still receive parent records without required bound extra and raises during formatting.",
+      "dimension": "state-management"
+    },
+    {
+      "affected_tests": 1,
+      "description": "TTY stream color capability is not reflected when colorize=None, so color-marked formatter output is stripped instead of ANSI-colored for color-capable streams.",
+      "dimension": "cross-view-consistency"
+    },
+    {
+      "affected_tests": 3,
+      "description": "Catch and exception workflows are incomplete: catch context manager usage is unsupported and logged exception records expose tuple-like data instead of exception objects with public type/value/traceback attributes.",
+      "dimension": "workflow-completeness"
+    }
+  ]
+}

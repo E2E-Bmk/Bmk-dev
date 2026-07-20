@@ -1,0 +1,130 @@
+{
+  "date": "2026-07-20",
+  "reference": {
+    "passed": 272,
+    "total": 272,
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 152,
+        "total": 152
+      },
+      "integration": {
+        "passed": 95,
+        "total": 95
+      },
+      "system_e2e": {
+        "passed": 25,
+        "total": 25
+      }
+    }
+  },
+  "dummy": {
+    "passed": 0,
+    "total": 272,
+    "pass_rate": 0.0,
+    "summary": {
+      "collection_error": 240,
+      "failed": 32,
+      "total": 272
+    },
+    "by_layer": {
+      "atomic": {
+        "collection_error": 120,
+        "failed": 32,
+        "total": 152
+      },
+      "integration": {
+        "collection_error": 95,
+        "total": 95
+      },
+      "system_e2e": {
+        "collection_error": 25,
+        "total": 25
+      }
+    },
+    "provenance": "task-local empty pyparsing shadow package"
+  },
+  "candidates": [
+    {
+      "run_id": "fresh-per-node-fairness-v3-20260720",
+      "runner": "opencode",
+      "model": "gpt-5.5",
+      "passed": 135,
+      "failed": 135,
+      "timeout": 2,
+      "total": 272,
+      "pass_rate_excluding_skips": 0.4963235294117647,
+      "summary": {
+        "failed": 135,
+        "passed": 135,
+        "timeout": 2,
+        "total": 272
+      },
+      "by_layer": {
+        "atomic": {
+          "failed": 60,
+          "passed": 90,
+          "timeout": 2,
+          "total": 152
+        },
+        "integration": {
+          "failed": 60,
+          "passed": 35,
+          "total": 95
+        },
+        "system_e2e": {
+          "failed": 15,
+          "passed": 10,
+          "total": 25
+        }
+      },
+      "timeout_seconds_per_node": 10,
+      "provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pyparsing-fullrepro-001-v4-clean-20260702T124500Z/output/pyparsing/__init__.py",
+      "sha256": "7d086715d9e414b18622da6bb79d0bb1603c9f0d3665847b8c9f3509b0b7bd72",
+      "provenance_clean": true,
+      "score_kind": "fresh per-node subprocess with complete subtest aggregation"
+    }
+  ],
+  "fairness_repairs": {
+    "excluded_nodeids": [
+      "oracle/test_integration.py::Test02_WithoutPackrat::testCharRe",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testCombineSetName",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testCommonExpressions",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testDefaultKeywordChars",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testDelimitedListName",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testEachWithParseFatalException",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testExpressionDefaultStrings",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testInlineLiteralsUsing",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testKeywordCopyIdentChars",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testLocatedExpr",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testNestedExpressionDoesNotOverwriteParseActions",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testNumericExpressions",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testOneOf",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testOneOfWithDuplicateSymbols",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testParseExpressionsWithRegex",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testParseResultsWithNameMatchFirst",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testParseResultsWithNameOr",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testRegexDeferredCompile",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testRegexDeferredCompileCommonHtmlEntity",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testRegexSub",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testSetName",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testSetNameToStrAndNone",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testTraceParseActionDecorator_with_exception",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testUnicodeExpression",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testUpdateDefaultWhitespace",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testWordInternalReRanges",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testWordInternalReRangesKnownSet",
+      "oracle/test_integration.py::Test02_WithoutPackrat::testWordMinOfZero",
+      "oracle/test_integration.py::Test02_WithoutPackrat::test_pep8_synonyms"
+    ],
+    "rewritten_setup": "Removed undocumented streamline/internal-regex dependencies and replaced exact formatting assertions with public behavior.",
+    "subtest_aggregation_fixed": true
+  },
+  "judge": {
+    "verdict": "QUALIFIED_WITH_CAVEATS",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "deepseek_passed": true
+  },
+  "trust_boundary": "Current main uses same-process pytest and is not adversarial black-box proof."
+}

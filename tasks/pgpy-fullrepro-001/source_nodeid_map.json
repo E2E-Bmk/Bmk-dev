@@ -1,0 +1,556 @@
+{
+  "schema_version": 1,
+  "mapping_contract": {
+    "source_nodeid": "prior filtered-test or generated-test provenance",
+    "oracle_nodeid": "task-local native score identity",
+    "canonical_score_identity": "oracle_nodeid",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "task_local_data_dependency": "oracle/data"
+  },
+  "validation": {
+    "expected_cases": 66,
+    "layers": {
+      "atomic": 36,
+      "integration": 17,
+      "system_e2e": 13
+    },
+    "reference_passed": 66,
+    "dummy_passed": 0,
+    "candidate_passed": 13,
+    "candidate_total": 66,
+    "historical_slice_cases": 54,
+    "generated_cases": 12,
+    "source_to_oracle_one_to_one": true
+  },
+  "cases": [
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPUID::test_userid",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPUID::test_userid",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Common Object Properties",
+      "notes": "PGPUID.new exposes documented name/comment/email/image fields."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPUID::test_userphoto",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPUID::test_userphoto",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Common Object Properties",
+      "notes": "PGPUID.new(bytearray) exposes documented user-attribute image behavior."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPUID::test_format",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPUID::test_format",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Common Object Properties",
+      "notes": "PGPUID string formatting is explicitly documented for user IDs."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_file[dsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_file[dsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_file returns a key whose public fingerprint projection matches the parsed OpenPGP key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_file[dsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_file[dsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_file returns a key whose public fingerprint projection matches the parsed OpenPGP key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_file[eccpubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_file[eccpubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_file returns a key whose public fingerprint projection matches the parsed OpenPGP key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_file[eccseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_file[eccseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_file returns a key whose public fingerprint projection matches the parsed OpenPGP key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_file[openpgp.js.pubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_file[openpgp.js.pubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_file returns a key whose public fingerprint projection matches the parsed OpenPGP key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_file[openpgp.js.seckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_file[openpgp.js.seckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_file returns a key whose public fingerprint projection matches the parsed OpenPGP key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_file[rsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_file[rsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_file returns a key whose public fingerprint projection matches the parsed OpenPGP key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_file[rsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_file[rsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_file returns a key whose public fingerprint projection matches the parsed OpenPGP key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_str[dsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_str[dsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts text and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_str[dsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_str[dsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts text and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_str[eccpubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_str[eccpubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts text and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_str[eccseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_str[eccseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts text and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_str[openpgp.js.pubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_str[openpgp.js.pubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts text and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_str[openpgp.js.seckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_str[openpgp.js.seckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts text and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_str[rsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_str[rsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts text and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_str[rsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_str[rsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts text and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytes[dsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[dsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytes and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytes[dsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[dsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytes and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytes[eccpubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[eccpubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytes and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytes[eccseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[eccseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytes and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytes[openpgp.js.pubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[openpgp.js.pubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytes and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytes[openpgp.js.seckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[openpgp.js.seckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytes and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytes[rsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[rsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytes and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytes[rsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[rsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytes and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytearray[dsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[dsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytearray and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytearray[dsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[dsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytearray and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytearray[eccpubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[eccpubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytearray and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytearray[eccseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[eccseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytearray and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytearray[openpgp.js.pubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[openpgp.js.pubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytearray and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytearray[openpgp.js.seckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[openpgp.js.seckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytearray and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytearray[rsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[rsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytearray and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_load_from_bytearray[rsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[rsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "PGPKey.from_blob accepts bytearray and exposes the parsed fingerprint."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/dsa.1.sec.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[dsa.1.sec.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/ecc.1.pub.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[ecc.1.pub.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/ecc.1.sec.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[ecc.1.sec.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/ecc.2.pub.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[ecc.2.pub.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/ecc.2.sec.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[ecc.2.sec.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/mixed.1.pub.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[mixed.1.pub.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/mixed.1.sec.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[mixed.1.sec.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/rsa.1.pub.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[rsa.1.pub.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/rsa.1.sec.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[rsa.1.sec.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/targette.pub.rsa.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[targette.pub.rsa.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKey::test_save[tests/testdata/keys/targette.sec.rsa.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[targette.sec.rsa.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting",
+      "notes": "Two independent loads of the same key must produce stable binary OpenPGP packet export through bytes(key)."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKeyring::test_load_key_instance[dsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[dsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings",
+      "notes": "Keyring.load of a public key object must index fingerprint and user ID aliases and keyring.key must yield the same loaded key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKeyring::test_load_key_instance[dsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[dsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings",
+      "notes": "Keyring.load of a public key object must index fingerprint and user ID aliases and keyring.key must yield the same loaded key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKeyring::test_load_key_instance[eccpubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[eccpubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings",
+      "notes": "Keyring.load of a public key object must index fingerprint and user ID aliases and keyring.key must yield the same loaded key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKeyring::test_load_key_instance[eccseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[eccseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings",
+      "notes": "Keyring.load of a public key object must index fingerprint and user ID aliases and keyring.key must yield the same loaded key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKeyring::test_load_key_instance[openpgp.js.pubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[openpgp.js.pubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings",
+      "notes": "Keyring.load of a public key object must index fingerprint and user ID aliases and keyring.key must yield the same loaded key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKeyring::test_load_key_instance[openpgp.js.seckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[openpgp.js.seckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings",
+      "notes": "Keyring.load of a public key object must index fingerprint and user ID aliases and keyring.key must yield the same loaded key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKeyring::test_load_key_instance[rsapubkey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[rsapubkey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings",
+      "notes": "Keyring.load of a public key object must index fingerprint and user ID aliases and keyring.key must yield the same loaded key."
+    },
+    {
+      "source_nodeid": "tests/test_04_PGP_objects.py::TestPGPKeyring::test_load_key_instance[rsaseckey.asc]",
+      "oracle_nodeid": "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[rsaseckey.asc]",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings",
+      "notes": "Keyring.load of a public key object must index fingerprint and user ID aliases and keyring.key must yield the same loaded key."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_message_text_cleartext_and_binary_views",
+      "oracle_nodeid": "oracle/test_integration.py::test_message_text_cleartext_and_binary_views",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Product State Model; Messages; Cross-View Invariants",
+      "notes": "Text, cleartext, compressed, and binary message projections use documented public properties."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_message_symmetric_encryption_roundtrip",
+      "oracle_nodeid": "oracle/test_integration.py::test_message_symmetric_encryption_roundtrip",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Messages; Product State Model; Cross-View Invariants",
+      "notes": "Passphrase encryption returns a new encrypted message and decrypts to the original public message projection."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_key_generation_uid_and_export_roundtrip",
+      "oracle_nodeid": "oracle/test_integration.py::test_key_generation_uid_and_export_roundtrip",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Product State Model; Keys and User IDs; Loading, Parsing, and Exporting",
+      "notes": "Generated key, attached UID, armored export, and reparsed public state remain consistent."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_sign_and_verify_text",
+      "oracle_nodeid": "oracle/test_integration.py::test_sign_and_verify_text",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Signing, Certification, Revocation, and Verification",
+      "notes": "A private key signs text and the matching public key accepts only the matching text."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_attach_and_verify_message_signature",
+      "oracle_nodeid": "oracle/test_integration.py::test_attach_and_verify_message_signature",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Signing, Certification, Revocation, and Verification; Cross-View Invariants",
+      "notes": "An attached message signature updates is_signed and verifies through the public key projection."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_public_key_encrypt_decrypt_roundtrip",
+      "oracle_nodeid": "oracle/test_integration.py::test_public_key_encrypt_decrypt_roundtrip",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Public-Key Encryption and Decryption; Cross-View Invariants",
+      "notes": "Matching public/private key halves preserve plaintext through encrypt/decrypt."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_protect_and_temporarily_unlock_private_key",
+      "oracle_nodeid": "oracle/test_integration.py::test_protect_and_temporarily_unlock_private_key",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Product State Model; Keys and User IDs; Representative Workflows",
+      "notes": "Protect and unlock expose documented state transitions and permit signing only inside the unlocked context."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_public_error_types_for_invalid_inputs",
+      "oracle_nodeid": "oracle/test_integration.py::test_public_error_types_for_invalid_inputs",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "Invalid fingerprint, empty-key signing, and unsupported UID attachment raise documented public exceptions."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_wrong_password_and_wrong_private_key_errors",
+      "oracle_nodeid": "oracle/test_integration.py::test_wrong_password_and_wrong_private_key_errors",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Error Semantics; Public-Key Encryption and Decryption",
+      "notes": "Wrong passphrases and unrelated private keys raise documented decryption errors."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_keyring_selects_key_for_encrypted_message",
+      "oracle_nodeid": "oracle/test_integration.py::test_keyring_selects_key_for_encrypted_message",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Keyrings; Representative Workflows",
+      "notes": "A keyring selects a loaded matching key from an encrypted message and decrypts it."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_generated_key_sign_verify_encrypt_decrypt_workflow",
+      "oracle_nodeid": "oracle/test_integration.py::test_generated_key_sign_verify_encrypt_decrypt_workflow",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Representative Workflows; Keys and User IDs; Signing, Certification, Revocation, and Verification; Public-Key Encryption and Decryption",
+      "notes": "A generated key completes the documented sign/verify/encrypt/decrypt workflow."
+    },
+    {
+      "source_nodeid": "generated/native_pgpy_workflows.py::test_cross_view_key_and_message_reparse",
+      "oracle_nodeid": "oracle/test_integration.py::test_cross_view_key_and_message_reparse",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Loading, Parsing, and Exporting; Cross-View Invariants",
+      "notes": "Text and binary key views preserve fingerprints and message armor reparses to equivalent bytes and content."
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "date": "2026-07-20",
+  "platform": "Linux",
+  "reference": {
+    "passed": 59,
+    "total": 59,
+    "by_layer": {
+      "atomic": {
+        "passed": 20,
+        "total": 20
+      },
+      "integration": {
+        "passed": 25,
+        "total": 25
+      },
+      "system_e2e": {
+        "passed": 14,
+        "total": 14
+      }
+    }
+  },
+  "dummy": {
+    "passed": 0,
+    "total": 59,
+    "pass_rate": 0.0,
+    "summary": {
+      "collection_error": 45,
+      "failed": 14,
+      "total": 59
+    },
+    "by_layer": {
+      "atomic": {
+        "collection_error": 20,
+        "total": 20
+      },
+      "integration": {
+        "collection_error": 25,
+        "total": 25
+      },
+      "system_e2e": {
+        "failed": 14,
+        "total": 14
+      }
+    },
+    "collection_errors": 45
+  },
+  "candidates": [
+    {
+      "model": "opencode-gpt-5.5",
+      "runner": "opencode",
+      "historical": false,
+      "passed": 55,
+      "total": 59,
+      "pass_rate": 0.9322033898305084,
+      "source": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-sqlparse-fullrepro-001-20260702T035140Z/score_result.json",
+      "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-sqlparse-fullrepro-001-20260702T035140Z/output/sqlparse/__init__.py",
+      "provenance_status": "clean_candidate_output_path",
+      "native_comparison": "freshly rescored against the exact current 59-case native oracle",
+      "candidate_snapshot_origin": "unchanged historical Stage 4 output",
+      "score_kind": "fresh_current_native_rescore",
+      "failed": 4,
+      "by_layer": {
+        "atomic": {
+          "passed": 20,
+          "total": 20
+        },
+        "integration": {
+          "passed": 25,
+          "total": 25
+        },
+        "system_e2e": {
+          "failed": 4,
+          "passed": 10,
+          "total": 14
+        }
+      }
+    }
+  ],
+  "judge": {
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "deepseek_passed": true
+  },
+  "trust_boundary": "Current main uses same-process pytest and is not adversarial black-box proof."
+}

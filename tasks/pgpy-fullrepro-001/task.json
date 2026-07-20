@@ -1,0 +1,242 @@
+{
+  "instance_id": "pgpy-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "SecurityInnovation/PGPy",
+  "repo_commit": "30a757181ab02f918a94f8549f354d93639b95e6",
+  "spec_version": "v1-native-cleanroom",
+  "oracle_version": "2026-07-20-native-v3",
+  "source_meta": {
+    "language": "Python",
+    "source_commit": "30a757181ab02f918a94f8549f354d93639b95e6",
+    "legacy_evidence_roots": [
+      "/root/autodl-tmp/Bmk-Lizhiqian/wip/pgpy-fullrepro-001",
+      "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pgpy-fullrepro-001-20260709T-stage4-cleanroom"
+    ]
+  },
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 66,
+    "source": "54 task-local upstream transplants plus 12 generated public-behavior workflows",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "task_local_data": "oracle/data",
+    "scorer_isolation": [
+      "--remove-path",
+      "pgpy",
+      "--rootdir=."
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::TestPGPUID::test_userid": "atomic",
+    "oracle/test_atomic.py::TestPGPUID::test_userphoto": "atomic",
+    "oracle/test_atomic.py::TestPGPUID::test_format": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_file[dsapubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_file[dsaseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_file[eccpubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_file[eccseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_file[openpgp.js.pubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_file[openpgp.js.seckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_file[rsapubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_file[rsaseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_str[dsapubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_str[dsaseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_str[eccpubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_str[eccseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_str[openpgp.js.pubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_str[openpgp.js.seckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_str[rsapubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_str[rsaseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[dsapubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[dsaseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[eccpubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[eccseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[openpgp.js.pubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[openpgp.js.seckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[rsapubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytes[rsaseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[dsapubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[dsaseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[eccpubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[eccseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[openpgp.js.pubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[openpgp.js.seckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[rsapubkey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_load_from_bytearray[rsaseckey.asc]": "atomic",
+    "oracle/test_atomic.py::TestPGPKey::test_save[dsa.1.sec.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[ecc.1.pub.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[ecc.1.sec.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[ecc.2.pub.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[ecc.2.sec.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[mixed.1.pub.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[mixed.1.sec.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[rsa.1.pub.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[rsa.1.sec.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[targette.pub.rsa.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKey::test_save[targette.sec.rsa.asc]": "integration",
+    "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[dsapubkey.asc]": "system_e2e",
+    "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[dsaseckey.asc]": "system_e2e",
+    "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[eccpubkey.asc]": "system_e2e",
+    "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[eccseckey.asc]": "system_e2e",
+    "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[openpgp.js.pubkey.asc]": "system_e2e",
+    "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[openpgp.js.seckey.asc]": "system_e2e",
+    "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[rsapubkey.asc]": "system_e2e",
+    "oracle/test_atomic.py::TestPGPKeyring::test_load_key_instance[rsaseckey.asc]": "system_e2e",
+    "oracle/test_integration.py::test_message_text_cleartext_and_binary_views": "integration",
+    "oracle/test_integration.py::test_message_symmetric_encryption_roundtrip": "system_e2e",
+    "oracle/test_integration.py::test_key_generation_uid_and_export_roundtrip": "integration",
+    "oracle/test_integration.py::test_sign_and_verify_text": "integration",
+    "oracle/test_integration.py::test_attach_and_verify_message_signature": "system_e2e",
+    "oracle/test_integration.py::test_public_key_encrypt_decrypt_roundtrip": "system_e2e",
+    "oracle/test_integration.py::test_protect_and_temporarily_unlock_private_key": "integration",
+    "oracle/test_integration.py::test_public_error_types_for_invalid_inputs": "atomic",
+    "oracle/test_integration.py::test_wrong_password_and_wrong_private_key_errors": "integration",
+    "oracle/test_integration.py::test_keyring_selects_key_for_encrypted_message": "system_e2e",
+    "oracle/test_integration.py::test_generated_key_sign_verify_encrypt_decrypt_workflow": "system_e2e",
+    "oracle/test_integration.py::test_cross_view_key_and_message_reparse": "integration"
+  },
+  "stats": {
+    "atomic": 36,
+    "integration": 17,
+    "system_e2e": 13
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 36,
+        "total": 36
+      },
+      "integration": {
+        "passed": 17,
+        "total": 17
+      },
+      "system_e2e": {
+        "passed": 13,
+        "total": 13
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "failed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "failed": 36,
+        "total": 36
+      },
+      "integration": {
+        "failed": 17,
+        "total": 17
+      },
+      "system_e2e": {
+        "failed": 13,
+        "total": 13
+      }
+    },
+    "collection_errors": 0
+  },
+  "candidate_score": {
+    "runner": "opencode",
+    "model": "gpt-5.5",
+    "run_id": "opencode-gpt-5.5-pgpy-fullrepro-001-20260709T-stage4-cleanroom",
+    "collection_errors": 0,
+    "solution_path": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pgpy-fullrepro-001-20260709T-stage4-cleanroom/output",
+    "import_provenance_stdout": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pgpy-fullrepro-001-20260709T-stage4-cleanroom/output/pgpy/__init__.py",
+    "import_provenance_clean": true,
+    "python_sha256": {
+      "pgpy/__init__.py": "1ca3a0a1dc4f96b6cbda1e52fbb486e6891de9729e1a2050e65856ce997543a6",
+      "pgpy/constants.py": "b2847cad65377873c1dbfdb8710e62a957faac899aecb7a744fe7163cc52bbac",
+      "pgpy/errors.py": "db6bc35f123d12acc7a46f73c396316646227878af107a6e5ca56d3e1481db9c",
+      "pgpy/types.py": "6e7c3038e94427160cb9c794536ab5eac8017d346c4116baa9a3dfecda24e7ab"
+    },
+    "generated_slice": {
+      "passed": 10,
+      "total": 12
+    },
+    "summary": {
+      "failed": 53,
+      "passed": 13,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 0.19696969696969696,
+    "by_layer": {
+      "atomic": {
+        "failed": 32,
+        "passed": 4,
+        "total": 36
+      },
+      "integration": {
+        "failed": 13,
+        "passed": 4,
+        "total": 17
+      },
+      "system_e2e": {
+        "failed": 8,
+        "passed": 5,
+        "total": 13
+      }
+    },
+    "historical_slice": {
+      "passed": 3,
+      "total": 54,
+      "outcome_mismatches": 0
+    }
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED_WITH_CAVEATS",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed_no_collection_cascade",
+      "C_native_oracle": "passed_no_upstream_test_carrier",
+      "D_coverage_gap": "FULL",
+      "E_independent_review": "passed"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "openpgp-interoperability",
+      "description": "The candidate fails 51 retained cases that parse, export, or index real OpenPGP fixture keys.",
+      "affected_tests": 51
+    },
+    {
+      "dimension": "message-binary-projection",
+      "description": "The candidate decodes a binary message payload to text instead of preserving bytes.",
+      "affected_tests": 1
+    },
+    {
+      "dimension": "key-uid-containment",
+      "description": "The candidate does not support documented UID containment on generated keys.",
+      "affected_tests": 1
+    }
+  ],
+  "labels": [
+    "mixed-native-oracle",
+    "cleanroom-spec",
+    "dummy-zero",
+    "real-openpgp-fixtures",
+    "generated-public-workflows",
+    "no-collection-cascade"
+  ],
+  "caveats": [
+    "The current-main harness runs task-local tests and candidate code in the same pytest-visible filesystem and is not adversarial black-box proof against a malicious candidate.",
+    "One redundant public DSA export fixture was excluded because GitHub push protection misclassified its armored payload as a credential.",
+    "The candidate passes 10/12 generated workflows but fails real OpenPGP fixture interoperability; these signals are reported separately."
+  ],
+  "qualification_reason": "Reference passes 66/66, executable dummy passes 0/66, unchanged candidate passes 13/66 without collection errors, the retained historical 54-case slice has zero outcome drift, 12 generated public workflows close the prior core-section coverage gap, and independent review reports no blocking issue."
+}

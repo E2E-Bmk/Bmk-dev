@@ -1,0 +1,438 @@
+{
+  "schema_version": 1,
+  "mapping_contract": {
+    "source_nodeid": "rewrite/generation provenance",
+    "oracle_nodeid": "task-local native score identity",
+    "canonical_score_identity": "oracle_nodeid",
+    "carrier_dependency": false,
+    "subprocess_dependency": false
+  },
+  "validation": {
+    "expected_cases": 52,
+    "reference_passed": 52,
+    "dummy_passed": 0,
+    "layers": {
+      "atomic": 20,
+      "integration": 30,
+      "system_e2e": 2
+    }
+  },
+  "cases": [
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_config_from_pyfile_loads_public_attributes",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_from_pyfile_loads_public_attributes",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_config_from_toml_loads_public_attributes",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_from_toml_loads_public_attributes",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_config_from_object_loads_public_attributes",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_from_object_loads_public_attributes",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_config_response_headers_follow_metadata_flags",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_response_headers_follow_metadata_flags",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Response Metadata and Metrics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_http_to_https_redirect_preserves_http_raw_path_and_query[/abc]",
+      "oracle_nodeid": "oracle/test_integration.py::test_http_to_https_redirect_preserves_http_raw_path_and_query[/abc]",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_http_to_https_redirect_preserves_http_raw_path_and_query[/abc%3C]",
+      "oracle_nodeid": "oracle/test_integration.py::test_http_to_https_redirect_preserves_http_raw_path_and_query[/abc%3C]",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_http_to_https_redirect_preserves_websocket_raw_path_and_query[/abc]",
+      "oracle_nodeid": "oracle/test_integration.py::test_http_to_https_redirect_preserves_websocket_raw_path_and_query[/abc]",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_http_to_https_redirect_preserves_websocket_raw_path_and_query[/abc%3C]",
+      "oracle_nodeid": "oracle/test_integration.py::test_http_to_https_redirect_preserves_websocket_raw_path_and_query[/abc%3C]",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_http_to_https_redirect_uses_https_scheme_for_http2_websocket",
+      "oracle_nodeid": "oracle/test_integration.py::test_http_to_https_redirect_uses_https_scheme_for_http2_websocket",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_http_to_https_redirect_closes_websocket_without_denial_extension",
+      "oracle_nodeid": "oracle/test_integration.py::test_http_to_https_redirect_closes_websocket_without_denial_extension",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_http_to_https_redirect_uses_request_host_when_constructor_host_is_none",
+      "oracle_nodeid": "oracle/test_integration.py::test_http_to_https_redirect_uses_request_host_when_constructor_host_is_none",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_proxy_fix_legacy_restores_trusted_client_scheme_and_host",
+      "oracle_nodeid": "oracle/test_integration.py::test_proxy_fix_legacy_restores_trusted_client_scheme_and_host",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Restoring Proxy Information",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_proxy_fix_modern_restores_trusted_client_scheme_and_host",
+      "oracle_nodeid": "oracle/test_integration.py::test_proxy_fix_modern_restores_trusted_client_scheme_and_host",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Restoring Proxy Information",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dispatcher_routes_by_insertion_order_and_updates_root_path",
+      "oracle_nodeid": "oracle/test_integration.py::test_dispatcher_routes_by_insertion_order_and_updates_root_path",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Dispatching Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dispatcher_returns_404_when_no_mount_matches",
+      "oracle_nodeid": "oracle/test_integration.py::test_dispatcher_returns_404_when_no_mount_matches",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Dispatching Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dispatcher_broadcasts_lifespan_to_mounted_applications",
+      "oracle_nodeid": "oracle/test_integration.py::test_dispatcher_broadcasts_lifespan_to_mounted_applications",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Dispatching Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_asyncio_wsgi_middleware_emits_wsgi_response_body",
+      "oracle_nodeid": "oracle/test_integration.py::test_asyncio_wsgi_middleware_emits_wsgi_response_body",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Adapting WSGI Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_asyncio_wsgi_middleware_returns_400_when_body_exceeds_limit",
+      "oracle_nodeid": "oracle/test_integration.py::test_asyncio_wsgi_middleware_returns_400_when_body_exceeds_limit",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Adapting WSGI Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_asyncio_wsgi_middleware_requires_start_response_before_body",
+      "oracle_nodeid": "oracle/test_integration.py::test_asyncio_wsgi_middleware_requires_start_response_before_body",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Adapting WSGI Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_trio_wsgi_middleware_emits_wsgi_response_body",
+      "oracle_nodeid": "oracle/test_integration.py::test_trio_wsgi_middleware_emits_wsgi_response_body",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Adapting WSGI Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_documented_defaults_are_visible",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_documented_defaults_are_visible",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Documented Defaults",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_bind_groups_accept_single_string_assignments",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_bind_groups_accept_single_string_assignments",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Binds and TLS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_root_path_assignment_removes_trailing_slashes",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_root_path_assignment_removes_trailing_slashes",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_from_mapping_applies_keyword_arguments_last",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_from_mapping_applies_keyword_arguments_last",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_from_mapping_accepts_keyword_only_configuration",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_from_mapping_accepts_keyword_only_configuration",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_from_object_resolves_dotted_object",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_from_object_resolves_dotted_object",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_from_pyfile_propagates_missing_file",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_from_pyfile_propagates_missing_file",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_from_pyfile_propagates_execution_failure",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_from_pyfile_propagates_execution_failure",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_from_toml_propagates_parse_failure",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_from_toml_propagates_parse_failure",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Creating and Loading Configuration",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_ssl_enabled_reflects_certificate_and_key_presence",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_ssl_enabled_reflects_certificate_and_key_presence",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Binds and TLS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_response_headers_include_each_alt_svc_value",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_response_headers_include_each_alt_svc_value",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Response Metadata and Metrics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_statsd_logger_class_requires_statsd_host",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_statsd_logger_class_requires_statsd_host",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Response Metadata and Metrics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_statsd_logger_class_replaces_default_when_statsd_is_enabled",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_statsd_logger_class_replaces_default_when_statsd_is_enabled",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Response Metadata and Metrics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_redirect_without_constructor_or_request_host_raises_value_error",
+      "oracle_nodeid": "oracle/test_atomic.py::test_redirect_without_constructor_or_request_host_raises_value_error",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_redirect_location_includes_root_path_before_raw_path",
+      "oracle_nodeid": "oracle/test_atomic.py::test_redirect_location_includes_root_path_before_raw_path",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_redirect_passes_secure_websocket_to_wrapped_application",
+      "oracle_nodeid": "oracle/test_atomic.py::test_redirect_passes_secure_websocket_to_wrapped_application",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_redirect_passes_non_http_scope_without_requiring_host",
+      "oracle_nodeid": "oracle/test_atomic.py::test_redirect_passes_non_http_scope_without_requiring_host",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Redirecting HTTP to HTTPS",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_proxy_fix_without_forwarded_headers_preserves_scope_values",
+      "oracle_nodeid": "oracle/test_atomic.py::test_proxy_fix_without_forwarded_headers_preserves_scope_values",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Restoring Proxy Information",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_proxy_fix_trusted_hops_selects_value_from_the_right",
+      "oracle_nodeid": "oracle/test_atomic.py::test_proxy_fix_trusted_hops_selects_value_from_the_right",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Restoring Proxy Information",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_proxy_fix_modern_mode_falls_back_to_legacy_headers",
+      "oracle_nodeid": "oracle/test_atomic.py::test_proxy_fix_modern_mode_falls_back_to_legacy_headers",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Restoring Proxy Information",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_proxy_fix_non_http_scope_is_passed_without_copying",
+      "oracle_nodeid": "oracle/test_atomic.py::test_proxy_fix_non_http_scope_is_passed_without_copying",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Restoring Proxy Information",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_dispatcher_uses_first_matching_mount_even_when_later_mount_is_longer",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dispatcher_uses_first_matching_mount_even_when_later_mount_is_longer",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Dispatching Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_dispatcher_extends_existing_root_path_for_selected_mount",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dispatcher_extends_existing_root_path_for_selected_mount",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Dispatching Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_environment_contains_root_path_path_info_query_and_headers",
+      "oracle_nodeid": "oracle/test_atomic.py::test_wsgi_environment_contains_root_path_path_info_query_and_headers",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Adapting WSGI Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_path_outside_root_path_returns_404_without_calling_app",
+      "oracle_nodeid": "oracle/test_atomic.py::test_wsgi_path_outside_root_path_returns_404_without_calling_app",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Adapting WSGI Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_websocket_scope_closes_without_calling_wsgi_app",
+      "oracle_nodeid": "oracle/test_atomic.py::test_wsgi_websocket_scope_closes_without_calling_wsgi_app",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Adapting WSGI Applications",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_logger_access_logfile_dash_writes_configured_access_record_to_stdout",
+      "oracle_nodeid": "oracle/test_atomic.py::test_logger_access_logfile_dash_writes_configured_access_record_to_stdout",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Logging",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_logger_missing_access_atom_renders_dash",
+      "oracle_nodeid": "oracle/test_atomic.py::test_logger_missing_access_atom_renders_dash",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Logging",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_logger_errorlog_dash_writes_error_and_warning_to_stderr",
+      "oracle_nodeid": "oracle/test_atomic.py::test_logger_errorlog_dash_writes_error_and_warning_to_stderr",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Logging",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_asyncio_serve_warns_when_process_or_loop_settings_do_not_apply",
+      "oracle_nodeid": "oracle/test_atomic.py::test_asyncio_serve_warns_when_process_or_loop_settings_do_not_apply",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Programmatic Service",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_hypercorn_module_help_exposes_command_line_interface",
+      "oracle_nodeid": "oracle/test_atomic.py::test_hypercorn_module_help_exposes_command_line_interface",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Service",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_hypercorn_module_rejects_unknown_verify_mode",
+      "oracle_nodeid": "oracle/test_atomic.py::test_hypercorn_module_rejects_unknown_verify_mode",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Service",
+      "notes": "public observable assertion; reference and dummy gated"
+    }
+  ]
+}

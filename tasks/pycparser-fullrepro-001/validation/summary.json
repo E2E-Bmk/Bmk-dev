@@ -1,0 +1,29 @@
+{
+  "date": "2026-07-20",
+  "harness_commit": "3eb10a6ae01266ada9e5f2b7f1c823d7395b404e",
+  "commands": {
+    "verify": "python harness/verify_task.py pycparser-fullrepro-001",
+    "import_lint": "python harness/oracle_import_lint.py pycparser-fullrepro-001 tasks/pycparser-fullrepro-001/spec.md",
+    "score": "python harness/score_pytest_original.py --source-repo tasks/pycparser-fullrepro-001 --nodeids tasks/pycparser-fullrepro-001/kept_nodeids.txt --taxonomy tasks/pycparser-fullrepro-001/taxonomy.jsonl --remove-path pycparser --timeout 120 --solution-dir <reference|dummy|candidate> --run-dir <fresh-run-dir> --json-out <score-file>"
+  },
+  "results": {
+    "verify": "QUALIFIED_VALID",
+    "import_lint": "LINT_PASS",
+    "reference": {"passed": 90, "total": 90, "pass_rate_excluding_skips": 1.0},
+    "dummy": {"passed": 0, "total": 90, "pass_rate_excluding_skips": 0.0},
+    "candidate": {"passed": 36, "failed": 54, "total": 90, "pass_rate_excluding_skips": 0.4}
+  },
+  "provenance": {
+    "reference_import": "/root/autodl-tmp/e2e/pycparser/pycparser/__init__.py",
+    "candidate_import": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-sweagent/swe-agent-gpt-5.5-pycparser-fullrepro-001-20260702T035227Z/output/pycparser/__init__.py",
+    "candidate_anti_cheat_scan": "PASS",
+    "native_score_supersedes_archived_carrier_score": true
+  },
+  "fairness": {
+    "gate_A_spec_mapping": "PASS_AFTER_REPR_REWRITE",
+    "gate_B_failure_pattern": "PASS",
+    "gate_C_generated_only": "N/A_UPSTREAM_REWRITTEN",
+    "gate_D_coverage_gap": "FULL"
+  },
+  "caveat": "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+}

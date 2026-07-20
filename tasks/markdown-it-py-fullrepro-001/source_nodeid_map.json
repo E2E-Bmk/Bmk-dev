@@ -1,0 +1,608 @@
+{
+  "schema_version": 1,
+  "mapping_contract": {
+    "source_nodeid": "upstream provenance",
+    "oracle_nodeid": "task-local native score identity",
+    "canonical_score_identity": "oracle_nodeid",
+    "source_type": "upstream_rewritten",
+    "carrier_dependency": false,
+    "subprocess_dependency": false
+  },
+  "validation": {
+    "expected_cases": 81,
+    "reference_passed": 81,
+    "dummy_passed": 0,
+    "layers": {
+      "atomic": 8,
+      "integration": 63,
+      "system_e2e": 10
+    }
+  },
+  "cases": [
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_get_rules",
+      "oracle_nodeid": "oracle/test_atomic.py::test_get_rules",
+      "layer": "atomic",
+      "spec_section": "Parser Configuration And Rule Control",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_load_presets",
+      "oracle_nodeid": "oracle/test_atomic.py::test_load_presets",
+      "layer": "atomic",
+      "spec_section": "Parser Configuration And Rule Control",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_override_options",
+      "oracle_nodeid": "oracle/test_atomic.py::test_override_options",
+      "layer": "atomic",
+      "spec_section": "Parser Configuration And Rule Control",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_enable",
+      "oracle_nodeid": "oracle/test_atomic.py::test_enable",
+      "layer": "atomic",
+      "spec_section": "Parser Configuration And Rule Control",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_disable",
+      "oracle_nodeid": "oracle/test_atomic.py::test_disable",
+      "layer": "atomic",
+      "spec_section": "Parser Configuration And Rule Control",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_reset",
+      "oracle_nodeid": "oracle/test_atomic.py::test_reset",
+      "layer": "atomic",
+      "spec_section": "Parser Configuration And Rule Control",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_parseInline",
+      "oracle_nodeid": "oracle/test_atomic.py::test_parseInline",
+      "layer": "integration",
+      "spec_section": "Inline Parsing And Token Joining",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_renderInline",
+      "oracle_nodeid": "oracle/test_atomic.py::test_renderInline",
+      "layer": "integration",
+      "spec_section": "Inline Parsing And Token Joining",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_emptyStr",
+      "oracle_nodeid": "oracle/test_atomic.py::test_emptyStr",
+      "layer": "atomic",
+      "spec_section": "Inline Parsing And Token Joining",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_empty_env",
+      "oracle_nodeid": "oracle/test_atomic.py::test_empty_env",
+      "layer": "atomic",
+      "spec_section": "Inline Parsing And Token Joining",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_fragments_join_merges_adjacent_text_tokens",
+      "oracle_nodeid": "oracle/test_atomic.py::test_fragments_join_merges_adjacent_text_tokens",
+      "layer": "integration",
+      "spec_section": "Inline Parsing And Token Joining",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_main.py::test_text_join_merges_adjacent_text_special_tokens",
+      "oracle_nodeid": "oracle/test_atomic.py::test_text_join_merges_adjacent_text_special_tokens",
+      "layer": "integration",
+      "spec_section": "Inline Parsing And Token Joining",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestColonFenceMarker::test_basic",
+      "oracle_nodeid": "oracle/test_integration.py::TestColonFenceMarker::test_basic",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestColonFenceMarker::test_with_info",
+      "oracle_nodeid": "oracle/test_integration.py::TestColonFenceMarker::test_with_info",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestColonFenceMarker::test_colon_in_info_allowed",
+      "oracle_nodeid": "oracle/test_integration.py::TestColonFenceMarker::test_colon_in_info_allowed",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestColonFenceMarker::test_longer_closing",
+      "oracle_nodeid": "oracle/test_integration.py::TestColonFenceMarker::test_longer_closing",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestColonFenceMarker::test_shorter_closing_no_match",
+      "oracle_nodeid": "oracle/test_integration.py::TestColonFenceMarker::test_shorter_closing_no_match",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestColonFenceMarker::test_does_not_interfere_with_backtick",
+      "oracle_nodeid": "oracle/test_integration.py::TestColonFenceMarker::test_does_not_interfere_with_backtick",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestColonFenceMarker::test_unclosed_block",
+      "oracle_nodeid": "oracle/test_integration.py::TestColonFenceMarker::test_unclosed_block",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestExactMatch::test_exact_match_same_length",
+      "oracle_nodeid": "oracle/test_integration.py::TestExactMatch::test_exact_match_same_length",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestExactMatch::test_exact_match_longer_no_close",
+      "oracle_nodeid": "oracle/test_integration.py::TestExactMatch::test_exact_match_longer_no_close",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestExactMatch::test_exact_match_shorter_no_close",
+      "oracle_nodeid": "oracle/test_integration.py::TestExactMatch::test_exact_match_shorter_no_close",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestExactMatch::test_nesting_pattern",
+      "oracle_nodeid": "oracle/test_integration.py::TestExactMatch::test_nesting_pattern",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestExactMatch::test_unclosed_exact_match",
+      "oracle_nodeid": "oracle/test_integration.py::TestExactMatch::test_unclosed_exact_match",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestOverrideStandardFence::test_override_with_exact_match",
+      "oracle_nodeid": "oracle/test_integration.py::TestOverrideStandardFence::test_override_with_exact_match",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestOverrideStandardFence::test_override_add_colon_marker",
+      "oracle_nodeid": "oracle/test_integration.py::TestOverrideStandardFence::test_override_add_colon_marker",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestOverrideStandardFence::test_override_preserves_backtick_info_restriction",
+      "oracle_nodeid": "oracle/test_integration.py::TestOverrideStandardFence::test_override_preserves_backtick_info_restriction",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestMinMarkers::test_min_markers_default",
+      "oracle_nodeid": "oracle/test_integration.py::TestMinMarkers::test_min_markers_default",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestMinMarkers::test_min_markers_custom",
+      "oracle_nodeid": "oracle/test_integration.py::TestMinMarkers::test_min_markers_custom",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestDisallowMarkerInInfo::test_default_backtick_disallowed",
+      "oracle_nodeid": "oracle/test_integration.py::TestDisallowMarkerInInfo::test_default_backtick_disallowed",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestDisallowMarkerInInfo::test_tilde_in_tilde_info_allowed",
+      "oracle_nodeid": "oracle/test_integration.py::TestDisallowMarkerInInfo::test_tilde_in_tilde_info_allowed",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestDisallowMarkerInInfo::test_disallow_all",
+      "oracle_nodeid": "oracle/test_integration.py::TestDisallowMarkerInInfo::test_disallow_all",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_make_fence_rule.py::TestDisallowMarkerInInfo::test_disallow_none",
+      "oracle_nodeid": "oracle/test_integration.py::TestDisallowMarkerInInfo::test_disallow_none",
+      "layer": "integration",
+      "spec_section": "Fence Rule Factory",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_inline_after",
+      "oracle_nodeid": "oracle/test_plugin.py::test_inline_after",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_inline_before",
+      "oracle_nodeid": "oracle/test_plugin.py::test_inline_before",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_inline_at",
+      "oracle_nodeid": "oracle/test_plugin.py::test_inline_at",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_block_after",
+      "oracle_nodeid": "oracle/test_plugin.py::test_block_after",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_block_before",
+      "oracle_nodeid": "oracle/test_plugin.py::test_block_before",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_block_at",
+      "oracle_nodeid": "oracle/test_plugin.py::test_block_at",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_core_after",
+      "oracle_nodeid": "oracle/test_plugin.py::test_core_after",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_core_before",
+      "oracle_nodeid": "oracle/test_plugin.py::test_core_before",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_core_at",
+      "oracle_nodeid": "oracle/test_plugin.py::test_core_at",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": [
+        "pytest:capsys"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_add_terminator_char",
+      "oracle_nodeid": "oracle/test_plugin.py::test_add_terminator_char",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_add_terminator_char_idempotent",
+      "oracle_nodeid": "oracle/test_plugin.py::test_add_terminator_char_idempotent",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_plugin_creation.py::test_add_terminator_char_rebuilds",
+      "oracle_nodeid": "oracle/test_plugin.py::test_add_terminator_char_rebuilds",
+      "layer": "integration",
+      "spec_section": "Plugin Rule Registration",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_token.py::test_token",
+      "oracle_nodeid": "oracle/test_token.py::test_token",
+      "layer": "integration",
+      "spec_section": "Token And Syntax Tree Views",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api/test_token.py::test_serialization",
+      "oracle_nodeid": "oracle/test_token.py::test_serialization",
+      "layer": "integration",
+      "spec_section": "Token And Syntax Tree Views",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_parse",
+      "oracle_nodeid": "oracle/test_cli.py::test_parse",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_parse_fail",
+      "oracle_nodeid": "oracle/test_cli.py::test_parse_fail",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_non_utf8",
+      "oracle_nodeid": "oracle/test_cli.py::test_non_utf8",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_print_heading",
+      "oracle_nodeid": "oracle/test_cli.py::test_print_heading",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_interactive",
+      "oracle_nodeid": "oracle/test_cli.py::test_interactive",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_main_no_args_is_interactive",
+      "oracle_nodeid": "oracle/test_cli.py::test_main_no_args_is_interactive",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_parse_output",
+      "oracle_nodeid": "oracle/test_cli.py::test_parse_output",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_stdin",
+      "oracle_nodeid": "oracle/test_cli.py::test_stdin",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_multiple_files",
+      "oracle_nodeid": "oracle/test_cli.py::test_multiple_files",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_interactive_render",
+      "oracle_nodeid": "oracle/test_cli.py::test_interactive_render",
+      "layer": "system_e2e",
+      "spec_section": "Command-Line Workflows",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_tree.py::test_tree_to_tokens_conversion",
+      "oracle_nodeid": "oracle/test_tree.py::test_tree_to_tokens_conversion",
+      "layer": "integration",
+      "spec_section": "Token And Syntax Tree Views",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_tree.py::test_property_passthrough",
+      "oracle_nodeid": "oracle/test_tree.py::test_property_passthrough",
+      "layer": "integration",
+      "spec_section": "Token And Syntax Tree Views",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_tree.py::test_type",
+      "oracle_nodeid": "oracle/test_tree.py::test_type",
+      "layer": "integration",
+      "spec_section": "Token And Syntax Tree Views",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_tree.py::test_sibling_traverse",
+      "oracle_nodeid": "oracle/test_tree.py::test_sibling_traverse",
+      "layer": "integration",
+      "spec_section": "Token And Syntax Tree Views",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_tree.py::test_walk",
+      "oracle_nodeid": "oracle/test_tree.py::test_walk",
+      "layer": "integration",
+      "spec_section": "Token And Syntax Tree Views",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[#-<h1></h1>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_empty_h1",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[###-<h3></h3>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_empty_h3",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[` `-<p><code> </code></p>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_inline_code_space",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[``````-<pre><code></code></pre>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_empty_fence",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[--<ul>\\n<li></li>\\n</ul>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_empty_unordered_item",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[1.-<ol>\\n<li></li>\\n</ol>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_empty_ordered_item",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[>-<blockquote></blockquote>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_empty_blockquote",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[----<hr />\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_horizontal_rule",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[<h1></h1>-<h1></h1>]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_html_block",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[p-<p>p</p>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_paragraph",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[[reference]: /url-]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_reference_definition",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[    indented code block-<pre><code>indented code block\\n</code></pre>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_indented_code",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_no_end_newline.py::test_no_end_newline[> test\\n>-<blockquote>\\n<p>test</p>\\n</blockquote>\\n]",
+      "oracle_nodeid": "oracle/test_rendering.py::test_no_end_newline_blockquote_after_text",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_references.py::test_ref_definitions",
+      "oracle_nodeid": "oracle/test_references.py::test_ref_definitions",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_misc.py::test_highlight_arguments",
+      "oracle_nodeid": "oracle/test_misc.py::test_highlight_arguments",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_port/test_misc.py::test_ordered_list_info",
+      "oracle_nodeid": "oracle/test_misc.py::test_ordered_list_info",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cmark_spec/test_spec.py::test_spec[entry0]",
+      "oracle_nodeid": "oracle/test_commonmark.py::test_commonmark_tab_example_1",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cmark_spec/test_spec.py::test_spec[entry1]",
+      "oracle_nodeid": "oracle/test_commonmark.py::test_commonmark_tab_example_2",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cmark_spec/test_spec.py::test_spec[entry2]",
+      "oracle_nodeid": "oracle/test_commonmark.py::test_commonmark_tab_example_3",
+      "layer": "integration",
+      "spec_section": "Markdown Rendering Behavior",
+      "fixture_dependencies": []
+    }
+  ]
+}

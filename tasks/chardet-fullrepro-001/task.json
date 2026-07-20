@@ -1,0 +1,273 @@
+{
+  "instance_id": "chardet-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "chardet/chardet",
+  "repo_commit": "b5b2aa5ff41b17b63b04dfe6a803dbebe820c8ad",
+  "spec_version": "v2",
+  "oracle_version": "2026-07-20-native-v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 90,
+    "source": "upstream_rewritten",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "PYTHONPATH=<solution_dir>",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "-p",
+      "no:cacheprovider"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_detect_binary_gif_signature": "atomic",
+    "oracle/test_atomic.py::test_detect_binary_jpeg_signature": "atomic",
+    "oracle/test_atomic.py::test_detect_binary_mp4_signature": "atomic",
+    "oracle/test_atomic.py::test_detect_binary_gif_with_all_encoding_eras": "atomic",
+    "oracle/test_atomic.py::test_detect_binary_jpeg_with_all_encoding_eras": "atomic",
+    "oracle/test_atomic.py::test_detect_binary_mp4_with_all_encoding_eras": "atomic",
+    "oracle/test_atomic.py::test_streaming_gif_matches_direct_detection": "atomic",
+    "oracle/test_atomic.py::test_streaming_jpeg_matches_direct_detection": "atomic",
+    "oracle/test_atomic.py::test_streaming_mp4_matches_direct_detection": "atomic",
+    "oracle/test_atomic.py::test_detect_returns_four_field_dictionary": "atomic",
+    "oracle/test_atomic.py::test_detect_ascii_returns_full_confidence": "atomic",
+    "oracle/test_atomic.py::test_detect_utf8_bom_returns_compatibility_name": "atomic",
+    "oracle/test_atomic.py::test_detect_utf8_multibyte_text": "atomic",
+    "oracle/test_atomic.py::test_detect_empty_uses_utf8_fallback": "atomic",
+    "oracle/test_atomic.py::test_detect_accepts_modern_web_encoding_era": "atomic",
+    "oracle/test_atomic.py::test_modern_web_era_excludes_legacy_greek_encoding": "atomic",
+    "oracle/test_atomic.py::test_detect_respects_max_bytes": "atomic",
+    "oracle/test_atomic.py::test_detect_all_returns_nonempty_list": "atomic",
+    "oracle/test_atomic.py::test_detect_all_is_sorted_by_descending_confidence": "atomic",
+    "oracle/test_atomic.py::test_detect_all_returns_four_field_dictionaries": "atomic",
+    "oracle/test_atomic.py::test_detect_all_top_matches_detect_for_ascii": "atomic",
+    "oracle/test_atomic.py::test_detect_all_top_matches_detect_for_utf8": "atomic",
+    "oracle/test_atomic.py::test_detect_all_top_matches_detect_for_bom": "atomic",
+    "oracle/test_atomic.py::test_version_is_nonempty_and_starts_with_digit": "atomic",
+    "oracle/test_atomic.py::test_legacy_rename_default_keeps_ascii_name": "atomic",
+    "oracle/test_atomic.py::test_legacy_rename_false_keeps_ascii_name": "atomic",
+    "oracle/test_atomic.py::test_legacy_rename_true_maps_ascii_to_windows_1252": "atomic",
+    "oracle/test_atomic.py::test_legacy_rename_default_with_all_eras_keeps_ascii": "atomic",
+    "oracle/test_atomic.py::test_detect_all_legacy_rename_true_maps_ascii": "atomic",
+    "oracle/test_atomic.py::test_detect_all_legacy_rename_false_keeps_ascii": "atomic",
+    "oracle/test_atomic.py::test_streaming_legacy_rename_true_maps_ascii": "atomic",
+    "oracle/test_atomic.py::test_streaming_legacy_rename_false_keeps_ascii": "atomic",
+    "oracle/test_atomic.py::test_compatibility_name_maps_euc_jis_to_euc_jp": "atomic",
+    "oracle/test_atomic.py::test_detect_all_default_filters_low_confidence_results": "atomic",
+    "oracle/test_atomic.py::test_detect_all_ignore_threshold_returns_candidates": "atomic",
+    "oracle/test_atomic.py::test_detect_all_threshold_falls_back_when_everything_is_low": "atomic",
+    "oracle/test_atomic.py::test_non_all_language_filter_emits_deprecation_warning": "atomic",
+    "oracle/test_atomic.py::test_all_language_filter_emits_no_deprecation_warning": "atomic",
+    "oracle/test_atomic.py::test_detect_rejects_boolean_max_bytes": "atomic",
+    "oracle/test_atomic.py::test_public_detection_identifies_plain_ascii": "atomic",
+    "oracle/test_atomic.py::test_public_detection_identifies_ascii_whitespace": "atomic",
+    "oracle/test_atomic.py::test_public_detection_does_not_label_high_byte_as_ascii": "atomic",
+    "oracle/test_atomic.py::test_public_detection_does_not_label_utf8_multibyte_as_ascii": "atomic",
+    "oracle/test_atomic.py::test_public_detection_empty_input_is_not_ascii": "atomic",
+    "oracle/test_atomic.py::test_public_detection_identifies_single_ascii_byte": "atomic",
+    "oracle/test_atomic.py::test_public_detection_identifies_all_printable_ascii": "atomic",
+    "oracle/test_atomic.py::test_public_detection_does_not_label_dense_nulls_as_ascii": "atomic",
+    "oracle/test_atomic.py::test_public_detection_identifies_null_separated_paths": "atomic",
+    "oracle/test_atomic.py::test_public_detection_accepts_ascii_at_five_percent_null_boundary": "atomic",
+    "oracle/test_atomic.py::test_public_detection_rejects_ascii_above_null_boundary": "atomic",
+    "oracle/test_atomic.py::test_public_detection_rejects_ascii_with_high_null_fraction": "atomic",
+    "oracle/test_atomic.py::test_public_detection_rejects_ascii_with_null_and_high_byte": "atomic",
+    "oracle/test_atomic.py::test_public_detection_pure_ascii_retains_full_confidence": "atomic",
+    "oracle/test_atomic.py::test_empty_input_is_text_not_binary": "atomic",
+    "oracle/test_atomic.py::test_plain_ascii_is_text_not_binary": "atomic",
+    "oracle/test_atomic.py::test_newlines_and_tabs_are_text_not_binary": "atomic",
+    "oracle/test_atomic.py::test_all_null_bytes_are_binary": "atomic",
+    "oracle/test_atomic.py::test_high_null_concentration_is_binary": "atomic",
+    "oracle/test_atomic.py::test_single_null_in_large_text_is_not_binary": "atomic",
+    "oracle/test_atomic.py::test_control_characters_indicate_binary": "atomic",
+    "oracle/test_atomic.py::test_few_control_characters_in_large_text_are_not_binary": "atomic",
+    "oracle/test_atomic.py::test_jpeg_magic_is_binary": "atomic",
+    "oracle/test_atomic.py::test_utf8_text_is_not_binary": "atomic",
+    "oracle/test_atomic.py::test_max_bytes_ignores_binary_tail": "atomic",
+    "oracle/test_atomic.py::test_exactly_one_percent_control_bytes_is_not_binary": "atomic",
+    "oracle/test_atomic.py::test_above_one_percent_control_bytes_is_binary": "atomic",
+    "oracle/test_atomic.py::test_utf8_bom_precedes_statistical_detection": "atomic",
+    "oracle/test_atomic.py::test_utf16_little_endian_bom": "atomic",
+    "oracle/test_atomic.py::test_utf16_big_endian_bom": "atomic",
+    "oracle/test_atomic.py::test_utf32_little_endian_bom": "atomic",
+    "oracle/test_atomic.py::test_utf32_big_endian_bom": "atomic",
+    "oracle/test_atomic.py::test_plain_text_has_no_bom_result": "atomic",
+    "oracle/test_atomic.py::test_empty_input_has_no_bom_result": "atomic",
+    "oracle/test_atomic.py::test_partial_utf8_bom_is_not_treated_as_bom": "atomic",
+    "oracle/test_atomic.py::test_utf32_little_endian_is_checked_before_utf16": "atomic",
+    "oracle/test_atomic.py::test_bare_utf32_little_endian_bom_is_valid": "atomic",
+    "oracle/test_atomic.py::test_ebcdic_text_is_not_misdetected_as_gb18030": "atomic",
+    "oracle/test_atomic.py::test_latin_text_is_not_misdetected_as_cp932": "atomic",
+    "oracle/test_atomic.py::test_real_japanese_remains_a_cjk_candidate": "atomic",
+    "oracle/test_atomic.py::test_real_chinese_remains_a_cjk_candidate": "atomic",
+    "oracle/test_atomic.py::test_real_korean_remains_a_cjk_candidate": "atomic",
+    "oracle/test_atomic.py::test_german_macroman_is_not_misdetected_as_cjk": "atomic",
+    "oracle/test_integration.py::test_sparse_null_separators_remain_ascii_text": "integration",
+    "oracle/test_integration.py::test_misaligned_utf32_little_endian_falls_back_to_utf16": "integration",
+    "oracle/test_integration.py::test_misaligned_utf32_big_endian_falls_through_to_binary": "integration",
+    "oracle/test_integration.py::test_cli_detects_ascii_file": "system_e2e",
+    "oracle/test_integration.py::test_cli_detects_utf8_file": "system_e2e",
+    "oracle/test_integration.py::test_cli_reads_standard_input": "system_e2e",
+    "oracle/test_integration.py::test_cli_version_has_numeric_version": "system_e2e",
+    "oracle/test_integration.py::test_cli_minimal_outputs_only_encoding": "system_e2e"
+  },
+  "stats": {
+    "atomic": 82,
+    "integration": 3,
+    "system_e2e": 5
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 90,
+    "total": 90
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 90,
+    "summary": {
+      "collection_error": 82,
+      "failed": 8,
+      "total": 90
+    },
+    "by_layer": {
+      "atomic": {
+        "collection_error": 82,
+        "total": 82
+      },
+      "integration": {
+        "failed": 3,
+        "total": 3
+      },
+      "system_e2e": {
+        "failed": 5,
+        "total": 5
+      }
+    },
+    "provenance": "task-local explicit shadow package"
+  },
+  "candidate_score": {
+    "runner": "opencode",
+    "model": "gpt-5.5",
+    "run_id": "opencode-gpt-5.5-chardet-fullrepro-001-20260702T035140Z",
+    "passed": 54,
+    "failed": 36,
+    "total": 90,
+    "pass_rate": 0.6,
+    "by_layer": {
+      "atomic": {
+        "passed": 50,
+        "failed": 32,
+        "total": 82
+      },
+      "integration": {
+        "passed": 1,
+        "failed": 2,
+        "total": 3
+      },
+      "system_e2e": {
+        "passed": 3,
+        "failed": 2,
+        "total": 5
+      }
+    },
+    "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-chardet-fullrepro-001-20260702T035140Z/output/chardet/__init__.py",
+    "provenance_clean": true
+  },
+  "candidate_scores": [
+    {
+      "runner": "opencode",
+      "model": "gpt-5.5",
+      "run_id": "opencode-gpt-5.5-chardet-fullrepro-001-20260702T035140Z",
+      "passed": 54,
+      "failed": 36,
+      "total": 90,
+      "pass_rate": 0.6,
+      "by_layer": {
+        "atomic": {
+          "passed": 50,
+          "failed": 32,
+          "total": 82
+        },
+        "integration": {
+          "passed": 1,
+          "failed": 2,
+          "total": 3
+        },
+        "system_e2e": {
+          "passed": 3,
+          "failed": 2,
+          "total": 5
+        }
+      },
+      "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-chardet-fullrepro-001-20260702T035140Z/output/chardet/__init__.py",
+      "provenance_clean": true
+    },
+    {
+      "runner": "swe-agent",
+      "model": "gpt-5.5",
+      "run_id": "swe-agent-gpt-5.5-chardet-fullrepro-001-20260702T035227Z",
+      "passed": 40,
+      "failed": 50,
+      "total": 90,
+      "pass_rate": 0.4444444444444444,
+      "by_layer": {
+        "atomic": {
+          "passed": 38,
+          "failed": 44,
+          "total": 82
+        },
+        "integration": {
+          "passed": 0,
+          "failed": 3,
+          "total": 3
+        },
+        "system_e2e": {
+          "passed": 2,
+          "failed": 3,
+          "total": 5
+        }
+      },
+      "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-sweagent/swe-agent-gpt-5.5-chardet-fullrepro-001-20260702T035227Z/output/chardet/__init__.py",
+      "provenance_clean": true
+    }
+  ],
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_upstream_rewritten",
+      "D_coverage_gap": "FULL"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "binary-and-bom-detection",
+      "description": "The best unchanged candidate misses public binary MIME signatures, sparse-null boundaries, and multiple UTF-16/UTF-32 BOM rules.",
+      "affected_tests": 18
+    },
+    {
+      "dimension": "option-and-cjk-coverage",
+      "description": "The best unchanged candidate misses era, legacy-name, warning, and CJK gating behavior across independent cases.",
+      "affected_tests": 10
+    },
+    {
+      "dimension": "cli-contract",
+      "description": "The best unchanged candidate detects file/stdin content but misses numeric version and exact minimal output.",
+      "affected_tests": 2
+    }
+  ],
+  "labels": [
+    "upstream-rewritten-oracle",
+    "native-public-api",
+    "discriminating"
+  ],
+  "caveats": [
+    "Current main uses same-process pytest and is not adversarial black-box proof."
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "verdict": "PASS",
+  "blocking_issues": [],
+  "nonblocking_issues": [
+    "Candidate pass rate 39.7% (282/711) falls below typical high-performance thresholds, but no policy requires a minimum candidate pass rate; performance does not block qualification."
+  ],
+  "fairness_gates": {
+    "A_spec_mapping": "passed",
+    "B_failure_pattern": "passed",
+    "C_generated_only": "not_applicable_upstream_rewritten",
+    "D_coverage_gap": "FULL"
+  },
+  "score_evidence": {
+    "reference": {
+      "passed": 711,
+      "skipped": 81,
+      "total": 792,
+      "pass_rate_excluding_skips": 1.0
+    },
+    "candidate": {
+      "passed": 282,
+      "failed": 429,
+      "skipped": 81,
+      "total": 792,
+      "pass_rate_excluding_skips": 0.39662447257383965
+    },
+    "dummy": {
+      "passed": 0,
+      "collection_error": 792,
+      "pass_rate": 0.0
+    },
+    "fairness_gates_status": "all passed",
+    "mapping_audit": "source 792 cases mapped 1:1 to oracle; sampled nodeids consistent with spec sections; no carrier dependency detected."
+  },
+  "recommended_status": "QUALIFIED",
+  "trust_boundary_note": "Same-process pytest isolation does not guarantee adversarial modifications to the candidate cannot affect scoring; this is a required caveat.",
+  "review_model": "deepseek-v4-pro",
+  "reviewed_at": "2026-07-20",
+  "request_sha256": "d2a52dc19432dc025e45a6f6c27d037365d49aa7f2ea04053a6dbfcc3001687d",
+  "response_id": "b8405e58-8757-4432-8ff7-8b4f85241408"
+}

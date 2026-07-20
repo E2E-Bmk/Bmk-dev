@@ -1,0 +1,102 @@
+{
+  "date": "2026-07-20",
+  "harness_commit": "3eb10a6ae01266ada9e5f2b7f1c823d7395b404e",
+  "commands": {
+    "verify": "python harness/verify_task.py cerberus-fullrepro-001",
+    "import_lint": "python harness/oracle_import_lint.py cerberus-fullrepro-001 tasks/cerberus-fullrepro-001/spec.md",
+    "score": "python harness/score_pytest_original.py --source-repo tasks/cerberus-fullrepro-001/validation/source --nodeids tasks/cerberus-fullrepro-001/kept_nodeids.txt --taxonomy tasks/cerberus-fullrepro-001/taxonomy.jsonl --remove-path cerberus --timeout 120 --pytest-arg=-o --pytest-arg=addopts= --solution-dir <reference|dummy|candidate> --run-dir <fresh-run-dir> --json-out <score-file>"
+  },
+  "results": {
+    "verify": "QUALIFIED_VALID",
+    "import_lint": "LINT_PASS",
+    "reference": {
+      "summary": {
+        "passed": 84,
+        "total": 84
+      },
+      "pass_rate_excluding_skips": 1.0,
+      "by_layer": {
+        "atomic": {
+          "passed": 28,
+          "total": 28
+        },
+        "integration": {
+          "passed": 46,
+          "total": 46
+        },
+        "system_e2e": {
+          "passed": 10,
+          "total": 10
+        }
+      }
+    },
+    "dummy": {
+      "summary": {
+        "failed": 84,
+        "total": 84
+      },
+      "pass_rate_excluding_skips": 0.0,
+      "by_layer": {
+        "atomic": {
+          "failed": 28,
+          "total": 28
+        },
+        "integration": {
+          "failed": 46,
+          "total": 46
+        },
+        "system_e2e": {
+          "failed": 10,
+          "total": 10
+        }
+      }
+    },
+    "candidate": {
+      "summary": {
+        "failed": 9,
+        "passed": 75,
+        "total": 84
+      },
+      "pass_rate_excluding_skips": 0.8928571428571429,
+      "by_layer": {
+        "atomic": {
+          "passed": 28,
+          "total": 28
+        },
+        "integration": {
+          "failed": 7,
+          "passed": 39,
+          "total": 46
+        },
+        "system_e2e": {
+          "failed": 2,
+          "passed": 8,
+          "total": 10
+        }
+      }
+    }
+  },
+  "provenance": {
+    "reference_import": "/root/autodl-tmp/e2e/cerberus/cerberus/__init__.py",
+    "candidate_import": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/cerberus/codex-subagent-gpt-5.5-cerberus-fullrepro-001-20260702T000000Z/output/cerberus/__init__.py",
+    "candidate_python_sha256": {
+      "cerberus/__init__.py": "f33031331b9d7ec232659109c63b0c8413d4b73b234de6a109cfe77539e209c8",
+      "cerberus/errors.py": "a50fa0d86b723a78dae978baebef7c41b8ff27b531ad437ac294521d34a5379d",
+      "cerberus/schema.py": "4fed0c0eb57e562ddd15fbd0a69cf27d2f6c870152c872ef06efe3100500db4a",
+      "cerberus/utils.py": "1266a9f0a9a3ae31b2a6d480487c406d34343889a23793fd2edf3f148961d8ab",
+      "cerberus/validator.py": "bb913e9b4ff1dacf1dc1e431ae5332768041744c15b20e90e966ed39ac35edca"
+    },
+    "candidate_anti_cheat_scan": "PASS",
+    "historical_common_set_outcome_mismatches": 0
+  },
+  "fairness": {
+    "canonical_cases": 84,
+    "upstream_transplanted": 81,
+    "generated_required_fields_gate_d_repair": 3,
+    "gate_A_spec_mapping": "PASS",
+    "gate_B_failure_pattern": "PASS",
+    "gate_C_generated_only": "N/A_MIXED",
+    "gate_D_coverage_gap": "FULL_AFTER_REPAIR"
+  },
+  "caveat": "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+}

@@ -1,0 +1,241 @@
+{
+  "instance_id": "markdown-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "Python-Markdown/markdown",
+  "repo_commit": "d38fd4a6ee4ef897812bc481855a7f9d8a4ad4f1",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py",
+      "oracle/test_legacy.py",
+      "oracle/test_meta.py",
+      "oracle/test_blockquotes.py",
+      "oracle/test_code_blocks.py",
+      "oracle/test_headers.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 90,
+    "source": "upstream_rewritten",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "--remove-path",
+      "markdown"
+    ],
+    "pytest_args": [
+      "--continue-on-collection-errors",
+      "-p",
+      "no:cacheprovider"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::TestMarkdownBasics::testBlankInput": "atomic",
+    "oracle/test_atomic.py::TestMarkdownBasics::testDotNotationExtension": "atomic",
+    "oracle/test_atomic.py::TestMarkdownBasics::testDotNotationExtensionWithClass": "atomic",
+    "oracle/test_atomic.py::TestMarkdownBasics::testEntryPointExtension": "atomic",
+    "oracle/test_atomic.py::TestMarkdownBasics::testInstanceExtension": "atomic",
+    "oracle/test_atomic.py::TestMarkdownBasics::testSimpleInput": "atomic",
+    "oracle/test_atomic.py::TestMarkdownBasics::testWhitespaceOnly": "atomic",
+    "oracle/test_atomic.py::TestConvertFile::testFileNames": "integration",
+    "oracle/test_atomic.py::TestConvertFile::testFileObjects": "integration",
+    "oracle/test_atomic.py::TestConvertFile::testStdinStdout": "integration",
+    "oracle/test_atomic.py::TestBlockParser::testParseChunk": "integration",
+    "oracle/test_atomic.py::TestBlockParser::testParseDocument": "integration",
+    "oracle/test_atomic.py::TestBlockParserState::testBlankState": "integration",
+    "oracle/test_atomic.py::TestBlockParserState::testIsSate": "integration",
+    "oracle/test_atomic.py::TestBlockParserState::testReset": "integration",
+    "oracle/test_atomic.py::TestBlockParserState::testSetSate": "integration",
+    "oracle/test_atomic.py::TestHtmlStash::testReset": "atomic",
+    "oracle/test_atomic.py::TestHtmlStash::testSimpleStore": "atomic",
+    "oracle/test_atomic.py::TestHtmlStash::testStoreMore": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testCreateRegistry": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testDeregister": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testGetIndexForName": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testIsSorted": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testRegisterDupplicate": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testRegisterWithoutPriority": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testRegistryContains": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testRegistryDelItem": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testRegistryGetItemByIndex": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testRegistryGetItemByItem": "atomic",
+    "oracle/test_atomic.py::RegistryTests::testRegistryIter": "atomic",
+    "oracle/test_integration.py::TestExtensionClass::testConfigAsKwargsOnInit": "atomic",
+    "oracle/test_integration.py::TestExtensionClass::testGetConfig": "atomic",
+    "oracle/test_integration.py::TestExtensionClass::testGetConfigDefault": "atomic",
+    "oracle/test_integration.py::TestExtensionClass::testGetConfigInfo": "atomic",
+    "oracle/test_integration.py::TestExtensionClass::testGetConfigs": "atomic",
+    "oracle/test_integration.py::TestExtensionClass::testSetConfig": "atomic",
+    "oracle/test_integration.py::TestExtensionClass::testSetConfigWithBadKey": "atomic",
+    "oracle/test_integration.py::TestMetaData::testBasicMetaData": "atomic",
+    "oracle/test_integration.py::TestMetaData::testMetaDataReset": "atomic",
+    "oracle/test_integration.py::TestMetaData::testMetaDataWithoutNewline": "atomic",
+    "oracle/test_integration.py::TestMetaData::testMissingMetaData": "atomic",
+    "oracle/test_integration.py::TestMetaData::testYamlMetaData": "atomic",
+    "oracle/test_integration.py::TestWikiLinks::testBasicWikilinks": "atomic",
+    "oracle/test_integration.py::TestWikiLinks::testComplexSettings": "atomic",
+    "oracle/test_integration.py::TestWikiLinks::testSimpleSettings": "atomic",
+    "oracle/test_integration.py::TestWikiLinks::testURLCallback": "atomic",
+    "oracle/test_integration.py::TestWikiLinks::testWikilinkWhitespace": "atomic",
+    "oracle/test_integration.py::TestWikiLinks::testWikilinksMetaData": "atomic",
+    "oracle/test_integration.py::TestAdmonition::testRE": "atomic",
+    "oracle/test_integration.py::TestSmarty::testCustomSubstitutions": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_amps_and_angle_encoding": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_angle_links_and_img": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_auto_links": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_backlash_escapes": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_blockquotes_with_code_blocks": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_codeblock_in_list": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_hard_wrapped": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_horizontal_rules": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_links_inline": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_links_reference": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_literal_quotes": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_markdown_documentation_basics": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_markdown_syntax": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_nested_blockquotes": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_ordered_and_unordered_list": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_strong_and_em_together": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_tabs": "atomic",
+    "oracle/test_legacy.py::TestBasic::test_tidyness": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_CRLF_line_ends": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_adjacent_headers": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_arabic": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_autolinks_with_asterisks": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_autolinks_with_asterisks_russian": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_backtick_escape": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_bidi": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_blank_block_quote": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_blank_lines_in_codeblocks": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_blockquote": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_blockquote_below_paragraph": "atomic",
+    "oracle/test_legacy.py::TestMisc::test_blockquote_hr": "atomic",
+    "oracle/test_meta.py::TestVersion::test__version__IsValid": "atomic",
+    "oracle/test_meta.py::TestVersion::test_get_version": "atomic",
+    "oracle/test_blockquotes.py::TestBlockquoteBlocks::test_nesting_limit": "atomic",
+    "oracle/test_code_blocks.py::TestCodeBlocks::test_codeblock_escape": "atomic",
+    "oracle/test_code_blocks.py::TestCodeBlocks::test_codeblock_second_line": "atomic",
+    "oracle/test_code_blocks.py::TestCodeBlocks::test_codeblock_with_blankline": "atomic",
+    "oracle/test_code_blocks.py::TestCodeBlocks::test_multiline_codeblock": "atomic",
+    "oracle/test_code_blocks.py::TestCodeBlocks::test_spaced_codeblock": "atomic",
+    "oracle/test_code_blocks.py::TestCodeBlocks::test_tabbed_codeblock": "atomic",
+    "oracle/test_headers.py::TestSetextHeaders::test_p_followed_by_setext_h1": "atomic"
+  },
+  "stats": {
+    "atomic": 81,
+    "integration": 9
+  },
+  "reference_score": {
+    "passed": 89,
+    "skipped": 1,
+    "total": 90,
+    "pass_rate_excluding_skips": 1.0,
+    "provenance": "/root/autodl-tmp/e2e/markdown/markdown/__init__.py",
+    "by_layer": {
+      "atomic": {
+        "passed": 80,
+        "skipped": 1,
+        "total": 81
+      },
+      "integration": {
+        "passed": 9,
+        "total": 9
+      }
+    }
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 90,
+    "pass_rate": 0.0,
+    "summary": {
+      "collection_error": 90,
+      "total": 90
+    },
+    "by_layer": {
+      "atomic": {
+        "collection_error": 81,
+        "total": 81
+      },
+      "integration": {
+        "collection_error": 9,
+        "total": 9
+      }
+    },
+    "provenance": "target package import blocked before collection"
+  },
+  "candidate_score": {
+    "run_id": "opencode-gpt-5.5-markdown-fullrepro-001-20260702T035140Z",
+    "model": "opencode-gpt-5.5",
+    "passed": 20,
+    "skipped": 1,
+    "failed": 69,
+    "total": 90,
+    "pass_rate_excluding_skips": 0.2247191011235955,
+    "summary": {
+      "passed": 20,
+      "failed": 69,
+      "skipped": 1,
+      "total": 90
+    },
+    "by_layer": {
+      "atomic": {
+        "passed": 17,
+        "failed": 63,
+        "skipped": 1,
+        "total": 81
+      },
+      "integration": {
+        "passed": 3,
+        "failed": 6,
+        "total": 9
+      }
+    },
+    "provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-markdown-fullrepro-001-20260702T035140Z/output/markdown/__init__.py",
+    "sha256": "98240e61160ba4aa8f984d1c3428ff0d8252a47503e374a95e5d99fc9cb3d1ba",
+    "historical_comparison": "Historical source-carrier score was 0 passed with 62 collection errors; removing dead imports and localizing support exposes 20 genuine passes and 69 behavioral failures."
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_upstream_rewritten",
+      "D_coverage_gap": "FULL"
+    },
+    "independent_review": "review/deepseekv4pro_review.json",
+    "qualification_gates": {
+      "reference_at_least_95_percent": "passed",
+      "dummy_zero": "passed",
+      "candidate_provenance_and_scoring": "passed",
+      "fairness_mapping": "passed",
+      "independent_review": "passed"
+    }
+  },
+  "caveats": [
+    "The current repository scorer uses same-process pytest isolation and does not defend against an actively malicious candidate."
+  ],
+  "reference_pass_rate": 1.0,
+  "labels": [
+    "upstream-rewritten-oracle",
+    "native-oracle",
+    "discriminating",
+    "full-coverage-audit"
+  ],
+  "weaknesses": [
+    {
+      "dimension": "markdown-feature-completeness",
+      "description": "The candidate handles a small core subset but fails extension, registry, file conversion, and legacy rendering behavior.",
+      "affected_tests": 69
+    }
+  ],
+  "validation": {
+    "date": "2026-07-20",
+    "platform": "Linux",
+    "pytest_mode": "same_process",
+    "collection_identity": "exact",
+    "oracle_import_lint": "passed",
+    "verify_task": "QUALIFIED_VALID"
+  }
+}

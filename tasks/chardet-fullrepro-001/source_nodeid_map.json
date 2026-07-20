@@ -1,0 +1,654 @@
+{
+  "schema_version": 1,
+  "mapping_contract": {
+    "source_nodeid": "upstream provenance",
+    "oracle_nodeid": "task-local native score identity",
+    "canonical_score_identity": "oracle_nodeid",
+    "source_type": "upstream_rewritten",
+    "carrier_dependency": false,
+    "subprocess_dependency": false
+  },
+  "validation": {
+    "expected_cases": 90,
+    "layers": {
+      "atomic": 82,
+      "integration": 3,
+      "system_e2e": 5
+    },
+    "reference_passed": 90,
+    "dummy_passed": 0,
+    "candidate_best_passed": 54
+  },
+  "cases": [
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect[None-None/sample-1.gif]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_binary_gif_signature",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect[None-None/sample-1.jpg]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_binary_jpeg_signature",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect[None-None/sample-1.mp4]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_binary_mp4_signature",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect_era_filtered[None-None/sample-1.gif]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_binary_gif_with_all_encoding_eras",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect_era_filtered[None-None/sample-1.jpg]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_binary_jpeg_with_all_encoding_eras",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect_era_filtered[None-None/sample-1.mp4]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_binary_mp4_with_all_encoding_eras",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect_streaming_parity[None-None/sample-1.gif]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_streaming_gif_matches_direct_detection",
+      "layer": "atomic",
+      "spec_section": "Streaming Detection; Cross-View Invariants",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect_streaming_parity[None-None/sample-1.jpg]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_streaming_jpeg_matches_direct_detection",
+      "layer": "atomic",
+      "spec_section": "Streaming Detection; Cross-View Invariants",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_accuracy.py::test_detect_streaming_parity[None-None/sample-1.mp4]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_streaming_mp4_matches_direct_detection",
+      "layer": "atomic",
+      "spec_section": "Streaming Detection; Cross-View Invariants",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_returns_dict",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_returns_four_field_dictionary",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_ascii",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_ascii_returns_full_confidence",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_utf8_bom",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_utf8_bom_returns_compatibility_name",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_utf8_multibyte",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_utf8_multibyte_text",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_empty",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_empty_uses_utf8_fallback",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_with_encoding_era",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_accepts_modern_web_encoding_era",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_encoding_era_excludes_legacy",
+      "oracle_nodeid": "oracle/test_atomic.py::test_modern_web_era_excludes_legacy_greek_encoding",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_with_max_bytes",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_respects_max_bytes",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_all_returns_list",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_returns_nonempty_list",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_all_sorted_by_confidence",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_is_sorted_by_descending_confidence",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_all_each_is_dict",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_returns_four_field_dictionaries",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_all_top_result_matches_detect[ascii]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_top_matches_detect_for_ascii",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking; Cross-View Invariants",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_all_top_result_matches_detect[utf8]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_top_matches_detect_for_utf8",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking; Cross-View Invariants; Representative Workflow",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_all_top_result_matches_detect[bom]",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_top_matches_detect_for_bom",
+      "layer": "atomic",
+      "spec_section": "BOM Handling; Cross-View Invariants",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_version_exists",
+      "oracle_nodeid": "oracle/test_atomic.py::test_version_is_nonempty_and_starts_with_digit",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_rename_legacy_default",
+      "oracle_nodeid": "oracle/test_atomic.py::test_legacy_rename_default_keeps_ascii_name",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_rename_legacy_false",
+      "oracle_nodeid": "oracle/test_atomic.py::test_legacy_rename_false_keeps_ascii_name",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_rename_legacy_true",
+      "oracle_nodeid": "oracle/test_atomic.py::test_legacy_rename_true_maps_ascii_to_windows_1252",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking; Error Semantics",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_rename_legacy_default_with_all_era",
+      "oracle_nodeid": "oracle/test_atomic.py::test_legacy_rename_default_with_all_eras_keeps_ascii",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_rename_legacy_detect_all",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_legacy_rename_true_maps_ascii",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking; Error Semantics",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_rename_legacy_detect_all_false",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_legacy_rename_false_keeps_ascii",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_rename_legacy_detector",
+      "oracle_nodeid": "oracle/test_atomic.py::test_streaming_legacy_rename_true_maps_ascii",
+      "layer": "atomic",
+      "spec_section": "Streaming Detection; Error Semantics",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_rename_legacy_detector_false",
+      "oracle_nodeid": "oracle/test_atomic.py::test_streaming_legacy_rename_false_keeps_ascii",
+      "layer": "atomic",
+      "spec_section": "Streaming Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_compat_names_eucjp",
+      "oracle_nodeid": "oracle/test_atomic.py::test_compatibility_name_maps_euc_jis_to_euc_jp",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_ignore_threshold_false_filters",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_default_filters_low_confidence_results",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_ignore_threshold_true_returns_all",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_ignore_threshold_returns_candidates",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_ignore_threshold_fallback",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_all_threshold_falls_back_when_everything_is_low",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_lang_filter_warning",
+      "oracle_nodeid": "oracle/test_atomic.py::test_non_all_language_filter_emits_deprecation_warning",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking; Error Semantics",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_lang_filter_all_no_warning",
+      "oracle_nodeid": "oracle/test_atomic.py::test_all_language_filter_emits_no_deprecation_warning",
+      "layer": "atomic",
+      "spec_section": "Encoding Options And Ranking; Error Semantics",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_api.py::test_detect_max_bytes_bool_raises",
+      "oracle_nodeid": "oracle/test_atomic.py::test_detect_rejects_boolean_max_bytes",
+      "layer": "atomic",
+      "spec_section": "Basic Detection; Error Semantics",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_pure_ascii",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_identifies_plain_ascii",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_ascii_with_common_whitespace",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_identifies_ascii_whitespace",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_high_byte_not_ascii",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_does_not_label_high_byte_as_ascii",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_utf8_multibyte_not_ascii",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_does_not_label_utf8_multibyte_as_ascii",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_empty_input",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_empty_input_is_not_ascii",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_single_ascii_byte",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_identifies_single_ascii_byte",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_all_printable_ascii",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_identifies_all_printable_ascii",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_null_byte_not_ascii",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_does_not_label_dense_nulls_as_ascii",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_ascii_with_null_separated_paths",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_identifies_null_separated_paths",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_ascii_with_null_at_boundary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_accepts_ascii_at_five_percent_null_boundary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_ascii_with_null_just_above_boundary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_rejects_ascii_above_null_boundary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_ascii_with_high_null_fraction",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_rejects_ascii_with_high_null_fraction",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_ascii_with_nulls_and_high_bytes",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_rejects_ascii_with_null_and_high_byte",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_pure_ascii_still_confidence_1",
+      "oracle_nodeid": "oracle/test_atomic.py::test_public_detection_pure_ascii_retains_full_confidence",
+      "layer": "atomic",
+      "spec_section": "Basic Detection",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_empty_input_is_not_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_empty_input_is_text_not_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_plain_ascii_is_not_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_plain_ascii_is_text_not_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_text_with_newlines_tabs_is_not_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_newlines_and_tabs_are_text_not_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_all_null_bytes_is_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_all_null_bytes_are_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_high_null_concentration_is_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_high_null_concentration_is_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_single_null_in_large_text_is_not_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_single_null_in_large_text_is_not_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_control_characters_indicate_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_control_characters_indicate_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_few_control_chars_in_large_text_is_not_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_few_control_characters_in_large_text_are_not_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_jpeg_header_is_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_jpeg_magic_is_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_utf8_text_is_not_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_utf8_text_is_not_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_max_bytes_respected",
+      "oracle_nodeid": "oracle/test_atomic.py::test_max_bytes_ignores_binary_tail",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_exactly_at_threshold_is_not_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_exactly_one_percent_control_bytes_is_not_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_binary.py::test_just_above_threshold_is_binary",
+      "oracle_nodeid": "oracle/test_atomic.py::test_above_one_percent_control_bytes_is_binary",
+      "layer": "atomic",
+      "spec_section": "ASCII And Binary Boundaries",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf8_bom",
+      "oracle_nodeid": "oracle/test_atomic.py::test_utf8_bom_precedes_statistical_detection",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf16_le_bom",
+      "oracle_nodeid": "oracle/test_atomic.py::test_utf16_little_endian_bom",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf16_be_bom",
+      "oracle_nodeid": "oracle/test_atomic.py::test_utf16_big_endian_bom",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf32_le_bom",
+      "oracle_nodeid": "oracle/test_atomic.py::test_utf32_little_endian_bom",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf32_be_bom",
+      "oracle_nodeid": "oracle/test_atomic.py::test_utf32_big_endian_bom",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_no_bom",
+      "oracle_nodeid": "oracle/test_atomic.py::test_plain_text_has_no_bom_result",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_empty_input",
+      "oracle_nodeid": "oracle/test_atomic.py::test_empty_input_has_no_bom_result",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_too_short_for_bom",
+      "oracle_nodeid": "oracle/test_atomic.py::test_partial_utf8_bom_is_not_treated_as_bom",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf32_le_checked_before_utf16_le",
+      "oracle_nodeid": "oracle/test_atomic.py::test_utf32_little_endian_is_checked_before_utf16",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf32_le_bom_only",
+      "oracle_nodeid": "oracle/test_atomic.py::test_bare_utf32_little_endian_bom_is_valid",
+      "layer": "atomic",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cjk_gating.py::test_ebcdic_not_detected_as_gb18030",
+      "oracle_nodeid": "oracle/test_atomic.py::test_ebcdic_text_is_not_misdetected_as_gb18030",
+      "layer": "atomic",
+      "spec_section": "CJK Candidate Gating",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cjk_gating.py::test_latin_text_not_detected_as_cp932",
+      "oracle_nodeid": "oracle/test_atomic.py::test_latin_text_is_not_misdetected_as_cp932",
+      "layer": "atomic",
+      "spec_section": "CJK Candidate Gating",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cjk_gating.py::test_real_cjk_still_detected",
+      "oracle_nodeid": "oracle/test_atomic.py::test_real_japanese_remains_a_cjk_candidate",
+      "layer": "atomic",
+      "spec_section": "CJK Candidate Gating",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cjk_gating.py::test_real_chinese_still_detected",
+      "oracle_nodeid": "oracle/test_atomic.py::test_real_chinese_remains_a_cjk_candidate",
+      "layer": "atomic",
+      "spec_section": "CJK Candidate Gating",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cjk_gating.py::test_real_korean_still_detected",
+      "oracle_nodeid": "oracle/test_atomic.py::test_real_korean_remains_a_cjk_candidate",
+      "layer": "atomic",
+      "spec_section": "CJK Candidate Gating",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cjk_gating.py::test_german_macroman_not_detected_as_cjk",
+      "oracle_nodeid": "oracle/test_atomic.py::test_german_macroman_is_not_misdetected_as_cjk",
+      "layer": "atomic",
+      "spec_section": "CJK Candidate Gating",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_ascii.py::test_ascii_with_sparse_null_separators",
+      "oracle_nodeid": "oracle/test_integration.py::test_sparse_null_separators_remain_ascii_text",
+      "layer": "integration",
+      "spec_section": "ASCII And Binary Boundaries; Cross-View Invariants",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf32_le_bom_falls_through_to_utf16_when_payload_not_aligned",
+      "oracle_nodeid": "oracle/test_integration.py::test_misaligned_utf32_little_endian_falls_back_to_utf16",
+      "layer": "integration",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_bom.py::test_utf32_be_bom_falls_through_when_payload_not_aligned",
+      "oracle_nodeid": "oracle/test_integration.py::test_misaligned_utf32_big_endian_falls_through_to_binary",
+      "layer": "integration",
+      "spec_section": "BOM Handling",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_cli_detects_file",
+      "oracle_nodeid": "oracle/test_integration.py::test_cli_detects_ascii_file",
+      "layer": "system_e2e",
+      "spec_section": "Command Line; Cross-View Invariants",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_cli_detects_utf8_file",
+      "oracle_nodeid": "oracle/test_integration.py::test_cli_detects_utf8_file",
+      "layer": "system_e2e",
+      "spec_section": "Command Line; Cross-View Invariants; Representative Workflow",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_cli_stdin",
+      "oracle_nodeid": "oracle/test_integration.py::test_cli_reads_standard_input",
+      "layer": "system_e2e",
+      "spec_section": "Command Line; Representative Workflow",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_cli_version",
+      "oracle_nodeid": "oracle/test_integration.py::test_cli_version_has_numeric_version",
+      "layer": "system_e2e",
+      "spec_section": "Command Line",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_cli.py::test_cli_minimal_flag",
+      "oracle_nodeid": "oracle/test_integration.py::test_cli_minimal_outputs_only_encoding",
+      "layer": "system_e2e",
+      "spec_section": "Command Line",
+      "fixture_dependencies": []
+    }
+  ]
+}

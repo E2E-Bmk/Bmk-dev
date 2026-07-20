@@ -1,0 +1,90 @@
+{
+  "date": "2026-07-20",
+  "harness_commit": "3eb10a6ae01266ada9e5f2b7f1c823d7395b404e",
+  "status": "QUALIFIED",
+  "commands": {
+    "verify": "python harness/verify_task.py parso-fullrepro-001",
+    "import_lint": "python harness/oracle_import_lint.py parso-fullrepro-001 tasks/parso-fullrepro-001/spec.md",
+    "score_source_staging": "mkdir -p tasks/parso-fullrepro-001/validation/scoring_source/oracle; cp tasks/parso-fullrepro-001/oracle/test_atomic.py tasks/parso-fullrepro-001/oracle/test_integration.py tasks/parso-fullrepro-001/validation/scoring_source/oracle/",
+    "reference_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/parso-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/e2e/parso --nodeids tasks/parso-fullrepro-001/kept_nodeids.txt --taxonomy tasks/parso-fullrepro-001/taxonomy.jsonl --run-dir tasks/parso-fullrepro-001/validation/runs/reference --remove-path parso --timeout 120 --json-out tasks/parso-fullrepro-001/validation/reference_score.json",
+    "dummy_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/parso-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/Bmk-upload-20260720/tasks/parso-fullrepro-001/validation/dummy --nodeids tasks/parso-fullrepro-001/kept_nodeids.txt --taxonomy tasks/parso-fullrepro-001/taxonomy.jsonl --run-dir tasks/parso-fullrepro-001/validation/runs/dummy --remove-path parso --timeout 120 --json-out tasks/parso-fullrepro-001/validation/dummy_score.json",
+    "candidate_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/parso-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-parso-fullrepro-001-20260702T035140Z/output --nodeids tasks/parso-fullrepro-001/kept_nodeids.txt --taxonomy tasks/parso-fullrepro-001/taxonomy.jsonl --run-dir tasks/parso-fullrepro-001/validation/runs/candidate --remove-path parso --timeout 120 --json-out tasks/parso-fullrepro-001/validation/candidate_score.json",
+    "candidate_provenance": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-parso-fullrepro-001-20260702T035140Z/output python -c \"import parso; print(parso.__file__)\""
+  },
+  "results": {
+    "verify": "QUALIFIED_VALID",
+    "import_lint": "LINT_PASS",
+    "reference": {
+      "summary": {
+        "passed": 84,
+        "total": 84
+      },
+      "pass_rate_excluding_skips": 1.0,
+      "by_layer": {
+        "atomic": {
+          "passed": 61,
+          "total": 61
+        },
+        "integration": {
+          "passed": 23,
+          "total": 23
+        }
+      }
+    },
+    "dummy": {
+      "summary": {
+        "failed": 84,
+        "passed": 0,
+        "total": 84
+      },
+      "pass_rate_excluding_skips": 0.0,
+      "collection_errors": 0,
+      "by_layer": {
+        "atomic": {
+          "failed": 61,
+          "total": 61
+        },
+        "integration": {
+          "failed": 23,
+          "total": 23
+        }
+      }
+    },
+    "candidate": {
+      "summary": {
+        "collection_error": 84,
+        "total": 84
+      },
+      "pass_rate_excluding_skips": 0.0,
+      "by_layer": {
+        "atomic": {
+          "collection_error": 61,
+          "total": 61
+        },
+        "integration": {
+          "collection_error": 23,
+          "total": 23
+        }
+      }
+    }
+  },
+  "provenance": {
+    "candidate_import": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-parso-fullrepro-001-20260702T035140Z/output/parso/__init__.py",
+    "candidate_import_clean": true,
+    "score_source": "task-local oracle/test_atomic.py and oracle/test_integration.py; transient scoring copy removed after runs"
+  },
+  "fairness": {
+    "canonical_cases": 84,
+    "all_cases_mapped": true,
+    "native_pytest_no_upstream_carrier": true,
+    "dummy_collected_without_error": true,
+    "independent_review": {
+      "credential_row": "deepseek-v4-pro",
+      "verdict": "PASS",
+      "recommended_status": "QUALIFIED",
+      "blocking_issues": 0,
+      "artifact": "review/deepseekv4pro_review.json"
+    }
+  },
+  "caveat": "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+}

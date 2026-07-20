@@ -1,0 +1,633 @@
+{
+  "schema_version": 1,
+  "mapping_contract": {
+    "source_nodeid": "prior filtered-test provenance",
+    "oracle_nodeid": "task-local native score identity",
+    "canonical_score_identity": "oracle_nodeid",
+    "carrier_dependency": false,
+    "subprocess_dependency": false
+  },
+  "validation": {
+    "expected_cases": 76,
+    "layers": {
+      "atomic": 13,
+      "integration": 53,
+      "system_e2e": 10
+    },
+    "reference_passed": 76,
+    "dummy_passed": 0,
+    "candidate_passed": 58,
+    "candidate_total": 76,
+    "candidate_outcome_mismatches_from_prior_oracle": 0
+  },
+  "cases": [
+    {
+      "source_nodeid": "tests/collections_test.py::test_dict_no_cycle",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dict_no_cycle",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "References, Cycles, And Identity; Dictionary Key Semantics",
+      "notes": "retained upstream: object dictionary keys with keys=True survive non-cyclic graph round trip"
+    },
+    {
+      "source_nodeid": "tests/collections_test.py::test_dict_self_cycle",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dict_self_cycle",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "References, Cycles, And Identity; Dictionary Key Semantics",
+      "notes": "retained upstream: object dictionary keys and self cycles survive keys=True round trip"
+    },
+    {
+      "source_nodeid": "tests/collections_test.py::test_dict_mutual_cycle",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dict_mutual_cycle",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "References, Cycles, And Identity; Dictionary Key Semantics",
+      "notes": "retained upstream: object dictionary keys and mutual cycles survive keys=True round trip"
+    },
+    {
+      "source_nodeid": "tests/collections_test.py::test_set_no_cycle",
+      "oracle_nodeid": "oracle/test_atomic.py::test_set_no_cycle",
+      "source_type": "upstream_transplanted",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Encoding And Decoding Behavior",
+      "notes": "retained upstream: set contents containing user objects survive round trip"
+    },
+    {
+      "source_nodeid": "tests/collections_test.py::test_set_self_cycle",
+      "oracle_nodeid": "oracle/test_atomic.py::test_set_self_cycle",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "References, Cycles, And Identity",
+      "notes": "retained upstream: set-backed object graph with self cycle survives round trip"
+    },
+    {
+      "source_nodeid": "tests/collections_test.py::test_set_mutual_cycle",
+      "oracle_nodeid": "oracle/test_atomic.py::test_set_mutual_cycle",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "References, Cycles, And Identity",
+      "notes": "retained upstream: set-backed object graph with mutual cycle survives round trip"
+    },
+    {
+      "source_nodeid": "tests/document_test.py::test_cyclical",
+      "oracle_nodeid": "oracle/test_atomic.py::test_cyclical",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "References, Cycles, And Identity; Representative Workflows",
+      "notes": "retained upstream: document tree cycle through child parent references round trips"
+    },
+    {
+      "source_nodeid": "tests/stdlib_test.py::test_random_uuid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_random_uuid",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Encoding And Decoding Behavior",
+      "notes": "retained upstream: uuid instance visible hex value survives round trip"
+    },
+    {
+      "source_nodeid": "tests/stdlib_test.py::test_known_uuid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_known_uuid",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Encoding And Decoding Behavior",
+      "notes": "retained upstream: known uuid visible hex value survives round trip"
+    },
+    {
+      "source_nodeid": "tests/stdlib_test.py::test_bytestream",
+      "oracle_nodeid": "oracle/test_atomic.py::test_bytestream",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Encoding And Decoding Behavior",
+      "notes": "retained upstream: bytes payload survives round trip"
+    },
+    {
+      "source_nodeid": "tests/wizard_test.py::test_with_pickling",
+      "oracle_nodeid": "oracle/test_atomic.py::test_with_pickling",
+      "source_type": "upstream_transplanted",
+      "layer": "system_e2e",
+      "spec_section": "Representative Workflows; References, Cycles, And Identity; Dictionary Key Semantics",
+      "notes": "retained upstream: keys=True workflow with cyclic object-key graph round trips"
+    },
+    {
+      "source_nodeid": "tests/zoneinfo_test.py::test_zoneinfo",
+      "oracle_nodeid": "oracle/test_atomic.py::test_zoneinfo",
+      "source_type": "upstream_transplanted",
+      "layer": "atomic",
+      "spec_section": "Encoding And Decoding Behavior",
+      "notes": "retained upstream: zoneinfo object equality survives round trip"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_import_surface_and_aliases_are_available",
+      "oracle_nodeid": "oracle/test_integration.py::test_import_surface_and_aliases_are_available",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Installable Surface; Public API",
+      "notes": "generated Track B public import surface coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_encode_decode_roundtrip_simple_object_state",
+      "oracle_nodeid": "oracle/test_integration.py::test_encode_decode_roundtrip_simple_object_state",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B encode/decode behavior coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_dumps_loads_aliases_roundtrip_container",
+      "oracle_nodeid": "oracle/test_integration.py::test_dumps_loads_aliases_roundtrip_container",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Installable Surface; Public API; Product State Model; Cross-View Invariants",
+      "notes": "generated Track B projection/API equivalence coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_unpicklable_false_returns_plain_json_data",
+      "oracle_nodeid": "oracle/test_integration.py::test_unpicklable_false_returns_plain_json_data",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B encode/decode behavior coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_primitives_lists_dicts_tuples_and_sets_roundtrip",
+      "oracle_nodeid": "oracle/test_integration.py::test_primitives_lists_dicts_tuples_and_sets_roundtrip",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B encode/decode behavior coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_tuple_and_set_become_lists_when_not_unpicklable",
+      "oracle_nodeid": "oracle/test_integration.py::test_tuple_and_set_become_lists_when_not_unpicklable",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B encode/decode behavior coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_pickler_flatten_and_unpickler_restore_match_encode_decode",
+      "oracle_nodeid": "oracle/test_integration.py::test_pickler_flatten_and_unpickler_restore_match_encode_decode",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Public API; Product State Model; Cross-View Invariants",
+      "notes": "generated Track B projection/API equivalence coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_unpickler_reset_false_preserves_reference_state",
+      "oracle_nodeid": "oracle/test_integration.py::test_unpickler_reset_false_preserves_reference_state",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Cross-View Invariants",
+      "notes": "generated Track B reference/cycle coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_repeated_object_reference_is_shared_after_decode",
+      "oracle_nodeid": "oracle/test_integration.py::test_repeated_object_reference_is_shared_after_decode",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Cross-View Invariants",
+      "notes": "generated Track B reference/cycle coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_object_cycle_roundtrips_to_restored_cycle",
+      "oracle_nodeid": "oracle/test_integration.py::test_object_cycle_roundtrips_to_restored_cycle",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Cross-View Invariants",
+      "notes": "generated Track B reference/cycle coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_list_cycle_roundtrips_to_restored_cycle",
+      "oracle_nodeid": "oracle/test_integration.py::test_list_cycle_roundtrips_to_restored_cycle",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Cross-View Invariants",
+      "notes": "generated Track B reference/cycle coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_dictionary_identity_is_preserved_in_current_format",
+      "oracle_nodeid": "oracle/test_integration.py::test_dictionary_identity_is_preserved_in_current_format",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Cross-View Invariants",
+      "notes": "generated Track B reference/cycle coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_make_refs_false_expands_repeated_objects",
+      "oracle_nodeid": "oracle/test_integration.py::test_make_refs_false_expands_repeated_objects",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Cross-View Invariants",
+      "notes": "generated Track B reference/cycle coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_unpicklable_false_breaks_cycles_with_none",
+      "oracle_nodeid": "oracle/test_integration.py::test_unpicklable_false_breaks_cycles_with_none",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Cross-View Invariants",
+      "notes": "generated Track B reference/cycle coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_make_refs_false_breaks_cycle_with_repr_string",
+      "oracle_nodeid": "oracle/test_integration.py::test_make_refs_false_breaks_cycle_with_repr_string",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "References, Cycles, And Identity; Cross-View Invariants",
+      "notes": "generated Track B reference/cycle coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_non_string_keys_default_to_strings",
+      "oracle_nodeid": "oracle/test_integration.py::test_non_string_keys_default_to_strings",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Dictionary Key Semantics; Cross-View Invariants",
+      "notes": "generated Track B dictionary key semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_keys_true_roundtrips_tuple_int_and_none_keys",
+      "oracle_nodeid": "oracle/test_integration.py::test_keys_true_roundtrips_tuple_int_and_none_keys",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Dictionary Key Semantics; Cross-View Invariants",
+      "notes": "generated Track B dictionary key semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_keys_true_roundtrips_object_keys_and_value_refs",
+      "oracle_nodeid": "oracle/test_integration.py::test_keys_true_roundtrips_object_keys_and_value_refs",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Dictionary Key Semantics; Cross-View Invariants",
+      "notes": "generated Track B dictionary key semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_keys_true_preserves_reserved_tag_string_keys_as_user_data",
+      "oracle_nodeid": "oracle/test_integration.py::test_keys_true_preserves_reserved_tag_string_keys_as_user_data",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Dictionary Key Semantics; Cross-View Invariants",
+      "notes": "generated Track B dictionary key semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_keys_true_decoded_without_keys_returns_escaped_strings",
+      "oracle_nodeid": "oracle/test_integration.py::test_keys_true_decoded_without_keys_returns_escaped_strings",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Dictionary Key Semantics; Cross-View Invariants",
+      "notes": "generated Track B dictionary key semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_numeric_keys_preserves_numeric_keys_in_flattened_projection",
+      "oracle_nodeid": "oracle/test_integration.py::test_numeric_keys_preserves_numeric_keys_in_flattened_projection",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Dictionary Key Semantics; Cross-View Invariants",
+      "notes": "generated Track B dictionary key semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_class_metadata_wire_tags_are_semantically_recognized",
+      "oracle_nodeid": "oracle/test_integration.py::test_class_metadata_wire_tags_are_semantically_recognized",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Class Metadata And Missing Classes; Public API",
+      "notes": "generated Track B class metadata/missing-class coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_type_and_function_metadata_roundtrip",
+      "oracle_nodeid": "oracle/test_integration.py::test_type_and_function_metadata_roundtrip",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Class Metadata And Missing Classes; Public API",
+      "notes": "generated Track B class metadata/missing-class coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_classes_mapping_restores_renamed_class",
+      "oracle_nodeid": "oracle/test_integration.py::test_classes_mapping_restores_renamed_class",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Class Metadata And Missing Classes; Public API",
+      "notes": "generated Track B class metadata/missing-class coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_classes_accept_single_sequence_and_dict_forms",
+      "oracle_nodeid": "oracle/test_integration.py::test_classes_accept_single_sequence_and_dict_forms",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Class Metadata And Missing Classes; Public API",
+      "notes": "generated Track B class metadata/missing-class coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_missing_class_ignore_warn_error_and_callback_behaviors",
+      "oracle_nodeid": "oracle/test_integration.py::test_missing_class_ignore_warn_error_and_callback_behaviors",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Class Metadata And Missing Classes; Public API",
+      "notes": "generated Track B class metadata/missing-class coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_invalid_on_missing_value_warns_and_ignores",
+      "oracle_nodeid": "oracle/test_integration.py::test_invalid_on_missing_value_warns_and_ignores",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Class Metadata And Missing Classes; Public API",
+      "notes": "generated Track B class metadata/missing-class coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_v1_decode_uses_legacy_reference_numbering_for_dicts",
+      "oracle_nodeid": "oracle/test_integration.py::test_v1_decode_uses_legacy_reference_numbering_for_dicts",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Class Metadata And Missing Classes; Public API",
+      "notes": "generated Track B class metadata/missing-class coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_getstate_and_setstate_are_used_for_object_state",
+      "oracle_nodeid": "oracle/test_integration.py::test_getstate_and_setstate_are_used_for_object_state",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_getstate_without_setstate_returns_non_dict_state_when_no_newargs",
+      "oracle_nodeid": "oracle/test_integration.py::test_getstate_without_setstate_returns_non_dict_state_when_no_newargs",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_getnewargs_and_getnewargs_ex_restore_tuple_subclasses",
+      "oracle_nodeid": "oracle/test_integration.py::test_getnewargs_and_getnewargs_ex_restore_tuple_subclasses",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_getinitargs_roundtrip_visible_state",
+      "oracle_nodeid": "oracle/test_integration.py::test_getinitargs_roundtrip_visible_state",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_reduce_listitems_restore_visible_mutation",
+      "oracle_nodeid": "oracle/test_integration.py::test_reduce_listitems_restore_visible_mutation",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_excluded_attributes_are_not_synthesized_after_decode",
+      "oracle_nodeid": "oracle/test_integration.py::test_excluded_attributes_are_not_synthesized_after_decode",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_slots_instances_roundtrip_public_slot_values",
+      "oracle_nodeid": "oracle/test_integration.py::test_slots_instances_roundtrip_public_slot_values",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_bytes_default_and_base85_roundtrip",
+      "oracle_nodeid": "oracle/test_integration.py::test_bytes_default_and_base85_roundtrip",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_invalid_base64_and_base85_payloads_restore_empty_bytes",
+      "oracle_nodeid": "oracle/test_integration.py::test_invalid_base64_and_base85_payloads_restore_empty_bytes",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "generated Track B error semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_max_depth_uses_repr_for_deeper_values",
+      "oracle_nodeid": "oracle/test_integration.py::test_max_depth_uses_repr_for_deeper_values",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_include_properties_adds_property_metadata_without_breaking_restore",
+      "oracle_nodeid": "oracle/test_integration.py::test_include_properties_adds_property_metadata_without_breaking_restore",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_handle_readonly_roundtrips_string_subclass_with_empty_slots",
+      "oracle_nodeid": "oracle/test_integration.py::test_handle_readonly_roundtrips_string_subclass_with_empty_slots",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_fail_safe_replaces_failed_object_and_records_exception",
+      "oracle_nodeid": "oracle/test_integration.py::test_fail_safe_replaces_failed_object_and_records_exception",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "generated Track B error semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_fail_safe_does_not_catch_keyboard_interrupt",
+      "oracle_nodeid": "oracle/test_integration.py::test_fail_safe_does_not_catch_keyboard_interrupt",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "generated Track B error semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_warn_true_emits_warning_for_unpicklable_file_object",
+      "oracle_nodeid": "oracle/test_integration.py::test_warn_true_emits_warning_for_unpicklable_file_object",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "generated Track B error semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_decode_invalid_json_raises_backend_exception",
+      "oracle_nodeid": "oracle/test_integration.py::test_decode_invalid_json_raises_backend_exception",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "generated Track B error semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_register_rejects_non_class_and_base_handler_methods_raise",
+      "oracle_nodeid": "oracle/test_integration.py::test_register_rejects_non_class_and_base_handler_methods_raise",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "generated Track B error semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_custom_handler_roundtrip_and_unregister_restores_default_behavior",
+      "oracle_nodeid": "oracle/test_integration.py::test_custom_handler_roundtrip_and_unregister_restores_default_behavior",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Custom Handlers; Cross-View Invariants",
+      "notes": "generated Track B handler coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_custom_handler_decorator_registration",
+      "oracle_nodeid": "oracle/test_integration.py::test_custom_handler_decorator_registration",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Custom Handlers; Cross-View Invariants",
+      "notes": "generated Track B handler coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_base_handler_applies_to_subclasses_until_specific_handler_overrides",
+      "oracle_nodeid": "oracle/test_integration.py::test_base_handler_applies_to_subclasses_until_specific_handler_overrides",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Custom Handlers; Cross-View Invariants",
+      "notes": "generated Track B handler coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_handler_context_passes_only_to_accepting_handlers",
+      "oracle_nodeid": "oracle/test_integration.py::test_handler_context_passes_only_to_accepting_handlers",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Custom Handlers; Cross-View Invariants",
+      "notes": "generated Track B handler coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_handler_can_share_reference_graph_with_context_reset_false",
+      "oracle_nodeid": "oracle/test_integration.py::test_handler_can_share_reference_graph_with_context_reset_false",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Custom Handlers; Cross-View Invariants",
+      "notes": "generated Track B handler coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_load_backend_and_preferred_backend_use_custom_module",
+      "oracle_nodeid": "oracle/test_integration.py::test_load_backend_and_preferred_backend_use_custom_module",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "JSON Backend Selection; Public API",
+      "notes": "generated Track B backend management coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_load_backend_returns_false_for_missing_components",
+      "oracle_nodeid": "oracle/test_integration.py::test_load_backend_returns_false_for_missing_components",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "JSON Backend Selection; Public API",
+      "notes": "generated Track B backend management coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_remove_backend_allows_absent_backend_and_preferred_unloaded_raises",
+      "oracle_nodeid": "oracle/test_integration.py::test_remove_backend_allows_absent_backend_and_preferred_unloaded_raises",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "JSON Backend Selection; Public API",
+      "notes": "generated Track B backend management coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_backend_encoder_decoder_options_persist_for_later_calls",
+      "oracle_nodeid": "oracle/test_integration.py::test_backend_encoder_decoder_options_persist_for_later_calls",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "JSON Backend Selection; Public API",
+      "notes": "generated Track B backend management coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_per_call_indent_and_separators_format_but_decode_same_projection",
+      "oracle_nodeid": "oracle/test_integration.py::test_per_call_indent_and_separators_format_but_decode_same_projection",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "JSON Backend Selection; Public API",
+      "notes": "generated Track B backend management coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_jsonbackend_fallthrough_raises_last_exception_when_enabled",
+      "oracle_nodeid": "oracle/test_integration.py::test_jsonbackend_fallthrough_raises_last_exception_when_enabled",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "JSON Backend Selection; Public API",
+      "notes": "generated Track B backend management coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_jsonbackend_no_fallthrough_raises_first_exception",
+      "oracle_nodeid": "oracle/test_integration.py::test_jsonbackend_no_fallthrough_raises_first_exception",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "JSON Backend Selection; Public API",
+      "notes": "generated Track B backend management coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_jsonbackend_with_no_loaded_backend_raises_assertion",
+      "oracle_nodeid": "oracle/test_integration.py::test_jsonbackend_with_no_loaded_backend_raises_assertion",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "generated Track B error semantics coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_workflow_object_graph_file_style_roundtrip",
+      "oracle_nodeid": "oracle/test_integration.py::test_workflow_object_graph_file_style_roundtrip",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Representative Workflows; Cross-View Invariants",
+      "notes": "generated Track B workflow coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_workflow_keys_true_for_non_string_keyed_object_graph",
+      "oracle_nodeid": "oracle/test_integration.py::test_workflow_keys_true_for_non_string_keyed_object_graph",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Representative Workflows; Cross-View Invariants",
+      "notes": "generated Track B workflow coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_workflow_custom_handler_with_backend_formatting",
+      "oracle_nodeid": "oracle/test_integration.py::test_workflow_custom_handler_with_backend_formatting",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Representative Workflows; Cross-View Invariants",
+      "notes": "generated Track B workflow coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_semantic_json_member_order_is_not_required_for_decode",
+      "oracle_nodeid": "oracle/test_integration.py::test_semantic_json_member_order_is_not_required_for_decode",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_semantic_json_whitespace_is_not_required_for_decode",
+      "oracle_nodeid": "oracle/test_integration.py::test_semantic_json_whitespace_is_not_required_for_decode",
+      "source_type": "generated",
+      "layer": "integration",
+      "spec_section": "Encoding And Decoding Behavior; Product State Model",
+      "notes": "generated Track B object-state/wire semantic coverage; observed against reference"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_no_optional_extension_is_needed_for_core_roundtrip",
+      "oracle_nodeid": "oracle/test_integration.py::test_no_optional_extension_is_needed_for_core_roundtrip",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Installable Surface; Public API",
+      "notes": "generated Track B public import surface coverage; observed against reference"
+    }
+  ]
+}

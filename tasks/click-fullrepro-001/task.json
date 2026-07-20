@@ -1,0 +1,227 @@
+{
+  "instance_id": "click-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "pallets/click",
+  "repo_commit": "679a7a0eccbdded7a6e85680bdaaf08003765e01",
+  "spec_version": "v2-native-cleanroom",
+  "oracle_version": "2026-07-20-native-v1",
+  "source_meta": {
+    "language": "Python",
+    "source_commit": "679a7a0eccbdded7a6e85680bdaaf08003765e01",
+    "legacy_evidence_roots": [
+      "/root/autodl-tmp/Bmk-git/tasks/click-fullrepro-001",
+      "/root/autodl-tmp/Bmk-Lizhiqian/tasks/click-fullrepro-001"
+    ]
+  },
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 82,
+    "source": "upstream_rewritten_native",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "scorer_isolation": [
+      "--remove-path",
+      "click"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_generated_command_names[plain]": "atomic",
+    "oracle/test_atomic.py::test_generated_command_names[command]": "atomic",
+    "oracle/test_atomic.py::test_generated_command_names[cmd]": "atomic",
+    "oracle/test_atomic.py::test_generated_command_names[group]": "atomic",
+    "oracle/test_atomic.py::test_generated_command_names[grp]": "atomic",
+    "oracle/test_atomic.py::test_command_and_group_repr": "atomic",
+    "oracle/test_atomic.py::test_command_callback_return_value": "atomic",
+    "oracle/test_atomic.py::test_explicit_parameters_precede_decorated_parameters": "atomic",
+    "oracle/test_atomic.py::test_scalar_option_conversion[string-default]": "atomic",
+    "oracle/test_atomic.py::test_scalar_option_conversion[string-explicit]": "atomic",
+    "oracle/test_atomic.py::test_scalar_option_conversion[int-default]": "atomic",
+    "oracle/test_atomic.py::test_scalar_option_conversion[int-explicit]": "atomic",
+    "oracle/test_atomic.py::test_scalar_option_conversion[float-default]": "atomic",
+    "oracle/test_atomic.py::test_scalar_option_conversion[float-explicit]": "atomic",
+    "oracle/test_atomic.py::test_scalar_option_conversion[uuid-default]": "atomic",
+    "oracle/test_atomic.py::test_scalar_option_conversion[uuid-explicit]": "atomic",
+    "oracle/test_atomic.py::test_invalid_scalar_option_is_usage_error[integer]": "atomic",
+    "oracle/test_atomic.py::test_invalid_scalar_option_is_usage_error[float]": "atomic",
+    "oracle/test_atomic.py::test_invalid_scalar_option_is_usage_error[uuid]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[one]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[true]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[t]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[yes]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[y]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[on]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[zero]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[false]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[f]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[no]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[n]": "atomic",
+    "oracle/test_atomic.py::test_boolean_option_conversion_is_case_insensitive[off]": "atomic",
+    "oracle/test_atomic.py::test_dual_boolean_switch[on-true]": "atomic",
+    "oracle/test_atomic.py::test_dual_boolean_switch[on-false]": "atomic",
+    "oracle/test_atomic.py::test_dual_boolean_switch[on-none]": "atomic",
+    "oracle/test_atomic.py::test_dual_boolean_switch[off]": "atomic",
+    "oracle/test_atomic.py::test_dual_boolean_switch[default-false]": "atomic",
+    "oracle/test_atomic.py::test_dual_boolean_switch[default-none]": "atomic",
+    "oracle/test_atomic.py::test_competing_flag_values[upper]": "atomic",
+    "oracle/test_atomic.py::test_competing_flag_values[lower]": "atomic",
+    "oracle/test_atomic.py::test_competing_flag_values[last-lower]": "atomic",
+    "oracle/test_atomic.py::test_competing_flag_values[last-upper]": "atomic",
+    "oracle/test_atomic.py::test_argument_usage_metavar[required-default]": "atomic",
+    "oracle/test_atomic.py::test_argument_usage_metavar[optional]": "atomic",
+    "oracle/test_atomic.py::test_argument_usage_metavar[variadic-optional]": "atomic",
+    "oracle/test_atomic.py::test_argument_usage_metavar[variadic-required]": "atomic",
+    "oracle/test_atomic.py::test_tuple_type_sets_argument_arity[tuple-literal]": "atomic",
+    "oracle/test_atomic.py::test_tuple_type_sets_argument_arity[tuple-object]": "atomic",
+    "oracle/test_atomic.py::test_tuple_type_rejects_conflicting_nargs": "atomic",
+    "oracle/test_atomic.py::test_uuid_option_returns_uuid_value": "atomic",
+    "oracle/test_integration.py::test_basic_command_help_and_execution": "system_e2e",
+    "oracle/test_integration.py::test_variadic_sources_leave_final_destination": "integration",
+    "oracle/test_integration.py::test_fixed_tuple_argument_converts_each_item": "integration",
+    "oracle/test_integration.py::test_unexpected_extra_argument_is_usage_error": "integration",
+    "oracle/test_integration.py::test_environment_variable_values[fixed]": "integration",
+    "oracle/test_integration.py::test_environment_variable_values[variadic]": "integration",
+    "oracle/test_integration.py::test_environment_variable_values[empty-variadic]": "integration",
+    "oracle/test_integration.py::test_explicit_values_override_environment": "integration",
+    "oracle/test_integration.py::test_fixed_environment_value_enforces_arity": "integration",
+    "oracle/test_integration.py::test_required_argument_accepts_supplied_text[empty]": "integration",
+    "oracle/test_integration.py::test_required_argument_accepts_supplied_text[spaces]": "integration",
+    "oracle/test_integration.py::test_required_argument_accepts_supplied_text[text]": "integration",
+    "oracle/test_integration.py::test_missing_required_argument_is_usage_error": "integration",
+    "oracle/test_integration.py::test_group_runs_parent_then_subcommand": "system_e2e",
+    "oracle/test_integration.py::test_group_constructor_registers_commands[mapping]": "integration",
+    "oracle/test_integration.py::test_group_constructor_registers_commands[iterable]": "integration",
+    "oracle/test_integration.py::test_nested_group_decorators_without_parentheses": "system_e2e",
+    "oracle/test_integration.py::test_chained_commands_run_left_to_right": "system_e2e",
+    "oracle/test_integration.py::test_chained_commands_receive_own_options": "integration",
+    "oracle/test_integration.py::test_result_callback_shape_without_command[normal]": "integration",
+    "oracle/test_integration.py::test_result_callback_shape_without_command[chain]": "integration",
+    "oracle/test_integration.py::test_chain_result_callback_builds_pipeline": "system_e2e",
+    "oracle/test_integration.py::test_chained_group_rejects_ambiguous_arguments[optional]": "integration",
+    "oracle/test_integration.py::test_chained_group_rejects_ambiguous_arguments[variadic]": "integration",
+    "oracle/test_integration.py::test_context_invoke_and_forward": "system_e2e",
+    "oracle/test_integration.py::test_nested_default_map_supplies_option_default": "integration",
+    "oracle/test_integration.py::test_argument_help_section_and_optional_metavar": "integration",
+    "oracle/test_integration.py::test_deprecated_argument_help_label": "integration",
+    "oracle/test_integration.py::test_no_args_is_help_uses_usage_exit_code": "integration",
+    "oracle/test_integration.py::test_group_argument_then_missing_or_selected_command": "integration",
+    "oracle/test_integration.py::test_file_dash_copies_stdin_to_file_and_back": "system_e2e",
+    "oracle/test_integration.py::test_atomic_file_replaces_only_after_callback": "system_e2e",
+    "oracle/test_integration.py::test_path_allow_dash_and_isolated_filesystem": "integration"
+  },
+  "stats": {
+    "atomic": 49,
+    "integration": 25,
+    "system_e2e": 8
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 82,
+    "total": 82,
+    "pass_rate": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 49,
+        "total": 49
+      },
+      "integration": {
+        "passed": 25,
+        "total": 25
+      },
+      "system_e2e": {
+        "passed": 8,
+        "total": 8
+      }
+    },
+    "result_file": "validation/reference_score.json"
+  },
+  "dummy_score": {
+    "passed": 0,
+    "failed": 82,
+    "total": 82,
+    "pass_rate": 0.0,
+    "by_layer": {
+      "atomic": {
+        "failed": 49,
+        "total": 49
+      },
+      "integration": {
+        "failed": 25,
+        "total": 25
+      },
+      "system_e2e": {
+        "failed": 8,
+        "total": 8
+      }
+    },
+    "collection_errors": 0,
+    "result_file": "validation/dummy_score.json"
+  },
+  "candidate_score": {
+    "model": "opencode-gpt-5.5-repaired",
+    "solution_path": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/click-repair-opencode/opencode-gpt-5.5-click-fullrepro-001-20260705T-repair-provenance/output",
+    "collection_error": 49,
+    "failed": 31,
+    "passed": 2,
+    "total": 82,
+    "pass_rate": 0.024390243902439025,
+    "by_layer": {
+      "atomic": {
+        "collection_error": 49,
+        "total": 49
+      },
+      "integration": {
+        "failed": 23,
+        "passed": 2,
+        "total": 25
+      },
+      "system_e2e": {
+        "failed": 8,
+        "total": 8
+      }
+    },
+    "import_provenance_stdout": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/click-repair-opencode/opencode-gpt-5.5-click-fullrepro-001-20260705T-repair-provenance/output/click/__init__.py",
+    "import_provenance_clean": true,
+    "result_file": "validation/candidate_score.json"
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed_public_surface_omission",
+      "C_native_oracle": "passed_no_carrier_or_subprocess",
+      "D_reference_and_dummy": "passed",
+      "E_independent_review": "passed"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "public-api-surface",
+      "description": "The unchanged candidate omits the documented top-level click.UUID export, preventing collection of 49 atomic cases.",
+      "affected_tests": 49
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "The independently collected command workflows pass 2 of 33 cases; help, parsing, groups, chaining, contexts, and file behavior remain incomplete.",
+      "affected_tests": 31
+    }
+  ],
+  "labels": [
+    "upstream-rewritten-native-oracle",
+    "cleanroom-spec",
+    "dummy-zero",
+    "cascade-dominated-candidate"
+  ],
+  "caveats": [
+    "The current-main harness runs the task-local tests and candidate code in the same pytest process. It is not adversarial black-box proof and does not defend against an actively malicious candidate.",
+    "Candidate collection failures are counted honestly and are caused by documented public export omissions identified in the score report."
+  ],
+  "qualification_reason": "Reference pass rate is 100%, executable dummy pass count is zero with no collection errors, unchanged candidate provenance is clean, all local native cases map to the public specification, and independent review recommends qualification."
+}

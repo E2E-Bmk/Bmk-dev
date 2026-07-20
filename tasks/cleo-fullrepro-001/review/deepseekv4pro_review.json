@@ -1,0 +1,55 @@
+{
+  "verdict": "PASS",
+  "blocking_issues": [],
+  "nonblocking_issues": [
+    {
+      "file": "oracle/test_integration.py",
+      "problem": "test_dispatch relies on a local RecordingDispatcher that captures internal event names and command.handled state. The spec does not guarantee the exact event names or the handled flag, but the test only checks that two distinct events fire and that the command is the same, which is a reasonable behavioral proxy."
+    },
+    {
+      "file": "oracle/test_application.py",
+      "problem": "test_run inspects command.io.output.stream and command.io.error_output.stream, which are implementation details not explicitly guaranteed by the spec. The test passes on reference, but a candidate could use different internal stream objects while still meeting the behavioral contract."
+    },
+    {
+      "file": "oracle/test_application.py",
+      "problem": "test_invalid_shell expects a ValueError from the completions command for an invalid shell. The spec only mentions public user errors for invalid input; a ValueError may be too specific, but the test is retained as it exercises error semantics."
+    },
+    {
+      "file": "oracle/test_atomic.py",
+      "problem": "test_parse_options parameterized cases use internal Option constructor flags (flag, requires_value) that are not directly exposed in the spec's helper API. However, the spec describes the same semantics, and the tests are valid behavioral checks."
+    },
+    {
+      "file": "oracle/test_atomic.py",
+      "problem": "test_argument and test_option in test_atomic.py test the helper functions, but the spec does not explicitly list all keyword arguments (e.g., value_required). The tests are consistent with the spec's description of argument and option helpers."
+    },
+    {
+      "file": "oracle/test_integration.py",
+      "problem": "test_display_with_quiet_verbosity uses ProgressBar and checks fetch_error(). The spec mentions progress helpers but does not detail their error output behavior under quiet verbosity. The test is retained as it aligns with the general verbosity contract."
+    },
+    {
+      "file": "oracle/test_integration.py",
+      "problem": "test_ask_and_validate uses a custom validator that raises Exception. The spec says question helpers retry until valid input or max attempts, but does not specify the exception type. The test is acceptable as it checks the retry mechanism."
+    },
+    {
+      "file": "oracle/test_application.py",
+      "problem": "test_run_with_input_and_non_interactive expects 'default input' when --no-interaction is used. The spec says non-interactive mode should use defaults, but the exact output string is not specified. The test is retained as it verifies the non-interactive workflow."
+    }
+  ],
+  "fairness_gates": {
+    "A_spec_mapping": "PASS",
+    "B_failure_pattern": "PASS",
+    "C_generated_only": "N/A",
+    "D_coverage_gap": "PARTIAL"
+  },
+  "score_evidence": {
+    "reference": "79/79 passed",
+    "dummy": "0/79 passed",
+    "candidate": "16/79 passed",
+    "collection_cascade_removed": true,
+    "provenance": "PASS"
+  },
+  "recommended_status": "QUALIFIED",
+  "trust_boundary_note": "Same-process pytest is self-attested current-main evidence, not adversarial black-box proof. Under the requested trust model, this is not a blocker.",
+  "review_model": "deepseek-v4-pro",
+  "reviewed_at": "2026-07-20"
+}

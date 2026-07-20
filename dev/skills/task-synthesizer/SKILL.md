@@ -1,0 +1,281 @@
+---
+name: task-synthesizer
+description: "Orchestrate the full SWE-E2E benchmark task synthesis pipeline: candidate selection -> spec writing -> test filtering -> evaluation -> judging. Use when constructing a new benchmark task from scratch, resuming a pipeline run, or routing feedback between stages. This is the top-level coordinator - each stage delegates to its specialist skill."
+---
+
+# Task Synthesizer
+
+## State Machine
+
+每个任务在 `wip/{task}/PIPELINE_STATE.md` 维护一个运行中的状态机实例。
+
+**Stage 1 开始前（新任务）：** 从 `Bmk-dev/skills/PIPELINE_STATE.template.md` 复制到 `wip/{task}/PIPELINE_STATE.md`，替换 `{TASK_ID}` 和 `{DATE}`。
+
+**每次分派子 agent 前：** 读 `PIPELINE_STATE.md`，确认 `state` 与即将运行的 stage 匹配。不匹配 → 不分派，先解决状态不一致。
+
+**每次子 agent 返回后：** 检查 `PIPELINE_STATE.md` 是否已更新（state 已转移，History 已追加）。未更新 → 子 agent 未正确退出，视为失败，重新运行。
+
+**循环终止：** `spec_iter > 3`、`filter_iter > 2` 或 `eval_iter > 2` 且未解决 → 直接设 `state → RETIRED`，不再继续循环。（spec 允许 3 次重写因其复杂度更高；filter 和 eval 各 2 次。）
+
+---
+
+## Core Principles
+
+These three principles are the main thread's judgment criteria. Every subagent output is reviewed against them before the pipeline proceeds.
+
+**1. Like a developer** — The spec must read like documentation written by the library author, not a benchmark artifact. No task IDs, no evaluation apparatus, no audit language in the candidate-visible body. If it reads like a test harness, reject it.
+
+**2. Spec-driven** — Every kept test must be traceable to a specific spec section. Every judge verdict must reference spec coverage. If a test cannot be mapped to the spec, or a failure cannot be explained by a spec gap, it is a verifier problem, not a model problem.
+
+**3. Behavioral** — Tests check observable outcomes that any correct reimplementation would produce. Failures must reflect genuine capability gaps, not protocol artifacts (exact strings, internal names, fixture shapes). If failures cluster around undocumented internal shapes, the instrument is broken.
+
+## Orchestrator Role
+
+The main thread dispatches subagents for execution tasks (spec writing, test filtering, evaluation, judging). The main thread does not execute these itself — it monitors, reviews output against the three principles, and intervenes when necessary.
+
+**When to accept:** subagent output satisfies all three principles applicable to that stage.
+
+**When to return for correction:** output violates a principle but the fix is within the subagent's scope (spec language is not developer-like, a test has no spec_section mapping, a judge skipped the preflight).
+
+**When to intervene directly:** the subagent has looped more than twice on the same issue without resolution, or the root cause requires a pipeline-level decision (retire the candidate, restructure the spec, change the filter strategy).
+
+## Skill Discipline
+
+Before starting any pipeline stage, read the specialist skill named for that stage from this workspace's `Bmk-dev/skills/{skill-name}/SKILL.md`. Treat that file as the stage authority. This is a mandatory pre-flight check, not optional background context.
+
+- Stage 1 must read `Bmk-dev/skills/candidate-selector/SKILL.md`.
+- Stage 2 must read `Bmk-dev/skills/spec-writer/SKILL.md`.
+- Stage 3 must read `Bmk-dev/skills/test-filter/SKILL.md`.
+- Stage 4 must give the candidate agent only the public packet/run prompt; do not give it workflow skills, source repositories, tests, score reports, or previous attempts. Run Stage 4 evaluation on Linux or WSL — not native Windows.
+- Stage 5 must read `Bmk-dev/skills/task-judge/SKILL.md`.
+
+When delegating a stage or stage audit to a subagent, instruct the subagent to read the same stage skill before inspecting task artifacts. The delegation prompt must name the exact `Bmk-dev/skills/{skill-name}/SKILL.md` path to read first.
+
+Do not use deprecated root-level SWE-E2E skills, archived v1 workflow skills, or unrelated global skills for this pipeline. The workflow authority is this `Bmk-dev/skills/` tree plus the objective file.
+
+## Workspace Layout
+
+```
+Bmk-dev/
+|-- wip/{task-id}/               <- active synthesis work
+|   |-- filter_notes.md          <- candidate-selector output
+|   |-- spec/
+|   |   |-- spec_v{N}.md
+|   |   `-- spec_patch_request.md
+|   |-- filter/
+|   |   |-- spec_test_map.md
+|   |   |-- kept_nodeids.txt
+|   |   |-- taxonomy.jsonl
+|   |   `-- filter_correction_request.md
+|   `-- judge/
+|       `-- diagnosis_report.md
+|-- tasks/{task-id}/             <- QUALIFIED tasks (graduated from wip/)
+|   |-- spec.md
+|   |-- oracle/
+|   |   |-- test_atomic.py       <- atomic layer tests
+|   |   |-- test_integration.py  <- integration + system_e2e tests
+|   |   |-- conftest.py          <- shared fixtures (optional)
+|   |   `-- requirements.txt     <- test dependencies
+|   |-- task.json                <- sole metadata authority (taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap)
+|   |-- kept_nodeids.txt         <- scorer input (one nodeid per line)
+|   |-- taxonomy.jsonl           <- scorer input (layer mapping, matches score_pytest_original.py key format)
+|   `-- spec_test_map.md
+|-- candidate-runs/              <- evaluation runs
+|   `-- {model}-{task}-{spec}-{date}-{run}/
+|       |-- task_prompt.txt
+|       |-- output/
+|       `-- score_report.md
+|-- skills/                      <- active stage SKILL.md files only
+|-- archive/deprecated-skills/   <- old workflow skills and packaged snapshots
+|-- CANDIDATES.md                <- selection + retirement log
+`-- weakness_table.md            <- DEPRECATED; weaknesses now in task.json per task
+```
+
+All stages write to `wip/{task-id}/` under their designated subdirectory. Do not write to `tasks/` directly - only the orchestrator moves a task there upon QUALIFIED.
+
+---
+
+## Pipeline Stages
+
+```
+candidate-selector -> spec-writer -> test-filter -> [evaluation] -> task-judge
+       ↑                 ↑              ↑                              |
+       `--- retire ------┴-- spec gap --┴-- filter issue -------------┘
+```
+
+| Stage | Skill | Key Output |
+|-------|-------|-----------|
+| 1. Select candidate | `candidate-selector` | `filter_notes.md`, CANDIDATES.md entry |
+| 2. Write spec | `spec-writer` | `spec_vN.md` (validated) |
+| 3. Filter tests | `test-filter` | `spec_test_map.md`, `kept_nodeids.txt`, `taxonomy.jsonl` |
+| 4. Evaluate | _(run candidate agent with spec only)_ | agent trajectory, score |
+| 5. Judge | `task-judge` | task status, diagnosis report, task.json weaknesses + integration_gap |
+
+---
+
+## Stage Handoffs
+
+### After candidate-selector
+- Pass: proceed to spec-writer with repo path and filter_notes.md
+- Fail hard gate: record retirement in CANDIDATES.md, select new candidate
+
+### After spec-writer
+
+Review against principles 1 and 2 before proceeding:
+- **Principle 1 check**: Read the spec body. Does it read like developer documentation, or like a benchmark artifact? Any sentence that sounds like it was written for an evaluator → return to spec-writer.
+- **Principle 2 check**: Is every item in the spec traceable to public API surface? Is source_boundary in the internal header non-empty (proof that sources were actually read)?
+- All 11 validation checks pass (per spec-writer SKILL): proceed to test-filter
+- Any check fails: patch spec, re-validate before proceeding
+
+**Candidate packet assembly**: the candidate receives the spec body only. Strip the `<!-- INTERNAL ... -->` header before assembling the run prompt. The candidate must not see task_id, delta notes, or source_boundary.
+
+### After test-filter
+
+Review against principles 2 and 3 before proceeding:
+- **Principle 2 check**: Sample `covered` rows from spec_test_map.md. Does each `spec_section` value match a real heading in the spec file? If not, the map was produced without genuine spec mapping — return to test-filter.
+- **Principle 3 check**: Sample kept tests. Do they check observable behavior, or internal shapes? If a significant share checks repr format, field names, or exact error message text → return to test-filter.
+
+**Active count verification (mandatory):**
+1. Read `PIPELINE_STATE.md`. Confirm `functions_kept + functions_excluded = functions_in_scope`. If not equal → return to test-filter; functions were not fully processed.
+2. Confirm `oracle_count ≥ 50`. If below 50 → return to test-filter for Track B expansion, filter_iter += 1.
+3. For each H2/H3 section in the spec, count `covered` rows in spec_test_map.md. Any section below its minimum (≥5 for `Cross-View Invariants`/`Error Semantics`, ≥3 for all others) → return to test-filter for targeted generation.
+
+- spec_gap rows present: issue `spec_patch_request.md` → route to spec-writer → after patch, rerun Stage 3
+- All count checks pass: proceed to evaluation
+- If `filter/oracle_source: generated_only` in spec_test_map.md: flag for task-judge additional spot-check
+
+**Scope plan verification (mandatory if filter_notes.md has `scope_plan != N/A`):**
+Check that the actual kept oracle set matches `target_subdomain` and does not exceed `expected_oracle_max`. If it does, return to Stage 2 to scope down the spec before proceeding.
+
+### After evaluation
+
+**Stage 4 Runbook — exact commands:**
+
+```bash
+# 1. Create cleanroom workspace
+python harness/run.py \
+  --task-dir wip/{task-id}/ \
+  --output-root candidate-runs/ \
+  --run-id {model}-{task-id}-specv{N}-{date}-{run} \
+  --program-file {package_name}/__init__.py \
+  --model-label {model-name}
+
+# 2. Run candidate agent against the cleanroom
+#    (agent sees only candidate-runs/{run-id}/public_packet/ and writes to solution/)
+
+# 3. Score the candidate output (MUST run on Linux/WSL)
+python harness/score_pytest_original.py \
+  --solution-dir candidate-runs/{run-id}/solution/ \
+  --nodeids wip/{task-id}/filter/kept_nodeids.txt \
+  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
+  --remove-path {package_name} \
+  --output candidate-runs/{run-id}/score_result.json
+```
+
+**Environment setup for scoring:**
+- Install test dependencies: `pip install -r wip/{task-id}/filter/oracle_requirements.txt`
+- Install candidate-declared dependencies: if `solution/requirements.txt` exists, `pip install -r solution/requirements.txt`
+- Do NOT install the target package from PyPI
+
+**Platform verification:**
+- Before proceeding to task-judge, verify the score JSON contains a `platform` field and its value does not contain `Windows` (case-insensitive). If it does, the run is invalid — re-run on Linux or WSL.
+- If the score JSON does not contain a `platform` field (produced by an older harness version), check the `solution_dir` path in the JSON for a Windows-style path (`C:\`, `D:\`, etc.). If found, treat as Windows run and re-run.
+- Always proceed to task-judge after platform verification passes.
+- If run was interrupted or environment anomaly detected: note in diagnosis, re-run if needed.
+
+### After task-judge
+
+Before accepting any verdict, verify diagnosis report structural validity:
+- Does the report contain a **Preflight output** block with the literal `__file__` path? If absent → report is invalid, return to task-judge.
+- Does the report contain a **Gate D — Coverage Gap Audit** section with a coverage verdict (FULL / PARTIAL / GAP)? If absent → return to task-judge.
+- If verdict is GAP: does `task.json` contain a `coverage_gap` entry listing the uncovered sections? If not → task-judge output is incomplete, return to task-judge.
+
+| Status | Action |
+|--------|--------|
+| `CHEAT_DETECTED` | Invalidate run, fix evaluation environment, re-evaluate |
+| `BROKEN` (solvability) | Fix environment or return to test-filter; re-evaluate |
+| `BROKEN` (fairness) | Process `filter_correction_request.md` via test-filter; re-evaluate |
+| `BROKEN` (spec gap) | Process `spec_patch_request.md` (type=spec_gap) via spec-writer → test-filter → re-evaluate |
+| `BROKEN` (spec error) | Process `spec_patch_request.md` (type=spec_error) via spec-writer → test-filter → re-evaluate |
+| `QUALIFIED` | Complete the QUALIFIED exit checklist (below), then record in CANDIDATES.md |
+
+**QUALIFIED exit checklist (all must pass before writing QUALIFIED to PIPELINE_STATE.md):**
+
+1. CANDIDATES.md has a SELECTED row for this repo
+2. `tasks/{task_id}/` directory exists and contains:
+   - `spec.md` (candidate-visible body only, internal header stripped)
+   - `oracle/test_atomic.py` (all atomic-layer tests)
+   - `oracle/test_integration.py` (all integration + system_e2e tests)
+   - `oracle/requirements.txt` (test runtime dependencies, excluding target package)
+   - `oracle/conftest.py` (optional, only if shared fixtures needed)
+   - `task.json` (metadata: taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap)
+   - `kept_nodeids.txt` (one nodeid per line)
+   - `taxonomy.jsonl` (scorer-compatible layer mapping)
+   - `spec_test_map.md` (coverage map with footer totals)
+3. `kept_nodeids.txt` line count matches `oracle_count` in PIPELINE_STATE.md
+4. `spec.md` contains none of: `task_id`, `delta:`, `source_boundary:`, `benchmark`, `oracle`, `judge`, `<!-- INTERNAL`
+5. Score JSON `platform` field confirms Linux/WSL evaluation
+6. Diagnosis report contains a `Preflight output` block with `__file__` path inside candidate solution directory
+7. `task.json` contains valid `integration_gap` object (at minimum `rate_gap`; `true_gap_events` if applicable)
+8. `task.json.source_meta` is populated (github_stars, pypi_monthly_downloads, loc, first_release)
+9. If `filter_notes.md` has `scope_plan != N/A`: verify actual oracle size ≤ `expected_oracle_max` and tests cover stated `target_subdomain`
+
+**Graduation procedure** (how to produce `tasks/{task_id}/` from `wip/{task_id}/`):
+1. Copy `spec_vN.md` → `tasks/{id}/spec.md`, stripping the `<!-- INTERNAL ... -->` header block
+2. Split filtered tests by taxonomy into `oracle/test_atomic.py` and `oracle/test_integration.py`
+3. Extract test dependencies from upstream repo → `oracle/requirements.txt`
+4. Generate `task.json` by merging: PIPELINE_STATE metadata + taxonomy.jsonl entries + score_result.json layer data + diagnosis weaknesses + source_meta
+5. Copy `kept_nodeids.txt`, `taxonomy.jsonl`, `spec_test_map.md` as-is
+6. Run `harness/verify_task.py {task_id}` — must output `QUALIFIED_VALID`
+
+If any item fails, do not write QUALIFIED — resolve the item first.
+
+---
+
+## Feedback Artifacts
+
+When task-judge signals a problem, it produces one of:
+
+`spec_patch_request.md` - spec gaps or spec errors with evidence; hand to spec-writer. The file must include a `type` field per item:
+- `type: spec_gap` — behavior present in reference but absent from spec; spec-writer adds it.
+- `type: spec_error` — spec claims X but reference demonstrates Y; spec-writer corrects the claim. The judge must include the reference-observed value and the spec's current claim so spec-writer can verify against source rather than re-inferring.
+
+`filter_correction_request.md` - list of misclassified or incorrectly kept tests; hand to test-filter
+
+The stage that receives the request processes it, updates its outputs, and signals back to the orchestrator. The orchestrator then re-runs all downstream stages.
+
+---
+
+## Loop Termination
+
+A feedback loop terminates when:
+- The requested artifact is updated and all downstream checks pass, or
+- The root cause is determined to require candidate retirement
+
+Cycles through the same loop more than twice without resolution → retire candidate.
+
+**Spec change linkage rule:** Whenever spec.md is modified after Stage 3 has completed (including post-QUALIFIED patches):
+1. Re-validate spec_test_map.md: every "covered" test must still map to an existing spec section
+2. Remove orphaned tests (those whose spec_section no longer exists) from the oracle
+3. Update task.json taxonomy and stats to reflect removals
+4. Re-run reference gate to confirm ≥95% on the updated oracle
+Partial spec edits that leave orphaned tests in the oracle are invalid.
+
+**Rescue prohibition:** once a task reaches `RETIRED`, it cannot be reopened under the same task_id. If the root cause is fixable and worth retrying, open a new task_id (e.g. `-002`). The new task must:
+- Inherit iter counters from the predecessor (do not reset to 0)
+- Have a `predecessor_task` field in its INTERNAL spec header
+- Begin with a CANDIDATES.md row: `| {repo} | REOPENED | predecessor={old_task_id} | {root_cause} |`
+
+Switching to a new task_id while resetting counters to 0 is the same as rescue — it is not permitted.
+
+---
+
+## Completion Record
+
+When a task reaches `QUALIFIED`, append to `CANDIDATES.md`:
+
+```
+| {repo} | QUALIFIED | spec_v{N} | {preserved_rate} | {reference_rate} | {date} |
+```
+
+Weaknesses are recorded in `task.json` (not a separate file) per task-judge SKILL.

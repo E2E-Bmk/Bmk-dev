@@ -1,0 +1,112 @@
+{
+  "instance_id": "rq-001",
+  "status": "QUALIFIED",
+  "repo": "rq/rq",
+  "repo_commit": "3454e2fa72593a456939846b9a01e68d9729125b",
+  "spec_version": "v1",
+  "oracle": {
+    "source": "generated_only",
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 56,
+    "scorer_isolation": [
+      "--remove-path",
+      "rq"
+    ]
+  },
+  "taxonomy": {
+    "test_atomic::test_top_level_installable_surface_exports_core_names": "atomic",
+    "test_atomic::test_documented_public_modules_export_scoped_classes": "atomic",
+    "test_atomic::test_queue_requires_connection": "atomic",
+    "test_atomic::test_queue_default_name_and_empty_count": "atomic",
+    "test_atomic::test_get_jobs_matches_job_ids_order": "atomic",
+    "test_atomic::test_queue_remove_removes_one_ready_job": "atomic",
+    "test_atomic::test_get_job_ids_supports_offset_and_length_window": "atomic",
+    "test_atomic::test_job_requires_connection": "atomic",
+    "test_atomic::test_job_create_rejects_non_string_id": "atomic",
+    "test_atomic::test_job_create_rejects_id_with_invalid_characters": "atomic",
+    "test_atomic::test_job_exists_tracks_persisted_job": "atomic",
+    "test_atomic::test_job_fetch_missing_raises_named_error": "atomic",
+    "test_atomic::test_job_fetch_many_preserves_requested_order_and_missing_slots": "atomic",
+    "test_atomic::test_job_metadata_round_trips_through_save_meta_and_get_meta": "atomic",
+    "test_atomic::test_return_value_is_none_before_successful_execution": "atomic",
+    "test_atomic::test_dependency_empty_list_is_rejected": "atomic",
+    "test_atomic::test_dependency_rejects_unsupported_values": "atomic",
+    "test_atomic::test_repeat_rejects_non_positive_times": "atomic",
+    "test_atomic::test_repeat_keeps_times_and_interval_configuration": "atomic",
+    "test_atomic::test_retry_keeps_max_interval_and_front_configuration": "atomic",
+    "test_atomic::test_json_serializer_round_trips_json_compatible_values": "atomic",
+    "test_atomic::test_group_fetch_missing_group_raises_named_error": "atomic",
+    "test_atomic::test_send_stop_job_command_rejects_non_executing_job_id": "atomic",
+    "test_integration::test_queue_all_lists_known_queue_after_enqueue": "integration",
+    "test_integration::test_enqueue_persists_job_status_origin_and_arguments": "integration",
+    "test_integration::test_enqueue_at_front_changes_ready_order": "integration",
+    "test_integration::test_successful_simple_worker_execution_records_finished_result": "integration",
+    "test_integration::test_failed_simple_worker_execution_records_failed_registry_and_exception_info": "integration",
+    "test_integration::test_finished_job_return_value_survives_refetch": "integration",
+    "test_integration::test_failed_registry_requeue_moves_job_back_to_ready_queue": "integration",
+    "test_integration::test_job_requeue_returns_failed_job_to_origin_queue": "integration",
+    "test_integration::test_requeue_job_helper_returns_failed_job_to_queue": "integration",
+    "test_integration::test_cancel_queued_job_moves_to_canceled_registry": "integration",
+    "test_integration::test_cancel_job_helper_cancels_by_id": "integration",
+    "test_integration::test_delete_job_removes_queue_and_registry_membership": "integration",
+    "test_integration::test_enqueue_in_creates_scheduled_job_not_ready_job": "integration",
+    "test_integration::test_enqueue_at_records_scheduled_time": "integration",
+    "test_integration::test_sync_queue_executes_success_immediately": "integration",
+    "test_integration::test_sync_queue_records_failed_state_on_exception": "integration",
+    "test_integration::test_dependency_places_dependent_job_in_deferred_registry": "integration",
+    "test_integration::test_finished_dependency_enqueues_dependent_after_worker_run": "system_e2e",
+    "test_integration::test_dependency_allow_failure_enqueues_dependent_after_failed_parent": "system_e2e",
+    "test_integration::test_enqueue_many_with_prepared_data_returns_jobs_in_order": "integration",
+    "test_integration::test_group_enqueue_many_attaches_jobs_to_group": "integration",
+    "test_integration::test_get_current_job_inside_execution_returns_running_job_id": "integration",
+    "test_integration::test_worker_default_queue_priority_processes_first_non_empty_queue": "system_e2e",
+    "test_integration::test_worker_burst_processes_all_available_jobs_and_returns_true": "system_e2e",
+    "test_integration::test_worker_all_and_count_are_empty_after_graceful_burst_exit": "integration",
+    "test_integration::test_worker_max_jobs_limits_burst_processing": "system_e2e",
+    "test_integration::test_result_history_records_newest_result_for_success": "integration",
+    "test_integration::test_exception_retry_with_zero_interval_requeues_then_fails_terminally": "integration",
+    "test_integration::test_return_based_retry_records_retried_result": "integration",
+    "test_integration::test_json_serializer_queue_and_worker_preserve_arguments_and_result": "integration",
+    "test_integration::test_cli_help_exits_zero_and_lists_core_commands": "system_e2e",
+    "test_integration::test_cli_invalid_command_exits_nonzero": "system_e2e",
+    "test_integration::test_cli_worker_help_exits_zero": "system_e2e"
+  },
+  "stats": {
+    "atomic": 23,
+    "integration": 25,
+    "system_e2e": 8
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": {
+    "passed": 30,
+    "total": 56
+  },
+  "labels": [
+    "generated-only",
+    "discriminating",
+    "cascade-dominated",
+    "state-lifecycle-signal",
+    "non-saturated-candidate-score"
+  ],
+  "weaknesses": [
+    {
+      "dimension": "state-management",
+      "description": "Jobs remain in created state or lose metadata instead of persisting queued, scheduled, deferred, canceled, and saved-meta lifecycle state across queue and fetch views.",
+      "affected_tests": 6
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "Worker execution fails while saving jobs with missing created_at, cascading through success, failure, sync execution, dependency, retry, result-history, serializer, and worker-priority workflows.",
+      "affected_tests": 18
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "Retry and Repeat configuration objects do not expose the documented interval list fields used by scheduling and retry workflows.",
+      "affected_tests": 2
+    }
+  ],
+  "candidate_run": "candidate-runs/rq-001-specv1-manual-20260716-001"
+}

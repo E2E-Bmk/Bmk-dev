@@ -93,7 +93,7 @@
 | gatewayconfig-fullrepro-001 | — | 已退休 |
 | towncrier-changelog-fullrepro-001 | twisted/towncrier | 已退休 |
 | asynq-fullrepro-001 | — | 已退休 |
-| authlib-jose-fullrepro-001 | lepture/authlib | S1 新候选 |
+| authlib-jose-fullrepro-001 | lepture/authlib | S1 已选中 (JOSE scoped) |
 | typer-cli-fullrepro-001 | fastapi/typer | S1 新候选 |
 
 ---

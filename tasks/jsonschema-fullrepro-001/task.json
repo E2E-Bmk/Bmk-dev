@@ -1,0 +1,219 @@
+{
+  "instance_id": "jsonschema-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "python-jsonschema/jsonschema",
+  "repo_commit": "97c044c48d6c6c08f88142ad27edc590f2a2cb07",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py",
+      "oracle/test_cli.py",
+      "oracle/test_exceptions.py",
+      "oracle/test_deprecations.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 90,
+    "source": "upstream_rewritten",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "selected package root first on sys.path",
+      "file-grouped pytest.main in the scorer process"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::TestFormatChecker::test_format_checkers_come_with_defaults": "integration",
+    "oracle/test_atomic.py::TestFormatChecker::test_format_error_causes_become_validation_error_causes": "system_e2e",
+    "oracle/test_atomic.py::TestFormatChecker::test_it_can_register_checkers": "integration",
+    "oracle/test_atomic.py::TestFormatChecker::test_it_can_register_cls_checkers": "integration",
+    "oracle/test_atomic.py::TestFormatChecker::test_it_can_validate_no_formats": "integration",
+    "oracle/test_atomic.py::TestFormatChecker::test_it_catches_registered_errors": "integration",
+    "oracle/test_atomic.py::TestFormatChecker::test_it_raises_a_key_error_for_unknown_formats": "integration",
+    "oracle/test_atomic.py::TestFormatChecker::test_repr": "integration",
+    "oracle/test_cli.py::TestCLI::test_custom_error_format": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_custom_error_format_applies_to_schema_errors": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_instance_does_not_exist": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_instance_does_not_exist_pretty_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_instance_is_invalid_JSON": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_instance_is_invalid_JSON_on_stdin": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_instance_is_invalid_JSON_on_stdin_pretty_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_instance_is_invalid_JSON_pretty_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_explicit_base_uri": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_instance": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_instance_continues_with_the_rest": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_instance_explicit_plain_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_instance_multiple_errors": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_instance_multiple_errors_pretty_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_instance_pretty_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_schema": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_schema_multiple_errors": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_schema_multiple_errors_pretty_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_schema_pretty_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_schema_with_invalid_instance": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_invalid_schema_with_invalid_instance_pretty_output": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_it_validates_using_draft4_when_specified": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_it_validates_using_draft7_when_specified": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_it_validates_using_the_latest_validator_when_unspecified": "system_e2e",
+    "oracle/test_cli.py::TestCLI::test_multiple_invalid_instances": "system_e2e",
+    "oracle/test_integration.py::TestCreateAndExtend::test_attrs": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_check_schema_with_different_metaschema": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_check_schema_with_different_metaschema_defaults_to_self": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_create_default_types": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_dashes_are_stripped_from_validator_names": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_extend": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_extend_applicable_validators": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_extend_idof": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_if_a_version_is_not_provided_it_is_not_registered": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_if_a_version_is_provided_it_is_registered": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_init": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_iter_errors_multiple_errors": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_iter_errors_one_error": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_iter_errors_successful": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_long_repr": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_repr": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_repr_no_version": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_validates_registers_meta_schema_draft6_id": "integration",
+    "oracle/test_integration.py::TestCreateAndExtend::test_validates_registers_meta_schema_id": "integration",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_False_schema": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_additionalItems_multiple_failures": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_additionalItems_single_failure": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_additionalProperties_false_patternProperties": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_additionalProperties_multiple_failures": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_additionalProperties_single_failure": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_const": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_contains_draft_6": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_contains_too_few": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_contains_too_few_both_constrained": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_contains_too_many": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_contains_too_many_both_constrained": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_dependencies_list_draft3": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_dependencies_list_draft7": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_dependencies_single_element": "system_e2e",
+    "oracle/test_integration.py::TestValidationErrorMessages::test_dependentRequired": "system_e2e",
+    "oracle/test_exceptions.py::TestBestMatch::test_anyOf_traversal_for_non_type_matching_sibling_errors": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_anyOf_traversal_for_single_equally_relevant_error": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_anyOf_traversal_for_single_sibling_errors": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_boolean_schemas": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_if_the_most_relevant_error_is_allOf_it_is_traversed": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_if_the_most_relevant_error_is_anyOf_it_is_traversed": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_if_the_most_relevant_error_is_oneOf_it_is_traversed": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_it_prioritizes_matching_types": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_it_prioritizes_matching_union_types": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_nested_context_for_oneOf": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_no_anyOf_traversal_for_equally_relevant_errors": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_no_errors": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_no_oneOf_traversal_for_equally_relevant_errors": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_oneOf_and_anyOf_are_weak_matches": "integration",
+    "oracle/test_exceptions.py::TestBestMatch::test_oneOf_traversal_for_non_type_matching_sibling_errors": "integration",
+    "oracle/test_deprecations.py::TestDeprecations::test_ErrorTree_setitem": "integration",
+    "oracle/test_deprecations.py::TestDeprecations::test_FormatChecker_cls_checks": "integration",
+    "oracle/test_deprecations.py::TestDeprecations::test_RefResolutionError": "integration",
+    "oracle/test_deprecations.py::TestDeprecations::test_RefResolver": "integration",
+    "oracle/test_deprecations.py::TestDeprecations::test_RefResolver_in_scope": "integration",
+    "oracle/test_deprecations.py::TestDeprecations::test_Validator_is_valid_two_arguments": "integration",
+    "oracle/test_deprecations.py::TestDeprecations::test_Validator_iter_errors_two_arguments": "integration"
+  },
+  "stats": {
+    "integration": 48,
+    "system_e2e": 42
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 90,
+    "total": 90,
+    "platform": "Linux-5.15.0-25-generic-x86_64-with-glibc2.35",
+    "python_version": "3.10.8",
+    "import_provenance": "/root/autodl-tmp/e2e/jsonschema/jsonschema/__init__.py"
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 90,
+    "summary": {
+      "collection_error": 90,
+      "total": 90
+    },
+    "setup": "task-local empty jsonschema package shadowing installed distributions"
+  },
+  "candidate_score": {
+    "model": "opencode-gpt-5.5",
+    "passed": 27,
+    "total": 90,
+    "pass_rate": 0.3,
+    "summary": {
+      "collection_error": 32,
+      "failed": 31,
+      "passed": 27,
+      "total": 90
+    },
+    "by_layer": {
+      "integration": {
+        "collection_error": 7,
+        "failed": 21,
+        "passed": 20,
+        "total": 48
+      },
+      "system_e2e": {
+        "collection_error": 25,
+        "failed": 10,
+        "passed": 7,
+        "total": 42
+      }
+    },
+    "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e-remaining-opencode/opencode-gpt-5.5-jsonschema-fullrepro-001-20260705T000000Z/output/jsonschema/__init__.py",
+    "provenance_status": "clean_candidate_output_path"
+  },
+  "archived_evidence": {
+    "source": "/root/autodl-tmp/Bmk-Lizhiqian",
+    "upstream_carrier_reference_score": {
+      "passed": 90,
+      "total": 90
+    },
+    "upstream_carrier_candidate_score": {
+      "passed": 5,
+      "total": 90
+    },
+    "native_score_difference_note": "Fresh native scores are authoritative. Differences from the archived upstream-carrier score reflect removal of repository-only and private collection dependencies."
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_upstream_rewritten",
+      "D_coverage_gap": "FULL"
+    },
+    "coverage_by_section": {
+      "Best-Match Error Selection": 15,
+      "Command-Line Validation Workflow": 25,
+      "Format Checking And Registration": 8,
+      "Legacy Compatibility Warnings": 7,
+      "Validation Error Messages": 16,
+      "Validator Construction And Extension": 19
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "legacy-api-surface",
+      "description": "The unchanged candidate omits the documented RefResolver and RefResolutionError compatibility aliases, causing 32 file-grouped collection failures.",
+      "affected_tests": 32
+    },
+    {
+      "dimension": "validation-semantics",
+      "description": "The remaining failures cover format exception chaining, validator class creation and registration, nested best-match selection, and draft-specific error wording.",
+      "affected_tests": 31
+    }
+  ],
+  "labels": [
+    "behavioral",
+    "legacy-compatibility",
+    "validator-cli",
+    "native-score-shift"
+  ],
+  "caveats": [
+    "The current main scorer uses same-process pytest and is not adversarial black-box proof."
+  ]
+}

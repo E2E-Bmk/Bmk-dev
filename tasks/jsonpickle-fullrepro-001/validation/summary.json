@@ -1,0 +1,119 @@
+{
+  "date": "2026-07-20",
+  "harness_commit": "3eb10a6ae01266ada9e5f2b7f1c823d7395b404e",
+  "commands": {
+    "verify": "python harness/verify_task.py jsonpickle-fullrepro-001",
+    "import_lint": "python harness/oracle_import_lint.py jsonpickle-fullrepro-001 tasks/jsonpickle-fullrepro-001/spec.md",
+    "score_source_staging": "mkdir -p tasks/jsonpickle-fullrepro-001/validation/source/oracle && cp tasks/jsonpickle-fullrepro-001/oracle/test_atomic.py tasks/jsonpickle-fullrepro-001/oracle/test_integration.py tasks/jsonpickle-fullrepro-001/oracle/requirements.txt tasks/jsonpickle-fullrepro-001/validation/source/oracle/",
+    "reference_score": "PYTHONDONTWRITEBYTECODE=1 python harness/score_pytest_original.py --source-repo tasks/jsonpickle-fullrepro-001/validation/source --nodeids tasks/jsonpickle-fullrepro-001/kept_nodeids.txt --taxonomy tasks/jsonpickle-fullrepro-001/taxonomy.jsonl --remove-path jsonpickle --timeout 120 --pytest-arg=-o --pytest-arg=addopts= --solution-dir /root/autodl-tmp/new-e2e/jsonpickle__jsonpickle --run-dir tasks/jsonpickle-fullrepro-001/validation/runs/reference --json-out tasks/jsonpickle-fullrepro-001/validation/reference_score.json",
+    "dummy_score": "PYTHONDONTWRITEBYTECODE=1 python harness/score_pytest_original.py --source-repo tasks/jsonpickle-fullrepro-001/validation/source --nodeids tasks/jsonpickle-fullrepro-001/kept_nodeids.txt --taxonomy tasks/jsonpickle-fullrepro-001/taxonomy.jsonl --remove-path jsonpickle --timeout 120 --pytest-arg=-o --pytest-arg=addopts= --solution-dir /root/autodl-tmp/Bmk-git/tasks/jsonpickle-fullrepro-001/filter/dummy_solution --run-dir tasks/jsonpickle-fullrepro-001/validation/runs/dummy --json-out tasks/jsonpickle-fullrepro-001/validation/dummy_score.json",
+    "candidate_score": "PYTHONDONTWRITEBYTECODE=1 python harness/score_pytest_original.py --source-repo tasks/jsonpickle-fullrepro-001/validation/source --nodeids tasks/jsonpickle-fullrepro-001/kept_nodeids.txt --taxonomy tasks/jsonpickle-fullrepro-001/taxonomy.jsonl --remove-path jsonpickle --timeout 120 --pytest-arg=-o --pytest-arg=addopts= --solution-dir /root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-jsonpickle-fullrepro-001-20260709T-stage4-cleanroom/output --run-dir tasks/jsonpickle-fullrepro-001/validation/runs/candidate --json-out tasks/jsonpickle-fullrepro-001/validation/candidate_score.json"
+  },
+  "results": {
+    "verify": "QUALIFIED_VALID",
+    "import_lint": "LINT_PASS",
+    "reference": {
+      "summary": {
+        "passed": 76,
+        "total": 76
+      },
+      "pass_rate_excluding_skips": 1.0,
+      "by_layer": {
+        "atomic": {
+          "passed": 13,
+          "total": 13
+        },
+        "integration": {
+          "passed": 53,
+          "total": 53
+        },
+        "system_e2e": {
+          "passed": 10,
+          "total": 10
+        }
+      }
+    },
+    "dummy": {
+      "summary": {
+        "failed": 76,
+        "total": 76
+      },
+      "pass_rate_excluding_skips": 0.0,
+      "by_layer": {
+        "atomic": {
+          "failed": 13,
+          "total": 13
+        },
+        "integration": {
+          "failed": 53,
+          "total": 53
+        },
+        "system_e2e": {
+          "failed": 10,
+          "total": 10
+        }
+      }
+    },
+    "candidate": {
+      "summary": {
+        "failed": 18,
+        "passed": 58,
+        "total": 76
+      },
+      "pass_rate_excluding_skips": 0.7631578947368421,
+      "by_layer": {
+        "atomic": {
+          "failed": 2,
+          "passed": 11,
+          "total": 13
+        },
+        "integration": {
+          "failed": 10,
+          "passed": 43,
+          "total": 53
+        },
+        "system_e2e": {
+          "failed": 6,
+          "passed": 4,
+          "total": 10
+        }
+      }
+    }
+  },
+  "provenance": {
+    "reference_import": "/root/autodl-tmp/new-e2e/jsonpickle__jsonpickle/jsonpickle/__init__.py",
+    "dummy_import": "/root/autodl-tmp/Bmk-git/tasks/jsonpickle-fullrepro-001/filter/dummy_solution/jsonpickle/__init__.py",
+    "candidate_import": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-jsonpickle-fullrepro-001-20260709T-stage4-cleanroom/output/jsonpickle/__init__.py",
+    "candidate_python_sha256": {
+      "jsonpickle/__init__.py": "15dee035c1db08a6c1015396797907972ace4f7981fb3e5a9485274b116d5604",
+      "jsonpickle/backend.py": "4a2be0b4714cf7cf4685b36bbaa6a2379f7d607a5ea1b6ee0dc07c44e1e61397",
+      "jsonpickle/errors.py": "e261a8bfb9da6b43889396e1c51368b399d5532299472b6f3226d4ea0a4e2cdd",
+      "jsonpickle/handlers.py": "16909c92d1a18ffffceab540c3b13ca059b71c96bb74d84770f6e5a52d24450d",
+      "jsonpickle/pickler.py": "7cb50d8af8df617a31a1dcccb516ecb6e621d30272ae220f8e87bc93be16522e",
+      "jsonpickle/tags.py": "a4a06ab841e44f7550b900aa357895b87d09190383782405c0f49b8a1be61eb5",
+      "jsonpickle/unpickler.py": "ab0bd62547e1ed2a34bb23c64f06e42cb0c9526216e35f45ef3c42eb5856cdec"
+    },
+    "candidate_anti_cheat_scan": "PASS",
+    "historical_candidate_summary_match": true,
+    "historical_candidate_layer_match": true,
+    "historical_candidate_outcome_mismatches": 0
+  },
+  "fairness": {
+    "canonical_cases": 76,
+    "unique_cases": 76,
+    "all_spec_sections_are_exact_public_headings": true,
+    "source_to_oracle_mapping_is_one_to_one": true,
+    "gate_A_spec_mapping": "PASS",
+    "gate_B_failure_pattern": "PASS",
+    "gate_C_generated_only": "N/A_MIXED",
+    "gate_D_coverage_gap": "FULL"
+  },
+  "independent_review": {
+    "credential_row": "deepseek-v4-pro",
+    "result": "PASS",
+    "recommended_status": "QUALIFIED",
+    "blocking_issues": 0,
+    "artifact": "review/deepseekv4pro_review.json"
+  },
+  "caveat": "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+}

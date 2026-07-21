@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpecBench — 研究提案</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:  #0f1f3d;
+  --navy2: #1a2f54;
+  --amber: #f59e0b;
+  --green: #10b981;
+  --blue:  #2563eb;
+  --red:   #dc2626;
+  --text:  #1e293b;
+  --muted: #64748b;
+  --border:#e2e8f0;
+  --bg:    #f8fafc;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; }
+
+/* hero */
+.hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%); color: white; padding: 52px 48px 44px; }
+.hero-tag { display: inline-block; background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.35); color: #fbbf24; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 12px; border-radius: 20px; margin-bottom: 18px; }
+.hero h1 { font-size: 2.6rem; font-weight: 700; letter-spacing: -.025em; margin-bottom: 6px; }
+.hero h1 em { font-style: normal; color: var(--amber); }
+.hero-byline { color: rgba(255,255,255,.5); font-size: .9rem; margin-bottom: 28px; }
+.hero-pitch { max-width: 780px; font-size: 1rem; line-height: 1.75; color: rgba(255,255,255,.88); border-left: 3px solid var(--amber); padding-left: 20px; }
+
+/* layout */
+.page { max-width: 940px; margin: 0 auto; padding: 0 36px; }
+.sec { padding: 48px 0 42px; border-bottom: 1px solid var(--border); }
+.sec:last-child { border-bottom: none; }
+.sec-kicker { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+.sec-h { font-size: 1.4rem; font-weight: 700; color: var(--navy); letter-spacing: -.01em; margin-bottom: 18px; }
+
+/* prose */
+.prose p { font-size: 14.5px; color: var(--text); line-height: 1.75; margin-bottom: 14px; }
+.prose p:last-child { margin-bottom: 0; }
+.prose strong { color: var(--navy); font-weight: 600; }
+
+/* axis */
+.axis-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 30px 28px 22px; margin-bottom: 24px; }
+.axis-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 20px; }
+.axis-outer { position: relative; margin: 0 16px 52px; }
+.axis-line { height: 5px; background: linear-gradient(to right, #ef4444, #f59e0b 50%, #10b981); border-radius: 3px; }
+.axis-pins { position: absolute; top: 0; left: 0; right: 0; }
+.pin { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; }
+.pin-dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px currentColor; }
+.pin.p-bad  { color: #ef4444; } .pin.p-bad  .pin-dot { background: #ef4444; }
+.pin.p-mid  { color: #f59e0b; } .pin.p-mid  .pin-dot { background: #f59e0b; }
+.pin.p-spec { color: #10b981; } .pin.p-spec .pin-dot { background: #10b981; width:17px;height:17px; box-shadow:0 0 0 3px white, 0 0 0 5px #10b981; }
+.pin-top { position: absolute; bottom: 18px; font-size: 11.5px; font-weight: 700; color: var(--navy); white-space: nowrap; }
+.pin-bot { position: absolute; top: 18px; font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.axis-foot { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding: 10px 0 0; border-top: 1px solid var(--border); }
+
+/* bench table */
+.btable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.btable th { background: var(--navy); color: white; padding: 9px 14px; font-weight: 600; font-size: 12px; letter-spacing: .03em; text-align: left; }
+.btable th:first-child { border-radius: 8px 0 0 0; }
+.btable th:last-child  { border-radius: 0 8px 0 0; }
+.btable td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.55; }
+.btable tr:last-child td { border-bottom: none; }
+.btable tr:nth-child(even) td { background: #f8fafc; }
+.btable tr.spec-row td { background: #f0fdf4; }
+.btable .bname { font-weight: 700; color: var(--navy); white-space: nowrap; }
+.tag-red  { display:inline-block; background:#fef2f2; color:#dc2626; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:4px; }
+.tag-green{ display:inline-block; background:#dcfce7; color:#15803d; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:4px; }
+
+/* approach */
+.flow { display:flex; align-items:center; gap:0; background:white; border:1px solid var(--border); border-radius:10px; padding:22px 24px; margin-bottom:20px; overflow-x:auto; }
+.fstep { display:flex;flex-direction:column;align-items:center;min-width:108px;text-align:center; }
+.ficon { width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:7px; }
+.flabel { font-size:12px;font-weight:600;color:var(--navy);line-height:1.3; }
+.fsub   { font-size:10.5px;color:var(--muted);margin-top:2px; }
+.farrow { color:var(--muted);font-size:17px;padding:0 6px;flex-shrink:0;padding-bottom:22px; }
+
+/* guarantees */
+.g2 { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px; }
+.gcard { border-radius:10px;padding:18px 20px;border:1px solid; }
+.gcard.q1 { background:#eff6ff;border-color:#bfdbfe; }
+.gcard.q2 { background:#f0fdf4;border-color:#bbf7d0; }
+.gcard-q { font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px; }
+.gcard.q1 .gcard-q { color:#1d4ed8; }
+.gcard.q2 .gcard-q { color:#15803d; }
+.gcard h4 { font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:6px; }
+.gcard p  { font-size:12.5px;color:var(--text);line-height:1.6; }
+.gcard .excl { font-size:11px;color:var(--muted);margin-top:8px; }
+.gcard .excl code { background:rgba(0,0,0,.07);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace; }
+
+/* contributions */
+.contrib-list { list-style:none;padding:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:white; }
+.contrib-list li { display:flex;gap:16px;padding:14px 20px;border-bottom:1px solid var(--border);align-items:flex-start;font-size:13.5px;line-height:1.6; }
+.contrib-list li:last-child { border-bottom:none; }
+.contrib-n { min-width:24px;height:24px;border-radius:50%;background:var(--navy);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px; }
+
+/* abstract */
+.abstract-wrap { background:white;border:1px solid var(--border);border-radius:12px;padding:26px 30px; }
+.abstract-row { display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--border);align-items:flex-start; }
+.abstract-row:last-child { border-bottom:none;padding-bottom:0; }
+.abstract-n { min-width:22px;height:22px;border-radius:50%;background:var(--navy);color:white;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px; }
+.abstract-role { font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--amber);margin-bottom:3px; }
+.abstract-text { font-size:13.5px;color:var(--text);line-height:1.7; }
+.abstract-text .hl { background:#fef9c3;padding:0 2px;border-radius:2px; }
+
+/* pipeline list */
+.pipe-list { list-style:none;padding:0;margin:20px 0 0;counter-reset:pipe; }
+.pipe-list li { display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.65;align-items:flex-start; }
+.pipe-list li:last-child { border-bottom:none; }
+.pipe-list li::before { counter-increment:pipe;content:counter(pipe);min-width:24px;height:24px;border-radius:50%;background:var(--navy);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px; }
+.pipe-list li strong { color:var(--navy); }
+
+/* footer */
+.footer { background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:18px;font-size:12px; }
+.footer strong { color:rgba(255,255,255,.75); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="page">
+    <div class="hero-tag">研究提案</div>
+    <h1>Spec<em>Bench</em></h1>
+    <p class="hero-byline">仅凭行为规约，语言模型能否实现一个从未见过的代码库？</p>
+    <p class="hero-pitch">
+      规约驱动开发是一种标准实践：团队在编写代码之前先撰写行为契约。
+      SpecBench 将这份契约转化为评测基准——包含 100 余个重建任务，模型只收到行为规约作为输入，
+      需要从零产出完整、可运行的代码库。
+      每个任务由一组经过验证的行为测试进行评分，这些测试仅检查可观察行为，
+      而非实现细节。
+    </p>
+  </div>
+</div>
+
+<!-- MOTIVATION -->
+<div class="page">
+<section class="sec">
+  <div class="sec-kicker">研究动机</div>
+  <div class="sec-h">开发者实际工作方式与模型评估范式之间的鸿沟</div>
+  <div class="prose">
+    <p>
+      当开发者启动一个新的代码库时，典型输入是一份设计文档、一份 API 契约，
+      或一组行为需求——而非已有代码。
+      他们阅读系统必须做什么，决定内部结构，然后据此实现。
+      这就是规约驱动开发，它是新项目、跨语言移植和代码库重写的常态。
+    </p>
+    <p>
+      代码生成评测基准尚未跟上这一现实。
+      主流范式仍然是<em>基于补丁</em>：给模型一个完整的代码库，要求它应用修复。
+      另一条工作线给模型提供代码脚手架——函数签名、文档字符串或骨架——
+      要求它填充函数体。
+      这两种范式的输入已经编码了大部分设计决策，
+      而这恰恰是开发者从规约出发时手中所没有的东西。
+    </p>
+    <p>
+      实际后果是存在一个测量盲区：
+      当前基准无法告诉我们一个模型是否能够
+      <strong>仅凭行为契约设计并实现一个多组件系统</strong>。
+      它们测量编辑能力和补全能力，但无法测量模型
+      做出架构选择、在多个公共接口之间维护状态一致性、
+      以及从文档化行为中推导出正确错误语义的能力。
+    </p>
+  </div>
+</section>
+
+<!-- RELATED WORK -->
+<section class="sec">
+  <div class="sec-kicker">相关工作</div>
+  <div class="sec-h">现有基准如何不同</div>
+
+  <div class="axis-card">
+    <div class="axis-title">规约泄露谱系</div>
+    <div class="axis-outer">
+      <div class="axis-line"></div>
+      <div class="axis-pins">
+        <div class="pin p-bad" style="left:0%">
+          <div class="pin-dot"></div>
+          <div class="pin-top" style="left:-10px;">SWE-bench / RepoZero</div>
+          <div class="pin-bot" style="left:-8px;">完整代码库</div>
+        </div>
+        <div class="pin p-mid" style="left:34%">
+          <div class="pin-dot"></div>
+          <div class="pin-top" style="left:-14px;">Commit0</div>
+          <div class="pin-bot" style="left:-20px;">代码骨架</div>
+        </div>
+        <div class="pin p-mid" style="left:63%">
+          <div class="pin-dot"></div>
+          <div class="pin-top" style="left:-14px;">NL2Repo</div>
+          <div class="pin-bot" style="left:-26px;">全部函数签名</div>
+        </div>
+        <div class="pin p-spec" style="left:100%">
+          <div class="pin-dot"></div>
+          <div class="pin-top" style="right:-6px;color:#15803d;">✦ SpecBench</div>
+          <div class="pin-bot" style="right:-14px;color:#15803d;">仅行为规约</div>
+        </div>
+      </div>
+    </div>
+    <div class="axis-foot">
+      <span>← 设计决策已预设 · 测试编辑/补全能力</span>
+      <span>设计决策留给模型 · 测试重建能力 →</span>
+    </div>
+  </div>
+
+  <table class="btable">
+    <thead>
+      <tr><th>基准</th><th>模型输入</th><th>实际测试内容</th><th>结构性缺失</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="bname">HumanEval / MBPP</td>
+        <td>函数签名 + 文档字符串</td>
+        <td>单函数正确性</td>
+        <td><span class="tag-red">粒度过细</span>&nbsp; 无多组件状态或跨接口不变量</td>
+      </tr>
+      <tr>
+        <td class="bname">SWE-bench</td>
+        <td>完整代码库 + GitHub Issue</td>
+        <td>补丁应用</td>
+        <td><span class="tag-red">完整上下文</span>&nbsp; 架构已存在；模型编辑而非设计</td>
+      </tr>
+      <tr>
+        <td class="bname">Commit0</td>
+        <td>代码骨架（签名 + 文档字符串）</td>
+        <td>函数体补全</td>
+        <td><span class="tag-red">提供脚手架</span>&nbsp; 内部结构已预设；大规模版 HumanEval</td>
+      </tr>
+      <tr>
+        <td class="bname">NL2Repo</td>
+        <td>列出全部文件、类、参数的自然语言规约</td>
+        <td>多函数补全</td>
+        <td><span class="tag-red">规约泄露</span>&nbsp; 规约编码了实现形态；设计空间被压缩</td>
+      </tr>
+      <tr class="spec-row">
+        <td class="bname" style="color:#15803d;">SpecBench ✦</td>
+        <td>仅行为规约</td>
+        <td>规约驱动的重建</td>
+        <td><span class="tag-green">设计保留</span>&nbsp; 模型自主决定结构、状态模型和错误处理</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- APPROACH -->
+<section class="sec">
+  <div class="sec-kicker">技术方法</div>
+  <div class="sec-h">任务设计与 Oracle 构建</div>
+  <div class="prose" style="margin-bottom:20px;">
+    <p>
+      每个 SpecBench 任务源自一个拥有活跃测试套件和公开文档的真实 Python 库。
+      行为规约根据公共 API 面撰写——包括库对调用者的承诺、
+      在什么条件下抛出什么错误，以及跨公共接口应持有的不变量。
+      规约读起来像库文档，而非测试框架。
+      候选模型仅收到这份规约，并产出一个完整实现。
+    </p>
+  </div>
+
+  <div class="flow">
+    <div class="fstep">
+      <div class="ficon" style="background:#eff6ff;">📄</div>
+      <div class="flabel">行为<br>规约</div>
+      <div class="fsub">模型唯一输入</div>
+    </div>
+    <div class="farrow">→</div>
+    <div class="fstep">
+      <div class="ficon" style="background:#fef3c7;">🤖</div>
+      <div class="flabel">候选<br>模型</div>
+      <div class="fsub">无代码 · 无测试</div>
+    </div>
+    <div class="farrow">→</div>
+    <div class="fstep">
+      <div class="ficon" style="background:#f0fdf4;">📦</div>
+      <div class="flabel">多文件<br>实现</div>
+      <div class="fsub">模型自主选择结构</div>
+    </div>
+    <div class="farrow">→</div>
+    <div class="fstep">
+      <div class="ficon" style="background:#fdf4ff;">🧪</div>
+      <div class="flabel">行为<br>Oracle</div>
+      <div class="fsub">每任务 50+ 测试</div>
+    </div>
+    <div class="farrow">→</div>
+    <div class="fstep">
+      <div class="ficon" style="background:#fff7ed;">📊</div>
+      <div class="flabel">分层评分</div>
+      <div class="fsub">原子 · 集成 · 端到端</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="gcard q1">
+      <div class="gcard-q">Oracle 约束一 — 行为性</div>
+      <h4>任何正确的重实现都能通过，无论内部结构如何</h4>
+      <p>测试经过筛选，仅检查可观察输出和副作用。
+        对 repr 格式、内部字段名或异常消息文本的断言被排除——
+        它们反映的是某个具体实现，而非行为契约。</p>
+      <div class="excl">已排除：<code>repr()</code> <code>._私有属性</code> <code>精确错误文本</code></div>
+    </div>
+    <div class="gcard q2">
+      <div class="gcard-q">Oracle 约束二 — 规约可推导性</div>
+      <h4>每个测试的预期结果均可追溯到规约</h4>
+      <p>每个保留的测试都映射到规约的特定章节。
+        无法映射的测试被排除——
+        失败必须反映能力差距，而非未文档化的期望。</p>
+      <div class="excl">通过 <code>spec_test_map</code> 逐行关联强制执行</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CONSTRUCTION PIPELINE -->
+<section class="sec">
+  <div class="sec-kicker">Pipeline</div>
+  <div class="sec-h">How Tasks Are Constructed</div>
+  <div class="prose">
+    <p>
+      Each SpecBench task is produced by a five-stage synthesis pipeline.
+      The pipeline is deterministic in structure but iterative in execution:
+      later stages can return feedback to earlier ones, and a task only graduates
+      when all quality checks at every stage are satisfied.
+    </p>
+  </div>
+
+  <ol class="pipe-list">
+    <li>
+      <strong>Candidate selection.</strong>
+      A Python library is screened against hard gates: active test suite,
+      public documentation sufficient to write a behavioral spec,
+      no data-file or binary-heavy test dependencies that would make
+      isolated evaluation impractical.
+      Libraries that pass are recorded in <code>CANDIDATES.md</code>;
+      those that fail are retired with a reason.
+    </li>
+    <li>
+      <strong>Spec writing.</strong>
+      A behavioral specification is written from the public API surface —
+      what the library promises to callers, what errors it raises and under what conditions,
+      and what invariants hold across its public interfaces.
+      The spec reads as library documentation, not a benchmark artifact.
+      Every inclusion decision is governed by two questions:
+      does this belong to the public behavioral contract,
+      and is it non-derivable from domain knowledge alone?
+      Twelve validation checks must pass before the spec is considered complete.
+    </li>
+    <li>
+      <strong>Test filtering.</strong>
+      The library's existing test suite is audited against the oracle constraints.
+      Tests that check internal shapes (repr format, private field names,
+      exact exception message text) or that cannot be mapped to a spec section
+      are excluded.
+      Where coverage is thin, additional tests are generated from the spec —
+      each generated test is mapped row-by-row to its source section
+      in <code>spec_test_map.md</code> before it enters the oracle.
+      The oracle must contain at least 50 tests, with no core spec section left uncovered.
+    </li>
+    <li>
+      <strong>Candidate evaluation.</strong>
+      The candidate model receives the behavioral specification and nothing else —
+      no code, no tests, no prior attempts.
+      It produces a complete multi-file implementation in isolation.
+      The implementation is scored against the oracle at three granularities:
+      atomic, integration, and system end-to-end.
+      Evaluation must run on Linux or WSL; Windows runs are invalid.
+      An import provenance check confirms the model's package
+      is loaded from the candidate directory, not from any installed reference.
+    </li>
+    <li>
+      <strong>Task judging.</strong>
+      The judge audits the scoring run for cheating, solvability, and fairness
+      before reading any score value.
+      Failures are classified into two passes:
+      instrument validity first (does the failing test actually check
+      a documented, observable behavior?),
+      then model capability (is the failure traceable to a genuine spec gap
+      in the candidate's output?).
+      The judge assigns one of three verdicts:
+      <code>QUALIFIED</code>, <code>BROKEN</code>, or <code>CHEAT_DETECTED</code>.
+    </li>
+  </ol>
+
+  <div class="prose" style="margin-top:20px;">
+    <p>
+      The pipeline includes three feedback paths.
+      When the judge finds a behavior present in the reference
+      but absent from the spec, a patch request is routed back to the spec writer.
+      When the judge finds tests that check undocumented internal shapes,
+      a correction request is routed back to test filtering.
+      When provenance or environment checks fail,
+      the evaluation stage is re-run after fixing the environment.
+      A loop that cycles more than twice without resolution retires the candidate.
+    </p>
+    <p>
+      Each task maintains a state machine in <code>wip/{task}/PIPELINE_STATE.md</code>
+      that records the current stage, iteration counters, and history.
+      A task reaches <code>QUALIFIED</code> only after all five stages complete
+      without unresolved failures, and after a final exit checklist confirms
+      the candidate-visible spec contains no evaluation metadata.
+    </p>
+  </div>
+</section>
+
+<!-- CONTRIBUTIONS -->
+<section class="sec">
+  <div class="sec-kicker">预期贡献</div>
+  <div class="sec-h">SpecBench 为社区带来什么</div>
+  <div class="prose" style="margin-bottom:20px;">
+    <p>该基准仍在构建中——下列内容反映预期范围及当前实证发现的方向。</p>
+  </div>
+  <ul class="contrib-list">
+    <li>
+      <div class="contrib-n">1</div>
+      <div><strong>一种与实际开发实践对齐的任务定义。</strong>
+      规约驱动的重建隔离了现有基准所绕过的架构设计环节。
+      该任务更困难，也更接近开发者根据需求文档实际所做的工作。</div>
+    </li>
+    <li>
+      <div class="contrib-n">2</div>
+      <div><strong>从开源库构建公平重建任务的合成流水线。</strong>
+      该流水线通过构造产生行为性和规约可推导的 oracle 测试。
+      任何拥有公开文档和现有测试套件的 Python 库均可作为候选。</div>
+    </li>
+    <li>
+      <div class="contrib-n">3</div>
+      <div><strong>关于模型在任务各层次上能力的实证发现。</strong>
+      早期结果表明原子级与系统级分数之间存在显著差距——
+      这是基于补丁的基准无法揭示的差距。
+      大多数集成和系统失败可追溯到少数几个损坏的原语（级联效应），
+      而非独立的跨组件失败。
+      <em>跨视图一致性</em>和<em>错误语义</em>
+      是最频繁出现的真正能力差距。</div>
+    </li>
+  </ul>
+</section>
+
+<!-- ABSTRACT -->
+<section class="sec">
+  <div class="sec-kicker">摘要草稿</div>
+  <div class="sec-h">五句式结构（Farquhar 范式）</div>
+  <div class="abstract-wrap">
+    <div class="abstract-row">
+      <div class="abstract-n">1</div>
+      <div>
+        <div class="abstract-role">我们实现了什么</div>
+        <div class="abstract-text">我们引入 SpecBench，一个包含 <span class="hl">[N]</span> 个 Python 库重建任务的基准，
+        模型仅收到行为规约作为输入，需从零产出一个完整、可运行的实现。</div>
+      </div>
+    </div>
+    <div class="abstract-row">
+      <div class="abstract-n">2</div>
+      <div>
+        <div class="abstract-role">为什么困难且重要</div>
+        <div class="abstract-text">从行为契约重建一个库需要做出架构决策、在公共接口间维护状态一致性、
+        并推导出正确的错误语义——这些能力是基于补丁和基于补全的基准无法探测的，
+        因为它们提供了规约驱动开发者必须自行产出的代码结构。</div>
+      </div>
+    </div>
+    <div class="abstract-row">
+      <div class="abstract-n">3</div>
+      <div>
+        <div class="abstract-role">我们如何做到</div>
+        <div class="abstract-text">每个任务由一个合成流水线从真实开源 Python 库构建，
+        该流水线根据公开 API 文档撰写行为规约，并对 oracle 测试施加两条约束进行筛选：
+        行为性（任何正确的重实现都能通过，无论内部结构如何）
+        和规约可推导性（每个测试结果均可追溯至规约标题）。</div>
+      </div>
+    </div>
+    <div class="abstract-row">
+      <div class="abstract-n">4</div>
+      <div>
+        <div class="abstract-role">实证证据</div>
+        <div class="abstract-text">在 <span class="hl">[N]</span> 个任务上对 <span class="hl">[X]</span> 个模型在三种粒度——
+        原子、集成和系统端到端——进行评估，揭示了一致的能力差距：
+        集成级和系统级分数相对于原子级分数急剧下降，
+        且大多数复合失败从少数几个损坏的原语级联而来，
+        而非代表独立的跨组件失败。</div>
+      </div>
+    </div>
+    <div class="abstract-row">
+      <div class="abstract-n">5</div>
+      <div>
+        <div class="abstract-role">最显著发现</div>
+        <div class="abstract-text">在真正模型失败（非级联所致）中，最频繁涉及的两个能力维度
+        是<em>跨视图一致性</em>和<em>错误语义</em>，
+        即使原子级通过率超过 <span class="hl">[Z]%</span>，系统级通过率平均仅为 <span class="hl">[Y]%</span>。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.page -->
+
+<div class="footer">
+  <strong>SpecBench</strong> &nbsp;·&nbsp; 研究提案 &nbsp;·&nbsp; 持续构建中
+</div>
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+{
+  "instance_id": "cerberus-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "pyeve/cerberus",
+  "repo_commit": "65e977de08ab76d4b40ca981972f9ff68926ed63",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v2",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py",
+      "oracle/test_extra_01_test_registries.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 84,
+    "source": "upstream_transplanted_plus_3_generated_gate_d_cases",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "--remove-path",
+      "cerberus"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_integration.py::test_coerce": "integration",
+    "oracle/test_integration.py::test_coerce_in_dictschema": "integration",
+    "oracle/test_integration.py::test_coerce_in_listschema": "integration",
+    "oracle/test_integration.py::test_coerce_in_listitems": "integration",
+    "oracle/test_integration.py::test_coerce_in_dictschema_in_listschema": "integration",
+    "oracle/test_integration.py::test_coerce_not_destructive": "integration",
+    "oracle/test_integration.py::test_coerce_unknown": "integration",
+    "oracle/test_integration.py::test_custom_coerce_and_rename": "integration",
+    "oracle/test_integration.py::test_coerce_chain": "integration",
+    "oracle/test_integration.py::test_coerce_non_digit_in_sequence": "integration",
+    "oracle/test_integration.py::test_nullables_dont_fail_coerce": "integration",
+    "oracle/test_integration.py::test_normalized": "integration",
+    "oracle/test_integration.py::test_rename": "integration",
+    "oracle/test_integration.py::test_rename_handler": "integration",
+    "oracle/test_integration.py::test_purge_unknown": "integration",
+    "oracle/test_integration.py::test_purge_unknown_in_subschema": "integration",
+    "oracle/test_integration.py::test_issue_147_complex": "system_e2e",
+    "oracle/test_integration.py::test_issue_147_nested_dict": "system_e2e",
+    "oracle/test_integration.py::test_coerce_in_valuesrules": "integration",
+    "oracle/test_integration.py::test_coerce_in_keysrules": "integration",
+    "oracle/test_integration.py::test_coercion_of_sequence_items": "integration",
+    "oracle/test_integration.py::test_default_missing[default0]": "integration",
+    "oracle/test_integration.py::test_default_missing[default1]": "integration",
+    "oracle/test_integration.py::test_default_existent[default0]": "integration",
+    "oracle/test_integration.py::test_default_existent[default1]": "integration",
+    "oracle/test_integration.py::test_default_none_nullable[default0]": "integration",
+    "oracle/test_integration.py::test_default_none_nullable[default1]": "integration",
+    "oracle/test_integration.py::test_default_none_nonnullable[default0]": "integration",
+    "oracle/test_integration.py::test_default_none_nonnullable[default1]": "integration",
+    "oracle/test_integration.py::test_default_none_default_value": "integration",
+    "oracle/test_integration.py::test_default_missing_in_subschema[default0]": "integration",
+    "oracle/test_integration.py::test_default_missing_in_subschema[default1]": "integration",
+    "oracle/test_integration.py::test_depending_default_setters": "integration",
+    "oracle/test_integration.py::test_issue_250_no_type_pass_on_list": "integration",
+    "oracle/test_integration.py::test_issue_250_no_type_fail_pass_on_other": "integration",
+    "oracle/test_integration.py::test_271_normalising_tuples": "integration",
+    "oracle/test_integration.py::test_allow_unknown_wo_schema": "integration",
+    "oracle/test_integration.py::test_allow_unknown_with_purge_unknown": "system_e2e",
+    "oracle/test_integration.py::test_allow_unknown_with_purge_unknown_subdocument": "system_e2e",
+    "oracle/test_integration.py::test_purge_readonly": "integration",
+    "oracle/test_integration.py::test_defaults_in_allow_unknown_schema": "system_e2e",
+    "oracle/test_extra_01_test_registries.py::test_schema_registry_simple": "integration",
+    "oracle/test_extra_01_test_registries.py::test_top_level_reference": "integration",
+    "oracle/test_extra_01_test_registries.py::test_recursion": "system_e2e",
+    "oracle/test_extra_01_test_registries.py::test_references_remain_unresolved": "integration",
+    "oracle/test_extra_01_test_registries.py::test_rules_registry_with_anyof_type": "integration",
+    "oracle/test_extra_01_test_registries.py::test_schema_registry_with_anyof_type": "integration",
+    "oracle/test_extra_01_test_registries.py::test_normalization_with_rules_set": "system_e2e",
+    "oracle/test_extra_01_test_registries.py::test_rules_set_with_dict_field": "system_e2e",
+    "oracle/test_atomic.py::test_empty_field_definition": "atomic",
+    "oracle/test_atomic.py::test_nullable_skips_allowed": "atomic",
+    "oracle/test_atomic.py::test_nullable_skips_of_roles[all]": "integration",
+    "oracle/test_atomic.py::test_nullable_skips_of_roles[any]": "integration",
+    "oracle/test_atomic.py::test_nullable_skips_of_roles[none]": "integration",
+    "oracle/test_atomic.py::test_nullable_skips_of_roles[one]": "integration",
+    "oracle/test_atomic.py::test_integer_allowed": "atomic",
+    "oracle/test_atomic.py::test_validate_update": "atomic",
+    "oracle/test_atomic.py::test_string": "atomic",
+    "oracle/test_atomic.py::test_string_allowed": "atomic",
+    "oracle/test_atomic.py::test_integer": "atomic",
+    "oracle/test_atomic.py::test_boolean": "atomic",
+    "oracle/test_atomic.py::test_datetime": "atomic",
+    "oracle/test_atomic.py::test_number": "atomic",
+    "oracle/test_atomic.py::test_array": "atomic",
+    "oracle/test_atomic.py::test_set": "atomic",
+    "oracle/test_atomic.py::test_a_list_of_dicts": "atomic",
+    "oracle/test_atomic.py::test_a_list_of_values": "atomic",
+    "oracle/test_atomic.py::test_an_array_from_set": "atomic",
+    "oracle/test_atomic.py::test_a_list_of_integers": "atomic",
+    "oracle/test_atomic.py::test_empty_skips_regex": "atomic",
+    "oracle/test_atomic.py::test_unknown_key_dict": "atomic",
+    "oracle/test_atomic.py::test_unknown_key_list": "atomic",
+    "oracle/test_atomic.py::test_unknown_keys_list_of_dicts": "atomic",
+    "oracle/test_atomic.py::test_callable_validator": "integration",
+    "oracle/test_atomic.py::test_options_passed_to_nested_validators": "system_e2e",
+    "oracle/test_atomic.py::test_validated": "atomic",
+    "oracle/test_atomic.py::test_unicode_allowed_py3": "atomic",
+    "oracle/test_atomic.py::test_anyof_type": "atomic",
+    "oracle/test_atomic.py::test_nested_oneof_type": "atomic",
+    "oracle/test_atomic.py::test_issue_107": "atomic",
+    "oracle/test_atomic.py::test_schema_validation_from_rules_set": "system_e2e",
+    "oracle/test_atomic.py::test_required_field_rejects_missing_and_accepts_present": "atomic",
+    "oracle/test_atomic.py::test_require_all_applies_to_all_schema_fields": "atomic",
+    "oracle/test_atomic.py::test_update_mode_allows_missing_required_fields": "atomic"
+  },
+  "stats": {
+    "integration": 46,
+    "system_e2e": 10,
+    "atomic": 28
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 84,
+    "total": 84
+  },
+  "dummy_score": {
+    "passed": 0,
+    "failed": 84,
+    "total": 84
+  },
+  "candidate_score": {
+    "runner": "codex-subagent",
+    "model": "gpt-5.5",
+    "run_id": "codex-subagent-gpt-5.5-cerberus-fullrepro-001-20260702T000000Z",
+    "passed": 75,
+    "total": 84,
+    "pass_rate": 0.8928571428571429,
+    "summary": {
+      "failed": 9,
+      "passed": 75,
+      "total": 84
+    },
+    "by_layer": {
+      "atomic": {
+        "passed": 28,
+        "total": 28
+      },
+      "integration": {
+        "failed": 7,
+        "passed": 39,
+        "total": 46
+      },
+      "system_e2e": {
+        "failed": 2,
+        "passed": 8,
+        "total": 10
+      }
+    },
+    "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/cerberus/codex-subagent-gpt-5.5-cerberus-fullrepro-001-20260702T000000Z/output/cerberus/__init__.py",
+    "python_sha256": {
+      "cerberus/__init__.py": "f33031331b9d7ec232659109c63b0c8413d4b73b234de6a109cfe77539e209c8",
+      "cerberus/errors.py": "a50fa0d86b723a78dae978baebef7c41b8ff27b531ad437ac294521d34a5379d",
+      "cerberus/schema.py": "4fed0c0eb57e562ddd15fbd0a69cf27d2f6c870152c872ef06efe3100500db4a",
+      "cerberus/utils.py": "1266a9f0a9a3ae31b2a6d480487c406d34343889a23793fd2edf3f148961d8ab",
+      "cerberus/validator.py": "bb913e9b4ff1dacf1dc1e431ae5332768041744c15b20e90e966ed39ac35edca"
+    },
+    "unchanged_from_prior_scoring": {
+      "prior_common_set": "72/81",
+      "current_common_set": "72/81",
+      "generated_required_fields": "3/3",
+      "outcome_mismatches_on_common_set": 0
+    }
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_mixed",
+      "D_coverage_gap": "FULL_AFTER_REQUIRED_FIELDS_REPAIR"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "normalization-composition",
+      "description": "Nine remaining candidate failures cover coercion/rename ordering, nullable defaults, nested purging, tuple preservation, deepcopy-resistant values, and rules-set schema validation.",
+      "affected_tests": 9
+    }
+  ],
+  "labels": [
+    "mixed-native-oracle",
+    "discriminating",
+    "gate-d-repaired"
+  ],
+  "caveats": [
+    "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+  ],
+  "validation_evidence": "validation/summary.json"
+}

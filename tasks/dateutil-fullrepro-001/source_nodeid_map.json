@@ -1,0 +1,670 @@
+{
+  "schema_version": 1,
+  "mapping_contract": {
+    "source_nodeid": "primary upstream provenance node ID",
+    "oracle_nodeid": "task-local native score identity",
+    "canonical_score_identity": "oracle_nodeid",
+    "source_type": "upstream_rewritten",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "source_nodeids": "all upstream provenance node IDs when a native case consolidates a behavior family"
+  },
+  "validation": {
+    "expected_cases": 80,
+    "reference_passed": 80,
+    "dummy_passed": 0,
+    "layers": {
+      "atomic": 50,
+      "integration": 30,
+      "system_e2e": 0
+    }
+  },
+  "cases": [
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_western",
+      "oracle_nodeid": "oracle/test_atomic.py::test_western_easter_dates[1990]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_western",
+      "oracle_nodeid": "oracle/test_atomic.py::test_western_easter_dates[2000]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_western",
+      "oracle_nodeid": "oracle/test_atomic.py::test_western_easter_dates[2018]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_western",
+      "oracle_nodeid": "oracle/test_atomic.py::test_western_easter_dates[2025]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_orthodox",
+      "oracle_nodeid": "oracle/test_atomic.py::test_orthodox_easter_dates[1991]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_orthodox",
+      "oracle_nodeid": "oracle/test_atomic.py::test_orthodox_easter_dates[2000]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_orthodox",
+      "oracle_nodeid": "oracle/test_atomic.py::test_orthodox_easter_dates[2018]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_orthodox",
+      "oracle_nodeid": "oracle/test_atomic.py::test_orthodox_easter_dates[2024]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_julian",
+      "oracle_nodeid": "oracle/test_atomic.py::test_julian_easter_dates[326]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_julian",
+      "oracle_nodeid": "oracle/test_atomic.py::test_julian_easter_dates[725]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_julian",
+      "oracle_nodeid": "oracle/test_atomic.py::test_julian_easter_dates[1242]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_julian",
+      "oracle_nodeid": "oracle/test_atomic.py::test_julian_easter_dates[1555]",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_easter.py::test_easter_bad_method",
+      "oracle_nodeid": "oracle/test_atomic.py::test_easter_rejects_unknown_method",
+      "layer": "atomic",
+      "spec_section": "Easter Dates",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_year_only",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_calendar_forms[year]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_year_only",
+        "tests/test_isoparser.py::test_year_month",
+        "tests/test_isoparser.py::test_year_month_day"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_year_only",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_calendar_forms[year-month]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_year_only",
+        "tests/test_isoparser.py::test_year_month",
+        "tests/test_isoparser.py::test_year_month_day"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_year_only",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_calendar_forms[basic-date]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_year_only",
+        "tests/test_isoparser.py::test_year_month",
+        "tests/test_isoparser.py::test_year_month_day"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_year_only",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_calendar_forms[extended-date]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_year_only",
+        "tests/test_isoparser.py::test_year_month",
+        "tests/test_isoparser.py::test_year_month_day"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_year_only",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_calendar_forms[bytes-basic]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_year_only",
+        "tests/test_isoparser.py::test_year_month",
+        "tests/test_isoparser.py::test_year_month_day"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_year_only",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_calendar_forms[bytes-extended]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_year_only",
+        "tests/test_isoparser.py::test_year_month",
+        "tests/test_isoparser.py::test_year_month_day"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_ymd_h",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[hour]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_ymd_h",
+        "tests/test_isoparser.py::test_ymd_hm",
+        "tests/test_isoparser.py::test_ymd_hms",
+        "tests/test_isoparser.py::test_ymd_hms_micro",
+        "tests/test_isoparser.py::test_extra_subsecond_digits"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_ymd_h",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[minute]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_ymd_h",
+        "tests/test_isoparser.py::test_ymd_hm",
+        "tests/test_isoparser.py::test_ymd_hms",
+        "tests/test_isoparser.py::test_ymd_hms_micro",
+        "tests/test_isoparser.py::test_extra_subsecond_digits"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_ymd_h",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[basic-second]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_ymd_h",
+        "tests/test_isoparser.py::test_ymd_hm",
+        "tests/test_isoparser.py::test_ymd_hms",
+        "tests/test_isoparser.py::test_ymd_hms_micro",
+        "tests/test_isoparser.py::test_extra_subsecond_digits"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_ymd_h",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[extended-second]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_ymd_h",
+        "tests/test_isoparser.py::test_ymd_hm",
+        "tests/test_isoparser.py::test_ymd_hms",
+        "tests/test_isoparser.py::test_ymd_hms_micro",
+        "tests/test_isoparser.py::test_extra_subsecond_digits"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_ymd_h",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[millisecond]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_ymd_h",
+        "tests/test_isoparser.py::test_ymd_hm",
+        "tests/test_isoparser.py::test_ymd_hms",
+        "tests/test_isoparser.py::test_ymd_hms_micro",
+        "tests/test_isoparser.py::test_extra_subsecond_digits"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_ymd_h",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[comma]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_ymd_h",
+        "tests/test_isoparser.py::test_ymd_hm",
+        "tests/test_isoparser.py::test_ymd_hms",
+        "tests/test_isoparser.py::test_ymd_hms_micro",
+        "tests/test_isoparser.py::test_extra_subsecond_digits"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_ymd_h",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[truncate-low]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_ymd_h",
+        "tests/test_isoparser.py::test_ymd_hm",
+        "tests/test_isoparser.py::test_ymd_hms",
+        "tests/test_isoparser.py::test_ymd_hms_micro",
+        "tests/test_isoparser.py::test_extra_subsecond_digits"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_ymd_h",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[truncate-high]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": [],
+      "source_nodeids": [
+        "tests/test_isoparser.py::test_ymd_h",
+        "tests/test_isoparser.py::test_ymd_hm",
+        "tests/test_isoparser.py::test_ymd_hms",
+        "tests/test_isoparser.py::test_ymd_hms_micro",
+        "tests/test_isoparser.py::test_extra_subsecond_digits"
+      ]
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_full_tzoffsets",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_timezone_offsets[zulu]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_full_tzoffsets",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_timezone_offsets[hours]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_full_tzoffsets",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_timezone_offsets[colon]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_full_tzoffsets",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_timezone_offsets[basic]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_datetime_midnight",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_midnight_forms[zero-hour]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_datetime_midnight",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_midnight_forms[hour-24]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_datetime_midnight",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_midnight_forms[zero-minute]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_datetime_midnight",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_midnight_forms[hour-24-full]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_isoparse_sep_none",
+      "oracle_nodeid": "oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[space]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_isoparse_sep_none",
+      "oracle_nodeid": "oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[letter]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_isoparse_sep_none",
+      "oracle_nodeid": "oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[tee]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_isoparse_sep_none",
+      "oracle_nodeid": "oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[underscore]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_isoparse_sep_none",
+      "oracle_nodeid": "oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[dash]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_isoparse_sep_none",
+      "oracle_nodeid": "oracle/test_atomic.py::test_configured_isoparser_separator",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_invalid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_rejects_malformed_values[short-year]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_invalid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_rejects_malformed_values[mixed-date-a]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_invalid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_rejects_malformed_values[mixed-date-b]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_invalid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_rejects_malformed_values[mixed-time]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_invalid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_rejects_malformed_values[short-zone]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_invalid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_rejects_malformed_values[zone-hour]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_invalid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_rejects_malformed_values[zone-minute]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_invalid",
+      "oracle_nodeid": "oracle/test_atomic.py::test_isoparse_rejects_malformed_values[bad-month]",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_isoparser.py::test_full_tzoffsets",
+      "oracle_nodeid": "oracle/test_atomic.py::test_zero_offset_is_utc_equivalent",
+      "layer": "atomic",
+      "spec_section": "ISO-8601 Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[date-command]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[month-name]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[iso]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[basic-iso]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[logger]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[day-first-unambiguous]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[dots]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[slashes]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[ampm]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[ordinal]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[fraction]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser",
+      "oracle_nodeid": "oracle/test_integration.py::test_general_parser_formats[compact-month]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser_default",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_default_fills_missing_components[missing-year]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser_default",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_default_fills_missing_components[missing-day-year]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parser_default",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_default_fills_missing_components[time-only]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_dayfirst",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_dayfirst[dash]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_dayfirst",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_dayfirst[dot]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_dayfirst",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_dayfirst[slash]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_yearfirst",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_yearfirst[dash]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_yearfirst",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_yearfirst[dot]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_yearfirst",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_yearfirst[slash]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_ignoretz",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_ignoretz_returns_naive[brst]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_ignoretz",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_ignoretz_returns_naive[pdt]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_ignoretz",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_ignoretz_returns_naive[pst]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_with_tzoffset",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_numeric_timezone_offsets[basic]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_with_tzoffset",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_numeric_timezone_offsets[rfc-like]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::test_parse_with_tzoffset",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_numeric_timezone_offsets[colon]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::TestInputTypes::test_empty_string_invalid",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_invalid_input_raises_parser_error[empty]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::TestInputTypes::test_empty_string_invalid",
+      "oracle_nodeid": "oracle/test_integration.py::test_parse_invalid_input_raises_parser_error[unrecognized]",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    },
+    {
+      "source_nodeid": "tests/test_parser.py::TestInputTypes::test_empty_string_invalid",
+      "oracle_nodeid": "oracle/test_integration.py::test_parser_error_is_value_error",
+      "layer": "integration",
+      "spec_section": "General Date Parsing",
+      "fixture_dependencies": []
+    }
+  ]
+}

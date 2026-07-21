@@ -1,0 +1,93 @@
+{
+  "date": "2026-07-20",
+  "harness_commit": "3eb10a6ae01266ada9e5f2b7f1c823d7395b404e",
+  "status": "QUALIFIED",
+  "commands": {
+    "verify": "python harness/verify_task.py dateutil-fullrepro-001",
+    "import_lint": "python harness/oracle_import_lint.py dateutil-fullrepro-001 tasks/dateutil-fullrepro-001/spec.md",
+    "score_source_staging": "mkdir -p tasks/dateutil-fullrepro-001/validation/scoring_source/oracle; cp tasks/dateutil-fullrepro-001/oracle/test_atomic.py tasks/dateutil-fullrepro-001/oracle/test_integration.py tasks/dateutil-fullrepro-001/validation/scoring_source/oracle/",
+    "reference_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/dateutil-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/e2e/dateutil/src --nodeids tasks/dateutil-fullrepro-001/kept_nodeids.txt --taxonomy tasks/dateutil-fullrepro-001/taxonomy.jsonl --run-dir tasks/dateutil-fullrepro-001/validation/runs/reference --remove-path dateutil --timeout 120 --json-out tasks/dateutil-fullrepro-001/validation/reference_score.json",
+    "dummy_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/dateutil-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/Bmk-upload-20260720/tasks/dateutil-fullrepro-001/validation/dummy --nodeids tasks/dateutil-fullrepro-001/kept_nodeids.txt --taxonomy tasks/dateutil-fullrepro-001/taxonomy.jsonl --run-dir tasks/dateutil-fullrepro-001/validation/runs/dummy --remove-path dateutil --timeout 120 --json-out tasks/dateutil-fullrepro-001/validation/dummy_score.json",
+    "candidate_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/dateutil-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-sweagent/swe-agent-gpt-5.5-dateutil-fullrepro-001-20260702T035227Z/output --nodeids tasks/dateutil-fullrepro-001/kept_nodeids.txt --taxonomy tasks/dateutil-fullrepro-001/taxonomy.jsonl --run-dir tasks/dateutil-fullrepro-001/validation/runs/candidate --remove-path dateutil --timeout 120 --json-out tasks/dateutil-fullrepro-001/validation/candidate_score.json",
+    "candidate_provenance": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-sweagent/swe-agent-gpt-5.5-dateutil-fullrepro-001-20260702T035227Z/output python -c \"import dateutil; print(dateutil.__file__)\""
+  },
+  "results": {
+    "verify": "QUALIFIED_VALID",
+    "import_lint": "LINT_PASS",
+    "reference": {
+      "summary": {
+        "passed": 80,
+        "total": 80
+      },
+      "pass_rate_excluding_skips": 1.0,
+      "by_layer": {
+        "atomic": {
+          "passed": 50,
+          "total": 50
+        },
+        "integration": {
+          "passed": 30,
+          "total": 30
+        }
+      }
+    },
+    "dummy": {
+      "summary": {
+        "failed": 80,
+        "passed": 0,
+        "total": 80
+      },
+      "pass_rate_excluding_skips": 0.0,
+      "collection_errors": 0,
+      "by_layer": {
+        "atomic": {
+          "failed": 50,
+          "total": 50
+        },
+        "integration": {
+          "failed": 30,
+          "total": 30
+        }
+      }
+    },
+    "candidate": {
+      "summary": {
+        "collection_error": 50,
+        "failed": 25,
+        "passed": 5,
+        "total": 80
+      },
+      "pass_rate_excluding_skips": 0.0625,
+      "by_layer": {
+        "atomic": {
+          "collection_error": 50,
+          "total": 50
+        },
+        "integration": {
+          "failed": 25,
+          "passed": 5,
+          "total": 30
+        }
+      }
+    }
+  },
+  "provenance": {
+    "candidate_import": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-sweagent/swe-agent-gpt-5.5-dateutil-fullrepro-001-20260702T035227Z/output/dateutil/__init__.py",
+    "candidate_import_clean": true,
+    "score_source": "task-local oracle/test_atomic.py and oracle/test_integration.py; transient scoring copy removed after runs"
+  },
+  "fairness": {
+    "canonical_cases": 80,
+    "all_cases_mapped": true,
+    "native_pytest_no_upstream_carrier": true,
+    "dummy_collected_without_error": true,
+    "independent_review": {
+      "credential_row": "deepseek-v4-pro",
+      "verdict": "PASS",
+      "recommended_status": "QUALIFIED",
+      "blocking_issues": 0,
+      "artifact": "review/deepseekv4pro_review.json"
+    }
+  },
+  "caveat": "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+}

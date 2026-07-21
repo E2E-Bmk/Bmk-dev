@@ -1,0 +1,200 @@
+{
+  "instance_id": "jsonpickle-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "jsonpickle/jsonpickle",
+  "repo_commit": "4bdc0d60779b8dac952b46788b5b858223a24674",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 76,
+    "source": "mixed_upstream_transplanted_and_generated",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "--remove-path",
+      "jsonpickle"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_dict_no_cycle": "system_e2e",
+    "oracle/test_atomic.py::test_dict_self_cycle": "system_e2e",
+    "oracle/test_atomic.py::test_dict_mutual_cycle": "system_e2e",
+    "oracle/test_atomic.py::test_set_no_cycle": "integration",
+    "oracle/test_atomic.py::test_set_self_cycle": "system_e2e",
+    "oracle/test_atomic.py::test_set_mutual_cycle": "system_e2e",
+    "oracle/test_atomic.py::test_cyclical": "system_e2e",
+    "oracle/test_atomic.py::test_random_uuid": "atomic",
+    "oracle/test_atomic.py::test_known_uuid": "atomic",
+    "oracle/test_atomic.py::test_bytestream": "atomic",
+    "oracle/test_atomic.py::test_with_pickling": "system_e2e",
+    "oracle/test_atomic.py::test_zoneinfo": "atomic",
+    "oracle/test_integration.py::test_import_surface_and_aliases_are_available": "atomic",
+    "oracle/test_integration.py::test_encode_decode_roundtrip_simple_object_state": "integration",
+    "oracle/test_integration.py::test_dumps_loads_aliases_roundtrip_container": "integration",
+    "oracle/test_integration.py::test_unpicklable_false_returns_plain_json_data": "integration",
+    "oracle/test_integration.py::test_primitives_lists_dicts_tuples_and_sets_roundtrip": "integration",
+    "oracle/test_integration.py::test_tuple_and_set_become_lists_when_not_unpicklable": "integration",
+    "oracle/test_integration.py::test_pickler_flatten_and_unpickler_restore_match_encode_decode": "integration",
+    "oracle/test_integration.py::test_unpickler_reset_false_preserves_reference_state": "integration",
+    "oracle/test_integration.py::test_repeated_object_reference_is_shared_after_decode": "integration",
+    "oracle/test_integration.py::test_object_cycle_roundtrips_to_restored_cycle": "integration",
+    "oracle/test_integration.py::test_list_cycle_roundtrips_to_restored_cycle": "integration",
+    "oracle/test_integration.py::test_dictionary_identity_is_preserved_in_current_format": "integration",
+    "oracle/test_integration.py::test_make_refs_false_expands_repeated_objects": "integration",
+    "oracle/test_integration.py::test_unpicklable_false_breaks_cycles_with_none": "integration",
+    "oracle/test_integration.py::test_make_refs_false_breaks_cycle_with_repr_string": "integration",
+    "oracle/test_integration.py::test_non_string_keys_default_to_strings": "integration",
+    "oracle/test_integration.py::test_keys_true_roundtrips_tuple_int_and_none_keys": "integration",
+    "oracle/test_integration.py::test_keys_true_roundtrips_object_keys_and_value_refs": "integration",
+    "oracle/test_integration.py::test_keys_true_preserves_reserved_tag_string_keys_as_user_data": "integration",
+    "oracle/test_integration.py::test_keys_true_decoded_without_keys_returns_escaped_strings": "integration",
+    "oracle/test_integration.py::test_numeric_keys_preserves_numeric_keys_in_flattened_projection": "integration",
+    "oracle/test_integration.py::test_class_metadata_wire_tags_are_semantically_recognized": "integration",
+    "oracle/test_integration.py::test_type_and_function_metadata_roundtrip": "integration",
+    "oracle/test_integration.py::test_classes_mapping_restores_renamed_class": "integration",
+    "oracle/test_integration.py::test_classes_accept_single_sequence_and_dict_forms": "integration",
+    "oracle/test_integration.py::test_missing_class_ignore_warn_error_and_callback_behaviors": "integration",
+    "oracle/test_integration.py::test_invalid_on_missing_value_warns_and_ignores": "integration",
+    "oracle/test_integration.py::test_v1_decode_uses_legacy_reference_numbering_for_dicts": "integration",
+    "oracle/test_integration.py::test_getstate_and_setstate_are_used_for_object_state": "integration",
+    "oracle/test_integration.py::test_getstate_without_setstate_returns_non_dict_state_when_no_newargs": "integration",
+    "oracle/test_integration.py::test_getnewargs_and_getnewargs_ex_restore_tuple_subclasses": "integration",
+    "oracle/test_integration.py::test_getinitargs_roundtrip_visible_state": "integration",
+    "oracle/test_integration.py::test_reduce_listitems_restore_visible_mutation": "integration",
+    "oracle/test_integration.py::test_excluded_attributes_are_not_synthesized_after_decode": "integration",
+    "oracle/test_integration.py::test_slots_instances_roundtrip_public_slot_values": "integration",
+    "oracle/test_integration.py::test_bytes_default_and_base85_roundtrip": "integration",
+    "oracle/test_integration.py::test_invalid_base64_and_base85_payloads_restore_empty_bytes": "atomic",
+    "oracle/test_integration.py::test_max_depth_uses_repr_for_deeper_values": "integration",
+    "oracle/test_integration.py::test_include_properties_adds_property_metadata_without_breaking_restore": "integration",
+    "oracle/test_integration.py::test_handle_readonly_roundtrips_string_subclass_with_empty_slots": "integration",
+    "oracle/test_integration.py::test_fail_safe_replaces_failed_object_and_records_exception": "atomic",
+    "oracle/test_integration.py::test_fail_safe_does_not_catch_keyboard_interrupt": "atomic",
+    "oracle/test_integration.py::test_warn_true_emits_warning_for_unpicklable_file_object": "atomic",
+    "oracle/test_integration.py::test_decode_invalid_json_raises_backend_exception": "atomic",
+    "oracle/test_integration.py::test_register_rejects_non_class_and_base_handler_methods_raise": "atomic",
+    "oracle/test_integration.py::test_custom_handler_roundtrip_and_unregister_restores_default_behavior": "integration",
+    "oracle/test_integration.py::test_custom_handler_decorator_registration": "integration",
+    "oracle/test_integration.py::test_base_handler_applies_to_subclasses_until_specific_handler_overrides": "integration",
+    "oracle/test_integration.py::test_handler_context_passes_only_to_accepting_handlers": "integration",
+    "oracle/test_integration.py::test_handler_can_share_reference_graph_with_context_reset_false": "integration",
+    "oracle/test_integration.py::test_load_backend_and_preferred_backend_use_custom_module": "integration",
+    "oracle/test_integration.py::test_load_backend_returns_false_for_missing_components": "integration",
+    "oracle/test_integration.py::test_remove_backend_allows_absent_backend_and_preferred_unloaded_raises": "integration",
+    "oracle/test_integration.py::test_backend_encoder_decoder_options_persist_for_later_calls": "integration",
+    "oracle/test_integration.py::test_per_call_indent_and_separators_format_but_decode_same_projection": "integration",
+    "oracle/test_integration.py::test_jsonbackend_fallthrough_raises_last_exception_when_enabled": "integration",
+    "oracle/test_integration.py::test_jsonbackend_no_fallthrough_raises_first_exception": "integration",
+    "oracle/test_integration.py::test_jsonbackend_with_no_loaded_backend_raises_assertion": "atomic",
+    "oracle/test_integration.py::test_workflow_object_graph_file_style_roundtrip": "system_e2e",
+    "oracle/test_integration.py::test_workflow_keys_true_for_non_string_keyed_object_graph": "system_e2e",
+    "oracle/test_integration.py::test_workflow_custom_handler_with_backend_formatting": "system_e2e",
+    "oracle/test_integration.py::test_semantic_json_member_order_is_not_required_for_decode": "integration",
+    "oracle/test_integration.py::test_semantic_json_whitespace_is_not_required_for_decode": "integration",
+    "oracle/test_integration.py::test_no_optional_extension_is_needed_for_core_roundtrip": "atomic"
+  },
+  "stats": {
+    "atomic": 13,
+    "integration": 53,
+    "system_e2e": 10
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 76,
+    "total": 76
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 76
+  },
+  "candidate_score": {
+    "runner": "opencode",
+    "model": "gpt-5.5",
+    "run_id": "opencode-gpt-5.5-jsonpickle-fullrepro-001-20260709T-stage4-cleanroom",
+    "passed": 58,
+    "total": 76,
+    "pass_rate": 0.7631578947368421,
+    "summary": {
+      "failed": 18,
+      "passed": 58,
+      "total": 76
+    },
+    "by_layer": {
+      "atomic": {
+        "failed": 2,
+        "passed": 11,
+        "total": 13
+      },
+      "integration": {
+        "failed": 10,
+        "passed": 43,
+        "total": 53
+      },
+      "system_e2e": {
+        "failed": 6,
+        "passed": 4,
+        "total": 10
+      }
+    },
+    "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-jsonpickle-fullrepro-001-20260709T-stage4-cleanroom/output/jsonpickle/__init__.py",
+    "python_sha256": {
+      "jsonpickle/__init__.py": "15dee035c1db08a6c1015396797907972ace4f7981fb3e5a9485274b116d5604",
+      "jsonpickle/backend.py": "4a2be0b4714cf7cf4685b36bbaa6a2379f7d607a5ea1b6ee0dc07c44e1e61397",
+      "jsonpickle/errors.py": "e261a8bfb9da6b43889396e1c51368b399d5532299472b6f3226d4ea0a4e2cdd",
+      "jsonpickle/handlers.py": "16909c92d1a18ffffceab540c3b13ca059b71c96bb74d84770f6e5a52d24450d",
+      "jsonpickle/pickler.py": "7cb50d8af8df617a31a1dcccb516ecb6e621d30272ae220f8e87bc93be16522e",
+      "jsonpickle/tags.py": "a4a06ab841e44f7550b900aa357895b87d09190383782405c0f49b8a1be61eb5",
+      "jsonpickle/unpickler.py": "ab0bd62547e1ed2a34bb23c64f06e42cb0c9526216e35f45ef3c42eb5856cdec"
+    },
+    "unchanged_from_prior_scoring": {
+      "summary_match": true,
+      "layer_match": true,
+      "outcome_mismatches": 0
+    }
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "independent_review_result": "PASS",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_mixed",
+      "D_coverage_gap": "FULL"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "cross-view-consistency",
+      "description": "The candidate loses identity or lookup consistency in cyclic object-keyed dictionaries, self-referential sets, reserved keys, and handler-managed shared graphs.",
+      "affected_tests": 8
+    },
+    {
+      "dimension": "state-management",
+      "description": "Persistent reference state and several restoration paths diverge for missing classes, legacy references, reduce list items, depth limits, readonly subclasses, and reordered object metadata.",
+      "affected_tests": 7
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "ZoneInfo restoration, warning behavior for unpicklable files, and preferred custom-backend output differ from the documented behavior.",
+      "affected_tests": 3
+    }
+  ],
+  "labels": [
+    "mixed-native-oracle",
+    "discriminating",
+    "state-identity-signal",
+    "object-graph-cross-view-signal",
+    "full-spec-section-coverage"
+  ],
+  "caveats": [
+    "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+  ],
+  "validation_evidence": "validation/summary.json"
+}

@@ -1,0 +1,505 @@
+{
+  "schema_version": 1,
+  "mapping_contract": {
+    "source_nodeid": "prior filtered-test provenance",
+    "oracle_nodeid": "task-local native score identity",
+    "canonical_score_identity": "oracle_nodeid",
+    "carrier_dependency": false,
+    "subprocess_dependency": true
+  },
+  "validation": {
+    "expected_cases": 60,
+    "layers": {
+      "atomic": 36,
+      "integration": 7,
+      "system_e2e": 17
+    },
+    "reference_passed": 60,
+    "dummy_passed": 0,
+    "candidate_passed": 26,
+    "candidate_total": 60,
+    "candidate_outcome_mismatches_from_prior_oracle": 0
+  },
+  "cases": [
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_config_known_settings_are_available_and_validated",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_known_settings_are_available_and_validated",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Configuration objects and logging",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_config_boolean_and_callable_validation",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_boolean_and_callable_validation",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Configuration objects and logging",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_config_forwarded_allow_ips_parsing_and_rejection",
+      "oracle_nodeid": "oracle/test_atomic.py::test_config_forwarded_allow_ips_parsing_and_rejection",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Principal settings",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_base_application_wsgi_callable_is_cached",
+      "oracle_nodeid": "oracle/test_atomic.py::test_base_application_wsgi_callable_is_cached",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Application targets and runners",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_wsgi_application_direct_cli_target_wins_over_config_wsgi_app",
+      "oracle_nodeid": "oracle/test_atomic.py::test_wsgi_application_direct_cli_target_wins_over_config_wsgi_app",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Sources and precedence",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_wsgi_application_uses_config_wsgi_app_when_cli_target_is_absent",
+      "oracle_nodeid": "oracle/test_atomic.py::test_wsgi_application_uses_config_wsgi_app_when_cli_target_is_absent",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Application targets and runners",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_wsgi_application_requires_an_application_target",
+      "oracle_nodeid": "oracle/test_atomic.py::test_wsgi_application_requires_an_application_target",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_cli_arguments_override_gunicorn_cmd_args",
+      "oracle_nodeid": "oracle/test_atomic.py::test_cli_arguments_override_gunicorn_cmd_args",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Sources and precedence",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_direct_cli_config_file_wins_over_env_config_file",
+      "oracle_nodeid": "oracle/test_atomic.py::test_direct_cli_config_file_wins_over_env_config_file",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Sources and precedence",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_configuration_values_and_validation",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_configuration_values_and_validation",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Application lifecycle and allocation",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_hook_settings_accept_matching_callables_and_reject_invalid_arity",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_hook_settings_accept_matching_callables_and_reject_invalid_arity",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Principal settings",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_app_dispatches_public_actions_and_persists_instance_state",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_app_dispatches_public_actions_and_persists_instance_state",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Application lifecycle and allocation",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_app_rejects_missing_and_underscore_prefixed_actions",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_app_rejects_missing_and_underscore_prefixed_actions",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Application lifecycle and allocation",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_app_worker_limit_attribute_is_inherited_or_overridden",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_app_worker_limit_attribute_is_inherited_or_overridden",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Application lifecycle and allocation",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_client_execute_reports_connection_failure",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_client_execute_reports_connection_failure",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Clients and execution",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_client_getter_uses_thread_local_client_and_close_resets",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_client_getter_uses_thread_local_client_and_close_resets",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Clients and execution",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_client_getter_is_thread_local",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_client_getter_is_thread_local",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Clients and execution",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_client_getter_requires_socket_configuration",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_client_getter_requires_socket_configuration",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Clients and execution",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_async_dirty_client_getter_reuses_context_client_and_close_is_idempotent",
+      "oracle_nodeid": "oracle/test_atomic.py::test_async_dirty_client_getter_reuses_context_client_and_close_is_idempotent",
+      "source_type": "upstream_rewrite",
+      "layer": "integration",
+      "spec_section": "Clients and execution",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_dirty_no_workers_error_preserves_app_path_and_base_type",
+      "oracle_nodeid": "oracle/test_atomic.py::test_dirty_no_workers_error_preserves_app_path_and_base_type",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_stash_errors_preserve_table_and_key_details",
+      "oracle_nodeid": "oracle/test_atomic.py::test_stash_errors_preserve_table_and_key_details",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Stash tables",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_control_client_send_command_reports_missing_socket",
+      "oracle_nodeid": "oracle/test_atomic.py::test_control_client_send_command_reports_missing_socket",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Control client",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_control_client_context_manager_reports_connection_failure",
+      "oracle_nodeid": "oracle/test_atomic.py::test_control_client_context_manager_reports_connection_failure",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Control client",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/rewritten_upstream_tests.py::test_control_client_close_is_idempotent",
+      "oracle_nodeid": "oracle/test_atomic.py::test_control_client_close_is_idempotent",
+      "source_type": "upstream_rewrite",
+      "layer": "atomic",
+      "spec_section": "Control client",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_version_info_matches_public_version_string",
+      "oracle_nodeid": "oracle/test_integration.py::test_version_info_matches_public_version_string",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Installable Surface",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_http2_capability_reports_installed_h2_version",
+      "oracle_nodeid": "oracle/test_integration.py::test_http2_capability_reports_installed_h2_version",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "HTTP/2 capability queries",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_principal_defaults_are_visible",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_principal_defaults_are_visible",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Principal settings",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_accepts_public_protocol_selection",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_accepts_public_protocol_selection",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Principal settings",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_control_socket_disable_uses_boolean_validation",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_control_socket_disable_uses_boolean_validation",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Principal settings",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_dirty_and_runtime_timeouts_accept_zero_as_documented_disable",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_dirty_and_runtime_timeouts_accept_zero_as_documented_disable",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Principal settings",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_request_limit_settings_reject_negative_values",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_request_limit_settings_reject_negative_values",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Request and Protocol Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_config_reload_and_capture_output_use_boolean_validation",
+      "oracle_nodeid": "oracle/test_integration.py::test_config_reload_and_capture_output_use_boolean_validation",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Principal settings",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_application_loads_default_application_name",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_application_loads_default_application_name",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Application targets and runners",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_application_loads_named_callable",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_application_loads_named_callable",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Application targets and runners",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_application_invokes_factory_with_literal_arguments",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_application_invokes_factory_with_literal_arguments",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Application targets and runners",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_application_rejects_missing_callable",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_application_rejects_missing_callable",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_application_rejects_non_callable_result",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_application_rejects_non_callable_result",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_application_rejects_non_literal_factory_argument",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_application_rejects_non_literal_factory_argument",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_application_rejects_malformed_target_expression",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_application_rejects_malformed_target_expression",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_application_rejects_non_simple_factory_reference",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_application_rejects_non_simple_factory_reference",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_dirty_error_subclasses_preserve_base_type",
+      "oracle_nodeid": "oracle/test_integration.py::test_dirty_error_subclasses_preserve_base_type",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_dirty_app_not_found_error_is_catchable_as_dirty_error",
+      "oracle_nodeid": "oracle/test_integration.py::test_dirty_app_not_found_error_is_catchable_as_dirty_error",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_control_client_error_is_raised_for_send_to_missing_socket",
+      "oracle_nodeid": "oracle/test_integration.py::test_control_client_error_is_raised_for_send_to_missing_socket",
+      "source_type": "generated",
+      "layer": "atomic",
+      "spec_section": "Control client",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_python_module_help_exits_successfully",
+      "oracle_nodeid": "oracle/test_integration.py::test_python_module_help_exits_successfully",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Installable Surface",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgiapp_module_help_exits_successfully",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgiapp_module_help_exits_successfully",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Installable Surface",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_check_config_accepts_valid_wsgi_application",
+      "oracle_nodeid": "oracle/test_integration.py::test_check_config_accepts_valid_wsgi_application",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Sources and precedence",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_check_config_rejects_missing_application_target",
+      "oracle_nodeid": "oracle/test_integration.py::test_check_config_rejects_missing_application_target",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_check_config_rejects_invalid_setting_value",
+      "oracle_nodeid": "oracle/test_integration.py::test_check_config_rejects_invalid_setting_value",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_check_config_rejects_missing_explicit_config_file",
+      "oracle_nodeid": "oracle/test_integration.py::test_check_config_rejects_missing_explicit_config_file",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Sources and precedence",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_check_config_ignores_unknown_python_config_names",
+      "oracle_nodeid": "oracle/test_integration.py::test_check_config_ignores_unknown_python_config_names",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Sources and precedence",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_print_config_reports_direct_cli_precedence_over_environment_args",
+      "oracle_nodeid": "oracle/test_integration.py::test_print_config_reports_direct_cli_precedence_over_environment_args",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Sources and precedence",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_server_returns_application_body",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_server_returns_application_body",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Request and Protocol Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_server_exposes_path_query_and_scheme",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_server_exposes_path_query_and_scheme",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Request and Protocol Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_server_exposes_method_headers_and_body_length",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_server_exposes_method_headers_and_body_length",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Cross-View Invariants",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_server_ignores_forwarded_scheme_from_untrusted_peer",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_server_ignores_forwarded_scheme_from_untrusted_peer",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Cross-View Invariants",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_server_reports_application_exception_as_server_error",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_server_reports_application_exception_as_server_error",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Error Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_wsgi_server_closes_returned_iterable",
+      "oracle_nodeid": "oracle/test_integration.py::test_wsgi_server_closes_returned_iterable",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Request and Protocol Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_control_socket_show_config_reports_runtime_projection",
+      "oracle_nodeid": "oracle/test_integration.py::test_control_socket_show_config_reports_runtime_projection",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Configured WSGI server with runtime inspection",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_control_socket_disable_prevents_socket_creation",
+      "oracle_nodeid": "oracle/test_integration.py::test_control_socket_disable_prevents_socket_creation",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Runtime and Control Semantics",
+      "notes": "public observable assertion; reference and dummy gated"
+    },
+    {
+      "source_nodeid": "filter/generated_tests.py::test_repeated_wsgi_requests_observe_same_running_service",
+      "oracle_nodeid": "oracle/test_integration.py::test_repeated_wsgi_requests_observe_same_running_service",
+      "source_type": "generated",
+      "layer": "system_e2e",
+      "spec_section": "Product State Model",
+      "notes": "public observable assertion; reference and dummy gated"
+    }
+  ]
+}

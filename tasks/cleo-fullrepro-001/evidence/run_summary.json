@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-07-20",
+  "oracle_version": "2026-07-20-native-v2-fairness",
+  "fairness_repair": {
+    "previous_cases": 87,
+    "final_cases": 79,
+    "excluded_event_cases": 8,
+    "retained_event_rewrite": "oracle/test_integration.py::test_dispatch",
+    "private_event_imports": 0,
+    "candidate_collection_errors": 0,
+    "parameter_setup": "Option construction deferred from collection to each test call"
+  },
+  "verification": [
+    {
+      "command": "python harness/verify_task.py cleo-fullrepro-001",
+      "result": "QUALIFIED_VALID"
+    },
+    {
+      "command": "python harness/oracle_import_lint.py cleo-fullrepro-001 tasks/cleo-fullrepro-001/spec.md",
+      "result": "LINT_PASS"
+    }
+  ],
+  "provenance": {
+    "candidate_run": "opencode-gpt-5.5-cleo-fullrepro-001-20260709T-stage4-cleanroom",
+    "candidate_unchanged": true,
+    "import_preflight_command": "env PYTHONPATH=/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-cleo-fullrepro-001-20260709T-stage4-cleanroom/output python -c \"import cleo; print(cleo.__file__)\"",
+    "import_preflight_output": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-cleo-fullrepro-001-20260709T-stage4-cleanroom/output/cleo/__init__.py",
+    "forbidden_output_scan": "no_matches"
+  },
+  "score_command_template": "python harness/score_pytest_original.py --source-repo tasks/cleo-fullrepro-001 --solution-dir <solution> --nodeids tasks/cleo-fullrepro-001/kept_nodeids.txt --taxonomy tasks/cleo-fullrepro-001/taxonomy.jsonl --run-dir <fresh-run-dir> --remove-path cleo --timeout 120 --pytest-arg=--rootdir=. --json-out <score-json>",
+  "scores": {
+    "reference": {
+      "summary": {"passed": 79, "total": 79},
+      "by_layer": {
+        "atomic": {"passed": 47, "total": 47},
+        "integration": {"passed": 21, "total": 21},
+        "system_e2e": {"passed": 11, "total": 11}
+      },
+      "sha256": "8c3cddfb6b8fbe23dbe23db1ad205f5e4d1c0f55cb549240662a8e45e9e4b04e"
+    },
+    "dummy": {
+      "summary": {"error": 14, "failed": 65, "total": 79},
+      "passed": 0,
+      "sha256": "4171115feaff95412b113d132021745a0040580e5c5f698d0807f0f7a94cfe49"
+    },
+    "candidate": {
+      "summary": {"error": 12, "failed": 51, "passed": 16, "total": 79},
+      "by_layer": {
+        "atomic": {"failed": 37, "passed": 10, "total": 47},
+        "integration": {"error": 10, "failed": 7, "passed": 4, "total": 21},
+        "system_e2e": {"error": 2, "failed": 7, "passed": 2, "total": 11}
+      },
+      "sha256": "8cb49d3682a923bb86c4cdfa127f6896af7502af92df09f1da1129b238e147e0"
+    }
+  },
+  "independent_review": {
+    "model": "deepseek-v4-pro",
+    "verdict": "PASS",
+    "recommended_status": "QUALIFIED",
+    "blocking_issues": 0,
+    "nonblocking_issues": 8
+  },
+  "qualification": {
+    "reference_at_least_95_percent": true,
+    "dummy_zero": true,
+    "candidate_provenance_and_scoring": true,
+    "fairness_mapping": true,
+    "status": "QUALIFIED"
+  },
+  "trust_boundary": "Current main uses same-process pytest and is not adversarial black-box proof."
+}

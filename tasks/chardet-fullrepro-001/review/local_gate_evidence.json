@@ -1,0 +1,96 @@
+{
+  "date": "2026-07-20",
+  "platform": "Linux",
+  "commands": {
+    "reference": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/root/autodl-tmp/e2e/chardet/src PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q -p no:cacheprovider -o addopts= tasks/chardet-fullrepro-001/oracle",
+    "dummy": "same command per local module with PYTHONPATH=tasks/chardet-fullrepro-001/.dummy and an explicit chardet shadow package",
+    "candidate": "same command per local module with PYTHONPATH=<unchanged candidate output>"
+  },
+  "reference": {
+    "passed": 90,
+    "total": 90
+  },
+  "dummy": {
+    "passed": 0,
+    "total": 90,
+    "summary": {
+      "collection_error": 82,
+      "failed": 8,
+      "total": 90
+    },
+    "by_layer": {
+      "atomic": {
+        "collection_error": 82,
+        "total": 82
+      },
+      "integration": {
+        "failed": 3,
+        "total": 3
+      },
+      "system_e2e": {
+        "failed": 5,
+        "total": 5
+      }
+    },
+    "provenance": "task-local explicit shadow package"
+  },
+  "candidates": [
+    {
+      "runner": "opencode",
+      "model": "gpt-5.5",
+      "run_id": "opencode-gpt-5.5-chardet-fullrepro-001-20260702T035140Z",
+      "passed": 54,
+      "failed": 36,
+      "total": 90,
+      "pass_rate": 0.6,
+      "by_layer": {
+        "atomic": {
+          "passed": 50,
+          "failed": 32,
+          "total": 82
+        },
+        "integration": {
+          "passed": 1,
+          "failed": 2,
+          "total": 3
+        },
+        "system_e2e": {
+          "passed": 3,
+          "failed": 2,
+          "total": 5
+        }
+      },
+      "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-chardet-fullrepro-001-20260702T035140Z/output/chardet/__init__.py",
+      "provenance_clean": true
+    },
+    {
+      "runner": "swe-agent",
+      "model": "gpt-5.5",
+      "run_id": "swe-agent-gpt-5.5-chardet-fullrepro-001-20260702T035227Z",
+      "passed": 40,
+      "failed": 50,
+      "total": 90,
+      "pass_rate": 0.4444444444444444,
+      "by_layer": {
+        "atomic": {
+          "passed": 38,
+          "failed": 44,
+          "total": 82
+        },
+        "integration": {
+          "passed": 0,
+          "failed": 3,
+          "total": 3
+        },
+        "system_e2e": {
+          "passed": 2,
+          "failed": 3,
+          "total": 5
+        }
+      },
+      "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-sweagent/swe-agent-gpt-5.5-chardet-fullrepro-001-20260702T035227Z/output/chardet/__init__.py",
+      "provenance_clean": true
+    }
+  ],
+  "trust_boundary": "Current main uses same-process pytest and is not adversarial black-box proof."
+}

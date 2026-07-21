@@ -1,0 +1,91 @@
+{
+  "date": "2026-07-20",
+  "platform": "Linux",
+  "commands": {
+    "reference": "isolated pytest-json-report run with PYTHONPATH=/root/autodl-tmp/new-e2e/yaml__pyyaml/lib",
+    "dummy": "same grouped runner with a task-local empty yaml shadow package",
+    "candidate": "same grouped runner with the unchanged Stage 4 candidate output"
+  },
+  "reference": {
+    "summary": {
+      "passed": 118,
+      "total": 118
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 73,
+        "total": 73
+      },
+      "integration": {
+        "passed": 41,
+        "total": 41
+      },
+      "system_e2e": {
+        "passed": 4,
+        "total": 4
+      }
+    }
+  },
+  "dummy": {
+    "summary": {
+      "failed": 118,
+      "total": 118
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "failed": 73,
+        "total": 73
+      },
+      "integration": {
+        "failed": 41,
+        "total": 41
+      },
+      "system_e2e": {
+        "failed": 4,
+        "total": 4
+      }
+    },
+    "collection_errors": 0,
+    "provenance": "task-local explicit shadow package"
+  },
+  "candidates": [
+    {
+      "summary": {
+        "failed": 20,
+        "passed": 98,
+        "total": 118
+      },
+      "pass_rate_excluding_skips": 0.8305084745762712,
+      "by_layer": {
+        "atomic": {
+          "failed": 10,
+          "passed": 63,
+          "total": 73
+        },
+        "integration": {
+          "failed": 10,
+          "passed": 31,
+          "total": 41
+        },
+        "system_e2e": {
+          "passed": 4,
+          "total": 4
+        }
+      },
+      "runner": "opencode",
+      "model": "gpt-5.5",
+      "run_id": "opencode-gpt-5.5-pyyaml-fullrepro-001-20260709T-stage4-cleanroom",
+      "collection_errors": 0,
+      "import_provenance_stdout": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pyyaml-fullrepro-001-20260709T-stage4-cleanroom/output/yaml/__init__.py",
+      "import_provenance_clean": true
+    }
+  ],
+  "judge": {
+    "verdict": "QUALIFIED_WITH_CAVEATS",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "deepseek_passed": true
+  },
+  "trust_boundary": "Current main uses same-process pytest and is not adversarial black-box proof."
+}

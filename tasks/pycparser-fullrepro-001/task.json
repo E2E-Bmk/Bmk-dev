@@ -1,0 +1,205 @@
+{
+  "instance_id": "pycparser-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "eliben/pycparser",
+  "repo_commit": "89c9f3d8642b9ec84cfdd6921faffaba7e95c43c",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_extra_01_test_c_ast.py",
+      "oracle/test_extra_02_test_c_lexer.py",
+      "oracle/test_extra_03_test_examples.py",
+      "oracle/test_extra_04_test_general.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 90,
+    "source": "upstream_rewritten",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "--remove-path",
+      "pycparser"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_extra_01_test_c_ast.py::Test_c_ast::test_BinaryOp": "atomic",
+    "oracle/test_extra_01_test_c_ast.py::Test_c_ast::test_weakref_works_on_coord": "atomic",
+    "oracle/test_extra_01_test_c_ast.py::Test_c_ast::test_weakref_works_on_nodes": "atomic",
+    "oracle/test_extra_01_test_c_ast.py::TestNodeVisitor::test_repr": "atomic",
+    "oracle/test_extra_01_test_c_ast.py::TestNodeVisitor::test_scalar_children": "atomic",
+    "oracle/test_extra_01_test_c_ast.py::TestNodeVisitor::tests_list_children": "atomic",
+    "oracle/test_atomic.py::TestFunctionDeclGeneration::test_partial_funcdecl_generation": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_alignment": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_array_decl": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_atomic_qual": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_casts": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_comma_op_assignment": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_comma_op_in_ternary": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_comma_operator_funcarg": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_complex_decls": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_compound_literal": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_enum": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_enum_typedef": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_expr_list_in_initializer_list": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_exprlist_with_compound": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_exprlist_with_semi": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_exprlist_with_subexprlist": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_exprs": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_generate_struct_union_enum_exception": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_initlist": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_issue246": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_issue36": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_issue37": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_issue66": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_issue83": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_issue84": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_krstyle": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_nest_initializer_list": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_nest_named_initializer": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_nested_sizeof": "atomic",
+    "oracle/test_atomic.py::TestCtoC::test_noreturn": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_char_constants": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_exprs": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_floating_constants": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_hexadecimal_floating_constants": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_id_typeid": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_integer_constants": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_mess": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_new_keywords": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_on_rbrace_lbrace": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_preprocessor_line": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_preprocessor_line_funny": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_preprocessor_pragma": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_special_names": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_statements": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_string_literal": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerNoErrors::test_trivial_tokens": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerErrors::test_char_constants": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerErrors::test_integer_constants": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerErrors::test_preprocessor": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerErrors::test_string_literals": "atomic",
+    "oracle/test_extra_02_test_c_lexer.py::TestCLexerErrors::test_trivial_tokens": "atomic",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_FileAST": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_alignas_with_typedef_in_struct": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_alignof": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_anonymous_struct_union": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_atomic_specifier": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_compound_literals": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_compound_statement": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_coords": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_decl_inits": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_decl_named_inits": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_duplicate_typedef": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_empty_toplevel_decl": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_enums": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_forloop_coord": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_func_decls_with_array_dim_qualifiers": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_function_definitions": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_initial_semi": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_inline_specifier": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_int128": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_invalid_multiple_types_error": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_invalid_typedef_storage_qual_error": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_line_directive_update_in_errors": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_multi_decls": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_nested_decls": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_noreturn_specifier": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_offsetof": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_parenthesized_compounds": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_pragma": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_pragmacomp_or_statement": "integration",
+    "oracle/test_integration.py::TestCParser_fundamentals::test_qualifiers_storage_specifiers": "integration",
+    "oracle/test_extra_03_test_examples.py::TestExamplesSucceed::test_all_examples": "atomic",
+    "oracle/test_extra_04_test_general.py::TestParsing::test_c11_with_cpp": "atomic",
+    "oracle/test_extra_04_test_general.py::TestParsing::test_cpp_funkydir": "atomic"
+  },
+  "stats": {
+    "atomic": 60,
+    "integration": 30
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 90,
+    "total": 90
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 90
+  },
+  "candidate_score": {
+    "runner": "swe-agent",
+    "model": "gpt-5.5",
+    "run_id": "swe-agent-gpt-5.5-pycparser-fullrepro-001-20260702T035227Z",
+    "passed": 36,
+    "total": 90,
+    "pass_rate": 0.4,
+    "summary": {
+      "failed": 54,
+      "passed": 36,
+      "total": 90
+    },
+    "by_layer": {
+      "atomic": {
+        "failed": 26,
+        "passed": 34,
+        "total": 60
+      },
+      "integration": {
+        "failed": 28,
+        "passed": 2,
+        "total": 30
+      }
+    },
+    "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-sweagent/swe-agent-gpt-5.5-pycparser-fullrepro-001-20260702T035227Z/output/pycparser/__init__.py",
+    "python_sha256": {
+      "pycparser/__init__.py": "3b1a265d7a6d3a4244da4d2fb7dde6ecc28048154c62c9f337cc0395029b0b49",
+      "pycparser/ast_transforms.py": "b7d8be8213c9420fed04045a0d148a7730dc314fa5da6031ec0dfbdf65da8d88",
+      "pycparser/c_ast.py": "0da16236814bafc0193b5e260ed5685072c6c171e3668b579d232c8eee788265",
+      "pycparser/c_generator.py": "8959ad1568c6f8e6039bf076583bc07a3b51bd726ac03f666c9cb7ac0929aa78",
+      "pycparser/c_lexer.py": "6a2c28eda3b8fb6f170dabd565f3884d1106d96ed30d91b17f06eb185468fa2a",
+      "pycparser/c_parser.py": "16c63e479f5c0f456bb41878beb051eccba6552bf9e7d8219b80b15952e82008"
+    },
+    "unchanged_from_prior_scoring": {
+      "summary_match": false,
+      "layer_match": false,
+      "native_score_supersedes_archived_carrier_score": true,
+      "reason": "The native rewrite removed repository-only carrier effects and replaced the unfair exact repr assertion with a public structural invariant."
+    }
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed_no_collection_errors",
+      "C_generated_only": "not_applicable_upstream_rewritten",
+      "D_coverage_gap": "FULL"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "C grammar and AST integration",
+      "description": "The candidate diverges on parser grammar, AST coordinates, declarations, and parse/generate round trips.",
+      "affected_tests": 28
+    },
+    {
+      "dimension": "lexer and generator behavior",
+      "description": "The candidate diverges on public tokenization, invalid-token handling, and C source generation behavior.",
+      "affected_tests": 29
+    }
+  ],
+  "labels": [
+    "upstream-rewritten-native-oracle",
+    "discriminating",
+    "parser-ast-cross-view-signal",
+    "zero-candidate-collection-errors",
+    "full-spec-section-coverage"
+  ],
+  "caveats": [
+    "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+  ],
+  "validation_evidence": "validation/summary.json"
+}

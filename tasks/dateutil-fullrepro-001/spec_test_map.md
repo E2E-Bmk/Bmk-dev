@@ -1,0 +1,90 @@
+# Specification Coverage Map
+
+oracle_version: 2026-07-20-native-v1
+
+| Local case | Provenance | Layer | Specification section | Status | Rationale |
+|---|---|---|---|---|---|
+| `oracle/test_atomic.py::test_western_easter_dates[1990]` | `tests/test_easter.py::test_easter_western` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_western_easter_dates[2000]` | `tests/test_easter.py::test_easter_western` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_western_easter_dates[2018]` | `tests/test_easter.py::test_easter_western` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_western_easter_dates[2025]` | `tests/test_easter.py::test_easter_western` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_orthodox_easter_dates[1991]` | `tests/test_easter.py::test_easter_orthodox` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_orthodox_easter_dates[2000]` | `tests/test_easter.py::test_easter_orthodox` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_orthodox_easter_dates[2018]` | `tests/test_easter.py::test_easter_orthodox` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_orthodox_easter_dates[2024]` | `tests/test_easter.py::test_easter_orthodox` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_julian_easter_dates[326]` | `tests/test_easter.py::test_easter_julian` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_julian_easter_dates[725]` | `tests/test_easter.py::test_easter_julian` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_julian_easter_dates[1242]` | `tests/test_easter.py::test_easter_julian` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_julian_easter_dates[1555]` | `tests/test_easter.py::test_easter_julian` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_easter_rejects_unknown_method` | `tests/test_easter.py::test_easter_bad_method` | atomic | Easter Dates | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_calendar_forms[year]` | `tests/test_isoparser.py::test_year_only`<br>`tests/test_isoparser.py::test_year_month`<br>`tests/test_isoparser.py::test_year_month_day` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_calendar_forms[year-month]` | `tests/test_isoparser.py::test_year_only`<br>`tests/test_isoparser.py::test_year_month`<br>`tests/test_isoparser.py::test_year_month_day` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_calendar_forms[basic-date]` | `tests/test_isoparser.py::test_year_only`<br>`tests/test_isoparser.py::test_year_month`<br>`tests/test_isoparser.py::test_year_month_day` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_calendar_forms[extended-date]` | `tests/test_isoparser.py::test_year_only`<br>`tests/test_isoparser.py::test_year_month`<br>`tests/test_isoparser.py::test_year_month_day` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_calendar_forms[bytes-basic]` | `tests/test_isoparser.py::test_year_only`<br>`tests/test_isoparser.py::test_year_month`<br>`tests/test_isoparser.py::test_year_month_day` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_calendar_forms[bytes-extended]` | `tests/test_isoparser.py::test_year_only`<br>`tests/test_isoparser.py::test_year_month`<br>`tests/test_isoparser.py::test_year_month_day` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[hour]` | `tests/test_isoparser.py::test_ymd_h`<br>`tests/test_isoparser.py::test_ymd_hm`<br>`tests/test_isoparser.py::test_ymd_hms`<br>`tests/test_isoparser.py::test_ymd_hms_micro`<br>`tests/test_isoparser.py::test_extra_subsecond_digits` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[minute]` | `tests/test_isoparser.py::test_ymd_h`<br>`tests/test_isoparser.py::test_ymd_hm`<br>`tests/test_isoparser.py::test_ymd_hms`<br>`tests/test_isoparser.py::test_ymd_hms_micro`<br>`tests/test_isoparser.py::test_extra_subsecond_digits` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[basic-second]` | `tests/test_isoparser.py::test_ymd_h`<br>`tests/test_isoparser.py::test_ymd_hm`<br>`tests/test_isoparser.py::test_ymd_hms`<br>`tests/test_isoparser.py::test_ymd_hms_micro`<br>`tests/test_isoparser.py::test_extra_subsecond_digits` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[extended-second]` | `tests/test_isoparser.py::test_ymd_h`<br>`tests/test_isoparser.py::test_ymd_hm`<br>`tests/test_isoparser.py::test_ymd_hms`<br>`tests/test_isoparser.py::test_ymd_hms_micro`<br>`tests/test_isoparser.py::test_extra_subsecond_digits` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[millisecond]` | `tests/test_isoparser.py::test_ymd_h`<br>`tests/test_isoparser.py::test_ymd_hm`<br>`tests/test_isoparser.py::test_ymd_hms`<br>`tests/test_isoparser.py::test_ymd_hms_micro`<br>`tests/test_isoparser.py::test_extra_subsecond_digits` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[comma]` | `tests/test_isoparser.py::test_ymd_h`<br>`tests/test_isoparser.py::test_ymd_hm`<br>`tests/test_isoparser.py::test_ymd_hms`<br>`tests/test_isoparser.py::test_ymd_hms_micro`<br>`tests/test_isoparser.py::test_extra_subsecond_digits` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[truncate-low]` | `tests/test_isoparser.py::test_ymd_h`<br>`tests/test_isoparser.py::test_ymd_hm`<br>`tests/test_isoparser.py::test_ymd_hms`<br>`tests/test_isoparser.py::test_ymd_hms_micro`<br>`tests/test_isoparser.py::test_extra_subsecond_digits` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_time_and_fraction_forms[truncate-high]` | `tests/test_isoparser.py::test_ymd_h`<br>`tests/test_isoparser.py::test_ymd_hm`<br>`tests/test_isoparser.py::test_ymd_hms`<br>`tests/test_isoparser.py::test_ymd_hms_micro`<br>`tests/test_isoparser.py::test_extra_subsecond_digits` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_timezone_offsets[zulu]` | `tests/test_isoparser.py::test_full_tzoffsets` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_timezone_offsets[hours]` | `tests/test_isoparser.py::test_full_tzoffsets` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_timezone_offsets[colon]` | `tests/test_isoparser.py::test_full_tzoffsets` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_timezone_offsets[basic]` | `tests/test_isoparser.py::test_full_tzoffsets` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_midnight_forms[zero-hour]` | `tests/test_isoparser.py::test_datetime_midnight` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_midnight_forms[hour-24]` | `tests/test_isoparser.py::test_datetime_midnight` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_midnight_forms[zero-minute]` | `tests/test_isoparser.py::test_datetime_midnight` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_midnight_forms[hour-24-full]` | `tests/test_isoparser.py::test_datetime_midnight` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[space]` | `tests/test_isoparser.py::test_isoparse_sep_none` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[letter]` | `tests/test_isoparser.py::test_isoparse_sep_none` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[tee]` | `tests/test_isoparser.py::test_isoparse_sep_none` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[underscore]` | `tests/test_isoparser.py::test_isoparse_sep_none` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_default_isoparser_accepts_single_separator[dash]` | `tests/test_isoparser.py::test_isoparse_sep_none` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_configured_isoparser_separator` | `tests/test_isoparser.py::test_isoparse_sep_none` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_rejects_malformed_values[short-year]` | `tests/test_isoparser.py::test_invalid` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_rejects_malformed_values[mixed-date-a]` | `tests/test_isoparser.py::test_invalid` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_rejects_malformed_values[mixed-date-b]` | `tests/test_isoparser.py::test_invalid` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_rejects_malformed_values[mixed-time]` | `tests/test_isoparser.py::test_invalid` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_rejects_malformed_values[short-zone]` | `tests/test_isoparser.py::test_invalid` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_rejects_malformed_values[zone-hour]` | `tests/test_isoparser.py::test_invalid` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_rejects_malformed_values[zone-minute]` | `tests/test_isoparser.py::test_invalid` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_isoparse_rejects_malformed_values[bad-month]` | `tests/test_isoparser.py::test_invalid` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_atomic.py::test_zero_offset_is_utc_equivalent` | `tests/test_isoparser.py::test_full_tzoffsets` | atomic | ISO-8601 Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[date-command]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[month-name]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[iso]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[basic-iso]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[logger]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[day-first-unambiguous]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[dots]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[slashes]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[ampm]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[ordinal]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[fraction]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_general_parser_formats[compact-month]` | `tests/test_parser.py::test_parser` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_default_fills_missing_components[missing-year]` | `tests/test_parser.py::test_parser_default` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_default_fills_missing_components[missing-day-year]` | `tests/test_parser.py::test_parser_default` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_default_fills_missing_components[time-only]` | `tests/test_parser.py::test_parser_default` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_dayfirst[dash]` | `tests/test_parser.py::test_parse_dayfirst` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_dayfirst[dot]` | `tests/test_parser.py::test_parse_dayfirst` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_dayfirst[slash]` | `tests/test_parser.py::test_parse_dayfirst` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_yearfirst[dash]` | `tests/test_parser.py::test_parse_yearfirst` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_yearfirst[dot]` | `tests/test_parser.py::test_parse_yearfirst` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_yearfirst[slash]` | `tests/test_parser.py::test_parse_yearfirst` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_ignoretz_returns_naive[brst]` | `tests/test_parser.py::test_parse_ignoretz` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_ignoretz_returns_naive[pdt]` | `tests/test_parser.py::test_parse_ignoretz` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_ignoretz_returns_naive[pst]` | `tests/test_parser.py::test_parse_ignoretz` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_numeric_timezone_offsets[basic]` | `tests/test_parser.py::test_parse_with_tzoffset` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_numeric_timezone_offsets[rfc-like]` | `tests/test_parser.py::test_parse_with_tzoffset` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_numeric_timezone_offsets[colon]` | `tests/test_parser.py::test_parse_with_tzoffset` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_invalid_input_raises_parser_error[empty]` | `tests/test_parser.py::TestInputTypes::test_empty_string_invalid` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parse_invalid_input_raises_parser_error[unrecognized]` | `tests/test_parser.py::TestInputTypes::test_empty_string_invalid` | integration | General Date Parsing | covered | Direct public behavior assertion |
+| `oracle/test_integration.py::test_parser_error_is_value_error` | `tests/test_parser.py::TestInputTypes::test_empty_string_invalid` | integration | General Date Parsing | covered | Direct public behavior assertion |
+
+Total: 80 | kept: 80 | spec_gap: 0 | source-only: 0 | excluded: 0 | final_scoreable: 80
+
+The local cases are self-contained pytest tests. They do not import an upstream test module, dispatch an upstream node ID, or invoke another test process.

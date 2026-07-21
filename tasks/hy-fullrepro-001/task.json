@@ -1,0 +1,187 @@
+{
+  "instance_id": "hy-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "hylang/hy",
+  "repo_commit": "5369306cb3e9598e15a23764935e2270197e1b96",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py",
+      "oracle/test_models.py",
+      "oracle/test_system.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 64,
+    "source": "upstream_rewritten",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "selected package root first on sys.path",
+      "file-grouped pytest.main in the scorer process"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_lex_exception": "atomic",
+    "oracle/test_atomic.py::test_unbalanced_exception": "atomic",
+    "oracle/test_atomic.py::test_lex_single_quote_err": "atomic",
+    "oracle/test_atomic.py::test_lex_expression_symbols": "atomic",
+    "oracle/test_atomic.py::test_symbol_and_sugar": "atomic",
+    "oracle/test_atomic.py::test_lex_expression_strings": "atomic",
+    "oracle/test_atomic.py::test_lex_expression_integer": "atomic",
+    "oracle/test_atomic.py::test_lex_symbols": "atomic",
+    "oracle/test_atomic.py::test_lex_strings": "atomic",
+    "oracle/test_atomic.py::test_lex_strings_exception": "atomic",
+    "oracle/test_atomic.py::test_lex_bracket_strings": "atomic",
+    "oracle/test_atomic.py::test_lex_integers": "atomic",
+    "oracle/test_atomic.py::test_lex_expression_float": "atomic",
+    "oracle/test_atomic.py::test_lex_big_float": "atomic",
+    "oracle/test_atomic.py::test_lex_nan_and_inf": "atomic",
+    "oracle/test_atomic.py::test_lex_expression_complex": "atomic",
+    "oracle/test_atomic.py::test_lex_digit_separators": "atomic",
+    "oracle/test_atomic.py::test_leading_zero": "atomic",
+    "oracle/test_atomic.py::test_dotted_identifiers": "atomic",
+    "oracle/test_atomic.py::test_lex_bad_attrs": "atomic",
+    "oracle/test_atomic.py::test_lists": "atomic",
+    "oracle/test_atomic.py::test_dicts": "atomic",
+    "oracle/test_atomic.py::test_lex_column_counting": "atomic",
+    "oracle/test_atomic.py::test_lex_column_counting_with_literal_newline": "atomic",
+    "oracle/test_atomic.py::test_lex_line_counting_multi": "atomic",
+    "oracle/test_models.py::test_symbol_or_keyword": "atomic",
+    "oracle/test_models.py::test_wrap_int": "atomic",
+    "oracle/test_models.py::test_wrap_tuple": "atomic",
+    "oracle/test_models.py::test_wrap_nested_expr": "atomic",
+    "oracle/test_models.py::test_replace_int": "atomic",
+    "oracle/test_models.py::test_invalid_bracket_strings": "atomic",
+    "oracle/test_models.py::test_replace_str": "atomic",
+    "oracle/test_models.py::test_replace_tuple": "atomic",
+    "oracle/test_models.py::test_list_add": "atomic",
+    "oracle/test_models.py::test_list_slice": "atomic",
+    "oracle/test_models.py::test_hydict_methods": "atomic",
+    "oracle/test_models.py::test_set": "atomic",
+    "oracle/test_system.py::test_basics": "system_e2e",
+    "oracle/test_system.py::test_runpy": "system_e2e",
+    "oracle/test_system.py::test_stringer": "system_e2e",
+    "oracle/test_system.py::test_imports": "system_e2e",
+    "oracle/test_system.py::test_import_error_reporting": "system_e2e",
+    "oracle/test_system.py::test_import_error_cleanup": "system_e2e",
+    "oracle/test_system.py::test_import_autocompiles": "system_e2e",
+    "oracle/test_system.py::test_eval": "system_e2e",
+    "oracle/test_system.py::test_reload": "system_e2e",
+    "oracle/test_system.py::test_reload_reexecute": "system_e2e",
+    "oracle/test_system.py::test_circular": "system_e2e",
+    "oracle/test_system.py::test_shadowed_basename": "system_e2e",
+    "oracle/test_integration.py::test_ast_bad_type": "integration",
+    "oracle/test_integration.py::test_empty_expr": "integration",
+    "oracle/test_integration.py::test_dot_unpacking": "integration",
+    "oracle/test_integration.py::test_ast_bad_if": "integration",
+    "oracle/test_integration.py::test_ast_valid_if": "integration",
+    "oracle/test_integration.py::test_ast_bad_while": "integration",
+    "oracle/test_integration.py::test_ast_good_do": "integration",
+    "oracle/test_integration.py::test_ast_good_raise": "integration",
+    "oracle/test_integration.py::test_ast_raise_from": "integration",
+    "oracle/test_integration.py::test_ast_bad_raise": "integration",
+    "oracle/test_integration.py::test_ast_good_try": "integration",
+    "oracle/test_integration.py::test_ast_bad_try": "integration",
+    "oracle/test_integration.py::test_ast_good_except": "integration",
+    "oracle/test_integration.py::test_ast_bad_except": "integration",
+    "oracle/test_integration.py::test_ast_good_assert": "integration"
+  },
+  "stats": {
+    "atomic": 37,
+    "integration": 15,
+    "system_e2e": 12
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 64,
+    "total": 64,
+    "platform": "Linux-5.15.0-25-generic-x86_64-with-glibc2.35",
+    "python_version": "3.10.8",
+    "import_provenance": "/root/autodl-tmp/e2e/hy/hy/__init__.py"
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 64,
+    "summary": {
+      "collection_error": 64,
+      "total": 64
+    },
+    "setup": "task-local empty hy package shadowing installed distributions"
+  },
+  "candidate_score": {
+    "model": "opencode-gpt-5.5",
+    "passed": 0,
+    "total": 64,
+    "pass_rate": 0.0,
+    "summary": {
+      "collection_error": 64,
+      "total": 64
+    },
+    "by_layer": {
+      "atomic": {
+        "collection_error": 37,
+        "total": 37
+      },
+      "integration": {
+        "collection_error": 15,
+        "total": 15
+      },
+      "system_e2e": {
+        "collection_error": 12,
+        "total": 12
+      }
+    },
+    "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e-remaining-opencode/opencode-gpt-5.5-hy-fullrepro-001-20260705T000000Z-smoke/output/hy/__init__.py",
+    "provenance_status": "clean_candidate_output_path"
+  },
+  "archived_evidence": {
+    "source": "/root/autodl-tmp/Bmk-Lizhiqian",
+    "upstream_carrier_reference_score": {
+      "passed": 64,
+      "total": 64
+    },
+    "upstream_carrier_candidate_score": {
+      "passed": 0,
+      "total": 64
+    },
+    "native_score_difference_note": "Fresh native scores are authoritative. Differences from the archived upstream-carrier score reflect removal of repository-only and private collection dependencies."
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_upstream_rewritten",
+      "D_coverage_gap": "FULL"
+    },
+    "coverage_by_section": {
+      "Compilation Forms And Errors": 15,
+      "Import Hooks And Module Execution": 9,
+      "Model Construction And Collection Behavior": 12,
+      "Reader Errors And Source Positions": 7,
+      "Reader Forms And Literal Conversion": 8,
+      "Reader Numeric Syntax": 7,
+      "Reader Sugar And Dotted Identifiers": 3,
+      "Runtime Execution And Python Interoperation": 3
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "api-surface",
+      "description": "The unchanged candidate omits PrematureEndOfInput, HyError, replace_hy_obj, and the hy.importer module, preventing all four native modules from collecting.",
+      "affected_tests": 64
+    }
+  ],
+  "labels": [
+    "api-surface-floor",
+    "collection-error-dominated",
+    "compiler-runtime"
+  ],
+  "caveats": [
+    "The current main scorer uses same-process pytest and is not adversarial black-box proof."
+  ]
+}

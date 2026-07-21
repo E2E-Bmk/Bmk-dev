@@ -1,0 +1,105 @@
+{
+  "date": "2026-07-20",
+  "harness_commit": "3eb10a6ae01266ada9e5f2b7f1c823d7395b404e",
+  "status": "QUALIFIED",
+  "commands": {
+    "verify": "python harness/verify_task.py click-fullrepro-001",
+    "import_lint": "python harness/oracle_import_lint.py click-fullrepro-001 tasks/click-fullrepro-001/spec.md",
+    "score_source_staging": "mkdir -p tasks/click-fullrepro-001/validation/scoring_source/oracle; cp tasks/click-fullrepro-001/oracle/test_atomic.py tasks/click-fullrepro-001/oracle/test_integration.py tasks/click-fullrepro-001/validation/scoring_source/oracle/",
+    "reference_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/click-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/e2e/click/src --nodeids tasks/click-fullrepro-001/kept_nodeids.txt --taxonomy tasks/click-fullrepro-001/taxonomy.jsonl --run-dir tasks/click-fullrepro-001/validation/runs/reference --remove-path click --timeout 120 --json-out tasks/click-fullrepro-001/validation/reference_score.json",
+    "dummy_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/click-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/Bmk-upload-20260720/tasks/click-fullrepro-001/validation/dummy --nodeids tasks/click-fullrepro-001/kept_nodeids.txt --taxonomy tasks/click-fullrepro-001/taxonomy.jsonl --run-dir tasks/click-fullrepro-001/validation/runs/dummy --remove-path click --timeout 120 --json-out tasks/click-fullrepro-001/validation/dummy_score.json",
+    "candidate_score": "PYTHONWARNINGS=ignore python harness/score_pytest_original.py --source-repo tasks/click-fullrepro-001/validation/scoring_source --solution-dir /root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/click-repair-opencode/opencode-gpt-5.5-click-fullrepro-001-20260705T-repair-provenance/output --nodeids tasks/click-fullrepro-001/kept_nodeids.txt --taxonomy tasks/click-fullrepro-001/taxonomy.jsonl --run-dir tasks/click-fullrepro-001/validation/runs/candidate --remove-path click --timeout 120 --json-out tasks/click-fullrepro-001/validation/candidate_score.json",
+    "candidate_provenance": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/click-repair-opencode/opencode-gpt-5.5-click-fullrepro-001-20260705T-repair-provenance/output python -c \"import click; print(click.__file__)\""
+  },
+  "results": {
+    "verify": "QUALIFIED_VALID",
+    "import_lint": "LINT_PASS",
+    "reference": {
+      "summary": {
+        "passed": 82,
+        "total": 82
+      },
+      "pass_rate_excluding_skips": 1.0,
+      "by_layer": {
+        "atomic": {
+          "passed": 49,
+          "total": 49
+        },
+        "integration": {
+          "passed": 25,
+          "total": 25
+        },
+        "system_e2e": {
+          "passed": 8,
+          "total": 8
+        }
+      }
+    },
+    "dummy": {
+      "summary": {
+        "failed": 82,
+        "passed": 0,
+        "total": 82
+      },
+      "pass_rate_excluding_skips": 0.0,
+      "collection_errors": 0,
+      "by_layer": {
+        "atomic": {
+          "failed": 49,
+          "total": 49
+        },
+        "integration": {
+          "failed": 25,
+          "total": 25
+        },
+        "system_e2e": {
+          "failed": 8,
+          "total": 8
+        }
+      }
+    },
+    "candidate": {
+      "summary": {
+        "collection_error": 49,
+        "failed": 31,
+        "passed": 2,
+        "total": 82
+      },
+      "pass_rate_excluding_skips": 0.024390243902439025,
+      "by_layer": {
+        "atomic": {
+          "collection_error": 49,
+          "total": 49
+        },
+        "integration": {
+          "failed": 23,
+          "passed": 2,
+          "total": 25
+        },
+        "system_e2e": {
+          "failed": 8,
+          "total": 8
+        }
+      }
+    }
+  },
+  "provenance": {
+    "candidate_import": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/click-repair-opencode/opencode-gpt-5.5-click-fullrepro-001-20260705T-repair-provenance/output/click/__init__.py",
+    "candidate_import_clean": true,
+    "score_source": "task-local oracle/test_atomic.py and oracle/test_integration.py; transient scoring copy removed after runs"
+  },
+  "fairness": {
+    "canonical_cases": 82,
+    "all_cases_mapped": true,
+    "native_pytest_no_upstream_carrier": true,
+    "dummy_collected_without_error": true,
+    "independent_review": {
+      "credential_row": "deepseek-v4-pro",
+      "verdict": "PASS",
+      "recommended_status": "QUALIFIED",
+      "blocking_issues": 0,
+      "artifact": "review/deepseekv4pro_review.json"
+    }
+  },
+  "caveat": "Current main uses same-process pytest execution and is not adversarial black-box proof against a malicious candidate."
+}

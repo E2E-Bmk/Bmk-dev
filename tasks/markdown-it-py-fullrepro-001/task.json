@@ -1,0 +1,220 @@
+{
+  "instance_id": "markdown-it-py-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "executablebooks/markdown-it-py",
+  "repo_commit": "2c3f71ec46c4259ca375fb40c9cd47385c6c304e",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py",
+      "oracle/test_plugin.py",
+      "oracle/test_token.py",
+      "oracle/test_cli.py",
+      "oracle/test_tree.py",
+      "oracle/test_rendering.py",
+      "oracle/test_references.py",
+      "oracle/test_misc.py",
+      "oracle/test_commonmark.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 81,
+    "source": "upstream_rewritten",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "selected package root first on sys.path",
+      "file-grouped pytest.main in the scorer process"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_get_rules": "atomic",
+    "oracle/test_atomic.py::test_load_presets": "atomic",
+    "oracle/test_atomic.py::test_override_options": "atomic",
+    "oracle/test_atomic.py::test_enable": "atomic",
+    "oracle/test_atomic.py::test_disable": "atomic",
+    "oracle/test_atomic.py::test_reset": "atomic",
+    "oracle/test_atomic.py::test_parseInline": "integration",
+    "oracle/test_atomic.py::test_renderInline": "integration",
+    "oracle/test_atomic.py::test_emptyStr": "atomic",
+    "oracle/test_atomic.py::test_empty_env": "atomic",
+    "oracle/test_atomic.py::test_fragments_join_merges_adjacent_text_tokens": "integration",
+    "oracle/test_atomic.py::test_text_join_merges_adjacent_text_special_tokens": "integration",
+    "oracle/test_integration.py::TestColonFenceMarker::test_basic": "integration",
+    "oracle/test_integration.py::TestColonFenceMarker::test_with_info": "integration",
+    "oracle/test_integration.py::TestColonFenceMarker::test_colon_in_info_allowed": "integration",
+    "oracle/test_integration.py::TestColonFenceMarker::test_longer_closing": "integration",
+    "oracle/test_integration.py::TestColonFenceMarker::test_shorter_closing_no_match": "integration",
+    "oracle/test_integration.py::TestColonFenceMarker::test_does_not_interfere_with_backtick": "integration",
+    "oracle/test_integration.py::TestColonFenceMarker::test_unclosed_block": "integration",
+    "oracle/test_integration.py::TestExactMatch::test_exact_match_same_length": "integration",
+    "oracle/test_integration.py::TestExactMatch::test_exact_match_longer_no_close": "integration",
+    "oracle/test_integration.py::TestExactMatch::test_exact_match_shorter_no_close": "integration",
+    "oracle/test_integration.py::TestExactMatch::test_nesting_pattern": "integration",
+    "oracle/test_integration.py::TestExactMatch::test_unclosed_exact_match": "integration",
+    "oracle/test_integration.py::TestOverrideStandardFence::test_override_with_exact_match": "integration",
+    "oracle/test_integration.py::TestOverrideStandardFence::test_override_add_colon_marker": "integration",
+    "oracle/test_integration.py::TestOverrideStandardFence::test_override_preserves_backtick_info_restriction": "integration",
+    "oracle/test_integration.py::TestMinMarkers::test_min_markers_default": "integration",
+    "oracle/test_integration.py::TestMinMarkers::test_min_markers_custom": "integration",
+    "oracle/test_integration.py::TestDisallowMarkerInInfo::test_default_backtick_disallowed": "integration",
+    "oracle/test_integration.py::TestDisallowMarkerInInfo::test_tilde_in_tilde_info_allowed": "integration",
+    "oracle/test_integration.py::TestDisallowMarkerInInfo::test_disallow_all": "integration",
+    "oracle/test_integration.py::TestDisallowMarkerInInfo::test_disallow_none": "integration",
+    "oracle/test_plugin.py::test_inline_after": "integration",
+    "oracle/test_plugin.py::test_inline_before": "integration",
+    "oracle/test_plugin.py::test_inline_at": "integration",
+    "oracle/test_plugin.py::test_block_after": "integration",
+    "oracle/test_plugin.py::test_block_before": "integration",
+    "oracle/test_plugin.py::test_block_at": "integration",
+    "oracle/test_plugin.py::test_core_after": "integration",
+    "oracle/test_plugin.py::test_core_before": "integration",
+    "oracle/test_plugin.py::test_core_at": "integration",
+    "oracle/test_plugin.py::test_add_terminator_char": "integration",
+    "oracle/test_plugin.py::test_add_terminator_char_idempotent": "integration",
+    "oracle/test_plugin.py::test_add_terminator_char_rebuilds": "integration",
+    "oracle/test_token.py::test_token": "integration",
+    "oracle/test_token.py::test_serialization": "integration",
+    "oracle/test_cli.py::test_parse": "system_e2e",
+    "oracle/test_cli.py::test_parse_fail": "system_e2e",
+    "oracle/test_cli.py::test_non_utf8": "system_e2e",
+    "oracle/test_cli.py::test_print_heading": "system_e2e",
+    "oracle/test_cli.py::test_interactive": "system_e2e",
+    "oracle/test_cli.py::test_main_no_args_is_interactive": "system_e2e",
+    "oracle/test_cli.py::test_parse_output": "system_e2e",
+    "oracle/test_cli.py::test_stdin": "system_e2e",
+    "oracle/test_cli.py::test_multiple_files": "system_e2e",
+    "oracle/test_cli.py::test_interactive_render": "system_e2e",
+    "oracle/test_tree.py::test_tree_to_tokens_conversion": "integration",
+    "oracle/test_tree.py::test_property_passthrough": "integration",
+    "oracle/test_tree.py::test_type": "integration",
+    "oracle/test_tree.py::test_sibling_traverse": "integration",
+    "oracle/test_tree.py::test_walk": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_empty_h1": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_empty_h3": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_inline_code_space": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_empty_fence": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_empty_unordered_item": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_empty_ordered_item": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_empty_blockquote": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_horizontal_rule": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_html_block": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_paragraph": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_reference_definition": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_indented_code": "integration",
+    "oracle/test_rendering.py::test_no_end_newline_blockquote_after_text": "integration",
+    "oracle/test_references.py::test_ref_definitions": "integration",
+    "oracle/test_misc.py::test_highlight_arguments": "integration",
+    "oracle/test_misc.py::test_ordered_list_info": "integration",
+    "oracle/test_commonmark.py::test_commonmark_tab_example_1": "integration",
+    "oracle/test_commonmark.py::test_commonmark_tab_example_2": "integration",
+    "oracle/test_commonmark.py::test_commonmark_tab_example_3": "integration"
+  },
+  "stats": {
+    "atomic": 8,
+    "integration": 63,
+    "system_e2e": 10
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 81,
+    "total": 81,
+    "platform": "Linux-5.15.0-25-generic-x86_64-with-glibc2.35",
+    "python_version": "3.10.8",
+    "import_provenance": "/root/autodl-tmp/e2e/markdown-it-py/markdown_it/__init__.py"
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 81,
+    "summary": {
+      "collection_error": 81,
+      "total": 81
+    },
+    "setup": "task-local empty markdown_it package shadowing installed distributions"
+  },
+  "candidate_score": {
+    "model": "opencode-gpt-5.5",
+    "passed": 11,
+    "total": 81,
+    "pass_rate": 0.13580246913580246,
+    "summary": {
+      "collection_error": 5,
+      "failed": 65,
+      "passed": 11,
+      "total": 81
+    },
+    "by_layer": {
+      "atomic": {
+        "failed": 8,
+        "total": 8
+      },
+      "integration": {
+        "collection_error": 5,
+        "failed": 49,
+        "passed": 9,
+        "total": 63
+      },
+      "system_e2e": {
+        "failed": 8,
+        "passed": 2,
+        "total": 10
+      }
+    },
+    "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e-remaining-opencode/opencode-gpt-5.5-markdown-it-py-fullrepro-001-20260705T000000Z/output/markdown_it/__init__.py",
+    "provenance_status": "clean_candidate_output_path"
+  },
+  "archived_evidence": {
+    "source": "/root/autodl-tmp/Bmk-Lizhiqian",
+    "upstream_carrier_reference_score": {
+      "passed": 81,
+      "total": 81
+    },
+    "upstream_carrier_candidate_score": {
+      "passed": 11,
+      "total": 81
+    },
+    "native_score_difference_note": "Fresh native scores are authoritative. Differences from the archived upstream-carrier score reflect removal of repository-only and private collection dependencies."
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_upstream_rewritten",
+      "D_coverage_gap": "FULL"
+    },
+    "coverage_by_section": {
+      "Command-Line Workflows": 10,
+      "Fence Rule Factory": 21,
+      "Inline Parsing And Token Joining": 6,
+      "Markdown Rendering Behavior": 19,
+      "Parser Configuration And Rule Control": 6,
+      "Plugin Rule Registration": 12,
+      "Token And Syntax Tree Views": 7
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "parser-renderer-completeness",
+      "description": "The unchanged candidate passes only 11 cases; parser configuration, custom fences, plugins, rendering details, and most CLI behavior remain incomplete.",
+      "affected_tests": 65
+    },
+    {
+      "dimension": "api-surface",
+      "description": "The candidate omits markdown_it.tree, preventing the five syntax-tree cases from collecting.",
+      "affected_tests": 5
+    }
+  ],
+  "labels": [
+    "behavioral",
+    "markdown-parser",
+    "plugin-and-cli",
+    "integration-system-signal"
+  ],
+  "caveats": [
+    "The current main scorer uses same-process pytest and is not adversarial black-box proof."
+  ]
+}

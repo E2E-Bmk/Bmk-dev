@@ -1,0 +1,135 @@
+{
+  "instance_id": "hypercorn-fullrepro-002",
+  "status": "QUALIFIED",
+  "predecessor_task": "hypercorn-fullrepro-001",
+  "repo": "pgjones/hypercorn",
+  "repo_commit": "0e2311f1ad2ae587aaa590f3824f59aa5dc0e770",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 52,
+    "source": "mixed_upstream_rewritten_and_generated",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "--remove-path",
+      "hypercorn"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_integration.py::test_config_from_pyfile_loads_public_attributes": "atomic",
+    "oracle/test_integration.py::test_config_from_toml_loads_public_attributes": "atomic",
+    "oracle/test_integration.py::test_config_from_object_loads_public_attributes": "atomic",
+    "oracle/test_integration.py::test_config_response_headers_follow_metadata_flags": "atomic",
+    "oracle/test_integration.py::test_http_to_https_redirect_preserves_http_raw_path_and_query[/abc]": "integration",
+    "oracle/test_integration.py::test_http_to_https_redirect_preserves_http_raw_path_and_query[/abc%3C]": "integration",
+    "oracle/test_integration.py::test_http_to_https_redirect_preserves_websocket_raw_path_and_query[/abc]": "integration",
+    "oracle/test_integration.py::test_http_to_https_redirect_preserves_websocket_raw_path_and_query[/abc%3C]": "integration",
+    "oracle/test_integration.py::test_http_to_https_redirect_uses_https_scheme_for_http2_websocket": "integration",
+    "oracle/test_integration.py::test_http_to_https_redirect_closes_websocket_without_denial_extension": "integration",
+    "oracle/test_integration.py::test_http_to_https_redirect_uses_request_host_when_constructor_host_is_none": "integration",
+    "oracle/test_integration.py::test_proxy_fix_legacy_restores_trusted_client_scheme_and_host": "integration",
+    "oracle/test_integration.py::test_proxy_fix_modern_restores_trusted_client_scheme_and_host": "integration",
+    "oracle/test_integration.py::test_dispatcher_routes_by_insertion_order_and_updates_root_path": "integration",
+    "oracle/test_integration.py::test_dispatcher_returns_404_when_no_mount_matches": "integration",
+    "oracle/test_integration.py::test_dispatcher_broadcasts_lifespan_to_mounted_applications": "integration",
+    "oracle/test_integration.py::test_asyncio_wsgi_middleware_emits_wsgi_response_body": "integration",
+    "oracle/test_integration.py::test_asyncio_wsgi_middleware_returns_400_when_body_exceeds_limit": "integration",
+    "oracle/test_integration.py::test_asyncio_wsgi_middleware_requires_start_response_before_body": "integration",
+    "oracle/test_integration.py::test_trio_wsgi_middleware_emits_wsgi_response_body": "integration",
+    "oracle/test_atomic.py::test_config_documented_defaults_are_visible": "atomic",
+    "oracle/test_atomic.py::test_config_bind_groups_accept_single_string_assignments": "atomic",
+    "oracle/test_atomic.py::test_config_root_path_assignment_removes_trailing_slashes": "atomic",
+    "oracle/test_atomic.py::test_config_from_mapping_applies_keyword_arguments_last": "atomic",
+    "oracle/test_atomic.py::test_config_from_mapping_accepts_keyword_only_configuration": "atomic",
+    "oracle/test_atomic.py::test_config_from_object_resolves_dotted_object": "atomic",
+    "oracle/test_atomic.py::test_config_from_pyfile_propagates_missing_file": "atomic",
+    "oracle/test_atomic.py::test_config_from_pyfile_propagates_execution_failure": "atomic",
+    "oracle/test_atomic.py::test_config_from_toml_propagates_parse_failure": "atomic",
+    "oracle/test_atomic.py::test_config_ssl_enabled_reflects_certificate_and_key_presence": "atomic",
+    "oracle/test_atomic.py::test_config_response_headers_include_each_alt_svc_value": "atomic",
+    "oracle/test_atomic.py::test_config_statsd_logger_class_requires_statsd_host": "atomic",
+    "oracle/test_atomic.py::test_config_statsd_logger_class_replaces_default_when_statsd_is_enabled": "atomic",
+    "oracle/test_atomic.py::test_redirect_without_constructor_or_request_host_raises_value_error": "integration",
+    "oracle/test_atomic.py::test_redirect_location_includes_root_path_before_raw_path": "integration",
+    "oracle/test_atomic.py::test_redirect_passes_secure_websocket_to_wrapped_application": "integration",
+    "oracle/test_atomic.py::test_redirect_passes_non_http_scope_without_requiring_host": "integration",
+    "oracle/test_atomic.py::test_proxy_fix_without_forwarded_headers_preserves_scope_values": "integration",
+    "oracle/test_atomic.py::test_proxy_fix_trusted_hops_selects_value_from_the_right": "integration",
+    "oracle/test_atomic.py::test_proxy_fix_modern_mode_falls_back_to_legacy_headers": "integration",
+    "oracle/test_atomic.py::test_proxy_fix_non_http_scope_is_passed_without_copying": "integration",
+    "oracle/test_atomic.py::test_dispatcher_uses_first_matching_mount_even_when_later_mount_is_longer": "integration",
+    "oracle/test_atomic.py::test_dispatcher_extends_existing_root_path_for_selected_mount": "integration",
+    "oracle/test_atomic.py::test_wsgi_environment_contains_root_path_path_info_query_and_headers": "integration",
+    "oracle/test_atomic.py::test_wsgi_path_outside_root_path_returns_404_without_calling_app": "integration",
+    "oracle/test_atomic.py::test_wsgi_websocket_scope_closes_without_calling_wsgi_app": "integration",
+    "oracle/test_atomic.py::test_logger_access_logfile_dash_writes_configured_access_record_to_stdout": "atomic",
+    "oracle/test_atomic.py::test_logger_missing_access_atom_renders_dash": "atomic",
+    "oracle/test_atomic.py::test_logger_errorlog_dash_writes_error_and_warning_to_stderr": "atomic",
+    "oracle/test_atomic.py::test_asyncio_serve_warns_when_process_or_loop_settings_do_not_apply": "integration",
+    "oracle/test_atomic.py::test_hypercorn_module_help_exposes_command_line_interface": "system_e2e",
+    "oracle/test_atomic.py::test_hypercorn_module_rejects_unknown_verify_mode": "system_e2e"
+  },
+  "stats": {
+    "atomic": 20,
+    "integration": 30,
+    "system_e2e": 2
+  },
+  "reference_pass_rate": 1,
+  "reference_score": {
+    "passed": 52,
+    "total": 52
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 52
+  },
+  "candidate_score": {
+    "model": "codex-gpt-5.6",
+    "passed": 52,
+    "total": 52,
+    "pass_rate": 1,
+    "by_layer": {
+      "atomic": {
+        "passed": 20,
+        "total": 20
+      },
+      "integration": {
+        "passed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 2,
+        "total": 2
+      }
+    }
+  },
+  "judge": {
+    "date": "2026-07-12",
+    "verdict": "QUALIFIED_WITH_CAVEATS",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_mixed",
+      "D_coverage_gap": "PARTIAL_ACCEPTABLE"
+    }
+  },
+  "labels": [
+    "saturated-candidate-score",
+    "trivially-solved",
+    "public-middleware-heavy",
+    "limited-service-e2e",
+    "coverage-gap-secondary-protocols"
+  ],
+  "caveats": [
+    "The compact candidate saturates the 52-case oracle, limiting benchmark difficulty.",
+    "HTTP/2, HTTP/3, and full network-service behavior remain lightly covered.",
+    "The current repository scorer uses same-process pytest isolation and does not defend against an actively malicious candidate."
+  ]
+}

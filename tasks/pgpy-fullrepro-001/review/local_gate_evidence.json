@@ -1,0 +1,106 @@
+{
+  "date": "2026-07-20",
+  "platform": "Linux",
+  "reference": {
+    "summary": {
+      "passed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 36,
+        "total": 36
+      },
+      "integration": {
+        "passed": 17,
+        "total": 17
+      },
+      "system_e2e": {
+        "passed": 13,
+        "total": 13
+      }
+    }
+  },
+  "dummy": {
+    "summary": {
+      "failed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "failed": 36,
+        "total": 36
+      },
+      "integration": {
+        "failed": 17,
+        "total": 17
+      },
+      "system_e2e": {
+        "failed": 13,
+        "total": 13
+      }
+    },
+    "collection_errors": 0
+  },
+  "candidates": [
+    {
+      "runner": "opencode",
+      "model": "gpt-5.5",
+      "run_id": "opencode-gpt-5.5-pgpy-fullrepro-001-20260709T-stage4-cleanroom",
+      "collection_errors": 0,
+      "solution_path": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pgpy-fullrepro-001-20260709T-stage4-cleanroom/output",
+      "import_provenance_stdout": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pgpy-fullrepro-001-20260709T-stage4-cleanroom/output/pgpy/__init__.py",
+      "import_provenance_clean": true,
+      "python_sha256": {
+        "pgpy/__init__.py": "1ca3a0a1dc4f96b6cbda1e52fbb486e6891de9729e1a2050e65856ce997543a6",
+        "pgpy/constants.py": "b2847cad65377873c1dbfdb8710e62a957faac899aecb7a744fe7163cc52bbac",
+        "pgpy/errors.py": "db6bc35f123d12acc7a46f73c396316646227878af107a6e5ca56d3e1481db9c",
+        "pgpy/types.py": "6e7c3038e94427160cb9c794536ab5eac8017d346c4116baa9a3dfecda24e7ab"
+      },
+      "generated_slice": {
+        "passed": 10,
+        "total": 12
+      },
+      "summary": {
+        "failed": 53,
+        "passed": 13,
+        "total": 66
+      },
+      "pass_rate_excluding_skips": 0.19696969696969696,
+      "by_layer": {
+        "atomic": {
+          "failed": 32,
+          "passed": 4,
+          "total": 36
+        },
+        "integration": {
+          "failed": 13,
+          "passed": 4,
+          "total": 17
+        },
+        "system_e2e": {
+          "failed": 8,
+          "passed": 5,
+          "total": 13
+        }
+      },
+      "historical_slice": {
+        "passed": 3,
+        "total": 54,
+        "outcome_mismatches": 0
+      }
+    }
+  ],
+  "judge": {
+    "verdict": "QUALIFIED_WITH_CAVEATS",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "deepseek_passed": true
+  },
+  "push_protection_repair": {
+    "excluded_nodeid": "oracle/test_atomic.py::TestPGPKey::test_save[dsa.1.pub.asc]",
+    "reason": "GitHub misclassified bytes inside a public armored test key as a Dropbox token."
+  },
+  "trust_boundary": "Current main uses same-process pytest and is not adversarial black-box proof."
+}

@@ -1,0 +1,222 @@
+{
+  "instance_id": "cleo-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "python-poetry/cleo",
+  "repo_commit": "8c3f1bbf82d918fc137ad40db65c446e14564aac",
+  "spec_version": "v1",
+  "oracle_version": "2026-07-20-native-v2-fairness",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py",
+      "oracle/test_application.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 79,
+    "source": "upstream_rewritten",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "scorer_isolation": [
+      "--remove-path",
+      "cleo"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_optional_non_list_argument": "atomic",
+    "oracle/test_atomic.py::test_required_non_list_argument": "atomic",
+    "oracle/test_atomic.py::test_list_argument": "atomic",
+    "oracle/test_atomic.py::test_parse_arguments": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args0-options0-expected_options0]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args1-options1-expected_options1]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args2-options2-expected_options2]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args3-options3-expected_options3]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args4-options4-expected_options4]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args5-options5-expected_options5]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args6-options6-expected_options6]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args7-options7-expected_options7]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args8-options8-expected_options8]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args9-options9-expected_options9]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args10-options10-expected_options10]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args11-options11-expected_options11]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args12-options12-expected_options12]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args13-options13-expected_options13]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args14-options14-expected_options14]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args15-options15-expected_options15]": "atomic",
+    "oracle/test_atomic.py::test_parse_options[args16-options16-expected_options16]": "atomic",
+    "oracle/test_atomic.py::test_create": "atomic",
+    "oracle/test_atomic.py::test_dashed_name": "atomic",
+    "oracle/test_atomic.py::test_fail_if_name_is_empty": "atomic",
+    "oracle/test_atomic.py::test_fail_if_default_value_provided_for_flag": "atomic",
+    "oracle/test_atomic.py::test_fail_if_wrong_default_value_for_list_option": "atomic",
+    "oracle/test_atomic.py::test_shortcut": "atomic",
+    "oracle/test_atomic.py::test_dashed_shortcut": "atomic",
+    "oracle/test_atomic.py::test_multiple_shortcuts": "atomic",
+    "oracle/test_atomic.py::test_fail_if_shortcut_is_empty": "atomic",
+    "oracle/test_atomic.py::test_optional_value": "atomic",
+    "oracle/test_atomic.py::test_optional_value_with_default": "atomic",
+    "oracle/test_atomic.py::test_required_value": "atomic",
+    "oracle/test_atomic.py::test_required_value_with_default": "atomic",
+    "oracle/test_atomic.py::test_list": "atomic",
+    "oracle/test_atomic.py::test_multi_valued_with_default": "atomic",
+    "oracle/test_atomic.py::test_has": "atomic",
+    "oracle/test_atomic.py::test_get": "atomic",
+    "oracle/test_atomic.py::test_get_invalid_command_raises_error": "atomic",
+    "oracle/test_atomic.py::test_names": "atomic",
+    "oracle/test_atomic.py::test_set_application": "atomic",
+    "oracle/test_atomic.py::test_name_version_getters": "atomic",
+    "oracle/test_atomic.py::test_name_version_setter": "atomic",
+    "oracle/test_atomic.py::test_argument": "atomic",
+    "oracle/test_atomic.py::test_option": "atomic",
+    "oracle/test_integration.py::test_dispatch": "integration",
+    "oracle/test_integration.py::test_explicit_multiple_argument": "integration",
+    "oracle/test_integration.py::TestApplicationTester::test_execute": "system_e2e",
+    "oracle/test_integration.py::TestApplicationTester::test_execute_namespace_command": "system_e2e",
+    "oracle/test_integration.py::TestCommandTester::test_execute": "system_e2e",
+    "oracle/test_integration.py::TestCommandTester::test_execute_namespace_command": "system_e2e",
+    "oracle/test_integration.py::test_ask[-True-True]": "integration",
+    "oracle/test_integration.py::test_ask[-False-False]": "integration",
+    "oracle/test_integration.py::test_ask[y-True-True]": "integration",
+    "oracle/test_integration.py::test_ask[yes-True-True]": "integration",
+    "oracle/test_integration.py::test_ask[n-False-True]": "integration",
+    "oracle/test_integration.py::test_ask[no-False-True]": "integration",
+    "oracle/test_integration.py::test_ask_with_custom_answer": "integration",
+    "oracle/test_integration.py::test_display_with_quiet_verbosity": "integration",
+    "oracle/test_integration.py::test_ask_and_validate": "integration",
+    "oracle/test_integration.py::test_no_interaction": "integration",
+    "oracle/test_application.py::test_with_signature": "atomic",
+    "oracle/test_application.py::test_all": "integration",
+    "oracle/test_application.py::test_add": "integration",
+    "oracle/test_application.py::test_has_get": "integration",
+    "oracle/test_application.py::test_silent_help": "integration",
+    "oracle/test_application.py::test_get_namespaces": "integration",
+    "oracle/test_application.py::test_find_namespace": "integration",
+    "oracle/test_application.py::test_find_namespace_with_sub_namespaces": "integration",
+    "oracle/test_application.py::test_find": "integration",
+    "oracle/test_application.py::test_auto_exit": "atomic",
+    "oracle/test_application.py::test_run": "system_e2e",
+    "oracle/test_application.py::test_run_removes_all_output_if_quiet": "system_e2e",
+    "oracle/test_application.py::test_run_with_verbosity": "system_e2e",
+    "oracle/test_application.py::test_run_with_input": "system_e2e",
+    "oracle/test_application.py::test_run_namespaced_with_input": "system_e2e",
+    "oracle/test_application.py::test_run_with_input_and_non_interactive[cmd0]": "system_e2e",
+    "oracle/test_application.py::test_run_with_input_and_non_interactive[cmd1]": "system_e2e",
+    "oracle/test_application.py::test_invalid_shell": "integration"
+  },
+  "stats": {
+    "atomic": 47,
+    "integration": 21,
+    "system_e2e": 11
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 79,
+    "total": 79,
+    "pass_rate": 1.0,
+    "summary": {
+      "passed": 79,
+      "total": 79
+    },
+    "by_layer": {
+      "atomic": {"passed": 47, "total": 47},
+      "integration": {"passed": 21, "total": 21},
+      "system_e2e": {"passed": 11, "total": 11}
+    },
+    "evidence": "evidence/reference_score.json",
+    "sha256": "8c3cddfb6b8fbe23dbe23db1ad205f5e4d1c0f55cb549240662a8e45e9e4b04e"
+  },
+  "dummy_score": {
+    "passed": 0,
+    "total": 79,
+    "pass_rate": 0.0,
+    "summary": {
+      "error": 14,
+      "failed": 65,
+      "total": 79
+    },
+    "by_layer": {
+      "atomic": {"failed": 47, "total": 47},
+      "integration": {"error": 10, "failed": 11, "total": 21},
+      "system_e2e": {"error": 4, "failed": 7, "total": 11}
+    },
+    "evidence": "evidence/dummy_score.json",
+    "sha256": "4171115feaff95412b113d132021745a0040580e5c5f698d0807f0f7a94cfe49"
+  },
+  "candidate_score": {
+    "model": "opencode-gpt-5.5",
+    "runner": "opencode",
+    "run_id": "opencode-gpt-5.5-cleo-fullrepro-001-20260709T-stage4-cleanroom",
+    "unchanged_candidate": true,
+    "passed": 16,
+    "total": 79,
+    "pass_rate": 0.20253164556962025,
+    "summary": {
+      "error": 12,
+      "failed": 51,
+      "passed": 16,
+      "total": 79
+    },
+    "by_layer": {
+      "atomic": {"failed": 37, "passed": 10, "total": 47},
+      "integration": {"error": 10, "failed": 7, "passed": 4, "total": 21},
+      "system_e2e": {"error": 2, "failed": 7, "passed": 2, "total": 11}
+    },
+    "provenance": {
+      "metadata": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-cleo-fullrepro-001-20260709T-stage4-cleanroom/metadata.json",
+      "import_preflight": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-cleo-fullrepro-001-20260709T-stage4-cleanroom/output/cleo/__init__.py",
+      "anti_cheat_output_scan": "no_matches"
+    },
+    "evidence": "evidence/candidate_score.json",
+    "sha256": "8cb49d3682a923bb86c4cdfa127f6896af7502af92df09f1da1129b238e147e0"
+  },
+  "scoring": {
+    "runner": "harness/score_pytest_original.py",
+    "remove_paths": ["cleo"],
+    "pytest_args": ["--rootdir=."],
+    "execution_model": "same-process pytest grouped by task-local oracle file"
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "independent_review_verdict": "PASS",
+    "independent_review_model": "deepseek-v4-pro",
+    "nonblocking_review_issues": 8,
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed",
+      "C_generated_only": "not_applicable_upstream_rewritten",
+      "D_coverage_gap": "PARTIAL"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "atomic-behavior",
+      "description": "Argument and Option construction, defaults, value/list flags, shortcuts, and argv parsing diverge from the documented input contract.",
+      "affected_tests": 33
+    },
+    {
+      "dimension": "state-management",
+      "description": "Application metadata, namespace discovery, command lookup, exception/auto-exit configuration, and loader name exposure are incomplete or inconsistent.",
+      "affected_tests": 14
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "Interactive input setup, quiet/verbosity execution, namespaced input, and non-interactive application workflows do not preserve the expected IO behavior.",
+      "affected_tests": 16
+    }
+  ],
+  "labels": [
+    "upstream-rewritten-oracle",
+    "discriminating",
+    "fairness-repaired",
+    "no-collection-cascade",
+    "cli-input-workflow-signal",
+    "partial-coverage-caveat"
+  ],
+  "caveats": [
+    "Eight event cases were excluded because they require an unpublished base Event API or unspecified listener introspection, priority, or propagation semantics.",
+    "Direct EventDispatcher priority, propagation, and listener-map introspection are intentionally unscored; retained event coverage exercises Application command and terminate dispatch.",
+    "Single-command application behavior has no retained reference-passing case at the pinned commit.",
+    "Current main uses same-process pytest and is not adversarial black-box proof; it does not defend against an actively malicious candidate."
+  ]
+}

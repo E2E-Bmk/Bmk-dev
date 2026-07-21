@@ -1,0 +1,290 @@
+{
+  "instance_id": "pyyaml-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "yaml/pyyaml",
+  "repo_commit": "34a9bf82357f4952d8f194a5a31f1c39743652d0",
+  "spec_version": "v1-native-cleanroom",
+  "oracle_version": "2026-07-20-native-v1",
+  "source_meta": {
+    "language": "Python",
+    "source_commit": "34a9bf82357f4952d8f194a5a31f1c39743652d0",
+    "legacy_evidence_roots": [
+      "/root/autodl-tmp/Bmk-git/tasks/pyyaml-fullrepro-001",
+      "/root/autodl-tmp/Bmk-Lizhiqian/wip/pyyaml-fullrepro-001"
+    ]
+  },
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 118,
+    "source": "118 self-contained generated public-behavior tests",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "scorer_isolation": [
+      "PYTHONPATH=<solution_dir>",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "-p",
+      "no:cacheprovider"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_package_exposes_numeric_version": "atomic",
+    "oracle/test_atomic.py::test_libyaml_capability_flag_is_boolean": "atomic",
+    "oracle/test_atomic.py::test_public_loader_classes_are_types": "atomic",
+    "oracle/test_atomic.py::test_public_dumper_classes_are_types": "atomic",
+    "oracle/test_atomic.py::test_public_node_classes_are_types": "atomic",
+    "oracle/test_atomic.py::test_yaml_error_is_exception_type": "atomic",
+    "oracle/test_atomic.py::test_specialized_errors_share_yaml_error_base": "atomic",
+    "oracle/test_atomic.py::test_safe_load_empty_string_returns_none": "atomic",
+    "oracle/test_atomic.py::test_safe_load_comment_only_returns_none": "atomic",
+    "oracle/test_atomic.py::test_safe_load_null_spellings": "atomic",
+    "oracle/test_atomic.py::test_safe_load_boolean_true_spellings": "atomic",
+    "oracle/test_atomic.py::test_safe_load_boolean_false_spellings": "atomic",
+    "oracle/test_atomic.py::test_safe_load_decimal_integer": "atomic",
+    "oracle/test_atomic.py::test_safe_load_negative_integer": "atomic",
+    "oracle/test_atomic.py::test_safe_load_binary_integer": "atomic",
+    "oracle/test_atomic.py::test_safe_load_octal_integer": "atomic",
+    "oracle/test_atomic.py::test_safe_load_hexadecimal_integer": "atomic",
+    "oracle/test_atomic.py::test_safe_load_decimal_float": "atomic",
+    "oracle/test_atomic.py::test_safe_load_exponent_float": "atomic",
+    "oracle/test_atomic.py::test_safe_load_positive_infinity": "atomic",
+    "oracle/test_atomic.py::test_safe_load_negative_infinity": "atomic",
+    "oracle/test_atomic.py::test_safe_load_nan": "atomic",
+    "oracle/test_atomic.py::test_safe_load_date": "atomic",
+    "oracle/test_atomic.py::test_safe_load_datetime": "atomic",
+    "oracle/test_atomic.py::test_safe_load_plain_string": "atomic",
+    "oracle/test_atomic.py::test_safe_load_single_quoted_string": "atomic",
+    "oracle/test_atomic.py::test_safe_load_double_quoted_escapes": "atomic",
+    "oracle/test_atomic.py::test_safe_load_literal_block_scalar": "atomic",
+    "oracle/test_atomic.py::test_safe_load_folded_block_scalar": "atomic",
+    "oracle/test_atomic.py::test_safe_load_block_sequence": "atomic",
+    "oracle/test_atomic.py::test_safe_load_flow_sequence": "atomic",
+    "oracle/test_atomic.py::test_safe_load_block_mapping": "atomic",
+    "oracle/test_atomic.py::test_safe_load_flow_mapping": "atomic",
+    "oracle/test_atomic.py::test_safe_load_nested_collections": "atomic",
+    "oracle/test_atomic.py::test_safe_load_binary_value": "atomic",
+    "oracle/test_atomic.py::test_safe_load_set_value": "atomic",
+    "oracle/test_atomic.py::test_safe_load_ordered_map_value": "atomic",
+    "oracle/test_atomic.py::test_safe_load_pairs_value": "atomic",
+    "oracle/test_atomic.py::test_safe_load_merge_key": "atomic",
+    "oracle/test_atomic.py::test_safe_load_alias_preserves_identity": "atomic",
+    "oracle/test_atomic.py::test_base_loader_keeps_scalar_values_as_strings": "atomic",
+    "oracle/test_atomic.py::test_full_load_python_tuple": "atomic",
+    "oracle/test_atomic.py::test_full_load_python_name": "atomic",
+    "oracle/test_atomic.py::test_safe_load_rejects_python_tuple_tag": "atomic",
+    "oracle/test_atomic.py::test_load_requires_explicit_loader": "atomic",
+    "oracle/test_atomic.py::test_load_all_returns_iterator_of_documents": "atomic",
+    "oracle/test_atomic.py::test_safe_load_all_preserves_empty_document": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_round_trips_simple_mapping": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_sorts_keys_by_default": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_can_preserve_mapping_order": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_block_style_option": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_flow_style_option": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_explicit_start_marker": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_explicit_end_marker": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_allow_unicode_emits_text_directly": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_encoding_returns_bytes": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_to_text_stream_returns_none": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_bytes_round_trip": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_date_round_trip": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_datetime_round_trip": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_set_round_trip": "atomic",
+    "oracle/test_atomic.py::test_safe_dump_unsupported_object_raises_representer_error": "atomic",
+    "oracle/test_atomic.py::test_scan_returns_stream_boundary_tokens": "atomic",
+    "oracle/test_atomic.py::test_scan_mapping_exposes_key_value_and_scalar_tokens": "atomic",
+    "oracle/test_atomic.py::test_scan_tokens_expose_source_marks": "atomic",
+    "oracle/test_atomic.py::test_parse_returns_stream_boundary_events": "atomic",
+    "oracle/test_atomic.py::test_parse_mapping_event_sequence": "atomic",
+    "oracle/test_atomic.py::test_parse_scalar_event_exposes_public_attributes": "atomic",
+    "oracle/test_atomic.py::test_compose_mapping_returns_mapping_node": "atomic",
+    "oracle/test_atomic.py::test_compose_sequence_returns_sequence_node": "atomic",
+    "oracle/test_atomic.py::test_compose_scalar_exposes_tag_and_marks": "atomic",
+    "oracle/test_atomic.py::test_compose_empty_stream_returns_none": "atomic",
+    "oracle/test_atomic.py::test_compose_all_returns_each_document_node": "atomic",
+    "oracle/test_integration.py::test_safe_round_trip_nested_configuration": "integration",
+    "oracle/test_integration.py::test_safe_round_trip_unicode_and_multiline_text": "integration",
+    "oracle/test_integration.py::test_safe_round_trip_dates_binary_and_set": "integration",
+    "oracle/test_integration.py::test_dump_all_and_safe_load_all_round_trip": "integration",
+    "oracle/test_integration.py::test_dump_all_to_binary_stream_round_trip": "integration",
+    "oracle/test_integration.py::test_compose_serialize_compose_preserves_node_tree": "integration",
+    "oracle/test_integration.py::test_compose_all_serialize_all_preserves_document_count": "integration",
+    "oracle/test_integration.py::test_parse_emit_parse_preserves_event_kinds_and_values": "integration",
+    "oracle/test_integration.py::test_emit_to_stream_returns_none_and_writes_yaml": "integration",
+    "oracle/test_integration.py::test_custom_constructor_on_private_loader": "integration",
+    "oracle/test_integration.py::test_custom_multi_constructor_receives_tag_suffix": "integration",
+    "oracle/test_integration.py::test_custom_fallback_multi_constructor_handles_unknown_tag": "integration",
+    "oracle/test_integration.py::test_custom_representer_round_trip": "integration",
+    "oracle/test_integration.py::test_custom_multi_representer_handles_subclass": "integration",
+    "oracle/test_integration.py::test_custom_implicit_resolver_changes_compose_and_load": "integration",
+    "oracle/test_integration.py::test_custom_wildcard_implicit_resolver": "integration",
+    "oracle/test_integration.py::test_custom_path_resolver_tags_selected_mapping_value": "integration",
+    "oracle/test_integration.py::test_invalid_path_resolver_declaration_raises_resolver_error": "integration",
+    "oracle/test_integration.py::test_yaml_object_default_round_trip": "integration",
+    "oracle/test_integration.py::test_yaml_object_custom_hooks_receive_loader_and_dumper": "integration",
+    "oracle/test_integration.py::test_loader_construct_helpers_validate_node_kinds": "integration",
+    "oracle/test_integration.py::test_dumper_represent_helpers_create_public_nodes": "integration",
+    "oracle/test_integration.py::test_mark_snippet_places_caret_under_pointer": "integration",
+    "oracle/test_integration.py::test_mark_without_buffer_has_no_snippet": "integration",
+    "oracle/test_integration.py::test_mark_string_uses_one_based_line_and_column": "integration",
+    "oracle/test_integration.py::test_marked_yaml_error_string_includes_context_problem_and_note": "integration",
+    "oracle/test_integration.py::test_malformed_flow_sequence_raises_yaml_error": "integration",
+    "oracle/test_integration.py::test_malformed_flow_mapping_raises_yaml_error": "integration",
+    "oracle/test_integration.py::test_invalid_escape_raises_yaml_error": "integration",
+    "oracle/test_integration.py::test_duplicate_yaml_directive_raises_yaml_error": "integration",
+    "oracle/test_integration.py::test_invalid_binary_value_raises_yaml_error": "integration",
+    "oracle/test_integration.py::test_unhashable_mapping_key_raises_yaml_error": "integration",
+    "oracle/test_integration.py::test_unsupported_tag_raises_yaml_error": "integration",
+    "oracle/test_integration.py::test_single_document_load_rejects_multiple_documents": "integration",
+    "oracle/test_integration.py::test_invalid_utf8_byte_stream_raises_yaml_error": "integration",
+    "oracle/test_integration.py::test_safe_loader_rejects_python_object_apply": "integration",
+    "oracle/test_integration.py::test_full_loader_rejects_arbitrary_object_apply": "integration",
+    "oracle/test_integration.py::test_unsafe_loader_supports_python_object_apply": "integration",
+    "oracle/test_integration.py::test_recursive_alias_round_trip_preserves_cycle": "integration",
+    "oracle/test_integration.py::test_mapping_with_incomparable_keys_dumps_without_sort_failure": "integration",
+    "oracle/test_integration.py::test_safe_configuration_workflow_preserves_public_values": "system_e2e",
+    "oracle/test_integration.py::test_custom_tag_workflow_round_trip": "system_e2e",
+    "oracle/test_integration.py::test_intermediate_representation_workflow": "system_e2e",
+    "oracle/test_integration.py::test_load_dump_compose_views_agree_on_scalar_types": "system_e2e",
+    "oracle/test_integration.py::test_warnings_compatibility_function_returns_empty_mapping": "integration"
+  },
+  "stats": {
+    "atomic": 73,
+    "integration": 41,
+    "system_e2e": 4
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 118,
+      "total": 118
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 73,
+        "total": 73
+      },
+      "integration": {
+        "passed": 41,
+        "total": 41
+      },
+      "system_e2e": {
+        "passed": 4,
+        "total": 4
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "failed": 118,
+      "total": 118
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "failed": 73,
+        "total": 73
+      },
+      "integration": {
+        "failed": 41,
+        "total": 41
+      },
+      "system_e2e": {
+        "failed": 4,
+        "total": 4
+      }
+    },
+    "collection_errors": 0
+  },
+  "candidate_score": {
+    "summary": {
+      "failed": 20,
+      "passed": 98,
+      "total": 118
+    },
+    "pass_rate_excluding_skips": 0.8305084745762712,
+    "by_layer": {
+      "atomic": {
+        "failed": 10,
+        "passed": 63,
+        "total": 73
+      },
+      "integration": {
+        "failed": 10,
+        "passed": 31,
+        "total": 41
+      },
+      "system_e2e": {
+        "passed": 4,
+        "total": 4
+      }
+    },
+    "runner": "opencode",
+    "model": "gpt-5.5",
+    "run_id": "opencode-gpt-5.5-pyyaml-fullrepro-001-20260709T-stage4-cleanroom",
+    "collection_errors": 0,
+    "solution_path": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pyyaml-fullrepro-001-20260709T-stage4-cleanroom/output",
+    "import_provenance_stdout": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/opencode-gpt-5.5-pyyaml-fullrepro-001-20260709T-stage4-cleanroom/output/yaml/__init__.py",
+    "import_provenance_clean": true,
+    "python_sha256": {
+      "yaml/__init__.py": "7a3b3d6ee86a8743dca8f61c0cdc127efedd47625984776c11592bdc28ff345d",
+      "yaml/composer.py": "99f9c5b39c594f3723b71571fa8bf84f75c1f3be283f055cb67ba9cc1999544a",
+      "yaml/constructor.py": "613ed6839d4f979c7437fa5e6db2a41a228fb80df693b84e53fbd250adf6f26e",
+      "yaml/emitter.py": "6b5bbe474d5d45ac6f9ea998fb0270e9a1f2e81e7a33e8fc6640b434a569453c",
+      "yaml/error.py": "68dcd8182fb3a75449827c923fd5002e8edb6517049bb530669dc54aa1ceb500",
+      "yaml/events.py": "9a0397ca01d2ea9cccffa762c7d009257fab136d32bd48ef32a6dcba4abfc991",
+      "yaml/nodes.py": "b64736c7bba180b658c8f0704a4c27b902747d9549f1092a8038cab62fd2eb41",
+      "yaml/parser.py": "f8a212fd9ba009992aa930fad70af90d8de3a200b523394f549a0b68660fb374",
+      "yaml/reader.py": "c25d973f7f2208faa769bc36d2471b0eabad886599f5266fac1d8af3e4878625",
+      "yaml/representer.py": "d907052ac9ba8a9b78064c36bc5e8c384a2bac26a2185997fdec0d41a2b69d46",
+      "yaml/resolver.py": "fba049eff2e651f38a83235e481aef89e8082f64186d2a5a2cc9015cd5d6a4cd",
+      "yaml/scanner.py": "68aabed1d2c19d69e18c6aa2370dc0068befc087cee7f8a17e8921952a8e3eac",
+      "yaml/serializer.py": "27419e98ab49a64c93250d7175cfb8bc3834625024706f311503230b33321a00",
+      "yaml/tokens.py": "717e4f3027f8fd262dd58735c8cacd53d4cf290ac0283dd5a44d1be254380891"
+    }
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED_WITH_CAVEATS",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed_behavioral_failures_no_collection_cascade",
+      "C_native_oracle": "passed_no_upstream_test_carrier",
+      "D_reference_and_dummy": "passed",
+      "E_independent_review": "passed"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "advanced-loading-semantics",
+      "description": "The candidate misses block scalars, YAML sets/ordered maps/pairs, merge keys, and alias identity.",
+      "affected_tests": 8
+    },
+    {
+      "dimension": "intermediate-and-multidocument-views",
+      "description": "The candidate diverges on token/node marks, multiline round trips, and multi-document serialization.",
+      "affected_tests": 4
+    },
+    {
+      "dimension": "validation-and-recursion",
+      "description": "The candidate omits resolver declaration checks, malformed-input errors, helper kind checks, and recursive aliases.",
+      "affected_tests": 8
+    }
+  ],
+  "labels": [
+    "generated-native-oracle",
+    "cleanroom-spec",
+    "dummy-zero",
+    "no-carrier-dependency"
+  ],
+  "caveats": [
+    "The current-main harness runs task-local tests and candidate code in the same pytest-visible filesystem and is not adversarial black-box proof against a malicious candidate."
+  ],
+  "qualification_reason": "Reference passes 118/118, the executable dummy passes 0/118, the unchanged candidate passes 98/118 with all cases collected, failures are documented public behaviors, the native tests have no carrier dependency, and independent DeepSeek review reports no blocking issue."
+}

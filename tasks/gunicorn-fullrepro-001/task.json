@@ -1,0 +1,249 @@
+{
+  "instance_id": "gunicorn-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "benoitc/gunicorn",
+  "repo_commit": "a8283bbf5e1416d0dd13f994f71ec2761988aeab",
+  "spec_version": "v1-native-cleanroom",
+  "oracle_version": "2026-07-20-native-v1",
+  "source_meta": {
+    "language": "Python",
+    "source_commit": "a8283bbf5e1416d0dd13f994f71ec2761988aeab",
+    "legacy_evidence_roots": [
+      "/root/autodl-tmp/Bmk-Lizhiqian/wip/gunicorn-fullrepro-001",
+      "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/gunicorn"
+    ]
+  },
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "source": "24 self-contained public rewrites plus 36 generated public-behavior tests",
+    "nodeid_file": "kept_nodeids.txt",
+    "mapping_file": "source_nodeid_map.json",
+    "carrier_dependency": false,
+    "subprocess_dependency": true,
+    "subprocess_scope": "documented module CLI and local loopback server/control workflows",
+    "scorer_isolation": [
+      "--remove-path",
+      "gunicorn",
+      "--rootdir=."
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_config_known_settings_are_available_and_validated": "atomic",
+    "oracle/test_atomic.py::test_config_boolean_and_callable_validation": "atomic",
+    "oracle/test_atomic.py::test_config_forwarded_allow_ips_parsing_and_rejection": "atomic",
+    "oracle/test_atomic.py::test_base_application_wsgi_callable_is_cached": "atomic",
+    "oracle/test_atomic.py::test_wsgi_application_direct_cli_target_wins_over_config_wsgi_app": "integration",
+    "oracle/test_atomic.py::test_wsgi_application_uses_config_wsgi_app_when_cli_target_is_absent": "integration",
+    "oracle/test_atomic.py::test_wsgi_application_requires_an_application_target": "atomic",
+    "oracle/test_atomic.py::test_cli_arguments_override_gunicorn_cmd_args": "integration",
+    "oracle/test_atomic.py::test_direct_cli_config_file_wins_over_env_config_file": "integration",
+    "oracle/test_atomic.py::test_dirty_configuration_values_and_validation": "atomic",
+    "oracle/test_atomic.py::test_dirty_hook_settings_accept_matching_callables_and_reject_invalid_arity": "atomic",
+    "oracle/test_atomic.py::test_dirty_app_dispatches_public_actions_and_persists_instance_state": "atomic",
+    "oracle/test_atomic.py::test_dirty_app_rejects_missing_and_underscore_prefixed_actions": "atomic",
+    "oracle/test_atomic.py::test_dirty_app_worker_limit_attribute_is_inherited_or_overridden": "atomic",
+    "oracle/test_atomic.py::test_dirty_client_execute_reports_connection_failure": "atomic",
+    "oracle/test_atomic.py::test_dirty_client_getter_uses_thread_local_client_and_close_resets": "integration",
+    "oracle/test_atomic.py::test_dirty_client_getter_is_thread_local": "integration",
+    "oracle/test_atomic.py::test_dirty_client_getter_requires_socket_configuration": "atomic",
+    "oracle/test_atomic.py::test_async_dirty_client_getter_reuses_context_client_and_close_is_idempotent": "integration",
+    "oracle/test_atomic.py::test_dirty_no_workers_error_preserves_app_path_and_base_type": "atomic",
+    "oracle/test_atomic.py::test_stash_errors_preserve_table_and_key_details": "atomic",
+    "oracle/test_atomic.py::test_control_client_send_command_reports_missing_socket": "atomic",
+    "oracle/test_atomic.py::test_control_client_context_manager_reports_connection_failure": "atomic",
+    "oracle/test_atomic.py::test_control_client_close_is_idempotent": "atomic",
+    "oracle/test_integration.py::test_version_info_matches_public_version_string": "atomic",
+    "oracle/test_integration.py::test_http2_capability_reports_installed_h2_version": "atomic",
+    "oracle/test_integration.py::test_config_principal_defaults_are_visible": "atomic",
+    "oracle/test_integration.py::test_config_accepts_public_protocol_selection": "atomic",
+    "oracle/test_integration.py::test_config_control_socket_disable_uses_boolean_validation": "atomic",
+    "oracle/test_integration.py::test_config_dirty_and_runtime_timeouts_accept_zero_as_documented_disable": "atomic",
+    "oracle/test_integration.py::test_config_request_limit_settings_reject_negative_values": "atomic",
+    "oracle/test_integration.py::test_config_reload_and_capture_output_use_boolean_validation": "atomic",
+    "oracle/test_integration.py::test_wsgi_application_loads_default_application_name": "atomic",
+    "oracle/test_integration.py::test_wsgi_application_loads_named_callable": "atomic",
+    "oracle/test_integration.py::test_wsgi_application_invokes_factory_with_literal_arguments": "atomic",
+    "oracle/test_integration.py::test_wsgi_application_rejects_missing_callable": "atomic",
+    "oracle/test_integration.py::test_wsgi_application_rejects_non_callable_result": "atomic",
+    "oracle/test_integration.py::test_wsgi_application_rejects_non_literal_factory_argument": "atomic",
+    "oracle/test_integration.py::test_wsgi_application_rejects_malformed_target_expression": "atomic",
+    "oracle/test_integration.py::test_wsgi_application_rejects_non_simple_factory_reference": "atomic",
+    "oracle/test_integration.py::test_dirty_error_subclasses_preserve_base_type": "atomic",
+    "oracle/test_integration.py::test_dirty_app_not_found_error_is_catchable_as_dirty_error": "atomic",
+    "oracle/test_integration.py::test_control_client_error_is_raised_for_send_to_missing_socket": "atomic",
+    "oracle/test_integration.py::test_python_module_help_exits_successfully": "system_e2e",
+    "oracle/test_integration.py::test_wsgiapp_module_help_exits_successfully": "system_e2e",
+    "oracle/test_integration.py::test_check_config_accepts_valid_wsgi_application": "system_e2e",
+    "oracle/test_integration.py::test_check_config_rejects_missing_application_target": "system_e2e",
+    "oracle/test_integration.py::test_check_config_rejects_invalid_setting_value": "system_e2e",
+    "oracle/test_integration.py::test_check_config_rejects_missing_explicit_config_file": "system_e2e",
+    "oracle/test_integration.py::test_check_config_ignores_unknown_python_config_names": "system_e2e",
+    "oracle/test_integration.py::test_print_config_reports_direct_cli_precedence_over_environment_args": "system_e2e",
+    "oracle/test_integration.py::test_wsgi_server_returns_application_body": "system_e2e",
+    "oracle/test_integration.py::test_wsgi_server_exposes_path_query_and_scheme": "system_e2e",
+    "oracle/test_integration.py::test_wsgi_server_exposes_method_headers_and_body_length": "system_e2e",
+    "oracle/test_integration.py::test_wsgi_server_ignores_forwarded_scheme_from_untrusted_peer": "system_e2e",
+    "oracle/test_integration.py::test_wsgi_server_reports_application_exception_as_server_error": "system_e2e",
+    "oracle/test_integration.py::test_wsgi_server_closes_returned_iterable": "system_e2e",
+    "oracle/test_integration.py::test_control_socket_show_config_reports_runtime_projection": "system_e2e",
+    "oracle/test_integration.py::test_control_socket_disable_prevents_socket_creation": "system_e2e",
+    "oracle/test_integration.py::test_repeated_wsgi_requests_observe_same_running_service": "system_e2e"
+  },
+  "stats": {
+    "atomic": 36,
+    "integration": 7,
+    "system_e2e": 17
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 36,
+        "total": 36
+      },
+      "integration": {
+        "passed": 7,
+        "total": 7
+      },
+      "system_e2e": {
+        "passed": 17,
+        "total": 17
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "failed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "failed": 36,
+        "total": 36
+      },
+      "integration": {
+        "failed": 7,
+        "total": 7
+      },
+      "system_e2e": {
+        "failed": 17,
+        "total": 17
+      }
+    },
+    "collection_errors": 0
+  },
+  "candidate_score": {
+    "runner": "opencode",
+    "model": "glm-5.2",
+    "run_id": "opencode-glm52-gunicorn-fullrepro-001-20260712T000000Z",
+    "summary": {
+      "failed": 34,
+      "passed": 26,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.43333333333333335,
+    "by_layer": {
+      "atomic": {
+        "failed": 15,
+        "passed": 21,
+        "total": 36
+      },
+      "integration": {
+        "failed": 5,
+        "passed": 2,
+        "total": 7
+      },
+      "system_e2e": {
+        "failed": 14,
+        "passed": 3,
+        "total": 17
+      }
+    },
+    "collection_errors": 0,
+    "solution_path": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/gunicorn/opencode-glm52-gunicorn-fullrepro-001-20260712T000000Z/output",
+    "import_provenance_stdout": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/gunicorn/opencode-glm52-gunicorn-fullrepro-001-20260712T000000Z/output/gunicorn/__init__.py",
+    "import_provenance_clean": true,
+    "python_sha256": {
+      "gunicorn/__init__.py": "4f398c7f8604b29be9fd1200bfae568b6d72ff50e77443bf7351dc8d9babe79d",
+      "gunicorn/__main__.py": "a2318695c575c9fcd188ad84d87270fe307bc2c4ed88e6264280d758450980af",
+      "gunicorn/app/__init__.py": "739e3be9e1dec501ffd9c92f53f1d35dd5e96828cfa50ae16a0e8cbe0e59adba",
+      "gunicorn/app/base.py": "91334ea7bef7e337ecf6d996c6a668bd47f9127648e7cf5b38071f77e97225c2",
+      "gunicorn/app/wsgiapp.py": "e4327c9aab9ef1a70cb67fe63249274965334ae105f118c0314dd398f6eefa8e",
+      "gunicorn/argparser.py": "b010a92068dfd66a00197aa0fd12e68b3f9346cf5cfa1ca0670443a633770709",
+      "gunicorn/asgi.py": "b7c8f2177ddacbd0ddd1d7fb75fb57713a13827e8ccc0ecfbb286231ba563152",
+      "gunicorn/config.py": "3346a6db650904a5b8829489d322186fa03046b34883a8835d9d10f58c6d2f17",
+      "gunicorn/ctl/__init__.py": "08558c15888baa85bd2e601628da5a596d821d4c46b418c226bcce557bb8e38f",
+      "gunicorn/ctl/__main__.py": "d28bacae354d295585f13954d3ed8e4e656781d697cafaee73d54c8b1fc9ad65",
+      "gunicorn/ctl/client.py": "25cb0862587f104dcde31333f1759963f18b50186c35c23b6af747b44afdc8b1",
+      "gunicorn/ctl/main.py": "39eb7f984ebdb30de87bffa3942ce682ce10654240d74bdec1fad5f4eed438cd",
+      "gunicorn/ctl/protocol.py": "f2f5b24ad2f48fca07f36a0f85f0c580d344ea04feba6926a15ee9c68d0815ec",
+      "gunicorn/ctl/socket.py": "1331e96bf024abec2e1098169798f1bc22efa6d34dbf53629e50b4cbf922dc27",
+      "gunicorn/debug.py": "26797f0823e351940bf79b624f7ec22e84aa0fb2ceefb952015f567eb7ede622",
+      "gunicorn/dirty/__init__.py": "d155a24ed5748c1f07daf9e312be30378576c2e3981672bf0ad0ec4ad3d521ee",
+      "gunicorn/dirty/errors.py": "113089a0d2294405c8a11cab18c7dd382be517317da4d4c86260842a5e70a2f2",
+      "gunicorn/errors.py": "61b797021f1fcac4a163913a496abb6e42ba9266b7beafe64a11dc049a0f9433",
+      "gunicorn/glogging.py": "fbf3879c5488a73a3045abd215a38e36e9bfc25fd169c86b5cebe219dcb50f23",
+      "gunicorn/http.py": "fcd758f6e4b255d9ceef1ece0d6e4cba28ebc855978466fa8ea578fab20f3161",
+      "gunicorn/http2/__init__.py": "78da4bb4cd4a53fceb1e93e7a8119b3813a6f1fa9b019599eb69e70b8fead6e8",
+      "gunicorn/http2/connection.py": "46a19fdf596d4cbab3819f4f4578c91f1b349067d887aae7557c3fe7118dc93f",
+      "gunicorn/uwsgi.py": "d6b03f1a79ea03f35af615129db54e74f958d2f44ae0bf7575966c0159e70162"
+    },
+    "unchanged_from_prior_scoring": {
+      "summary_match": true,
+      "layer_match": true,
+      "outcome_mismatches": 0
+    }
+  },
+  "judge": {
+    "date": "2026-07-20",
+    "verdict": "QUALIFIED_WITH_CAVEATS",
+    "independent_review": "review/deepseekv4pro_review.json",
+    "fairness_gates": {
+      "A_spec_mapping": "passed",
+      "B_failure_pattern": "passed_behavioral_failures_no_collection_cascade",
+      "C_native_oracle": "passed_no_upstream_test_carrier",
+      "D_reference_and_dummy": "passed",
+      "E_independent_review": "passed"
+    }
+  },
+  "weaknesses": [
+    {
+      "dimension": "configuration-semantics",
+      "description": "The candidate diverges on typed setting validation, defaults, and CLI/config precedence.",
+      "affected_tests": 19
+    },
+    {
+      "dimension": "runtime-workflows",
+      "description": "The candidate cannot complete most documented local server and control workflows.",
+      "affected_tests": 12
+    },
+    {
+      "dimension": "dirty-state-and-errors",
+      "description": "Several documented Dirty client lifecycle and structured error attributes are incomplete.",
+      "affected_tests": 3
+    }
+  ],
+  "labels": [
+    "mixed-native-oracle",
+    "cleanroom-spec",
+    "dummy-zero",
+    "discriminating",
+    "subprocess-public-workflows"
+  ],
+  "caveats": [
+    "The current-main harness runs task-local tests and candidate code in the same pytest-visible filesystem and is not adversarial black-box proof against a malicious candidate.",
+    "Documented CLI and loopback-server workflows launch subprocesses, but the package has no dependency on an upstream tests carrier or a reference-only console-script wrapper."
+  ],
+  "qualification_reason": "Reference passes 60/60, executable dummy passes 0/60 without collection errors, the unchanged historical candidate passes 26/60 with zero outcome drift and no collection cascade, native public-behavior tests have no upstream carrier dependency, and independent review reports no blocking issue."
+}

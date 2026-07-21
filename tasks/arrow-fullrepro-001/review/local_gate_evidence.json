@@ -1,0 +1,67 @@
+{
+  "date": "2026-07-20",
+  "platform": "Linux",
+  "commands": {
+    "reference": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/root/autodl-tmp/e2e/arrow PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q -p no:cacheprovider -o addopts= tasks/arrow-fullrepro-001/oracle",
+    "dummy": "same command per local module with PYTHONPATH=tasks/arrow-fullrepro-001/.dummy and an explicit arrow shadow package",
+    "candidate": "same command per local module with PYTHONPATH=<unchanged candidate output>"
+  },
+  "reference": {
+    "passed": 87,
+    "total": 87
+  },
+  "dummy": {
+    "passed": 0,
+    "collection_error": 87,
+    "total": 87
+  },
+  "candidates": [
+    {
+      "runner": "opencode",
+      "model": "gpt-5.5",
+      "run_id": "opencode-gpt-5.5-arrow-fullrepro-001-20260702T035140Z",
+      "passed": 47,
+      "failed": 40,
+      "total": 87,
+      "pass_rate": 0.5402298850574713,
+      "by_layer": {
+        "atomic": {
+          "passed": 9,
+          "failed": 5,
+          "total": 14
+        },
+        "integration": {
+          "passed": 38,
+          "failed": 35,
+          "total": 73
+        }
+      },
+      "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-isolated/opencode-gpt-5.5-arrow-fullrepro-001-20260702T035140Z/output/arrow/__init__.py",
+      "provenance_clean": true
+    },
+    {
+      "runner": "swe-agent",
+      "model": "gpt-5.5",
+      "run_id": "swe-agent-gpt-5.5-arrow-fullrepro-001-20260702T035227Z",
+      "passed": 49,
+      "failed": 38,
+      "total": 87,
+      "pass_rate": 0.5632183908045977,
+      "by_layer": {
+        "atomic": {
+          "passed": 11,
+          "failed": 3,
+          "total": 14
+        },
+        "integration": {
+          "passed": 38,
+          "failed": 35,
+          "total": 73
+        }
+      },
+      "import_provenance": "/root/autodl-tmp/Bmk-Lizhiqian/candidate-runs/e2e10-sweagent/swe-agent-gpt-5.5-arrow-fullrepro-001-20260702T035227Z/output/arrow/__init__.py",
+      "provenance_clean": true
+    }
+  ],
+  "trust_boundary": "Current main uses same-process pytest and is not adversarial black-box proof."
+}

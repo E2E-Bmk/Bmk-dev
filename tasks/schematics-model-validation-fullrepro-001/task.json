@@ -1,0 +1,83 @@
+{
+  "instance_id": "schematics-model-validation-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "schematics",
+  "repo_commit": "3a144be0aa50f68a4da917e8d957b924dedf9a52",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 53,
+    "scorer_isolation": [
+      "--remove-path",
+      "schematics"
+    ]
+  },
+  "taxonomy": {
+    "oracle/test_atomic.py::test_string_converts_integer_to_text": "atomic",
+    "oracle/test_atomic.py::test_string_min_length_rejects_short_value": "atomic",
+    "oracle/test_atomic.py::test_string_regex_rejects_nonmatching_value": "atomic",
+    "oracle/test_atomic.py::test_int_converts_decimal_text": "atomic",
+    "oracle/test_atomic.py::test_int_rejects_out_of_range_value": "atomic",
+    "oracle/test_atomic.py::test_decimal_has_native_decimal_and_primitive_text": "atomic",
+    "oracle/test_atomic.py::test_boolean_accepts_true_text": "atomic",
+    "oracle/test_atomic.py::test_boolean_accepts_false_digit": "atomic",
+    "oracle/test_atomic.py::test_boolean_rejects_unrecognized_text": "atomic",
+    "oracle/test_atomic.py::test_uuid_has_uuid_native_value": "atomic",
+    "oracle/test_atomic.py::test_uuid_has_text_primitive_value": "atomic",
+    "oracle/test_atomic.py::test_date_has_iso_primitive_value": "atomic",
+    "oracle/test_atomic.py::test_datetime_rejects_invalid_text": "atomic",
+    "oracle/test_atomic.py::test_timedelta_converts_seconds": "atomic",
+    "oracle/test_atomic.py::test_geopoint_rejects_out_of_range_coordinate": "atomic",
+    "oracle/test_atomic.py::test_list_type_converts_each_element": "atomic",
+    "oracle/test_atomic.py::test_list_type_enforces_maximum_size": "atomic",
+    "oracle/test_atomic.py::test_dict_type_converts_each_value": "atomic",
+    "oracle/test_atomic.py::test_dict_type_rejects_non_mapping_input": "atomic",
+    "oracle/test_atomic.py::test_email_rejects_malformed_value": "atomic",
+    "oracle/test_atomic.py::test_url_rejects_malformed_value": "atomic",
+    "oracle/test_atomic.py::test_ipv4_rejects_malformed_value": "atomic",
+    "oracle/test_atomic.py::test_md5_rejects_wrong_digest_length": "atomic",
+    "oracle/test_integration.py::test_attribute_and_mapping_read_same_native_value": "integration",
+    "oracle/test_integration.py::test_attribute_assignment_updates_mapping_and_native_export": "integration",
+    "oracle/test_integration.py::test_mapping_assignment_updates_attribute_and_native_export": "integration",
+    "oracle/test_integration.py::test_export_uses_serialized_field_name": "integration",
+    "oracle/test_integration.py::test_declared_input_key_wins_over_alternate_keys": "integration",
+    "oracle/test_integration.py::test_serialized_input_key_wins_over_deserialize_from_key": "integration",
+    "oracle/test_integration.py::test_unknown_mapping_assignment_raises_documented_error": "integration",
+    "oracle/test_integration.py::test_strict_constructor_rejects_unknown_input_key": "integration",
+    "oracle/test_integration.py::test_non_partial_validation_reports_missing_required_field": "integration",
+    "oracle/test_integration.py::test_partial_constructor_allows_missing_required_field": "integration",
+    "oracle/test_integration.py::test_literal_default_is_available_in_native_export": "integration",
+    "oracle/test_integration.py::test_callable_default_is_evaluated_for_each_model": "integration",
+    "oracle/test_integration.py::test_modeltype_turns_mapping_into_nested_model": "integration",
+    "oracle/test_integration.py::test_modeltype_accepts_nested_model_instance": "integration",
+    "oracle/test_integration.py::test_modeltype_rejects_non_model_non_mapping_value": "integration",
+    "oracle/test_integration.py::test_list_of_models_exports_nested_primitive_mapping": "integration",
+    "oracle/test_integration.py::test_whitelist_role_exports_only_named_field_in_both_views": "integration",
+    "oracle/test_integration.py::test_blacklist_role_omits_named_field_in_both_views": "integration",
+    "oracle/test_integration.py::test_default_role_applies_when_no_role_is_requested": "integration",
+    "oracle/test_integration.py::test_import_data_updates_and_returns_same_instance": "integration",
+    "oracle/test_integration.py::test_primitive_export_uses_decimal_primitive_value": "integration",
+    "oracle/test_integration.py::test_validate_reports_nested_field_errors_structurally": "integration",
+    "oracle/test_integration.py::test_model_validate_returns_instance_when_valid": "integration",
+    "oracle/test_integration.py::test_boolean_accepts_numeric_true_value": "integration",
+    "oracle/test_integration.py::test_date_rejects_unparseable_value": "integration",
+    "oracle/test_integration.py::test_primitive_export_is_mapping_with_scalar_values": "integration",
+    "oracle/test_integration.py::test_product_state_workflow_binds_instance_native_and_primitive_views": "system_e2e",
+    "oracle/test_integration.py::test_representative_workflow_applies_role_to_both_export_views": "system_e2e",
+    "oracle/test_integration.py::test_representative_workflow_exports_nested_state_after_validation": "system_e2e",
+    "oracle/test_integration.py::test_representative_workflow_recovers_after_structured_validation_failure": "system_e2e"
+  },
+  "stats": {
+    "atomic": 23,
+    "integration": 26,
+    "system_e2e": 4
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": {
+    "passed": 49,
+    "total": 53
+  }
+}

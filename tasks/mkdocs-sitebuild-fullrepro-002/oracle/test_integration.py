@@ -1,487 +1,651 @@
-# Spec2Repo oracle - integration tests for mkdocs-sitebuild-fullrepro-002
-import subprocess
+"""
+Integration-layer tests for mkdocs.
 
-import sys
-
-import textwrap
-
-from pathlib import Path
-
-import pytest
-
-import mkdocs
-
-from mkdocs.__main__ import cli
-
-from mkdocs.commands.build import build
-
-from mkdocs.config import load_config
-
-from mkdocs.exceptions import Abort
-
-from mkdocs.plugins import BasePlugin, PluginCollection
+Each test verifies ≥2 different public API boundaries cooperating.
+Composition-dependency: even if every atomic test passes, these tests
+can still fail because component seams don't align.
+"""
 
 import json
+import pytest
+from pathlib import Path
 
-import logging
-
-import os
-
-from mkdocs.commands.new import new
-
-from mkdocs.config import config_options as c
-
-from mkdocs.config.base import Config
-
-from mkdocs.contrib.search import SearchPlugin
-
-from mkdocs.contrib.search.search_index import SearchIndex
-
-from mkdocs.exceptions import Abort, ConfigurationError
-
-from mkdocs.plugins import BasePlugin, PluginCollection, event_priority
-
+from mkdocs.config import load_config
+from mkdocs.commands.build import build
 from mkdocs.structure.files import File, Files, InclusionLevel, get_files
-
-from mkdocs.structure.nav import Link, Section, get_navigation
-
 from mkdocs.structure.pages import Page
-
-from mkdocs.structure.toc import AnchorLink, TableOfContents
-
+from mkdocs.structure.nav import Navigation, Section, Link, get_navigation
+from mkdocs.structure.toc import AnchorLink
+from mkdocs.exceptions import Abort, ConfigurationError
+from mkdocs.plugins import BasePlugin, PluginCollection, event_priority
 from mkdocs.theme import Theme
 
-from mkdocs.utils import (
-    CountHandler,
-    clean_directory,
-    copy_file,
-    create_media_urls,
-    dirname_to_title,
-    get_relative_url,
-    is_error_template,
-    is_markdown_file,
-    normalize_url,
-    reduce_list,
-    write_file,
+from conftest import make_file, create_project, load_cfg, SITE_NAME, REPO_URL
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-1  site_dir agreement
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_load_config_mapping_and_attribute_access")
+def test_build_output_written_to_effective_site_dir(tmp_path):
+    """CVI-1: build output written to config-effective site_dir."""
+    """Build must write into the config-effective site_dir."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={"index.md": "# Alpha Start\n\nContent.\n"},
+        cfg_yaml="site_dir: custom_output",
+    )
+    build(cfg)
+    site = Path(cfg["site_dir"])
+    assert (site / "index.html").exists()
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-2  use_directory_urls consistency
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on(
+    "test_file_dest_uri_directory_urls_enabled",
+    "test_page_render_produces_html_content",
 )
+def test_file_and_page_url_agree_directory_urls_on(tmp_path):
+    """CVI-2: File.url and Page.url agree when directory URLs enabled."""
+    """File.url and Page.url must agree when directory URLs are enabled."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={"index.md": "# Home\n", "guide.md": "# Guide\n"},
+    )
+    files = get_files(cfg)
+    nav = get_navigation(files, cfg)
+    for page in nav.pages:
+        assert page.url == page.file.url
 
-from mkdocs.utils.meta import get_data
 
-from mkdocs.utils.templates import script_tag_filter, url_filter
+@pytest.mark.depends_on("test_file_dest_uri_directory_urls_disabled")
+def test_file_and_page_url_agree_directory_urls_off(tmp_path):
+    """CVI-2: File.url and Page.url agree when directory URLs disabled."""
+    """File.url and Page.url must agree when directory URLs are disabled."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={"index.md": "# Home\n", "reference.md": "# Ref\n"},
+        cfg_yaml="use_directory_urls: false",
+    )
+    files = get_files(cfg)
+    nav = get_navigation(files, cfg)
+    for page in nav.pages:
+        assert page.url == page.file.url
 
-from mkdocs.utils.yaml import yaml_load
 
-def write_project(tmp_path, config_text="site_name: Example\n", pages=None):
+# ═══════════════════════════════════════════════════════════════
+# CVI-3  nav-page object sharing
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_files_get_file_from_path_found")
+def test_nav_page_same_object_as_file_page(tmp_path):
+    """CVI-3: nav-referenced page is same object as file.page."""
+    """A nav-referenced page must be the same object as file.page."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={"index.md": "# Home\n", "about.md": "# About\n"},
+        cfg_yaml="nav:\n  - Home: index.md\n  - About: about.md",
+    )
+    files = get_files(cfg)
+    nav = get_navigation(files, cfg)
+
+    about_file = files.get_file_from_path("about.md")
+    about_in_nav = [p for p in nav.pages if p.file.src_uri == "about.md"][0]
+    assert about_file.page is about_in_nav
+
+
+@pytest.mark.depends_on("test_files_get_file_from_path_found")
+def test_previous_next_links_follow_nav_pages(tmp_path):
+    """CVI-3: prev/next links follow Navigation.pages ordering."""
+    """prev/next links must follow Navigation.pages ordering."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={
+            "index.md": "# Home\n",
+            "setup.md": "# Setup\n",
+            "usage.md": "# Usage\n",
+        },
+        cfg_yaml="nav:\n  - Home: index.md\n  - Setup: setup.md\n  - Usage: usage.md",
+    )
+    files = get_files(cfg)
+    nav = get_navigation(files, cfg)
+
+    pages = nav.pages
+    assert len(pages) == 3
+    assert pages[0].next_page is pages[1]
+    assert pages[1].previous_page is pages[0]
+    assert pages[1].next_page is pages[2]
+    assert pages[2].previous_page is pages[1]
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-4  omitted pages
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_files_get_file_from_path_found")
+def test_omitted_page_absent_from_nav_pages(tmp_path):
+    """CVI-4: pages omitted from nav absent from Navigation.pages."""
+    """Pages not in explicit nav must be absent from Navigation.pages."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={
+            "index.md": "# Home\n",
+            "listed.md": "# Listed\n",
+            "unlisted.md": "# Unlisted\n",
+        },
+        cfg_yaml="nav:\n  - Home: index.md\n  - Listed: listed.md",
+    )
+    files = get_files(cfg)
+    nav = get_navigation(files, cfg)
+
+    nav_uris = {p.file.src_uri for p in nav.pages}
+    assert "index.md" in nav_uris
+    assert "listed.md" in nav_uris
+    assert "unlisted.md" not in nav_uris
+
+
+@pytest.mark.depends_on("test_files_get_file_from_path_found")
+def test_omitted_page_no_previous_next(tmp_path):
+    """CVI-4: omitted pages have no previous or next page links."""
+    """Omitted pages must not have previous or next page links."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={
+            "index.md": "# Home\n",
+            "visible.md": "# Visible\n",
+            "ghost.md": "# Ghost\n",
+        },
+        cfg_yaml="nav:\n  - Home: index.md\n  - Visible: visible.md",
+    )
+    files = get_files(cfg)
+    nav = get_navigation(files, cfg)
+
+    ghost_file = files.get_file_from_path("ghost.md")
+    assert ghost_file.page is not None
+    assert ghost_file.page.previous_page is None
+    assert ghost_file.page.next_page is None
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-5  exclusion consistency
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_inclusion_level_enum_members")
+def test_excluded_file_absent_from_nav(tmp_path):
+    """CVI-5: EXCLUDED files absent from navigation pages."""
+    """EXCLUDED files must not appear in navigation."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={
+            "index.md": "# Home\n",
+            "public.md": "# Public\n",
+            "secret.md": "# Secret\n",
+        },
+    )
+    files = get_files(cfg)
+    secret = files.get_file_from_path("secret.md")
+    if secret is not None:
+        secret.inclusion = InclusionLevel.EXCLUDED
+    nav = get_navigation(files, cfg)
+
+    nav_uris = {p.file.src_uri for p in nav.pages}
+    assert "secret.md" not in nav_uris
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-6  title consistency
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_page_title_from_nav_label")
+def test_page_title_matches_nav_label_across_views(tmp_path):
+    """CVI-6: nav label propagates as Page.title across file and nav views."""
+    """Nav label must propagate as Page.title across file and nav views."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={
+            "index.md": "# Something\n",
+            "help.md": "# Anything\n",
+        },
+        cfg_yaml="nav:\n  - Home: index.md\n  - Help Section: help.md",
+    )
+    files = get_files(cfg)
+    nav = get_navigation(files, cfg)
+
+    help_page = [p for p in nav.pages if p.file.src_uri == "help.md"][0]
+    assert help_page.title == "Help Section"
+    assert files.get_file_from_path("help.md").page.title == "Help Section"
+
+
+@pytest.mark.depends_on("test_page_render_produces_html_content")
+def test_page_title_consistent_in_search_index(tmp_path):
+    """CVI-6: search index entry titles match resolved page titles."""
+    """Search index entry titles must match resolved page titles."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={
+            "index.md": "# Portal Home\n\nWelcome.\n",
+            "quickstart.md": "# Getting Started\n\nBegin.\n",
+        },
+    )
+    build(cfg)
+
+    search_path = Path(cfg["site_dir"]) / "search" / "search_index.json"
+    assert search_path.exists()
+    with open(search_path, encoding="utf-8") as fh:
+        index = json.load(fh)
+
+    titles = {doc["title"] for doc in index["docs"]}
+    assert "Portal Home" in titles
+    assert "Getting Started" in titles
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-7  edit links
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on(
+    "test_file_edit_uri_defaults_to_src_uri",
+    "test_load_config_mapping_and_attribute_access",
+)
+def test_edit_url_from_repo_url_and_edit_uri(tmp_path):
+    """CVI-7: Page.edit_url combines repo_url, edit_uri, and File.edit_uri."""
+    """Page.edit_url must combine repo_url, edit_uri, and File.edit_uri."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={"index.md": "# Home\n", "guide.md": "# Guide\n"},
+        cfg_yaml=f"repo_url: {REPO_URL}\nedit_uri: edit/main/docs/",
+    )
+    files = get_files(cfg)
+    nav = get_navigation(files, cfg)
+
+    guide = [p for p in nav.pages if p.file.src_uri == "guide.md"][0]
+    guide.read_source(cfg)
+    assert guide.edit_url is not None
+    assert "guide.md" in guide.edit_url
+    assert REPO_URL.rstrip("/") in guide.edit_url or "example.test" in guide.edit_url
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-8  metadata removal
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on(
+    "test_page_read_source_populates_markdown",
+    "test_page_meta_from_yaml_front_matter",
+)
+def test_metadata_stripped_from_markdown_meta_preserved(tmp_path):
+    """CVI-8: front matter stripped from markdown but preserved in meta."""
+    """Front matter must be removed from markdown but available in meta."""
     docs = tmp_path / "docs"
-    docs.mkdir()
-    for name, content in (pages or {"index.md": "# Home"}).items():
-        path = docs / name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(textwrap.dedent(content).lstrip(), encoding="utf-8")
-    config = tmp_path / "mkdocs.yml"
-    config.write_text(textwrap.dedent(config_text).lstrip(), encoding="utf-8")
-    return config
-
-
-def _project(tmp_path, config_text="site_name: Example\n", pages=None):
-    docs_dir = tmp_path / "docs"
-    docs_dir.mkdir()
-    for name, content in (pages or {"index.md": "# Home"}).items():
-        path = docs_dir / name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
-    config_path = tmp_path / "mkdocs.yml"
-    config_path.write_text(config_text, encoding="utf-8")
-    return config_path
-
-
-def _loaded_config(tmp_path, config_text="site_name: Example\n", pages=None):
-    return load_config(config_file=str(_project(tmp_path, config_text, pages)))
-
-
-def test_python_module_version_reports_installed_version():
-    result = subprocess.run(
-        [sys.executable, "-m", "mkdocs", "--version"],
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
+    docs.mkdir(exist_ok=True)
+    (docs / "index.md").write_text(
+        "---\ntitle: My Title\nstatus: draft\n---\n# Heading\n\nBody.\n",
+        encoding="utf-8",
     )
+    site = tmp_path / "s"
+    site.mkdir()
+    cfg = load_cfg(tmp_path)
+    f = make_file("index.md", docs, site)
+    page = Page(title=None, file=f, config=cfg)
+    page.read_source(cfg)
 
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "mkdocs" in result.stdout.lower()
-    assert mkdocs.__version__ in result.stdout
-
-
-def test_project_config_defaults_include_site_and_theme(tmp_path):
-    config_file = write_project(tmp_path, "site_name: Defaults\n")
-
-    config = load_config(config_file=str(config_file))
-
-    assert config.site_name == "Defaults"
-    assert Path(config.docs_dir).name == "docs"
-    assert Path(config.site_dir).name == "site"
-    assert config.theme.name == "mkdocs"
-    assert "search" in config.plugins
+    assert "---" not in page.markdown
+    assert "status:" not in page.markdown
+    assert page.meta["status"] == "draft"
+    assert page.meta["title"] == "My Title"
 
 
-def test_build_api_writes_site_pages_and_search_assets(tmp_path):
-    config_file = write_project(
+# ═══════════════════════════════════════════════════════════════
+# CVI-9  base_url / url filter consistency
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_page_render_produces_html_content")
+def test_rendered_links_consistent_with_page_urls(tmp_path):
+    """CVI-9: internal Markdown links rewritten to correct relative URLs."""
+    """Internal Markdown links must be rewritten to correct relative URLs."""
+    cfg = load_cfg(
         tmp_path,
-        """
-        site_name: Build API
-        nav:
-          - Home: index.md
-          - Guide: guide.md
-        """,
-        {"index.md": "# Home\nWelcome", "guide.md": "# Guide\nContent"},
+        pages={
+            "index.md": "# Home\n\nGo to [FAQ](faq.md).\n",
+            "faq.md": "# FAQ\n\nBack to [Home](index.md).\n",
+        },
     )
-    config = load_config(config_file=str(config_file))
+    build(cfg)
 
-    build(config)
+    site = Path(cfg["site_dir"])
+    home_html = (site / "index.html").read_text(encoding="utf-8")
+    faq_html = (site / "faq" / "index.html").read_text(encoding="utf-8")
 
-    assert (Path(config.site_dir) / "index.html").exists()
-    assert (Path(config.site_dir) / "guide" / "index.html").exists()
-    assert (Path(config.site_dir) / "search" / "search_index.json").exists()
-
-
-def test_build_site_dir_override_keeps_config_and_output_consistent(tmp_path):
-    config_file = write_project(tmp_path, "site_name: Override\n", {"index.md": "# Home"})
-    custom_site = tmp_path / "published"
-    config = load_config(config_file=str(config_file), site_dir=str(custom_site))
-
-    build(config)
-
-    assert Path(config.site_dir) == custom_site
-    assert (custom_site / "index.html").exists()
-    assert not (tmp_path / "site" / "index.html").exists()
+    assert 'href="faq/"' in home_html
+    assert 'href="../"' in faq_html or 'href=".."' in faq_html
 
 
-def test_strict_build_aborts_on_warning(tmp_path):
-    config_file = write_project(
+# ═══════════════════════════════════════════════════════════════
+# CVI-10  search index
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_page_render_produces_html_content")
+def test_search_index_written_under_site_dir(tmp_path):
+    """CVI-10: default search plugin writes search_index.json under site_dir."""
+    """Default search plugin must write search_index.json under site_dir."""
+    cfg = load_cfg(
         tmp_path,
-        """
-        site_name: Strict
-        nav:
-          - Missing: missing.md
-        """,
-        {"index.md": "# Home"},
+        pages={"index.md": "# Main Page\n\nSome content.\n"},
     )
-    config = load_config(config_file=str(config_file), strict=True)
+    build(cfg)
 
+    search_path = Path(cfg["site_dir"]) / "search" / "search_index.json"
+    assert search_path.exists()
+
+    with open(search_path, encoding="utf-8") as fh:
+        index = json.load(fh)
+    assert "docs" in index
+    assert len(index["docs"]) >= 1
+
+
+@pytest.mark.depends_on("test_page_render_produces_html_content")
+def test_search_index_location_matches_page_url(tmp_path):
+    """CVI-10: search entry location matches page URL."""
+    """Each search entry location must match its page's URL."""
+    cfg = load_cfg(
+        tmp_path,
+        pages={
+            "index.md": "# Start\n",
+            "reference.md": "# Reference Guide\n\nDetails.\n",
+        },
+    )
+    build(cfg)
+
+    search_path = Path(cfg["site_dir"]) / "search" / "search_index.json"
+    with open(search_path, encoding="utf-8") as fh:
+        index = json.load(fh)
+
+    locations = {doc["location"] for doc in index["docs"]}
+    assert any("reference" in loc for loc in locations)
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-11  plugin event returns
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_plugin_collection_run_event_returns_item")
+def test_plugin_event_return_replaces_item():
+    """CVI-11: plugin handler return value replaces current event item."""
+    """A handler returning a value must replace the current item."""
+
+    class AppendPlugin(BasePlugin):
+        def on_page_markdown(self, markdown, **kwargs):
+            return markdown + "\n> appended"
+
+    pc = PluginCollection()
+    pc["appender"] = AppendPlugin()
+    result = pc.run_event("page_markdown", item="# Original\n")
+    assert "appended" in result
+    assert result.startswith("# Original\n")
+
+
+@pytest.mark.depends_on("test_plugin_collection_run_event_returns_item")
+def test_plugin_event_none_preserves_item():
+    """CVI-11: plugin handler returning None preserves current item."""
+    """A handler returning None must preserve the current item."""
+
+    class NoopPlugin(BasePlugin):
+        def on_page_markdown(self, markdown, **kwargs):
+            return None
+
+    pc = PluginCollection()
+    pc["noop"] = NoopPlugin()
+    result = pc.run_event("page_markdown", item="# Keep This\n")
+    assert result == "# Keep This\n"
+
+
+# ═══════════════════════════════════════════════════════════════
+# CVI-12  strict mode
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_load_config_mapping_and_attribute_access")
+def test_strict_mode_unknown_key_raises_abort(tmp_path):
+    """CVI-12: strict mode converts unknown config key warnings to Abort."""
+    """In strict mode, unknown config keys must convert warnings → Abort."""
+    create_project(
+        tmp_path,
+        cfg_yaml="strict: true\nzz_unknown_key_alpha: 42",
+    )
     with pytest.raises(Abort):
-        build(config)
+        load_config(config_file=str(tmp_path / "mkdocs.yml"))
 
 
-def test_plugin_lifecycle_events_run_during_build(tmp_path):
-    events = []
-
-    class Recorder(BasePlugin):
-        def on_pre_build(self, *, config):
-            events.append("pre_build")
-
-        def on_post_build(self, *, config):
-            events.append("post_build")
-
-    config_file = write_project(tmp_path, "site_name: Plugins\n")
-    config = load_config(config_file=str(config_file))
-    plugins = PluginCollection()
-    plugins["recorder"] = Recorder()
-    config.plugins = plugins
-
-    build(config)
-
-    assert events == ["pre_build", "post_build"]
+# ═══════════════════════════════════════════════════════════════
+# Additional seams – render rewrites links via Files
+# (state-consistency seam)
+# ═══════════════════════════════════════════════════════════════
 
 
-def test_plugin_build_error_hook_observes_build_failure(tmp_path):
-    seen = []
-
-    class FailingPlugin(BasePlugin):
-        def on_pre_build(self, *, config):
-            raise RuntimeError("boom")
-
-        def on_build_error(self, *, error):
-            seen.append(type(error).__name__)
-
-    config_file = write_project(tmp_path, "site_name: Error Hook\n")
-    config = load_config(config_file=str(config_file))
-    plugins = PluginCollection()
-    plugins["failing"] = FailingPlugin()
-    config.plugins = plugins
-
-    with pytest.raises(RuntimeError):
-        build(config)
-    assert seen == ["RuntimeError"]
-
-
-def test_repo_url_and_site_url_shape_page_edit_links(tmp_path):
-    config_file = write_project(
-        tmp_path,
-        """
-        site_name: Links
-        site_url: https://example.com/docs/
-        repo_url: https://github.com/example/project
-        edit_uri: edit/main/docs/
-        """,
-        {"index.md": "# Home"},
-    )
-    config = load_config(config_file=str(config_file))
-
-    build(config)
-    html = (Path(config.site_dir) / "index.html").read_text(encoding="utf-8")
-
-    assert "https://example.com/docs/" in html
-    assert "https://github.com/example/project" in html
-    assert "edit/main/docs/index.md" in html
-
-
-def test_custom_theme_directory_overrides_main_template(tmp_path):
-    theme_dir = tmp_path / "theme"
-    theme_dir.mkdir()
-    (theme_dir / "main.html").write_text("CUSTOM {{ page.title }}", encoding="utf-8")
-    config_file = write_project(
-        tmp_path,
-        f"""
-        site_name: Custom Theme
-        theme:
-          name: mkdocs
-          custom_dir: {theme_dir.as_posix()}
-        """,
-        {"index.md": "# Custom Page"},
-    )
-    config = load_config(config_file=str(config_file))
-
-    build(config)
-
-    assert (Path(config.site_dir) / "index.html").read_text(encoding="utf-8") == "CUSTOM Custom Page"
-
-
-def test_full_new_then_build_workflow(tmp_path):
-    project = tmp_path / "project"
-    result = subprocess.run(
-        [sys.executable, "-m", "mkdocs", "new", str(project)],
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-    )
-    assert result.returncode == 0, result.stdout + result.stderr
-
-    build_result = subprocess.run(
-        [sys.executable, "-m", "mkdocs", "build", "-f", str(project / "mkdocs.yml"), "-d", str(project / "public")],
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-    )
-
-    assert build_result.returncode == 0, build_result.stdout + build_result.stderr
-    assert (project / "public" / "index.html").exists()
-
-
-def test_new_creates_project_config_and_index(tmp_path):
-    target = tmp_path / "site"
-    new(str(target))
-
-    assert (target / "mkdocs.yml").read_text(encoding="utf-8").strip() == "site_name: My Docs"
-    assert "Welcome to MkDocs" in (target / "docs" / "index.md").read_text(encoding="utf-8")
-
-
-def test_new_preserves_existing_config_and_index(tmp_path):
-    target = tmp_path / "existing"
-    (target / "docs").mkdir(parents=True)
-    (target / "mkdocs.yml").write_text("site_name: Existing\n", encoding="utf-8")
-    (target / "docs" / "index.md").write_text("# Existing", encoding="utf-8")
-
-    new(str(target))
-
-    assert (target / "mkdocs.yml").read_text(encoding="utf-8") == "site_name: Existing\n"
-    assert (target / "docs" / "index.md").read_text(encoding="utf-8") == "# Existing"
-
-
-def test_load_config_applies_keyword_overrides(tmp_path):
-    config = _loaded_config(
-        tmp_path,
-        "site_name: File Name\nsite_dir: configured_site\nuse_directory_urls: true\n",
-        pages={"index.md": "# Home"},
-    )
-    overridden = load_config(config_file=config.config_file_path, site_name="Override", use_directory_urls=False)
-
-    assert overridden.site_name == "Override"
-    assert overridden.use_directory_urls is False
-    assert Path(overridden.site_dir).name == "configured_site"
-
-
-def test_load_config_discovers_mkdocs_yml_before_yaml(tmp_path, monkeypatch):
-    (tmp_path / "docs").mkdir()
-    (tmp_path / "docs" / "index.md").write_text("# Home", encoding="utf-8")
-    (tmp_path / "mkdocs.yml").write_text("site_name: Preferred\n", encoding="utf-8")
-    (tmp_path / "mkdocs.yaml").write_text("site_name: Secondary\n", encoding="utf-8")
-    monkeypatch.chdir(tmp_path)
-
-    config = load_config()
-
-    assert config.site_name == "Preferred"
-
-
-def test_load_config_missing_default_file_raises_configuration_error(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-
-    with pytest.raises(ConfigurationError):
-        load_config()
-
-
-def test_yaml_inherit_deep_merges_mappings_and_replaces_lists(tmp_path):
-    parent = tmp_path / "parent.yml"
-    child = tmp_path / "child.yml"
-    parent.write_text("site_name: Parent\nextra:\n  a: 1\nnav:\n  - Home: index.md\n", encoding="utf-8")
-    child.write_text("INHERIT: parent.yml\nextra:\n  b: 2\nnav:\n  - Guide: guide.md\n", encoding="utf-8")
-
-    with child.open(encoding="utf-8") as handle:
-        data = yaml_load(handle)
-
-    assert data["site_name"] == "Parent"
-    assert data["extra"] == {"a": 1, "b": 2}
-    assert data["nav"] == [{"Guide": "guide.md"}]
-
-
-def test_copy_static_files_copies_included_non_markdown(tmp_path):
+@pytest.mark.depends_on(
+    "test_page_render_produces_html_content",
+    "test_files_get_file_from_path_found",
+)
+def test_render_rewrites_internal_links_via_files(tmp_path):
+    """Seam: state consistency — render rewrites internal links via Files collection."""
+    """Render must rewrite Markdown links to known files as relative URLs."""
     docs = tmp_path / "docs"
-    site = tmp_path / "site"
+    docs.mkdir(exist_ok=True)
+    (docs / "index.md").write_text("# Home\n\n[More](details.md)\n", encoding="utf-8")
+    (docs / "details.md").write_text("# Details\n", encoding="utf-8")
+    site = tmp_path / "s"
+    site.mkdir()
+
+    cfg = load_cfg(tmp_path)
+    f_idx = make_file("index.md", docs, site)
+    f_det = make_file("details.md", docs, site)
+    files = Files([f_idx, f_det])
+
+    page = Page(title=None, file=f_idx, config=cfg)
+    page.read_source(cfg)
+    page.render(cfg, files)
+
+    assert "details" in page.content
+
+
+# ═══════════════════════════════════════════════════════════════
+# Additional seams – generated file in collection
+# (protocol-handoff seam)
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on(
+    "test_file_generated_with_content_string",
+    "test_files_append_adds_file",
+)
+def test_generated_file_added_to_files_and_discoverable(tmp_path):
+    """Seam: protocol handoff — generated File appended to Files becomes discoverable."""
+    """A generated File, once appended to Files, must be discoverable."""
+    docs, site = tmp_path / "d", tmp_path / "s"
     docs.mkdir()
-    (docs / "asset.txt").write_text("asset", encoding="utf-8")
-    asset = File("asset.txt", str(docs), str(site), True, inclusion=InclusionLevel.INCLUDED)
+    site.mkdir()
+    (docs / "index.md").write_text("", encoding="utf-8")
 
-    Files([asset]).copy_static_files()
+    f_real = make_file("index.md", docs, site)
+    f_gen = File.generated(str(site), "extra/generated.md", content="# Gen\n")
 
-    assert (site / "asset.txt").read_text(encoding="utf-8") == "asset"
+    fs = Files([f_real])
+    fs.append(f_gen)
+
+    assert fs.get_file_from_path("extra/generated.md") is f_gen
+    doc_uris = [f.src_uri for f in fs.documentation_pages()]
+    assert "extra/generated.md" in doc_uris
 
 
-def test_get_files_prefers_index_over_readme(tmp_path):
-    config = _loaded_config(
-        tmp_path,
-        "site_name: Example\n",
-        {"index.md": "# Home", "README.md": "# Readme", "guide.md": "# Guide"},
+# ═══════════════════════════════════════════════════════════════
+# Additional seams – INHERIT config merge
+# (config-interaction seam)
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_load_config_mapping_and_attribute_access")
+def test_inherit_config_deep_merges_mappings(tmp_path):
+    """Seam: config interaction — INHERIT deep-merges parent config with child overrides."""
+    """INHERIT must deep-merge parent config; child site_name wins."""
+    parent = tmp_path / "base.yml"
+    parent.write_text(
+        "site_name: Parent Site\ntheme:\n  name: mkdocs\n", encoding="utf-8"
     )
 
-    files = get_files(config)
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "index.md").write_text("# X\n", encoding="utf-8")
 
-    assert files.get_file_from_path("index.md") is not None
-    assert files.get_file_from_path("README.md") is None
-    assert files.get_file_from_path("guide.md") is not None
-
-
-def test_page_render_rewrites_internal_markdown_links(tmp_path):
-    config = _loaded_config(
-        tmp_path,
-        "site_name: Example\nuse_directory_urls: false\n",
-        {"index.md": "[Guide](guide.md#intro)", "guide.md": "# Intro"},
+    child = tmp_path / "mkdocs.yml"
+    child.write_text(
+        "INHERIT: base.yml\nsite_name: Child Override\n", encoding="utf-8"
     )
-    index = File("index.md", config.docs_dir, config.site_dir, config.use_directory_urls)
-    guide = File("guide.md", config.docs_dir, config.site_dir, config.use_directory_urls)
-    page = Page(None, index, config)
 
-    page.read_source(config)
-    page.render(config, Files([index, guide]))
-
-    assert 'href="guide.html#intro"' in page.content
+    cfg = load_config(config_file=str(child))
+    assert cfg["site_name"] == "Child Override"
+    env = cfg["theme"].get_env()
+    assert "main.html" in env.list_templates()
 
 
-def test_navigation_builds_sections_links_and_pages(tmp_path):
-    config = _loaded_config(
+# ═══════════════════════════════════════════════════════════════
+# Additional seams – !ENV tag
+# (config-interaction seam)
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_load_config_mapping_and_attribute_access")
+def test_env_tag_value_propagates_to_config(tmp_path, monkeypatch):
+    """Seam: config interaction — !ENV tag reads environment variable into config."""
+    """!ENV tag must read environment variable into config value."""
+    monkeypatch.setenv("ALPHA_SITE_URL", "https://alpha.example.test/docs/")
+    cfg = load_cfg(tmp_path, cfg_yaml="site_url: !ENV ALPHA_SITE_URL")
+    assert cfg["site_url"] == "https://alpha.example.test/docs/"
+
+
+# ═══════════════════════════════════════════════════════════════
+# Additional seams – default search active
+# (lifecycle seam)
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_page_render_produces_html_content")
+def test_default_search_active_produces_index(tmp_path):
+    """Seam: lifecycle crossing — default search plugin produces index during build."""
+    """Default plugins include search; it must produce a search index."""
+    cfg = load_cfg(
         tmp_path,
-        "site_name: Example\nnav:\n  - Home: index.md\n  - Guide:\n      - Intro: guide.md\n  - Project: https://example.com\n",
-        {"index.md": "# Home", "guide.md": "# Guide"},
+        pages={"index.md": "# Welcome\n\nSearchable content.\n"},
     )
-    files = get_files(config)
-    nav = get_navigation(files, config)
+    build(cfg)
 
-    assert len(nav.pages) == 2
-    assert nav.homepage.title == "Home"
-    assert isinstance(nav.items[1], Section)
-    assert isinstance(nav.items[2], Link)
-    assert nav.items[2].url == "https://example.com"
+    search_file = Path(cfg["site_dir"]) / "search" / "search_index.json"
+    assert search_file.exists()
+
+    with open(search_file, encoding="utf-8") as fh:
+        data = json.load(fh)
+    assert len(data.get("docs", [])) >= 1
 
 
-def test_pages_omitted_from_explicit_nav_still_get_page_objects(tmp_path):
-    config = _loaded_config(
+@pytest.mark.depends_on("test_load_config_mapping_and_attribute_access")
+def test_explicit_empty_plugins_disables_search(tmp_path):
+    """Seam: config interaction — explicit empty plugins list disables default search."""
+    """An explicit empty plugins list must disable the default search."""
+    cfg = load_cfg(
         tmp_path,
-        "site_name: Example\nnav:\n  - Home: index.md\n",
-        {"index.md": "# Home", "hidden.md": "# Hidden"},
+        pages={"index.md": "# Home\n"},
+        cfg_yaml="plugins: []",
     )
-    files = get_files(config)
-    nav = get_navigation(files, config)
+    build(cfg)
 
-    hidden = files.get_file_from_path("hidden.md")
-    assert hidden.page is not None
-    assert hidden.page not in nav.pages
+    search_file = Path(cfg["site_dir"]) / "search" / "search_index.json"
+    assert not search_file.exists()
 
 
-def test_plugin_load_config_validates_schema():
-    class DemoPlugin(BasePlugin):
-        config_scheme = (("enabled", c.Type(bool, default=True)), ("label", c.Type(str, default="ok")))
-
-    plugin = DemoPlugin()
-    errors, warnings = plugin.load_config({"enabled": False})
-
-    assert errors == []
-    assert warnings == []
-    assert plugin.config["enabled"] is False
-    assert plugin.config["label"] == "ok"
+# ═══════════════════════════════════════════════════════════════
+# Additional seams – event_priority ordering
+# (protocol-handoff seam)
+# ═══════════════════════════════════════════════════════════════
 
 
-def test_plugin_collection_runs_events_in_priority_order():
-    calls = []
+@pytest.mark.depends_on("test_plugin_collection_run_event_returns_item")
+def test_event_priority_ordering_with_collection():
+    """Seam: protocol handoff — event_priority ordering controls handler execution order."""
+    """Higher-priority handlers must run first regardless of insertion order."""
 
-    class FirstPlugin(BasePlugin):
-        @event_priority(50)
-        def on_nav(self, nav, *, config, files):
-            calls.append("first")
-            return nav + ["first"]
+    class LowPlugin(BasePlugin):
+        def on_page_markdown(self, markdown, **kwargs):
+            return markdown + " low"
 
-    class SecondPlugin(BasePlugin):
-        def on_nav(self, nav, *, config, files):
-            calls.append("second")
-            return nav + ["second"]
+    class HighPlugin(BasePlugin):
+        @event_priority(100)
+        def on_page_markdown(self, markdown, **kwargs):
+            return markdown + " high"
 
-    collection = PluginCollection()
-    collection["second"] = SecondPlugin()
-    collection["first"] = FirstPlugin()
+    pc = PluginCollection()
+    pc["low_first"] = LowPlugin()
+    pc["high_second"] = HighPlugin()
 
-    result = collection.run_event("nav", [], config=None, files=None)
-
-    assert calls == ["first", "second"]
-    assert result == ["first", "second"]
+    result = pc.run_event("page_markdown", item="start")
+    assert result == "start high low"
 
 
-def test_search_index_serializes_page_and_section_entries(tmp_path):
-    config = _loaded_config(tmp_path)
-    file = File("index.md", config.docs_dir, config.site_dir, config.use_directory_urls)
-    page = Page("Home", file, config)
-    page.content = '<h1 id="intro">Intro</h1><p>Welcome</p>'
-    page.toc = TableOfContents([AnchorLink("Intro", "intro", 1)])
-    index = SearchIndex(lang=["en"], separator=r"[\s\-]+", min_search_length=3, prebuild_index=False, indexing="full")
-
-    index.add_entry_from_context(page)
-    payload = json.loads(index.generate_search_index())
-
-    assert payload["config"]["lang"] == ["en"]
-    assert payload["docs"][0]["title"] == "Home"
-    assert payload["docs"][1]["location"] == "#intro"
-    assert payload["docs"][1]["text"] == "Welcome"
+# ═══════════════════════════════════════════════════════════════
+# Additional seams – theme custom_dir override
+# (state-consistency seam)
+# ═══════════════════════════════════════════════════════════════
 
 
-def test_search_index_titles_mode_omits_section_entries(tmp_path):
-    config = _loaded_config(tmp_path)
-    file = File("index.md", config.docs_dir, config.site_dir, config.use_directory_urls)
-    page = Page("Home", file, config)
-    page.content = '<h1 id="intro">Intro</h1><p>Welcome</p>'
-    page.toc = TableOfContents([AnchorLink("Intro", "intro", 1)])
-    index = SearchIndex(lang=["en"], separator=r"[\s\-]+", min_search_length=3, prebuild_index=False, indexing="titles")
+@pytest.mark.depends_on("test_theme_custom_dir_first_in_dirs")
+def test_theme_custom_dir_overrides_packaged_template(tmp_path):
+    """Seam: state consistency — theme custom_dir shadows packaged template."""
+    """A template in custom_dir must shadow the packaged one."""
+    custom = tmp_path / "overrides"
+    custom.mkdir()
+    (custom / "main.html").write_text(
+        "<!-- custom main -->\n{% block content %}{% endblock %}", encoding="utf-8"
+    )
+    theme = Theme(name="mkdocs", custom_dir=str(custom))
+    env = theme.get_env()
+    tpl = env.get_template("main.html")
+    source = tpl.render()
+    assert "custom main" in source
 
-    index.add_entry_from_context(page)
-    payload = json.loads(index.generate_search_index())
 
-    assert len(payload["docs"]) == 1
-    assert payload["docs"][0]["text"] == ""
+# ═══════════════════════════════════════════════════════════════
+# Additional seams – docs_dir/site_dir containment
+# (error-propagation seam)
+# ═══════════════════════════════════════════════════════════════
+
+
+@pytest.mark.depends_on("test_load_config_docs_site_containment_raises_abort")
+def test_site_dir_inside_docs_dir_also_raises_abort(tmp_path):
+    """Seam: error propagation — site_dir inside docs_dir triggers Abort."""
+    """site_dir inside docs_dir must also trigger Abort."""
+    docs = tmp_path / "content"
+    docs.mkdir()
+    (docs / "index.md").write_text("# X\n", encoding="utf-8")
+    site = docs / "build"
+    site.mkdir()
+
+    cfg_path = tmp_path / "mkdocs.yml"
+    cfg_path.write_text(
+        f"site_name: {SITE_NAME}\ndocs_dir: content\nsite_dir: content/build\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(Abort):
+        load_config(config_file=str(cfg_path))

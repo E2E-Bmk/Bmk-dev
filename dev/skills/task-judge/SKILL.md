@@ -25,6 +25,8 @@ description: "Judge whether a SWE-E2E benchmark task and evaluation run are vali
 
 > **Every test in the scoring set must be spec-driven and behavioral. Apply this before reading any score.**
 
+**Quality Gate reference:** The comprehensive quality standard for all benchmark tasks is defined in `Spec2Repo/docs/QUALITY_GATE.md`. The spec structure authority is `Spec2Repo/docs/SPEC_STANDARD.md` which defines the 6-layer structure (Context → Orientation → Behavior → Contract → Reference → Meta), information depth rules, and spec-oracle alignment protocol. The judge must verify that the task satisfies all automated gates and the spec standard before issuing QUALIFIED. The key gates are: file completeness (Gate 1), spec structure and content rules (Gate 2, per SPEC_STANDARD), oracle test composition (Gate 3), metadata consistency (Gate 4), and reference validation (Gate 5).
+
 **Spec-driven**: the test traces to a spec section; its expected outcome is derivable from the spec alone.
 
 **Behavioral**: the test checks observable behavior that any correct reimplementation would produce — not internal field names, repr strings, exception message wording, or implementation-specific shapes.
@@ -131,6 +133,30 @@ Coverage verdict:
 - **GAP** (requires action) — any core invariant section (`Cross-View Invariants`, `Error Semantics`, state lifecycle sections) has zero coverage
 
 On a GAP verdict: issue a `filter_correction_request.md` routing back to test-filter with the list of uncovered sections. Test-filter must generate additional tests for each GAP section until per-section minimums are met (see test-filter SKILL). Do not issue QUALIFIED with an unresolved GAP. A GAP may only be accepted as a caveat (recorded in `task.json` under `coverage_gap`) if test-filter has already attempted generation and confirmed no further spec-derivable tests can be produced for those sections without introducing circular assertions — this exception must be explicitly stated in the diagnosis report.
+
+**Gate E — Static Quality Gate**
+
+Before issuing QUALIFIED, run `python harness/validate_ledger.py` from the Spec2Repo repo root. The task must pass all static checks (warnings are acceptable). This gate automates checks for:
+- Spec section completeness and forbidden terms
+- Oracle test layer minimums (≥15 atomic, ≥15 integration, ≥50 total functions)
+- Assertion composition (≥60% positive in atomic layer)
+- Metadata consistency (task.json stats match actual oracle files)
+- Fixture completeness (all referenced files exist)
+
+A task that fails `validate_ledger.py` cannot be QUALIFIED regardless of score.
+
+**Gate F — Spec Phrasing Quality**
+
+Before issuing QUALIFIED, verify the spec passes all phrasing hard checks (spec-writer SKILL validation #21-#25). These are content-level checks that automated validators cannot catch:
+
+1. Non-Goals: every bullet starts with "This specification does not require" or "This specification does not define". Zero instances of "outside this design" anywhere in the spec.
+2. Product Overview: first sentence is descriptive (`` `{Name}` is a {category} that... ``), not imperative ("Build a Python package...").
+3. CLI Entry Points: pure libraries (no console script) use prose format ("There is no console script..."), not a bullet list with `Console script name: \`none\``.
+4. Behavior sections: each has an opening narrative sentence and bold subsection headers. A bare bullet list without narrative structure is rejected.
+5. API Catalog: `Name | Kind | Role` table only. No Python signatures, type annotations, or parameter lists.
+6. Behavioral language: required behaviors use `must`/`returns`/`raises`. No `can`/`may`/`might`/`should` for anything that is a mandatory contract.
+
+Compare against the gold standard exemplar `Spec2Repo/tasks/requests-cache-fullrepro-001/spec.md` when in doubt. A task that fails Gate F cannot be QUALIFIED — return to spec-writer for phrasing correction.
 
 ---
 

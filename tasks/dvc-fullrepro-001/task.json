@@ -1,79 +1,175 @@
 {
   "instance_id": "dvc-fullrepro-001",
-  "status": "QUALIFIED",
-  "repo": "",
-  "repo_commit": "",
-  "spec_version": "v1",
+  "status": "REVALIDATION-REQUIRED",
+  "repo": "iterative/dvc",
+  "repo_commit": "8131c32c336b2f0cb47cb8782141d899a4876b8e",
+  "spec_version": "v2",
   "oracle": {
     "test_files": [
       "oracle/test_atomic.py",
       "oracle/test_integration.py"
     ],
-    "count": 50,
+    "count": 63,
+    "oracle_version": "2026-07-17T00:00:00+08:00-rp-audit-batch2",
     "scorer_isolation": [
-      "--remove-path"
+      "--remove-path dvc"
     ]
   },
   "taxonomy": {
-    "generated_tests::test_stage_add_success_exit_code": "integration",
-    "generated_tests::test_stage_add_writes_named_stage_to_dvc_yaml": "integration",
-    "generated_tests::test_stage_add_without_run_does_not_create_lockfile": "integration",
-    "generated_tests::test_stage_list_name_only_reports_created_stage": "integration",
-    "generated_tests::test_repro_no_commit_executes_command_and_writes_output": "system_e2e",
-    "generated_tests::test_repro_no_commit_writes_public_lock_stage": "integration",
-    "generated_tests::test_status_json_reports_no_commit_output_not_in_cache": "integration",
-    "generated_tests::test_status_quiet_is_nonzero_when_pipeline_has_reported_changes": "integration",
-    "generated_tests::test_status_json_changes_after_dependency_file_changes": "integration",
-    "generated_tests::test_dry_repro_does_not_modify_workspace_output": "system_e2e",
-    "generated_tests::test_force_repro_updates_workspace_output": "system_e2e",
-    "generated_tests::test_repro_invalid_target_fails_nonzero": "atomic",
-    "generated_tests::test_no_commit_repro_runs_stage_each_time_when_output_is_uncached": "integration",
-    "generated_tests::test_no_commit_repro_runs_after_dependency_change": "integration",
-    "generated_tests::test_no_commit_repro_runs_after_output_deletion": "integration",
-    "generated_tests::test_no_commit_repro_recreates_deleted_output": "integration",
-    "generated_tests::test_nonpersistent_outputs_are_removed_before_forced_rerun": "integration",
-    "generated_tests::test_persistent_outputs_remain_before_forced_rerun": "integration",
-    "generated_tests::test_outs_no_cache_is_serialized_with_cache_false": "atomic",
-    "generated_tests::test_missing_no_cache_output_reports_status_change": "integration",
-    "generated_tests::test_metric_output_is_recorded_in_lockfile_outputs": "atomic",
-    "generated_tests::test_plot_output_is_recorded_in_lockfile_outputs": "atomic",
-    "generated_tests::test_stage_wdir_runs_command_from_declared_directory": "integration",
-    "generated_tests::test_stage_command_receives_dvc_root_environment": "atomic",
-    "generated_tests::test_stage_command_receives_dvc_stage_environment": "atomic",
-    "generated_tests::test_command_list_runs_commands_in_order": "integration",
-    "generated_tests::test_failing_command_list_stage_returns_nonzero": "atomic",
-    "generated_tests::test_failing_command_list_does_not_run_later_commands": "integration",
-    "generated_tests::test_params_dependency_initial_repro_uses_param_value": "integration",
-    "generated_tests::test_params_change_reports_status_change": "integration",
-    "generated_tests::test_freeze_writes_frozen_to_stage_definition": "atomic",
-    "generated_tests::test_frozen_stage_does_not_reproduce_changed_params": "system_e2e",
-    "generated_tests::test_unfreeze_removes_frozen_flag_and_repro_updates_output": "system_e2e",
-    "generated_tests::test_local_status_rejects_revision_expansion_option": "atomic",
-    "generated_tests::test_duplicate_stage_name_without_force_fails": "atomic",
-    "generated_tests::test_duplicate_stage_name_with_force_succeeds": "atomic",
-    "generated_tests::test_overlapping_stage_outputs_are_rejected": "atomic",
-    "generated_tests::test_targeted_repro_runs_upstream_dependency_for_target": "system_e2e",
-    "generated_tests::test_downstream_repro_updates_descendant_stage_output": "system_e2e",
-    "generated_tests::test_repo_reproduce_force_returns_reproduced_stages": "integration",
-    "generated_tests::test_repo_freeze_writes_same_frozen_state_as_cli": "integration",
-    "generated_tests::test_repo_unfreeze_removes_frozen_state": "integration",
-    "generated_tests::test_repo_run_no_exec_writes_stage_but_does_not_create_output": "integration",
-    "generated_tests::test_clean_status_reports_up_to_date_after_committed_repro": "integration",
-    "generated_tests::test_status_quiet_success_when_pipeline_is_clean": "atomic",
-    "generated_tests::test_run_cache_restores_deleted_output_without_rerunning_command": "system_e2e",
-    "generated_tests::test_pull_restores_stage_output_from_local_remote": "system_e2e",
-    "generated_tests::test_always_changed_stage_serializes_public_flag": "atomic",
-    "generated_tests::test_always_changed_stage_runs_even_without_input_changes": "integration",
-    "generated_tests::test_status_json_returns_mapping_for_changed_stage": "integration"
+    "test_atomic::test_dvc_api_public_names_are_importable": "atomic",
+    "test_atomic::test_installed_dvc_console_entry_point_launches": "atomic",
+    "test_atomic::test_repo_freeze_marks_selected_stage_frozen": "atomic",
+    "test_atomic::test_repo_run_force_replaces_existing_stage_command": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_always_changed": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_cached_output": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_command": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_default_params_file_key": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_dependency": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_description": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_metric": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_plot": "atomic",
+    "test_atomic::test_repo_run_no_exec_records_working_directory": "atomic",
+    "test_atomic::test_repo_unfreeze_removes_selected_stage_frozen_flag": "atomic",
+    "test_atomic::test_top_level_dvc_metadata_names_are_importable": "atomic",
+    "test_integration::test_always_changed_stage_runs_even_without_input_changes": "system_e2e",
+    "test_integration::test_always_changed_stage_serializes_public_flag": "integration",
+    "test_integration::test_clean_status_json_reports_no_changes_after_committed_repro": "integration",
+    "test_integration::test_command_list_runs_commands_in_order": "integration",
+    "test_integration::test_downstream_repro_updates_descendant_stage_output": "integration",
+    "test_integration::test_dry_repro_does_not_modify_workspace_output": "system_e2e",
+    "test_integration::test_duplicate_stage_name_with_force_succeeds": "integration",
+    "test_integration::test_duplicate_stage_name_without_force_fails": "integration",
+    "test_integration::test_force_repro_updates_workspace_output": "system_e2e",
+    "test_integration::test_freeze_writes_frozen_to_stage_definition": "integration",
+    "test_integration::test_frozen_stage_does_not_reproduce_changed_params": "integration",
+    "test_integration::test_invalid_stage_name_preserves_existing_pipeline": "integration",
+    "test_integration::test_keep_going_runs_independent_stage_and_skips_dependent": "system_e2e",
+    "test_integration::test_list_command_failure_stops_later_commands": "integration",
+    "test_integration::test_metric_output_is_recorded_in_lockfile_outputs": "integration",
+    "test_integration::test_missing_no_cache_output_reports_status_change": "integration",
+    "test_integration::test_no_commit_repro_recreates_deleted_output": "integration",
+    "test_integration::test_no_commit_repro_runs_after_dependency_change": "integration",
+    "test_integration::test_no_commit_repro_runs_after_output_deletion": "integration",
+    "test_integration::test_no_commit_repro_runs_stage_each_time_when_output_is_uncached": "integration",
+    "test_integration::test_nonpersistent_outputs_are_removed_before_forced_rerun": "integration",
+    "test_integration::test_outs_no_cache_is_serialized_with_cache_false": "integration",
+    "test_integration::test_overlapping_stage_outputs_are_rejected": "integration",
+    "test_integration::test_params_change_reports_status_change": "integration",
+    "test_integration::test_params_dependency_initial_repro_uses_param_value": "integration",
+    "test_integration::test_persistent_outputs_remain_before_forced_rerun": "integration",
+    "test_integration::test_plot_output_is_recorded_in_lockfile_outputs": "integration",
+    "test_integration::test_repo_freeze_writes_same_frozen_state_as_cli": "integration",
+    "test_integration::test_repo_reproduce_force_returns_reproduced_stages": "integration",
+    "test_integration::test_repo_run_no_exec_writes_stage_but_does_not_create_output": "system_e2e",
+    "test_integration::test_repo_unfreeze_removes_frozen_state": "integration",
+    "test_integration::test_repro_no_commit_executes_command_and_writes_output": "system_e2e",
+    "test_integration::test_repro_no_commit_writes_public_lock_stage": "integration",
+    "test_integration::test_run_cache_restores_deleted_output_without_rerunning_command": "system_e2e",
+    "test_integration::test_stage_add_success_exit_code": "integration",
+    "test_integration::test_stage_add_without_run_does_not_create_lockfile": "integration",
+    "test_integration::test_stage_add_writes_named_stage_to_dvc_yaml": "integration",
+    "test_integration::test_stage_command_receives_dvc_root_environment": "integration",
+    "test_integration::test_stage_command_receives_dvc_stage_environment": "integration",
+    "test_integration::test_stage_list_name_only_reports_created_stage": "integration",
+    "test_integration::test_stage_wdir_runs_command_from_declared_directory": "integration",
+    "test_integration::test_status_json_changes_after_dependency_file_changes": "integration",
+    "test_integration::test_status_json_reports_no_commit_output_not_in_cache": "integration",
+    "test_integration::test_status_json_returns_mapping_for_changed_stage": "integration",
+    "test_integration::test_status_quiet_is_nonzero_when_pipeline_has_reported_changes": "integration",
+    "test_integration::test_status_quiet_success_when_pipeline_is_clean": "integration",
+    "test_integration::test_targeted_repro_runs_upstream_dependency_for_target": "integration",
+    "test_integration::test_unfreeze_removes_frozen_flag_and_repro_updates_output": "system_e2e"
   },
   "stats": {
-    "atomic": 14,
-    "integration": 27,
-    "system_e2e": 9
+    "atomic": 15,
+    "integration": 40,
+    "system_e2e": 8
   },
   "reference_pass_rate": 1.0,
-  "candidate_score": {
-    "passed": 41,
-    "total": 50
-  }
+  "candidate_score": null,
+  "integration_gap": null,
+  "true_gap_events": [],
+  "weaknesses": [],
+  "labels": [
+    "trivially-solved",
+    "saturated-candidate-score",
+    "generated-only-oracle",
+    "full-linux-collection",
+    "partial-narrative-coverage"
+  ],
+  "coverage": {
+    "verdict": "PARTIAL_ACCEPTABLE",
+    "uncovered_sections": [
+      {
+        "spec_section": "Product Overview",
+        "type": "framing",
+        "impact": "none; substantive behavior is specified under dedicated headings"
+      },
+      {
+        "spec_section": "Scope",
+        "type": "framing",
+        "impact": "low; the state model is covered through lifecycle and invariant headings"
+      },
+      {
+        "spec_section": "Non-Goals",
+        "type": "constraint",
+        "impact": "none; adding structural negative tests would reduce fairness"
+      },
+      {
+        "spec_section": "Invocation Protocol",
+        "type": "protocol",
+        "impact": "low; installed-console launch and exit behavior are covered under substantive headings"
+      },
+      {
+        "spec_section": "Environment",
+        "type": "evaluator_setup",
+        "impact": "none on runtime behavior"
+      },
+      {
+        "spec_section": "Implementation Guidance",
+        "type": "evaluator_guidance",
+        "impact": "none; implementation structure is intentionally untested"
+      }
+    ]
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "report": "wip/dvc-fullrepro-001/judge/diagnosis_report_strict_v6_20260715.md",
+    "result": "wip/dvc-fullrepro-001/judge/judge_result_strict_v6_20260715.json",
+    "score_artifact_independently_verified": true,
+    "failure_clusters": 0
+  },
+  "source_meta": {
+    "source_path": "G:\\research\\01_agents\\swe-e2e\\repo-pool\\iterative__dvc",
+    "commit": "8131c32c336b2f0cb47cb8782141d899a4876b8e",
+    "github_stars": 15748,
+    "pypi_monthly_downloads": 2526405,
+    "loc": 35805,
+    "first_release": "2017-05-05",
+    "measured_at": "2026-07-15",
+    "sources": {
+      "github": "https://github.com/iterative/dvc",
+      "pypi": "https://pypi.org/project/dvc/",
+      "downloads": "https://pypistats.org/packages/dvc"
+    }
+  },
+  "caveats": [
+    "The six-file candidate passed a generated-only oracle for a 299-file upstream package; this is consistent with possible training-data recall and limits discrimination.",
+    "Gate D is PARTIAL_ACCEPTABLE because only framing and evaluator-control headings lack exact map rows; all behavior-bearing and core invariant sections are covered."
+  ],
+  "superseded_evidence": {
+    "reference": "50/50",
+    "candidate": "41/50",
+    "reason": "Strict package audit superseded the shared-fixture and unpromised-launcher oracle."
+  },
+  "oracle_version": "2026-07-17T00:00:00+08:00-rp-audit-batch2",
+  "reference_score": {
+    "passed": 63,
+    "failed": 0,
+    "total": 63,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2",
+    "artifact": "dev/task-artifacts/dvc-fullrepro-001/reference_score.json"
+  },
+  "oracle_cleanup_date": "2026-07-17",
+  "oracle_cleanup_removed": 0
 }

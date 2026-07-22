@@ -26,7 +26,7 @@ Every filtering decision reduces to two questions. Both must be true to keep a t
 
 A test that checks exact field names, repr strings, internal maps, exception message wording, or singleton shapes answers No — a correct reimplementation with different internals would fail it. Exclude these regardless of import visibility.
 
-**Q1 strict enforcement for atomic tests:** Atomic tests may only import through entry points explicitly described in the spec's prose (the "Installable Surface" or equivalent section). If a test imports from a sub-module path not mentioned in the spec text, it violates Q1 regardless of whether the path has an underscore prefix. The test: "if the model puts this function in a different sub-module (behavior identical), would this test fail due to ImportError?" — if yes, exclude.
+**Q1 strict enforcement for atomic tests:** Atomic tests may only import through entry points explicitly described in the spec's prose (the "Public Interface > Import Surface" section or equivalent). If a test imports from a sub-module path not mentioned in the spec text, it violates Q1 regardless of whether the path has an underscore prefix. The test: "if the model puts this function in a different sub-module (behavior identical), would this test fail due to ImportError?" — if yes, exclude.
 
 **Q2 — Spec-derivable?**
 > Can a senior engineer who has only read the spec infer what this test expects?
@@ -49,6 +49,8 @@ Scan each test nodeid. Any match -> exclude immediately, no further judgment nee
 2. **Private assertion** - asserts on a private attribute or accesses `obj._field` / `obj.__dict__`
 3. **Environment dependency** - makes network requests, uses absolute filesystem paths, or reads environment variables not injected by the test itself
 4. **Fixture side-effect dependency** - setup requires calling public feature A solely to construct input for feature B, where A is not the behavior under test
+5. **Duplicate top-level import** — two or more `from X import ...` statements at module level import the same symbol name. Shadowed imports cause unpredictable behavior during test collection. Consolidate into a single import line per symbol.
+6. **Missing fixture file** — test references a file via `Path(__file__).parent / 'subdir' / 'file'` but the referenced path does not exist in the oracle directory. Missing fixtures cause unconditional test failures that are environment artifacts, not model capability signals.
 
 ---
 
@@ -56,7 +58,7 @@ Scan each test nodeid. Any match -> exclude immediately, no further judgment nee
 
 For every test nodeid in the suite:
 
-1. Apply the four mechanical pre-filter rules. Any match -> mark `excluded`, record the rule, move on.
+1. Apply the six mechanical pre-filter rules. Any match -> mark `excluded`, record the rule, move on.
 2. For tests that pass: attempt to write the `spec_test_map.md` row - identify the spec section or inferrable principle, classify the layer, assign status.
 3. If the row cannot be completed -> status is `source-only` or `excluded`.
 
@@ -114,7 +116,7 @@ Process each test nodeid one at a time. Write its row in `spec_test_map.md` befo
 
 If you are about to score, run tests, or move to the next stage without a complete `spec_test_map.md`, stop: the filtering is not done. A complete map is the only evidence that filtering happened.
 
-For every `covered` row, the `spec_section` value must match a heading that actually exists in `spec_vN.md`. Verify the heading exists before writing the row. A `spec_section` cell that cannot be matched to a real spec heading means Q2 was not properly applied — reclassify the row.
+For every `covered` row, the `spec_section` value must match a heading that actually exists in `spec_vN.md`. The spec now uses a 6-layer structure (see `Spec2Repo/docs/SPEC_STANDARD.md`): Context (Product Overview, Non-Goals), Orientation (Representative Workflows), Behavior (domain sections), Contract (State Model, Error Semantics, Cross-View Invariants), Reference (Public Interface), Meta (Appendix A/B). Verify the heading exists before writing the row. A `spec_section` cell that cannot be matched to a real spec heading means Q2 was not properly applied — reclassify the row.
 
 Produced during filtering, not after.
 
@@ -164,7 +166,9 @@ Total: N | kept (covered): N | spec_gap: N | source-only: N | excluded: N | fina
 
 **Coverage too low:** if a significant share of kept tests are `source-only` after resolution, the library may not be viable - its tests cover behavior that cannot be fairly specified.
 
-When `spec_gap` rows trigger spec patches, patches must pass spec-writer validation (all 5 checks) before the row is re-labeled `covered`.
+**Test collection safety:** Before finalizing the oracle, run `pytest --collect-only` against all oracle test files to verify they can be parsed and imported without errors. Collection failures (ImportError, SyntaxError, missing fixtures) zero an entire layer's score for ALL models — they are the highest-impact bugs in the oracle. Fix all collection errors before proceeding.
+
+When `spec_gap` rows trigger spec patches, patches must pass spec-writer validation (all 25 checks) before the row is re-labeled `covered`.
 
 ---
 

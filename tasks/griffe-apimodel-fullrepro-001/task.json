@@ -1,0 +1,153 @@
+{
+  "instance_id": "griffe-apimodel-fullrepro-001",
+  "status": "REVALIDATION-REQUIRED",
+  "repo": "mkdocstrings/griffe",
+  "repo_commit": "e1d738680aa537cc903359687d3d1451ac449631",
+  "spec_version": "v3",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 70,
+    "oracle_version": "2026-07-17T00:00:00+08:00-rp-audit-batch2",
+    "oracle_source": "mixed_upstream_generated",
+    "scorer_isolation": [
+      "--remove-path griffe",
+      "--remove-path griffecli"
+    ]
+  },
+  "taxonomy": {
+    "file": "taxonomy.jsonl",
+    "atomic": 18,
+    "integration": 48,
+    "system_e2e": 4
+  },
+  "stats": {
+    "atomic": 18,
+    "integration": 48,
+    "system_e2e": 4
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": null,
+  "true_gap_events": [
+    {
+      "failed_test": "oracle/test_integration.py::test_dotted_load_returns_object_from_containing_package_graph",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "oracle/test_atomic.py::test_member_assignment_establishes_graph_relationships",
+        "oracle/test_atomic.py::test_item_access_accepts_name_dotted_and_tuple_paths"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency"
+    },
+    {
+      "failed_test": "oracle/test_integration.py::test_reused_loader_shares_collection_and_resolves_cross_package_alias",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "oracle/test_atomic.py::test_resolved_alias_keeps_import_path_and_exposes_target_metadata",
+        "oracle/test_atomic.py::test_alias_resolves_to_available_target"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency"
+    }
+  ],
+  "weaknesses": [
+    {
+      "dimension": "cross-view-consistency",
+      "description": "Dotted loading returns an object whose parent chain stops at the nested module instead of retaining the containing package graph.",
+      "affected_tests": 1,
+      "layer": "integration"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "A reused loader rewrites an absolute imported alias as consumer.provider.Thing, preventing resolution through the shared modules collection.",
+      "affected_tests": 1,
+      "layer": "integration"
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "API compatibility logic over-reports parameter-kind breakages when variadic parameters preserve call acceptance.",
+      "affected_tests": 6,
+      "layer": "integration"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "Inheritance-aware comparison reports a removed method after it moves to a parent class and remains available through inheritance.",
+      "affected_tests": 1,
+      "layer": "integration"
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "Built-in dataclass and TypedDict extensions dereference imported standard-library aliases while traversing the graph, aborting before local transformations complete.",
+      "affected_tests": 7,
+      "layer": "integration"
+    }
+  ],
+  "labels": [
+    "mixed-oracle",
+    "full-linux-collection",
+    "non-saturated-candidate-score",
+    "clean-replacement-run",
+    "interrupted-candidate-valid-artifact",
+    "oracle-v6-fairness-audited",
+    "composition-signal",
+    "cascade-dominated"
+  ],
+  "coverage": {
+    "verdict": "FULL_BEHAVIORAL",
+    "core_gap": false,
+    "behavioral_sections_uncovered": [],
+    "uncovered_non_behavioral_headings": [
+      "Product Overview",
+      "Scope",
+      "Non-Goals",
+      "Environment",
+      "Implementation Guidance"
+    ]
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "report": "wip/griffe-apimodel-fullrepro-001/judge/diagnosis_report_v6_20260715.md",
+    "result": "wip/griffe-apimodel-fullrepro-001/judge/judge_result_v6_20260715.json",
+    "score_artifact_independently_verified": true,
+    "failure_clusters": 5,
+    "observed_failed_cases_with_verifier_defects": 0,
+    "candidate_attributable_failed_cases": 16,
+    "latent_scope_overreach_tests": 0,
+    "terminal_artifact_conformance": true,
+    "terminal_correction_request": "wip/griffe-apimodel-fullrepro-001/judge/filter_correction_request_v6_20260715.md"
+  },
+  "source_meta": {
+    "source_path": "G:\\research\\01_agents\\swe-e2e\\Bmk-dev\\wip\\prospects\\griffe",
+    "commit": "e1d738680aa537cc903359687d3d1451ac449631",
+    "github_stars": 667,
+    "pypi_monthly_downloads": 30710458,
+    "loc": 11266,
+    "first_release": "2021-09-09",
+    "measured_at": "2026-07-15",
+    "sources": {
+      "github": "https://api.github.com/repos/mkdocstrings/griffe",
+      "pypi": "https://pypi.org/project/griffe/",
+      "downloads": "https://pypistats.org/packages/griffe"
+    }
+  },
+  "caveats": [
+    "The invalid specv3-001 run is quarantined for a successful target-package pip install and is not the source of this score.",
+    "The specv3-002 trajectory contains 15 cleanroom-local completed commands, no final message, and a truncated terminal file-change record after external budget termination; the scorer artifact itself is complete and valid.",
+    "Oracle v6 preserves all 70 semantic cases while removing Attribute source-location and callable check option carriers; the public extension mutation now relabels, updates, inserts, and deletes an already loaded graph object.",
+    "An independent all-70 test-body audit found no remaining verifier or spec defect; all 16 observed failures are model-attributable and the canonical 54/70 result is semantically valid for benchmark analysis.",
+    "The first terminal verifier run exposed taxonomy duplication and a missing final_scoreable field; a separate Stage 3 repair corrected both without changing tests, and post-repair verification returned QUALIFIED_VALID with reference 70/70 and candidate 54/70 unchanged."
+  ],
+  "oracle_version": "2026-07-17T00:00:00+08:00-rp-audit-batch2",
+  "reference_score": {
+    "passed": 70,
+    "failed": 0,
+    "total": 70,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2",
+    "artifact": "dev/task-artifacts/griffe-apimodel-fullrepro-001/reference_score.json"
+  },
+  "oracle_cleanup_date": "2026-07-17",
+  "oracle_cleanup_removed": 0
+}

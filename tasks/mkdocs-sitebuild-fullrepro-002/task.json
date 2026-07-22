@@ -1,77 +1,226 @@
 {
   "instance_id": "mkdocs-sitebuild-fullrepro-002",
-  "status": "QUALIFIED",
-  "repo": "",
-  "repo_commit": "",
+  "status": "REOPENED_S3",
+  "repo": "mkdocs/mkdocs",
+  "repo_url": "https://github.com/mkdocs/mkdocs",
+  "repo_commit": "2862536793b3c67d9d83c33e0dd6d50a791928f8",
   "spec_version": "v1",
+  "oracle_version": "20260716T195327Z-rp-audit-b3",
   "oracle": {
     "test_files": [
       "oracle/test_atomic.py",
       "oracle/test_integration.py"
     ],
-    "count": 50,
-    "scorer_isolation": ""
+    "count": 86,
+    "source": "mixed_upstream_rewritten_generated",
+    "scorer_isolation": [
+      "--remove-path",
+      "mkdocs"
+    ]
   },
   "taxonomy": {
-    "rewritten_upstream_tests::test_new_creates_project_config_and_index": "system_e2e",
-    "rewritten_upstream_tests::test_new_preserves_existing_config_and_index": "integration",
-    "rewritten_upstream_tests::test_load_config_applies_keyword_overrides": "integration",
-    "rewritten_upstream_tests::test_load_config_discovers_mkdocs_yml_before_yaml": "integration",
-    "rewritten_upstream_tests::test_load_config_missing_default_file_raises_configuration_error": "integration",
-    "rewritten_upstream_tests::test_unknown_config_key_is_warning_and_strict_aborts": "atomic",
-    "rewritten_upstream_tests::test_yaml_env_tag_uses_environment_and_default": "atomic",
-    "rewritten_upstream_tests::test_yaml_inherit_deep_merges_mappings_and_replaces_lists": "integration",
-    "rewritten_upstream_tests::test_docs_dir_and_site_dir_may_not_contain_each_other": "atomic",
-    "rewritten_upstream_tests::test_config_mapping_and_attribute_access_round_trip": "atomic",
-    "rewritten_upstream_tests::test_config_options_validate_choice_list_and_optional": "atomic",
-    "rewritten_upstream_tests::test_file_directory_url_mapping": "atomic",
-    "rewritten_upstream_tests::test_file_no_directory_url_mapping": "atomic",
-    "rewritten_upstream_tests::test_file_generated_content_and_edit_uri": "atomic",
-    "rewritten_upstream_tests::test_file_generated_requires_exactly_one_source": "atomic",
-    "rewritten_upstream_tests::test_files_collection_replaces_filters_and_removes": "atomic",
-    "rewritten_upstream_tests::test_copy_static_files_copies_included_non_markdown": "integration",
-    "rewritten_upstream_tests::test_get_files_prefers_index_over_readme": "integration",
-    "rewritten_upstream_tests::test_page_title_from_metadata_outranks_heading": "atomic",
-    "rewritten_upstream_tests::test_page_title_from_heading_and_filename_fallback": "atomic",
-    "rewritten_upstream_tests::test_page_render_rewrites_internal_markdown_links": "system_e2e",
-    "rewritten_upstream_tests::test_navigation_builds_sections_links_and_pages": "system_e2e",
-    "rewritten_upstream_tests::test_pages_omitted_from_explicit_nav_still_get_page_objects": "system_e2e",
-    "rewritten_upstream_tests::test_theme_mapping_and_custom_dir_precedence": "atomic",
-    "rewritten_upstream_tests::test_template_filters_normalize_urls_and_scripts": "atomic",
-    "rewritten_upstream_tests::test_plugin_load_config_validates_schema": "integration",
-    "rewritten_upstream_tests::test_plugin_collection_runs_events_in_priority_order": "integration",
-    "rewritten_upstream_tests::test_plugin_event_returning_none_preserves_current_value": "atomic",
-    "rewritten_upstream_tests::test_search_plugin_config_defaults_and_overrides": "atomic",
-    "rewritten_upstream_tests::test_search_index_serializes_page_and_section_entries": "system_e2e",
-    "rewritten_upstream_tests::test_search_index_titles_mode_omits_section_entries": "integration",
-    "rewritten_upstream_tests::test_url_helpers_preserve_external_urls_and_normalize_relative_paths": "atomic",
-    "rewritten_upstream_tests::test_file_and_path_utility_helpers": "atomic",
-    "rewritten_upstream_tests::test_clean_directory_preserves_hidden_entries": "atomic",
-    "rewritten_upstream_tests::test_meta_parser_extracts_yaml_and_multimarkdown_metadata": "atomic",
-    "rewritten_upstream_tests::test_count_handler_counts_records_by_level": "atomic",
-    "rewritten_upstream_tests::test_build_date_helpers_use_source_date_epoch": "atomic",
-    "generated_tests::test_public_package_exposes_version_and_cli_group": "atomic",
-    "generated_tests::test_python_module_version_reports_installed_version": "system_e2e",
-    "generated_tests::test_load_config_rejects_missing_docs_dir": "atomic",
-    "generated_tests::test_project_config_defaults_include_site_and_theme": "integration",
-    "generated_tests::test_build_api_writes_site_pages_and_search_assets": "system_e2e",
-    "generated_tests::test_build_site_dir_override_keeps_config_and_output_consistent": "system_e2e",
-    "generated_tests::test_strict_build_aborts_on_warning": "integration",
-    "generated_tests::test_plugin_lifecycle_events_run_during_build": "integration",
-    "generated_tests::test_plugin_build_error_hook_observes_build_failure": "integration",
-    "generated_tests::test_repo_url_and_site_url_shape_page_edit_links": "system_e2e",
-    "generated_tests::test_custom_theme_directory_overrides_main_template": "integration",
-    "generated_tests::test_validation_rejects_unknown_theme_name": "atomic",
-    "generated_tests::test_full_new_then_build_workflow": "system_e2e"
+    "test_atomic::test_file_projects_source_destination_url_and_classification": "atomic",
+    "test_atomic::test_table_of_contents_exposes_nested_anchor_links": "atomic",
+    "test_atomic::test_builtin_theme_mapping_dirs_and_environment_are_available": "atomic",
+    "test_atomic::test_custom_theme_directory_precedes_packaged_templates": "atomic",
+    "test_atomic::test_theme_static_templates_are_exposed_as_a_set": "atomic",
+    "test_atomic::test_build_datetime_uses_source_date_epoch": "atomic",
+    "test_atomic::test_clean_directory_preserves_hidden_entries": "atomic",
+    "test_atomic::test_url_helpers_preserve_external_values_and_rebase_relative_paths": "atomic",
+    "test_atomic::test_mkdocs_version_is_nonempty_string": "atomic",
+    "test_atomic::test_load_config_supports_mapping_access": "atomic",
+    "test_atomic::test_load_config_supports_attribute_access": "atomic",
+    "test_atomic::test_load_config_rewinds_open_file": "atomic",
+    "test_atomic::test_keyword_override_replaces_file_value": "atomic",
+    "test_atomic::test_none_keyword_override_is_ignored": "atomic",
+    "test_atomic::test_default_lookup_prefers_mkdocs_yml": "atomic",
+    "test_atomic::test_default_lookup_uses_mkdocs_yaml": "atomic",
+    "test_atomic::test_missing_default_config_raises_configuration_error": "atomic",
+    "test_atomic::test_invalid_yaml_raises_configuration_error": "atomic",
+    "test_atomic::test_missing_inherited_config_raises_configuration_error": "atomic",
+    "test_atomic::test_inherit_deep_merges_mappings": "atomic",
+    "test_atomic::test_inherit_replaces_parent_lists": "atomic",
+    "test_atomic::test_env_tag_reads_named_variable": "atomic",
+    "test_atomic::test_env_tag_uses_fallback_variable": "atomic",
+    "test_atomic::test_env_tag_uses_literal_default": "atomic",
+    "test_atomic::test_relative_docs_dir_resolves_from_config_directory": "atomic",
+    "test_atomic::test_relative_site_dir_resolves_from_config_directory": "atomic",
+    "test_atomic::test_empty_site_url_is_valid": "atomic",
+    "test_atomic::test_explicit_empty_plugins_replaces_default": "atomic",
+    "test_atomic::test_plugins_default_includes_search": "atomic",
+    "test_atomic::test_markdown_extensions_include_builtins": "atomic",
+    "test_atomic::test_markdown_extensions_append_without_duplicates": "atomic",
+    "test_atomic::test_missing_site_name_raises_abort": "atomic",
+    "test_atomic::test_invalid_plugin_name_raises_abort": "atomic",
+    "test_atomic::test_missing_hook_file_raises_abort": "atomic",
+    "test_atomic::test_missing_theme_custom_dir_raises_abort": "atomic",
+    "test_atomic::test_invalid_markdown_extension_raises_abort": "atomic",
+    "test_atomic::test_keyword_override_applies_before_strict_validation": "atomic",
+    "test_atomic::test_abort_is_mkdocs_exception": "atomic",
+    "test_atomic::test_abort_is_system_exit": "atomic",
+    "test_atomic::test_configuration_error_is_mkdocs_exception": "atomic",
+    "test_atomic::test_build_error_is_mkdocs_exception": "atomic",
+    "test_atomic::test_plugin_error_is_build_error": "atomic",
+    "test_atomic::test_abort_uses_exit_code_one": "atomic",
+    "test_atomic::test_plugin_logger_uses_plugin_namespace": "atomic",
+    "test_atomic::test_load_config_rejects_missing_docs_dir": "atomic",
+    "test_atomic::test_validation_rejects_unknown_theme_name": "atomic",
+    "test_atomic::test_unknown_config_key_is_warning_and_strict_aborts": "atomic",
+    "test_atomic::test_docs_dir_and_site_dir_may_not_contain_each_other": "atomic",
+    "test_integration::test_project_config_defaults_include_site_and_theme": "integration",
+    "test_integration::test_build_api_writes_site_pages_and_search_assets": "system_e2e",
+    "test_integration::test_build_site_dir_override_keeps_config_and_output_consistent": "system_e2e",
+    "test_integration::test_strict_build_aborts_on_warning": "integration",
+    "test_integration::test_repo_url_and_site_url_shape_page_edit_links": "system_e2e",
+    "test_integration::test_custom_theme_directory_overrides_main_template": "integration",
+    "test_integration::test_load_config_applies_keyword_overrides": "integration",
+    "test_integration::test_load_config_discovers_mkdocs_yml_before_yaml": "integration",
+    "test_integration::test_load_config_missing_default_file_raises_configuration_error": "integration",
+    "test_integration::test_get_files_prefers_index_over_readme": "integration",
+    "test_integration::test_build_copies_non_markdown_media_to_matching_site_path": "integration",
+    "test_integration::test_build_copies_and_links_configured_extra_css": "integration",
+    "test_integration::test_build_rewrites_internal_markdown_link_to_page_url": "integration",
+    "test_integration::test_explicit_navigation_labels_are_visible_in_built_pages": "integration",
+    "test_integration::test_plugin_pre_and_post_build_events_share_one_build_lifecycle": "integration",
+    "test_integration::test_build_clean_removes_stale_output_before_writing_site": "integration",
+    "test_integration::test_build_dirty_preserves_existing_output_while_updating_pages": "integration",
+    "test_integration::test_generated_file_content_views_share_one_replaceable_value": "integration",
+    "test_integration::test_files_collection_lookup_replace_remove_and_filters": "integration",
+    "test_integration::test_page_reads_front_matter_and_renders_title_toc_and_links": "integration",
+    "test_integration::test_page_title_falls_back_to_heading_then_filename": "integration",
+    "test_integration::test_navigation_builds_sections_links_pages_and_sequence": "integration",
+    "test_integration::test_omitted_page_is_built_but_absent_from_navigation_pages": "integration",
+    "test_integration::test_section_active_state_propagates_from_child_page": "integration",
+    "test_integration::test_plugin_collection_applies_event_priority_and_replacements": "integration",
+    "test_integration::test_plugin_none_keeps_value_and_string_replaces_page_markdown": "integration",
+    "test_integration::test_search_index_contains_rendered_page_title_location_and_text": "integration",
+    "test_integration::test_replacing_default_plugins_removes_search_output": "integration",
+    "test_integration::test_search_titles_indexing_omits_body_text": "integration",
+    "test_integration::test_directory_url_file_page_link_and_output_views_agree": "integration",
+    "test_integration::test_nav_page_template_and_search_share_explicit_title": "integration",
+    "test_integration::test_plugin_replacement_is_shared_by_page_output_and_search": "integration",
+    "test_integration::test_module_help_and_version_are_successful": "integration",
+    "test_integration::test_new_command_creates_project_without_overwriting_existing_page": "integration",
+    "test_integration::test_build_command_site_dir_override_writes_requested_output": "integration",
+    "test_integration::test_representative_new_then_build_workflow": "integration",
+    "test_integration::test_representative_navigation_theme_and_search_workflow": "integration",
+    "test_integration::test_representative_plugin_build_and_output_workflow": "integration"
   },
   "stats": {
-    "atomic": 25,
-    "integration": 15,
-    "system_e2e": 10
+    "atomic": 48,
+    "integration": 35,
+    "system_e2e": 3
   },
   "reference_pass_rate": 1.0,
-  "candidate_score": {
-    "passed": 8,
-    "total": 13
+  "reference_score": null,
+  "candidate_score": null,
+  "integration_gap": {
+    "atomic_rate": 0.925,
+    "integration_e2e_rate": 0.7777777777777778,
+    "rate_gap": 0.14722222222222214
+  },
+  "true_gap_events": [
+    {
+      "failed_test": "oracle/test_integration.py::test_strict_build_aborts_on_warning",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "oracle/test_atomic.py::test_unknown_config_key_is_warning_and_strict_aborts",
+        "oracle/test_atomic.py::test_keyword_override_applies_before_strict_validation"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency"
+    }
+  ],
+  "weaknesses": [
+    {
+      "dimension": "error-semantics",
+      "description": "Configuration validation accepts missing hook files, unavailable Markdown extensions, and unknown named themes instead of aborting.",
+      "affected_tests": 3,
+      "layer": "atomic"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "Strict mode converts configuration warnings to aborts but does not apply the same rule to navigation and build warnings.",
+      "affected_tests": 1,
+      "layer": "integration"
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "Unexpected build exceptions propagate without first notifying the plugin on_build_error lifecycle hook.",
+      "affected_tests": 1,
+      "layer": "integration"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "Built page output omits canonical, repository, and edit-link values derived from loaded configuration.",
+      "affected_tests": 1,
+      "layer": "system_e2e"
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "The index.md versus README.md destination conflict is resolved by filesystem traversal order instead of always preferring index.md.",
+      "affected_tests": 1,
+      "layer": "integration"
+    }
+  ],
+  "labels": [
+    "composition-signal",
+    "non-cascade-failures",
+    "mixed-oracle",
+    "full-linux-collection",
+    "partial-secondary-coverage",
+    "spec-version-superset-caveat"
+  ],
+  "coverage": {
+    "verdict": "PARTIAL_ACCEPTABLE",
+    "uncovered_sections": [
+      {
+        "spec_section": "Command Line",
+        "type": "secondary",
+        "impact": "No direct CLI entry test remains after unpromised Python-module entry points were removed."
+      },
+      {
+        "spec_section": "Search",
+        "type": "secondary",
+        "impact": "Search output is exercised through Build API but mapped to the build section."
+      },
+      {
+        "spec_section": "Utilities",
+        "type": "secondary",
+        "impact": "No exact utility-heading row remains; core invariants are covered."
+      }
+    ],
+    "uncovered_core_sections": []
+  },
+  "source_meta": {
+    "github_stars": 22253,
+    "github_forks": 2638,
+    "pypi_monthly_downloads": 33076865,
+    "loc": 5619,
+    "first_release": "2014-01-21",
+    "measured_at": "2026-07-14",
+    "pypi_version": "1.6.1"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "report": "judge/diagnosis_report_oracle_v3_20260714.md",
+    "result": "judge/judge_result_oracle_v3_20260714.json",
+    "failure_clusters": 5,
+    "cascade_failures": 0,
+    "preflight_output": "/mnt/g/research/01_agents/swe-e2e/Bmk-dev/runs/codex-mkdocs-specv1-20260701-001/solution/mkdocs/__init__.py"
+  },
+  "comparability_caveat": {
+    "candidate_packet_matches_current_spec_byte_for_byte": false,
+    "candidate_received_broader_import_surface": true,
+    "effect": "The frozen candidate received strictly more import-surface information; none of the seven failures is caused by the current narrowing.",
+    "future_action": "All official future model runs must use the current task spec."
+  },
+  "oracle_cleanup": {
+    "date": "2026-07-14",
+    "superseded_published_count": 31,
+    "superseded_wip_count": 50,
+    "final_count": 58,
+    "excluded_in_final_audit": 9,
+    "dummy_result": "58 collected, 58 failed, 0 passed, 0 collection errors"
   }
 }

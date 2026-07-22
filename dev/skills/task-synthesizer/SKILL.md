@@ -29,6 +29,8 @@ These three principles are the main thread's judgment criteria. Every subagent o
 
 **3. Behavioral** — Tests check observable outcomes that any correct reimplementation would produce. Failures must reflect genuine capability gaps, not protocol artifacts (exact strings, internal names, fixture shapes). If failures cluster around undocumented internal shapes, the instrument is broken.
 
+**Quality standard:** All tasks must satisfy the gates defined in `Spec2Repo/docs/QUALITY_GATE.md`. The spec structure authority is `Spec2Repo/docs/SPEC_STANDARD.md` which defines the 6-layer structure (Context → Orientation → Behavior → Contract → Reference → Meta), information depth rules, and spec-oracle alignment protocol.
+
 ## Orchestrator Role
 
 The main thread dispatches subagents for execution tasks (spec writing, test filtering, evaluation, judging). The main thread does not execute these itself — it monitors, reviews output against the three principles, and intervenes when necessary.
@@ -124,7 +126,15 @@ candidate-selector -> spec-writer -> test-filter -> [evaluation] -> task-judge
 Review against principles 1 and 2 before proceeding:
 - **Principle 1 check**: Read the spec body. Does it read like developer documentation, or like a benchmark artifact? Any sentence that sounds like it was written for an evaluator → return to spec-writer.
 - **Principle 2 check**: Is every item in the spec traceable to public API surface? Is source_boundary in the internal header non-empty (proof that sources were actually read)?
-- All 11 validation checks pass (per spec-writer SKILL): proceed to test-filter
+- **Structure check**: Does the spec follow the 6-layer structure from `Spec2Repo/docs/SPEC_STANDARD.md`? Specification Authority disclaimer present? ≥2 behavior sections? ≥5 Cross-View Invariants? Product Overview desensitized?
+- **Phrasing check (mandatory, from spec-writer Phrasing Rules)**:
+  - Non-Goals: every bullet starts with "This specification does not require/define..."; zero instances of "outside this design"
+  - Product Overview: first sentence is descriptive (`` `{Name}` is a ... ``), not imperative ("Build a Python package...")
+  - CLI Entry Points: pure libraries use prose ("There is no console script..."), not bullet list
+  - Behavior sections: each has an opening sentence and bold subsection headers; no bare bullet lists
+  - API Catalog: `Name | Kind | Role` table only; no Python signatures
+  - Behavioral language: `must`/`returns`/`raises` only; no `can`/`may`/`might`/`should` for required behavior
+- All 25 validation checks pass (per spec-writer SKILL): proceed to test-filter
 - Any check fails: patch spec, re-validate before proceeding
 
 **Candidate packet assembly**: the candidate receives the spec body only. Strip the `<!-- INTERNAL ... -->` header before assembling the run prompt. The candidate must not see task_id, delta notes, or source_boundary.
@@ -214,11 +224,14 @@ Before accepting any verdict, verify diagnosis report structural validity:
    - `spec_test_map.md` (coverage map with footer totals)
 3. `kept_nodeids.txt` line count matches `oracle_count` in PIPELINE_STATE.md
 4. `spec.md` contains none of: `task_id`, `delta:`, `source_boundary:`, `benchmark`, `oracle`, `judge`, `<!-- INTERNAL`
+4b. `spec.md` follows the 6-layer structure from `Spec2Repo/docs/SPEC_STANDARD.md`: has Specification Authority disclaimer, ≥2 behavior sections, ≥5 Cross-View Invariants, desensitized Product Overview, no stale section names
+4c. `spec.md` passes phrasing hard checks (spec-writer validation #21-#25): Non-Goals use "This specification does not require/define..." (no "outside this design"); Product Overview is descriptive not imperative; pure library CLI uses prose not bullet list; behavior sections have opening sentences + bold subsection headers; behavioral language uses `must`/`returns`/`raises` not `can`/`may`; API Catalog is Name|Kind|Role only
 5. Score JSON `platform` field confirms Linux/WSL evaluation
 6. Diagnosis report contains a `Preflight output` block with `__file__` path inside candidate solution directory
 7. `task.json` contains valid `integration_gap` object (at minimum `rate_gap`; `true_gap_events` if applicable)
 8. `task.json.source_meta` is populated (github_stars, pypi_monthly_downloads, loc, first_release)
 9. If `filter_notes.md` has `scope_plan != N/A`: verify actual oracle size ≤ `expected_oracle_max` and tests cover stated `target_subdomain`
+10. Run `python harness/validate_ledger.py` from the Spec2Repo repo root — task must appear as PASS (warnings acceptable, failures block graduation). This runs all static gates defined in `docs/QUALITY_GATE.md`.
 
 **Graduation procedure** (how to produce `tasks/{task_id}/` from `wip/{task_id}/`):
 1. Copy `spec_vN.md` → `tasks/{id}/spec.md`, stripping the `<!-- INTERNAL ... -->` header block

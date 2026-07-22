@@ -1,4 +1,4 @@
-"""Behavioral WTForms oracle generated from spec_v3 public contracts."""
+"""Atomic tests for wtforms-form-lifecycle-fullrepro-001."""
 
 from __future__ import annotations
 
@@ -18,23 +18,20 @@ from wtforms import (
     Form,
     FormField,
     IntegerField,
+    MonthField,
     PasswordField,
     SelectField,
     SelectMultipleField,
     StringField,
     SubmitField,
+    TimeField,
 )
 from wtforms import validators
 from wtforms.csrf.core import CSRF
 from wtforms.meta import DefaultMeta
 
 
-class FormData(dict):
-    """Small public getlist-compatible submitted-data adapter."""
-
-    def getlist(self, name):
-        value = self.get(name, [])
-        return value if isinstance(value, list) else [value]
+from conftest import FormData
 
 
 @pytest.mark.parametrize("submitted, expected", [("1", 1), ("0", 0), ("-9", -9)])
@@ -214,3 +211,29 @@ def test_rendering_returns_html_safe_value_without_exact_markup_contract():
     rendered = F().value()
     assert hasattr(rendered, "__html__")
     assert str(rendered)
+
+
+# --- composition fix additions (2026-07-20) ---
+
+
+def test_string_field_retains_first_submitted_value():
+    class F(Form):
+        value = StringField()
+
+    form = F(FormData(value=["first", "second"]))
+    assert form.value.data == "first"
+    assert form.value.raw_data == ["first", "second"]
+
+
+def test_month_field_parses_month_storing_day_one():
+    class F(Form):
+        value = MonthField()
+
+    assert F(FormData(value=["2024-05"])).value.data == dt.date(2024, 5, 1)
+
+
+def test_time_field_parses_documented_format():
+    class F(Form):
+        value = TimeField()
+
+    assert F(FormData(value=["13:30"])).value.data == dt.time(13, 30)

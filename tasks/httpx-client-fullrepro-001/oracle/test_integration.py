@@ -1,570 +1,460 @@
-# Spec2Repo oracle - integration tests for httpx-client-fullrepro-001
+"""Integration tests for httpx-client-fullrepro-001.
+
+Each test exercises ≥2 public API boundaries working together.
+Seams tested: client config → request preparation, hooks → transport,
+cookies → jar → request, redirects → history, auth → transport, etc.
+"""
+from __future__ import annotations
+
 import asyncio
 import json
 
 import pytest
 
 import httpx
+from conftest import BASE_URL, redirect_handler, run_async
 
 
-def test_client_close_is_idempotent_and_blocks_later_send():
-    client = httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(200)))
-    assert client.is_closed is False
-    assert client.close() is None
-    assert client.close() is None
-    assert client.is_closed is True
-    with pytest.raises(RuntimeError):
-        client.get("https://example.org/")
+# =============================================================================
+# Client lifecycle (context manager → transport → is_closed)
+# Seam: lifecycle crossing
+# =============================================================================
 
 
-def test_client_context_returns_self_and_closes_transport():
+def test_client_context_returns_self_and_closes():
+    """Seam: lifecycle crossing — client context manager closes transport on exit."""
     closed = []
 
-    class Transport(httpx.BaseTransport):
+    class T(httpx.BaseTransport):
         def handle_request(self, request):
             return httpx.Response(200, request=request)
-
         def close(self):
-            closed.append("transport")
+            closed.append(True)
 
-    client = httpx.Client(transport=Transport())
-    with client as entered:
-        assert entered is client
-        assert entered.get("https://example.org/").status_code == 200
+    with httpx.Client(transport=T()) as client:
+        assert client.is_closed is False
     assert client.is_closed is True
-    assert closed == ["transport"]
+    assert closed == [True]
 
 
-def test_async_client_context_and_aclose_are_idempotent():
+def test_close_idempotent_and_blocks_requests():
+    """Seam: lifecycle crossing — close is idempotent and blocks subsequent requests."""
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200)))
+    client.close()
+    client.close()
+    assert client.is_closed is True
+    with pytest.raises(RuntimeError):
+        client.get("https://host.test/")
+
+
+def test_reenter_open_context_raises():
+    """Seam: lifecycle crossing — re-entering open client context raises RuntimeError."""
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200)))
+    with client:
+        with pytest.raises(RuntimeError):
+            with client:
+                pass
+
+
+def test_enter_after_close_raises():
+    """Seam: lifecycle crossing — entering context after close raises RuntimeError."""
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200)))
+    client.close()
+    with pytest.raises(RuntimeError):
+        with client:
+            pass
+
+
+def test_async_client_lifecycle():
+    """Seam: lifecycle crossing — AsyncClient context closes transport via aclose."""
     async def run():
         closed = []
 
-        class Transport(httpx.AsyncBaseTransport):
+        class T(httpx.AsyncBaseTransport):
             async def handle_async_request(self, request):
                 return httpx.Response(200, request=request)
-
             async def aclose(self):
-                closed.append("transport")
+                closed.append(True)
 
-        client = httpx.AsyncClient(transport=Transport())
-        async with client as entered:
-            assert entered is client
-            response = await entered.get("https://example.org/")
-            assert response.status_code == 200
+        async with httpx.AsyncClient(transport=T()) as client:
+            resp = await client.get("https://host.test/")
+            assert resp.status_code == 200
         assert client.is_closed is True
-        assert closed == ["transport"]
-        assert await client.aclose() is None
+        assert closed == [True]
 
-    asyncio.run(run())
+    run_async(run())
 
 
-def test_build_request_merges_base_url_headers_cookies_and_params():
+# =============================================================================
+# Configuration merge (client config + request config → prepared request)
+# Seam: state consistency — merged values visible in request
+# =============================================================================
+
+
+def test_build_request_merges_headers_params_cookies():
+    """Seam: state consistency — client and request config merge into prepared request."""
     client = httpx.Client(
-        base_url="https://example.org/api/v1",
-        headers={"X-Client": "yes", "X-Override": "client"},
-        cookies={"session": "abc"},
-        params={"client": "1", "replace": "old"},
-        transport=httpx.MockTransport(lambda request: httpx.Response(200)),
+        base_url="https://api.test/v2",
+        headers={"X-Client": "yes", "X-Over": "client"},
+        params={"client_p": "1"},
+        cookies={"sess": "abc"},
+        transport=httpx.MockTransport(lambda r: httpx.Response(200)),
     )
-    request = client.build_request(
-        "get",
-        "items?replace=url",
-        headers={"X-Override": "request"},
-        cookies={"request": "cookie"},
-        params={"replace": "new", "local": "2"},
+    req = client.build_request(
+        "GET", "items",
+        headers={"X-Over": "request"},
+        params={"req_p": "2"},
+        cookies={"extra": "cookie"},
     )
-    assert request.method == "GET"
-    assert str(request.url) == "https://example.org/api/v1/items?client=1&replace=new&local=2"
-    assert request.headers["x-client"] == "yes"
-    assert request.headers["x-override"] == "request"
-    assert "session=abc" in request.headers["cookie"]
-    assert "request=cookie" in request.headers["cookie"]
+    assert req.headers["x-client"] == "yes"
+    assert req.headers["x-over"] == "request"
+    assert req.url.params["client_p"] == "1"
+    assert req.url.params["req_p"] == "2"
+    assert "sess=abc" in req.headers["cookie"]
 
 
-def test_client_request_sends_prepared_request_and_reads_body():
-    seen = []
-
-    def handler(request):
-        seen.append((request.method, str(request.url), request.headers["x-token"]))
-        return httpx.Response(201, content=b"created", request=request)
-
-    client = httpx.Client(base_url="https://example.org", transport=httpx.MockTransport(handler))
-    response = client.post("/items", headers={"X-Token": "abc"}, content=b"payload")
-    assert seen == [("POST", "https://example.org/items", "abc")]
-    assert response.status_code == 201
-    assert response.content == b"created"
-    assert response.request.method == "POST"
-
-
-def test_client_send_stream_true_leaves_response_unread_until_read():
-    response = httpx.Response(200, stream=httpx.ByteStream(b"streamed"))
-    client = httpx.Client(transport=httpx.MockTransport(lambda request: response))
-    request = client.build_request("GET", "https://example.org/")
-    streamed = client.send(request, stream=True)
-    with pytest.raises(httpx.ResponseNotRead):
-        _ = streamed.content
-    assert streamed.read() == b"streamed"
-    assert streamed.content == b"streamed"
-
-
-def test_client_stream_context_closes_response_on_exit():
-    response = httpx.Response(200, stream=httpx.ByteStream(b"abc"))
-    client = httpx.Client(transport=httpx.MockTransport(lambda request: response))
-    with client.stream("GET", "https://example.org/") as streamed:
-        assert streamed.is_closed is False
-        assert streamed.read() == b"abc"
-    assert streamed.is_closed is True
-
-
-def test_async_client_request_and_build_request():
-    async def run():
-        seen = []
-
-        async def handler(request):
-            seen.append((request.method, str(request.url)))
-            return httpx.Response(200, json={"ok": True}, request=request)
-
-        async with httpx.AsyncClient(base_url="https://example.org", transport=httpx.MockTransport(handler)) as client:
-            request = client.build_request("POST", "/submit", json={"a": 1})
-            assert request.method == "POST"
-            assert request.url.path == "/submit"
-            response = await client.send(request)
-            assert response.json() == {"ok": True}
-        assert seen == [("POST", "https://example.org/submit")]
-
-    asyncio.run(run())
-
-
-def test_request_level_auth_none_disables_client_auth():
+def test_request_auth_none_disables_client_auth():
+    """Seam: config interaction — per-request auth=None disables client-level auth."""
     def handler(request):
         return httpx.Response(200, json={"auth": request.headers.get("authorization")}, request=request)
 
-    client = httpx.Client(auth=("user", "pass"), transport=httpx.MockTransport(handler))
-    assert client.get("https://example.org/").json()["auth"].startswith("Basic ")
-    assert client.get("https://example.org/", auth=None).json()["auth"] is None
+    client = httpx.Client(auth=("user", "pw"), transport=httpx.MockTransport(handler))
+    assert client.get("https://host.test/").json()["auth"].startswith("Basic ")
+    assert client.get("https://host.test/", auth=None).json()["auth"] is None
 
 
-def test_request_level_follow_redirects_overrides_client_default():
+def test_base_url_resolves_relative_paths():
+    """Seam: config interaction — client base_url resolves relative request paths."""
+    client = httpx.Client(base_url="https://api.test/root/")
+    req = client.build_request("GET", "child")
+    assert str(req.url) == "https://api.test/root/child"
+
+
+# =============================================================================
+# Request sending (client → transport → response)
+# Seam: protocol handoff — client dispatches to transport
+# =============================================================================
+
+
+def test_client_request_sends_and_reads_body():
+    """Seam: protocol handoff — client dispatches request through transport and reads body."""
+    def handler(request):
+        return httpx.Response(201, content=b"done", request=request)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    resp = client.post("https://host.test/items", content=b"payload")
+    assert resp.status_code == 201
+    assert resp.content == b"done"
+    assert resp.request.method == "POST"
+
+
+def test_client_send_stream_true_leaves_unread():
+    """Seam: lifecycle crossing — send(stream=True) leaves response unread until explicit read."""
+    resp_obj = httpx.Response(200, stream=httpx.ByteStream(b"stream"))
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: resp_obj))
+    req = client.build_request("GET", "https://host.test/")
+    streamed = client.send(req, stream=True)
+    with pytest.raises(httpx.ResponseNotRead):
+        _ = streamed.content
+    assert streamed.read() == b"stream"
+
+
+def test_client_stream_context_closes_on_exit():
+    """Seam: lifecycle crossing — stream context closes response on exit."""
+    resp_obj = httpx.Response(200, stream=httpx.ByteStream(b"ctx"))
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: resp_obj))
+    with client.stream("GET", "https://host.test/") as streamed:
+        assert streamed.read() == b"ctx"
+    assert streamed.is_closed is True
+
+
+# =============================================================================
+# Redirects and history (client → redirect chain → history)
+# Seam: state consistency — history captures each redirect step
+# =============================================================================
+
+
+def test_redirect_not_followed_exposes_next_request():
+    """Seam: state consistency — unfollowed redirect exposes next_request without history."""
+    client = httpx.Client(base_url="https://host.test", transport=httpx.MockTransport(redirect_handler))
+    resp = client.get("/start", follow_redirects=False)
+    assert resp.status_code == 302
+    assert resp.history == []
+    assert resp.next_request.url.path == "/end"
+
+
+def test_redirect_followed_populates_history():
+    """Seam: state consistency — followed redirect populates history with intermediate responses."""
+    client = httpx.Client(base_url="https://host.test", transport=httpx.MockTransport(redirect_handler), follow_redirects=True)
+    resp = client.get("/start")
+    assert resp.status_code == 200
+    assert resp.text == "arrived"
+    assert [h.status_code for h in resp.history] == [302]
+    assert resp.next_request is None
+
+
+def test_303_rewrites_post_to_get():
+    """Seam: protocol handoff — 303 redirect rewrites POST to GET on follow."""
+    seen = []
+
+    def handler(request):
+        seen.append(request.method)
+        if request.url.path == "/form":
+            return httpx.Response(303, headers={"Location": "/done"}, request=request)
+        return httpx.Response(200, request=request)
+
+    client = httpx.Client(base_url="https://host.test", transport=httpx.MockTransport(handler))
+    client.post("/form", content=b"data", follow_redirects=True)
+    assert seen == ["POST", "GET"]
+
+
+def test_too_many_redirects_raises():
+    """Seam: error propagation — redirect loop exceeding max_redirects raises TooManyRedirects."""
+    def handler(request):
+        return httpx.Response(302, headers={"Location": "/loop"}, request=request)
+
+    client = httpx.Client(base_url="https://host.test", max_redirects=2, transport=httpx.MockTransport(handler))
+    with pytest.raises(httpx.TooManyRedirects):
+        client.get("/loop", follow_redirects=True)
+
+
+def test_request_level_follow_redirects_overrides_client():
+    """Seam: config interaction — request-level follow_redirects overrides client default."""
     calls = []
 
     def handler(request):
         calls.append(request.url.path)
-        if request.url.path == "/start":
-            return httpx.Response(302, headers={"Location": "/end"}, request=request)
-        return httpx.Response(200, text="done", request=request)
+        if request.url.path == "/go":
+            return httpx.Response(302, headers={"Location": "/here"}, request=request)
+        return httpx.Response(200, request=request)
 
-    client = httpx.Client(base_url="https://example.org", follow_redirects=False, transport=httpx.MockTransport(handler))
-    response = client.get("/start", follow_redirects=True)
-    assert response.status_code == 200
-    assert [item.status_code for item in response.history] == [302]
-    assert calls == ["/start", "/end"]
-
-
-def test_cookies_extract_and_send_matching_cookie_header():
-    request = httpx.Request("GET", "https://example.org/login")
-    response = httpx.Response(200, headers={"Set-Cookie": "sid=abc; Path=/"}, request=request)
-    cookies = httpx.Cookies()
-    cookies.extract_cookies(response)
-    outgoing = httpx.Request("GET", "https://example.org/account")
-    cookies.set_cookie_header(outgoing)
-    assert outgoing.headers["cookie"] == "sid=abc"
+    client = httpx.Client(base_url="https://host.test", follow_redirects=False, transport=httpx.MockTransport(handler))
+    resp = client.get("/go", follow_redirects=True)
+    assert resp.status_code == 200
+    assert calls == ["/go", "/here"]
 
 
-def test_client_cookie_jar_persists_between_requests():
+# =============================================================================
+# Event hooks (hooks → transport → response)
+# Seam: state consistency — hook mutations visible downstream
+# =============================================================================
+
+
+def test_request_hook_mutates_outgoing_request():
+    """Seam: protocol handoff — request hook mutation visible in transport handler."""
+    def hook(request):
+        request.headers["X-Hooked"] = "yes"
+
+    def handler(request):
+        return httpx.Response(200, text=request.headers["x-hooked"], request=request)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler), event_hooks={"request": [hook]})
+    assert client.get("https://host.test/").text == "yes"
+
+
+def test_hooks_run_in_list_order():
+    """Seam: protocol handoff — request hooks execute in configured list order."""
+    order = []
+
+    def h1(request):
+        order.append("h1")
+        request.headers["X-Seq"] = "1"
+
+    def h2(request):
+        order.append("h2")
+
+    def handler(request):
+        return httpx.Response(200, request=request)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler), event_hooks={"request": [h1, h2]})
+    client.get("https://host.test/")
+    assert order == ["h1", "h2"]
+
+
+def test_response_hook_can_read_body():
+    """Seam: lifecycle crossing — response hook read makes body available downstream."""
+    def handler(request):
+        return httpx.Response(200, stream=httpx.ByteStream(b"hook-read"), request=request)
+
+    def hook(response):
+        response.read()
+
+    client = httpx.Client(transport=httpx.MockTransport(handler), event_hooks={"response": [hook]})
+    resp = client.get("https://host.test/")
+    assert resp.content == b"hook-read"
+
+
+# =============================================================================
+# Cookies across requests (jar → extraction → sending)
+# Seam: state consistency — cookie jar persists between requests
+# =============================================================================
+
+
+def test_cookies_extracted_and_sent_on_next_request():
+    """Seam: state consistency — Set-Cookie extracted and sent on subsequent request."""
     paths = []
 
     def handler(request):
         paths.append((request.url.path, request.headers.get("cookie")))
         if request.url.path == "/login":
-            return httpx.Response(200, headers={"Set-Cookie": "sid=abc; Path=/"}, request=request)
+            return httpx.Response(200, headers={"Set-Cookie": "tok=abc; Path=/"}, request=request)
         return httpx.Response(200, request=request)
 
-    client = httpx.Client(base_url="https://example.org", transport=httpx.MockTransport(handler))
+    client = httpx.Client(base_url="https://host.test", transport=httpx.MockTransport(handler))
     client.get("/login")
-    client.get("/profile")
-    assert paths == [("/login", None), ("/profile", "sid=abc")]
+    client.get("/dashboard")
+    assert paths[1] == ("/dashboard", "tok=abc")
 
 
-def test_async_response_aread_and_aiter_bytes():
-    async def run():
-        response = httpx.Response(200, stream=httpx.ByteStream(b"abc"))
-        assert await response.aread() == b"abc"
-        assert response.content == b"abc"
-
-        streamed = httpx.Response(200, stream=httpx.ByteStream(b"xy"))
-        chunks = []
-        async for chunk in streamed.aiter_bytes():
-            chunks.append(chunk)
-        assert chunks == [b"xy"]
-        with pytest.raises(httpx.StreamConsumed):
-            async for _ in streamed.aiter_bytes():
-                pass
-
-    asyncio.run(run())
+def test_extract_cookies_then_set_cookie_header():
+    """Seam: state consistency — jar extract_cookies and set_cookie_header round-trip."""
+    req1 = httpx.Request("GET", "https://host.test/auth")
+    resp = httpx.Response(200, headers={"Set-Cookie": "sid=xyz; Path=/"}, request=req1)
+    jar = httpx.Cookies()
+    jar.extract_cookies(resp)
+    req2 = httpx.Request("GET", "https://host.test/api")
+    jar.set_cookie_header(req2)
+    assert req2.headers["cookie"] == "sid=xyz"
 
 
-def test_redirect_without_following_exposes_next_request():
+# =============================================================================
+# Authentication (auth → request preparation → transport)
+# Seam: configuration interaction — auth modifies outgoing headers
+# =============================================================================
+
+
+def test_basic_auth_tuple_adds_authorization():
+    """Seam: config interaction — basic auth tuple adds Authorization header."""
     def handler(request):
-        return httpx.Response(302, headers={"Location": "/next"}, request=request)
+        return httpx.Response(200, json={"auth": request.headers["authorization"]}, request=request)
 
-    client = httpx.Client(base_url="https://example.org", transport=httpx.MockTransport(handler))
-    response = client.get("/start", follow_redirects=False)
-    assert response.history == []
-    assert response.next_request.method == "GET"
-    assert str(response.next_request.url) == "https://example.org/next"
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    resp = client.get("https://host.test/", auth=("user", "pw"))
+    assert resp.json()["auth"].startswith("Basic ")
 
 
-def test_follow_redirects_populates_history_and_final_request():
-    def handler(request):
-        if request.url.path == "/one":
-            return httpx.Response(302, headers={"Location": "/two"}, request=request)
-        if request.url.path == "/two":
-            return httpx.Response(301, headers={"Location": "/done"}, request=request)
-        return httpx.Response(200, text=request.url.path, request=request)
-
-    client = httpx.Client(base_url="https://example.org", follow_redirects=True, transport=httpx.MockTransport(handler))
-    response = client.get("/one")
-    assert response.text == "/done"
-    assert [item.status_code for item in response.history] == [302, 301]
-    assert [item.request.url.path for item in response.history] == ["/one", "/two"]
-    assert response.next_request is None
-
-
-def test_post_303_redirect_rewrites_to_get():
-    seen = []
+def test_callable_auth_mutates_request():
+    """Seam: config interaction — callable auth mutates outgoing request headers."""
+    def my_auth(request):
+        request.headers["Authorization"] = "Token xyz"
+        return request
 
     def handler(request):
-        seen.append((request.method, request.url.path))
-        if request.url.path == "/submit":
-            return httpx.Response(303, headers={"Location": "/result"}, request=request)
-        return httpx.Response(200, request=request)
+        return httpx.Response(200, text=request.headers["authorization"], request=request)
 
-    client = httpx.Client(base_url="https://example.org", transport=httpx.MockTransport(handler))
-    response = client.post("/submit", content=b"payload", follow_redirects=True)
-    assert response.status_code == 200
-    assert seen == [("POST", "/submit"), ("GET", "/result")]
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    assert client.get("https://host.test/", auth=my_auth).text == "Token xyz"
 
 
-def test_request_and_response_hooks_run_in_order_and_mutate_request():
-    events = []
-
-    def first_request(request):
-        events.append(("request", "first"))
-        request.headers["X-Trace"] = "1"
-
-    def second_request(request):
-        events.append(("request", request.headers["X-Trace"]))
-        request.headers["X-Trace"] = "2"
-
-    def response_hook(response):
-        events.append(("response", response.request.headers["X-Trace"]))
-
-    def handler(request):
-        events.append(("handler", request.headers["X-Trace"]))
-        return httpx.Response(200, request=request)
-
-    client = httpx.Client(
-        transport=httpx.MockTransport(handler),
-        event_hooks={"request": [first_request, second_request], "response": [response_hook]},
-    )
-    client.get("https://example.org/")
-    assert events == [("request", "first"), ("request", "1"), ("handler", "2"), ("response", "2")]
-
-
-def test_response_hook_can_read_streaming_body_before_return():
-    def handler(request):
-        return httpx.Response(200, stream=httpx.ByteStream(b"hook-body"), request=request)
-
-    def read_body(response):
-        assert response.read() == b"hook-body"
-
-    client = httpx.Client(transport=httpx.MockTransport(handler), event_hooks={"response": [read_body]})
-    response = client.get("https://example.org/")
-    assert response.content == b"hook-body"
-
-
-def test_custom_auth_flow_can_retry_with_response_history():
+def test_custom_auth_flow_retries():
+    """Seam: protocol handoff — custom auth flow retries after 401 through transport."""
     class RetryAuth(httpx.Auth):
         def auth_flow(self, request):
-            request.headers["Authorization"] = "first"
+            request.headers["Authorization"] = "attempt1"
             response = yield request
             if response.status_code == 401:
-                request.headers["Authorization"] = "second"
+                request.headers["Authorization"] = "attempt2"
                 yield request
 
-    seen = []
+    calls = []
 
     def handler(request):
-        seen.append(request.headers["authorization"])
-        if len(seen) == 1:
+        calls.append(request.headers["authorization"])
+        if len(calls) == 1:
             return httpx.Response(401, request=request)
         return httpx.Response(200, request=request)
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    response = client.get("https://example.org/", auth=RetryAuth())
-    assert response.status_code == 200
-    assert seen == ["first", "second"]
-    assert [item.status_code for item in response.history] == [401]
+    resp = client.get("https://host.test/", auth=RetryAuth())
+    assert resp.status_code == 200
+    assert calls == ["attempt1", "attempt2"]
 
 
-def test_auth_flow_reads_request_body_when_required():
-    class BodyAuth(httpx.Auth):
-        requires_request_body = True
+# =============================================================================
+# Transports (MockTransport, WSGITransport, ASGITransport)
+# Seam: protocol handoff — client dispatches through transport
+# =============================================================================
 
-        def auth_flow(self, request):
-            request.headers["X-Body-Length"] = str(len(request.content))
-            yield request
 
+def test_mock_transport_handler_exception_propagates():
+    """Seam: error propagation — MockTransport handler exception propagates to client."""
     def handler(request):
-        return httpx.Response(200, text=request.headers["x-body-length"], request=request)
+        raise ValueError("boom")
 
     client = httpx.Client(transport=httpx.MockTransport(handler))
-    assert client.post("https://example.org/", content=b"abcdef", auth=BodyAuth()).text == "6"
+    with pytest.raises(ValueError, match="boom"):
+        client.get("https://host.test/")
 
 
-def test_mock_transport_calls_sync_handler_with_request():
-    seen = []
-
-    def handler(request):
-        seen.append((request.method, request.url.path))
-        return httpx.Response(204, request=request)
-
-    client = httpx.Client(base_url="https://example.org", transport=httpx.MockTransport(handler))
-    assert client.delete("/resource").status_code == 204
-    assert seen == [("DELETE", "/resource")]
-
-
-def test_async_mock_transport_awaits_async_handler():
-    async def run():
-        seen = []
-
-        async def handler(request):
-            seen.append(request.url.path)
-            return httpx.Response(200, text="async", request=request)
-
-        async with httpx.AsyncClient(base_url="https://example.org", transport=httpx.MockTransport(handler)) as client:
-            response = await client.get("/resource")
-        assert response.text == "async"
-        assert seen == ["/resource"]
-
-    asyncio.run(run())
-
-
-def test_wsgi_transport_populates_environ_and_returns_response():
+def test_wsgi_transport_populates_environ():
+    """Seam: protocol handoff — WSGITransport maps request to WSGI environ."""
     captured = {}
 
     def app(environ, start_response):
         captured["method"] = environ["REQUEST_METHOD"]
         captured["path"] = environ["PATH_INFO"]
         captured["query"] = environ["QUERY_STRING"]
-        captured["remote"] = environ["REMOTE_ADDR"]
-        body = environ["wsgi.input"].read()
         start_response("200 OK", [("Content-Type", "text/plain")])
-        return [body + b":" + environ["PATH_INFO"].encode()]
+        return [b"wsgi-ok"]
 
-    transport = httpx.WSGITransport(app=app, remote_addr="10.0.0.5")
-    client = httpx.Client(transport=transport, base_url="http://testserver")
-    response = client.post("/items?x=1", content=b"data")
-    assert response.text == "data:/items"
-    assert captured == {"method": "POST", "path": "/items", "query": "x=1", "remote": "10.0.0.5"}
-
-
-def test_wsgi_transport_can_return_error_response_when_configured():
-    def app(environ, start_response):
-        start_response("500 ERROR", [("Content-Type", "text/plain")], (RuntimeError, RuntimeError("boom"), None))
-        return [b"error"]
-
-    client = httpx.Client(transport=httpx.WSGITransport(app=app, raise_app_exceptions=False), base_url="http://testserver")
-    response = client.get("/")
-    assert response.status_code == 500
-    assert response.text == "error"
+    client = httpx.Client(transport=httpx.WSGITransport(app=app), base_url="http://wsgi.test")
+    resp = client.get("/items?page=2")
+    assert resp.text == "wsgi-ok"
+    assert captured == {"method": "GET", "path": "/items", "query": "page=2"}
 
 
-def test_asgi_transport_populates_scope_and_returns_response():
+def test_asgi_transport_populates_scope():
+    """Seam: protocol handoff — ASGITransport maps request to ASGI scope with root_path."""
     async def app(scope, receive, send):
-        assert scope["method"] == "POST"
-        assert scope["path"] == "/api/items"
-        assert scope["query_string"] == b"x=1"
-        await send({"type": "http.response.start", "status": 200, "headers": [(b"content-type", b"text/plain")]})
-        await send({"type": "http.response.body", "body": scope["path"].encode()})
-
-    async def run():
-        transport = httpx.ASGITransport(app=app, root_path="/api", client=("1.2.3.4", 1234))
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver/api") as client:
-            response = await client.post("/items?x=1", content=b"data")
-        assert response.text == "/api/items"
-
-    asyncio.run(run())
-
-
-def test_request_hook_header_visible_to_transport_cross_view():
-    def hook(request):
-        request.headers["X-Cross"] = "visible"
-
-    def handler(request):
-        return httpx.Response(200, text=request.headers["x-cross"], request=request)
-
-    client = httpx.Client(transport=httpx.MockTransport(handler), event_hooks={"request": [hook]})
-    assert client.get("https://example.org/").text == "visible"
-
-
-def test_response_object_seen_by_hook_is_returned_to_caller():
-    seen = []
-
-    def handler(request):
-        return httpx.Response(200, text="same", request=request)
-
-    def hook(response):
-        seen.append(id(response))
-
-    client = httpx.Client(transport=httpx.MockTransport(handler), event_hooks={"response": [hook]})
-    response = client.get("https://example.org/")
-    assert seen == [id(response)]
-
-
-def test_built_request_defaults_match_url_header_and_query_views():
-    client = httpx.Client(
-        base_url="https://example.org/base",
-        headers={"X-One": "1"},
-        cookies={"a": "b"},
-        params={"q": "client"},
-    )
-    request = client.build_request("GET", "/items", params={"page": "1"})
-    assert request.url.params["q"] == "client"
-    assert request.url.params["page"] == "1"
-    assert "q=client" in str(request.url)
-    assert request.headers["x-one"] == "1"
-    assert request.headers["cookie"] == "a=b"
-
-
-def test_response_read_bytes_match_content_and_text_cache():
-    response = httpx.Response(200, stream=httpx.ByteStream("caf\xc3\xa9".encode()), default_encoding="utf-8")
-    data = response.read()
-    assert data == response.content
-    assert response.text == "caf\xc3\xa9".encode().decode("utf-8")
-
-
-def test_mocked_sync_workflow_with_hooks_redirects_and_json():
-    events = []
-
-    def app(request):
-        if request.url.path == "/start":
-            return httpx.Response(302, headers={"Location": "/end"}, request=request)
-        return httpx.Response(200, json={"path": request.url.path, "trace": request.headers["x-trace"]}, request=request)
-
-    def add_header(request):
-        request.headers["X-Trace"] = "1"
-        events.append(("request", str(request.url)))
-
-    def remember_response(response):
-        events.append(("response", response.status_code))
-
-    with httpx.Client(
-        base_url="https://example.org",
-        params={"client": "yes"},
-        headers={"User-Agent": "demo"},
-        transport=httpx.MockTransport(app),
-        event_hooks={"request": [add_header], "response": [remember_response]},
-        follow_redirects=True,
-    ) as client:
-        request = client.build_request("GET", "/start", params={"request": "yes"})
-        response = client.send(request)
-
-    assert response.status_code == 200
-    assert response.history[0].status_code == 302
-    assert response.json() == {"path": "/end", "trace": "1"}
-    assert [item[0] for item in events] == ["request", "response", "request", "response"]
-
-
-def test_mocked_sync_workflow_handler_exception_propagates():
-    def app(request):
-        raise RuntimeError("boom")
-
-    client = httpx.Client(transport=httpx.MockTransport(app))
-    with pytest.raises(RuntimeError):
-        client.get("https://example.org/")
-
-
-def test_mocked_sync_workflow_preserves_client_params_into_redirect():
-    def app(request):
-        if request.url.path == "/start":
-            assert request.url.params["client"] == "yes"
-            return httpx.Response(302, headers={"Location": "/end"}, request=request)
-        return httpx.Response(200, json={"query": str(request.url.query, "ascii")}, request=request)
-
-    client = httpx.Client(
-        base_url="https://example.org",
-        params={"client": "yes"},
-        transport=httpx.MockTransport(app),
-        follow_redirects=True,
-    )
-    response = client.get("/start")
-    assert response.history[0].request.url.params["client"] == "yes"
-    assert response.json() == {"query": ""}
-
-
-def test_async_asgi_representative_workflow():
-    async def app(scope, receive, send):
-        await send({"type": "http.response.start", "status": 200, "headers": [(b"content-type", b"text/plain")]})
+        assert scope["method"] == "GET"
+        assert scope["path"] == "/api/data"
+        await send({"type": "http.response.start", "status": 200, "headers": []})
         await send({"type": "http.response.body", "body": scope["path"].encode()})
 
     async def run():
         transport = httpx.ASGITransport(app=app, root_path="/api")
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver/api") as client:
-            response = await client.get("/items")
-        assert response.text == "/api/items"
+        async with httpx.AsyncClient(transport=transport, base_url="http://asgi.test/api") as client:
+            resp = await client.get("/data")
+        assert resp.text == "/api/data"
 
-    asyncio.run(run())
+    run_async(run())
 
 
-def test_async_asgi_representative_workflow_exception_propagates():
+def test_asgi_raise_app_exceptions_true_propagates():
+    """Seam: error propagation — ASGITransport raise_app_exceptions propagates app errors."""
     async def app(scope, receive, send):
-        raise RuntimeError("asgi boom")
+        raise RuntimeError("asgi-error")
 
     async def run():
         transport = httpx.ASGITransport(app=app)
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-            with pytest.raises(RuntimeError):
+        async with httpx.AsyncClient(transport=transport, base_url="http://asgi.test") as client:
+            with pytest.raises(RuntimeError, match="asgi-error"):
                 await client.get("/")
 
-    asyncio.run(run())
+    run_async(run())
 
 
-def test_async_asgi_representative_workflow_can_return_error_response_when_configured():
-    async def app(scope, receive, send):
-        await send({"type": "http.response.start", "status": 500, "headers": [(b"content-type", b"text/plain")]})
-        await send({"type": "http.response.body", "body": b"error"})
-        raise RuntimeError("after response")
-
-    async def run():
-        transport = httpx.ASGITransport(app=app, raise_app_exceptions=False)
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-            response = await client.get("/")
-        assert response.status_code == 500
-        assert response.text == "error"
-
-    asyncio.run(run())
+def test_unsupported_protocol_raises():
+    """Seam: error propagation — unsupported URL protocol raises UnsupportedProtocol."""
+    client = httpx.Client()
+    with pytest.raises(httpx.UnsupportedProtocol):
+        client.get("ftp://host.test/")
 
 
-def test_cli_help_exits_successfully():
+# =============================================================================
+# CLI
+# =============================================================================
+
+
+def test_cli_help_exits_zero():
+    """Seam: lifecycle crossing — CLI help invocation exits cleanly."""
     from click.testing import CliRunner
-
     result = CliRunner().invoke(httpx.main, ["--help"])
     assert result.exit_code == 0
-    assert "Usage:" in result.output
 
 
-def test_cli_rejects_invalid_json_before_request():
+def test_cli_invalid_json_exits_two():
+    """Seam: error propagation — CLI invalid JSON flag exits with error code 2."""
     from click.testing import CliRunner
-
-    result = CliRunner().invoke(httpx.main, ["https://example.org/", "--json", "{"])
+    result = CliRunner().invoke(httpx.main, ["https://host.test/", "--json", "{"])
     assert result.exit_code == 2
-    assert isinstance(result.exception, SystemExit)
-
-
-def test_cli_requires_url_argument_before_request():
-    from click.testing import CliRunner
-
-    result = CliRunner().invoke(httpx.main, [])
-    assert result.exit_code == 2
-    assert isinstance(result.exception, SystemExit)

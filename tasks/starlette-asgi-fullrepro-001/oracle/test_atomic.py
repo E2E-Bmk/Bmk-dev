@@ -1,223 +1,260 @@
-# Spec2Repo oracle - atomic tests for starlette-asgi-fullrepro-001
+"""Atomic tests for starlette-asgi-fullrepro-001.
+
+Each test exercises ONE public API with ONE behavior.
+"""
 from __future__ import annotations
 
-import asyncio
 import json
-from contextlib import asynccontextmanager
+import math
 from pathlib import Path
 
 import pytest
 
-from starlette.applications import Starlette
 from starlette.background import BackgroundTask, BackgroundTasks
-from starlette.datastructures import Headers, MutableHeaders, QueryParams
-from starlette.exceptions import HTTPException
+from starlette.convertors import Convertor, register_url_convertor
+from starlette.datastructures import URL, Headers, MutableHeaders, QueryParams
+from starlette.exceptions import HTTPException, WebSocketException
 from starlette.middleware import Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.middleware.cors import CORSMiddleware
-from starlette.middleware.gzip import GZipMiddleware
-from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
-from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.requests import Request
 from starlette.responses import (
     FileResponse,
+    HTMLResponse,
     JSONResponse,
     PlainTextResponse,
     RedirectResponse,
     Response,
     StreamingResponse,
 )
-from starlette.routing import Host, Mount, NoMatchFound, Route, Router, WebSocketRoute
-from starlette.staticfiles import StaticFiles
+from starlette.routing import Mount, NoMatchFound, Route, Router, WebSocketRoute
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
+from conftest import http_scope, run_asgi
 
 
-def _run_asgi(app, scope, incoming=None):
-    sent = []
-    messages = list(incoming or [{"type": "http.request", "body": b"", "more_body": False}])
-
-    async def receive():
-        return messages.pop(0) if messages else {"type": "http.disconnect"}
-
-    async def send(message):
-        sent.append(message)
-
-    asyncio.run(app(scope, receive, send))
-    return sent
+# =============================================================================
+# URL datastructure
+# =============================================================================
 
 
-def _http_scope(path="/", method="GET", headers=None, query_string=b""):
-    return {
-        "type": "http",
-        "asgi": {"version": "3.0", "spec_version": "2.4"},
-        "http_version": "1.1",
-        "method": method,
-        "scheme": "http",
-        "path": path,
-        "raw_path": path.encode(),
-        "query_string": query_string,
-        "root_path": "",
-        "headers": headers or [(b"host", b"testserver")],
-        "client": ("127.0.0.1", 1234),
-        "server": ("testserver", 80),
-    }
+def test_url_parses_components():
+    url = URL("https://host.test:9443/path?q=1#frag")
+    assert url.scheme == "https"
+    assert url.hostname == "host.test"
+    assert url.port == 9443
+    assert url.path == "/path"
+    assert url.query == "q=1"
+    assert url.fragment == "frag"
 
 
-# Application and lifespan rewrites from tests/test_applications.py and
-# tests/test_testclient.py.
+def test_url_replace_returns_new_instance():
+    url = URL("http://host.test/original?x=1")
+    new = url.replace(scheme="https", path="/changed")
+    assert str(new) == "https://host.test/changed?x=1"
+    assert url.path == "/original"
 
 
-def test_application_rejects_middleware_added_after_first_call():
-    app = Starlette(routes=[Route("/", lambda request: PlainTextResponse("ok"))])
-    assert TestClient(app).get("/").status_code == 200
-    with pytest.raises(RuntimeError):
-        app.add_middleware(GZipMiddleware)
+# =============================================================================
+# Headers
+# =============================================================================
 
 
-def test_route_requires_leading_slash():
-    with pytest.raises(AssertionError):
-        Route("missing", lambda request: Response())
-
-
-def test_route_rejects_duplicate_parameter_names():
-    with pytest.raises(ValueError):
-        Route("/{item}/{item}", lambda request: Response())
-
-
-def test_route_rejects_unknown_convertor():
-    with pytest.raises(AssertionError):
-        Route("/{item:missing_convertor}", lambda request: Response())
-
-
-def test_router_reverse_lookup_and_missing_name():
-    router = Router(routes=[Route("/users/{user:int}", lambda request: Response(), name="user")])
-    assert str(router.url_path_for("user", user=4)) == "/users/4"
-    with pytest.raises(NoMatchFound):
-        router.url_path_for("missing")
-
-
-def test_request_is_mapping_over_scope():
-    scope = _http_scope("/items")
-    request = Request(scope)
-    assert request["path"] == "/items"
-    assert len(request) == len(scope)
-
-
-def test_request_url_and_query_params_follow_scope():
-    request = Request(_http_scope("/items", query_string=b"a=1&a=2"))
-    assert str(request.url) == "http://testserver/items?a=1&a=2"
-    assert request.query_params.getlist("a") == ["1", "2"]
-
-
-def test_request_headers_are_case_insensitive_and_immutable():
-    request = Request(_http_scope(headers=[(b"host", b"testserver"), (b"x-token", b"abc")]))
-    assert request.headers["X-Token"] == "abc"
+def test_headers_immutable_case_insensitive():
+    h = Headers(raw=[(b"content-type", b"text/plain"), (b"x-id", b"42")])
+    assert h["Content-Type"] == "text/plain"
+    assert h["X-ID"] == "42"
+    with pytest.raises(KeyError):
+        _ = h["missing"]
     with pytest.raises(TypeError):
-        request.headers["x-token"] = "changed"
+        h["x-id"] = "new"
 
 
-def test_public_multidict_views_preserve_repeated_values():
-    query = QueryParams("a=1&a=2&b=3")
-    headers = Headers(raw=[(b"x-tag", b"one"), (b"x-tag", b"two")])
-    assert query.getlist("a") == ["1", "2"]
-    assert headers.getlist("x-tag") == ["one", "two"]
+def test_headers_getlist():
+    h = Headers(raw=[(b"accept", b"text/html"), (b"accept", b"application/json")])
+    assert h.getlist("accept") == ["text/html", "application/json"]
 
 
-def test_request_body_is_cached():
-    chunks = [{"type": "http.request", "body": b"hello", "more_body": False}]
-
-    async def receive():
-        return chunks.pop(0)
-
-    async def read_twice():
-        request = Request(_http_scope(method="POST"), receive)
-        return await request.body(), await request.body()
-
-    assert asyncio.run(read_twice()) == (b"hello", b"hello")
+def test_mutable_headers_assignment():
+    mh = MutableHeaders(raw=[(b"x-a", b"1")])
+    mh["X-A"] = "2"
+    assert mh["x-a"] == "2"
 
 
-def test_request_invalid_json_raises_decoder_error():
-    messages = [{"type": "http.request", "body": b"not-json", "more_body": False}]
-
-    async def receive():
-        return messages.pop(0)
-
-    async def parse():
-        return await Request(_http_scope(method="POST"), receive).json()
-
-    with pytest.raises(json.JSONDecodeError):
-        asyncio.run(parse())
+# =============================================================================
+# QueryParams
+# =============================================================================
 
 
-def test_request_client_projection_handles_present_and_missing_client():
-    assert Request(_http_scope()).client.host == "127.0.0.1"
-    scope = _http_scope()
-    scope["client"] = None
-    assert Request(scope).client is None
+def test_queryparams_multidict():
+    qp = QueryParams("a=1&a=2&b=3")
+    assert qp["a"] == "1"
+    assert qp.getlist("a") == ["1", "2"]
+    assert qp.get("missing", "default") == "default"
+    assert ("a", "1") in qp.multi_items()
+    assert ("a", "2") in qp.multi_items()
 
 
-# Response rewrites from tests/test_responses.py and tests/test_background.py.
+# =============================================================================
+# Response types
+# =============================================================================
 
 
-def test_response_none_renders_empty_body():
-    response = Response(None)
-    assert response.body == b""
+def test_plain_text_response():
+    resp = PlainTextResponse("hello")
+    scope = http_scope()
+    msgs = run_asgi(resp, scope)
+    start = msgs[0]
+    body = msgs[1]
+    assert start["status"] == 200
+    headers = dict(start["headers"])
+    assert b"text/plain" in headers.get(b"content-type", b"")
+    assert body["body"] == b"hello"
 
 
-def test_response_adds_content_length_and_text_charset():
-    response = PlainTextResponse("hello")
-    assert response.headers["content-length"] == "5"
-    assert response.headers["content-type"] == "text/plain; charset=utf-8"
+def test_html_response():
+    resp = HTMLResponse("<b>hi</b>")
+    msgs = run_asgi(resp, http_scope())
+    headers = dict(msgs[0]["headers"])
+    assert b"text/html" in headers.get(b"content-type", b"")
+    assert msgs[1]["body"] == b"<b>hi</b>"
 
 
-def test_response_204_omits_content_length():
-    assert "content-length" not in Response(b"ignored", status_code=204).headers
+def test_json_response_compact_utf8():
+    resp = JSONResponse({"key": "value", "emoji": "\U0001f600"})
+    msgs = run_asgi(resp, http_scope())
+    data = json.loads(msgs[1]["body"])
+    assert data == {"key": "value", "emoji": "\U0001f600"}
+    assert b"\\u" not in msgs[1]["body"]
 
 
-def test_response_preserves_caller_content_headers():
-    response = Response("abc", headers={"content-length": "9", "content-type": "application/custom"})
-    assert response.headers["content-length"] == "9"
-    assert response.headers["content-type"] == "application/custom"
-
-
-def test_json_response_is_compact_utf8_and_preserves_unicode():
-    response = JSONResponse({"message": "olá"})
-    assert response.body == '{"message":"olá"}'.encode()
-
-
-def test_json_response_rejects_non_finite_numbers():
+def test_json_response_rejects_non_finite():
     with pytest.raises(ValueError):
-        JSONResponse({"value": float("nan")})
+        JSONResponse({"x": float("inf")})
 
 
-def test_redirect_response_quotes_location():
-    response = RedirectResponse("https://example.com/a path?q=hello world")
-    assert response.status_code == 307
-    assert response.headers["location"] == "https://example.com/a%20path?q=hello%20world"
+def test_redirect_response_default_307():
+    resp = RedirectResponse("/target path")
+    msgs = run_asgi(resp, http_scope())
+    assert msgs[0]["status"] == 307
+    headers = dict(msgs[0]["headers"])
+    assert b"/target%20path" in headers[b"location"]
 
 
-def test_response_cookie_set_and_delete_are_observable():
-    response = Response()
-    response.set_cookie("session", "abc", httponly=True, samesite="strict")
-    response.delete_cookie("old")
-    cookies = response.headers.getlist("set-cookie")
-    assert "session=abc" in cookies[0]
-    assert "HttpOnly" in cookies[0]
-    assert "Max-Age=0" in cookies[1]
+def test_response_none_body_sends_empty():
+    resp = Response(content=None, status_code=204)
+    msgs = run_asgi(resp, http_scope())
+    assert msgs[0]["status"] == 204
+    assert msgs[1]["body"] == b""
 
 
-def test_file_response_missing_file_raises_at_call_time(tmp_path):
-    response = FileResponse(tmp_path / "missing.txt")
-    with pytest.raises(RuntimeError):
-        _run_asgi(response, _http_scope())
+def test_response_auto_content_length():
+    resp = Response(content="body", media_type="text/plain")
+    msgs = run_asgi(resp, http_scope())
+    headers = dict(msgs[0]["headers"])
+    assert headers[b"content-length"] == b"4"
 
 
-def test_request_missing_session_auth_and_user_raise_assertion():
-    request = Request(_http_scope())
-    for attribute in ("session", "auth", "user"):
-        with pytest.raises(AssertionError):
-            getattr(request, attribute)
+def test_response_no_content_length_for_204():
+    resp = Response(status_code=204)
+    msgs = run_asgi(resp, http_scope())
+    headers = dict(msgs[0]["headers"])
+    assert b"content-length" not in headers
 
 
-# Explicit cross-view invariants.
+# =============================================================================
+# Cookie operations
+# =============================================================================
+
+
+def test_set_cookie_adds_header():
+    resp = Response(content="ok")
+    resp.set_cookie("sid", "abc", max_age=3600, httponly=True)
+    msgs = run_asgi(resp, http_scope())
+    cookie_headers = [v for k, v in msgs[0]["headers"] if k == b"set-cookie"]
+    assert any(b"sid=abc" in h for h in cookie_headers)
+    assert any(b"httponly" in h.lower() for h in cookie_headers)
+
+
+def test_delete_cookie_sets_max_age_zero():
+    resp = Response(content="ok")
+    resp.delete_cookie("sid")
+    msgs = run_asgi(resp, http_scope())
+    cookie_headers = [v for k, v in msgs[0]["headers"] if k == b"set-cookie"]
+    assert any(b"max-age=0" in h.lower() for h in cookie_headers)
+
+
+def test_set_cookie_invalid_samesite_raises():
+    resp = Response(content="ok")
+    with pytest.raises(AssertionError):
+        resp.set_cookie("x", "y", samesite="invalid")
+
+
+# =============================================================================
+# Routing
+# =============================================================================
+
+
+def test_route_path_must_start_with_slash():
+    with pytest.raises(AssertionError):
+        Route("no-slash", lambda r: PlainTextResponse("x"))
+
+
+def test_duplicate_path_param_raises():
+    with pytest.raises(ValueError):
+        Route("/{name}/{name}", lambda r: PlainTextResponse("x"))
+
+
+def test_unknown_convertor_raises():
+    with pytest.raises(AssertionError):
+        Route("/{id:nonexistent}", lambda r: PlainTextResponse("x"))
+
+
+def test_no_match_found_on_bad_reverse_lookup():
+    router = Router(routes=[Route("/items/{id:int}", lambda r: PlainTextResponse("x"), name="item")])
+    with pytest.raises(NoMatchFound):
+        router.url_path_for("nonexistent")
+
+
+# =============================================================================
+# Request attributes from scope
+# =============================================================================
+
+
+def test_request_asserts_http_scope_type():
+    with pytest.raises(AssertionError):
+        Request({"type": "websocket", "headers": []})
+
+
+def test_request_mapping_access():
+    scope = http_scope(path="/test")
+    scope["custom"] = "val"
+    req = Request(scope)
+    assert req["path"] == "/test"
+    assert req["custom"] == "val"
+
+
+# =============================================================================
+# HTTPException
+# =============================================================================
+
+
+def test_http_exception_preserves_attributes():
+    exc = HTTPException(status_code=403, detail="forbidden", headers={"X-Err": "1"})
+    assert exc.status_code == 403
+    assert exc.detail == "forbidden"
+    assert exc.headers == {"X-Err": "1"}
+
+
+# =============================================================================
+# WebSocket
+# =============================================================================
+
+
+def test_websocket_asserts_websocket_scope():
+    with pytest.raises(AssertionError):
+        WebSocket({"type": "http", "headers": []}, None, None)
+
+
+def test_websocket_disconnect_preserves_code_and_reason():
+    exc = WebSocketDisconnect(code=1001, reason="going away")
+    assert exc.code == 1001
+    assert exc.reason == "going away"

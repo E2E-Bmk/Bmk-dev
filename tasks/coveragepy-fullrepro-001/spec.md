@@ -158,6 +158,15 @@ data.close(force=False) -> None
 
 `set_query_context()` and `set_query_contexts()` narrow later `lines()`, `arcs()`, and `contexts_by_lineno()` calls. If the context does not match recorded data, queries return empty results rather than raising an exception.
 
+## Product State Model
+
+A coverage run has one measured data set containing files, executed lines or arcs, contexts, and optional file-tracer names. The active `Coverage` object, `CoverageData`, the configured data file, report methods, and CLI commands are public projections of that same state.
+
+- Data collected by `Coverage` must be visible through `get_data()` and through a `CoverageData` object that reads the written data file.
+- Line, branch, and context filters must select the same measurements in programmatic queries and generated reports.
+- JSON, XML, HTML, LCOV, annotate, and text reports generated from the same data must agree on measured files and overall coverage totals.
+- `combine()` must merge parallel data into the same state subsequently read by report commands and programmatic `CoverageData` queries.
+
 ## Command-Line Behavior
 
 ### `coverage help`
@@ -327,10 +336,14 @@ coverage html -d demo/htmlcov
 - Guaranteeing platform-specific path spelling beyond documented include/omit/path mapping semantics.
 - Treating unsupported importable modules as public API merely because their module names have no leading underscore.
 
-## Implementation Guidance
+## Invocation Protocol
 
-The expected implementation should exercise coverage.py through public imports and ordinary command-line workflows. Tests should create temporary Python files, run them under coverage measurement, inspect `CoverageData`, generate reports, combine and erase data files, and verify errors through public exception classes.
+The console command is `coverage`. Covered commands include `help`, `run`, `report`, `json`, `xml`, `html`, `lcov`, `annotate`, `combine`, `erase`, and `debug data`. Successful commands must return status 0. `coverage report --fail-under` must return status 2 when total coverage is below the threshold. Missing scripts, invalid configuration, missing source, and absent measurement data must return a nonzero status. Running `python -m coverage` is supported and must expose the same command behavior.
 
-Scoring should reward semantic compatibility: measured files, line and branch data, contexts, data-file persistence, report totals, and CLI/API consistency. Checks may inspect structured JSON/XML fields and public `CoverageData` query results, but should avoid exact debug formatting, exact HTML/CSS asset contents, private attributes, project-specific helper behavior, and implementation-specific object representations.
+## Environment
 
-The execution target is local Python code using the standard library. Tests should avoid external services, optional third-party concurrency libraries, and reliance on a C extension tracer.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
+## Evaluation Notes
+
+Assessment exercises measurement, contexts, data persistence and merging, configuration, reports, errors, and CLI/API agreement against local Python programs. It observes public data queries, generated report files, structured report fields, totals, exception classes, and exit statuses. Collector internals, tracer implementation, storage schema, exact report whitespace, exact diagnostic wording, HTML styling, and source organization are not assessed.

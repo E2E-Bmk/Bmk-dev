@@ -401,8 +401,10 @@ bandit-baseline [-f {txt,html,json}] targets... [additional bandit options]
 
 The script must return 0 or 1 from the current comparison scan and 2 for baseline setup failure. It must not leave the repository checked out at the parent commit after success or failure.
 
-## Implementation Guidance
+## Environment
 
-Automated checks exercise public console scripts, package-level plugin symbols, documented extension entry groups, and parsed report outputs. Checks compare semantic issue identity, ratings, CWE, locations, metrics, suppression, selection, baseline behavior, skipped-file errors, and exit status across formats. They do not compare exact presentation, timestamps, ordering, platform-specific path rendering, terminal color, or HTML styling.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-Rule coverage samples documented trigger and non-trigger cases across B1xx-B7xx families. Configuration checks use conflicting sources to verify the stated precedence and combination rules. Workflow checks run only against local temporary source trees and local Git repositories. The evaluation set is capped at 70 cases and assigns credit by independently observable behavior rather than internal architecture.
+## Evaluation Notes
+
+Assessment exercises public console scripts, package-level plugin symbols, documented extension entry groups, and parsed report outputs. It compares semantic issue identity, ratings, CWE, locations, metrics, suppression, selection, baseline behavior, skipped-file errors, and exit status across formats. Exact presentation, timestamps, ordering, platform-specific path spelling, terminal color, HTML styling, internal manager classes, and registry layout are not assessed.

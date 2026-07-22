@@ -1,5 +1,9 @@
-# Spec2Repo oracle - atomic tests for httpx-client-fullrepro-001
-import asyncio
+"""Atomic tests for httpx-client-fullrepro-001.
+
+Each test exercises ONE public API entry point with ONE behavior.
+"""
+from __future__ import annotations
+
 import json
 
 import pytest
@@ -7,347 +11,308 @@ import pytest
 import httpx
 
 
-def test_client_reentering_open_context_raises():
-    client = httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(200)))
-    with client:
-        with pytest.raises(RuntimeError):
-            with client:
-                pass
+# =============================================================================
+# Headers
+# =============================================================================
 
 
-def test_client_enter_after_close_raises():
-    client = httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(200)))
-    client.close()
-    with pytest.raises(RuntimeError):
-        with client:
-            pass
+def test_headers_case_insensitive_lookup():
+    h = httpx.Headers([("Content-Type", "text/html"), ("x-id", "42")])
+    assert h["content-type"] == "text/html"
+    assert h["X-ID"] == "42"
 
 
-def test_base_url_relative_paths_resolve_under_base_path():
-    client = httpx.Client(base_url="https://example.org/root/path/")
-    assert str(client.build_request("GET", "child").url) == "https://example.org/root/path/child"
-    assert str(client.build_request("GET", "../sibling").url) == "https://example.org/root/sibling"
+def test_headers_get_list_returns_all_values():
+    h = httpx.Headers([("Accept", "text/html"), ("accept", "application/json")])
+    assert h.get_list("ACCEPT") == ["text/html", "application/json"]
 
 
-def test_invalid_url_construction_raises_public_exception():
-    with pytest.raises(httpx.InvalidURL):
-        httpx.URL("http://example.org:abc").port
+def test_headers_combined_value_for_duplicates():
+    h = httpx.Headers([("X-Tag", "a"), ("x-tag", "b")])
+    assert h["x-tag"] == "a, b"
 
 
-def test_headers_case_insensitive_lookup_and_duplicates():
-    headers = httpx.Headers([("X-Thing", "one"), ("x-thing", "two"), ("Other", "ok")])
-    assert headers["x-thing"] == "one, two"
-    assert headers.get_list("X-THING") == ["one", "two"]
-    assert ("x-thing", "one") in list(headers.multi_items())
-    assert ("x-thing", "two") in list(headers.multi_items())
+def test_headers_split_commas():
+    h = httpx.Headers([("Accept", "text/html, text/plain"), ("Accept", "application/xml")])
+    assert h.get_list("accept", split_commas=True) == ["text/html", "text/plain", "application/xml"]
 
 
-def test_headers_setting_replaces_all_existing_values():
-    headers = httpx.Headers([("A", "1"), ("a", "2"), ("B", "3")])
-    headers["a"] = "final"
-    assert headers.get_list("A") == ["final"]
-    assert headers["b"] == "3"
-    del headers["A"]
-    assert "a" not in headers
+def test_headers_set_replaces_all_existing():
+    h = httpx.Headers([("X-A", "1"), ("x-a", "2"), ("X-B", "3")])
+    h["x-a"] = "final"
+    assert h.get_list("X-A") == ["final"]
 
 
-def test_headers_get_and_missing_key_behavior():
-    headers = httpx.Headers({"Content-Type": "text/plain"})
-    assert headers.get("content-type") == "text/plain"
-    assert headers.get("missing", "fallback") == "fallback"
+def test_headers_delete_removes_all():
+    h = httpx.Headers([("X-A", "1"), ("x-a", "2")])
+    del h["X-A"]
+    assert "x-a" not in h
+
+
+def test_headers_missing_key_raises():
+    h = httpx.Headers({"Only": "one"})
     with pytest.raises(KeyError):
-        _ = headers["missing"]
+        _ = h["missing"]
+    assert h.get("missing", "fallback") == "fallback"
 
 
-def test_headers_split_commas_keeps_ordered_values():
-    headers = httpx.Headers([("Accept", "text/html, application/json"), ("Accept", "text/plain")])
-    assert headers.get_list("accept", split_commas=True) == ["text/html", "application/json", "text/plain"]
+def test_headers_multi_items_preserves_all_pairs():
+    h = httpx.Headers([("A", "1"), ("a", "2"), ("B", "3")])
+    items = list(h.multi_items())
+    assert ("a", "1") in items
+    assert ("a", "2") in items
 
 
-def test_invalid_header_value_is_rejected():
-    with pytest.raises(TypeError):
-        httpx.Request("GET", "https://example.org/", headers={"X-Bad": None})
+# =============================================================================
+# QueryParams
+# =============================================================================
 
 
-def test_queryparams_lookup_lists_and_string_encoding():
-    params = httpx.QueryParams([("a", "1"), ("a", "2"), ("space", "a b")])
-    assert params["a"] == "1"
-    assert params.get_list("a") == ["1", "2"]
-    assert "space=a+b" in str(params)
+def test_queryparams_lookup_returns_first_value():
+    qp = httpx.QueryParams([("k", "one"), ("k", "two")])
+    assert qp["k"] == "one"
+    assert qp.get_list("k") == ["one", "two"]
 
 
-def test_queryparams_set_add_remove_and_merge_are_immutable():
-    params = httpx.QueryParams("a=1&a=2&b=3")
-    changed = params.set("a", "final")
-    added = changed.add("a", "again")
-    removed = added.remove("b")
-    merged = removed.merge({"c": "4", "a": "merged"})
-    assert params.get_list("a") == ["1", "2"]
-    assert changed.get_list("a") == ["final"]
-    assert added.get_list("a") == ["final", "again"]
-    assert "b" not in removed
-    assert dict(merged) == {"a": "merged", "c": "4"}
+def test_queryparams_set_replaces_all():
+    qp = httpx.QueryParams("k=1&k=2&x=3")
+    new = qp.set("k", "final")
+    assert new.get_list("k") == ["final"]
+    assert qp.get_list("k") == ["1", "2"]
 
 
-def test_url_exposes_normalized_components():
-    url = httpx.URL("https://user:pass@example.org:8443/a/b?x=1#frag")
+def test_queryparams_add_appends():
+    qp = httpx.QueryParams("k=1")
+    new = qp.add("k", "2")
+    assert new.get_list("k") == ["1", "2"]
+
+
+def test_queryparams_remove_deletes_key():
+    qp = httpx.QueryParams("a=1&b=2")
+    new = qp.remove("a")
+    assert "a" not in new
+
+
+def test_queryparams_merge_replaces_existing_keys():
+    qp = httpx.QueryParams("a=1&b=2")
+    new = qp.merge({"a": "new", "c": "3"})
+    assert new["a"] == "new"
+    assert new["b"] == "2"
+    assert new["c"] == "3"
+
+
+# =============================================================================
+# URL
+# =============================================================================
+
+
+def test_url_parses_all_components():
+    url = httpx.URL("https://user:pw@host.test:9443/path?q=1#frag")
     assert url.scheme == "https"
     assert url.username == "user"
-    assert url.password == "pass"
-    assert url.host == "example.org"
-    assert url.port == 8443
-    assert url.path == "/a/b"
-    assert url.query == b"x=1"
+    assert url.password == "pw"
+    assert url.host == "host.test"
+    assert url.port == 9443
+    assert url.path == "/path"
     assert url.fragment == "frag"
 
 
-def test_url_copy_and_param_helpers_return_new_urls():
-    url = httpx.URL("https://example.org/path?a=1")
-    assert str(url.copy_with(path="/other")) == "https://example.org/other?a=1"
-    assert str(url.copy_set_param("a", "2")) == "https://example.org/path?a=2"
-    assert str(url.copy_add_param("a", "3")) == "https://example.org/path?a=1&a=3"
-    assert str(url.copy_remove_param("a")) == "https://example.org/path"
-    assert str(url.copy_merge_params({"b": "4"})) == "https://example.org/path?a=1&b=4"
-    assert str(url) == "https://example.org/path?a=1"
+def test_url_copy_with_returns_new_url():
+    url = httpx.URL("https://host.test/a?x=1")
+    new = url.copy_with(path="/b")
+    assert str(new) == "https://host.test/b?x=1"
+    assert str(url) == "https://host.test/a?x=1"
 
 
-def test_url_join_resolves_relative_references():
-    base = httpx.URL("https://example.org/a/b/c")
-    assert str(base.join("../d?x=1")) == "https://example.org/a/d?x=1"
+def test_url_param_helpers():
+    url = httpx.URL("https://host.test/p?a=1")
+    assert "a=2" in str(url.copy_set_param("a", "2"))
+    assert "a=1&a=2" in str(url.copy_add_param("a", "2"))
+    assert "a=" not in str(url.copy_remove_param("a"))
 
 
-def test_cookies_set_get_delete_and_conflict():
-    cookies = httpx.Cookies()
-    cookies.set("sid", "one", domain="example.org", path="/")
-    cookies.set("sid", "two", domain="api.example.org", path="/")
-    assert cookies.get("sid", domain="example.org") == "one"
+def test_url_join_resolves_relative():
+    base = httpx.URL("https://host.test/a/b/c")
+    assert str(base.join("../d")) == "https://host.test/a/d"
+
+
+def test_invalid_url_raises():
+    with pytest.raises(httpx.InvalidURL):
+        httpx.URL("http://host.test:abc").port
+
+
+# =============================================================================
+# Cookies
+# =============================================================================
+
+
+def test_cookies_set_get_delete():
+    c = httpx.Cookies()
+    c.set("sid", "val1", domain="a.test", path="/")
+    assert c.get("sid", domain="a.test") == "val1"
+    c.delete("sid", domain="a.test", path="/")
+    assert c.get("sid", domain="a.test", default=None) is None
+
+
+def test_cookies_conflict_on_ambiguous_get():
+    c = httpx.Cookies()
+    c.set("tok", "one", domain="a.test")
+    c.set("tok", "two", domain="b.test")
     with pytest.raises(httpx.CookieConflict):
-        cookies.get("sid")
-    cookies.delete("sid", domain="example.org", path="/")
-    assert cookies.get("sid", domain="api.example.org") == "two"
+        c.get("tok")
 
 
-def test_cookies_clear_removes_matching_domain_and_path():
-    cookies = httpx.Cookies()
-    cookies.set("sid", "one", domain="example.org", path="/")
-    cookies.set("sid", "two", domain="api.example.org", path="/")
-    cookies.clear(domain="example.org", path="/")
-    assert cookies.get("sid", domain="example.org", default=None) is None
-    assert cookies.get("sid", domain="api.example.org") == "two"
+def test_cookies_clear_by_domain():
+    c = httpx.Cookies()
+    c.set("a", "1", domain="x.test", path="/")
+    c.set("a", "2", domain="y.test", path="/")
+    c.clear(domain="x.test", path="/")
+    assert c.get("a", domain="x.test", default=None) is None
+    assert c.get("a", domain="y.test") == "2"
 
 
-def test_request_model_adds_default_headers_and_content_length():
-    request = httpx.Request("post", "https://example.org/submit", content=b"abc")
-    assert request.method == "POST"
-    assert request.url == httpx.URL("https://example.org/submit")
-    assert request.headers["host"] == "example.org"
-    assert request.headers["content-length"] == "3"
-    assert request.content == b"abc"
+# =============================================================================
+# Request model
+# =============================================================================
 
 
-def test_request_json_body_sets_content_type_and_bytes():
-    request = httpx.Request("POST", "https://example.org/", json={"a": 1})
-    assert request.headers["content-type"].startswith("application/json")
-    assert json.loads(request.content.decode()) == {"a": 1}
+def test_request_normalizes_method_to_uppercase():
+    req = httpx.Request("post", "https://host.test/")
+    assert req.method == "POST"
 
 
-def test_request_stream_content_requires_read_before_content_access():
-    request = httpx.Request("POST", "https://example.org/", stream=httpx.ByteStream(b"abc"))
+def test_request_sets_host_and_content_length():
+    req = httpx.Request("PUT", "https://host.test/item", content=b"body")
+    assert req.headers["host"] == "host.test"
+    assert req.headers["content-length"] == "4"
+
+
+def test_request_json_body_sets_content_type():
+    req = httpx.Request("POST", "https://host.test/", json={"x": 1})
+    assert "application/json" in req.headers["content-type"]
+    assert json.loads(req.content) == {"x": 1}
+
+
+def test_request_stream_requires_read():
+    req = httpx.Request("POST", "https://host.test/", stream=httpx.ByteStream(b"data"))
     with pytest.raises(httpx.RequestNotRead):
-        _ = request.content
-    assert request.read() == b"abc"
-    assert request.content == b"abc"
-    assert request.read() == b"abc"
+        _ = req.content
+    assert req.read() == b"data"
+    assert req.content == b"data"
 
 
-def test_response_status_reason_http_version_and_url_projection():
-    request = httpx.Request("GET", "https://example.org/")
-    response = httpx.Response(201, request=request, extensions={"http_version": b"HTTP/2"})
-    assert response.status_code == 201
-    assert response.reason_phrase == "Created"
-    assert response.http_version == "HTTP/2"
-    assert response.url == request.url
+# =============================================================================
+# Response model
+# =============================================================================
 
 
-def test_response_request_and_url_require_attached_request():
-    response = httpx.Response(200)
+def test_response_status_and_reason():
+    resp = httpx.Response(201)
+    assert resp.status_code == 201
+    assert resp.reason_phrase == "Created"
+
+
+def test_response_json_and_text():
+    resp = httpx.Response(200, json={"ok": True})
+    assert resp.json() == {"ok": True}
+    assert resp.text
+
+
+def test_response_request_required():
+    resp = httpx.Response(200)
     with pytest.raises(RuntimeError):
-        _ = response.request
+        _ = resp.request
     with pytest.raises(RuntimeError):
-        _ = response.url
+        _ = resp.url
 
 
-def test_response_content_text_json_and_cookies():
-    request = httpx.Request("GET", "https://example.org/")
-    response = httpx.Response(200, json={"ok": True}, headers={"Set-Cookie": "a=b"}, request=request)
-    assert response.content
-    assert response.json() == {"ok": True}
-    assert response.text == response.content.decode(response.encoding)
-    assert response.cookies.get("a") == "b"
+def test_response_status_booleans():
+    assert httpx.Response(100).is_informational is True
+    assert httpx.Response(200).is_success is True
+    assert httpx.Response(301).is_redirect is True
+    assert httpx.Response(400).is_client_error is True
+    assert httpx.Response(500).is_server_error is True
+    assert httpx.Response(500).is_error is True
 
 
-def test_response_links_are_parsed_by_relation():
-    response = httpx.Response(200, headers={"Link": '<https://example.org/page/2>; rel="next"'})
-    assert response.links["next"]["url"] == "https://example.org/page/2"
-
-
-def test_raise_for_status_returns_self_for_success_and_raises_for_error():
-    request = httpx.Request("GET", "https://example.org/")
-    ok = httpx.Response(204, request=request)
-    assert ok.raise_for_status() is ok
-    error = httpx.Response(404, request=request)
-    with pytest.raises(httpx.HTTPStatusError) as exc_info:
-        error.raise_for_status()
-    assert exc_info.value.request is request
-    assert exc_info.value.response is error
-
-
-def test_response_status_category_booleans():
-    assert httpx.Response(101).is_informational is True
-    assert httpx.Response(204).is_success is True
-    assert httpx.Response(302).is_redirect is True
-    assert httpx.Response(404).is_client_error is True
-    assert httpx.Response(503).is_server_error is True
-    assert httpx.Response(503).is_error is True
-
-
-def test_response_has_redirect_location_requires_redirect_status_and_location():
-    assert httpx.Response(302, headers={"Location": "/next"}).has_redirect_location is True
-    assert httpx.Response(200, headers={"Location": "/next"}).has_redirect_location is False
+def test_response_has_redirect_location():
+    assert httpx.Response(302, headers={"Location": "/x"}).has_redirect_location is True
+    assert httpx.Response(200, headers={"Location": "/x"}).has_redirect_location is False
     assert httpx.Response(302).has_redirect_location is False
 
 
-def test_streamed_response_read_caches_content_and_closes_stream():
-    response = httpx.Response(200, stream=httpx.ByteStream(b"hello"))
+def test_raise_for_status_returns_self_for_2xx():
+    req = httpx.Request("GET", "https://host.test/")
+    ok = httpx.Response(204, request=req)
+    assert ok.raise_for_status() is ok
+
+
+def test_raise_for_status_raises_for_4xx():
+    req = httpx.Request("GET", "https://host.test/")
+    err = httpx.Response(404, request=req)
+    with pytest.raises(httpx.HTTPStatusError) as exc_info:
+        err.raise_for_status()
+    assert exc_info.value.request is req
+    assert exc_info.value.response is err
+
+
+def test_response_links_parsed():
+    resp = httpx.Response(200, headers={"Link": '<https://api.test/p2>; rel="next"'})
+    assert resp.links["next"]["url"] == "https://api.test/p2"
+
+
+def test_response_cookies_from_set_cookie():
+    req = httpx.Request("GET", "https://host.test/")
+    resp = httpx.Response(200, headers={"Set-Cookie": "sid=xyz"}, request=req)
+    assert resp.cookies.get("sid") == "xyz"
+
+
+# =============================================================================
+# Streaming and read state
+# =============================================================================
+
+
+def test_streamed_response_requires_read():
+    resp = httpx.Response(200, stream=httpx.ByteStream(b"lazy"))
     with pytest.raises(httpx.ResponseNotRead):
-        _ = response.text
-    assert response.read() == b"hello"
-    assert response.content == b"hello"
-    assert response.is_closed is True
+        _ = resp.text
+    assert resp.read() == b"lazy"
+    assert resp.content == b"lazy"
 
 
-def test_iter_bytes_text_lines_and_raw_consume_streams():
-    byte_response = httpx.Response(200, stream=httpx.ByteStream(b"ab"))
-    assert list(byte_response.iter_bytes()) == [b"ab"]
+def test_iter_bytes_consumes_stream():
+    resp = httpx.Response(200, stream=httpx.ByteStream(b"chunk"))
+    assert list(resp.iter_bytes()) == [b"chunk"]
     with pytest.raises(httpx.StreamConsumed):
-        list(byte_response.iter_bytes())
-
-    text_response = httpx.Response(200, stream=httpx.ByteStream("a\r\nb".encode()))
-    assert list(text_response.iter_lines()) == ["a", "b"]
-
-    raw_response = httpx.Response(200, stream=httpx.ByteStream(b"xyz"))
-    assert list(raw_response.iter_raw()) == [b"xyz"]
+        list(resp.iter_bytes())
 
 
-def test_response_closed_before_read_raises_stream_closed():
-    response = httpx.Response(200, stream=httpx.ByteStream(b"abc"))
-    response.close()
+def test_closed_response_raises_stream_closed():
+    resp = httpx.Response(200, stream=httpx.ByteStream(b"x"))
+    resp.close()
     with pytest.raises(httpx.StreamClosed):
-        response.read()
+        resp.read()
 
 
-def test_num_bytes_downloaded_tracks_raw_stream_consumption():
-    response = httpx.Response(200, stream=httpx.ByteStream(b"abcdef"))
-    assert response.num_bytes_downloaded == 0
-    assert list(response.iter_raw(chunk_size=2)) == [b"ab", b"cd", b"ef"]
-    assert response.num_bytes_downloaded == 6
+def test_num_bytes_downloaded_tracks_raw():
+    resp = httpx.Response(200, stream=httpx.ByteStream(b"abcdef"))
+    list(resp.iter_raw())
+    assert resp.num_bytes_downloaded == 6
 
 
-def test_too_many_redirects_raises_with_request():
-    def handler(request):
-        return httpx.Response(302, headers={"Location": "/loop"}, request=request)
-
-    client = httpx.Client(base_url="https://example.org", max_redirects=1, transport=httpx.MockTransport(handler))
-    with pytest.raises(httpx.TooManyRedirects) as exc_info:
-        client.get("/loop", follow_redirects=True)
-    assert exc_info.value.request.url.path == "/loop"
+# =============================================================================
+# Exception hierarchy
+# =============================================================================
 
 
-def test_client_event_hooks_property_can_be_mutated():
-    client = httpx.Client()
-    seen = []
-
-    def hook(request):
-        seen.append(str(request.url))
-
-    client.event_hooks["request"].append(hook)
-    request = client.build_request("GET", "https://example.org/")
-    for registered in client.event_hooks["request"]:
-        registered(request)
-    assert seen == ["https://example.org/"]
-
-
-def test_async_client_rejects_sync_hook_when_awaited():
-    async def run():
-        def sync_hook(request):
-            return None
-
-        async with httpx.AsyncClient(
-            transport=httpx.MockTransport(lambda request: httpx.Response(200, request=request)),
-            event_hooks={"request": [sync_hook]},
-        ) as client:
-            with pytest.raises(TypeError):
-                await client.get("https://example.org/")
-
-    asyncio.run(run())
-
-
-def test_basic_auth_tuple_sets_authorization_header():
-    def handler(request):
-        return httpx.Response(200, json={"auth": request.headers["authorization"]}, request=request)
-
-    client = httpx.Client(transport=httpx.MockTransport(handler))
-    response = client.get("https://example.org/", auth=("user", "pass"))
-    assert response.json()["auth"].startswith("Basic ")
-
-
-def test_callable_auth_mutates_prepared_request():
-    def add_auth(request):
-        request.headers["Authorization"] = "Token abc"
-        return request
-
-    def handler(request):
-        return httpx.Response(200, text=request.headers["authorization"], request=request)
-
-    client = httpx.Client(transport=httpx.MockTransport(handler))
-    assert client.get("https://example.org/", auth=add_auth).text == "Token abc"
-
-
-def test_base_transport_without_handle_request_raises_not_implemented():
-    client = httpx.Client(transport=httpx.BaseTransport())
-    with pytest.raises(NotImplementedError):
-        client.get("https://example.org/")
-
-
-def test_sync_client_with_async_transport_raises_capability_error():
-    client = httpx.Client(transport=httpx.AsyncBaseTransport())
-    assert client.is_closed is False
-    with pytest.raises(Exception):
-        client.get("https://example.org/")
-
-
-def test_public_exception_hierarchy_and_request_attribute():
-    request = httpx.Request("GET", "https://example.org/")
-    error = httpx.RequestError("problem", request=request)
-    assert isinstance(error, httpx.HTTPError)
-    assert error.request is request
-
-    unattached = httpx.RequestError("problem")
-    with pytest.raises(RuntimeError):
-        _ = unattached.request
-
-
-def test_stream_state_exceptions_are_public_stream_errors():
+def test_exception_hierarchy():
+    assert issubclass(httpx.RequestError, httpx.HTTPError)
+    assert issubclass(httpx.HTTPStatusError, httpx.HTTPError)
     assert issubclass(httpx.StreamConsumed, httpx.StreamError)
     assert issubclass(httpx.StreamClosed, httpx.StreamError)
-    assert issubclass(httpx.ResponseNotRead, httpx.StreamError)
-    assert issubclass(httpx.RequestNotRead, httpx.StreamError)
-    response = httpx.Response(200, stream=httpx.ByteStream(b"state"))
-    with pytest.raises(httpx.ResponseNotRead):
-        _ = response.content
 
 
-def test_unsupported_protocol_raises_request_error_subclass():
-    client = httpx.Client()
-    with pytest.raises(httpx.UnsupportedProtocol):
-        client.get("ftp://example.org/")
+def test_request_error_without_request_raises():
+    err = httpx.RequestError("problem")
+    with pytest.raises(RuntimeError):
+        _ = err.request

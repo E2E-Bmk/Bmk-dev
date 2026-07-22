@@ -1,62 +1,20 @@
 # Spec2Repo oracle - integration tests for coveragepy-fullrepro-001
 import json
-
 import os
-
-import subprocess
-
-import sys
-
-import xml.etree.ElementTree as ET
-
 from pathlib import Path
-
-from coverage import Coverage, CoverageData
-
-from coverage.exceptions import ConfigError, NoDataError, NoSource
-
 from xml.etree import ElementTree
 
 import pytest
 
 import coverage
+from coverage import Coverage, CoverageData
+from coverage.exceptions import ConfigError, NoDataError, NoSource, DataError
 
-from coverage.exceptions import ConfigError, DataError, NoDataError, NoSource
-
-def write_py(path: Path, text: str) -> Path:
-    path.write_text(text, encoding="utf-8")
-    return path
-
-
-def run_cli(cwd: Path, *args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
-    run_env = os.environ.copy()
-    if env:
-        run_env.update(env)
-    return subprocess.run(
-        [sys.executable, "-m", "coverage", *args],
-        cwd=cwd,
-        text=True,
-        capture_output=True,
-        env=run_env,
-        timeout=30,
-    )
-
-
-def measured_file(data: CoverageData, suffix: str) -> str:
-    return next(name for name in data.measured_files() if name.endswith(suffix))
-
-
-def collect_file(tmp_path: Path, source: str, *, branch: bool = False, context: str | None = None) -> tuple[Coverage, Path]:
-    program = write_py(tmp_path / "sample.py", source)
-    cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)], branch=branch, context=context)
-    cov.start()
-    exec(compile(program.read_text(encoding="utf-8"), str(program), "exec"), {})
-    cov.stop()
-    cov.save()
-    return cov, program
+from conftest import write_py, run_cli, measured_file, collect_file
 
 
 def test_cli_branch_context_json_and_total_report_agree(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     write_py(
         tmp_path / "prog.py",
         "flag = True\n"
@@ -87,6 +45,7 @@ def test_cli_branch_context_json_and_total_report_agree(tmp_path):
 
 
 def test_cli_xml_report_exposes_branch_totals_and_missing_branch(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     write_py(
         tmp_path / "prog.py",
         "flag = True\n"
@@ -99,7 +58,7 @@ def test_cli_xml_report_exposes_branch_totals_and_missing_branch(tmp_path):
 
     xml_result = run_cli(tmp_path, "xml", "-o", "coverage.xml")
     assert xml_result.returncode == 0
-    root = ET.parse(tmp_path / "coverage.xml").getroot()
+    root = ElementTree.parse(tmp_path / "coverage.xml").getroot()
     assert root.attrib["branches-valid"] == "2"
     assert root.attrib["branches-covered"] == "1"
     assert root.attrib["branch-rate"] == "0.5"
@@ -112,6 +71,7 @@ def test_cli_xml_report_exposes_branch_totals_and_missing_branch(tmp_path):
 
 
 def test_configured_data_file_is_shared_by_cli_and_coveragedata(tmp_path):
+    """Seam: state consistency — projections agree across API boundaries."""
     write_py(tmp_path / "prog.py", "value = 7\nprint(value)\n")
     (tmp_path / ".coveragerc").write_text("[run]\ndata_file = envcov.dat\n", encoding="utf-8")
 
@@ -126,6 +86,7 @@ def test_configured_data_file_is_shared_by_cli_and_coveragedata(tmp_path):
 
 
 def test_programmatic_branch_contexts_survive_serialization(tmp_path):
+    """Seam: state consistency — projections agree across API boundaries."""
     program = write_py(
         tmp_path / "prog.py",
         "flag = False\n"
@@ -156,6 +117,7 @@ def test_programmatic_branch_contexts_survive_serialization(tmp_path):
 
 
 def test_coverage_collect_context_manager_records_lines(tmp_path):
+    """Seam: state consistency — integrated workflow preserves expected invariants."""
     program = write_py(tmp_path / "prog.py", "a = 1\nb = 2\nc = a + b\n")
     cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)])
 
@@ -171,6 +133,7 @@ def test_coverage_collect_context_manager_records_lines(tmp_path):
 
 
 def test_coverage_analysis_and_analysis2_report_missing_lines(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
     program = write_py(
         tmp_path / "prog.py",
         "flag = True\n"
@@ -196,6 +159,7 @@ def test_coverage_analysis_and_analysis2_report_missing_lines(tmp_path):
 
 
 def test_exclude_and_clear_exclude_change_missing_line_analysis(tmp_path):
+    """Seam: state consistency — integrated workflow preserves expected invariants."""
     program = write_py(
         tmp_path / "prog.py",
         "flag = True\n"
@@ -220,6 +184,7 @@ def test_exclude_and_clear_exclude_change_missing_line_analysis(tmp_path):
 
 
 def test_switch_context_filters_coveragedata_queries(tmp_path):
+    """Seam: state consistency — integrated workflow preserves expected invariants."""
     first = write_py(tmp_path / "first.py", "value = 1\n")
     second = write_py(tmp_path / "second.py", "value = 2\n")
     cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)], context="static")
@@ -241,6 +206,7 @@ def test_switch_context_filters_coveragedata_queries(tmp_path):
 
 
 def test_include_omit_measurement_controls_measured_files(tmp_path):
+    """Seam: config interaction — multiple sources merge with documented precedence."""
     keep = write_py(tmp_path / "keep.py", "value = 'keep'\n")
     skip = write_py(tmp_path / "skip.py", "value = 'skip'\n")
     cov = Coverage(data_file=str(tmp_path / ".coverage"), include=[str(keep)], omit=[str(skip)])
@@ -255,6 +221,7 @@ def test_include_omit_measurement_controls_measured_files(tmp_path):
 
 
 def test_programmatic_json_xml_html_and_lcov_reports_share_total(tmp_path):
+    """Seam: state consistency — projections agree across API boundaries."""
     program = write_py(tmp_path / "prog.py", "print('hello')\n")
     cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)])
     cov.start()
@@ -275,6 +242,7 @@ def test_programmatic_json_xml_html_and_lcov_reports_share_total(tmp_path):
 
 
 def test_combine_keep_preserves_parallel_input_files(tmp_path):
+    """Seam: state consistency — persisted and in-memory views stay aligned."""
     write_py(tmp_path / "one.py", "print('one')\n")
     write_py(tmp_path / "two.py", "print('two')\n")
     assert run_cli(tmp_path, "run", "--parallel-mode", "one.py").returncode == 0
@@ -292,6 +260,7 @@ def test_combine_keep_preserves_parallel_input_files(tmp_path):
 
 
 def test_cli_erase_removes_coverage_file_and_report_has_no_data(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     write_py(tmp_path / "prog.py", "print('hello')\n")
     assert run_cli(tmp_path, "run", "prog.py").returncode == 0
     assert (tmp_path / ".coverage").exists()
@@ -305,6 +274,7 @@ def test_cli_erase_removes_coverage_file_and_report_has_no_data(tmp_path):
 
 
 def test_cli_run_module_passes_program_arguments(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     package = tmp_path / "pkg"
     package.mkdir()
     write_py(package / "__init__.py", "")
@@ -321,17 +291,8 @@ def test_cli_run_module_passes_program_arguments(tmp_path):
     assert json.loads((tmp_path / "args.json").read_text(encoding="utf-8")) == ["left", "right"]
 
 
-def test_cli_debug_data_reports_measured_file(tmp_path):
-    write_py(tmp_path / "prog.py", "print('hello')\n")
-    assert run_cli(tmp_path, "run", "prog.py").returncode == 0
-
-    debug = run_cli(tmp_path, "debug", "data")
-
-    assert debug.returncode == 0
-    assert "prog.py" in debug.stdout
-
-
 def test_coverage_file_environment_is_used_by_report_command(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     write_py(tmp_path / "prog.py", "print('hello')\n")
     env = {"COVERAGE_FILE": str(tmp_path / "custom.dat")}
     assert run_cli(tmp_path, "run", "prog.py", env=env).returncode == 0
@@ -342,18 +303,8 @@ def test_coverage_file_environment_is_used_by_report_command(tmp_path):
     assert report.stdout.strip() == "100"
 
 
-def test_coverage_data_update_merges_measured_files(tmp_path):
-    left = CoverageData(no_disk=True)
-    right = CoverageData(no_disk=True)
-    a_file = str(tmp_path / "a.py")
-    b_file = str(tmp_path / "b.py")
-    left.add_lines({a_file: {1}})
-    right.add_lines({b_file: {2}})
-    left.update(right)
-    assert {Path(name).name for name in left.measured_files()} == {"a.py", "b.py"}
-
-
 def test_coverage_data_query_context_filters_lines(tmp_path):
+    """Seam: state consistency — integrated workflow preserves expected invariants."""
     program = write_py(tmp_path / "ctx.py", "a = 1\nb = 2\nc = 3\n")
     cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)], context="setup")
     cov.start()
@@ -373,6 +324,7 @@ def test_coverage_data_query_context_filters_lines(tmp_path):
 
 
 def test_exclusion_rules_remove_lines_from_missing_report(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
     cov, program = collect_file(tmp_path, "x = 1\nif x:\n    y = 2\nelse:  # pragma: no cover\n    y = 3\n")
     analysis = cov.analysis2(str(program))
     assert 5 not in analysis[3]
@@ -383,6 +335,7 @@ def test_exclusion_rules_remove_lines_from_missing_report(tmp_path):
 
 
 def test_json_report_contains_totals_and_file_details(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
     cov, _program = collect_file(tmp_path, "x = 1\nprint(x)\n", branch=True)
     outfile = tmp_path / "coverage.json"
     total = cov.json_report(outfile=str(outfile), pretty_print=True)
@@ -392,6 +345,7 @@ def test_json_report_contains_totals_and_file_details(tmp_path):
 
 
 def test_xml_report_writes_cobertura_style_document(tmp_path):
+    """Seam: state consistency — persisted and in-memory views stay aligned."""
     cov, _program = collect_file(tmp_path, "x = 1\nprint(x)\n")
     outfile = tmp_path / "coverage.xml"
     assert cov.xml_report(outfile=str(outfile)) == 100.0
@@ -401,6 +355,7 @@ def test_xml_report_writes_cobertura_style_document(tmp_path):
 
 
 def test_html_report_writes_index_and_source_page(tmp_path):
+    """Seam: state consistency — persisted and in-memory views stay aligned."""
     cov, _program = collect_file(tmp_path, "x = 1\nprint(x)\n")
     outdir = tmp_path / "htmlcov"
     total = cov.html_report(directory=str(outdir))
@@ -410,6 +365,7 @@ def test_html_report_writes_index_and_source_page(tmp_path):
 
 
 def test_lcov_report_mentions_source_file_and_lines(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
     cov, _program = collect_file(tmp_path, "x = 1\nprint(x)\n")
     outfile = tmp_path / "coverage.lcov"
     assert cov.lcov_report(outfile=str(outfile)) == 100.0
@@ -419,6 +375,7 @@ def test_lcov_report_mentions_source_file_and_lines(tmp_path):
 
 
 def test_annotate_report_marks_missing_lines(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
     cov, _program = collect_file(tmp_path, "flag = False\nif flag:\n    missed = 1\n")
     outdir = tmp_path / "annotated"
     cov.annotate(directory=str(outdir))
@@ -429,6 +386,7 @@ def test_annotate_report_marks_missing_lines(tmp_path):
 
 
 def test_cli_run_report_and_json_share_data_file(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     write_py(tmp_path / "prog.py", "x = 1\nprint(x)\n")
     assert run_cli(tmp_path, "run", "prog.py").returncode == 0
     report = run_cli(tmp_path, "report", "--format=total")
@@ -439,24 +397,8 @@ def test_cli_run_report_and_json_share_data_file(tmp_path):
     assert json.loads((tmp_path / "out.json").read_text(encoding="utf-8"))["totals"]["covered_lines"] == 2
 
 
-def test_cli_run_module_passes_program_arguments(tmp_path):
-    pkg = tmp_path / "pkg"
-    pkg.mkdir()
-    write_py(pkg / "__init__.py", "")
-    write_py(pkg / "__main__.py", "import sys\nopen('args.txt', 'w', encoding='utf-8').write('|'.join(sys.argv[1:]))\n")
-    result = run_cli(tmp_path, "run", "-m", "pkg", "a", "b")
-    assert result.returncode == 0
-    assert (tmp_path / "args.txt").read_text(encoding="utf-8") == "a|b"
-
-
-def test_cli_report_fail_under_returns_status_two(tmp_path):
-    write_py(tmp_path / "prog.py", "flag = True\nif flag:\n    x = 1\nelse:\n    x = 2\n")
-    assert run_cli(tmp_path, "run", "--branch", "prog.py").returncode == 0
-    result = run_cli(tmp_path, "report", "--fail-under=100")
-    assert result.returncode == 2
-
-
 def test_cli_combine_merges_parallel_data_files(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     write_py(tmp_path / "one.py", "a = 1\n")
     write_py(tmp_path / "two.py", "b = 2\n")
     assert run_cli(tmp_path, "run", "--parallel-mode", "one.py").returncode == 0
@@ -467,15 +409,8 @@ def test_cli_combine_merges_parallel_data_files(tmp_path):
     assert {Path(name).name for name in data.measured_files()} >= {"one.py", "two.py"}
 
 
-def test_coverage_file_environment_selects_data_file(tmp_path):
-    write_py(tmp_path / "prog.py", "x = 1\n")
-    env = {"COVERAGE_FILE": str(tmp_path / "custom.coverage")}
-    assert run_cli(tmp_path, "run", "prog.py", env=env).returncode == 0
-    assert (tmp_path / "custom.coverage").exists()
-    assert not (tmp_path / ".coverage").exists()
-
-
 def test_rcfile_config_controls_branch_and_report_output(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     write_py(tmp_path / "prog.py", "flag = True\nif flag:\n    x = 1\nelse:\n    x = 2\n")
     (tmp_path / ".coveragerc").write_text("[run]\nbranch = True\n[report]\nshow_missing = True\n", encoding="utf-8")
     assert run_cli(tmp_path, "run", "prog.py").returncode == 0
@@ -486,6 +421,7 @@ def test_rcfile_config_controls_branch_and_report_output(tmp_path):
 
 
 def test_public_report_methods_return_same_total_for_same_data(tmp_path):
+    """Seam: state consistency — projections agree across API boundaries."""
     cov, _program = collect_file(tmp_path, "x = 1\nprint(x)\n")
     text_total = cov.report(file=open(os.devnull, "w", encoding="utf-8"))
     json_total = cov.json_report(outfile=str(tmp_path / "coverage.json"))
@@ -494,6 +430,7 @@ def test_public_report_methods_return_same_total_for_same_data(tmp_path):
 
 
 def test_include_and_omit_filters_affect_measured_files(tmp_path):
+    """Seam: config interaction — multiple sources merge with documented precedence."""
     keep = write_py(tmp_path / "keep_me.py", "x = 1\n")
     skip = write_py(tmp_path / "skip_me.py", "y = 2\n")
     cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)], omit=[str(skip)])
@@ -504,3 +441,37 @@ def test_include_and_omit_filters_affect_measured_files(tmp_path):
     names = {Path(name).name for name in cov.get_data().measured_files()}
     assert "keep_me.py" in names
     assert "skip_me.py" not in names
+
+
+def test_installable_surface_imports_version_and_module_cli(tmp_path):
+    """Seam: protocol handoff — import surface and CLI --version agree on package identity."""
+    import coverage
+
+    assert isinstance(coverage.__version__, str)
+    assert hasattr(coverage, "Coverage")
+    assert hasattr(coverage, "CoverageData")
+
+    result = run_cli(tmp_path, "--version")
+
+    assert result.returncode == 0
+    assert "Coverage.py" in result.stdout
+
+
+def test_invalid_rcfile_reports_config_error_via_cli_and_api(tmp_path):
+    """Seam: error propagation — invalid rcfile errors surface via CLI and Coverage API."""
+    bad = tmp_path / ".coveragerc"
+    bad.write_text("[run\nbranch = true\n", encoding="utf-8")
+    cli = run_cli(tmp_path, "debug", "config")
+
+    def make_coverage():
+        Coverage(config_file=str(bad))
+
+    try:
+        make_coverage()
+    except ConfigError:
+        api_error = True
+    else:
+        api_error = False
+
+    assert cli.returncode != 0
+    assert api_error is True

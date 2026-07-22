@@ -12,16 +12,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TASKS_DIR = ROOT / "tasks"
 REQUIRED_FILES = ["spec.md", "kept_nodeids.txt", "taxonomy.jsonl", "spec_test_map.md"]
+REQUIRED_ORACLE_FILES = ["oracle/test_atomic.py", "oracle/test_integration.py"]
 ALLOWED_LAYERS = {"atomic", "integration", "system_e2e"}
 CLEANROOM_FORBIDDEN = [
     "task_id",
     "delta:",
     "source_boundary:",
     "Candidate Agent Input Boundary",
+    "<!-- INTERNAL",
     "benchmark",
     "oracle",
     "judge",
 ]
+TASK_JSON_REQUIRED_KEYS = ["instance_id", "status", "oracle", "taxonomy"]
 
 
 def read_lines(path: Path) -> list[str]:
@@ -153,6 +156,59 @@ def main(argv: list[str]) -> int:
         "kept_nodeid_format",
         bool(kept_lines) and not bad_nodeids,
         "all nodeids contain ::" if not bad_nodeids else "bad nodeids: " + ", ".join(bad_nodeids[:10]),
+        failures,
+    )
+
+    # Oracle directory checks
+    missing_oracle = [f for f in REQUIRED_ORACLE_FILES if not (task_dir / f).exists()]
+    report(
+        "oracle_files_exist",
+        not missing_oracle,
+        "oracle test files present" if not missing_oracle else "missing: " + ", ".join(missing_oracle),
+        failures,
+    )
+
+    # task.json checks
+    task_json_path = task_dir / "task.json"
+    if task_json_path.exists():
+        try:
+            with open(task_json_path, "r", encoding="utf-8") as f:
+                task_data = json.load(f)
+            missing_keys = [k for k in TASK_JSON_REQUIRED_KEYS if k not in task_data]
+            report(
+                "task_json_keys",
+                not missing_keys,
+                "all required keys present" if not missing_keys else "missing keys: " + ", ".join(missing_keys),
+                failures,
+            )
+            # Check instance_id matches directory name
+            instance_id = task_data.get("instance_id", "")
+            report(
+                "task_json_instance_id",
+                instance_id == task_id,
+                f"instance_id={instance_id!r}" if instance_id == task_id else f"mismatch: {instance_id!r} vs dir {task_id!r}",
+                failures,
+            )
+            # Check integration_gap is present
+            has_gap = "integration_gap" in task_data
+            report(
+                "task_json_integration_gap",
+                has_gap,
+                "integration_gap present" if has_gap else "integration_gap missing (required for QUALIFIED)",
+                failures,
+            )
+        except json.JSONDecodeError as exc:
+            report("task_json_valid", False, f"invalid JSON: {exc.msg}", failures)
+    else:
+        report("task_json_exists", False, "task.json missing", failures)
+
+    # Per-layer minimum counts
+    atomic_count = sum(1 for line in taxonomy_lines if '"atomic"' in line)
+    integ_count = len(taxonomy_lines) - atomic_count
+    report(
+        "layer_minimums",
+        atomic_count >= 15 and integ_count >= 15,
+        f"atomic={atomic_count}, integration+e2e={integ_count} (min 15 each)",
         failures,
     )
 

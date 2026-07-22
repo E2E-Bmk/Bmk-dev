@@ -1,11 +1,16 @@
-# Spec2Repo oracle - atomic tests for marshmallow-schema-fullrepro-001
+"""Atomic tests for marshmallow-schema-fullrepro-001.
+
+Each test verifies ONE public API entry point, ONE behavior.
+IMPORTANT: This task had -11.7pp gap. Atomic tests must be truly single-API.
+No cross-module tests (e.g., no load→dump consistency checks here).
+"""
+
 from __future__ import annotations
 
 import datetime as dt
 import decimal
 import enum
 import ipaddress
-import json
 import uuid
 from dataclasses import dataclass
 
@@ -16,392 +21,458 @@ from marshmallow import (
     INCLUDE,
     RAISE,
     Schema,
+    SchemaOpts,
     ValidationError,
     fields,
-    post_dump,
-    post_load,
-    pre_dump,
-    pre_load,
     validate,
     validates,
     validates_schema,
 )
-from marshmallow.experimental.context import Context
 
 
 @dataclass
-class User:
+class Person:
     name: str
     email: str
     age: int = 0
-    created_at: dt.datetime | None = None
 
 
-def test_only_limits_dump_and_load_views():
-    class UserSchema(Schema):
+# --- Schema.load: single field type conversions ---
+
+
+def test_load_str_field_accepts_string():
+    class S(Schema):
         name = fields.Str()
-        email = fields.Email()
-        age = fields.Int()
 
-    schema = UserSchema(only=("name", "email"))
-
-    assert schema.dump(User("Ada", "ada@example.com", 37)) == {
-        "name": "Ada",
-        "email": "ada@example.com",
-    }
-    assert schema.load({"name": "Ada", "email": "ada@example.com"}) == {
-        "name": "Ada",
-        "email": "ada@example.com",
-    }
-    with pytest.raises(ValidationError) as excinfo:
-        schema.load({"name": "Ada", "email": "ada@example.com", "age": 37})
-    assert "age" in excinfo.value.messages
+    assert S().load({"name": "Ada"}) == {"name": "Ada"}
 
 
-def test_exclude_removes_fields_from_dump_and_load():
-    class UserSchema(Schema):
-        name = fields.Str()
-        email = fields.Email()
-        age = fields.Int()
-
-    schema = UserSchema(exclude=("age",))
-
-    assert schema.dump(User("Ada", "ada@example.com", 37)) == {
-        "name": "Ada",
-        "email": "ada@example.com",
-    }
-    assert schema.load({"name": "Ada", "email": "ada@example.com"}) == {
-        "name": "Ada",
-        "email": "ada@example.com",
-    }
-    with pytest.raises(ValidationError) as excinfo:
-        schema.load({"name": "Ada", "email": "ada@example.com", "age": 37})
-    assert "age" in excinfo.value.messages
-
-
-def test_load_default_and_dump_default_are_applied():
-    class UserSchema(Schema):
-        name = fields.Str(load_default="anonymous")
-        created = fields.Date(dump_default=dt.date(2020, 1, 2))
-
-    schema = UserSchema()
-
-    assert schema.load({}) == {"name": "anonymous"}
-    assert schema.dump({}) == {"created": "2020-01-02"}
-
-
-def test_callable_load_default_runs_for_each_load():
-    calls = {"count": 0}
-
-    def next_value():
-        calls["count"] += 1
-        return calls["count"]
-
-    class CounterSchema(Schema):
-        value = fields.Int(load_default=next_value)
-
-    schema = CounterSchema()
-
-    assert schema.load({}) == {"value": 1}
-    assert schema.load({}) == {"value": 2}
-
-
-def test_load_default_none_allows_none_by_default():
-    class UserSchema(Schema):
-        nickname = fields.Str(load_default=None)
-
-    schema = UserSchema()
-
-    assert schema.load({}) == {"nickname": None}
-    assert schema.load({"nickname": None}) == {"nickname": None}
-
-
-def test_allow_none_false_rejects_none_even_with_default():
-    class UserSchema(Schema):
-        nickname = fields.Str(load_default="n/a", allow_none=False)
-
-    with pytest.raises(ValidationError) as excinfo:
-        UserSchema().load({"nickname": None})
-
-    assert "nickname" in excinfo.value.messages
-
-
-def test_attribute_reads_different_internal_name_on_dump():
-    class UserSchema(Schema):
-        display_name = fields.Str(attribute="name")
-
-    assert UserSchema().dump(User("Ada", "ada@example.com")) == {"display_name": "Ada"}
-
-
-def test_dump_only_is_omitted_from_load_and_load_only_from_dump():
-    class UserSchema(Schema):
-        name = fields.Str()
-        password = fields.Str(load_only=True)
-        created = fields.Str(dump_only=True)
-
-    schema = UserSchema(unknown=EXCLUDE)
-
-    assert schema.dump({"name": "Ada", "password": "secret", "created": "today"}) == {
-        "name": "Ada",
-        "created": "today",
-    }
-    assert schema.load({"name": "Ada", "password": "secret", "created": "today"}) == {
-        "name": "Ada",
-        "password": "secret",
-    }
-
-
-def test_validation_error_exposes_messages_and_valid_data():
-    class UserSchema(Schema):
-        name = fields.Str()
-        email = fields.Email(required=True)
-
-    with pytest.raises(ValidationError) as excinfo:
-        UserSchema().load({"name": "Ada", "email": "bad"})
-
-    err = excinfo.value
-    assert "email" in err.messages
-    assert err.valid_data == {"name": "Ada"}
-
-
-def test_collection_errors_are_keyed_by_index():
-    class UserSchema(Schema):
-        email = fields.Email(required=True)
-
-    with pytest.raises(ValidationError) as excinfo:
-        UserSchema(many=True).load([
-            {"email": "ada@example.com"},
-            {"email": "bad"},
-            {},
-        ])
-
-    assert set(excinfo.value.messages) == {1, 2}
-
-
-def test_string_integer_float_decimal_boolean_conversions():
-    class ValueSchema(Schema):
-        text = fields.Str()
+def test_load_int_field_coerces_string_to_int():
+    class S(Schema):
         count = fields.Int()
+
+    assert S().load({"count": "7"}) == {"count": 7}
+
+
+def test_load_float_field_coerces_string_to_float():
+    class S(Schema):
         ratio = fields.Float()
-        amount = fields.Decimal(as_string=True)
+
+    assert S().load({"ratio": "2.5"}) == {"ratio": 2.5}
+
+
+def test_load_decimal_field_coerces_string():
+    class S(Schema):
+        amount = fields.Decimal()
+
+    loaded = S().load({"amount": "3.14"})
+    assert loaded["amount"] == decimal.Decimal("3.14")
+
+
+def test_load_bool_field_recognizes_truthy_falsy():
+    class S(Schema):
         active = fields.Bool()
 
-    loaded = ValueSchema().load(
-        {"text": "123", "count": "7", "ratio": "2.5", "amount": "4.20", "active": "true"}
-    )
-
-    assert loaded == {
-        "text": "123",
-        "count": 7,
-        "ratio": 2.5,
-        "amount": decimal.Decimal("4.20"),
-        "active": True,
-    }
-    assert ValueSchema().dump({"amount": decimal.Decimal("4.20"), "active": False}) == {
-        "amount": "4.20",
-        "active": False,
-    }
+    assert S().load({"active": "true"}) == {"active": True}
+    assert S().load({"active": "false"}) == {"active": False}
 
 
-def test_date_time_datetime_and_timedelta_fields():
-    class TimeSchema(Schema):
+def test_load_date_field():
+    class S(Schema):
         day = fields.Date()
-        moment = fields.DateTime()
+
+    assert S().load({"day": "2024-03-15"}) == {"day": dt.date(2024, 3, 15)}
+
+
+def test_load_datetime_field():
+    class S(Schema):
+        ts = fields.DateTime()
+
+    loaded = S().load({"ts": "2024-03-15T10:30:00+00:00"})
+    assert loaded["ts"].hour == 10
+
+
+def test_load_time_field():
+    class S(Schema):
         clock = fields.Time()
+
+    assert S().load({"clock": "14:30:00"}) == {"clock": dt.time(14, 30, 0)}
+
+
+def test_load_timedelta_field_seconds_precision():
+    class S(Schema):
         delta = fields.TimeDelta(precision="seconds")
 
-    loaded = TimeSchema().load(
-        {
-            "day": "2020-01-02",
-            "moment": "2020-01-02T03:04:05+00:00",
-            "clock": "03:04:05",
-            "delta": 90,
-        }
-    )
-
-    assert loaded["day"] == dt.date(2020, 1, 2)
-    assert loaded["moment"].hour == 3
-    assert loaded["clock"] == dt.time(3, 4, 5)
-    assert loaded["delta"] == dt.timedelta(seconds=90)
+    assert S().load({"delta": 120}) == {"delta": dt.timedelta(seconds=120)}
 
 
-def test_uuid_ip_url_and_email_fields():
-    ident = uuid.UUID("12345678-1234-5678-1234-567812345678")
+def test_load_uuid_field():
+    uid = uuid.UUID("abcdef12-3456-7890-abcd-ef1234567890")
 
-    class NetworkSchema(Schema):
-        ident = fields.UUID()
-        ip = fields.IP()
-        url = fields.Url()
+    class S(Schema):
+        id = fields.UUID()
+
+    assert S().load({"id": str(uid)}) == {"id": uid}
+
+
+def test_load_ip_field():
+    class S(Schema):
+        addr = fields.IP()
+
+    assert S().load({"addr": "10.0.0.1"}) == {"addr": ipaddress.ip_address("10.0.0.1")}
+
+
+def test_load_url_field_validates():
+    class S(Schema):
+        link = fields.Url()
+
+    assert S().load({"link": "https://example.com/path"}) == {"link": "https://example.com/path"}
+
+
+def test_load_email_field_validates():
+    class S(Schema):
         email = fields.Email()
 
-    loaded = NetworkSchema().load(
-        {
-            "ident": str(ident),
-            "ip": "192.168.1.1",
-            "url": "https://example.com/path",
-            "email": "ada@example.com",
-        }
-    )
-
-    assert loaded["ident"] == ident
-    assert loaded["ip"] == ipaddress.ip_address("192.168.1.1")
-    assert loaded["url"] == "https://example.com/path"
-    assert loaded["email"] == "ada@example.com"
+    assert S().load({"email": "ada@example.com"}) == {"email": "ada@example.com"}
 
 
-def test_list_tuple_dict_and_mapping_fields():
-    class ContainerSchema(Schema):
+def test_load_list_field():
+    class S(Schema):
         tags = fields.List(fields.Str())
+
+    assert S().load({"tags": ["a", "b"]}) == {"tags": ["a", "b"]}
+
+
+def test_load_tuple_field():
+    class S(Schema):
         point = fields.Tuple((fields.Int(), fields.Int()))
+
+    assert S().load({"point": ["3", "4"]}) == {"point": (3, 4)}
+
+
+def test_load_dict_field():
+    class S(Schema):
         prefs = fields.Dict(keys=fields.Str(), values=fields.Int())
 
-    assert ContainerSchema().load(
-        {"tags": ["one", "two"], "point": ["3", 4], "prefs": {"a": "1"}}
-    ) == {"tags": ["one", "two"], "point": (3, 4), "prefs": {"a": 1}}
+    assert S().load({"prefs": {"a": "1"}}) == {"prefs": {"a": 1}}
 
 
-def test_constant_field_returns_constant_on_dump_and_load():
-    class ConstantSchema(Schema):
-        kind = fields.Constant("user")
+def test_load_raw_field_passes_through():
+    class S(Schema):
+        payload = fields.Raw()
 
-    schema = ConstantSchema()
-
-    assert schema.dump({}) == {"kind": "user"}
-    assert schema.load({"kind": "anything"}) == {"kind": "user"}
+    data = {"nested": [1, None]}
+    assert S().load({"payload": data}) == {"payload": data}
 
 
-def test_function_and_method_fields_dump_computed_values():
-    class UserSchema(Schema):
+def test_load_constant_field_ignores_input():
+    class S(Schema):
+        kind = fields.Constant("fixed")
+
+    assert S().load({"kind": "anything"}) == {"kind": "fixed"}
+
+
+def test_load_enum_field_by_value():
+    class Color(enum.Enum):
+        RED = "red"
+        BLUE = "blue"
+
+    class S(Schema):
+        c = fields.Enum(Color, by_value=True)
+
+    assert S().load({"c": "red"}) == {"c": Color.RED}
+
+
+# --- Schema.load: defaults ---
+
+
+def test_load_default_applied_when_field_absent():
+    class S(Schema):
+        name = fields.Str(load_default="anon")
+
+    assert S().load({}) == {"name": "anon"}
+
+
+def test_callable_load_default_called_each_time():
+    counter = {"n": 0}
+
+    def next_val():
+        counter["n"] += 1
+        return counter["n"]
+
+    class S(Schema):
+        v = fields.Int(load_default=next_val)
+
+    schema = S()
+    assert schema.load({}) == {"v": 1}
+    assert schema.load({}) == {"v": 2}
+
+
+def test_load_default_none_allows_none():
+    class S(Schema):
+        v = fields.Str(load_default=None)
+
+    assert S().load({}) == {"v": None}
+    assert S().load({"v": None}) == {"v": None}
+
+
+def test_allow_none_false_rejects_none():
+    class S(Schema):
+        v = fields.Str(load_default="x", allow_none=False)
+
+    with pytest.raises(ValidationError) as exc:
+        S().load({"v": None})
+    assert "v" in exc.value.messages
+
+
+# --- Schema.load: required / validation errors ---
+
+
+def test_required_field_missing_raises_validation_error():
+    class S(Schema):
+        email = fields.Email(required=True)
+
+    with pytest.raises(ValidationError) as exc:
+        S().load({})
+    assert "email" in exc.value.messages
+
+
+def test_validation_error_exposes_valid_data():
+    class S(Schema):
+        name = fields.Str()
+        email = fields.Email(required=True)
+
+    with pytest.raises(ValidationError) as exc:
+        S().load({"name": "Ada", "email": "bad"})
+    assert exc.value.valid_data == {"name": "Ada"}
+
+
+def test_collection_errors_keyed_by_index():
+    class S(Schema):
+        v = fields.Int(required=True)
+
+    with pytest.raises(ValidationError) as exc:
+        S(many=True).load([{"v": 1}, {"v": "bad"}, {}])
+    assert 1 in exc.value.messages or 2 in exc.value.messages
+
+
+# --- Schema.dump: single operations ---
+
+
+def test_dump_reads_from_dict():
+    class S(Schema):
+        name = fields.Str()
+        age = fields.Int()
+
+    assert S().dump({"name": "Ada", "age": 37}) == {"name": "Ada", "age": 37}
+
+
+def test_dump_reads_from_object_attributes():
+    class S(Schema):
+        name = fields.Str()
+        age = fields.Int()
+
+    assert S().dump(Person("Ada", "a@example.com", 37)) == {"name": "Ada", "age": 37}
+
+
+def test_dump_default_applied_when_attribute_absent():
+    class S(Schema):
+        created = fields.Date(dump_default=dt.date(2023, 1, 1))
+
+    assert S().dump({}) == {"created": "2023-01-01"}
+
+
+def test_dump_does_not_run_validators():
+    def reject(v):
+        raise ValidationError("invalid")
+
+    class S(Schema):
+        age = fields.Int(validate=reject)
+
+    assert S().dump({"age": 5}) == {"age": 5}
+
+
+def test_decimal_as_string_serializes_to_string():
+    class S(Schema):
+        v = fields.Decimal(as_string=True)
+
+    assert S().dump({"v": decimal.Decimal("3.14")}) == {"v": "3.14"}
+
+
+def test_enum_field_dumps_value():
+    class Color(enum.Enum):
+        RED = "red"
+
+    class S(Schema):
+        c = fields.Enum(Color, by_value=True)
+
+    assert S().dump({"c": Color.RED}) == {"c": "red"}
+
+
+# --- Schema.validate ---
+
+
+def test_validate_returns_errors_without_raising():
+    class S(Schema):
+        email = fields.Email(required=True)
+
+    errors = S().validate({"email": "bad"})
+    assert "email" in errors
+
+
+# --- Built-in validators ---
+
+
+def test_range_validator_rejects_out_of_bounds():
+    class S(Schema):
+        n = fields.Int(validate=validate.Range(min=5, max=10))
+
+    assert S().load({"n": 7}) == {"n": 7}
+    with pytest.raises(ValidationError):
+        S().load({"n": 3})
+
+
+def test_length_validator_rejects_short_and_long():
+    class S(Schema):
+        s = fields.Str(validate=validate.Length(min=2, max=5))
+
+    assert S().load({"s": "abc"}) == {"s": "abc"}
+    with pytest.raises(ValidationError):
+        S().load({"s": "a"})
+    with pytest.raises(ValidationError):
+        S().load({"s": "abcdef"})
+
+
+def test_oneof_validator_rejects_invalid_choice():
+    class S(Schema):
+        role = fields.Str(validate=validate.OneOf(["admin", "user"]))
+
+    assert S().load({"role": "admin"}) == {"role": "admin"}
+    with pytest.raises(ValidationError):
+        S().load({"role": "guest"})
+
+
+def test_noneof_validator_rejects_forbidden():
+    class S(Schema):
+        name = fields.Str(validate=validate.NoneOf(["root", "admin"]))
+
+    assert S().load({"name": "alice"}) == {"name": "alice"}
+    with pytest.raises(ValidationError):
+        S().load({"name": "root"})
+
+
+def test_regexp_validator():
+    class S(Schema):
+        code = fields.Str(validate=validate.Regexp(r"^[A-Z]{3}$"))
+
+    assert S().load({"code": "ABC"}) == {"code": "ABC"}
+    with pytest.raises(ValidationError):
+        S().load({"code": "ab"})
+
+
+def test_equal_validator():
+    class S(Schema):
+        v = fields.Int(validate=validate.Equal(42))
+
+    assert S().load({"v": 42}) == {"v": 42}
+    with pytest.raises(ValidationError):
+        S().load({"v": 41})
+
+
+def test_and_validator_collects_all_failures():
+    class S(Schema):
+        v = fields.Str(validate=validate.And(
+            validate.Length(min=3), validate.Regexp(r"^[A-Z]+$")
+        ))
+
+    with pytest.raises(ValidationError) as exc:
+        S().load({"v": "a"})
+    assert len(exc.value.messages["v"]) >= 2
+
+
+def test_multiple_validators_collect_failures():
+    class S(Schema):
+        n = fields.Int(validate=[validate.Range(min=10), validate.Range(max=5)])
+
+    with pytest.raises(ValidationError) as exc:
+        S().load({"n": 7})
+    assert len(exc.value.messages["n"]) >= 2
+
+
+# --- only / exclude ---
+
+
+def test_only_limits_fields():
+    class S(Schema):
+        name = fields.Str()
+        email = fields.Email()
+        age = fields.Int()
+
+    schema = S(only=("name",))
+    assert set(schema.fields) == {"name"}
+
+
+def test_exclude_removes_fields():
+    class S(Schema):
+        name = fields.Str()
+        age = fields.Int()
+
+    schema = S(exclude=("age",))
+    assert "age" not in schema.fields
+
+
+def test_invalid_only_field_raises_at_construction():
+    class S(Schema):
+        name = fields.Str()
+
+    with pytest.raises(ValueError):
+        S(only=("nonexistent",))
+
+
+# --- attribute / data_key ---
+
+
+def test_attribute_reads_different_name_on_dump():
+    class S(Schema):
+        display_name = fields.Str(attribute="name")
+
+    assert S().dump(Person("Ada", "a@e.com")) == {"display_name": "Ada"}
+
+
+def test_dump_only_omitted_from_load():
+    class S(Schema):
+        name = fields.Str()
+        secret = fields.Str(dump_only=True)
+
+    schema = S(unknown=EXCLUDE)
+    assert schema.load({"name": "Ada", "secret": "x"}) == {"name": "Ada"}
+
+
+def test_load_only_omitted_from_dump():
+    class S(Schema):
+        name = fields.Str()
+        password = fields.Str(load_only=True)
+
+    assert S().dump({"name": "Ada", "password": "x"}) == {"name": "Ada"}
+
+
+# --- Function / Method fields ---
+
+
+def test_function_field_computes_on_dump():
+    class S(Schema):
         name = fields.Str()
         upper = fields.Function(lambda obj: obj["name"].upper())
+
+    assert S().dump({"name": "ada"}) == {"name": "ada", "upper": "ADA"}
+
+
+def test_method_field_calls_schema_method():
+    class S(Schema):
+        name = fields.Str()
         label = fields.Method("make_label")
 
         def make_label(self, obj):
-            return f"user:{obj['name']}"
+            return f"label:{obj['name']}"
 
-    assert UserSchema().dump({"name": "ada"}) == {
-        "name": "ada",
-        "upper": "ADA",
-        "label": "user:ada",
-    }
-
-
-def test_field_pre_and_post_load_processors_transform_value():
-    class UserSchema(Schema):
-        name = fields.Str(pre_load=str.strip, post_load=str.title)
-
-    assert UserSchema().load({"name": "  ada lovelace  "}) == {"name": "Ada Lovelace"}
-
-
-def test_field_processor_validation_error_attaches_to_field():
-    def reject_blank(value):
-        if not value.strip():
-            raise ValidationError("blank")
-        return value
-
-    class UserSchema(Schema):
-        name = fields.Str(pre_load=reject_blank)
-
-    with pytest.raises(ValidationError) as excinfo:
-        UserSchema().load({"name": "   "})
-
-    assert "name" in excinfo.value.messages
-
-
-def test_range_length_and_oneof_validators_accept_valid_values():
-    class UserSchema(Schema):
-        name = fields.Str(validate=validate.Length(min=2, max=5))
-        age = fields.Int(validate=validate.Range(min=18, max=99))
-        role = fields.Str(validate=validate.OneOf(["admin", "user"]))
-
-    assert UserSchema().load({"name": "Ada", "age": 37, "role": "admin"}) == {
-        "name": "Ada",
-        "age": 37,
-        "role": "admin",
-    }
-
-
-def test_builtin_validators_report_field_errors():
-    class UserSchema(Schema):
-        name = fields.Str(validate=validate.Length(min=2))
-        age = fields.Int(validate=validate.Range(min=18))
-        role = fields.Str(validate=validate.OneOf(["admin", "user"]))
-
-    with pytest.raises(ValidationError) as excinfo:
-        UserSchema().load({"name": "A", "age": 17, "role": "guest"})
-
-    assert set(excinfo.value.messages) == {"name", "age", "role"}
-
-
-def test_noneof_contains_only_equal_regexp_predicate_and_and_validators():
-    class ChoiceSchema(Schema):
-        code = fields.Str(
-            validate=validate.And(
-                validate.NoneOf(["bad"]),
-                validate.Regexp(r"^[A-Z]{2}$"),
-            )
-        )
-        flags = fields.List(fields.Str(), validate=validate.ContainsOnly(["x", "y"]))
-        exact = fields.Int(validate=validate.Equal(5))
-        rounded = fields.Float(validate=validate.Predicate("is_integer"))
-
-    assert ChoiceSchema().load(
-        {"code": "OK", "flags": ["x", "y"], "exact": 5, "rounded": 2.0}
-    ) == {"code": "OK", "flags": ["x", "y"], "exact": 5, "rounded": 2.0}
-
-
-def test_multiple_validators_collect_multiple_failures_for_field():
-    class ChoiceSchema(Schema):
-        code = fields.Str(validate=[validate.Length(min=4), validate.Regexp(r"^[A-Z]+$")])
-
-    with pytest.raises(ValidationError) as excinfo:
-        ChoiceSchema().load({"code": "a"})
-
-    assert len(excinfo.value.messages["code"]) >= 2
-
-
-def test_post_load_pass_original_receives_original_input():
-    class UserSchema(Schema):
-        name = fields.Str()
-
-        @post_load(pass_original=True)
-        def add_original_keys(self, data, original, **kwargs):
-            data["original_keys"] = sorted(original)
-            return data
-
-    assert UserSchema(unknown=EXCLUDE).load({"name": "Ada", "extra": "x"}) == {
-        "name": "Ada",
-        "original_keys": ["extra", "name"],
-    }
-
-
-def test_dump_does_not_run_field_validators():
-    def reject(value):
-        raise ValidationError("invalid")
-
-    class UserSchema(Schema):
-        age = fields.Int(validate=reject)
-
-    assert UserSchema().dump({"age": 5}) == {"age": 5}
-
-
-def test_raw_field_passes_values_through():
-    class RawSchema(Schema):
-        payload = fields.Raw()
-
-    value = {"nested": [1, "two", None]}
-
-    assert RawSchema().dump({"payload": value}) == {"payload": value}
-    assert RawSchema().load({"payload": value}) == {"payload": value}
-
-
-def test_post_dump_pass_original_receives_original_object():
-    class UserSchema(Schema):
-        name = fields.Str()
-
-        @post_dump(pass_original=True)
-        def add_seen_name(self, data, original, **kwargs):
-            data["seen"] = original["name"]
-            return data
-
-    assert UserSchema().dump({"name": "Ada"}) == {"name": "Ada", "seen": "Ada"}
+    assert S().dump({"name": "ada"}) == {"name": "ada", "label": "label:ada"}

@@ -1,164 +1,619 @@
-# Spec2Repo oracle - integration tests for tox-envrunner-fullrepro-001
-import json
-
-import os
-
-import subprocess
-
-import sys
-
-import textwrap
-
-from pathlib import Path
-
-def run_tox(project: Path, *args: str) -> subprocess.CompletedProcess[str]:
-    env = {key: value for key, value in os.environ.items() if not key.startswith("TOX")}
-    env.update(
-        {
-            "NO_COLOR": "1",
-            "PYTHONIOENCODING": "utf-8",
-            "TOX_REPORTER_TIMESTAMP": "0",
-        },
-    )
-    return subprocess.run(
-        [sys.executable, "-m", "tox", "--colored", "no", *args],
-        cwd=project,
-        env=env,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        timeout=60,
-        check=False,
-    )
+from conftest import (
+    create_tox_ini,
+    create_tox_toml,
+    create_pyproject_toml,
+    create_setup_cfg,
+    run_tox,
+    parse_json_output,
+    write_file,
+)
 
 
-def write(project: Path, name: str, content: str) -> Path:
-    path = project / name
-    path.write_text(textwrap.dedent(content).lstrip(), encoding="utf-8")
-    return path
+# ===========================================================================
+# Cross-View Invariant tests (CVI 1–10)
+# ===========================================================================
 
 
-def load_json_output(result: subprocess.CompletedProcess[str]) -> dict:
-    assert result.returncode == 0, result.stdout + result.stderr
-    return json.loads(result.stdout)
-
-
-def json_config(result: subprocess.CompletedProcess[str]) -> dict:
-    assert result.returncode == 0, result.stdout + result.stderr
-    return json.loads(result.stdout)
-
-
-def test_tox_ini_is_discovered_before_tox_toml(tmp_path):
-    write(
+def test_cvi1_list_name_matches_run_config_exec(tmp_path):
+    """CVI-1: name visible in list is accepted by run -e, config -e, exec -e."""
+    create_tox_toml(
         tmp_path,
-        "tox.ini",
         """
-        [tox]
-        env_list = ini_env
-
-        [testenv:ini_env]
-        package = skip
-        skip_install = true
-        description = from ini
-        commands = python -c "print('ini')"
-        """,
-    )
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["toml_env"]
-
-        [env.toml_env]
+        env_list = ["verify"]
+        [env.verify]
         package = "skip"
         skip_install = true
-        description = "from toml"
-        commands = [["python", "-c", "print('toml')"]]
+        description = "verification suite"
+        commands = [["python", "-c", "print('VERIFY_CMD')"]]
+        """,
+    )
+    listing = run_tox(tmp_path, "list")
+    config = run_tox(tmp_path, "config", "-e", "verify", "-k", "description", "--format", "json")
+    run_result = run_tox(tmp_path, "run", "-e", "verify", "--skip-pkg-install")
+    exec_result = run_tox(
+        tmp_path, "exec", "-e", "verify", "--skip-pkg-install",
+        "--", "python", "-c", "print('EXEC_OK')",
+    )
+
+    assert listing.returncode == 0
+    assert "verify" in listing.stdout
+
+    data = parse_json_output(config)
+    assert data["env"]["verify"]["description"] == "verification suite"
+
+    assert run_result.returncode == 0
+    assert "VERIFY_CMD" in run_result.stdout
+
+    assert exec_result.returncode == 0
+    assert "EXEC_OK" in exec_result.stdout
+
+
+def test_cvi2_config_deps_used_during_run(tmp_path):
+    """CVI-2: deps shown by config are installed during run."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["verify"]
+        [env.verify]
+        package = "skip"
+        skip_install = true
+        deps = ["pip"]
+        commands = [["python", "-c", "import pip; print('DEPS_OK')"]]
+        """,
+    )
+    data = parse_json_output(
+        run_tox(tmp_path, "config", "-e", "verify", "-k", "deps", "--format", "json")
+    )
+    assert "pip" in str(data["env"]["verify"]["deps"])
+
+    result = run_tox(tmp_path, "run", "-e", "verify")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "DEPS_OK" in result.stdout
+
+
+def test_cvi3_json_toml_formats_expose_same_values(tmp_path):
+    """CVI-3: JSON and TOML config formats show the same resolved value."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["verify"]
+        [env.verify]
+        package = "skip"
+        skip_install = true
+        description = "sample verification"
+        commands = [["python", "-c", "print('ok')"]]
+        """,
+    )
+    json_result = run_tox(
+        tmp_path, "config", "-e", "verify", "-k", "description", "--format", "json",
+    )
+    toml_result = run_tox(
+        tmp_path, "config", "-e", "verify", "-k", "description", "--format", "toml",
+    )
+    json_data = parse_json_output(json_result)
+    desc = json_data["env"]["verify"]["description"]
+    assert desc == "sample verification"
+
+    assert toml_result.returncode == 0
+    assert desc in toml_result.stdout
+
+
+def test_cvi4_depends_ordering_honored_in_run(tmp_path):
+    """CVI-4: depends ordering consistent between depends subcommand and run."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["build", "analyze"]
+        [env_run_base]
+        package = "skip"
+        skip_install = true
+        [env.build]
+        commands = [["python", "-c", "print('BUILD_DONE')"]]
+        [env.analyze]
+        depends = ["build"]
+        commands = [["python", "-c", "print('ANALYZE_DONE')"]]
+        """,
+    )
+    depends = run_tox(tmp_path, "depends")
+    assert depends.returncode == 0
+    assert depends.stdout.index("build") < depends.stdout.index("analyze")
+
+    result = run_tox(tmp_path, "run", "-e", "build,analyze", "--skip-pkg-install")
+    assert result.returncode == 0
+    assert result.stdout.index("BUILD_DONE") < result.stdout.index("ANALYZE_DONE")
+
+
+def test_cvi5_env_var_composition_in_execution(tmp_path):
+    """CVI-5: pass_env + set_env from config match variables in execution."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["verify"]
+        [env.verify]
+        package = "skip"
+        skip_install = true
+        pass_env = ["SAMPLE_HOST_VAR"]
+        set_env.SAMPLE_CONFIG_VAR = "configured"
+        commands = [["python", "-c", "import os; print('HOST=' + os.environ.get('SAMPLE_HOST_VAR', 'MISSING')); print('CFG=' + os.environ.get('SAMPLE_CONFIG_VAR', 'MISSING'))"]]
+        """,
+    )
+    data = parse_json_output(
+        run_tox(
+            tmp_path, "config", "-e", "verify",
+            "-k", "pass_env", "set_env", "--format", "json",
+        )
+    )
+    assert "SAMPLE_HOST_VAR" in data["env"]["verify"]["pass_env"]
+    assert data["env"]["verify"]["set_env"]["SAMPLE_CONFIG_VAR"] == "configured"
+
+    result = run_tox(
+        tmp_path, "run", "-e", "verify", "--skip-pkg-install",
+        extra_env={"SAMPLE_HOST_VAR": "from_host"},
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "HOST=from_host" in result.stdout
+    assert "CFG=configured" in result.stdout
+
+
+def test_cvi6_package_mode_config_reflects_packaging(tmp_path):
+    """CVI-6: package mode determines package_env in config and TOX_PACKAGE in run."""
+    create_pyproject_toml(
+        tmp_path,
+        """
+        [build-system]
+        requires = ["setuptools>=64"]
+        build-backend = "setuptools.build_meta"
+
+        [project]
+        name = "sample-lib"
+        version = "0.1.0"
+        """,
+    )
+    (tmp_path / "sample_lib").mkdir()
+    write_file(tmp_path, "sample_lib/__init__.py", "")
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["verify"]
+        [env.verify]
+        commands = [["python", "-c", "import os; v=os.environ.get('TOX_PACKAGE','ABSENT'); print('PKG=' + v)"]]
         """,
     )
 
-    result = run_tox(tmp_path, "list")
+    data = parse_json_output(
+        run_tox(
+            tmp_path, "config", "-e", "verify",
+            "-k", "package", "package_env", "--format", "json",
+        )
+    )
+    assert data["env"]["verify"]["package"] == "sdist"
+    assert data["env"]["verify"]["package_env"] == ".pkg"
 
+    result = run_tox(tmp_path, "run", "-e", "verify")
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "ini_env -> from ini" in result.stdout
-    assert "toml_env" not in result.stdout
+    found_pkg = False
+    for line in result.stdout.splitlines():
+        if "PKG=" in line:
+            assert "ABSENT" not in line
+            found_pkg = True
+            break
+    assert found_pkg, "TOX_PACKAGE was not printed"
 
 
-def test_pyproject_native_toml_is_preferred_over_legacy_tox_ini(tmp_path):
-    write(
+def test_cvi7_posargs_visible_only_in_commands(tmp_path):
+    """CVI-7: positional args change commands but not unrelated keys like description."""
+    create_tox_toml(
         tmp_path,
-        "pyproject.toml",
-        '''
-        [tool.tox]
-        env_list = ["native"]
-        legacy_tox_ini = """
-        [tox]
-        env_list = legacy
-
-        [testenv:legacy]
-        package = skip
-        skip_install = true
-        description = legacy env
-        commands = python -c "print('legacy')"
         """
-
-        [tool.tox.env.native]
+        env_list = ["check"]
+        [env.check]
         package = "skip"
         skip_install = true
-        description = "native env"
-        commands = [["python", "-c", "print('native')"]]
-        ''',
+        description = "check task"
+        commands = [["python", "-c", "print('ok')", { replace = "posargs", default = ["fallback_arg"], extend = true }]]
+        """,
     )
+    data = parse_json_output(
+        run_tox(
+            tmp_path, "config", "-e", "check",
+            "-k", "description", "commands", "--format", "json",
+            "--", "injected_arg",
+        )
+    )
+    assert data["env"]["check"]["description"] == "check task"
+    command = data["env"]["check"]["commands"][0]
+    assert "injected_arg" in command
+    assert "fallback_arg" not in command
 
-    listing = run_tox(tmp_path, "list")
-    config = run_tox(tmp_path, "config", "-e", "native", "-k", "description", "commands", "--format", "json")
 
-    assert listing.returncode == 0, listing.stdout + listing.stderr
-    assert "native -> native env" in listing.stdout
-    assert "legacy" not in listing.stdout
-    data = load_json_output(config)
-    assert data["env"]["native"] == {
-        "description": "native env",
-        "commands": ["python -c print('native')"],
-    }
-
-
-def test_pyproject_legacy_tox_ini_is_used_without_native_env_table(tmp_path):
-    write(
+def test_cvi8_labels_consistent_across_list_and_run_m(tmp_path):
+    """CVI-8: list -m and run -m select the same environments."""
+    create_tox_toml(
         tmp_path,
-        "pyproject.toml",
-        '''
-        [tool.tox]
-        legacy_tox_ini = """
-        [tox]
-        env_list = legacy
+        """
+        env_list = ["lint", "format", "docs"]
+        labels.quality = ["lint", "format"]
+        [env_run_base]
+        package = "skip"
+        skip_install = true
+        [env.lint]
+        labels = ["quality"]
+        commands = [["python", "-c", "print('LINT_OK')"]]
+        [env.format]
+        labels = ["quality"]
+        commands = [["python", "-c", "print('FORMAT_OK')"]]
+        [env.docs]
+        commands = [["python", "-c", "print('DOCS_OK')"]]
+        """,
+    )
+    listing = run_tox(tmp_path, "list", "-m", "quality", "--no-desc")
+    assert set(listing.stdout.strip().splitlines()) == {"lint", "format"}
 
-        [testenv:legacy]
+    result = run_tox(tmp_path, "run", "-m", "quality", "--skip-pkg-install")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "LINT_OK" in result.stdout
+    assert "FORMAT_OK" in result.stdout
+    assert "DOCS_OK" not in result.stdout
+
+
+def test_cvi9_unused_key_visible_in_config(tmp_path):
+    """CVI-9: an unused/misplaced config key is surfaced in config output."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["check"]
+        stale_setting = "leftover"
+        [env.check]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "print('ok')"]]
+        """,
+    )
+    result = run_tox(tmp_path, "config")
+    assert result.returncode == 0, result.stdout + result.stderr
+    combined = result.stdout + result.stderr
+    assert "stale_setting" in combined
+
+
+def test_cvi10_exit_status_matches_env_outcomes(tmp_path):
+    """CVI-10: all-pass → 0, any-fail → nonzero."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["alpha", "bravo"]
+        [env_run_base]
+        package = "skip"
+        skip_install = true
+        [env.alpha]
+        commands = [["python", "-c", "print('A')"]]
+        [env.bravo]
+        commands = [["python", "-c", "print('B')"]]
+        """,
+    )
+    ok = run_tox(tmp_path, "run", "--skip-pkg-install")
+    assert ok.returncode == 0
+
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["good", "bad"]
+        [env.good]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "print('GOOD')"]]
+        [env.bad]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "raise SystemExit(3)"]]
+        """,
+    )
+    fail = run_tox(tmp_path, "run", "--skip-pkg-install")
+    assert fail.returncode != 0
+
+
+# ===========================================================================
+# Seam tests — composition boundaries
+# ===========================================================================
+
+
+def test_seam_discovery_tox_ini_over_tox_toml(tmp_path):
+    """Seam: config interaction — tox.ini discovery precedence ↔ list and run use ini env."""
+    create_tox_ini(
+        tmp_path,
+        """
+        [tox]
+        env_list = from_ini
+
+        [testenv:from_ini]
         package = skip
         skip_install = true
-        description = legacy env
-        commands = python -c "print('legacy')"
-        """
-        ''',
+        description = ini source
+        commands = python -c "print('INI_CMD')"
+        """,
     )
-
-    listing = run_tox(tmp_path, "list")
-    config = run_tox(tmp_path, "config", "-e", "legacy", "-k", "description", "commands", "--format", "json")
-
-    assert listing.returncode == 0, listing.stdout + listing.stderr
-    assert "legacy -> legacy env" in listing.stdout
-    data = load_json_output(config)
-    assert data["env"]["legacy"]["description"] == "legacy env"
-    assert data["env"]["legacy"]["commands"] == ["python -c print('legacy')"]
-
-
-def test_ini_generative_env_list_expands_and_substitutes_env_name(tmp_path):
-    write(
+    create_tox_toml(
         tmp_path,
-        "tox.ini",
-        r'''
+        """
+        env_list = ["from_toml"]
+        [env.from_toml]
+        package = "skip"
+        skip_install = true
+        description = "toml source"
+        commands = [["python", "-c", "print('TOML_CMD')"]]
+        """,
+    )
+    listing = run_tox(tmp_path, "list")
+    assert listing.returncode == 0
+    assert "from_ini" in listing.stdout
+    assert "from_toml" not in listing.stdout
+
+    result = run_tox(tmp_path, "run", "-e", "from_ini", "--skip-pkg-install")
+    assert result.returncode == 0
+    assert "INI_CMD" in result.stdout
+
+
+def test_seam_env_run_base_inheritance_in_config_and_run(tmp_path):
+    """Seam: config interaction — env_run_base inheritance ↔ config JSON and run output."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["check"]
+        [env_run_base]
+        package = "skip"
+        skip_install = true
+        description = "base template"
+        commands = [["python", "-c", "print('BASE_CMD')"]]
+        [env.check]
+        description = "check override"
+        """,
+    )
+    data = parse_json_output(
+        run_tox(
+            tmp_path, "config", "-e", "check",
+            "-k", "description", "commands", "package", "--format", "json",
+        )
+    )
+    env = data["env"]["check"]
+    assert env["description"] == "check override"
+    assert "BASE_CMD" in env["commands"][0]
+    assert env["package"] == "skip"
+
+    result = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert result.returncode == 0
+    assert "BASE_CMD" in result.stdout
+
+
+def test_seam_dash_prefix_ignores_failure(tmp_path):
+    """Seam: error propagation — dash-prefixed command failure ↔ env still passes and next command runs."""
+    create_tox_ini(
+        tmp_path,
+        """
         [tox]
-        env_list = py{310,311}-django{42,50}, lint
+        env_list = check
+
+        [testenv:check]
+        package = skip
+        skip_install = true
+        commands =
+            - python -c "raise SystemExit(5)"
+            python -c "print('AFTER_IGNORE')"
+        """,
+    )
+    result = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "AFTER_IGNORE" in result.stdout
+
+
+def test_seam_bang_prefix_inverts_success(tmp_path):
+    """Seam: error propagation — bang-prefixed nonzero exit ↔ treated as success and next command runs."""
+    create_tox_ini(
+        tmp_path,
+        """
+        [tox]
+        env_list = check
+
+        [testenv:check]
+        package = skip
+        skip_install = true
+        commands =
+            ! python -c "raise SystemExit(7)"
+            python -c "print('AFTER_INVERT')"
+        """,
+    )
+    result = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "AFTER_INVERT" in result.stdout
+
+
+def test_seam_recreate_forces_fresh_env(tmp_path):
+    """Seam: lifecycle crossing — --recreate ↔ env directory deletion and recreation."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["check"]
+        [env.check]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "print('RUN_OK')"]]
+        """,
+    )
+    first = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert first.returncode == 0
+
+    env_dir = tmp_path / ".tox" / "check"
+    sentinel = env_dir / "test_sentinel.txt"
+    sentinel.write_text("keep", encoding="utf-8")
+
+    reuse = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert reuse.returncode == 0
+    assert sentinel.exists()
+
+    recreated = run_tox(tmp_path, "run", "-r", "-e", "check", "--skip-pkg-install")
+    assert recreated.returncode == 0
+    assert not sentinel.exists()
+
+
+def test_seam_skip_install_runs_commands_without_build(tmp_path):
+    """Seam: lifecycle crossing — --skip-pkg-install ↔ commands without packaging."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["check"]
+        [env.check]
+        commands = [["python", "-c", "print('COMMANDS_RAN')"]]
+        """,
+    )
+    result = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "COMMANDS_RAN" in result.stdout
+
+
+def test_seam_parallel_runs_environments(tmp_path):
+    """Seam: protocol handoff — run-parallel ↔ multiple env completion."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["alpha", "bravo"]
+        [env_run_base]
+        package = "skip"
+        skip_install = true
+        [env.alpha]
+        commands = [["python", "-c", "print('ALPHA_DONE')"]]
+        [env.bravo]
+        commands = [["python", "-c", "print('BRAVO_DONE')"]]
+        """,
+    )
+    result = run_tox(
+        tmp_path, "run-parallel", "--parallel", "2",
+        "-e", "alpha,bravo", "--skip-pkg-install",
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    combined = result.stdout + result.stderr
+    assert "alpha" in combined.lower()
+    assert "bravo" in combined.lower()
+
+
+def test_seam_fail_fast_stops_scheduling(tmp_path):
+    """Seam: error propagation — fail_fast ↔ later envs not scheduled after failure."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["fail_first", "pass_second"]
+        fail_fast = true
+
+        [env.fail_first]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "raise SystemExit(1)"]]
+
+        [env.pass_second]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "print('SECOND_RAN')"]]
+        """,
+    )
+    result = run_tox(tmp_path, "run", "--skip-pkg-install")
+    assert result.returncode != 0
+    assert "SECOND_RAN" not in result.stdout
+
+
+def test_seam_depends_delays_but_does_not_add_unselected(tmp_path):
+    """Seam: config interaction — depends ordering ↔ selected env run sequence only."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["build", "analyze"]
+        [env_run_base]
+        package = "skip"
+        skip_install = true
+        [env.build]
+        commands = [["python", "-c", "print('BUILD_CMD')"]]
+        [env.analyze]
+        depends = ["build"]
+        commands = [["python", "-c", "print('ANALYZE_CMD')"]]
+        """,
+    )
+    only_analyze = run_tox(tmp_path, "run", "-e", "analyze", "--skip-pkg-install")
+    assert only_analyze.returncode == 0, only_analyze.stdout + only_analyze.stderr
+    assert "ANALYZE_CMD" in only_analyze.stdout
+    assert "BUILD_CMD" not in only_analyze.stdout
+
+    both = run_tox(tmp_path, "run", "-e", "build,analyze", "--skip-pkg-install")
+    assert both.returncode == 0
+    assert both.stdout.index("BUILD_CMD") < both.stdout.index("ANALYZE_CMD")
+
+
+def test_seam_exec_runs_only_given_command(tmp_path):
+    """Seam: protocol handoff — tox exec ↔ ad-hoc command instead of configured commands."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["check"]
+        [env.check]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "print('CONFIGURED')"]]
+        """,
+    )
+    result = run_tox(
+        tmp_path, "exec", "-e", "check", "--skip-pkg-install",
+        "--", "python", "-c", "print('EXEC_ONLY')",
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "EXEC_ONLY" in result.stdout
+    assert "CONFIGURED" not in result.stdout
+
+
+def test_seam_command_failure_skips_later_commands(tmp_path):
+    """Seam: error propagation — failed command ↔ subsequent commands skipped in env."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["check"]
+        [env.check]
+        package = "skip"
+        skip_install = true
+        commands = [
+            ["python", "-c", "raise SystemExit(3)"],
+            ["python", "-c", "print('LATER_CMD')"],
+        ]
+        """,
+    )
+    result = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert result.returncode != 0
+    assert "LATER_CMD" not in result.stdout
+
+
+def test_seam_parallel_failure_nonzero(tmp_path):
+    """Seam: error propagation — parallel env failure ↔ nonzero exit status."""
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["good", "bad"]
+        [env.good]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "print('GOOD')"]]
+        [env.bad]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "raise SystemExit(2)"]]
+        """,
+    )
+    result = run_tox(
+        tmp_path, "run-parallel", "--parallel", "2",
+        "-e", "good,bad", "--skip-pkg-install",
+    )
+    assert result.returncode != 0
+
+
+def test_seam_generative_envs_factor_filter_and_config(tmp_path):
+    """Seam: config interaction — generative env list + factor filter ↔ list and config agreement."""
+    create_tox_ini(
+        tmp_path,
+        r"""
+        [tox]
+        env_list = py{311,312}-unit, lint
 
         [testenv]
         package = skip
@@ -167,835 +622,41 @@ def test_ini_generative_env_list_expands_and_substitutes_env_name(tmp_path):
         commands = python -c "print('{env_name}')"
 
         [testenv:lint]
-        description = lint commands
+        description = lint check
         commands = python -c "print('lint')"
-        ''',
+        """,
     )
-
     listing = run_tox(tmp_path, "list", "--no-desc")
-    config = run_tox(
-        tmp_path,
-        "config",
-        "-f",
-        "django42",
-        "-k",
-        "description",
-        "commands",
-        "--format",
-        "json",
+    assert listing.returncode == 0
+    lines = listing.stdout.strip().splitlines()
+    assert "py311-unit" in lines
+    assert "py312-unit" in lines
+    assert "lint" in lines
+
+    data = parse_json_output(
+        run_tox(
+            tmp_path, "config", "-f", "py312",
+            "-k", "description", "--format", "json",
+        )
     )
-
-    assert listing.returncode == 0, listing.stdout + listing.stderr
-    assert listing.stdout.splitlines() == [
-        "py310-django42",
-        "py310-django50",
-        "py311-django42",
-        "py311-django50",
-        "lint",
-    ]
-    data = load_json_output(config)
-    assert set(data["env"]) == {"py310-django42", "py311-django42"}
-    assert data["env"]["py310-django42"]["description"] == "run py310-django42"
-    assert data["env"]["py310-django42"]["commands"] == ["python -c print('py310-django42')"]
+    assert set(data["env"]) == {"py312-unit"}
+    assert data["env"]["py312-unit"]["description"] == "run py312-unit"
 
 
-def test_label_selection_matches_between_list_and_config(tmp_path):
-    write(
+def test_seam_toxfile_plugin_adds_config_key(tmp_path):
+    """Seam: config interaction — toxfile plugin ↔ custom key visible in config JSON."""
+    create_tox_toml(
         tmp_path,
-        "tox.toml",
         """
-        env_list = ["lint", "type", "docs"]
-        labels.check = ["lint", "type"]
-
-        [env_run_base]
+        env_list = ["check"]
+        [env.check]
         package = "skip"
         skip_install = true
-        commands = [["python", "-c", "print('base')"]]
-
-        [env.lint]
-        description = "lint only"
-        labels = ["check"]
-
-        [env.type]
-        description = "type check"
-        labels = ["check"]
-
-        [env.docs]
-        description = "docs build"
-        """,
-    )
-
-    listing = run_tox(tmp_path, "list", "-m", "check")
-    config = run_tox(tmp_path, "config", "-m", "check", "-k", "description", "--format", "json")
-
-    assert listing.returncode == 0, listing.stdout + listing.stderr
-    assert "lint -> lint only" in listing.stdout
-    assert "type -> type check" in listing.stdout
-    assert "docs" not in listing.stdout
-    data = load_json_output(config)
-    assert data["env"] == {
-        "lint": {"description": "lint only"},
-        "type": {"description": "type check"},
-    }
-
-
-def test_config_json_preserves_native_types_and_inherited_values(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint", "type"]
-
-        [env_run_base]
-        package = "skip"
-        skip_install = true
-        description = "base command runner"
-        commands = [["python", "-c", "print('base')"]]
-
-        [env.lint]
-        description = "lint only"
-        commands = [["python", "-c", "print('lint')"]]
-
-        [env.type]
-        description = "type check"
-        depends = ["lint"]
-        labels = ["check"]
-        """,
-    )
-
-    result = run_tox(
-        tmp_path,
-        "config",
-        "-e",
-        "type",
-        "-k",
-        "description",
-        "skip_install",
-        "package",
-        "commands",
-        "depends",
-        "labels",
-        "--format",
-        "json",
-    )
-
-    data = load_json_output(result)
-    env = data["env"]["type"]
-    assert env["description"] == "type check"
-    assert env["skip_install"] is True
-    assert env["package"] == "skip"
-    assert env["commands"] == ["python -c print('base')"]
-    assert env["depends"] == ["lint"]
-    assert env["labels"] == ["check"]
-
-
-def test_schema_command_outputs_json_schema_for_tox_configuration(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint"]
-
-        [env.lint]
-        package = "skip"
-        skip_install = true
-        description = "lint"
-        commands = [["python", "-c", "print('lint')"]]
-        """,
-    )
-
-    result = run_tox(tmp_path, "schema")
-
-    schema = load_json_output(result)
-    assert schema["title"] == "tox configuration"
-    assert schema["type"] == "object"
-    assert "env_list" in schema["properties"]
-    assert "env_run_base" in schema["properties"]
-    assert "env" in schema["properties"]
-
-
-def test_depends_reports_dependency_order_for_default_environment_set(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint", "type", "docs"]
-
-        [env_run_base]
-        package = "skip"
-        skip_install = true
-        commands = [["python", "-c", "print('base')"]]
-
-        [env.lint]
-        description = "lint"
-
-        [env.type]
-        description = "type"
-        depends = ["lint"]
-
-        [env.docs]
-        description = "docs"
-        depends = ["type"]
-        """,
-    )
-
-    result = run_tox(tmp_path, "depends")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert result.stdout.index("lint") < result.stdout.index("type") < result.stdout.index("docs")
-    assert "type\n      lint" in result.stdout
-    assert "docs\n      type" in result.stdout
-
-
-def test_mutually_exclusive_no_capture_and_result_json_fails_before_writing_json(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint"]
-
-        [env.lint]
-        package = "skip"
-        skip_install = true
-        description = "lint"
-        commands = [["python", "-c", "print('lint')"]]
-        """,
-    )
-    result_json = tmp_path / "result.json"
-
-    result = run_tox(tmp_path, "config", "-i", "--result-json", str(result_json))
-
-    assert result.returncode != 0
-    assert not result_json.exists()
-    combined = result.stdout + result.stderr
-    assert "--no-capture" in combined
-    assert "--result-json" in combined
-
-
-def test_config_option_selects_explicit_tox_file(tmp_path):
-    explicit = write(
-        tmp_path,
-        "custom.ini",
-        """
-        [tox]
-        env_list = custom
-
-        [testenv:custom]
-        package = skip
-        skip_install = true
-        description = explicit config
-        commands = python -c "print('custom')"
-        """,
-    )
-    write(
-        tmp_path,
-        "tox.ini",
-        """
-        [tox]
-        env_list = default
-
-        [testenv:default]
-        package = skip
-        skip_install = true
-        description = default config
-        commands = python -c "print('default')"
-        """,
-    )
-
-    result = run_tox(tmp_path, "-c", str(explicit), "list")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "custom -> explicit config" in result.stdout
-    assert "default -> default config" not in result.stdout
-
-
-def test_setup_cfg_is_used_when_tox_ini_is_absent(tmp_path):
-    write(
-        tmp_path,
-        "setup.cfg",
-        """
-        [tox:tox]
-        env_list = cfg
-
-        [testenv:cfg]
-        package = skip
-        skip_install = true
-        description = from setup cfg
-        commands = python -c "print('cfg')"
-        """,
-    )
-
-    result = run_tox(tmp_path, "list")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "cfg -> from setup cfg" in result.stdout
-
-
-def test_tox_toml_is_used_when_earlier_config_files_are_absent(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["tomlonly"]
-
-        [env.tomlonly]
-        package = "skip"
-        skip_install = true
-        description = "from tox toml"
-        commands = [["python", "-c", "print('tomlonly')"]]
-        """,
-    )
-
-    result = run_tox(tmp_path, "list")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "tomlonly -> from tox toml" in result.stdout
-
-
-def test_toml_product_env_list_expands_to_cartesian_product(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = [{ product = [{ prefix = "3.", start = 10, stop = 12 }, ["django42", "django50"]] }]
-
-        [env_run_base]
-        package = "skip"
-        skip_install = true
-        description = "generated"
-        commands = [["python", "-c", "print('generated')"]]
-        """,
-    )
-
-    result = run_tox(tmp_path, "list", "--no-desc")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert result.stdout.splitlines() == [
-        "3.10-django42",
-        "3.10-django50",
-        "3.11-django42",
-        "3.11-django50",
-        "3.12-django42",
-        "3.12-django50",
-    ]
-
-
-def test_env_base_template_generates_factor_environments(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint"]
-
-        [env_run_base]
-        package = "skip"
-        skip_install = true
-        commands = [["python", "-c", "print('base')"]]
-
-        [env_base.test]
-        factors = ["py310", "py311"]
-        description = "test {env_name}"
-
-        [env.lint]
-        description = "lint"
-        """,
-    )
-
-    result = run_tox(tmp_path, "list")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "test-py310 -> test test-py310" in result.stdout
-    assert "test-py311 -> test test-py311" in result.stdout
-    assert "test ->" not in result.stdout
-
-
-def test_toml_conditional_replacement_uses_else_branch_when_env_is_missing(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        '''
-        env_list = ["lint"]
-
-        [env.lint]
-        package = "skip"
-        skip_install = true
-        description = { replace = "if", condition = "env.TOX_RETRO_MODE == 'ci'", then = "ci mode", else = "local mode" }
-        commands = [["python", "-c", "print('lint')"]]
-        ''',
-    )
-
-    result = run_tox(tmp_path, "config", "-e", "lint", "-k", "description", "--format", "json")
-
-    data = load_json_output(result)
-    assert data["env"]["lint"]["description"] == "local mode"
-
-
-def test_posargs_are_rendered_only_in_commands(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint"]
-
-        [env.lint]
-        package = "skip"
-        skip_install = true
-        description = "lint"
-        commands = [["python", "-c", "print('args')", { replace = "posargs", default = ["default"], extend = true }]]
-        """,
-    )
-
-    result = run_tox(tmp_path, "config", "-e", "lint", "-k", "description", "commands", "--format", "json", "--", "custom")
-
-    data = load_json_output(result)
-    assert data["env"]["lint"]["description"] == "lint"
-    assert data["env"]["lint"]["commands"] == ["python -c print('args') custom"]
-
-
-def test_set_env_pass_env_and_disallow_pass_env_are_visible_in_config(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint"]
-
-        [env.lint]
-        package = "skip"
-        skip_install = true
-        pass_env = ["RETRO_*"]
-        disallow_pass_env = ["RETRO_SECRET"]
-        set_env.RETRO_MODE = "configured"
-        commands = [["python", "-c", "print('env')"]]
-        """,
-    )
-
-    result = run_tox(
-        tmp_path,
-        "config",
-        "-e",
-        "lint",
-        "-k",
-        "pass_env",
-        "disallow_pass_env",
-        "set_env",
-        "--format",
-        "json",
-    )
-
-    data = load_json_output(result)["env"]["lint"]
-    assert "RETRO_*" in data["pass_env"]
-    assert data["disallow_pass_env"] == ["RETRO_SECRET"]
-    assert data["set_env"]["RETRO_MODE"] == "configured"
-
-
-def test_package_modes_remain_visible_in_verbose_configuration(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["wheel", "editable", "skip"]
-
-        [env_run_base]
-        commands = [["python", "-c", "print('package')"]]
-
-        [env.wheel]
-        package = "wheel"
-        skip_install = true
-
-        [env.editable]
-        package = "editable"
-        skip_install = true
-
-        [env.skip]
-        package = "skip"
-        skip_install = true
-        """,
-    )
-
-    result = run_tox(tmp_path, "config", "-k", "package", "-vv")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "wheel" in result.stdout
-    assert "editable" in result.stdout
-    assert "skip" in result.stdout
-
-
-def test_explicit_package_environment_is_listed_separately(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint", ".pkg"]
-
-        [env_run_base]
-        skip_install = true
-        description = "run base"
-        commands = [["python", "-c", "print('run')"]]
-
-        [env_pkg_base]
-        description = "package base"
-        commands = [["python", "-c", "print('pkg')"]]
-
-        [env.lint]
-        package = "skip"
-        description = "lint"
-        """,
-    )
-
-    listing = run_tox(tmp_path, "list")
-    run_result = run_tox(tmp_path, "config", "-e", "lint", "-k", "description", "commands", "--format", "json")
-
-    assert listing.returncode == 0, listing.stdout + listing.stderr
-    assert ".pkg" in listing.stdout
-    assert ".pkg -> run base" in listing.stdout
-    assert load_json_output(run_result)["env"]["lint"]["description"] == "lint"
-    assert load_json_output(run_result)["env"]["lint"]["commands"] == ["python -c print('run')"]
-
-
-def test_run_with_skip_pkg_install_executes_configured_command(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint"]
-
-        [env.lint]
-        package = "skip"
-        skip_install = true
-        commands = [["python", "-c", "print('RETRO_RUN_OK')"]]
-        """,
-    )
-
-    result = run_tox(tmp_path, "run", "-e", "lint", "--skip-pkg-install")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "RETRO_RUN_OK" in result.stdout
-
-
-def test_command_prefixes_ignore_and_invert_failures(tmp_path):
-    write(
-        tmp_path,
-        "tox.ini",
-        """
-        [tox]
-        env_list = prefixed
-
-        [testenv:prefixed]
-        package = skip
-        skip_install = true
-        commands =
-            - python -c "raise SystemExit(7)"
-            ! python -c "raise SystemExit(3)"
-            python -c "print('after prefixes')"
-        """,
-    )
-
-    result = run_tox(tmp_path, "run", "-e", "prefixed", "--skip-pkg-install")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "after prefixes" in result.stdout
-
-
-def test_exec_runs_supplied_command_without_configured_commands(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint"]
-
-        [env.lint]
-        package = "skip"
-        skip_install = true
-        commands = [["python", "-c", "print('CONFIGURED_COMMAND')"]]
-        """,
-    )
-
-    result = run_tox(tmp_path, "exec", "-e", "lint", "--skip-pkg-install", "--", "python", "-c", "print('EXEC_COMMAND')")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "EXEC_COMMAND" in result.stdout
-    assert "CONFIGURED_COMMAND" not in result.stdout
-
-
-def test_failing_command_returns_nonzero_and_skips_later_commands(tmp_path):
-    marker = tmp_path / "later.txt"
-    write(
-        tmp_path,
-        "tox.toml",
-        f"""
-        env_list = ["fail"]
-
-        [env.fail]
-        package = "skip"
-        skip_install = true
-        commands = [
-            ["python", "-c", "raise SystemExit(5)"],
-            ["python", "-c", "from pathlib import Path; Path({str(marker)!r}).write_text('ran')"],
-        ]
-        """,
-    )
-
-    result = run_tox(tmp_path, "run", "-e", "fail", "--skip-pkg-install")
-
-    assert result.returncode != 0
-    assert not marker.exists()
-
-
-def test_skip_missing_interpreters_reports_skip_for_missing_python(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["missing"]
-        skip_missing_interpreters = true
-
-        [env.missing]
-        base_python = ["python9.99"]
-        package = "skip"
-        skip_install = true
-        commands = [["python", "-c", "print('missing')"]]
-        """,
-    )
-
-    result = run_tox(tmp_path, "run", "-e", "missing", "--skip-pkg-install")
-
-    assert result.returncode != 0
-    assert "skip" in result.stdout.lower() or "skip" in result.stderr.lower()
-
-
-def test_depends_does_not_add_unselected_dependencies(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint", "coverage"]
-
-        [env_run_base]
-        package = "skip"
-        skip_install = true
-        commands = [["python", "-c", "print('base')"]]
-
-        [env.lint]
-        description = "lint"
-
-        [env.coverage]
-        description = "coverage"
-        depends = ["lint"]
-        """,
-    )
-
-    result = run_tox(tmp_path, "depends")
-
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "coverage" in result.stdout
-    assert "lint" in result.stdout
-
-
-def test_ini_env_var_substitution_uses_default_when_missing(tmp_path):
-    write(
-        tmp_path,
-        "tox.ini",
-        """
-        [tox]
-        env_list = py
-
-        [testenv]
-        package = skip
-        skip_install = true
-        description = {env:TOX_MISSING:default-value}
-        commands = python -c "print('ok')"
-        """,
-    )
-    data = json_config(run_tox(tmp_path, "config", "-k", "description", "--format", "json"))
-    assert data["env"]["py"]["description"] == "default-value"
-
-
-def test_posargs_default_is_used_without_extra_arguments(tmp_path):
-    write(
-        tmp_path,
-        "tox.ini",
-        """
-        [tox]
-        env_list = py
-
-        [testenv]
-        package = skip
-        skip_install = true
-        commands = python -c "print('{posargs:default text}')"
-        """,
-    )
-    data = json_config(run_tox(tmp_path, "config", "-k", "commands", "--format", "json"))
-    assert data["env"]["py"]["commands"] == ['python -c "print(\'default text\')"']
-
-
-def test_posargs_override_default_after_separator(tmp_path):
-    write(
-        tmp_path,
-        "tox.ini",
-        """
-        [tox]
-        env_list = py
-
-        [testenv]
-        package = skip
-        skip_install = true
-        commands = python -c "print('{posargs:default}')"
-        """,
-    )
-    data = json_config(run_tox(tmp_path, "config", "-k", "commands", "--format", "json", "--", "custom"))
-    assert data["env"]["py"]["commands"] == ["python -c print('custom')"]
-
-
-def test_generative_ini_env_list_expands_factor_product(tmp_path):
-    write(
-        tmp_path,
-        "tox.ini",
-        """
-        [tox]
-        env_list = py{310,311}-django{42,50}
-
-        [testenv]
-        package = skip
-        skip_install = true
-        commands = python -c "print('{env_name}')"
-        """,
-    )
-    result = run_tox(tmp_path, "list", "--no-desc")
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert result.stdout.splitlines() == [
-        "py310-django42",
-        "py310-django50",
-        "py311-django42",
-        "py311-django50",
-    ]
-
-
-def test_factor_filter_selects_matching_environments(tmp_path):
-    write(
-        tmp_path,
-        "tox.ini",
-        """
-        [tox]
-        env_list = py310-unit, py311-unit, py311-integration
-
-        [testenv]
-        package = skip
-        skip_install = true
-        commands = python -c "print('{env_name}')"
-        """,
-    )
-    data = json_config(run_tox(tmp_path, "config", "-f", "py311", "-k", "commands", "--format", "json"))
-    assert set(data["env"]) == {"py311-unit", "py311-integration"}
-
-
-def test_tox_ini_takes_precedence_over_setup_cfg(tmp_path):
-    write(
-        tmp_path,
-        "setup.cfg",
-        """
-        [tox]
-        env_list = from_setup_cfg
-        [testenv:from_setup_cfg]
-        package = skip
-        skip_install = true
-        description = setup cfg
-        """,
-    )
-    write(
-        tmp_path,
-        "tox.ini",
-        """
-        [tox]
-        env_list = from_tox_ini
-        [testenv:from_tox_ini]
-        package = skip
-        skip_install = true
-        description = tox ini
-        """,
-    )
-    result = run_tox(tmp_path, "list")
-    assert "from_tox_ini -> tox ini" in result.stdout
-    assert "from_setup_cfg" not in result.stdout
-
-
-def test_pyproject_legacy_tox_ini_defines_environments(tmp_path):
-    write(
-        tmp_path,
-        "pyproject.toml",
-        '''
-        [tool.tox]
-        legacy_tox_ini = """
-        [tox]
-        env_list = legacy
-        [testenv:legacy]
-        package = skip
-        skip_install = true
-        description = legacy config
-        """
-        ''',
-    )
-    result = run_tox(tmp_path, "list")
-    assert "legacy -> legacy config" in result.stdout
-
-
-def test_tox_toml_env_run_base_values_are_inherited(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint"]
-        [env_run_base]
-        package = "skip"
-        skip_install = true
-        commands = [["python", "-c", "print('base')"]]
-        [env.lint]
-        description = "lint"
-        """,
-    )
-    data = json_config(run_tox(tmp_path, "config", "-k", "description", "commands", "package", "--format", "json"))
-    assert data["env"]["lint"]["description"] == "lint"
-    assert data["env"]["lint"]["commands"] == ["python -c print('base')"]
-    assert data["env"]["lint"]["package"] == "skip"
-
-
-def test_toml_labels_select_same_envs_in_list_and_config(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["lint", "type", "docs"]
-        labels.check = ["lint", "type"]
-        [env_run_base]
-        package = "skip"
-        skip_install = true
-        [env.lint]
-        labels = ["check"]
-        [env.type]
-        labels = ["check"]
-        [env.docs]
-        description = "docs"
-        """,
-    )
-    listing = run_tox(tmp_path, "list", "-m", "check", "--no-desc")
-    data = json_config(run_tox(tmp_path, "config", "-m", "check", "-k", "labels", "--format", "json"))
-    assert listing.stdout.splitlines() == ["lint", "type"]
-    assert set(data["env"]) == {"lint", "type"}
-
-
-def test_toxfile_plugin_can_add_env_config_key(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["py"]
-        [env.py]
-        package = "skip"
-        skip_install = true
-        custom_value = "plugin-value"
+        audit_level = "strict"
         commands = [["python", "-c", "print('ok')"]]
         """,
     )
-    write(
+    write_file(
         tmp_path,
         "toxfile.py",
         """
@@ -1003,139 +664,84 @@ def test_toxfile_plugin_can_add_env_config_key(tmp_path):
 
         @impl
         def tox_add_env_config(env_conf, state):
-            env_conf.add_config(keys=['custom_value'], of_type=str, default='fallback', desc='custom')
+            env_conf.add_config(
+                keys=["audit_level"],
+                of_type=str,
+                default="normal",
+                desc="audit strictness level",
+            )
         """,
     )
-    data = json_config(run_tox(tmp_path, "config", "-k", "custom_value", "--format", "json"))
-    assert data["env"]["py"]["custom_value"] == "plugin-value"
+    data = parse_json_output(
+        run_tox(
+            tmp_path, "config", "-e", "check",
+            "-k", "audit_level", "--format", "json",
+        )
+    )
+    assert data["env"]["check"]["audit_level"] == "strict"
 
 
-def test_depends_lists_dependency_edges(tmp_path):
-    write(
+def test_seam_repeated_run_reuses_recreate_replaces(tmp_path):
+    """Seam: lifecycle crossing — repeated run reuse ↔ -r recreate removes sentinel."""
+    create_tox_toml(
         tmp_path,
-        "tox.toml",
         """
-        env_list = ["lint", "type"]
-        [env_run_base]
+        env_list = ["check"]
+        [env.check]
         package = "skip"
         skip_install = true
-        [env.lint]
-        description = "lint"
-        [env.type]
-        description = "type"
-        depends = ["lint"]
+        commands = [["python", "-c", "print('RUN_OK')"]]
         """,
     )
-    result = run_tox(tmp_path, "depends")
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "type" in result.stdout
-    assert "lint" in result.stdout
-    assert result.stdout.index("lint") < result.stdout.index("type")
+    first = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert first.returncode == 0
+
+    sentinel = tmp_path / ".tox" / "check" / "sentinel.txt"
+    sentinel.write_text("marker", encoding="utf-8")
+
+    second = run_tox(tmp_path, "run", "-e", "check", "--skip-pkg-install")
+    assert second.returncode == 0
+    assert sentinel.read_text(encoding="utf-8") == "marker"
+
+    recreated = run_tox(tmp_path, "run", "-r", "-e", "check", "--skip-pkg-install")
+    assert recreated.returncode == 0
+    assert not sentinel.exists()
 
 
-def test_list_no_desc_outputs_only_environment_names(tmp_path):
-    write(
+def test_seam_pyproject_native_over_legacy(tmp_path):
+    """Seam: config interaction — native [tool.tox] ↔ precedence over legacy_tox_ini."""
+    create_pyproject_toml(
         tmp_path,
-        "tox.toml",
+        '''
+        [tool.tox]
+        env_list = ["native_env"]
+        legacy_tox_ini = """
+        [tox]
+        env_list = legacy_env
+
+        [testenv:legacy_env]
+        package = skip
+        skip_install = true
+        description = legacy source
+        commands = python -c "print('LEGACY')"
         """
-        env_list = ["lint", "docs"]
-        [env_run_base]
+
+        [tool.tox.env.native_env]
         package = "skip"
         skip_install = true
-        [env.lint]
-        description = "lint"
-        [env.docs]
-        description = "docs"
-        """,
+        description = "native source"
+        commands = [["python", "-c", "print('NATIVE')"]]
+        ''',
     )
-    result = run_tox(tmp_path, "list", "--no-desc")
-    assert result.stdout.splitlines() == ["lint", "docs"]
+    listing = run_tox(tmp_path, "list")
+    assert listing.returncode == 0
+    assert "native_env" in listing.stdout
+    assert "legacy_env" not in listing.stdout
 
-
-def test_schema_command_includes_core_sections(tmp_path):
-    write(tmp_path, "tox.toml", 'env_list = ["py"]\n[env.py]\npackage = "skip"\nskip_install = true\n')
-    schema = json_config(run_tox(tmp_path, "schema"))
-    assert schema["title"] == "tox configuration"
-    assert "env" in schema["properties"]
-    assert "env_list" in schema["properties"]
-
-
-def test_module_invocation_prints_version(tmp_path):
-    result = run_tox(tmp_path, "--version")
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "tox" in result.stdout.lower()
-
-
-def test_pep723_runner_rejects_base_python_override(tmp_path):
-    write(
-        tmp_path,
-        "script.py",
-        """
-        # /// script
-        # requires-python = ">=3.11"
-        # ///
-        print("hello")
-        """,
+    data = parse_json_output(
+        run_tox(
+            tmp_path, "config", "-e", "native_env",
+            "-k", "description", "--format", "json",
+        )
     )
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["py"]
-        [env.py]
-        runner = "virtualenv-pep-723"
-        base_python = ["python3.11"]
-        commands = [["python", "script.py"]]
-        """,
-    )
-    result = run_tox(tmp_path, "run", "-e", "py")
-    assert result.returncode != 0
-    assert "base_python" in result.stdout + result.stderr
-
-
-def test_ci_environment_variable_can_be_passed_to_command(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["py"]
-        [env.py]
-        package = "skip"
-        skip_install = true
-        pass_env = ["CI"]
-        commands = [["python", "-c", "import os; print(os.environ.get('CI'))"]]
-        """,
-    )
-    env = os.environ.copy()
-    env["CI"] = "true"
-    result = subprocess.run(
-        [sys.executable, "-m", "tox", "--colored", "no", "run", "-e", "py"],
-        cwd=tmp_path,
-        env=env,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        timeout=90,
-        check=False,
-    )
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "true" in result.stdout
-
-
-def test_recreate_flag_recreates_environment(tmp_path):
-    write(
-        tmp_path,
-        "tox.toml",
-        """
-        env_list = ["py"]
-        [env.py]
-        package = "skip"
-        skip_install = true
-        commands = [["python", "-c", "print('run')"]]
-        """,
-    )
-    first = run_tox(tmp_path, "run", "-e", "py")
-    second = run_tox(tmp_path, "run", "-r", "-e", "py")
-    assert first.returncode == 0, first.stdout + first.stderr
-    assert second.returncode == 0, second.stdout + second.stderr
-    assert (tmp_path / ".tox" / "py").exists()
+    assert data["env"]["native_env"]["description"] == "native source"

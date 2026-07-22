@@ -1,804 +1,675 @@
-# Spec2Repo oracle - integration tests for boltons-coreutils-fullrepro-001
-"""Track B generated tests for boltons.iterutils and boltons.urlutils."""
+"""Integration layer tests for boltons oracle suite.
+
+Each test verifies >=2 different public API boundaries cooperating.
+Satisfies Composition Dependency: even if all atomic tests pass, these
+tests can still fail because component "seams" don't align.
+
+Seam types tested: state consistency, protocol handoff, error propagation,
+config interaction, lifecycle crossing.
+"""
 import pytest
 
-from boltons.iterutils import (
-    is_iterable, is_scalar, is_collection,
-    split, split_iter,
-    lstrip, lstrip_iter, rstrip, rstrip_iter, strip,
-    chunked, chunked_iter, chunk_ranges,
-    pairwise, pairwise_iter, windowed, windowed_iter,
-    xfrange, frange,
-    backoff, backoff_iter,
-    bucketize, partition,
-    unique, unique_iter, redundant,
-    one, first, same,
-    flatten, flatten_iter,
-    remap, get_path, research,
-    default_visit, default_enter, default_exit, PathAccessError,
-    GUIDerator, SequentialGUIDerator,
-    soft_sorted, untyped_sorted,
-)
-from boltons.urlutils import (
-    URL, QueryParamDict, URLParseError, parse_url, find_all_links,
-    quote_path_part, quote_query_part, quote_fragment_part,
-    quote_userinfo_part, unquote, unquote_to_bytes,
-    parse_host, parse_qsl, resolve_path_parts, register_scheme,
-    to_unicode,
-)
-from boltons.cacheutils import make_cache_key
-from boltons.dictutils import FrozenDict, FrozenHashError
-
 
 # ---------------------------------------------------------------------------
-# make_cache_key / FrozenDict
+# CVI: Cache insert->lookup consistency (LRU + cached decorator cooperation)
+# Seam: state consistency - cached decorator must correctly interact with
+#        the LRU backing store's eviction policy
 # ---------------------------------------------------------------------------
 
 
-def test_frozendict_mapping_and_updated_copy():
-    fd = FrozenDict({'a': 'A', 'b': 'B'})
-    newer = fd.updated({'b': 'Bee', 'c': 'C'})
-    assert fd['b'] == 'B'
-    assert newer == {'a': 'A', 'b': 'Bee', 'c': 'C'}
+class TestCacheLRUWithCachedDecorator:
+    """Integration: cached decorator + LRU backing store."""
 
+    @pytest.mark.depends_on("test_lru_access_updates_recency", "test_cached_stores_return_value")
+    def test_cached_with_lru_eviction_still_recomputes(self):
+        """Seam: state consistency — integration path for cached with lru eviction still recomputes across cooperating public APIs."""
+        from boltons.cacheutils import LRU, cached
 
-def test_is_iterable_string():
-    assert is_iterable("hello")
+        store = LRU(max_size=2)
+        call_log = []
 
+        @cached(store)
+        def expensive(n):
+            call_log.append(n)
+            return n * 11
 
-def test_is_iterable_int():
-    assert not is_iterable(42)
+        expensive(5)
+        expensive(6)
+        expensive(7)  # should evict key for arg 5
+        result = expensive(5)  # must recompute
+        assert result == 55
+        assert call_log.count(5) == 2
 
+    @pytest.mark.depends_on("test_lru_access_updates_recency", "test_cached_stores_return_value")
+    def test_cached_hit_counts_match_lru_state(self):
+        """Seam: state consistency — integration path for cached hit counts match lru state across cooperating public APIs."""
+        from boltons.cacheutils import LRU, cached
 
-def test_is_scalar_int():
-    assert is_scalar(5)
+        store = LRU(max_size=3)
 
+        @cached(store)
+        def square(x):
+            return x * x
 
-def test_is_scalar_none():
-    assert is_scalar(None)
-
-
-def test_is_scalar_list():
-    assert not is_scalar([1, 2])
-
-
-def test_is_collection_string():
-    assert not is_collection("hello")
-
-
-# ---------------------------------------------------------------------------
-# split / split_iter
-# ---------------------------------------------------------------------------
-
-
-def test_split_none_sep_groups():
-    # sep=None groups consecutive Nones like str.split()
-    result = split([1, None, None, 2, None, 3])
-    assert result == [[1], [2], [3]]
-
-
-def test_split_container_sep():
-    # sep=[2,3] splits on 2 and 3 — [1] | [] | [] | [4]
-    result = split([1, 2, 3, 2, 4], sep=[2, 3])
-    assert result[0] == [1]
-    assert result[-1] == [4]
-    assert len(result) > 2
-
-
-def test_split_maxsplit_zero():
-    # maxsplit=0 yields [src] (the whole iterable wrapped)
-    result = list(split_iter([1, 2, 3], sep=2, maxsplit=0))
-    assert len(result) == 1
-    # maxsplit=0 wraps src in a single group: [[[1, 2, 3]]]
-    assert result[0] == [[1, 2, 3]]
-
-
-def test_split_maxsplit_one():
-    result = split([1, 2, 3, 2, 4], sep=2, maxsplit=1)
-    assert result == [[1], [3, 2, 4]]
-
-
-def test_split_non_iterable_raises():
-    with pytest.raises(TypeError):
-        list(split_iter(42))
-
-
-def test_split_empty_trailing():
-    result = split([1, 2, 0], sep=0)
-    assert result == [[1, 2], []]
+        square(2)
+        square(3)
+        square(4)
+        assert len(store) == 3
+        square(2)  # hit
+        assert len(store) == 3  # no new entry
 
 
 # ---------------------------------------------------------------------------
-# lstrip / rstrip / strip
+# CVI: cached/cachedmethod/cachedproperty reuse
+# Seam: protocol handoff - different caching decorators must independently
+#        cache without interfering
 # ---------------------------------------------------------------------------
 
 
-def test_lstrip_all_strip_value():
-    assert list(lstrip_iter([None, None, None])) == []
+class TestCacheDecoratorFamily:
+    """Integration: cached + cachedmethod + cachedproperty on same class."""
 
+    @pytest.mark.depends_on("test_cached_stores_return_value", "test_cachedmethod_caches_result", "test_cachedproperty_computes_once")
+    def test_three_cache_mechanisms_independent(self):
+        """Seam: config interaction — integration path for three cache mechanisms independent across cooperating public APIs."""
+        from boltons.cacheutils import cached, cachedmethod, cachedproperty
 
-def test_lstrip_empty():
-    assert list(lstrip_iter([])) == []
+        fn_store = {}
 
+        @cached(fn_store)
+        def helper(val):
+            return val + 100
 
-def test_rstrip_removes_trailing():
-    assert list(rstrip_iter([1, None, 2, None, None])) == [1, None, 2]
+        class Service:
+            def __init__(self):
+                self._mc = {}
+                self._prop_calls = 0
 
+            @cachedmethod("_mc")
+            def compute(self, val):
+                return val + 200
 
-def test_rstrip_all_strip_value():
-    assert list(rstrip_iter([None, None])) == []
+            @cachedproperty
+            def config(self):
+                self._prop_calls += 1
+                return {"ready": True}
 
+        svc = Service()
+        fn_result = helper(8)
+        method_result = svc.compute(8)
+        prop_result = svc.config
 
-def test_lstrip_custom_value():
-    assert list(lstrip_iter([0, 0, 1, 2], strip_value=0)) == [1, 2]
+        assert fn_result == 108
+        assert method_result == 208
+        assert prop_result == {"ready": True}
+        # Each uses independent storage
+        assert 8 not in svc._mc or svc._mc != fn_store
+        assert svc._prop_calls == 1
 
+    @pytest.mark.depends_on("test_cachedmethod_caches_result", "test_cachedproperty_computes_once")
+    def test_cachedproperty_and_cachedmethod_separate_namespaces(self):
+        """Seam: state consistency — integration path for cachedproperty and cachedmethod separate namespaces across cooperating public APIs."""
+        from boltons.cacheutils import cachedmethod, cachedproperty
 
-def test_rstrip_custom_value():
-    assert list(rstrip_iter([1, 2, 0, 0], strip_value=0)) == [1, 2]
+        class Dual:
+            def __init__(self):
+                self._method_cache = {}
+                self._prop_runs = 0
+                self._method_runs = 0
 
+            @cachedproperty
+            def lazy_val(self):
+                self._prop_runs += 1
+                return 999
 
-# ---------------------------------------------------------------------------
-# chunked / chunked_iter
-# ---------------------------------------------------------------------------
+            @cachedmethod("_method_cache")
+            def fetch(self, key):
+                self._method_runs += 1
+                return key.upper()
 
-
-def test_chunked_with_fill():
-    assert chunked([1, 2, 3], 2, fill=0) == [[1, 2], [3, 0]]
-
-
-def test_chunked_string():
-    assert chunked("abcde", 2) == ["ab", "cd", "e"]
-
-
-def test_chunked_bytes():
-    result = chunked(b"abcde", 2)
-    assert result == [b"ab", b"cd", b"e"]
-
-
-def test_chunked_empty():
-    assert chunked([], 3) == []
-
-
-def test_chunked_invalid_size():
-    with pytest.raises(ValueError):
-        chunked([1, 2], 0)
-
-
-def test_chunked_invalid_kwarg():
-    with pytest.raises(ValueError):
-        chunked([1, 2], 2, unknown=True)
-
-
-def test_chunked_non_iterable():
-    with pytest.raises(TypeError):
-        chunked(42, 2)
-
-
-def test_chunked_with_count():
-    assert chunked([1, 2, 3, 4, 5], 2, count=2) == [[1, 2], [3, 4]]
-
-
-# ---------------------------------------------------------------------------
-# chunk_ranges
-# ---------------------------------------------------------------------------
-
-
-def test_chunk_ranges_with_overlap():
-    result = list(chunk_ranges(10, 4, overlap_size=1))
-    assert len(result) > 0
-    assert result[0][0] == 0
-
-
-def test_chunk_ranges_align():
-    result = list(chunk_ranges(10, 4, input_offset=2, align=True))
-    assert len(result) > 0
-
-
-def test_chunk_ranges_offset():
-    result = list(chunk_ranges(6, 3, input_offset=2))
-    assert result[0][0] == 2
+        d = Dual()
+        assert d.lazy_val == 999
+        assert d.fetch("test") == "TEST"
+        # Verify independent - clearing one doesn't affect other
+        del d.__dict__["lazy_val"]
+        assert d.fetch("test") == "TEST"
+        assert d._method_runs == 1  # still cached
 
 
 # ---------------------------------------------------------------------------
-# pairwise / windowed
+# CVI: LRI/LRU insert->lookup with make_cache_key
+# Seam: protocol handoff - make_cache_key output used as LRU key
 # ---------------------------------------------------------------------------
 
 
-def test_pairwise_with_end():
-    result = list(pairwise_iter([1, 2, 3], end=None))
-    assert (3, None) in result
+class TestCacheKeyWithLRU:
+    """Integration: make_cache_key + LRU storage."""
 
+    @pytest.mark.depends_on("test_typed_true_distinguishes_int_from_float", "test_lru_insert_and_retrieve")
+    def test_make_cache_key_as_lru_key(self):
+        """Seam: state consistency — integration path for make cache key as lru key across cooperating public APIs."""
+        from boltons.cacheutils import LRU, make_cache_key
 
-def test_pairwise_empty():
-    assert list(pairwise([])) == []
+        store = LRU(max_size=10)
+        k1 = make_cache_key((3, "hello"), {"mode": "fast"}, typed=False)
+        k2 = make_cache_key((3, "hello"), {"mode": "slow"}, typed=False)
 
+        store[k1] = "result_fast"
+        store[k2] = "result_slow"
 
-def test_windowed_with_fill():
-    result = list(windowed_iter([1, 2], 3, fill=0))
-    assert (1, 2, 0) in result
-
-
-def test_windowed_too_short_no_fill():
-    result = list(windowed([1], 3))
-    assert result == []
-
-
-# ---------------------------------------------------------------------------
-# xfrange / frange
-# ---------------------------------------------------------------------------
-
-
-def test_xfrange_with_start():
-    result = list(xfrange(1.0, 3.0))
-    assert result[0] == 1.0
-
-
-def test_xfrange_zero_step():
-    with pytest.raises(ValueError):
-        list(xfrange(5.0, step=0))
-
-
-def test_frange_with_start():
-    result = frange(1.0, 4.0)
-    assert result[0] == 1.0
-    assert len(result) == 3
-
-
-def test_frange_zero_step():
-    with pytest.raises(ValueError):
-        frange(5.0, step=0)
-
-
-def test_frange_empty():
-    result = frange(0.0)
-    assert result == []
-
-
-def test_frange_negative_step():
-    result = frange(5.0, 0.0, step=-1.25)
-    assert result[0] == 5.0
+        assert store[k1] == "result_fast"
+        assert store[k2] == "result_slow"
+        assert k1 != k2
 
 
 # ---------------------------------------------------------------------------
-# backoff / backoff_iter
+# CVI: OMD multi-view consistency
+# Seam: state consistency - mutations through one OMD method must be
+#        observable through all view methods consistently
 # ---------------------------------------------------------------------------
 
 
-def test_backoff_repeat_raises():
-    with pytest.raises(ValueError):
-        backoff(1, 10, count='repeat')
+class TestOMDMultiViewConsistency:
+    """Integration: OMD mutation + multiple views agree."""
 
+    @pytest.mark.depends_on("test_omd_add_appends_without_replacing", "test_omd_getlist_returns_all_values")
+    def test_add_visible_through_getlist_items_copy(self):
+        """Seam: lifecycle crossing — integration path for add visible through getlist items copy across cooperating public APIs."""
+        from boltons.dictutils import OrderedMultiDict
 
-def test_backoff_negative_start():
-    with pytest.raises(ValueError):
-        list(backoff_iter(-1, 10))
+        omd = OrderedMultiDict([("lang", "python"), ("lang", "rust")])
+        omd.add("lang", "go")
 
+        assert omd.getlist("lang") == ["python", "rust", "go"]
+        multi_items = omd.items(multi=True)
+        lang_vals = [v for k, v in multi_items if k == "lang"]
+        assert lang_vals == ["python", "rust", "go"]
+        clone = omd.copy()
+        assert clone.getlist("lang") == ["python", "rust", "go"]
 
-def test_backoff_factor_lt_one():
-    with pytest.raises(ValueError):
-        list(backoff_iter(1, 10, factor=0.5))
+    @pytest.mark.depends_on("test_omd_assignment_replaces_all_values", "test_omd_getlist_returns_all_values")
+    def test_assignment_clears_old_multi_values(self):
+        """Seam: state consistency — integration path for assignment clears old multi values across cooperating public APIs."""
+        from boltons.dictutils import OrderedMultiDict
 
+        omd = OrderedMultiDict([("status", "draft"), ("status", "review"), ("status", "final")])
+        omd["status"] = "published"
 
-def test_backoff_stop_zero():
-    with pytest.raises(ValueError):
-        list(backoff_iter(1, 0))
+        assert omd.getlist("status") == ["published"]
+        assert omd["status"] == "published"
+        all_keys = list(omd.keys(multi=True))
+        assert all_keys.count("status") == 1
 
+    @pytest.mark.depends_on("test_omd_getlist_returns_all_values", "test_omd_subscript_returns_most_recent")
+    def test_inverted_and_items_agree(self):
+        """Seam: state consistency — integration path for inverted and items agree across cooperating public APIs."""
+        from boltons.dictutils import OrderedMultiDict
 
-def test_backoff_stop_lt_start():
-    with pytest.raises(ValueError):
-        list(backoff_iter(5, 3))
-
-
-def test_backoff_with_count():
-    result = backoff(1, 100, count=3)
-    assert len(result) == 3
-
-
-def test_backoff_iter_repeat():
-    gen = backoff_iter(1, 4, count='repeat')
-    vals = [next(gen) for _ in range(6)]
-    assert all(v >= 1.0 for v in vals)
-
-
-def test_backoff_jitter_range():
-    result = backoff(1, 16, jitter=0.5)
-    assert all(v >= 0 for v in result)
-
-
-def test_backoff_jitter_out_of_range():
-    with pytest.raises(ValueError):
-        list(backoff_iter(1, 10, jitter=2.0))
+        omd = OrderedMultiDict([("a", 1), ("b", 2), ("a", 3)])
+        inv = omd.inverted()
+        multi = omd.items(multi=True)
+        for k, v in multi:
+            assert k in inv.getlist(v)
 
 
 # ---------------------------------------------------------------------------
-# bucketize / partition
+# CVI: OneToOne bidirectional sync
+# Seam: state consistency - forward and inverse must stay synchronized
+#        after a sequence of mutations
 # ---------------------------------------------------------------------------
 
 
-def test_bucketize_string_key():
-    class Obj:
-        def __init__(self, v): self.v = v
-    objs = [Obj(1), Obj(2), Obj(1)]
-    result = bucketize(objs, key='v')
-    assert len(result[1]) == 2
+class TestOneToOneBidirectionalSync:
+    """Integration: OneToOne forward + .inv consistency across mutations."""
 
+    @pytest.mark.depends_on("test_onetoone_assignment_maintains_bijection", "test_onetoone_inv_assignment_updates_forward")
+    def test_forward_inv_stay_synced_after_mutations(self):
+        """Seam: state consistency — integration path for forward inv stay synced after mutations across cooperating public APIs."""
+        from boltons.dictutils import OneToOne
 
-def test_bucketize_callable_key():
-    result = bucketize(range(5), key=lambda x: x > 2)
-    assert True in result and False in result
+        oto = OneToOne({"server1": "10.0.0.1", "server2": "10.0.0.2"})
+        oto["server3"] = "10.0.0.3"
+        oto.inv["10.0.0.4"] = "server4"
+        del oto["server1"]
 
+        assert "server1" not in oto
+        assert "10.0.0.1" not in oto.inv
+        assert oto["server4"] == "10.0.0.4"
+        assert oto.inv["10.0.0.4"] == "server4"
+        # All forward keys map to valid inverse entries
+        for k, v in oto.items():
+            assert oto.inv[v] == k
 
-def test_bucketize_list_key():
-    result = bucketize([10, 20, 30], key=['a', 'b', 'a'])
-    assert result['a'] == [10, 30]
+    @pytest.mark.depends_on("test_onetoone_reassign_value_removes_old_key", "test_onetoone_pop_updates_inv")
+    def test_value_collision_resolution_syncs_inv(self):
+        """Seam: lifecycle crossing — integration path for value collision resolution syncs inv across cooperating public APIs."""
+        from boltons.dictutils import OneToOne
 
-
-def test_bucketize_list_key_length_mismatch():
-    with pytest.raises(ValueError):
-        bucketize([1, 2, 3], key=['a', 'b'])
-
-
-def test_bucketize_invalid_key_type():
-    with pytest.raises(TypeError):
-        bucketize([1, 2], key=42)
-
-
-def test_bucketize_key_filter():
-    result = bucketize([1, 2, 3, 4], key=lambda x: x % 2,
-                       key_filter=lambda k: k == 1)
-    assert 0 not in result
-    assert 1 in result
-
-
-def test_bucketize_value_transform():
-    result = bucketize([1, 2, 3, 4], key=bool, value_transform=lambda x: x * 10)
-    assert result[True] == [10, 20, 30, 40]
-
-
-def test_bucketize_non_iterable():
-    with pytest.raises(TypeError):
-        bucketize(42)
-
-
-def test_partition_basic():
-    true_vals, false_vals = partition([1, 0, 2, None, 3])
-    assert true_vals == [1, 2, 3]
-
-
-def test_partition_non_iterable():
-    with pytest.raises(TypeError):
-        partition(42)
+        oto = OneToOne({"alpha": "x", "beta": "y", "gamma": "z"})
+        oto["delta"] = "x"  # removes "alpha"
+        assert "alpha" not in oto
+        assert oto.inv["x"] == "delta"
+        assert len(oto) == len(oto.inv)
 
 
 # ---------------------------------------------------------------------------
-# unique / unique_iter / redundant
+# CVI: ManyToMany bidirectional sync
+# Seam: state consistency - forward and inverse frozensets reflect same links
 # ---------------------------------------------------------------------------
 
 
-def test_unique_with_key():
-    result = unique(['a', 'bb', 'c', 'dd'], key=len)
-    assert result == ['a', 'bb']
+class TestManyToManyBidirectionalSync:
+    """Integration: ManyToMany forward + .inv consistency."""
 
+    @pytest.mark.depends_on("test_manytomany_add_creates_link", "test_manytomany_remove_deletes_link")
+    def test_add_and_remove_reflected_in_inv(self):
+        """Seam: lifecycle crossing — integration path for add and remove reflected in inv across cooperating public APIs."""
+        from boltons.dictutils import ManyToMany
 
-def test_unique_callable_key():
-    result = unique([1, -1, 2, -2], key=abs)
-    assert result == [1, 2]
+        mm = ManyToMany()
+        mm.add("course_a", "student_1")
+        mm.add("course_a", "student_2")
+        mm.add("course_b", "student_2")
 
+        assert "course_a" in mm.inv["student_2"]
+        assert "course_b" in mm.inv["student_2"]
 
-def test_unique_non_iterable():
-    with pytest.raises(TypeError):
-        unique(42)
+        mm.remove("course_a", "student_2")
+        assert "course_a" not in mm.inv["student_2"]
+        assert "student_2" in mm["course_b"]
 
+    @pytest.mark.depends_on("test_manytomany_add_creates_link", "test_manytomany_del_removes_all_links")
+    def test_del_key_clears_inv_entries(self):
+        """Seam: lifecycle crossing — integration path for del key clears inv entries across cooperating public APIs."""
+        from boltons.dictutils import ManyToMany
 
-def test_unique_iter_basic():
-    assert list(unique_iter([1, 2, 1, 3])) == [1, 2, 3]
-
-
-def test_redundant_groups():
-    result = redundant([1, 2, 1, 2], groups=True)
-    assert [1, 1] in result or [1, 1] in [sorted(g) for g in result]
-
-
-def test_redundant_callable_key():
-    result = redundant([1, -1, 2], key=abs)
-    assert len(result) == 1
-
-
-# ---------------------------------------------------------------------------
-# one / first / same
-# ---------------------------------------------------------------------------
-
-
-def test_one_no_match():
-    assert one([1, 2, 3], key=lambda x: x == 99) is None
-
-
-def test_one_multiple_matches():
-    assert one([1, 2, 2, 3], key=lambda x: x == 2) is None
-
-
-def test_first_basic():
-    assert first([0, None, 1, 2]) == 1
-
-
-def test_first_default():
-    assert first([], default=42) == 42
-
-
-def test_same_all_equal():
-    assert same([2, 2, 2]) is True
-
-
-def test_same_with_ref():
-    assert same([3, 3, 3], ref=3) is True
-
-
-def test_same_empty():
-    assert same([]) is True
+        mm = ManyToMany([("team1", "p1"), ("team1", "p2"), ("team2", "p2")])
+        del mm["team1"]
+        # p1 no longer linked to any team
+        assert mm.get("team1") == frozenset()
+        # p2 still linked to team2
+        assert "team2" in mm.inv["p2"]
+        if "p1" in mm.inv:
+            assert mm.inv["p1"] == frozenset()
 
 
 # ---------------------------------------------------------------------------
-# flatten / flatten_iter
+# CVI: URL parse->serialize round-trip
+# Seam: protocol handoff - URL constructor output fed to to_text() and re-parsed
 # ---------------------------------------------------------------------------
 
 
-def test_flatten_strings_not_expanded():
-    assert flatten(["ab", [1, 2]]) == ["ab", 1, 2]
+class TestURLRoundTrip:
+    """Integration: URL parse + to_text + re-parse round-trip."""
 
+    @pytest.mark.depends_on("test_url_parses_scheme", "test_qpd_to_text_serializes")
+    def test_full_url_round_trip_preserves_components(self):
+        """Seam: state consistency — integration path for full url round trip preserves components across cooperating public APIs."""
+        from boltons.urlutils import URL
 
-def test_flatten_iter_nested():
-    assert list(flatten_iter([1, [2, 3]])) == [1, 2, 3]
+        original = "https://user:pass@roundtrip.example.test:9999/a/b/c?key=val&arr=1&arr=2#bottom"
+        u1 = URL(original)
+        serialized = u1.to_text()
+        u2 = URL(serialized)
 
+        assert u1.scheme == u2.scheme
+        assert u1.host == u2.host
+        assert u1.port == u2.port
+        assert u1.path == u2.path
+        assert u1.fragment == u2.fragment
+        assert u1.username == u2.username
 
-# ---------------------------------------------------------------------------
-# remap
-# ---------------------------------------------------------------------------
+    @pytest.mark.depends_on("test_url_parses_scheme", "test_qpd_from_text_parses")
+    def test_query_params_survive_round_trip(self):
+        """Seam: state consistency — integration path for query params survive round trip across cooperating public APIs."""
+        from boltons.urlutils import URL
 
-
-def test_remap_basic():
-    result = remap({'a': 1, 'b': {'c': 2}})
-    assert result == {'a': 1, 'b': {'c': 2}}
-
-
-def test_remap_drop_falsy():
-    result = remap({'a': 1, 'b': None, 'c': 0},
-                   visit=lambda p, k, v: bool(v))
-    assert 'b' not in result
-
-
-def test_remap_list():
-    result = remap([1, [2, 3], 4])
-    assert result == [1, [2, 3], 4]
-
-
-def test_remap_set():
-    result = remap({1, 2, 3})
-    assert isinstance(result, (set, frozenset))
-
-
-def test_remap_tuple():
-    result = remap((1, 2, 3))
-    assert result == (1, 2, 3)
-
-
-def test_remap_non_callable_visit():
-    with pytest.raises(TypeError):
-        remap({}, visit=42)
-
-
-def test_remap_non_callable_enter():
-    with pytest.raises(TypeError):
-        remap({}, enter=42)
-
-
-def test_remap_non_callable_exit():
-    with pytest.raises(TypeError):
-        remap({}, exit=42)
-
-
-def test_remap_unexpected_kwarg():
-    with pytest.raises(TypeError):
-        remap({}, unknown_arg=True)
-
-
-def test_remap_shared_reference():
-    shared = [1, 2]
-    root = {'a': shared, 'b': shared}
-    result = remap(root)
-    assert result['a'] == [1, 2]
+        u = URL("http://qp.example.test/search?tag=red&tag=blue&page=3")
+        text = u.to_text()
+        u2 = URL(text)
+        assert u2.query_params.getlist("tag") == ["red", "blue"]
+        assert u2.query_params["page"] == "3"
 
 
 # ---------------------------------------------------------------------------
-# get_path
+# CVI: URL navigate/normalize consistency
+# Seam: lifecycle crossing - navigate creates new state, normalize mutates it,
+#        attributes/serialization must all agree
 # ---------------------------------------------------------------------------
 
 
-def test_get_path_list_index():
-    data = [1, [2, 3]]
-    assert get_path(data, (1, 0)) == 2
+class TestURLNavigateNormalizeConsistency:
+    """Integration: URL.navigate + URL.normalize + attributes/to_text agree."""
 
+    @pytest.mark.depends_on("test_url_navigate_relative", "test_url_normalize_removes_default_port")
+    def test_navigate_then_normalize_consistent(self):
+        """Seam: lifecycle crossing — integration path for navigate then normalize consistent across cooperating public APIs."""
+        from boltons.urlutils import URL
 
-def test_get_path_missing_default():
-    data = {'a': 1}
-    assert get_path(data, ('b',), default=99) == 99
+        base = URL("https://nav.example.test:443/docs/intro?v=1")
+        dest = base.navigate("../api/endpoint?format=json")
+        dest.normalize()
 
+        text = dest.to_text()
+        assert dest.host == "nav.example.test"
+        assert "api/endpoint" in dest.path
+        assert "nav.example.test" in text
+        assert ":443" not in text  # default port removed
+        assert dest.query_params["format"] == "json"
 
-def test_get_path_missing_raises():
-    with pytest.raises(PathAccessError):
-        get_path({'a': 1}, ('b',))
+    @pytest.mark.depends_on("test_url_navigate_relative", "test_url_parses_scheme")
+    def test_navigate_absolute_replaces_base(self):
+        """Seam: state consistency — integration path for navigate absolute replaces base across cooperating public APIs."""
+        from boltons.urlutils import URL
 
+        base = URL("http://old.example.test/page")
+        dest = base.navigate("https://new.example.test/fresh")
+        assert dest.scheme == "https"
+        assert dest.host == "new.example.test"
+        assert "fresh" in dest.path
 
-def test_get_path_dotstring():
-    data = {'a': {'b': 3}}
-    assert get_path(data, 'a.b') == 3
+    @pytest.mark.depends_on("test_url_normalize_removes_default_port", "test_url_parses_port")
+    def test_normalize_updates_authority_and_text(self):
+        """Seam: state consistency — integration path for normalize updates authority and text across cooperating public APIs."""
+        from boltons.urlutils import URL
 
-
-# ---------------------------------------------------------------------------
-# research
-# ---------------------------------------------------------------------------
-
-
-def test_research_basic():
-    data = {'a': 1, 'b': {'c': 2, 'd': 3}}
-    results = research(data, query=lambda p, k, v: v == 2)
-    assert len(results) == 1
-    assert results[0][1] == 2
-
-
-def test_research_all():
-    data = [1, 2, 3]
-    results = research(data)
-    assert len(results) > 0
-
-
-def test_research_reraise():
-    def bad_query(p, k, v):
-        raise ValueError("oops")
-    data = {'x': 1}
-    with pytest.raises(ValueError):
-        research(data, query=bad_query, reraise=True)
-
-
-# ---------------------------------------------------------------------------
-# GUIDerator / SequentialGUIDerator
-# ---------------------------------------------------------------------------
-
-
-def test_guiderator_invalid_size():
-    with pytest.raises(ValueError):
-        GUIDerator(size=10)
-
-
-def test_soft_sorted_first():
-    result = soft_sorted([3, 1, 2], first=[3])
-    assert result[0] == 3
-
-
-def test_soft_sorted_last():
-    result = soft_sorted([3, 1, 2], last=[1])
-    assert result[-1] == 1
-
-
-def test_untyped_sorted_mixed():
-    result = untyped_sorted([3, 'a', 1, 'b'])
-    assert len(result) == 4
+        u = URL("http://auth.example.test:80/resource")
+        u.normalize()
+        auth = u.get_authority()
+        text = u.to_text()
+        assert ":80" not in auth
+        assert ":80" not in text
+        assert "auth.example.test" in auth
 
 
 # ---------------------------------------------------------------------------
-# URL / QueryParamDict / urlutils helpers
+# CVI: remap/get_path/research path agreement
+# Seam: state consistency - all three functions must agree on paths in the
+#        same nested structure
 # ---------------------------------------------------------------------------
 
 
-def test_url_basic_parse():
-    u = URL('http://example.com/path?q=1#frag')
-    assert u.scheme == 'http'
-    assert u.host == 'example.com'
-    assert u.path == '/path'
-    assert u.fragment == 'frag'
+class TestRemapGetPathResearchAgreement:
+    """Integration: remap + get_path + research on same nested data."""
 
+    @pytest.mark.depends_on("test_remap_identity_preserves_structure", "test_get_path_indexes_nested", "test_research_finds_matching_paths")
+    def test_research_paths_accessible_via_get_path(self):
+        """Seam: config interaction — integration path for research paths accessible via get path across cooperating public APIs."""
+        from boltons.iterutils import remap, get_path, research
 
-def test_url_query_params():
-    u = URL('http://example.com/?a=1&b=2')
-    assert u.query_params['a'] == '1'
-    assert u.query_params['b'] == '2'
+        data = {"config": {"db": {"host": "db.example.test", "port": 5432}}, "version": 3}
 
+        matches = research(data, query=lambda p, k, v: v == "db.example.test")
+        assert len(matches) >= 1
+        for path, value in matches:
+            retrieved = get_path(data, path)
+            assert retrieved == "db.example.test"
 
-def test_url_port():
-    u = URL('http://example.com:8080/')
-    assert u.port == 8080
+    @pytest.mark.depends_on("test_remap_visit_drops_items", "test_get_path_indexes_nested")
+    def test_remap_preserves_paths_for_get_path(self):
+        """Seam: state consistency — integration path for remap preserves paths for get path across cooperating public APIs."""
+        from boltons.iterutils import remap, get_path
 
+        data = {"settings": {"theme": "dark", "debug": True, "timeout": 30}}
 
-def test_url_default_port_omitted():
-    u = URL('http://example.com:80/')
-    assert 'port' not in u.to_text() or ':80' not in u.to_text()
+        def keep_non_debug(path, key, value):
+            if key == "debug":
+                return False
+            return True
 
+        remapped = remap(data, visit=keep_non_debug)
+        assert get_path(remapped, ("settings", "theme")) == "dark"
+        assert get_path(remapped, ("settings", "timeout")) == 30
 
-def test_url_to_text():
-    text = 'http://example.com/path'
-    u = URL(text)
-    assert u.to_text() == text
+    @pytest.mark.depends_on("test_research_finds_matching_paths", "test_remap_identity_preserves_structure")
+    def test_research_on_remapped_data_finds_transformed_values(self):
+        """Seam: protocol handoff — integration path for research on remapped data finds transformed values across cooperating public APIs."""
+        from boltons.iterutils import remap, research
 
+        data = {"items": [{"name": "one"}, {"name": "two"}]}
 
-def test_url_str():
-    u = URL('http://example.com/')
-    assert str(u) == u.to_text()
+        def upper_names(path, key, value):
+            if key == "name" and isinstance(value, str):
+                return (key, value.upper())
+            return True
 
+        remapped = remap(data, visit=upper_names)
+        matches = research(remapped, query=lambda p, k, v: v == "ONE")
+        assert len(matches) >= 1
 
-def test_url_equality():
-    assert URL('http://example.com/') == URL('http://example.com/')
 
+# ---------------------------------------------------------------------------
+# Cross-domain: URL + QueryParamDict cooperation
+# Seam: state consistency - URL.query_params mutations reflect in to_text()
+# ---------------------------------------------------------------------------
 
-def test_url_normalize():
-    u = URL('HTTP://Example.COM/./foo/../bar')
-    u.normalize()
-    assert u.scheme == 'http'
-    assert u.host == 'example.com'
 
+class TestURLQueryParamCooperation:
+    """Integration: URL + QueryParamDict mutation + serialization."""
 
-def test_url_navigate_relative():
-    u = URL('http://example.com/a/b/c')
-    result = u.navigate('../d')
-    assert '/a/d' in result.to_text()
+    @pytest.mark.depends_on("test_url_parses_scheme", "test_qpd_from_text_parses")
+    def test_qp_mutation_reflected_in_to_text(self):
+        """Seam: state consistency — integration path for qp mutation reflected in to text across cooperating public APIs."""
+        from boltons.urlutils import URL
 
+        u = URL("https://shop.example.test/cart?item=hat")
+        u.query_params["color"] = "navy"
+        u.query_params.add("item", "scarf")
 
-def test_url_navigate_absolute():
-    u = URL('http://example.com/a/b')
-    result = u.navigate('http://other.com/')
-    assert result.host == 'other.com'
+        text = u.to_text()
+        assert "color=navy" in text
+        # Both items present
+        assert text.count("item=") >= 2
 
+    @pytest.mark.depends_on("test_qpd_from_text_parses", "test_url_equality_same_components")
+    def test_qp_getlist_matches_parsed_url(self):
+        """Seam: state consistency — integration path for qp getlist matches parsed url across cooperating public APIs."""
+        from boltons.urlutils import URL
 
-def test_url_from_parts():
-    u = URL.from_parts(scheme='https', host='example.com', path_parts=('', 'foo'))
-    assert 'example.com' in u.to_text()
-    assert '/foo' in u.to_text()
+        u = URL("http://multi.example.test/api?id=10&id=20&id=30")
+        assert u.query_params.getlist("id") == ["10", "20", "30"]
+        assert u.query_params["id"] == "30"
 
 
-def test_url_path_parts():
-    u = URL('http://example.com/a/b/c')
-    assert 'a' in u.path_parts
+# ---------------------------------------------------------------------------
+# Cross-domain: URL + find_all_links protocol handoff
+# Seam: protocol handoff - find_all_links returns URL objects that should
+#        have properly parsed components
+# ---------------------------------------------------------------------------
 
 
-def test_url_uses_netloc():
-    u = URL('http://example.com/')
-    assert u.uses_netloc
+class TestFindAllLinksURLCooperation:
+    """Integration: find_all_links + URL component access."""
 
+    @pytest.mark.depends_on("test_find_all_links_extracts_urls", "test_url_parses_scheme")
+    def test_extracted_links_have_valid_components(self):
+        """Seam: state consistency — integration path for extracted links have valid components across cooperating public APIs."""
+        from boltons.urlutils import find_all_links
 
-def test_url_username_password():
-    u = URL('http://user:pass@example.com/')
-    assert u.username == 'user'
-    assert u.password == 'pass'
+        text = "Resources: https://docs.example.test/guide/intro and http://cdn.example.test/assets/img.png end."
+        links = find_all_links(text)
+        assert len(links) >= 2
 
+        schemes = [l.scheme for l in links]
+        assert "https" in schemes
+        hosts = [l.host for l in links]
+        assert "docs.example.test" in hosts
 
-def test_url_get_authority():
-    u = URL('http://user@example.com:9000/path')
-    auth = u.get_authority(with_userinfo=True)
-    assert 'user' in auth
-    assert 'example.com' in auth
+    @pytest.mark.depends_on("test_find_all_links_extracts_urls", "test_url_navigate_relative")
+    def test_extracted_link_supports_navigate(self):
+        """Seam: state consistency — integration path for extracted link supports navigate across cooperating public APIs."""
+        from boltons.urlutils import find_all_links
 
+        text = "See https://base.example.test/docs/page for details."
+        links = find_all_links(text)
+        assert len(links) >= 1
+        navigated = links[0].navigate("../other")
+        assert "other" in navigated.path
 
-def test_url_bytes_input():
-    u = URL(b'http://example.com/')
-    assert u.host == 'example.com'
 
+# ---------------------------------------------------------------------------
+# Cross-domain: OMD + subdict cooperation
+# Seam: protocol handoff - subdict output type matches input mapping type
+# ---------------------------------------------------------------------------
 
-def test_url_full_quote():
-    u = URL('http://example.com/path with spaces')
-    text = u.to_text(full_quote=True)
-    assert ' ' not in text
 
+class TestOMDSubdictCooperation:
+    """Integration: OrderedMultiDict + subdict."""
 
-def test_query_param_dict_from_text():
-    qp = QueryParamDict.from_text('a=1&b=2&a=3')
-    assert qp.getlist('a') == ['1', '3']
+    @pytest.mark.depends_on("test_omd_getlist_returns_all_values", "test_subdict_keep_filters")
+    def test_subdict_of_omd_preserves_multidict_behavior(self):
+        """Seam: state consistency — integration path for subdict of omd preserves multidict behavior across cooperating public APIs."""
+        from boltons.dictutils import OrderedMultiDict, subdict
 
+        omd = OrderedMultiDict([("x", 1), ("y", 2), ("x", 3), ("z", 4)])
+        sub = subdict(omd, keep=["x", "z"])
+        assert "x" in sub
+        assert "z" in sub
+        assert "y" not in sub
 
-def test_query_param_repeated_keys():
-    u = URL('http://example.com/?k=1&k=2')
-    assert len(u.qp.getlist('k')) == 2
 
+# ---------------------------------------------------------------------------
+# Cross-domain: FrozenDict + subdict cooperation
+# Seam: protocol handoff - subdict on FrozenDict should return appropriate type
+# ---------------------------------------------------------------------------
 
-def test_parse_url_error():
-    with pytest.raises(URLParseError):
-        parse_url('http://[invalid::ipv6/')
 
+class TestFrozenDictSubdictCooperation:
+    """Integration: FrozenDict + subdict."""
 
-def test_find_all_links_basic():
-    text = "Visit http://example.com and http://other.org today."
-    links = find_all_links(text)
-    assert len(links) == 2
-    assert all(isinstance(u, URL) for u in links)
+    @pytest.mark.depends_on("test_frozendict_hashable_values_can_hash", "test_subdict_drop_excludes")
+    def test_subdict_of_frozendict(self):
+        """Seam: state consistency — integration path for subdict of frozendict across cooperating public APIs."""
+        from boltons.dictutils import FrozenDict, subdict
 
+        fd = FrozenDict({"a": 1, "b": 2, "c": 3})
+        sub = subdict(fd, drop=["b"])
+        assert sub["a"] == 1
+        assert sub["c"] == 3
+        assert "b" not in sub
 
-def test_find_all_links_with_text():
-    text = "See http://example.com for details."
-    tokens = find_all_links(text, with_text=True)
-    assert any(isinstance(t, URL) for t in tokens)
-    assert any(isinstance(t, str) for t in tokens)
 
+# ---------------------------------------------------------------------------
+# Cross-domain: LRI + cachedmethod lifecycle
+# Seam: lifecycle crossing - LRI eviction observed through cachedmethod behavior
+# ---------------------------------------------------------------------------
 
-def test_find_all_links_default_scheme():
-    text = "Visit http://example.com and https://other.org today."
-    links = find_all_links(text, default_scheme='https')
-    assert len(links) >= 2
-    assert all(isinstance(u, URL) for u in links)
 
+class TestLRICachedMethodLifecycle:
+    """Integration: LRI backing + cachedmethod eviction lifecycle."""
 
-def test_find_all_links_scheme_filter():
-    text = "http://a.com and http://b.com"
-    links = find_all_links(text, schemes=['http'])
-    assert len(links) == 2
-    assert all(isinstance(u, URL) for u in links)
-    assert all(u.scheme == 'http' for u in links)
+    @pytest.mark.depends_on("test_lri_evicts_oldest_by_insertion_order", "test_cachedmethod_caches_result")
+    def test_lri_eviction_forces_method_recomputation(self):
+        """Seam: protocol handoff — integration path for lri eviction forces method recomputation across cooperating public APIs."""
+        from boltons.cacheutils import LRI, cachedmethod
 
+        class Processor:
+            def __init__(self):
+                self._cache = LRI(max_size=2)
+                self._calls = 0
 
-def test_quote_path_part_no_full_quote():
-    result = quote_path_part('hello', full_quote=False)
-    assert 'hello' in result
+            @cachedmethod("_cache")
+            def transform(self, val):
+                self._calls += 1
+                return val * 7
 
+        p = Processor()
+        p.transform("a")
+        p.transform("b")
+        p.transform("c")  # evicts "a"
+        p.transform("a")  # must recompute
+        assert p._calls == 4
+        assert p.transform("a") == "aaaaaaa"
 
-def test_quote_query_part_basic():
-    result = quote_query_part('key=value&more')
-    assert isinstance(result, str)
 
+# ---------------------------------------------------------------------------
+# Cross-domain: backoff + unique cooperation
+# Seam: protocol handoff - backoff output fed into unique to detect plateaus
+# ---------------------------------------------------------------------------
 
-def test_quote_fragment_part():
-    result = quote_fragment_part('section 1')
-    assert isinstance(result, str)
 
+class TestBackoffUniqueCooperation:
+    """Integration: backoff output + unique deduplication."""
 
-def test_quote_userinfo_part():
-    result = quote_userinfo_part('user:pass')
-    assert isinstance(result, str)
+    @pytest.mark.depends_on("test_backoff_generates_increasing_delays", "test_unique_preserves_first_occurrence")
+    def test_backoff_plateau_detected_by_unique(self):
+        """Seam: lifecycle crossing — integration path for backoff plateau detected by unique across cooperating public APIs."""
+        from boltons.iterutils import backoff, unique
 
+        delays = backoff(start=1, stop=8, factor=2.0, count=10, jitter=False)
+        unique_delays = unique(delays)
+        # Should have fewer unique values than total due to ceiling
+        assert len(unique_delays) <= len(delays)
+        assert all(d <= 8 for d in unique_delays)
 
-def test_unquote_no_percent():
-    assert unquote('hello') == 'hello'
 
+# ---------------------------------------------------------------------------
+# Cross-domain: chunked + flatten round-trip
+# Seam: protocol handoff - chunked output fed into flatten should recover original
+# ---------------------------------------------------------------------------
 
-def test_unquote_to_bytes_basic():
-    assert unquote_to_bytes('abc%20def') == b'abc def'
 
+class TestChunkedFlattenRoundTrip:
+    """Integration: chunked then flatten recovers original sequence."""
 
-def test_unquote_to_bytes_empty():
-    assert unquote_to_bytes('') == b''
+    @pytest.mark.depends_on("test_chunked_produces_correct_chunks", "test_flatten_nested_lists")
+    def test_chunk_then_flatten_recovers_data(self):
+        """Seam: state consistency — integration path for chunk then flatten recovers data across cooperating public APIs."""
+        from boltons.iterutils import chunked, flatten
 
+        original = [11, 22, 33, 44, 55, 66, 77]
+        chunks = chunked(original, size=3)
+        recovered = flatten(chunks)
+        assert recovered == original
 
-def test_unquote_to_bytes_no_percent():
-    assert unquote_to_bytes(b'hello') == b'hello'
 
+# ---------------------------------------------------------------------------
+# Cross-domain: split + bucketize cooperation
+# Seam: protocol handoff - split output fed into bucketize for classification
+# ---------------------------------------------------------------------------
 
-def test_parse_host_ipv4():
-    import socket
-    family, host = parse_host('192.168.1.1')
-    assert family == socket.AF_INET
 
+class TestSplitBucketizeCooperation:
+    """Integration: split segments then bucketize groups them."""
 
-def test_parse_host_ipv6_invalid():
-    with pytest.raises(URLParseError):
-        parse_host('[::invalid]')
+    @pytest.mark.depends_on("test_split_on_none_default", "test_bucketize_by_callable")
+    def test_split_then_bucketize_by_length(self):
+        """Seam: state consistency — integration path for split then bucketize by length across cooperating public APIs."""
+        from boltons.iterutils import split, bucketize
 
+        data = [1, 2, None, 3, 4, 5, None, 6]
+        segments = split(data)
+        bucketed = bucketize(segments, key=len)
+        # segments are [1,2], [3,4,5], [6] -> lengths 2, 3, 1
+        assert len(bucketed[1]) >= 1  # length-1 segments
+        assert len(bucketed[2]) >= 1  # length-2 segments
 
-def test_parse_qsl_blank_values():
-    result = parse_qsl('a=&b=2')
-    keys = [k for k, v in result]
-    assert 'a' in keys
 
+# ---------------------------------------------------------------------------
+# Cross-domain: URL.from_parts + parse_url agreement
+# Seam: state consistency - URL.from_parts and parse_url agree on components
+# ---------------------------------------------------------------------------
 
-def test_resolve_path_parts_dotdot():
-    result = resolve_path_parts(['', 'a', 'b', '..', 'c'])
-    assert '..' not in result
 
+class TestURLFromPartsParseUrlAgreement:
+    """Integration: URL.from_parts + parse_url produce consistent results."""
 
-def test_register_scheme_uses_netloc():
-    register_scheme('myscheme', uses_netloc=True, default_port=1234)
-    u = URL('myscheme://example.com:1234/')
-    assert u.uses_netloc
+    @pytest.mark.depends_on("test_parse_url_extracts_components", "test_url_parses_scheme")
+    def test_from_parts_serializes_same_as_parsed(self):
+        """Seam: state consistency — integration path for from parts serializes same as parsed across cooperating public APIs."""
+        from boltons.urlutils import URL, parse_url
 
-
-def test_register_scheme_no_netloc_with_port_raises():
-    with pytest.raises(ValueError):
-        register_scheme('badscheme', uses_netloc=False, default_port=999)
-
-
-def test_to_unicode_str():
-    assert to_unicode('hello') == 'hello'
+        u = URL.from_parts(
+            scheme="https",
+            host="parts.example.test",
+            port=7070,
+            path_parts=("", "api", "data", ""),
+            query_params=[("fmt", "json")],
+            fragment="top",
+        )
+        text = u.to_text()
+        parts = parse_url(text)
+        assert parts["scheme"] == "https"
+        assert parts["host"] == "parts.example.test"
+        assert parts["port"] == 7070
+        assert parts["fragment"] == "top"

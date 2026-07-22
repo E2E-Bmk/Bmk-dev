@@ -60,32 +60,11 @@ from traitlets.config.loader import (
     PyFileConfigLoader,
 )
 
-def clear_application_singletons():
-    _clear_application_tree()
-    yield
-    _clear_application_tree()
-
-def _clear_application_tree(cls=Application):
-    cls.clear_instance()
-    for subclass in cls.__subclasses__():
-        _clear_application_tree(subclass)
-
-class IntegerModel(HasTraits):
-    value = Integer()
-
-class Worker(Configurable):
-    enabled = Bool(False, help="enable worker").tag(config=True)
-    label = Unicode("default", help="worker label").tag(config=True)
-    count = Int(0, help="worker count").tag(config=True)
-    plain = Unicode("plain")
-
-class MiniApp(Application):
-    classes = [Worker]
-    aliases = {"label": "Worker.label", "count": "Worker.count"}
-    flags = {"enable-worker": ({"Worker": {"enabled": True}}, "enable worker")}
+from conftest import IntegerModel, Worker, MiniApp, clear_application_tree
 
 
 def test_dynamic_default_is_lazy_and_constructor_overrides_it():
+    """Seam: lifecycle crossing — @default lazy evaluation vs constructor override."""
     class Model(HasTraits):
         value = Int()
         calls = 0
@@ -104,6 +83,7 @@ def test_dynamic_default_is_lazy_and_constructor_overrides_it():
     assert lazy.calls == 1
 
 def test_observe_receives_bunch_change_and_unobserve_stops_it():
+    """Seam: protocol handoff — observe/unobserve controls change notification delivery."""
     class Model(HasTraits):
         value = Int()
 
@@ -121,6 +101,7 @@ def test_observe_receives_bunch_change_and_unobserve_stops_it():
     assert seen == [(obj, "value", 1, 2, "change")]
 
 def test_observe_decorator_registers_class_observer():
+    """Seam: protocol handoff — @observe decorator registers class-level handler."""
     class Model(HasTraits):
         value = Int()
 
@@ -133,6 +114,7 @@ def test_observe_decorator_registers_class_observer():
     assert obj.last == (4, 9)
 
 def test_validator_transforms_value_before_storage():
+    """Seam: state consistency — @validate transform applied before trait storage."""
     class Model(HasTraits):
         value = Int()
 
@@ -145,6 +127,7 @@ def test_validator_transforms_value_before_storage():
     assert obj.value == 5
 
 def test_validator_rejection_preserves_old_value():
+    """Seam: error propagation — validator rejection preserves previous trait value."""
     class Model(HasTraits):
         value = Int(1)
 
@@ -160,6 +143,7 @@ def test_validator_rejection_preserves_old_value():
     assert obj.value == 1
 
 def test_hold_trait_notifications_batches_successful_changes():
+    """Seam: lifecycle crossing — hold_trait_notifications batches observer delivery."""
     class Model(HasTraits):
         a = Int()
         b = Int()
@@ -175,6 +159,7 @@ def test_hold_trait_notifications_batches_successful_changes():
     assert set(seen) == {"a", "b"}
 
 def test_hold_trait_notifications_rolls_back_on_validation_error():
+    """Seam: error propagation — hold block rolls back all changes on TraitError."""
     class Model(HasTraits):
         value = Int(1)
 
@@ -192,6 +177,7 @@ def test_hold_trait_notifications_rolls_back_on_validation_error():
     assert obj.value == 1
 
 def test_bidirectional_link_synchronizes_and_unlink_detaches():
+    """Seam: state consistency — bidirectional link syncs traits until unlink."""
     class Model(HasTraits):
         value = Int()
 
@@ -207,6 +193,7 @@ def test_bidirectional_link_synchronizes_and_unlink_detaches():
     assert right.value == 7
 
 def test_directional_link_only_updates_target():
+    """Seam: protocol handoff — directional_link updates target without reverse propagation."""
     class Model(HasTraits):
         value = Int()
 
@@ -220,6 +207,7 @@ def test_directional_link_only_updates_target():
     connector.unlink()
 
 def test_link_transform_uses_forward_and_reverse_functions():
+    """Seam: config interaction — link transform forward/reverse functions on sync."""
     class Model(HasTraits):
         value = Int()
 
@@ -233,6 +221,7 @@ def test_link_transform_uses_forward_and_reverse_functions():
     connector.unlink()
 
 def test_invalid_link_endpoint_raises_before_linking():
+    """Seam: error propagation — invalid link endpoint raises before linking."""
     class Model(HasTraits):
         value = Int()
 
@@ -241,6 +230,7 @@ def test_invalid_link_endpoint_raises_before_linking():
         link((obj, "missing"), (obj, "value"))
 
 def test_config_uppercase_attribute_creates_section_and_lowercase_missing_fails():
+    """Seam: state consistency — Config uppercase attrs ↔ dict section views."""
     cfg = Config()
     cfg.Worker.name = "alpha"
     assert cfg["Worker"]["name"] == "alpha"
@@ -248,6 +238,7 @@ def test_config_uppercase_attribute_creates_section_and_lowercase_missing_fails(
     assert cfg.Worker.count == 3
 
 def test_config_merge_overrides_scalars_and_preserves_nested_values():
+    """Seam: config interaction — Config.merge overrides scalars, preserves nested keys."""
     base = Config({"Worker": {"name": "base", "count": 1}})
     other = Config({"Worker": {"name": "other", "enabled": True}})
     base.merge(other)
@@ -256,6 +247,7 @@ def test_config_merge_overrides_scalars_and_preserves_nested_values():
     assert base.Worker.enabled is True
 
 def test_config_collisions_reports_conflicting_values():
+    """Seam: state consistency — Config.collisions detects conflicting section values."""
     left = Config({"Worker": {"name": "left"}})
     right = Config({"Worker": {"name": "right"}})
     collisions = left.collisions(right)
@@ -263,6 +255,7 @@ def test_config_collisions_reports_conflicting_values():
     assert collisions["Worker"]
 
 def test_lazy_config_value_applies_container_updates():
+    """Seam: protocol handoff — LazyConfigValue defers list/dict container mutations."""
     lazy = LazyConfigValue()
     lazy.append("tail")
     lazy.prepend(["head"])
@@ -272,39 +265,46 @@ def test_lazy_config_value_applies_container_updates():
     assert mapping.get_value({"b": 2}) == {"a": 1, "b": 2}
 
 def test_json_config_loader_reads_public_config_values(tmp_path):
+    """Seam: protocol handoff — JSONFileConfigLoader file → Config section values."""
     path = tmp_path / "sample.json"
     path.write_text(json.dumps({"Worker": {"name": "json"}}), encoding="utf-8")
     cfg = JSONFileConfigLoader(str(path)).load_config()
     assert cfg.Worker.name == "json"
 
 def test_py_config_loader_uses_get_config_object(tmp_path):
+    """Seam: protocol handoff — PyFileConfigLoader executes get_config() assignments."""
     path = tmp_path / "sample.py"
     path.write_text("c = get_config()\nc.Worker.name = 'python'\n", encoding="utf-8")
     cfg = PyFileConfigLoader(str(path)).load_config()
     assert cfg.Worker.name == "python"
 
 def test_missing_required_config_file_raises(tmp_path):
+    """Seam: error propagation — missing config file raises ConfigFileNotFound."""
     loader = JSONFileConfigLoader("missing.json", path=str(tmp_path))
     with pytest.raises(ConfigFileNotFound):
         loader.load_config()
 
 def test_configurable_loads_tagged_traits_from_matching_section():
+    """Seam: config interaction — Config section loads tagged Configurable traits."""
     cfg = Config({"Worker": {"label": "configured", "enabled": True}})
     worker = Worker(config=cfg)
     assert worker.label == "configured"
     assert worker.enabled is True
 
 def test_configurable_constructor_keyword_overrides_config_value():
+    """Seam: config interaction — constructor keyword overrides Config-provided trait."""
     cfg = Config({"Worker": {"label": "configured"}})
     worker = Worker(config=cfg, label="kw")
     assert worker.label == "kw"
 
 def test_update_config_changes_existing_configurable_trait():
+    """Seam: lifecycle crossing — update_config mutates live Configurable traits."""
     worker = Worker()
     worker.update_config(Config({"Worker": {"count": 7}}))
     assert worker.count == 7
 
 def test_configurable_base_section_applies_to_subclass_and_specific_overrides():
+    """Seam: config interaction — base section vs subclass-specific Config sections."""
     class SpecialWorker(Worker):
         pass
 
@@ -313,6 +313,7 @@ def test_configurable_base_section_applies_to_subclass_and_specific_overrides():
     assert worker.label == "special"
 
 def test_singleton_configurable_instance_lifecycle():
+    """Seam: lifecycle crossing — Application singleton instance create/clear/reject sibling."""
     class Single(Application):
         pass
 
@@ -330,12 +331,14 @@ def test_singleton_configurable_instance_lifecycle():
     assert Single.initialized() is False
 
 def test_logging_configurable_has_public_logger_trait():
+    """Seam: protocol handoff — LoggingConfigurable exposes usable log trait."""
     from traitlets.config import LoggingConfigurable
 
     configurable = LoggingConfigurable()
     assert hasattr(configurable.log, "warning")
 
 def test_application_cli_alias_and_flag_populate_config():
+    """Seam: config interaction — CLI aliases/flags populate Application Config → Worker."""
     MiniApp.clear_instance()
     app = MiniApp.instance()
     app.initialize(["--label=cli", "--count=5", "--enable-worker"])
@@ -346,6 +349,7 @@ def test_application_cli_alias_and_flag_populate_config():
     MiniApp.clear_instance()
 
 def test_application_cli_overrides_loaded_config_file(tmp_path):
+    """Seam: config interaction — CLI args override values from loaded config file."""
     class FileApp(MiniApp):
         pass
 
@@ -359,6 +363,7 @@ def test_application_cli_overrides_loaded_config_file(tmp_path):
     FileApp.clear_instance()
 
 def test_application_json_overrides_python_same_base(tmp_path):
+    """Seam: config interaction — JSON config overrides Python config for same base name."""
     class FileApp(Application):
         classes = [Worker]
 
@@ -374,6 +379,7 @@ def test_application_json_overrides_python_same_base(tmp_path):
     FileApp.clear_instance()
 
 def test_application_path_priority_prefers_earlier_directory(tmp_path):
+    """Seam: config interaction — earlier path entry wins in load_config_file search."""
     class FileApp(Application):
         classes = [Worker]
 
@@ -390,6 +396,7 @@ def test_application_path_priority_prefers_earlier_directory(tmp_path):
     FileApp.clear_instance()
 
 def test_repeated_scalar_cli_option_raises():
+    """Seam: error propagation — repeated scalar CLI option raises ArgumentError/SystemExit."""
     class ScalarApp(MiniApp):
         pass
 
@@ -400,6 +407,7 @@ def test_repeated_scalar_cli_option_raises():
     ScalarApp.clear_instance()
 
 def test_repeated_list_and_dict_cli_values_accumulate():
+    """Seam: config interaction — repeated CLI list/dict options accumulate in Config."""
     class ContainerWorker(Configurable):
         items = List(Unicode()).tag(config=True)
         mapping = Dict(value_trait=Unicode()).tag(config=True)
@@ -419,11 +427,13 @@ def test_repeated_list_and_dict_cli_values_accumulate():
     assert worker.mapping == {"a": "1", "b": "2"}
 
 def test_boolean_flag_definitions_set_true_and_false():
+    """Seam: config interaction — boolean_flag defines paired enable/disable Config fragments."""
     flags = boolean_flag("feature", "Worker.enabled", "on", "off")
     assert flags["feature"][0]["Worker"]["enabled"] is True
     assert flags["no-feature"][0]["Worker"]["enabled"] is False
 
 def test_subcommand_instantiates_and_initializes_child_app():
+    """Seam: lifecycle crossing — subcommand dispatches to child Application initialize."""
     class Child(Application):
         initialized_with = List(Unicode())
 
@@ -441,6 +451,7 @@ def test_subcommand_instantiates_and_initializes_child_app():
     Parent.clear_instance()
 
 def test_show_config_json_prints_current_config_and_stops_work(capsys):
+    """Seam: lifecycle crossing — show_config_json prints config and stops startup."""
     class ShowApp(MiniApp):
         def start(self):
             super().start()
@@ -456,6 +467,7 @@ def test_show_config_json_prints_current_config_and_stops_work(capsys):
     ShowApp.clear_instance()
 
 def test_cross_view_assignment_observer_and_trait_values_agree():
+    """CVI-N: assignment, observer, and trait_values agree on stored value."""
     class Model(HasTraits):
         value = Int()
 
@@ -468,6 +480,7 @@ def test_cross_view_assignment_observer_and_trait_values_agree():
     assert seen == [6]
 
 def test_cross_view_constructor_override_does_not_call_default():
+    """CVI-N: constructor override skips @default without invoking default callable."""
     class Model(HasTraits):
         value = Int()
         calls = Int(0)
@@ -483,12 +496,14 @@ def test_cross_view_constructor_override_does_not_call_default():
     assert obj.calls == 0
 
 def test_cross_view_metadata_visible_in_traits_and_help_section():
+    """CVI-N: trait metadata visible in class_traits and class_config_section."""
     section = Worker.class_config_section()
     assert Worker.class_traits(config=True)["label"].metadata["config"] is True
     assert Worker().trait_metadata("label", "help") == "worker label"
     assert "label" in section
 
 def test_cross_view_rejected_validator_value_absent_from_notifications_and_links():
+    """CVI-N: rejected validator leaves observers and links unchanged."""
     class Model(HasTraits):
         value = Int(1)
 
@@ -511,6 +526,7 @@ def test_cross_view_rejected_validator_value_absent_from_notifications_and_links
     connector.unlink()
 
 def test_cross_view_validator_transform_observer_and_link_agree():
+    """CVI-N: validator transform visible to observer and directional link target."""
     class Source(HasTraits):
         value = Int()
 
@@ -533,24 +549,14 @@ def test_cross_view_validator_transform_observer_and_link_agree():
     connector.unlink()
 
 def test_cross_view_config_dict_attribute_and_configurable_agree():
+    """CVI-N: Config dict, attribute, and Configurable trait views agree."""
     cfg = Config()
     cfg.Worker.label = "same"
     assert cfg["Worker"]["label"] == "same"
     assert Worker(config=cfg).label == "same"
 
-def test_cross_view_application_cli_overrides_file_for_configurable(tmp_path):
-    class FileApp(MiniApp):
-        pass
-
-    FileApp.clear_instance()
-    (tmp_path / "fileapp_config.py").write_text("c = get_config()\nc.Worker.label = 'file'\n", encoding="utf-8")
-    app = FileApp.instance()
-    app.initialize(["--label=cli"])
-    app.load_config_file("fileapp_config", path=[str(tmp_path)])
-    assert Worker(config=app.config).label == "cli"
-    FileApp.clear_instance()
-
 def test_workflow_trait_object_defaults_validation_and_observation():
+    """Seam: lifecycle crossing — defaults, validation, and @observe on trait object."""
     class Account(HasTraits):
         name = Unicode()
         balance = Int()
@@ -577,67 +583,8 @@ def test_workflow_trait_object_defaults_validation_and_observation():
         account.balance = -1
     assert account.balance == 7
 
-def test_workflow_trait_object_constructor_override_and_rejection_state():
-    class Account(HasTraits):
-        name = Unicode()
-        balance = Int()
-        default_calls = Int(0)
-
-        @default("name")
-        def _default_name(self):
-            self.default_calls += 1
-            return "guest"
-
-        @validate("balance")
-        def _valid_balance(self, proposal):
-            if proposal["value"] < 0:
-                raise TraitError("invalid")
-            return proposal["value"]
-
-    account = Account(name="alice", balance=1)
-    assert account.name == "alice"
-    assert account.default_calls == 0
-    with pytest.raises(TraitError):
-        account.balance = -10
-    assert account.trait_values()["balance"] == 1
-
-def test_workflow_trait_object_validation_notification_success_path():
-    class Account(HasTraits):
-        balance = Int()
-
-        @validate("balance")
-        def _valid_balance(self, proposal):
-            return proposal["value"] * 2
-
-    account = Account(balance=2)
-    seen = []
-    account.observe(lambda change: seen.append(change.new), names="balance")
-    account.balance = 3
-    assert account.balance == 6
-    assert seen == [6]
-
-def test_workflow_configurable_application_alias_flag_and_worker_state():
-    MiniApp.clear_instance()
-    app = MiniApp.instance()
-    app.initialize(["--label=cli", "--enable-worker"])
-    worker = Worker(config=app.config)
-    assert worker.label == "cli"
-    assert worker.enabled is True
-    MiniApp.clear_instance()
-
-def test_workflow_configurable_application_file_then_cli_priority(tmp_path):
-    class FileApp(MiniApp):
-        pass
-
-    FileApp.clear_instance()
-    (tmp_path / "fileapp_config.py").write_text("c = get_config()\nc.Worker.label = 'file'\n", encoding="utf-8")
-    app = FileApp.instance()
-    app.initialize(["--label=cli"])
-    app.load_config_file("fileapp_config", path=[str(tmp_path)])
-    assert Worker(config=app.config).label == "cli"
-    FileApp.clear_instance()
-
 def test_workflow_configurable_application_flag_can_be_disabled():
+    """Seam: config interaction — boolean flags enable then disable Worker trait."""
     class BoolApp(Application):
         classes = [Worker]
         flags = boolean_flag("worker", "Worker.enabled")

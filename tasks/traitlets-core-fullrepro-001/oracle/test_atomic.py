@@ -60,29 +60,7 @@ from traitlets.config.loader import (
     PyFileConfigLoader,
 )
 
-def clear_application_singletons():
-    _clear_application_tree()
-    yield
-    _clear_application_tree()
-
-def _clear_application_tree(cls=Application):
-    cls.clear_instance()
-    for subclass in cls.__subclasses__():
-        _clear_application_tree(subclass)
-
-class IntegerModel(HasTraits):
-    value = Integer()
-
-class Worker(Configurable):
-    enabled = Bool(False, help="enable worker").tag(config=True)
-    label = Unicode("default", help="worker label").tag(config=True)
-    count = Int(0, help="worker count").tag(config=True)
-    plain = Unicode("plain")
-
-class MiniApp(Application):
-    classes = [Worker]
-    aliases = {"label": "Worker.label", "count": "Worker.count"}
-    flags = {"enable-worker": ({"Worker": {"enabled": True}}, "enable worker")}
+from conftest import IntegerModel, Worker, MiniApp, clear_application_tree
 
 
 def test_top_level_installable_surface_exports_core_names():
@@ -305,7 +283,7 @@ def test_trait_from_string_and_list_from_string_list():
 def test_dict_from_string_list_parses_key_value_pairs():
     parsed = Dict(value_trait=Int()).from_string_list(["a=1", "b=2"])
     assert parsed == {"a": 1, "b": 2}
-    with pytest.raises(Exception):
+    with pytest.raises((TraitError, ValueError)):
         Dict().from_string_list(["missing-separator"])
 
 def test_trait_introspection_methods_reflect_metadata_and_values():

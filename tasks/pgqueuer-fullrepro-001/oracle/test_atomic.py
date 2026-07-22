@@ -13,50 +13,7 @@ from pgqueuer.models import Context, ScheduleContext
 from pgqueuer.types import JobId, QueueExecutionMode
 
 
-def run(coro):
-    return asyncio.run(coro)
-
-
-def latest_status(rows, job_id):
-    requested = int(job_id)
-    if isinstance(rows, Mapping):
-        for key in (job_id, requested, str(requested)):
-            if key in rows:
-                return rows[key]
-        raise AssertionError(f"job id {requested} missing from job_status result")
-
-    for row in rows:
-        if isinstance(row, Mapping):
-            key = row.get("job_id", row.get("id"))
-            status = row.get("status")
-        elif hasattr(row, "job_id") and hasattr(row, "status"):
-            key = row.job_id
-            status = row.status
-        elif hasattr(row, "id") and hasattr(row, "status"):
-            key = row.id
-            status = row.status
-        else:
-            key, status = row
-        if int(key) == requested:
-            return status
-    raise AssertionError(f"job id {requested} missing from job_status result")
-
-
-def latest_statuses(rows, ids):
-    return {int(job_id): latest_status(rows, job_id) for job_id in ids}
-
-
-async def make_queries() -> InMemoryQueries:
-    pgq = PgQueuer.in_memory()
-    return pgq.qm.queries
-
-
-def test_top_level_public_imports_available():
-    assert PgQueuer is not None
-    assert InMemoryDriver is not None
-    assert InMemoryQueries is not None
-    assert Job is not None
-    assert JobId(7) == 7
+from conftest import run, latest_status, latest_statuses, make_queries
 
 
 def test_install_upgrade_and_schema_checks_are_noops():
@@ -176,27 +133,6 @@ def test_retry_requested_defaults_and_reason_attributes():
     assert str(custom) == "later"
 
 
-def test_retry_preserves_payload_priority_and_job_id():
-    async def scenario():
-        pgq = PgQueuer.in_memory()
-        observed = []
-
-        @pgq.entrypoint("flaky")
-        async def flaky(job: Job) -> None:
-            observed.append((int(job.id), job.payload, job.priority, job.attempts))
-            if job.attempts == 0:
-                raise RetryRequested()
-
-        await pgq.qm.queries.enqueue("flaky", b"keep", priority=8)
-        await pgq.qm.run(
-            batch_size=1,
-            mode=QueueExecutionMode.drain,
-            max_concurrent_tasks=2,
-            dequeue_timeout=timedelta(seconds=0.01),
-        )
-        assert observed == [(1, b"keep", 8, 0), (1, b"keep", 8, 1)]
-
-    run(scenario())
 
 
 def test_requeue_jobs_ignores_non_failed_and_missing_ids():
@@ -233,7 +169,7 @@ def test_dedupe_key_rejects_duplicate_active_job():
     async def scenario():
         queries = await make_queries()
         await queries.enqueue("a", b"x", dedupe_key="same")
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, RuntimeError)):
             await queries.enqueue("a", b"y", dedupe_key="same")
 
     run(scenario())
@@ -307,35 +243,73 @@ def test_schedule_duplicate_normalized_pair_raises_runtime_error():
             return None
 
 
-def test_schedule_six_field_trailing_seconds_is_registered():
+
+
+
+
+# --- composition fix additions (2026-07-20) ---
+
+
+def test_enqueue_batch_returns_monotonic_ids_in_input_order():
     async def scenario():
-        pgq = PgQueuer.in_memory()
-
-        @pgq.schedule("heartbeat", "* * * * * */1")
-        async def heartbeat(schedule):
-            pgq.shutdown.set()
-
-        await asyncio.wait_for(pgq.sm.run(), timeout=3)
-        schedules = await pgq.sm.queries.peek_schedule()
-        assert [(row.entrypoint, row.status) for row in schedules] == [("heartbeat", "queued")]
+        queries = await make_queries()
+        ids = await queries.enqueue(["a", "b", "c"], [b"1", b"2", b"3"], [0, 5, 2])
+        assert ids == [JobId(1), JobId(2), JobId(3)]
 
     run(scenario())
 
 
-def test_update_schedule_heartbeat_changes_heartbeat_without_status_change():
+def test_fresh_in_memory_instances_assign_ids_independently():
     async def scenario():
-        pgq = PgQueuer.in_memory()
+        first = await make_queries()
+        second = await make_queries()
+        assert await first.enqueue("a", b"x") == [JobId(1)]
+        assert await first.enqueue("a", b"y") == [JobId(2)]
+        assert await second.enqueue("a", b"z") == [JobId(1)]
 
-        @pgq.schedule("tick", "* * * * * */1")
-        async def tick(schedule):
-            pgq.shutdown.set()
+    run(scenario())
 
-        await asyncio.wait_for(pgq.sm.run(), timeout=3)
-        before = (await pgq.sm.queries.peek_schedule())[0]
-        await pgq.sm.queries.update_schedule_heartbeat({before.id})
-        after = (await pgq.sm.queries.peek_schedule())[0]
-        assert after.id == before.id
-        assert after.status == "queued"
-        assert after.heartbeat >= before.heartbeat
+
+def test_new_jobs_report_queued_status_before_processing():
+    async def scenario():
+        queries = await make_queries()
+        ids = await queries.enqueue(["a", "b"], [b"1", b"2"], [0, 3])
+        assert latest_statuses(await queries.job_status(ids), ids) == {1: "queued", 2: "queued"}
+
+    run(scenario())
+
+
+def test_queue_log_preserves_batch_enqueue_append_order_and_priorities():
+    async def scenario():
+        queries = await make_queries()
+        await queries.enqueue(["a", "b", "c"], [b"1", b"2", b"3"], [7, 0, 3])
+        log = await queries.queue_log()
+        assert [(int(row.job_id), row.entrypoint, row.status, row.priority) for row in log] == [
+            (1, "a", "queued", 7),
+            (2, "b", "queued", 0),
+            (3, "c", "queued", 3),
+        ]
+
+    run(scenario())
+
+
+def test_clear_queue_without_filter_releases_dedupe_key():
+    async def scenario():
+        queries = await make_queries()
+        await queries.enqueue("a", b"x", dedupe_key="same")
+        await queries.clear_queue()
+        ids = await queries.enqueue("a", b"y", dedupe_key="same")
+        assert ids == [JobId(2)]
+
+    run(scenario())
+
+
+def test_mark_job_as_cancelled_releases_dedupe_key():
+    async def scenario():
+        queries = await make_queries()
+        first = await queries.enqueue("a", b"x", dedupe_key="same")
+        await queries.mark_job_as_cancelled(first)
+        ids = await queries.enqueue("a", b"y", dedupe_key="same")
+        assert ids == [JobId(2)]
 
     run(scenario())

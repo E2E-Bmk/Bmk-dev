@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SpecBench — 研究提案</title>
+<title>Spec2Repo — 研究提案</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,6 +42,26 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
 .prose p:last-child { margin-bottom: 0; }
 .prose strong { color: var(--navy); font-weight: 600; }
 
+/* insight box */
+.insight-box { background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%); border: 1px solid #fcd34d; border-radius: 12px; padding: 22px 26px; margin: 20px 0; }
+.insight-box .insight-label { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #92400e; margin-bottom: 8px; }
+.insight-box p { font-size: 14.5px; color: #78350f; line-height: 1.7; font-weight: 500; }
+
+/* gap visual */
+.gap-visual { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin: 24px 0; }
+.gap-title { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 22px; }
+.gap-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.gap-row:last-child { margin-bottom: 0; }
+.gap-label { min-width: 120px; font-size: 12.5px; font-weight: 600; color: var(--navy); text-align: right; }
+.gap-bar-wrap { flex: 1; height: 28px; background: #f1f5f9; border-radius: 6px; position: relative; overflow: hidden; }
+.gap-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-size: 11.5px; font-weight: 700; color: white; transition: width .6s ease; }
+.gap-bar.unit { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+.gap-bar.integ { background: linear-gradient(90deg, #f97316, #ea580c); }
+.gap-bar.human { background: linear-gradient(90deg, #10b981, #059669); }
+.gap-annotation { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+.gap-arrow { font-size: 20px; color: var(--red); }
+.gap-ann-text { font-size: 13px; font-weight: 700; color: var(--red); }
+
 /* axis */
 .axis-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 30px 28px 22px; margin-bottom: 24px; }
 .axis-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 20px; }
@@ -69,6 +89,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
 .btable .bname { font-weight: 700; color: var(--navy); white-space: nowrap; }
 .tag-red  { display:inline-block; background:#fef2f2; color:#dc2626; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:4px; }
 .tag-green{ display:inline-block; background:#dcfce7; color:#15803d; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:4px; }
+.tag-amber{ display:inline-block; background:#fef3c7; color:#92400e; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:4px; }
 
 /* approach */
 .flow { display:flex; align-items:center; gap:0; background:white; border:1px solid var(--border); border-radius:10px; padding:22px 24px; margin-bottom:20px; overflow-x:auto; }
@@ -77,6 +98,17 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
 .flabel { font-size:12px;font-weight:600;color:var(--navy);line-height:1.3; }
 .fsub   { font-size:10.5px;color:var(--muted);margin-top:2px; }
 .farrow { color:var(--muted);font-size:17px;padding:0 6px;flex-shrink:0;padding-bottom:22px; }
+
+/* two conditions */
+.cond-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px; }
+.cond-card { border-radius:10px;padding:18px 20px;border:1px solid; }
+.cond-card.c1 { background:#eff6ff;border-color:#bfdbfe; }
+.cond-card.c2 { background:#f0fdf4;border-color:#bbf7d0; }
+.cond-card .cond-q { font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px; }
+.cond-card.c1 .cond-q { color:#1d4ed8; }
+.cond-card.c2 .cond-q { color:#15803d; }
+.cond-card h4 { font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:6px; }
+.cond-card p  { font-size:12.5px;color:var(--text);line-height:1.6; }
 
 /* guarantees */
 .g2 { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px; }
@@ -124,137 +156,145 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
 <div class="hero">
   <div class="page">
     <div class="hero-tag">研究提案</div>
-    <h1>Spec<em>Bench</em></h1>
-    <p class="hero-byline">仅凭行为规约，语言模型能否实现一个从未见过的代码库？</p>
+    <h1>Spec<em>2Repo</em></h1>
+    <p class="hero-byline">首次量化 LLM 仓库级代码生成中的集成能力缺口</p>
     <p class="hero-pitch">
-      规约驱动开发是一种标准实践：团队在编写代码之前先撰写行为契约。
-      SpecBench 将这份契约转化为评测基准——包含 100 余个重建任务，模型只收到行为规约作为输入，
-      需要从零产出完整、可运行的代码库。
-      每个任务由一组经过验证的行为测试进行评分，这些测试仅检查可观察行为，
-      而非实现细节。
+      当前的 AI 编程助手能写出正确的组件，但拼不成正确的系统。
+      Spec2Repo 是第一个能够<strong>将组件正确性与集成正确性分开量化</strong>的代码生成基准。
+      通过行为规约驱动的任务设计和分层行为测试，
+      我们发现即使最强模型的 Integration Gap 也高达 <strong>[Z] 个百分点</strong>——
+      而人类开发者在同一任务上的 Gap 不到 [H]%。
     </p>
   </div>
 </div>
 
-<!-- MOTIVATION -->
+<!-- 1. THE PROBLEM -->
 <div class="page">
 <section class="sec">
-  <div class="sec-kicker">研究动机</div>
-  <div class="sec-h">开发者实际工作方式与模型评估范式之间的鸿沟</div>
+  <div class="sec-kicker">核心问题</div>
+  <div class="sec-h">组件写对了，系统却跑不了</div>
   <div class="prose">
     <p>
-      当开发者启动一个新的代码库时，典型输入是一份设计文档、一份 API 契约，
-      或一组行为需求——而非已有代码。
-      他们阅读系统必须做什么，决定内部结构，然后据此实现。
-      这就是规约驱动开发，它是新项目、跨语言移植和代码库重写的常态。
+      随着代码生成从函数级（HumanEval）走向仓库级（NL2Repo、RepoZero），
+      真实的能力瓶颈正在浮现：模型生成的<strong>单个组件各自能通过自测</strong>，
+      但<strong>组装成多组件系统后频繁出现行为错误</strong>——
+      接口类型不匹配、状态表示不一致、错误在模块边界处被静默吞掉。
     </p>
     <p>
-      代码生成评测基准尚未跟上这一现实。
-      主流范式仍然是<em>基于补丁</em>：给模型一个完整的代码库，要求它应用修复。
-      另一条工作线给模型提供代码脚手架——函数签名、文档字符串或骨架——
-      要求它填充函数体。
-      这两种范式的输入已经编码了大部分设计决策，
-      而这恰恰是开发者从规约出发时手中所没有的东西。
+      这意味着仓库级代码生成实际包含两种可分离的能力：
+      <strong>组件正确性</strong>（单个模块的输入输出是否正确）
+      和 <strong>集成正确性</strong>（模块之间能否正确交互）。
+      这两种能力对应不同的认知需求和改进方向——
+      组件错误需要更好的代码生成，集成错误需要更好的架构推理。
     </p>
+  </div>
+  <div class="insight-box">
+    <div class="insight-label">关键洞察</div>
     <p>
-      实际后果是存在一个测量盲区：
-      当前基准无法告诉我们一个模型是否能够
-      <strong>仅凭行为契约设计并实现一个多组件系统</strong>。
-      它们测量编辑能力和补全能力，但无法测量模型
-      做出架构选择、在多个公共接口之间维护状态一致性、
-      以及从文档化行为中推导出正确错误语义的能力。
+      现有基准在评估框架层面<strong>缺乏区分这两种能力的机制</strong>——
+      既无法确认这一现象是否系统性存在，
+      也无法指导 coding agent 的能力发展方向。
+      评估从诊断工具退化成了排行榜数字。
     </p>
   </div>
 </section>
 
-<!-- RELATED WORK -->
+<!-- 2. WHY EXISTING BENCHMARKS CAN'T -->
 <section class="sec">
-  <div class="sec-kicker">相关工作</div>
-  <div class="sec-h">现有基准如何不同</div>
-
-  <div class="axis-card">
-    <div class="axis-title">规约泄露谱系</div>
-    <div class="axis-outer">
-      <div class="axis-line"></div>
-      <div class="axis-pins">
-        <div class="pin p-bad" style="left:0%">
-          <div class="pin-dot"></div>
-          <div class="pin-top" style="left:-10px;">SWE-bench / RepoZero</div>
-          <div class="pin-bot" style="left:-8px;">完整代码库</div>
-        </div>
-        <div class="pin p-mid" style="left:34%">
-          <div class="pin-dot"></div>
-          <div class="pin-top" style="left:-14px;">Commit0</div>
-          <div class="pin-bot" style="left:-20px;">代码骨架</div>
-        </div>
-        <div class="pin p-mid" style="left:63%">
-          <div class="pin-dot"></div>
-          <div class="pin-top" style="left:-14px;">NL2Repo</div>
-          <div class="pin-bot" style="left:-26px;">全部函数签名</div>
-        </div>
-        <div class="pin p-spec" style="left:100%">
-          <div class="pin-dot"></div>
-          <div class="pin-top" style="right:-6px;color:#15803d;">✦ SpecBench</div>
-          <div class="pin-bot" style="right:-14px;color:#15803d;">仅行为规约</div>
-        </div>
-      </div>
-    </div>
-    <div class="axis-foot">
-      <span>← 设计决策已预设 · 测试编辑/补全能力</span>
-      <span>设计决策留给模型 · 测试重建能力 →</span>
-    </div>
+  <div class="sec-kicker">结构性障碍</div>
+  <div class="sec-h">为什么现有基准做不到：不是加几个测试的事</div>
+  <div class="prose" style="margin-bottom:20px;">
+    <p>
+      这不是前人疏忽，是<strong>任务设计的结构性问题</strong>。
+      函数级基准根本没有集成维度；补丁级基准在已有架构上做局部修改，集成结构是给定的。
+      新兴的仓库级基准本应是检验集成能力的理想场所，但均存在结构性障碍：
+    </p>
   </div>
 
   <table class="btable">
     <thead>
-      <tr><th>基准</th><th>模型输入</th><th>实际测试内容</th><th>结构性缺失</th></tr>
+      <tr><th>基准</th><th>模型输入</th><th>实际测试内容</th><th>为什么无法隔离集成能力</th></tr>
     </thead>
     <tbody>
       <tr>
         <td class="bname">HumanEval / MBPP</td>
         <td>函数签名 + 文档字符串</td>
         <td>单函数正确性</td>
-        <td><span class="tag-red">粒度过细</span>&nbsp; 无多组件状态或跨接口不变量</td>
+        <td><span class="tag-red">无集成维度</span></td>
       </tr>
       <tr>
         <td class="bname">SWE-bench</td>
-        <td>完整代码库 + GitHub Issue</td>
+        <td>完整代码库 + Issue</td>
         <td>补丁应用</td>
-        <td><span class="tag-red">完整上下文</span>&nbsp; 架构已存在；模型编辑而非设计</td>
+        <td><span class="tag-red">架构已给定</span>&nbsp; 模型只做局部修改，不需要自主集成决策</td>
       </tr>
       <tr>
-        <td class="bname">Commit0</td>
-        <td>代码骨架（签名 + 文档字符串）</td>
-        <td>函数体补全</td>
-        <td><span class="tag-red">提供脚手架</span>&nbsp; 内部结构已预设；大规模版 HumanEval</td>
+        <td class="bname">NL2RepoBench</td>
+        <td>自然语言规约（~19K tokens）</td>
+        <td>按规约逐文件实现</td>
+        <td><span class="tag-red">Spec-following</span>&nbsp; 规约已包含完整模块结构和 API 设计，集成退化为翻译蓝图</td>
       </tr>
       <tr>
-        <td class="bname">NL2Repo</td>
-        <td>列出全部文件、类、参数的自然语言规约</td>
-        <td>多函数补全</td>
-        <td><span class="tag-red">规约泄露</span>&nbsp; 规约编码了实现形态；设计空间被压缩</td>
+        <td class="bname">RepoZero</td>
+        <td>显式 API 规约 + 跨语言</td>
+        <td>跨语言重现</td>
+        <td><span class="tag-red">Spec-following</span>&nbsp; 架构被 API 签名预先限定</td>
+      </tr>
+      <tr>
+        <td class="bname">ProgramBench</td>
+        <td>编译后的二进制 + 文档</td>
+        <td>行为等价重建</td>
+        <td><span class="tag-amber">落点偏移</span>&nbsp; 逆向设计使其主要考察模型的信息收集能力，而非架构决策；且无规约支撑分层测试，只能端到端评估</td>
       </tr>
       <tr class="spec-row">
-        <td class="bname" style="color:#15803d;">SpecBench ✦</td>
-        <td>仅行为规约</td>
-        <td>规约驱动的重建</td>
-        <td><span class="tag-green">设计保留</span>&nbsp; 模型自主决定结构、状态模型和错误处理</td>
+        <td class="bname" style="color:#15803d;">Spec2Repo ✦</td>
+        <td>仅行为规约（~1K 词）</td>
+        <td>自主架构 + 分层评估</td>
+        <td><span class="tag-green">同时满足两个条件</span>&nbsp; 行为规约迫使自主决策 + 分层行为测试解耦得分</td>
       </tr>
     </tbody>
   </table>
+
+  <div class="prose" style="margin-top:20px;">
+    <p>
+      共同缺口：要隔离集成能力，<strong>行为规约</strong>和<strong>分层行为测试</strong>缺一不可——
+      前者迫使模型自主做架构决策并为 implementation-agnostic 评估提供依据，
+      后者解耦两种能力的得分，
+      同时基于行为而非实现细节的测试避免将命名差异误判为逻辑错误。
+    </p>
+  </div>
+
+  <div class="cond-grid">
+    <div class="cond-card c1">
+      <div class="cond-q">条件一 — 行为规约</div>
+      <h4>迫使自主架构决策</h4>
+      <p>规约只描述可观测行为——输入输出契约、错误处理预期。
+        不泄露模块划分、API 签名或目录布局。
+        模型必须自己决定内部结构。
+        同时为 implementation-agnostic 的分层测试提供评估依据。</p>
+    </div>
+    <div class="cond-card c2">
+      <div class="cond-q">条件二 — 分层行为测试</div>
+      <h4>解耦两种能力的得分</h4>
+      <p>Unit test 验证单组件输出正确性，Integration test 验证组件交互正确性。
+        测试基于行为而非实现细节，
+        任何功能正确的实现都能通过，不限命名、类层次或文件组织。</p>
+    </div>
+  </div>
 </section>
 
-<!-- APPROACH -->
+<!-- 3. OUR APPROACH -->
 <section class="sec">
-  <div class="sec-kicker">技术方法</div>
-  <div class="sec-h">任务设计与 Oracle 构建</div>
+  <div class="sec-kicker">Spec2Repo 设计</div>
+  <div class="sec-h">行为规约 × 分层评估 = Integration Gap</div>
   <div class="prose" style="margin-bottom:20px;">
     <p>
-      每个 SpecBench 任务源自一个拥有活跃测试套件和公开文档的真实 Python 库。
-      行为规约根据公共 API 面撰写——包括库对调用者的承诺、
-      在什么条件下抛出什么错误，以及跨公共接口应持有的不变量。
-      规约读起来像库文档，而非测试框架。
-      候选模型仅收到这份规约，并产出一个完整实现。
+      Spec2Repo 同时满足上述两个条件。每个任务提供 ~1000 词的行为规约，
+      模型从空目录出发，自主决定内部架构、模块边界和跨模块数据流，
+      构建完整可运行项目。
+      评估通过分层 oracle 测试独立打分，定义
+      <strong>Integration Gap = Unit Pass Rate − Integration Pass Rate</strong>，
+      直接量化集成能力缺口。
     </p>
   </div>
 
@@ -262,7 +302,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
     <div class="fstep">
       <div class="ficon" style="background:#eff6ff;">📄</div>
       <div class="flabel">行为<br>规约</div>
-      <div class="fsub">模型唯一输入</div>
+      <div class="fsub">~1K 词 · 仅行为</div>
     </div>
     <div class="farrow">→</div>
     <div class="fstep">
@@ -273,20 +313,20 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
     <div class="farrow">→</div>
     <div class="fstep">
       <div class="ficon" style="background:#f0fdf4;">📦</div>
-      <div class="flabel">多文件<br>实现</div>
+      <div class="flabel">完整<br>仓库</div>
       <div class="fsub">模型自主选择结构</div>
     </div>
     <div class="farrow">→</div>
     <div class="fstep">
       <div class="ficon" style="background:#fdf4ff;">🧪</div>
-      <div class="flabel">行为<br>Oracle</div>
-      <div class="fsub">每任务 50+ 测试</div>
+      <div class="flabel">分层<br>Oracle</div>
+      <div class="fsub">Unit + Integration</div>
     </div>
     <div class="farrow">→</div>
     <div class="fstep">
       <div class="ficon" style="background:#fff7ed;">📊</div>
-      <div class="flabel">分层评分</div>
-      <div class="fsub">原子 · 集成 · 端到端</div>
+      <div class="flabel">Integration<br>Gap</div>
+      <div class="fsub">Unit PR − Integ PR</div>
     </div>
   </div>
 
@@ -294,7 +334,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
     <div class="gcard q1">
       <div class="gcard-q">Oracle 约束一 — 行为性</div>
       <h4>任何正确的重实现都能通过，无论内部结构如何</h4>
-      <p>测试经过筛选，仅检查可观察输出和副作用。
+      <p>测试仅检查可观察输出和副作用。
         对 repr 格式、内部字段名或异常消息文本的断言被排除——
         它们反映的是某个具体实现，而非行为契约。</p>
       <div class="excl">已排除：<code>repr()</code> <code>._私有属性</code> <code>精确错误文本</code></div>
@@ -310,181 +350,196 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
   </div>
 </section>
 
-
-<!-- CONSTRUCTION PIPELINE -->
+<!-- 4. EXPECTED FINDINGS -->
 <section class="sec">
-  <div class="sec-kicker">Pipeline</div>
-  <div class="sec-h">How Tasks Are Constructed</div>
+  <div class="sec-kicker">核心发现</div>
+  <div class="sec-h">Integration Gap 普遍且显著</div>
+  <div class="prose" style="margin-bottom:20px;">
+    <p>
+      在 [M] 个前沿模型、[N] 个任务上，Integration Gap 普遍存在。
+      模型能写对组件，但拼不成系统。
+    </p>
+  </div>
+
+  <div class="gap-visual">
+    <div class="gap-title">Integration Gap 示意（占位数据）</div>
+    <div class="gap-row">
+      <div class="gap-label">Unit Pass Rate</div>
+      <div class="gap-bar-wrap"><div class="gap-bar unit" style="width:72%;">72%</div></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-label">Integration PR</div>
+      <div class="gap-bar-wrap"><div class="gap-bar integ" style="width:45%;">45%</div></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-label">Human Gap</div>
+      <div class="gap-bar-wrap"><div class="gap-bar human" style="width:8%;min-width:50px;">< H%</div></div>
+    </div>
+    <div class="gap-annotation">
+      <span class="gap-arrow">⬆</span>
+      <span class="gap-ann-text">Integration Gap = 27 pp — 模型特有缺陷，非任务歧义</span>
+    </div>
+  </div>
+
   <div class="prose">
     <p>
-      Each SpecBench task is produced by a five-stage synthesis pipeline.
-      The pipeline is deterministic in structure but iterative in execution:
-      later stages can return feedback to earlier ones, and a task only graduates
-      when all quality checks at every stage are satisfied.
+      对 [100] 个 integration 失败的分析显示，[Z]% 归因于<strong>跨模块一致性问题</strong>——
+      状态表示不匹配、接口契约违反、错误传播中断——
+      而非单组件逻辑错误。
+      人类开发者在相同规约下 Integration Gap 低于 [H]%，
+      证明 gap 是<strong>模型特有的能力缺陷</strong>，而非任务本身的歧义。
+    </p>
+  </div>
+</section>
+
+<!-- 5. CONSTRUCTION PIPELINE -->
+<section class="sec">
+  <div class="sec-kicker">构建流水线</div>
+  <div class="sec-h">任务如何被构造</div>
+  <div class="prose">
+    <p>
+      每个 Spec2Repo 任务通过五阶段流水线从真实开源 Python 库构建。
+      流水线结构确定但执行迭代：后续阶段可向前反馈，
+      任务仅在所有质量检查通过后方可毕业。
     </p>
   </div>
 
   <ol class="pipe-list">
     <li>
-      <strong>Candidate selection.</strong>
-      A Python library is screened against hard gates: active test suite,
-      public documentation sufficient to write a behavioral spec,
-      no data-file or binary-heavy test dependencies that would make
-      isolated evaluation impractical.
-      Libraries that pass are recorded in <code>CANDIDATES.md</code>;
-      those that fail are retired with a reason.
+      <strong>候选库筛选。</strong>
+      Python 库需通过硬门槛：活跃测试套件、
+      公开文档足以撰写行为规约、
+      无二进制或大数据文件依赖。
     </li>
     <li>
-      <strong>Spec writing.</strong>
-      A behavioral specification is written from the public API surface —
-      what the library promises to callers, what errors it raises and under what conditions,
-      and what invariants hold across its public interfaces.
-      The spec reads as library documentation, not a benchmark artifact.
-      Every inclusion decision is governed by two questions:
-      does this belong to the public behavioral contract,
-      and is it non-derivable from domain knowledge alone?
-      Twelve validation checks must pass before the spec is considered complete.
+      <strong>行为规约撰写。</strong>
+      从公共 API 面撰写行为规约——
+      库对调用者的承诺、错误抛出条件、跨接口不变量。
+      规约读起来像库文档，不像基准测试。
+      每个纳入决策受两个问题约束：
+      这是否属于公共行为契约？是否不可仅凭领域知识推导？
     </li>
     <li>
-      <strong>Test filtering.</strong>
-      The library's existing test suite is audited against the oracle constraints.
-      Tests that check internal shapes (repr format, private field names,
-      exact exception message text) or that cannot be mapped to a spec section
-      are excluded.
-      Where coverage is thin, additional tests are generated from the spec —
-      each generated test is mapped row-by-row to its source section
-      in <code>spec_test_map.md</code> before it enters the oracle.
-      The oracle must contain at least 50 tests, with no core spec section left uncovered.
+      <strong>Oracle 测试过滤。</strong>
+      对原有测试套件进行审计，排除检查内部状态的测试
+      （repr 格式、私有字段名、精确异常文本）。
+      覆盖不足处从规约生成补充测试，
+      每个生成的测试在 <code>spec_test_map</code> 中逐行关联到规约章节。
+      按 <strong>unit / integration</strong> 分层标注。
     </li>
     <li>
-      <strong>Candidate evaluation.</strong>
-      The candidate model receives the behavioral specification and nothing else —
-      no code, no tests, no prior attempts.
-      It produces a complete multi-file implementation in isolation.
-      The implementation is scored against the oracle at three granularities:
-      atomic, integration, and system end-to-end.
-      Evaluation must run on Linux or WSL; Windows runs are invalid.
-      An import provenance check confirms the model's package
-      is loaded from the candidate directory, not from any installed reference.
+      <strong>候选评估。</strong>
+      候选模型仅收到行为规约，从空目录产出完整实现。
+      在三个粒度上评分：unit、integration、system end-to-end。
+      导入来源检查确认模型包来自候选目录。
     </li>
     <li>
-      <strong>Task judging.</strong>
-      The judge audits the scoring run for cheating, solvability, and fairness
-      before reading any score value.
-      Failures are classified into two passes:
-      instrument validity first (does the failing test actually check
-      a documented, observable behavior?),
-      then model capability (is the failure traceable to a genuine spec gap
-      in the candidate's output?).
-      The judge assigns one of three verdicts:
-      <code>QUALIFIED</code>, <code>BROKEN</code>, or <code>CHEAT_DETECTED</code>.
+      <strong>任务裁决。</strong>
+      裁判在读取分数之前先审计评分运行的作弊、可解性和公平性。
+      失败分两轮分类：
+      先检查工具有效性（测试是否检查了文档化的可观察行为），
+      再检查模型能力（失败是否可追溯到候选输出中的真实能力差距）。
     </li>
   </ol>
-
-  <div class="prose" style="margin-top:20px;">
-    <p>
-      The pipeline includes three feedback paths.
-      When the judge finds a behavior present in the reference
-      but absent from the spec, a patch request is routed back to the spec writer.
-      When the judge finds tests that check undocumented internal shapes,
-      a correction request is routed back to test filtering.
-      When provenance or environment checks fail,
-      the evaluation stage is re-run after fixing the environment.
-      A loop that cycles more than twice without resolution retires the candidate.
-    </p>
-    <p>
-      Each task maintains a state machine in <code>wip/{task}/PIPELINE_STATE.md</code>
-      that records the current stage, iteration counters, and history.
-      A task reaches <code>QUALIFIED</code> only after all five stages complete
-      without unresolved failures, and after a final exit checklist confirms
-      the candidate-visible spec contains no evaluation metadata.
-    </p>
-  </div>
 </section>
 
-<!-- CONTRIBUTIONS -->
+<!-- 6. CONTRIBUTIONS -->
 <section class="sec">
   <div class="sec-kicker">预期贡献</div>
-  <div class="sec-h">SpecBench 为社区带来什么</div>
-  <div class="prose" style="margin-bottom:20px;">
-    <p>该基准仍在构建中——下列内容反映预期范围及当前实证发现的方向。</p>
-  </div>
+  <div class="sec-h">Spec2Repo 为社区带来什么</div>
   <ul class="contrib-list">
     <li>
       <div class="contrib-n">1</div>
-      <div><strong>一种与实际开发实践对齐的任务定义。</strong>
-      规约驱动的重建隔离了现有基准所绕过的架构设计环节。
-      该任务更困难，也更接近开发者根据需求文档实际所做的工作。</div>
+      <div><strong>Integration Gap 作为诊断性 construct。</strong>
+      首次将组件正确性和集成正确性解耦为可独立量化的指标，
+      揭示现有评估遮蔽的能力维度。
+      这一指标不仅量化差距，更指明改进方向——
+      跨模块架构推理，而非更好的单组件代码生成。</div>
     </li>
     <li>
       <div class="contrib-n">2</div>
-      <div><strong>从开源库构建公平重建任务的合成流水线。</strong>
-      该流水线通过构造产生行为性和规约可推导的 oracle 测试。
-      任何拥有公开文档和现有测试套件的 Python 库均可作为候选。</div>
+      <div><strong>同时满足两个必要条件的基准设计。</strong>
+      行为规约迫使模型自主做架构决策，
+      分层行为 oracle 测试实现 implementation-agnostic 的能力解耦。
+      前向构建流水线从源头避免 PR-derived 基准的有效性缺陷。</div>
     </li>
     <li>
       <div class="contrib-n">3</div>
-      <div><strong>关于模型在任务各层次上能力的实证发现。</strong>
-      早期结果表明原子级与系统级分数之间存在显著差距——
-      这是基于补丁的基准无法揭示的差距。
-      大多数集成和系统失败可追溯到少数几个损坏的原语（级联效应），
-      而非独立的跨组件失败。
-      <em>跨视图一致性</em>和<em>错误语义</em>
-      是最频繁出现的真正能力差距。</div>
+      <div><strong>首次实证集成瓶颈。</strong>
+      跨模块集成——而非组件实现——是当前 LLM 仓库级生成的瓶颈。
+      失败分析和人类 baseline 共同确认结论稳健。
+      这一发现划定了 AI 辅助开发的能力边界：
+      组件生成可自主化，系统级集成仍需人类架构监督。</div>
     </li>
   </ul>
 </section>
 
-<!-- ABSTRACT -->
+<!-- 7. ABSTRACT -->
 <section class="sec">
-  <div class="sec-kicker">摘要草稿</div>
-  <div class="sec-h">五句式结构（Farquhar 范式）</div>
+  <div class="sec-kicker">Introduction 草稿</div>
+  <div class="sec-h">七段式叙事结构</div>
   <div class="abstract-wrap">
     <div class="abstract-row">
       <div class="abstract-n">1</div>
       <div>
-        <div class="abstract-role">我们实现了什么</div>
-        <div class="abstract-text">我们引入 SpecBench，一个包含 <span class="hl">[N]</span> 个 Python 库重建任务的基准，
-        模型仅收到行为规约作为输入，需从零产出一个完整、可运行的实现。</div>
+        <div class="abstract-role">P1 — 方向重要</div>
+        <div class="abstract-text">仓库级代码生成是新前沿：真实开发的核心挑战不是写函数，是构建多组件协作的系统。</div>
       </div>
     </div>
     <div class="abstract-row">
       <div class="abstract-n">2</div>
       <div>
-        <div class="abstract-role">为什么困难且重要</div>
-        <div class="abstract-text">从行为契约重建一个库需要做出架构决策、在公共接口间维护状态一致性、
-        并推导出正确的错误语义——这些能力是基于补丁和基于补全的基准无法探测的，
-        因为它们提供了规约驱动开发者必须自行产出的代码结构。</div>
+        <div class="abstract-role">P2 — 实践观察 + 诊断价值</div>
+        <div class="abstract-text">实践中反复出现一个模式：模型生成的组件各自能通过自测，但组装成系统后出现行为错误——接口类型不匹配、状态表示不一致、错误在模块边界处被吞掉。
+        这意味着<strong>组件正确性</strong>和<strong>集成正确性</strong>是两种独立能力，对应不同的改进方向。
+        但现有基准在评估框架层面缺乏区分这两种能力的机制——既无法确认现象是否系统性存在，也无法指导能力发展方向。</div>
       </div>
     </div>
     <div class="abstract-row">
       <div class="abstract-n">3</div>
       <div>
-        <div class="abstract-role">我们如何做到</div>
-        <div class="abstract-text">每个任务由一个合成流水线从真实开源 Python 库构建，
-        该流水线根据公开 API 文档撰写行为规约，并对 oracle 测试施加两条约束进行筛选：
-        行为性（任何正确的重实现都能通过，无论内部结构如何）
-        和规约可推导性（每个测试结果均可追溯至规约标题）。</div>
+        <div class="abstract-role">P3 — 结构性障碍（逐个点名）</div>
+        <div class="abstract-text">函数级/补丁级基准天然不含集成维度。仓库级基准本应是理想场所，但均存在结构性障碍：
+        <strong>NL2RepoBench</strong> 规约已包含完整模块结构，退化为 specification-following；
+        <strong>RepoZero</strong> 显式给出 API 签名，架构预先限定；
+        <strong>ProgramBench</strong> 逆向设计落点在信息收集能力，且无规约支撑分层测试。
+        共同缺口：<span class="hl">行为规约</span>和<span class="hl">分层行为测试</span>缺一不可。</div>
       </div>
     </div>
     <div class="abstract-row">
       <div class="abstract-n">4</div>
       <div>
-        <div class="abstract-role">实证证据</div>
-        <div class="abstract-text">在 <span class="hl">[N]</span> 个任务上对 <span class="hl">[X]</span> 个模型在三种粒度——
-        原子、集成和系统端到端——进行评估，揭示了一致的能力差距：
-        集成级和系统级分数相对于原子级分数急剧下降，
-        且大多数复合失败从少数几个损坏的原语级联而来，
-        而非代表独立的跨组件失败。</div>
+        <div class="abstract-role">P4 — Spec2Repo 设计</div>
+        <div class="abstract-text">~1000 词行为规约，只描述可观测行为，不泄露实现。模型从空目录自主构建完整仓库。
+        分层 oracle 测试（unit + integration）独立打分。
+        <span class="hl">Integration Gap = Unit PR − Integration PR</span>，直接量化集成能力缺口。</div>
       </div>
     </div>
     <div class="abstract-row">
       <div class="abstract-n">5</div>
       <div>
-        <div class="abstract-role">最显著发现</div>
-        <div class="abstract-text">在真正模型失败（非级联所致）中，最频繁涉及的两个能力维度
-        是<em>跨视图一致性</em>和<em>错误语义</em>，
-        即使原子级通过率超过 <span class="hl">[Z]%</span>，系统级通过率平均仅为 <span class="hl">[Y]%</span>。</div>
+        <div class="abstract-role">P5 — 构建方法与规模</div>
+        <div class="abstract-text"><span class="hl">[N]</span> 个任务，<span class="hl">[D]</span> 个领域，<span class="hl">[T]</span> 个行为测试。
+        前向构建流程，所有测试 implementation-agnostic，gold solution 100% 通过。</div>
+      </div>
+    </div>
+    <div class="abstract-row">
+      <div class="abstract-n">6</div>
+      <div>
+        <div class="abstract-role">P6 — 核心发现</div>
+        <div class="abstract-text">Integration Gap 普遍且显著：最强模型 unit <span class="hl">[X]%</span>、integration <span class="hl">[Y]%</span>，gap <span class="hl">[Z]</span> pp。
+        人类 baseline gap &lt; <span class="hl">[H]%</span>，证明是模型特有缺陷。
+        <span class="hl">[Z]%</span> 的集成失败归因于跨模块一致性问题。
+        <strong>模型能写对组件，但拼不成系统。</strong></div>
+      </div>
+    </div>
+    <div class="abstract-row">
+      <div class="abstract-n">7</div>
+      <div>
+        <div class="abstract-role">P7 — 贡献</div>
+        <div class="abstract-text">① Integration Gap 作为诊断性 construct，首次解耦两种能力。
+        ② Spec2Repo benchmark：行为规约 + 分层行为 oracle，同时满足两个必要条件。
+        ③ 首次实证：跨模块集成是当前 LLM 仓库级生成的瓶颈，人类 baseline 确认结论稳健。</div>
       </div>
     </div>
   </div>
@@ -493,7 +548,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color
 </div><!-- /.page -->
 
 <div class="footer">
-  <strong>SpecBench</strong> &nbsp;·&nbsp; 研究提案 &nbsp;·&nbsp; 持续构建中
+  <strong>Spec2Repo</strong> &nbsp;·&nbsp; 研究提案 &nbsp;·&nbsp; 持续构建中
 </div>
 
 </body>

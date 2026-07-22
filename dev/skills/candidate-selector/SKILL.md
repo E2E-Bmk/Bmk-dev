@@ -45,7 +45,7 @@ Prefer repos with:
 
 ## Test Import Pre-Screen
 
-Before writing filter_notes.md, run an AST-level import closure check — not just underscore-prefixed names. For each test file, collect all imported top-level package names and compare against the spec's Installable Surface (or the candidate repo's `__all__` / `__init__` exports if the spec does not yet exist).
+Before writing filter_notes.md, run an AST-level import closure check — not just underscore-prefixed names. For each test file, collect all imported top-level package names and compare against the spec's Public Interface > Import Surface (or the candidate repo's `__all__` / `__init__` exports if the spec does not yet exist).
 
 ```bash
 # Quick grep for explicit private imports

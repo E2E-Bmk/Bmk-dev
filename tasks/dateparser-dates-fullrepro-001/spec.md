@@ -1,9 +1,3 @@
-﻿<!-- INTERNAL
-spec_version: v2
-delta: clarifies no-spaces-time compact digit parsing, TO_TIMEZONE awareness for timezone-bearing input, and past-week RETURN_TIME_SPAN boundary/time semantics; excludes timezone implementation object shape
-source_boundary: dateparser/__init__.py; dateparser/date.py public signatures and docstrings; dateparser/search/__init__.py; dateparser/search/search.py public signatures and docstrings; dateparser/conf.py validation surface; docs/usage.rst; docs/settings.rst; docs/dateparser.rst; docs/custom_language_detection.rst; pyproject.toml console script declaration
--->
-
 # dateparser Specification
 
 ## Product Overview
@@ -279,8 +273,12 @@ Exit code expectations:
 - Import failures, syntax errors, and uncaught exceptions in user code follow normal Python process behavior.
 - The covered parsing API signals user errors through Python exceptions, not process exit codes.
 
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
 ## Implementation Guidance
 
-The scoring checks exercise public parsing behavior from the perspective of a caller using the documented API. They cover successful absolute parsing, relative parsing with fixed bases, incomplete-date settings, language and locale hints, custom language detection, search result shape, timezone conversion, deterministic cross-view agreement, and documented error types.
+The three parsing entry points should share one interpretation of language, date-order, relative-base, and timezone settings. A reusable parser may cache caller-visible locale preferences, but that cache must not change the results promised for an equivalent one-shot parse.
 
-The checks avoid private parser modules, raw language fixtures, exact exception message text, exact object representations, and system-clock-dependent assertions. Correct implementations are expected to pass by following the public behavior described here, even when their internal parser organization differs from the original package.
+Internal parser modules, raw language-data layout, exception wording, object representations, and the choice of timezone provider are implementation details. Only the public values, exceptions, and cross-view relationships described above are stable contracts.

@@ -83,7 +83,7 @@ from jrnl.exception import JrnlException
 def jrnl.main.run(manual_args: list[str] | None = None) -> int
 ```
 
-When `manual_args` is `None`, arguments are read from `sys.argv[1:]`. The function returns `0` for successful standalone commands and returns `1` after handled `JrnlException`, keyboard interrupt, or uncaught exceptions. In debug mode, uncaught exceptions include traceback details on stderr; otherwise they are reported as a user-facing error.
+When `manual_args` is `None`, arguments are read from `sys.argv[1:]`. Successful commands normally return `None`, which produces process exit status `0` through the module and console wrappers. The parser's `--help` action raises `SystemExit(0)` after writing help. Handled `JrnlException`, keyboard interrupt, or uncaught exceptions return `1`. In debug mode, uncaught exceptions include traceback details on stderr; otherwise they are reported as a user-facing error.
 
 ### Journal Objects
 
@@ -105,46 +105,13 @@ class Journal:
     def __init__(self, name: str = "default", **kwargs): ...
 ```
 
-A `Journal` stores entries in a single file. It is iterable over entries and `len(journal)` returns the number of entries. Important public methods and properties are:
+A `Journal` stores entries in a single file. It is iterable over entries and `len(journal)` returns the number of entries. `open(filename=None)` creates a missing file and parent directory, reads and decrypts existing data when configured, parses entries, sorts them by date, and returns the journal. `write(filename=None)` persists the current entries through the selected storage and encryption contract. `validate_parsing()` reports whether serializing and parsing the current entries preserves their public values, and `create_file(filename)` creates an empty journal file.
 
-```python
-Journal.from_journal(other: Journal) -> Journal
-Journal.import_(other_journal_txt: str) -> None
-Journal.open(filename: str | None = None) -> Journal
-Journal.write(filename: str | None = None) -> None
-Journal.validate_parsing() -> bool
-Journal.create_file(filename: str) -> None
-Journal.pprint(short: bool = False) -> str
-Journal.sort() -> None
-Journal.limit(n: int | None = None) -> None
-Journal.tags -> list
-Journal.filter(
-    tags=[],
-    month=None,
-    day=None,
-    year=None,
-    start_date=None,
-    end_date=None,
-    starred=False,
-    tagged=False,
-    exclude_starred=False,
-    exclude_tagged=False,
-    strict=False,
-    contains=[],
-    exclude=[],
-) -> None
-Journal.delete_entries(entries_to_delete: list[Entry]) -> None
-Journal.change_date_entries(date: datetime.datetime, entries_to_change: list[Entry]) -> None
-Journal.prompt_action_entries(msg) -> list[Entry]
-Journal.new_entry(raw: str, date=None, sort: bool = True) -> Entry
-Journal.editable_str() -> str
-Journal.parse_editable_str(edited: str) -> None
-Journal.get_change_counts() -> dict
-```
+Entries are created with `new_entry(raw, date=None, sort=True)`. `sort()` restores chronological order, while `limit(n)` keeps the latest `n` entries. `import_(other_journal_txt)` parses jrnl text, de-duplicates equal entries, merges them with current state, and sorts the result. `from_journal(other)` creates the requested journal type with the other journal's configuration and entries.
 
-`Journal.open()` creates a missing file and any missing parent directory, reads existing data, decrypts when configured, parses entries, sorts by date, and returns the journal. `Journal.write()` writes all current entries back to storage, encrypting when configured. `Journal.import_()` parses another jrnl text stream, marks imported entries modified, de-duplicates entries by entry equality, merges them, and sorts the result. `Journal.filter()` mutates the journal to the selected entries.
+`filter(...)` replaces the current entry view with the selected subset. It accepts tag, date, starred, tagged, inclusion-text, and exclusion constraints; `strict=True` requires all supplied tags or text terms instead of any. The `tags` property returns summary objects whose `name` and `count` describe the current entry view, with each tag counted at most once per entry.
 
-`Journal.tags` returns tag summary objects with `name` and `count` attributes. Their string value is the tag name. Counts are based on each tag appearing at most once per entry.
+User-driven changes remain observable through the same journal object. `delete_entries(entries)` removes the selected entries, `change_date_entries(date, entries)` updates their timestamps, and `prompt_action_entries(message)` returns the entries accepted by the user. `editable_str()` produces the editable storage view, `parse_editable_str(edited)` applies that view back to the journal, and `get_change_counts()` returns the added, deleted, and modified counts for the session. `pprint(short=False)` renders the current entry view, with `short=True` omitting bodies.
 
 ```python
 class Folder(Journal):
@@ -514,10 +481,10 @@ The `work` token selects the configured `work` journal and applies its overrides
 - Internal upgrade flows for old configuration files are not covered except where legacy journal opening and public encryption labels are explicitly described.
 - Exact prose of every user-facing status message is not required unless the behavior depends on stdout/stderr routing, exit status, or named error condition.
 
-## Implementation Guidance
+## Environment
 
-The expected implementation focuses on public behavior that a user can observe through the CLI, documented files, and exported Python import paths. Tests may exercise entry creation, date parsing boundaries, tag/star parsing, config scoping and overrides, journal selection, search combinations, editor/template behavior, import de-duplication, export formats, storage persistence, encryption/decryption flows with controlled password/keyring behavior, and public Python API imports.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment. Journal and configuration workflows use local temporary files and require no network services.
 
-Scoring is based on behavioral compatibility, not source-code similarity. A correct implementation may choose different internal modules or helper functions as long as the public command, file, object, output, and error contracts described here are satisfied.
+## Evaluation Notes
 
-Tests should not require private helper names, private attributes, or undocumented internal module paths. Failures should reflect missing or incorrect public behavior rather than differences in implementation structure.
+Assessment exercises the documented CLI, file formats, exported Python objects, plugins, storage modes, encryption selection, and state shared by write, search, edit, and export operations. It checks public values, durable files, exit status, and output routing without requiring private helpers, private attributes, undocumented module paths, or exact error prose.

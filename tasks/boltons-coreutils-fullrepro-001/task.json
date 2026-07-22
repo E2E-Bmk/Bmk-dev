@@ -1,6 +1,6 @@
 {
   "instance_id": "boltons-coreutils-fullrepro-001",
-  "status": "QUALIFIED",
+  "status": "REVALIDATION-REQUIRED",
   "repo": "",
   "repo_commit": "",
   "spec_version": "v1",
@@ -9,107 +9,351 @@
       "oracle/test_atomic.py",
       "oracle/test_integration.py"
     ],
-    "count": 85,
+    "count": 82,
     "scorer_isolation": [
       "--remove-path"
     ]
   },
   "taxonomy": {
-    "test_cacheutils.test_lru_add": "integration",
-    "test_cacheutils.test_lri": "system_e2e",
-    "test_cacheutils.test_lri_cache_eviction": "system_e2e",
-    "test_cacheutils.test_lru_basic": "system_e2e",
-    "test_cacheutils.test_lru_dict_replacement": "system_e2e",
-    "test_cacheutils.test_cached_dec": "system_e2e",
-    "test_cacheutils.test_unscoped_cached_dec": "system_e2e",
-    "test_cacheutils.test_callable_cached_dec": "system_e2e",
-    "test_cacheutils.test_cachedmethod": "system_e2e",
-    "test_cacheutils.test_cachedmethod_maintains_func_abstraction": "system_e2e",
-    "test_cacheutils.test_cachedproperty": "system_e2e",
-    "test_cacheutils.test_cachedproperty_maintains_func_abstraction": "system_e2e",
-    "test_cacheutils.test_min_id_map": "system_e2e",
-    "test_cacheutils.test_threshold_counter": "system_e2e",
-    "test_dictutils.test_dict_init": "integration",
-    "test_dictutils.test_todict": "integration",
-    "test_dictutils.test_eq": "integration",
-    "test_dictutils.test_copy": "integration",
-    "test_dictutils.test_omd_pickle": "system_e2e",
-    "test_dictutils.test_clear": "integration",
-    "test_dictutils.test_multi_correctness": "integration",
-    "test_dictutils.test_kv_consistency": "integration",
-    "test_dictutils.test_update_basic": "system_e2e",
-    "test_dictutils.test_update": "system_e2e",
-    "test_dictutils.test_update_extend": "system_e2e",
-    "test_dictutils.test_invert": "system_e2e",
-    "test_dictutils.test_poplast": "integration",
-    "test_dictutils.test_pop": "integration",
-    "test_dictutils.test_addlist": "integration",
-    "test_dictutils.test_pop_all": "integration",
-    "test_dictutils.test_reversed": "integration",
-    "test_dictutils.test_setdefault": "integration",
-    "test_dictutils.test_ior": "integration",
-    "test_dictutils.test_subdict": "integration",
-    "test_dictutils.test_subdict_keep_type": "integration",
-    "test_dictutils.test_one_to_one": "system_e2e",
-    "test_dictutils.test_many_to_many": "system_e2e",
-    "generated_tests.test_make_cache_key_single_fast_arg": "atomic",
-    "generated_tests.test_make_cache_key_kwargs_are_order_independent": "atomic",
-    "generated_tests.test_make_cache_key_typed_distinguishes_equal_values": "atomic",
-    "generated_tests.test_frozendict_mapping_and_updated_copy": "integration",
-    "generated_tests.test_frozendict_rejects_mutation": "atomic",
-    "generated_tests.test_frozendict_hash_error_for_unhashable_values": "atomic",
-    "generated_tests.test_is_iterable_list": "atomic",
-    "generated_tests.test_is_scalar_string": "atomic",
-    "generated_tests.test_is_collection_list": "atomic",
-    "generated_tests.test_split_basic_sep": "atomic",
-    "generated_tests.test_split_callable_sep": "atomic",
-    "generated_tests.test_lstrip_removes_leading": "atomic",
-    "generated_tests.test_strip_both_ends": "atomic",
-    "generated_tests.test_chunked_basic": "atomic",
-    "generated_tests.test_chunk_ranges_basic": "atomic",
-    "generated_tests.test_pairwise_basic": "atomic",
-    "generated_tests.test_windowed_basic": "atomic",
-    "generated_tests.test_xfrange_basic": "atomic",
-    "generated_tests.test_frange_basic": "atomic",
-    "generated_tests.test_backoff_basic": "atomic",
-    "generated_tests.test_bucketize_basic": "atomic",
-    "generated_tests.test_partition_multiple_keys": "atomic",
-    "generated_tests.test_unique_basic": "atomic",
-    "generated_tests.test_redundant_basic": "atomic",
-    "generated_tests.test_one_single_match": "atomic",
-    "generated_tests.test_same_not_equal": "atomic",
-    "generated_tests.test_flatten_nested": "atomic",
-    "generated_tests.test_remap_basic": "integration",
-    "generated_tests.test_get_path_nested_dict": "atomic",
-    "generated_tests.test_research_basic": "integration",
-    "generated_tests.test_guiderator_yields_strings": "atomic",
-    "generated_tests.test_sequential_guiderator_deterministic": "atomic",
-    "generated_tests.test_url_parse_error": "atomic",
-    "generated_tests.test_quote_path_part_basic": "atomic",
-    "generated_tests.test_unquote_basic": "atomic",
-    "generated_tests.test_to_unicode_bytes": "atomic",
-    "generated_tests.test_parse_url_basic": "atomic",
-    "generated_tests.test_parse_host_plain": "atomic",
-    "generated_tests.test_parse_qsl_basic": "atomic",
-    "generated_tests.test_resolve_path_parts_dot": "atomic",
-    "generated_tests.test_query_param_dict_from_text": "integration",
-    "generated_tests.test_query_param_dict_to_text": "atomic",
-    "generated_tests.test_url_basic_parse": "integration",
-    "generated_tests.test_url_normalize": "system_e2e",
-    "generated_tests.test_url_navigate_relative": "system_e2e",
-    "generated_tests.test_url_from_parts": "integration",
-    "generated_tests.test_find_all_links_basic": "integration",
-    "generated_tests.test_find_all_links_with_text": "system_e2e"
+    "atomic": 38,
+    "entries": [
+      {
+        "taxonomy_key": "test_atomic::test_make_cache_key_single_fast_arg",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_make_cache_key_kwargs_are_order_independent",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_make_cache_key_typed_distinguishes_equal_values",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_frozendict_rejects_mutation",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_frozendict_hash_error_for_unhashable_values",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_is_iterable_list",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_is_scalar_string",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_is_collection_list",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_split_basic_sep",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_split_callable_sep",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_lstrip_removes_leading",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_strip_both_ends",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_chunked_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_chunk_ranges_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_pairwise_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_windowed_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_xfrange_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_frange_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_backoff_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_bucketize_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_partition_multiple_keys",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_unique_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_redundant_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_one_single_match",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_same_not_equal",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_flatten_nested",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_get_path_nested_dict",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_guiderator_yields_strings",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_sequential_guiderator_deterministic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_url_parse_error",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_query_param_dict_to_text",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_parse_url_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_quote_path_part_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_unquote_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_parse_host_plain",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_parse_qsl_basic",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_resolve_path_parts_dot",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_to_unicode_bytes",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_integration::test_frozendict_mapping_and_updated_copy",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_remap_basic",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_research_basic",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_url_basic_parse",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_url_normalize",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_url_navigate_relative",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_url_from_parts",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_query_param_dict_from_text",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_find_all_links_basic",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_find_all_links_with_text",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_lru_add",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_lri",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_lru_basic",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_lru_dict_replacement",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_cached_dec",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_unscoped_cached_dec",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_callable_cached_dec",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_cachedmethod",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_cachedmethod_maintains_func_abstraction",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_cachedproperty",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_cachedproperty_maintains_func_abstraction",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_min_id_map",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_threshold_counter",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_dict_init",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_todict",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_eq",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_copy",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_omd_pickle",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_clear",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_multi_correctness",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_kv_consistency",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_update_basic",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_update_extend",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_invert",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_poplast",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_pop",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_addlist",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_pop_all",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_reversed",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_setdefault",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_ior",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_subdict",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_subdict_keep_type",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_one_to_one",
+        "layer": "system_e2e"
+      }
+    ],
+    "integration_system_e2e": 44
   },
   "stats": {
     "atomic": 38,
     "integration": 24,
-    "system_e2e": 24
+    "system_e2e": 20
   },
-  "reference_pass_rate": 1.0,
-  "candidate_score": {
-    "passed": 78,
-    "total": 86
-  },
+  "reference_pass_rate": null,
+  "candidate_score": null,
   "spec_style_note": "spec_style: LIST-HEAVY, needs rewrite to NATURAL (organize by concept not module)"
 }

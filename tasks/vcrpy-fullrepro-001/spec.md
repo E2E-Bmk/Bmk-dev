@@ -4,6 +4,8 @@
 
 Build an installable Python package named `vcr`. VCR.py records HTTP interactions made by user code into cassette files and replays them on later runs. The package lets tests become deterministic by intercepting outgoing HTTP requests, matching them to recorded requests, and returning the previously recorded responses instead of performing network traffic.
 
+## Product State Model
+
 The central shared state is a cassette: an ordered collection of recorded request/response interactions plus playback bookkeeping. Several public projections must agree with the cassette:
 
 - the requests and responses visible on the `Cassette` object;
@@ -66,9 +68,12 @@ import vcr.filters
 import vcr.request
 import vcr.serialize
 import vcr.patch
+import vcr.errors
+import vcr.persisters.filesystem
+import vcr.unittest
 ```
 
-The package should also expose the public classes and functions implied by those documented modules, including configuration, cassette, request, matcher, filter, serializer, and patch APIs.
+The package should also expose the public classes and functions implied by those documented modules, including configuration, cassette, request, matcher, filter, serializer, patch, persistence, and unittest APIs. In particular, callers may import `Cassette`, `Request`, `CannotOverwriteExistingCassetteException`, `FilesystemPersister`, `CassetteNotFoundError`, `CassetteDecodeError`, `VCRMixin`, and `VCRTestCase` from their documented modules.
 
 ## Core Workflow
 
@@ -197,7 +202,6 @@ Built-in matcher names:
 - `raw_body`
 - `body`
 - `headers`
-- `url` as a backwards-compatible alias for `uri`
 
 Required behavior:
 
@@ -351,3 +355,15 @@ Unhandled requests should raise a VCR-related exception. Custom persister loadin
 ## Implementation Freedom
 
 Any internal architecture is acceptable if the public behavior above holds. You may use Python standard-library HTTP facilities and common installed dependencies implied by the docs. Do not require live internet access for tests that replay recorded local interactions.
+
+## Invocation Protocol
+
+VCR.py is a library-only package. It does not provide a console script, and `python -m vcr` is not a supported invocation. Applications and test suites use the documented Python imports and context-manager, decorator, or unittest workflows.
+
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
+## Evaluation Notes
+
+Validation exercises public imports, request normalization and matching, cassette state, record modes, serialization and persistence, filtering, patch lifecycle, unittest integration, and local HTTP record/replay workflows. Equivalent internal organization and semantically equivalent cassette formatting are acceptable.

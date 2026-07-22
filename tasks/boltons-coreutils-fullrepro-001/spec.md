@@ -1,15 +1,21 @@
-# Boltons Core Utilities Reconstruction Spec
+# Boltons Core Utilities Specification
 
-Build a pure-Python package named `boltons` implementing the documented public
-behavior of these modules:
+## Product Overview
+
+Boltons is a collection of focused Python utilities that extend the standard library without introducing a shared framework. This contract covers caching, ordered multi-value mappings, iterable transformation, and URL manipulation.
+
+## Scope
+
+The supported feature areas are provided by these independent public modules:
 
 - `boltons.cacheutils`
 - `boltons.dictutils`
 - `boltons.iterutils`
 - `boltons.urlutils`
 
-The implementation must use only the Python standard library at runtime. Public
-imports must work from the documented module paths, including:
+## Installable Surface
+
+The package is imported as `boltons`. Public imports must work from the documented module paths, including:
 
 ```python
 from boltons.cacheutils import LRU, LRI, cached, cachedmethod, cachedproperty
@@ -21,9 +27,7 @@ from boltons.iterutils import default_visit, default_enter, default_exit, PathAc
 from boltons.urlutils import URL, QueryParamDict, URLParseError, parse_url, find_all_links
 ```
 
-Do not implement private test-only names. Public behavior is defined by the
-classes, functions, methods, attributes, conversions, exceptions, and examples
-below.
+The four modules are independent utility domains. Callers must not need private helpers or a particular internal package layout to use them.
 
 ## General Conventions
 
@@ -39,7 +43,11 @@ below.
 - Exact exception message wording is not part of the contract unless this spec
   gives exact text.
 
-## `boltons.cacheutils`
+## Product State Model
+
+Each stateful utility exposes one logical value through more than one public view. Cache mapping operations and cached callables must observe the same cached entries. Ordered multi-value mappings must preserve the same key/value associations through single-value lookup, multi-value lookup, iteration, copying, and inversion. URL attributes, query parameters, serialization, normalization, and navigation must describe the same URL state. Iterable helpers are stateless transformations whose output order must follow their input traversal order.
+
+## Cache Behavior
 
 ### `LRI`
 
@@ -191,7 +199,7 @@ Behavior:
 - Object ids may be reused after objects are dropped or garbage-collected.
 - Objects should be weak-referenceable where weak references are required.
 
-## `boltons.dictutils`
+## Ordered Mapping Behavior
 
 ### `OrderedMultiDict`, `OMD`, and `MultiDict`
 
@@ -319,7 +327,7 @@ Behavior:
 - If both are supplied, apply `keep` first, then `drop`.
 - The original mapping is not mutated.
 
-## `boltons.iterutils`
+## Iterable Transformation Behavior
 
 ### Type Checks
 
@@ -475,7 +483,7 @@ suppressed unless `reraise=True`.
 - `SequentialGUIDerator(size=24)` yields deterministic sequential ids of the
   requested length and supports `reseed()`.
 
-## `boltons.urlutils`
+## URL Behavior
 
 ### Public Constants and Exceptions
 
@@ -602,6 +610,30 @@ Behavior:
 - With `with_text=True`, return a token list that preserves non-link text
   segments and replaces link segments with `URL` objects.
 
+## Error Semantics
+
+Mutation attempts on `FrozenDict` must raise `TypeError`. Hashing a `FrozenDict` containing an unhashable value must raise `FrozenHashError`.
+
+Malformed URL input that cannot be parsed as a supported URL must raise `URLParseError`. Nested traversal through `get_path()` must raise `PathAccessError` when a requested component cannot be resolved.
+
+`OneToOne` must reject inputs that assign the same value to multiple keys. Cached descriptors and methods must raise `TypeError` when invoked without the instance required by their public descriptor contract.
+
+## Cross-View Invariants
+
+- A value inserted into an `LRI` or `LRU` through mapping assignment must be returned by lookup until public eviction or deletion removes it.
+- A result stored by `cached`, `cachedmethod`, or `cachedproperty` must be reused by subsequent calls that resolve to the same public cache key.
+- An ordered multi-value mapping changed through `add`, `addlist`, assignment, update, or deletion must expose the same associations through lookup, `getlist`, iteration, `items(multi=True)`, and copying.
+- Inverting a `OneToOne` or `ManyToMany` relation must expose the reverse of the same public associations, and changes through either public view must remain visible from the other.
+- A `URL` serialized with `to_text()` and parsed again must preserve its public components, subject to the documented quoting and default-port normalization rules.
+- Navigating or normalizing a `URL` must update its attributes, query parameters, authority, and serialized form consistently.
+- `remap`, `get_path`, and `research` must agree on the paths produced by the same nested mapping and sequence structure.
+
+## Representative Workflows
+
+A caller may create an `LRU`, store values by key, read keys to update recency, and insert another value to observe eviction through normal mapping operations. A caller may build an `OrderedMultiDict` from repeated pairs, update individual values or whole value lists, invert or copy it, and then serialize its ordered pairs without consulting internal linked-list state.
+
+For URL processing, a caller may parse text into `URL`, inspect and edit `query_params`, navigate to a relative destination, normalize the result, and serialize it with `to_text()`. Every step must operate on the same public URL state.
+
 ## Non-Goals
 
 - Do not implement unrelated Boltons modules outside the four selected modules
@@ -612,3 +644,15 @@ Behavior:
   spec gives exact text.
 - Performance should be reasonable for ordinary inputs, but micro-optimization
   and thread scheduling details are not part of the contract.
+
+## Invocation Protocol
+
+Boltons is a Python library. It provides no covered console script, and `python -m boltons` is not supported for these utilities.
+
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
+## Evaluation Notes
+
+Assessment calls only the documented module paths and public names. It exercises direct utility behavior, state changes observed through multiple public views, errors by class rather than exact wording, and complete cache, mapping, traversal, and URL workflows. Private nodes, parser expressions, registry shapes, internal cache sentinels, and exact object representations are not assessed.

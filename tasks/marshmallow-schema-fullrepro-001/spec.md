@@ -153,6 +153,10 @@ The package is used through Python imports. There is no supported `marshmallow` 
 
 Exit code behavior is therefore limited to normal Python process behavior: importing and calling the API succeeds without exiting the process; uncaught exceptions propagate according to Python rules.
 
-## Implementation Guidance
+## Environment
 
-The test suite exercises public imports, schema declaration, dump/load/JSON agreement, field conversion, validators, unknown and partial options, nested schemas, decorator hooks, error dictionaries, and context behavior. The tests use public return values, public exception types, and public exception attributes. They do not require exact error message wording, private attributes, source file layout, or maintainer-only helper objects.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
+## Evaluation Notes
+
+Assessment exercises the documented imports, schema declaration, dump/load/JSON agreement, field conversion, validators, unknown and partial policies, nested schemas, processor hooks, error dictionaries, and context behavior. It uses public return values, exception types, and documented exception attributes without requiring exact error prose, private state, source layout, or maintainer-only helpers.

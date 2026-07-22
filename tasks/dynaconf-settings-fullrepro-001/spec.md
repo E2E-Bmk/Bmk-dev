@@ -6,6 +6,10 @@ Implement a Python configuration management library compatible with Dynaconf's d
 
 The implementation must be usable without network services. Redis, Vault, Django, and Flask integrations are non-goals unless explicitly exercised through their public optional wrappers. The core scope is the local settings engine.
 
+## Scope
+
+This specification covers local file loading, environment variables, layered environments, dynamic casting tokens, Python accessors, runtime updates, merge behavior, validators, post-load hooks, inspection/history, and the local `dynaconf` CLI. Network-backed stores and framework integrations are outside the required core.
+
 ## Public Import Surface
 
 The following names are public and importable:
@@ -20,6 +24,12 @@ from dynaconf import inspect_settings, get_history
 `Dynaconf` and `LazySettings` construct settings objects. `settings` is a global backwards-compatible settings object. `Validator` describes validation rules. `ValidationError` is raised for validation failures and exposes accumulated details when all errors are collected. `add_converter` registers custom casting tokens. `post_hook` marks Python settings-file functions as hooks. `inspect_settings` and `get_history` report how values were loaded.
 
 The package provides a console command named `dynaconf`.
+
+## Product State Model
+
+One settings object holds a canonical value view for its active environment. File loaders, environment variables, hooks, validator defaults/casts, and runtime updates contribute ordered values to that view. Attribute access, item access, dotted lookup, `as_dict()`, validation, inspection/history, and CLI reads are public projections of the same state.
+
+Changing the active environment changes which layered contributions participate without creating contradictory accessor views. Merge markers and casting tokens control how source contributions are interpreted; they are not retained as ordinary user settings after loading.
 
 ## Constructing Settings
 
@@ -361,6 +371,18 @@ Unsupported optional integrations such as Redis, Vault, Django, and Flask should
 7. Hooks run after their prerequisite sources are loaded and their returned data participates in the same merge, validation, access, and history behavior as file data.
 8. Inspection history must explain the currently visible value with enough source metadata to distinguish file, envvar, validation default, hook, and runtime update contributions.
 
+## Representative Workflow
+
+Create `settings.toml` with a default service name and development port, then set `DYNACONF_PORT` to a different integer. Construct `Dynaconf(settings_files=["settings.toml"], environments=True, env="development")`, validate that `PORT` is an integer, and update a nested runtime key with `set`. Attribute access, dotted `get`, `as_dict()`, `get_history`, `inspect_settings`, and `dynaconf get/list` must report the same final values. Switching to another declared environment must expose that layer without mutating the original development values.
+
+## Invocation Protocol
+
+The installed `dynaconf` console command is supported. `python -m dynaconf` is not part of this contract. Successful `get`, `list`, `write`, `init`, `inspect`, and validation operations return status `0`; missing keys without defaults and failed validation return nonzero status as described above.
+
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
 ## Non-Goals
 
 - Do not implement network-backed Redis or Vault behavior for the local core scope.
@@ -369,4 +391,8 @@ Unsupported optional integrations such as Redis, Vault, Django, and Flask should
 - Do not expose upstream internal implementation modules as required API.
 - Do not implement undocumented private helpers or private attributes.
 - Do not require internet access.
+
+## Implementation Guidance
+
+Source loading, environment switching, runtime updates, validation, hooks, history, and CLI output should all derive from the same canonical settings state. File parser choices and internal loader classes may differ as long as the public precedence, casting, merge, error, and cross-view behavior remains consistent.
 

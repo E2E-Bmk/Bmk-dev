@@ -1,14 +1,10 @@
-﻿# Cookiecutter Reconstruction Spec v2
-
-Source: derived from official Cookiecutter documentation, API reference, and public README only.
-
----
+﻿# Cookiecutter Specification
 
 ## Product Overview
 
 Build a Python package named `cookiecutter` plus a `cookiecutter` CLI entry point. The package generates new projects from project templates. A template is a directory (or archive) containing a `cookiecutter.json` prompt/defaults file and a project directory tree whose names and contents may contain Jinja2 template expressions.
 
-Primary target: local, filesystem-based template generation. Remote repository cloning (GitHub/Bitbucket/GitLab/VCS) is out of scope for this slice. Local paths and local zip archives must work.
+This specification covers local, filesystem-based template generation. Remote repository cloning (GitHub/Bitbucket/GitLab/VCS) is out of scope. Local paths and local zip archives must work.
 
 ## Non-Goals
 
@@ -19,6 +15,10 @@ Primary target: local, filesystem-based template generation. Remote repository c
 - Do not replicate private source architecture or private test fixture content.
 
 ---
+
+## Installable Surface
+
+The package is imported through `cookiecutter.main`. Its public Python entry point is `cookiecutter.main.cookiecutter`. Installation also provides the `cookiecutter` console command. Running `python -m cookiecutter` is not a supported entry point.
 
 ## Public Interfaces
 
@@ -59,7 +59,7 @@ from cookiecutter.main import cookiecutter
 
 result_path = cookiecutter(
     template,                    # str: local path or zip path
-    checkout=None,               # str: VCS checkout ref (out of scope for this slice)
+    checkout=None,               # str: VCS checkout ref (out of scope)
     no_input=False,              # bool
     extra_context=None,          # dict | None
     replay=False,                # bool | str: True uses default replay, str uses that file path
@@ -74,6 +74,15 @@ result_path = cookiecutter(
     keep_project_on_failure=False, # bool
 )
 ```
+
+## Product State Model
+
+A generation run has one resolved template source, one ordered context, one selected template directory, one generated project tree, and optionally one replay record. The CLI and Python API are two entry views over this same state.
+
+- A resolved context value must be identical wherever it appears in a rendered directory name, file name, file body, hook environment, and replay data.
+- CLI options and equivalent Python arguments must produce the same selected template, context precedence, file tree, overwrite behavior, and replay semantics.
+- Files matched by `_copy_without_render` must preserve their contents while their path names still use the resolved context.
+- A saved replay record must reproduce the same resolved answers unless explicitly overridden by a higher-precedence input.
 
 Returns the absolute path to the generated project directory as a string.
 
@@ -359,7 +368,7 @@ Custom Jinja2 extensions may register additional filters, globals, and tags. The
 
 ---
 
-## Exceptions
+## Error Semantics
 
 All exceptions inherit from `CookiecutterException(Exception)`.
 
@@ -404,6 +413,18 @@ Verbose mode (`--verbose`) enables DEBUG-level logging to stdout. Implementation
 
 ---
 
-## Implementation Guidance
+## Representative Workflows
 
-Hidden tests use only public APIs, CLI invocations, generated file inspection, replay JSON content, exception classes, and observable CLI exit codes. They do not require access to private internals, private fixture shapes, or undocumented exception message text.
+Create a local template with `cookiecutter.json`, a templated project directory, rendered files, and optional hooks. Calling `cookiecutter(template, no_input=True, extra_context=..., output_dir=...)` must resolve defaults and overrides once, run accepted hooks around generation, write the project under the requested output directory, save replay data when enabled, and return the absolute project path. Running the equivalent `cookiecutter --no-input --output-dir ... template` command must produce the same file tree.
+
+## Invocation Protocol
+
+The console command is `cookiecutter`. A successful generation must return status 0. Invalid arguments, unavailable templates, invalid template configuration, rejected overwrite conditions, archive password failures, and hook failures must return a nonzero status. Running `python -m cookiecutter` is not supported by this specification.
+
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
+## Evaluation Notes
+
+Assessment exercises context types and precedence, rendering, hooks, replay, user configuration, directories and archives, built-in extensions, error conditions, and CLI/API agreement. It observes public files, returned paths, prompts, documented logging behavior, replay data, exceptions, and exit statuses. Private helpers, prompt-library internals, caches, temporary-directory strategy, exact diagnostic wording, and source organization are not assessed.

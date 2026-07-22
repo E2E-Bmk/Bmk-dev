@@ -1,6 +1,9 @@
-# Spec2Repo oracle - integration tests for diskcache-cache-fullrepro-001
+"""Integration tests for diskcache-cache-fullrepro-001.
+
+Each test crosses ≥2 public API boundaries. Tests target composition seams.
+"""
+
 import collections
-import os
 import time
 
 import pytest
@@ -8,342 +11,430 @@ import pytest
 import diskcache as dc
 
 
-def test_import_surface_core_exports():
-    for name in [
-        "Averager",
-        "BoundedSemaphore",
-        "Cache",
-        "DEFAULT_SETTINGS",
-        "Deque",
-        "Disk",
-        "ENOVAL",
-        "EVICTION_POLICY",
-        "EmptyDirWarning",
-        "FanoutCache",
-        "Index",
-        "JSONDisk",
-        "Lock",
-        "RLock",
-        "Timeout",
-        "UNKNOWN",
-        "UnknownFileWarning",
-        "barrier",
-        "memoize_stampede",
-        "throttle",
-    ]:
-        assert hasattr(dc, name)
+# --- State Consistency: write → read across projections ---
 
 
-def test_cache_mapping_roundtrip_and_membership(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    cache["alpha"] = {"count": 1}
-    assert cache["alpha"] == {"count": 1}
+def test_mapping_write_visible_via_get_contains_iteration_len(tmp_path):
+    """Seam: state consistency across multiple read projections."""
+    cache = dc.Cache(tmp_path / "c")
+    cache["alpha"] = {"data": 99}
+
+    assert cache.get("alpha") == {"data": 99}
     assert "alpha" in cache
     assert len(cache) == 1
-    del cache["alpha"]
-    assert "alpha" not in cache
+    assert "alpha" in list(cache)
 
 
-def test_cache_metadata_tuple_get_and_pop(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    cache.set("k", "v", expire=None, tag="group")
+def test_set_with_tag_removable_via_evict(tmp_path):
+    """Seam: state consistency between set(tag=) and evict(tag)."""
+    cache = dc.Cache(tmp_path / "c")
+    cache.set("item-a", 1, tag="batch")
+    cache.set("item-b", 2, tag="batch")
+    cache.set("item-c", 3, tag="other")
+
+    removed = cache.evict("batch")
+
+    assert removed == 2
+    assert cache.get("item-a") is None
+    assert cache.get("item-c") == 3
+
+
+def test_get_with_metadata_flags_returns_correct_tuple(tmp_path):
+    """Seam: state consistency between set metadata and get metadata flags."""
+    cache = dc.Cache(tmp_path / "c")
+    cache.set("k", "payload", expire=None, tag="grp")
+
     value, expire_time, tag = cache.get("k", expire_time=True, tag=True)
-    assert (value, expire_time, tag) == ("v", None, "group")
-    cache.set("k", "v", expire=None, tag="group")
+
+    assert value == "payload"
+    assert expire_time is None
+    assert tag == "grp"
+
+
+def test_pop_with_metadata_flags_removes_and_returns_tuple(tmp_path):
+    """Seam: state consistency between set and pop with metadata."""
+    cache = dc.Cache(tmp_path / "c")
+    cache.set("k", "popped", tag="meta")
+
     value, expire_time, tag = cache.pop("k", expire_time=True, tag=True)
-    assert (value, expire_time, tag) == ("v", None, "group")
+
+    assert value == "popped"
+    assert tag == "meta"
+    assert cache.get("k") is None
 
 
-def test_cache_expire_removes_expired_items(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    cache.reset("cull_limit", 0)
-    cache.set("old", "v", expire=0.001)
-    time.sleep(0.01)
-    assert cache.expire() >= 1
-    assert cache.get("old") is None
+# --- Lifecycle Crossing: close → reopen ---
 
 
-def test_cache_evict_removes_matching_tag(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    cache.set("a", 1, tag="keep")
-    cache.set("b", 2, tag="drop")
-    cache.set("c", 3, tag="drop")
-    assert cache.evict("drop") == 2
-    assert cache.get("a") == 1
-    assert cache.get("b") is None
-
-
-def test_cache_iteration_insertion_order_and_sorted_iterkeys(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    for key in "cab":
-        cache[key] = key.upper()
-    assert list(cache) == ["c", "a", "b"]
-    assert list(cache.iterkeys()) == ["a", "b", "c"]
-    assert list(reversed(cache)) == ["b", "a", "c"]
-
-
-def test_cache_queue_push_pull_back_and_front(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    first = cache.push("first")
-    second = cache.push("second")
-    zeroth = cache.push("zeroth", side="front")
-    assert (first, second, zeroth) == (
-        500000000000000,
-        500000000000001,
-        499999999999999,
-    )
-    assert cache.peek() == (zeroth, "zeroth")
-    assert cache.pull() == (zeroth, "zeroth")
-    assert cache.pull(side="back") == (second, "second")
-
-
-def test_cache_stats_count_hits_and_misses(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    cache.stats(enable=True, reset=True)
-    cache["a"] = 1
-    assert cache.get("a") == 1
-    assert cache.get("b") is None
-    assert cache.stats(enable=False, reset=True) == (1, 1)
-
-
-def test_cache_persists_across_reopened_objects(tmp_path):
-    directory = tmp_path / "cache"
+def test_cache_persists_across_close_and_reopen(tmp_path):
+    """Seam: lifecycle crossing - data survives close/reopen."""
+    directory = tmp_path / "persist"
     first = dc.Cache(directory)
-    first["a"] = {"x": 1}
+    first["config"] = {"host": "localhost", "port": 8080}
     first.close()
+
     second = dc.Cache(directory)
-    assert second["a"] == {"x": 1}
+    assert second["config"] == {"host": "localhost", "port": 8080}
+    second.close()
 
 
-def test_cache_closed_object_reopens_on_access(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    cache["a"] = 1
+def test_cache_auto_reopens_after_close(tmp_path):
+    """Seam: lifecycle crossing - closed cache reopens on access."""
+    cache = dc.Cache(tmp_path / "c")
+    cache["k"] = "auto"
     cache.close()
-    assert cache.get("a") == 1
+
+    assert cache.get("k") == "auto"
 
 
-def test_cache_transaction_groups_writes(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    with cache.transact():
-        cache["total"] = cache.get("total", 0) + 3
-        cache["count"] = cache.get("count", 0) + 1
-    assert (cache["total"], cache["count"]) == (3, 1)
-
-
-def test_cache_memoize_caches_by_arguments(tmp_path):
-    cache = dc.Cache(tmp_path / "cache")
-    calls = {"count": 0}
-
-    @cache.memoize()
-    def add(a, b=0):
-        calls["count"] += 1
-        return a + b
-
-    assert add(2, b=3) == 5
-    assert add(2, b=3) == 5
-    assert calls["count"] == 1
-    assert cache[add.__cache_key__(2, b=3)] == 5
-
-
-def test_fanout_mapping_roundtrip_and_membership(tmp_path):
-    cache = dc.FanoutCache(tmp_path / "fanout", shards=4, timeout=1)
-    cache["a"] = 1
-    assert cache["a"] == 1
-    assert cache.get("a") == 1
-    assert "a" in cache
-    del cache["a"]
-    assert "a" not in cache
-
-
-def test_fanout_persists_across_reopened_objects(tmp_path):
+def test_fanout_persists_across_close_and_reopen(tmp_path):
+    """Seam: lifecycle crossing - FanoutCache survives close/reopen."""
     directory = tmp_path / "fanout"
     first = dc.FanoutCache(directory, shards=4, timeout=1)
-    first.set("k", "v")
+    first.set("shared", "value")
     first.close()
+
     second = dc.FanoutCache(directory, shards=4, timeout=1)
-    assert second.get("k") == "v"
+    assert second.get("shared") == "value"
+    second.close()
 
 
-def test_fanout_named_cache_view_persists_by_name(tmp_path):
-    fanout = dc.FanoutCache(tmp_path / "fanout", timeout=1)
-    fanout.cache("jobs").set("status", "ready")
-    assert fanout.cache("jobs").get("status") == "ready"
-    assert fanout.cache("other").get("status") is None
+# --- Protocol Handoff: queue keys → lookup ---
 
 
-def test_fanout_named_deque_view_persists_by_name(tmp_path):
-    fanout = dc.FanoutCache(tmp_path / "fanout", timeout=1)
-    fanout.deque("queue").append("job-1")
-    assert list(fanout.deque("queue")) == ["job-1"]
-    assert list(fanout.deque("other")) == []
+def test_queue_push_pull_back_and_front_ordering(tmp_path):
+    """Seam: protocol handoff between push key generation and pull retrieval."""
+    cache = dc.Cache(tmp_path / "c")
+    k1 = cache.push("first")
+    k2 = cache.push("second")
+    k0 = cache.push("zeroth", side="front")
+
+    assert cache.peek() == (k0, "zeroth")
+    assert cache.pull() == (k0, "zeroth")
+    assert cache.pull(side="back") == (k2, "second")
 
 
-def test_fanout_named_index_view_persists_by_name(tmp_path):
-    fanout = dc.FanoutCache(tmp_path / "fanout", timeout=1)
-    fanout.index("results")["job-1"] = "queued"
-    assert fanout.index("results")["job-1"] == "queued"
-    assert "job-1" not in fanout.index("other")
+def test_queue_prefix_key_visible_via_mapping_lookup(tmp_path):
+    """Seam: protocol handoff between push(prefix=) and mapping get."""
+    cache = dc.Cache(tmp_path / "c")
+    key = cache.push("task-data", prefix="jobs")
+
+    assert cache[key] == "task-data"
+    assert cache.pull(prefix="jobs") == (key, "task-data")
 
 
-def test_fanout_transact_not_supported(tmp_path):
-    cache = dc.FanoutCache(tmp_path / "fanout", timeout=1)
+# --- Config Interaction: stats ---
+
+
+def test_stats_counts_hits_and_misses(tmp_path):
+    """Seam: config interaction between stats enable and get operations."""
+    cache = dc.Cache(tmp_path / "c")
+    cache.stats(enable=True, reset=True)
+    cache["k"] = "v"
+
+    cache.get("k")
+    cache.get("missing")
+
+    hits, misses = cache.stats(enable=False, reset=True)
+    assert hits == 1
+    assert misses == 1
+
+
+# --- Iteration ---
+
+
+def test_iteration_follows_insertion_order(tmp_path):
+    """Seam: state consistency between insertion order and iteration."""
+    cache = dc.Cache(tmp_path / "c")
+    for key in ["gamma", "alpha", "beta"]:
+        cache[key] = key.upper()
+
+    assert list(cache) == ["gamma", "alpha", "beta"]
+    assert list(reversed(cache)) == ["beta", "alpha", "gamma"]
+
+
+def test_iterkeys_produces_sorted_order(tmp_path):
+    """Seam: state consistency between set and iterkeys ordering."""
+    cache = dc.Cache(tmp_path / "c")
+    for key in ["gamma", "alpha", "beta"]:
+        cache[key] = key
+
+    assert list(cache.iterkeys()) == ["alpha", "beta", "gamma"]
+
+
+# --- Transaction ---
+
+
+def test_cache_transact_groups_writes(tmp_path):
+    """Seam: config interaction between transact context and cache state."""
+    cache = dc.Cache(tmp_path / "c")
     with cache.transact():
-        cache.incr("total", 3)
-        cache.incr("count", 1)
-    assert (cache["total"], cache["count"]) == (3, 1)
+        cache["sum"] = cache.get("sum", 0) + 5
+        cache["count"] = cache.get("count", 0) + 1
+
+    assert cache["sum"] == 5
+    assert cache["count"] == 1
 
 
-def test_fanout_expire_evict_clear_across_shards(tmp_path):
-    cache = dc.FanoutCache(tmp_path / "fanout", shards=4, timeout=1)
-    cache.set("a", 1, tag="drop")
-    cache.set("b", 2, tag="drop")
-    assert cache.evict("drop") == 2
-    cache.set("c", 3)
-    assert cache.clear() == 1
+def test_fanout_transact_groups_writes_across_shards(tmp_path):
+    """Seam: config interaction between FanoutCache.transact and shard state."""
+    fanout = dc.FanoutCache(tmp_path / "f", timeout=1)
+    with fanout.transact():
+        fanout.incr("total", 7)
+        fanout.incr("ops", 1)
+
+    assert fanout["total"] == 7
+    assert fanout["ops"] == 1
+    fanout.close()
 
 
-def test_deque_initialization_and_persistence(tmp_path):
+# --- Memoize integration ---
+
+
+def test_memoize_caches_result_by_arguments(tmp_path):
+    """Seam: state consistency between memoize decorator and cache storage."""
+    cache = dc.Cache(tmp_path / "c")
+    calls = {"n": 0}
+
+    @cache.memoize()
+    def compute(x, y=0):
+        calls["n"] += 1
+        return x + y
+
+    assert compute(3, y=4) == 7
+    assert compute(3, y=4) == 7
+    assert calls["n"] == 1
+    assert cache[compute.__cache_key__(3, y=4)] == 7
+
+
+# --- FanoutCache named views ---
+
+
+def test_fanout_named_cache_isolates_entries(tmp_path):
+    """Seam: state consistency between named cache views."""
+    fanout = dc.FanoutCache(tmp_path / "f", timeout=1)
+    fanout.cache("tasks").set("status", "active")
+
+    assert fanout.cache("tasks").get("status") == "active"
+    assert fanout.cache("other").get("status") is None
+    fanout.close()
+
+
+def test_fanout_named_deque_isolates_entries(tmp_path):
+    """Seam: state consistency between named deque views."""
+    fanout = dc.FanoutCache(tmp_path / "f", timeout=1)
+    fanout.deque("q1").append("item-a")
+
+    assert list(fanout.deque("q1")) == ["item-a"]
+    assert list(fanout.deque("q2")) == []
+    fanout.close()
+
+
+def test_fanout_named_index_isolates_entries(tmp_path):
+    """Seam: state consistency between named index views."""
+    fanout = dc.FanoutCache(tmp_path / "f", timeout=1)
+    fanout.index("results")["job-x"] = "done"
+
+    assert fanout.index("results")["job-x"] == "done"
+    assert "job-x" not in fanout.index("other")
+    fanout.close()
+
+
+def test_fanout_evict_clear_across_shards(tmp_path):
+    """Seam: state consistency between fanout aggregate ops and shards."""
+    fanout = dc.FanoutCache(tmp_path / "f", shards=4, timeout=1)
+    fanout.set("x", 1, tag="rm")
+    fanout.set("y", 2, tag="rm")
+    fanout.set("z", 3, tag="keep")
+
+    assert fanout.evict("rm") == 2
+    assert fanout.get("z") == 3
+    assert fanout.clear() == 1
+    fanout.close()
+
+
+# --- Deque persistence and operations ---
+
+
+def test_deque_persists_across_reopen(tmp_path):
+    """Seam: lifecycle crossing - Deque data survives reopen."""
     directory = tmp_path / "deque"
-    deque = dc.Deque(range(3), directory=directory)
-    deque.append(3)
-    deque.appendleft(-1)
-    assert list(deque) == [-1, 0, 1, 2, 3]
-    assert list(dc.Deque(directory=directory)) == [-1, 0, 1, 2, 3]
+    first = dc.Deque(range(4), directory=directory)
+    first.append(4)
+    first.appendleft(-1)
+
+    reopened = dc.Deque(directory=directory)
+    assert list(reopened) == [-1, 0, 1, 2, 3, 4]
 
 
-def test_deque_remove_reverse_rotate_and_count(tmp_path):
-    deque = dc.Deque(["a", "b", "a", "c"], directory=tmp_path / "deque")
+def test_deque_mutations_visible_through_iteration(tmp_path):
+    """Seam: state consistency between deque mutations and iteration."""
+    deque = dc.Deque(["a", "b", "c", "a"], directory=tmp_path / "d")
     assert deque.count("a") == 2
     deque.remove("a")
-    assert list(deque) == ["b", "a", "c"]
-    deque.reverse()
-    assert list(deque) == ["c", "a", "b"]
-    deque.rotate(1)
     assert list(deque) == ["b", "c", "a"]
-    with pytest.raises(ValueError):
-        deque.remove("missing")
+    deque.reverse()
+    assert list(deque) == ["a", "c", "b"]
+    deque.rotate(1)
+    assert list(deque) == ["b", "a", "c"]
 
 
-def test_deque_copy_is_independent(tmp_path):
-    deque = dc.Deque([1, 2], directory=tmp_path / "deque")
+def test_deque_copy_shares_persistent_state(tmp_path):
+    """Seam: lifecycle crossing - copy shares same directory."""
+    deque = dc.Deque([10, 20], directory=tmp_path / "d")
     copied = deque.copy()
-    assert list(copied) == [1, 2]
-    copied.append(3)
-    assert list(deque) == [1, 2, 3]
+    copied.append(30)
+
+    assert list(deque) == [10, 20, 30]
 
 
-def test_deque_fromcache_exposes_same_cache(tmp_path):
-    cache = dc.Cache(tmp_path / "cache", eviction_policy="none")
-    deque = dc.Deque.fromcache(cache, [1, 2])
+def test_deque_fromcache_exposes_underlying_cache(tmp_path):
+    """Seam: protocol handoff between Deque.fromcache and cache object."""
+    cache = dc.Cache(tmp_path / "c", eviction_policy="none")
+    deque = dc.Deque.fromcache(cache, [5, 6])
     assert deque.cache is cache
-    assert list(deque) == [1, 2]
+    assert list(deque) == [5, 6]
 
 
-def test_index_initialization_and_persistence(tmp_path):
-    directory = tmp_path / "index"
-    index = dc.Index(str(directory), [("a", 1)], b=2)
-    assert list(index) == ["a", "b"]
-    assert dc.Index(str(directory))["b"] == 2
+# --- Index persistence and operations ---
 
 
-def test_index_queue_helpers(tmp_path):
-    index = dc.Index(directory=tmp_path / "index")
-    first = index.push("first")
-    second = index.push("second")
-    assert (first, second) == (500000000000000, 500000000000001)
-    assert index.pull() == (first, "first")
-    prefixed = index.push("job", prefix="jobs")
-    assert prefixed == "jobs-500000000000000"
-    assert index.pull(prefix="jobs") == (prefixed, "job")
+def test_index_persists_across_reopen(tmp_path):
+    """Seam: lifecycle crossing - Index data survives reopen."""
+    directory = str(tmp_path / "idx")
+    first = dc.Index(directory, [("x", 10), ("y", 20)])
+
+    reopened = dc.Index(directory)
+    assert reopened["x"] == 10
+    assert reopened["y"] == 20
 
 
-def test_index_views_and_equality(tmp_path):
-    pairs = [("a", 1), ("b", 2), ("c", 3)]
-    index = dc.Index(str(tmp_path / "index"), pairs)
-    assert list(index.keys()) == ["a", "b", "c"]
+def test_index_views_and_ordered_equality(tmp_path):
+    """Seam: state consistency between index operations and view objects."""
+    pairs = [("x", 1), ("y", 2), ("z", 3)]
+    index = dc.Index(str(tmp_path / "idx"), pairs)
+
+    assert list(index.keys()) == ["x", "y", "z"]
     assert list(index.values()) == [1, 2, 3]
     assert list(index.items()) == pairs
-    assert index == {"c": 3, "b": 2, "a": 1}
     assert index == collections.OrderedDict(pairs)
     assert index != collections.OrderedDict(reversed(pairs))
 
 
-def test_index_fromcache_exposes_same_cache(tmp_path):
-    cache = dc.Cache(tmp_path / "cache", eviction_policy="none")
-    index = dc.Index.fromcache(cache, {"a": 1})
+def test_index_queue_helpers(tmp_path):
+    """Seam: protocol handoff between Index.push/pull and key system."""
+    index = dc.Index(directory=tmp_path / "idx")
+    k1 = index.push("first")
+    k2 = index.push("second")
+
+    assert index.pull() == (k1, "first")
+    pk = index.push("prefixed", prefix="p")
+    assert pk == "p-500000000000000"
+    assert index.pull(prefix="p") == (pk, "prefixed")
+
+
+def test_index_fromcache_exposes_underlying_cache(tmp_path):
+    """Seam: protocol handoff between Index.fromcache and cache object."""
+    cache = dc.Cache(tmp_path / "c", eviction_policy="none")
+    index = dc.Index.fromcache(cache, {"k": 42})
     assert index.cache is cache
-    assert index["a"] == 1
+    assert index["k"] == 42
 
 
-def test_index_memoize_caches_function_result(tmp_path):
-    index = dc.Index(directory=tmp_path / "index")
-    calls = {"count": 0}
+def test_index_memoize_caches_function(tmp_path):
+    """Seam: state consistency between Index.memoize and storage."""
+    index = dc.Index(directory=tmp_path / "idx")
+    calls = {"n": 0}
 
     @index.memoize()
-    def double(value):
-        calls["count"] += 1
-        return value * 2
+    def square(v):
+        calls["n"] += 1
+        return v * v
 
-    assert double(4) == 8
-    assert double(4) == 8
-    assert calls["count"] == 1
+    assert square(6) == 36
+    assert square(6) == 36
+    assert calls["n"] == 1
 
 
-def test_lock_context_and_locked_status(tmp_path):
-    cache = dc.Cache(tmp_path / "cache", eviction_policy="none")
-    lock = dc.Lock(cache, "lock")
+# --- Recipe integration ---
+
+
+def test_lock_context_manager_acquires_and_releases(tmp_path):
+    """Seam: state consistency between Lock acquire/release and locked()."""
+    cache = dc.Cache(tmp_path / "c", eviction_policy="none")
+    lock = dc.Lock(cache, "lk")
+
     assert lock.locked() is False
     with lock:
         assert lock.locked() is True
     assert lock.locked() is False
 
 
+def test_rlock_reentrant_acquire_and_release(tmp_path):
+    """Seam: config interaction between RLock reentrant state and release."""
+    cache = dc.Cache(tmp_path / "c", eviction_policy="none")
+    lock = dc.RLock(cache, "rlk")
+    lock.acquire()
+    lock.acquire()
+    lock.release()
+    lock.release()
+    with pytest.raises(AssertionError):
+        lock.release()
+
+
+def test_averager_accumulates_and_pops(tmp_path):
+    """Seam: state consistency between Averager add/get/pop and cache state."""
+    cache = dc.Cache(tmp_path / "c", eviction_policy="none")
+    avg = dc.Averager(cache, "latency")
+    avg.add(0.1)
+    avg.add(0.3)
+
+    assert avg.get() == pytest.approx(0.2)
+    assert avg.pop() == pytest.approx(0.2)
+    assert avg.get() is None
+
+
 def test_barrier_preserves_return_value(tmp_path):
-    cache = dc.Cache(tmp_path / "cache", eviction_policy="none")
+    """Seam: state consistency between barrier lock and wrapped function."""
+    cache = dc.Cache(tmp_path / "c", eviction_policy="none")
 
     @dc.barrier(cache, dc.Lock)
-    def work(value):
-        return value + 1
+    def work(v):
+        return v * 3
 
-    assert work(4) == 5
+    assert work(5) == 15
 
 
-def test_throttle_preserves_return_value_with_injected_clock(tmp_path):
-    cache = dc.Cache(tmp_path / "cache", eviction_policy="none")
+def test_throttle_preserves_return_value(tmp_path):
+    """Seam: config interaction between throttle rate tracking and function."""
+    cache = dc.Cache(tmp_path / "c", eviction_policy="none")
     clock = {"now": 0.0, "slept": 0.0}
 
-    def time_func():
-        return clock["now"]
+    @dc.throttle(
+        cache, 1, 1,
+        time_func=lambda: clock["now"],
+        sleep_func=lambda s: (clock.update({"slept": clock["slept"] + s, "now": clock["now"] + s})),
+    )
+    def compute(v):
+        return v + 1
 
-    def sleep_func(seconds):
-        clock["slept"] += seconds
-        clock["now"] += seconds
-
-    calls = []
-
-    @dc.throttle(cache, 1, 1, time_func=time_func, sleep_func=sleep_func)
-    def work(value):
-        calls.append(value)
-        return value * 2
-
-    assert work(3) == 6
-    assert work(4) == 8
-    assert calls == [3, 4]
-    assert clock["slept"] >= 0
+    assert compute(4) == 5
+    assert compute(7) == 8
 
 
-def test_memoize_stampede_caches_result_and_exposes_key(tmp_path):
-    cache = dc.Cache(tmp_path / "cache", eviction_policy="none")
-    calls = {"count": 0}
+def test_memoize_stampede_caches_with_elapsed_tuple(tmp_path):
+    """Seam: state consistency between memoize_stampede and cache storage format."""
+    cache = dc.Cache(tmp_path / "c", eviction_policy="none")
+    calls = {"n": 0}
 
-    @dc.memoize_stampede(cache, expire=60)
-    def triple(value):
-        calls["count"] += 1
-        return value * 3
+    @dc.memoize_stampede(cache, expire=120)
+    def double(v):
+        calls["n"] += 1
+        return v * 2
 
-    assert triple(5) == 15
-    assert triple(5) == 15
-    assert calls["count"] == 1
-    cached_result, elapsed = cache[triple.__cache_key__(5)]
-    assert cached_result == 15
+    assert double(7) == 14
+    assert double(7) == 14
+    assert calls["n"] == 1
+    cached_value, elapsed = cache[double.__cache_key__(7)]
+    assert cached_value == 14
     assert elapsed >= 0

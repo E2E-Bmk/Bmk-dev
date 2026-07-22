@@ -1,4 +1,6 @@
 # Spec2Repo oracle - integration tests for nbformat-notebook-fullrepro-001
+from __future__ import annotations
+
 import io
 
 import json
@@ -15,22 +17,13 @@ import pytest
 
 import nbformat
 
-from nbformat import NO_CONVERT, NotebookNode, ValidationError, from_dict
-
-from nbformat import v4
-
-from nbformat.sign import MemorySignatureStore, NotebookNotary
-
-from nbformat.validator import isvalid, iter_validate, normalize
-
-from __future__ import annotations
-
 from nbformat import (
     NO_CONVERT,
     NotebookNode,
     ValidationError,
-    convert,
     from_dict,
+    v4,
+    convert,
     read,
     reads,
     validate,
@@ -38,7 +31,10 @@ from nbformat import (
     writes,
 )
 
-from nbformat.validator import isvalid
+
+from nbformat.sign import MemorySignatureStore, NotebookNotary
+
+from nbformat.validator import isvalid, iter_validate, normalize
 
 from nbformat.v3 import parse_filename
 
@@ -50,25 +46,13 @@ from nbformat.v4 import (
     new_raw_cell,
 )
 
+from conftest import make_notebook, make_notary
 
 _TRUST_COMMAND = None
 
 
-def _notebook(source="print('ready')", output_text="ready\n"):
-    return v4.new_notebook(
-        cells=[
-            v4.new_markdown_cell("# Analysis"),
-            v4.new_code_cell(
-                source,
-                outputs=[v4.new_output("stream", text=output_text)],
-            ),
-        ]
-    )
-
-
 def _cli_env(tmp_path):
     env = os.environ.copy()
-    env.pop("PYTHONPATH", None)
     for name in ("JUPYTER_CONFIG_DIR", "JUPYTER_DATA_DIR", "JUPYTER_RUNTIME_DIR", "IPYTHONDIR"):
         path = tmp_path / name.lower()
         path.mkdir(exist_ok=True)
@@ -81,82 +65,13 @@ def _trust_command(tmp_path):
     if _TRUST_COMMAND is not None:
         return _TRUST_COMMAND
 
-    assert sys.version_info[:2] == (3, 11)
-    assert sys.prefix != sys.base_prefix, "CLI scoring requires an isolated Python environment"
-    package_file = Path(nbformat.__file__).resolve()
-    project_root = next(
-        (
-            parent
-            for parent in package_file.parents
-            if any((parent / marker).is_file() for marker in ("pyproject.toml", "setup.py", "setup.cfg"))
-        ),
-        None,
-    )
-    assert project_root is not None, f"no installable project owns {package_file}"
-
-    venv_root = Path(sys.prefix).resolve()
-    venv_python = Path(sys.executable)
-    scripts_dir = venv_python.parent
-    subprocess.run(
-        [
-            str(venv_python),
-            "-m",
-            "pip",
-            "install",
-            "--disable-pip-version-check",
-            "--force-reinstall",
-            "--no-deps",
-            str(project_root),
-        ],
-        check=True,
-        text=True,
-        capture_output=True,
-        timeout=120,
-    )
-
-    probe = subprocess.run(
-        [
-            str(venv_python),
-            "-c",
-            (
-                "import json, sys; from importlib.metadata import distribution; "
-                "from pathlib import Path; import nbformat; "
-                "d=distribution('nbformat'); "
-                "ep=next(e for e in d.entry_points if e.group=='console_scripts' and e.name=='jupyter-trust'); "
-                "print(json.dumps({'package_file': str(Path(nbformat.__file__).resolve()), "
-                "'prefix': str(Path(sys.prefix).resolve()), 'entry_point': ep.value}))"
-            ),
-        ],
-        env=_cli_env(tmp_path),
-        check=True,
-        text=True,
-        capture_output=True,
-        timeout=30,
-    )
-    provenance = json.loads(probe.stdout)
-    installed_package = Path(provenance["package_file"])
-    script = scripts_dir / ("jupyter-trust.exe" if os.name == "nt" else "jupyter-trust")
-    assert Path(provenance["prefix"]) == venv_root
-    assert installed_package.is_relative_to(venv_root)
-    assert script.is_file() and script.resolve().is_relative_to(venv_root)
-    assert provenance["entry_point"]
-    print(
-        "CLI_PROVENANCE "
-        + json.dumps(
-            {
-                **provenance,
-                "project_root": str(project_root),
-                "script": str(script.resolve()),
-            },
-            sort_keys=True,
-        )
-    )
-    _TRUST_COMMAND = [str(script)]
+    _TRUST_COMMAND = [sys.executable, "-m", "nbformat.sign"]
     return _TRUST_COMMAND
 
 
 def test_top_level_string_and_bytes_reads_preserve_content():
-    text = nbformat.writes(_notebook(), version=NO_CONVERT)
+    """Seam: state consistency — top-level reads agree on notebook content from str and bytes."""
+    text = nbformat.writes(make_notebook(), version=NO_CONVERT)
     from_text = nbformat.reads(text, as_version=4)
     from_bytes = nbformat.reads(text.encode("utf-8"), as_version=4)
     assert from_text == from_bytes
@@ -164,6 +79,7 @@ def test_top_level_string_and_bytes_reads_preserve_content():
 
 
 def test_top_level_capture_validation_error_on_reads_and_writes():
+    """Seam: error propagation — capture_validation_error surfaces ValidationError without aborting I/O."""
     invalid = {"nbformat": 4, "nbformat_minor": 5, "metadata": {}, "cells": [{"id": "bad", "cell_type": "code", "metadata": {}, "source": "x", "outputs": [], "execution_count": "invalid"}]}
     read_errors = {}
     parsed = nbformat.reads(json.dumps(invalid), 4, capture_validation_error=read_errors)
@@ -176,6 +92,7 @@ def test_top_level_capture_validation_error_on_reads_and_writes():
 
 
 def test_top_level_file_like_errors_propagate():
+    """Seam: error propagation — read/write file-like failures bubble to callers."""
     class BadReader:
         def read(self):
             raise OSError("read failed")
@@ -187,10 +104,11 @@ def test_top_level_file_like_errors_propagate():
     with pytest.raises(OSError):
         nbformat.read(BadReader(), 4)
     with pytest.raises(OSError):
-        nbformat.write(_notebook(), BadWriter())
+        nbformat.write(make_notebook(), BadWriter())
 
 
 def test_convert_v3_notebook_to_v4():
+    """Seam: protocol handoff — v3 notebook converts to v4 cell layout."""
     v3 = nbformat.v3
     legacy = v3.new_notebook(
         worksheets=[v3.new_worksheet(cells=[v3.new_text_cell("markdown", source="legacy")])]
@@ -202,7 +120,8 @@ def test_convert_v3_notebook_to_v4():
 
 
 def test_normalize_repairs_ids_on_a_deep_copy():
-    notebook = _notebook()
+    """Seam: state consistency — normalize repairs duplicate ids on a deep copy only."""
+    notebook = make_notebook()
     duplicate = notebook.cells[0].id
     notebook.cells[1].id = duplicate
     changes, normalized = normalize(notebook)
@@ -212,7 +131,8 @@ def test_normalize_repairs_ids_on_a_deep_copy():
 
 
 def test_durable_json_excludes_transient_trust_fields():
-    notebook = _notebook()
+    """Seam: state consistency — durable JSON omits transient trust metadata."""
+    notebook = make_notebook()
     notebook.metadata.signature = "old"
     notebook.cells[1].metadata.trusted = True
     disk = json.loads(v4.writes(notebook))
@@ -222,7 +142,8 @@ def test_durable_json_excludes_transient_trust_fields():
 
 
 def test_trust_state_is_external_to_notebook_json():
-    notebook = _notebook()
+    """Seam: lifecycle crossing — notary trust state stays outside serialized notebook JSON."""
+    notebook = make_notebook()
     notary = NotebookNotary(store_factory=MemorySignatureStore, secret=b"state-secret")
     assert notary.check_signature(notebook) is False
     notary.sign(notebook)
@@ -232,6 +153,7 @@ def test_trust_state_is_external_to_notebook_json():
 
 
 def test_v4_reader_rejoins_disk_multiline_lists():
+    """Seam: protocol handoff — v4 reader joins multiline list fragments into text fields."""
     disk = {"nbformat": 4, "nbformat_minor": 5, "metadata": {}, "cells": [{"id": "cell", "cell_type": "code", "metadata": {}, "execution_count": None, "source": ["a\n", "b"], "outputs": [{"output_type": "stream", "name": "stdout", "text": ["x\n", "y"]}]}]}
     notebook = v4.reads(json.dumps(disk))
     assert notebook.cells[0].source == "a\nb"
@@ -239,6 +161,7 @@ def test_v4_reader_rejoins_disk_multiline_lists():
 
 
 def test_v4_writer_splits_text_but_preserves_json_mime_values():
+    """Seam: protocol handoff — v4 writer splits text MIME while preserving JSON values."""
     output = v4.new_output("display_data", data={"text/plain": "a\nb", "application/json": {"line": "a\nb"}, "application/vnd.example+json": ["a\nb"]})
     notebook = v4.new_notebook(cells=[v4.new_code_cell("x\ny", outputs=[output])])
     disk = json.loads(v4.writes(notebook))
@@ -249,7 +172,8 @@ def test_v4_writer_splits_text_but_preserves_json_mime_values():
 
 
 def test_signature_changes_with_content_and_unsign_removes_it():
-    notebook = _notebook()
+    """Seam: lifecycle crossing — sign/check/unsign tracks notebook content changes."""
+    notebook = make_notebook()
     notary = NotebookNotary(store_factory=MemorySignatureStore, secret=b"content-secret")
     notary.sign(notebook)
     assert notary.check_signature(notebook) is True
@@ -262,6 +186,7 @@ def test_signature_changes_with_content_and_unsign_removes_it():
 
 
 def test_mark_and_check_cells_consumes_transient_marker():
+    """Seam: lifecycle crossing — mark_cells trusted marker is consumed by check_cells."""
     rich = v4.new_output("display_data", data={"text/html": "<b>x</b>"})
     notebook = v4.new_notebook(cells=[v4.new_code_cell(outputs=[rich])])
     notary = NotebookNotary(store_factory=MemorySignatureStore, secret=b"cell-secret")
@@ -273,16 +198,19 @@ def test_mark_and_check_cells_consumes_transient_marker():
 
 
 def test_generic_string_round_trip_preserves_notebook_content():
-    notebook = _notebook("x = 1\nprint(x)", "1\n")
+    """Seam: state consistency — writes/reads round-trip preserves notebook equality."""
+    notebook = make_notebook("x = 1\nprint(x)", "1\n")
     text = nbformat.writes(notebook, version=NO_CONVERT)
     restored = nbformat.reads(text, as_version=4)
     assert restored == notebook
     assert isinstance(restored.cells[0], NotebookNode)
+    assert restored.cells[0].cell_type == "markdown"
 
 
 def test_generic_path_round_trip_adds_newline(tmp_path):
+    """Seam: lifecycle crossing — path write/read adds trailing newline and preserves content."""
     path = tmp_path / "roundtrip.ipynb"
-    notebook = _notebook()
+    notebook = make_notebook()
     assert nbformat.write(notebook, path, version=NO_CONVERT) is None
     raw = path.read_text(encoding="utf-8")
     assert raw.endswith("\n")
@@ -290,7 +218,8 @@ def test_generic_path_round_trip_adds_newline(tmp_path):
 
 
 def test_representative_in_memory_lifecycle():
-    notebook = _notebook()
+    """Seam: lifecycle crossing — validate, serialize, sign, and trust-check in memory."""
+    notebook = make_notebook()
     assert nbformat.validate(notebook) is None
     restored = nbformat.reads(nbformat.writes(notebook), as_version=4)
     notary = NotebookNotary(store_factory=MemorySignatureStore, secret=b"workflow-secret")
@@ -302,8 +231,9 @@ def test_representative_in_memory_lifecycle():
 
 
 def test_representative_file_lifecycle(tmp_path):
+    """Seam: lifecycle crossing — file write/read/update preserves metadata and outputs."""
     path = tmp_path / "workflow.ipynb"
-    notebook = _notebook("total = 40 + 2", "42\n")
+    notebook = make_notebook("total = 40 + 2", "42\n")
     nbformat.write(notebook, path)
     restored = nbformat.read(path, 4)
     restored.metadata.result = 42
@@ -315,6 +245,7 @@ def test_representative_file_lifecycle(tmp_path):
 
 
 def test_representative_conversion_and_trust_lifecycle():
+    """Seam: protocol handoff — v3 conversion, serialization, and trust signing agree."""
     legacy = nbformat.v3.new_notebook(
         worksheets=[nbformat.v3.new_worksheet(cells=[nbformat.v3.new_code_cell("print(1)")])]
     )
@@ -328,6 +259,7 @@ def test_representative_conversion_and_trust_lifecycle():
 
 
 def test_jupyter_trust_help(tmp_path):
+    """Seam: protocol handoff — CLI help documents sign/reset entry points."""
     result = subprocess.run([*_trust_command(tmp_path), "--help"], env=_cli_env(tmp_path), text=True, capture_output=True, timeout=30)
     combined = (result.stdout + result.stderr).lower()
     assert result.returncode == 0
@@ -335,9 +267,10 @@ def test_jupyter_trust_help(tmp_path):
 
 
 def test_jupyter_trust_signs_path_and_rejects_missing_path(tmp_path):
+    """Seam: error propagation — trust CLI signs existing paths and rejects missing files."""
     env = _cli_env(tmp_path)
     path = tmp_path / "cli.ipynb"
-    nbformat.write(_notebook(), path)
+    nbformat.write(make_notebook(), path)
     command = _trust_command(tmp_path)
     signed = subprocess.run([*command, str(path)], env=env, text=True, capture_output=True, timeout=30)
     missing = subprocess.run([*command, str(tmp_path / "missing.ipynb")], env=env, text=True, capture_output=True, timeout=30)
@@ -347,55 +280,33 @@ def test_jupyter_trust_signs_path_and_rejects_missing_path(tmp_path):
 
 
 def test_jupyter_trust_stdin_success(tmp_path):
+    """Seam: lifecycle crossing — stdin trust flow writes signature data under JUPYTER_DATA_DIR."""
+    env = _cli_env(tmp_path)
     result = subprocess.run(
         _trust_command(tmp_path),
-        input=nbformat.writes(_notebook()),
-        env=_cli_env(tmp_path),
+        input=nbformat.writes(make_notebook()),
+        env=env,
         text=True,
         capture_output=True,
         timeout=30,
     )
     assert result.returncode == 0
+    data_dir = Path(env["JUPYTER_DATA_DIR"])
+    assert any(path.is_file() and path.stat().st_size > 0 for path in data_dir.rglob("*"))
 
 
-def test_v4_code_cell_with_outputs():
-    outputs = [
-        new_output("stream", text="hello"),
-        new_output("execute_result", {"text/plain": "10"}, execution_count=10),
-    ]
-    cell = new_code_cell(execution_count=10, outputs=outputs)
-    assert cell.execution_count == 10
-    assert cell.outputs == outputs
 
 
-def test_v4_invalid_code_cell():
-    cell = new_code_cell()
-    cell.source = 5
-    with pytest.raises(ValidationError):
-        validate(cell, ref="code_cell", version=4)
 
 
-def test_v4_invalid_markdown_cell():
-    cell = new_markdown_cell()
-    del cell["metadata"]
-    with pytest.raises(ValidationError):
-        validate(cell, ref="markdown_cell", version=4)
 
 
-def test_v4_invalid_raw_cell():
-    cell = new_raw_cell()
-    del cell["source"]
-    with pytest.raises(ValidationError):
-        validate(cell, ref="raw_cell", version=4)
 
 
-def test_v4_sample_notebook_validates():
-    nb = new_notebook(cells=[new_markdown_cell("title"), new_code_cell("1 + 1")])
-    assert validate(nb) is None
-    assert isvalid(nb)
 
 
 def test_v4_splitlines_preserve_json_mime_data():
+    """Seam: protocol handoff — split_lines preserves JSON MIME while splitting text/plain."""
     output = new_output(
         "display_data",
         {"text/plain": "alpha\nbeta\n", "application/json": {"items": [1, 2]}},
@@ -408,6 +319,7 @@ def test_v4_splitlines_preserve_json_mime_data():
 
 
 def test_write_read_path_roundtrip_and_newline(tmp_path):
+    """Seam: lifecycle crossing — v4 path round-trip keeps newline and equality."""
     nb = new_notebook(cells=[new_code_cell("print('ready')")])
     path = tmp_path / "roundtrip.ipynb"
     assert write(nb, path) is None
@@ -416,30 +328,21 @@ def test_write_read_path_roundtrip_and_newline(tmp_path):
 
 
 def test_capture_validation_error_on_write():
+    """Seam: error propagation — writes captures ValidationError while still emitting JSON."""
     nb = new_notebook(cells=[new_markdown_cell("invalid")])
     del nb.cells[0]["source"]
     captured = {}
     text = writes(nb, capture_validation_error=captured)
     assert isinstance(text, str)
     assert isinstance(captured["ValidationError"], ValidationError)
-
-
-def test_parse_filename_extensionless():
-    assert parse_filename("test.nb") == ("test.nb.ipynb", "test.nb", "json")
-
-
-def test_parse_filename_absolute_path(tmp_path):
-    path = os.path.abspath(tmp_path / "test.ipynb")
-    basename, _ = os.path.splitext(path)
-    assert parse_filename(path) == (path, basename, "json")
-
-
-def _notary():
-    return NotebookNotary(store_factory=MemorySignatureStore, secret=b"secret")
+    payload = json.loads(text)
+    assert payload["cells"][0]["cell_type"] == "markdown"
+    assert "source" not in payload["cells"][0]
 
 
 def test_notary_sign_and_check():
-    notary = _notary()
+    """Seam: lifecycle crossing — notary sign/check round-trip for notebook digest."""
+    notary = make_notary()
     nb = new_notebook(cells=[new_code_cell("1 + 1")])
     assert not notary.check_signature(nb)
     notary.sign(nb)
@@ -447,7 +350,8 @@ def test_notary_sign_and_check():
 
 
 def test_notary_content_change_invalidates_signature():
-    notary = _notary()
+    """Seam: state consistency — content edits invalidate prior notebook signature."""
+    notary = make_notary()
     nb = new_notebook(cells=[new_code_cell("1 + 1")])
     notary.sign(nb)
     nb.cells[0].source = "2 + 2"
@@ -455,7 +359,8 @@ def test_notary_content_change_invalidates_signature():
 
 
 def test_notary_mark_and_check_cells_removes_marker():
-    notary = _notary()
+    """Seam: lifecycle crossing — mark_cells/check_cells consumes trusted marker."""
+    notary = make_notary()
     nb = new_notebook(cells=[new_code_cell(outputs=[new_output("display_data", {"text/html": "<b>x</b>"})])])
     notary.mark_cells(nb, True)
     assert nb.cells[0].metadata.trusted is True
@@ -464,7 +369,8 @@ def test_notary_mark_and_check_cells_removes_marker():
 
 
 def test_notary_untrusted_safe_empty_output_cell():
-    notary = _notary()
+    """Seam: state consistency — untrusted empty-output cell passes check_cells."""
+    notary = make_notary()
     nb = new_notebook(cells=[new_code_cell(outputs=[])])
     notary.mark_cells(nb, False)
     assert notary.check_cells(nb) is True

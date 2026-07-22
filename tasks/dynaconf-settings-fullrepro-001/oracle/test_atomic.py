@@ -1,35 +1,12 @@
 # Spec2Repo oracle - atomic tests for dynaconf-settings-fullrepro-001
-import json
-import os
-import subprocess
-import sys
-import textwrap
 from pathlib import Path
 
 import pytest
 
-import dynaconf
 from dynaconf import Dynaconf, LazySettings, ValidationError, Validator
 from dynaconf import add_converter, get_history, inspect_settings, post_hook, settings
 
-
-def _write(path: Path, text: str) -> Path:
-    path.write_text(textwrap.dedent(text).strip() + "\n", encoding="utf-8")
-    return path
-
-
-def _run_dynaconf_cli(tmp_path: Path, *args: str, env=None):
-    run_env = os.environ.copy()
-    if env:
-        run_env.update(env)
-    return subprocess.run(
-        [sys.executable, "-m", "dynaconf", *args],
-        cwd=tmp_path,
-        env=run_env,
-        text=True,
-        capture_output=True,
-        timeout=20,
-    )
+from conftest import _write, _run_dynaconf_cli
 
 
 def test_validator_default_and_cast_mutate_visible_state():
@@ -110,7 +87,7 @@ def test_get_token_reads_another_setting_and_casts_default(tmp_path):
         """
         SOURCE = 42
         ALIAS = "@get SOURCE"
-        FALLBACK = "@get MISSING 7"
+        FALLBACK = "@get MISSING fallback-value"
         """,
     )
 
@@ -121,7 +98,7 @@ def test_get_token_reads_another_setting_and_casts_default(tmp_path):
     )
 
     assert settings.ALIAS == 42
-    assert settings.FALLBACK == "7"
+    assert settings.FALLBACK == "fallback-value"
 
 
 def test_read_file_token_reads_relative_file(tmp_path):
@@ -179,11 +156,11 @@ def test_runtime_update_validate_true_raises_first_error():
 def test_validator_apply_default_on_none_sets_none_value():
     settings = Dynaconf(
         envvar_prefix="TBDEFNONE",
-        VALUE=None,
         validators=[Validator("VALUE", default="fallback")],
         apply_default_on_none=True,
         environments=False,
     )
+    settings.set("VALUE", None)
 
     settings.validators.validate()
 
@@ -193,10 +170,9 @@ def test_validator_apply_default_on_none_sets_none_value():
 def test_validator_or_and_and_composition():
     settings = Dynaconf(
         envvar_prefix="TBCOMPOSE",
-        MODE="dev",
-        PORT=15,
         environments=False,
     )
+    settings.update({"MODE": "dev", "PORT": 15})
     settings.validators.register(
         Validator("MODE", eq="prod") | Validator("MODE", eq="dev"),
         Validator("PORT", gt=10) & Validator("PORT", lt=20),
@@ -211,9 +187,9 @@ def test_validator_or_and_and_composition():
 def test_validator_callable_default_can_read_settings_context():
     settings = Dynaconf(
         envvar_prefix="TBCALLDEF",
-        HOST="example.test",
         environments=False,
     )
+    settings.set("HOST", "example.test")
     settings.validators.register(
         Validator("URL", default=lambda settings, validator: "https://" + settings.HOST)
     )
@@ -226,9 +202,9 @@ def test_validator_callable_default_can_read_settings_context():
 def test_validator_casts_are_ordered_and_mutate_state():
     settings = Dynaconf(
         envvar_prefix="TBCASTVALID",
-        PORT="8000",
         environments=False,
     )
+    settings.set("PORT", "8000")
     settings.validators.register(
         Validator("PORT", cast=int),
         Validator("PORT", cast=lambda value: value + 1),
@@ -274,3 +250,65 @@ def test_cli_get_missing_key_with_default_prints_default(tmp_path):
 
     assert proc.returncode == 0, proc.stderr
     assert proc.stdout.strip() == "fallback"
+
+
+def test_public_dynaconf_constructor_supports_runtime_state():
+    configured = Dynaconf(envvar_prefix="TBGAPDYNA", environments=False)
+    configured.set("PUBLIC_VALUE", 11)
+    assert configured.get("PUBLIC_VALUE") == 11
+
+
+def test_public_lazysettings_constructor_supports_runtime_state():
+    configured = LazySettings(envvar_prefix="TBGAPLAZY", environments=False)
+    configured.set("PUBLIC_VALUE", 12)
+    assert configured.get("PUBLIC_VALUE") == 12
+
+
+def test_public_global_settings_object_supports_runtime_state():
+    settings.set("TBGAP_GLOBAL_PUBLIC_VALUE", 13)
+    assert settings.get("TBGAP_GLOBAL_PUBLIC_VALUE") == 13
+
+
+def test_settings_object_call_reads_dotted_value():
+    configured = Dynaconf(envvar_prefix="TBGAPCALL", environments=False)
+    configured.set("DATABASE", {"HOST": "call.example"})
+    assert configured("database.host") == "call.example"
+
+
+def test_get_without_dotted_lookup_reads_literal_dot_key(tmp_path):
+    settings_file = _write(
+        tmp_path / "settings.toml",
+        """
+        dynaconf_dotted_lookup = false
+        "SERVICE.HOST" = "literal.example"
+        [SERVICE]
+        HOST = "nested.example"
+        """,
+    )
+    configured = Dynaconf(
+        envvar_prefix="TBGAPLITERAL",
+        settings_files=[str(settings_file)],
+        environments=False,
+    )
+    assert configured.get("SERVICE.HOST") == "nested.example"
+    assert configured.get("SERVICE.HOST", dotted_lookup=False) == "literal.example"
+
+
+def test_validator_is_type_of_rejects_wrong_type():
+    configured = Dynaconf(envvar_prefix="TBISTYPE", environments=False)
+    configured.set("PORT", "not-a-number")
+    configured.validators.register(Validator("PORT", is_type_of=int))
+
+    with pytest.raises(ValidationError):
+        configured.validators.validate()
+
+
+def test_validator_when_conditional_activates_on_matching_condition():
+    configured = Dynaconf(envvar_prefix="TBWHEN", environments=False)
+    configured.update({"MODE": "prod", "DEBUG": True})
+    configured.validators.register(
+        Validator("DEBUG", eq=False, when=Validator("MODE", eq="prod"))
+    )
+
+    with pytest.raises(ValidationError):
+        configured.validators.validate()

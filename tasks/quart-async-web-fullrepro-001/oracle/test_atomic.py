@@ -1,15 +1,11 @@
-"""Public-API rewrites of the covered upstream Quart behaviors.
+"""Atomic tests for quart-async-web-fullrepro-001.
 
-Each test constructs its application through ``Quart`` and exercises it through
-documented contexts or the in-process client.  This file deliberately has no
-dependency on Quart's source-tree test fixtures or implementation modules.
+Each test exercises ONE public API with ONE behavior.
 """
-
 from __future__ import annotations
 
-import asyncio
-
 import pytest
+from werkzeug.routing import BuildError
 
 from quart import (
     Quart,
@@ -18,28 +14,7 @@ from quart import (
     copy_current_app_context,
     copy_current_request_context,
     copy_current_websocket_context,
-    g,
-    has_app_context,
-    has_request_context,
-    has_websocket_context,
-    jsonify,
-    render_template_string,
-    request,
-    session,
-    stream_template_string,
-    websocket,
-)
-from quart.testing import WebsocketResponseError
-
-import pytest
-
-from quart import (
-    Blueprint,
-    Quart,
-    abort,
     current_app,
-    flash,
-    get_flashed_messages,
     g,
     has_app_context,
     has_request_context,
@@ -49,158 +24,273 @@ from quart import (
     render_template_string,
     request,
     session,
-    stream_with_context,
     url_for,
     websocket,
+    Blueprint,
+    flash,
+    get_flashed_messages,
+    stream_template_string,
+    stream_with_context,
 )
-from quart.testing import WebsocketResponseError
-
-"""Public Configuration behavior generated from the Quart specification."""
-
-from quart import Quart
-async def test_make_response_str() -> None:
-    app = Quart(__name__)
-
-    plain = await app.make_response("plain body")
-    with_status = await app.make_response(("status body", 202))
-    with_headers = await app.make_response(("header body", {"X-Mode": "public"}))
-    full = await app.make_response(("full body", 204, {"X-Mode": "complete"}))
-
-    assert await plain.get_data(as_text=True) == "plain body"
-    assert with_status.status_code == 202
-    assert await with_status.get_data(as_text=True) == "status body"
-    assert with_headers.headers["X-Mode"] == "public"
-    assert full.status_code == 204
-    assert full.headers["X-Mode"] == "complete"
+from conftest import make_app, run_async
 
 
-async def test_make_response_response() -> None:
-    app = Quart(__name__)
-
-    direct = await app.make_response(Response("direct body"))
-    with_headers = await app.make_response((Response("header body"), {"X-Mode": "response"}))
-    full = await app.make_response((Response("full body"), 203, {"X-Mode": "full"}))
-
-    assert await direct.get_data(as_text=True) == "direct body"
-    assert await with_headers.get_data(as_text=True) == "header body"
-    assert with_headers.headers["X-Mode"] == "response"
-    assert full.status_code == 203
-    assert full.headers["X-Mode"] == "full"
+# =============================================================================
+# make_response
+# =============================================================================
 
 
-async def test_make_response_errors() -> None:
-    app = Quart(__name__)
-    invalid_values = [None, ("only value",), ("body", 200, {}, "extra")]
-
-    for value in invalid_values:
-        with pytest.raises(TypeError):
-            await app.make_response(value)  # type: ignore[arg-type]
-
-
-async def test_has_app_context() -> None:
-    app = Quart(__name__)
-    assert not has_app_context()
-
+async def test_make_response_from_string():
+    app = make_app()
     async with app.app_context():
-        assert has_app_context()
-        assert not has_request_context()
+        resp = await make_response("hello")
+        assert resp.status_code == 200
+        assert await resp.get_data(as_text=True) == "hello"
 
-    assert not has_app_context()
 
-
-async def test_template_render() -> None:
-    app = Quart(__name__)
+async def test_make_response_from_tuple_with_status():
+    app = make_app()
     async with app.app_context():
-        rendered = await render_template_string("Hello {{ person }}", person="Ada")
-    assert rendered == "Hello Ada"
+        resp = await make_response(("created", 201))
+        assert resp.status_code == 201
+        assert await resp.get_data(as_text=True) == "created"
 
 
-async def test_unmatched_http_rule_returns_404():
-    app = Quart(__name__)
-
-    response = await app.test_client().get("/missing")
-
-    assert response.status_code == 404
-
-
-async def test_jsonify_returns_json_response():
-    app = Quart(__name__)
-
+async def test_make_response_from_response_passthrough():
+    app = make_app()
     async with app.app_context():
-        response = jsonify("one", 2)
+        original = Response("body", status=202)
+        resp = await make_response(original)
+        assert resp is original
 
-    assert await response.get_json() == ["one", 2]
 
-
-async def test_make_response_rejects_none_value():
-    app = Quart(__name__)
-
+async def test_make_response_none_raises_type_error():
+    app = make_app()
     async with app.app_context():
         with pytest.raises(TypeError):
             await make_response(None)
 
 
-async def test_make_response_rejects_invalid_length_tuple():
-    app = Quart(__name__)
+# =============================================================================
+# jsonify
+# =============================================================================
 
+
+async def test_jsonify_returns_json_response():
+    app = make_app()
     async with app.app_context():
-        with pytest.raises(TypeError):
-            await make_response(("body", 200, {}, "extra"))
+        resp = await jsonify(key="val")
+        assert resp.status_code == 200
+        assert resp.content_type == "application/json"
+        data = await resp.get_json()
+        assert data == {"key": "val"}
 
 
-async def test_app_context_exposes_current_app_and_g():
-    app = Quart(__name__)
+async def test_jsonify_positional_args_produce_array():
+    app = make_app()
+    async with app.app_context():
+        resp = await jsonify(1, 2, 3)
+        data = await resp.get_json()
+        assert data == [1, 2, 3]
 
-    assert not has_app_context()
+
+# =============================================================================
+# Application and request context
+# =============================================================================
+
+
+async def test_app_context_resolves_current_app():
+    app = make_app()
+    async with app.app_context():
+        assert has_app_context() is True
+        assert current_app._get_current_object() is app
+
+
+async def test_outside_context_has_app_context_false():
+    assert has_app_context() is False
+    assert has_request_context() is False
+
+
+async def test_request_context_resolves_request():
+    app = make_app()
+    async with app.test_request_context("/test-path", method="POST"):
+        assert has_request_context() is True
+        assert request.path == "/test-path"
+        assert request.method == "POST"
+
+
+async def test_request_context_also_establishes_app_context():
+    app = make_app()
+    async with app.test_request_context("/"):
+        assert has_app_context() is True
+        assert has_request_context() is True
+        assert request.path == "/"
+
+
+async def test_g_namespace_within_context():
+    app = make_app()
     async with app.app_context():
         g.answer = 42
-        assert has_app_context()
-        assert current_app == app
         assert g.answer == 42
-    assert not has_app_context()
 
 
-async def test_request_context_exposes_request_and_ends_cleanly():
-    app = Quart(__name__)
-
-    assert not has_request_context()
-    async with app.test_request_context("/context", method="PATCH"):
-        assert has_request_context()
-        assert request.path == "/context"
-        assert request.method == "PATCH"
-    assert not has_request_context()
+async def test_proxy_outside_context_raises():
+    app = make_app()
+    async with app.app_context():
+        pass
     with pytest.raises(RuntimeError):
-        request.path
+        _ = current_app.name
 
 
-def test_from_prefixed_env_applies_loads_to_prefixed_values(monkeypatch):
-    app = Quart(__name__)
-    monkeypatch.setenv("SWE_CONFIG_ENABLED", "true")
-
-    app.config.from_prefixed_env(prefix="SWE_CONFIG")
-
-    assert app.config["ENABLED"] is True
+# =============================================================================
+# URL generation
+# =============================================================================
 
 
-def test_from_prefixed_env_keeps_original_string_when_loads_fails(monkeypatch):
-    app = Quart(__name__)
-    monkeypatch.setenv("SWE_CONFIG_VALUE", "unparsed")
+async def test_url_for_generates_path():
+    app = make_app()
 
-    def rejecting_loads(value):
-        raise ValueError("invalid configuration value")
+    @app.route("/items/<int:item_id>")
+    async def item(item_id):
+        return ""
 
-    app.config.from_prefixed_env(prefix="SWE_CONFIG", loads=rejecting_loads)
+    async with app.test_request_context("/"):
+        result = url_for("item", item_id=7)
+        assert result == "/items/7"
 
-    assert app.config["VALUE"] == "unparsed"
+
+async def test_url_for_missing_endpoint_raises():
+    app = make_app()
+    async with app.test_request_context("/"):
+        with pytest.raises(BuildError):
+            url_for("nonexistent")
 
 
-def test_from_prefixed_env_creates_nested_keys_and_ignores_other_prefixes(monkeypatch):
-    app = Quart(__name__)
-    app.config["UNCHANGED"] = "original"
-    monkeypatch.setenv("SWE_CONFIG_PARENT__CHILD", '"nested"')
-    monkeypatch.setenv("UNRELATED_CONFIG_UNCHANGED", '"replacement"')
+async def test_url_for_external_with_server_name():
+    app = make_app()
+    app.config["SERVER_NAME"] = "api.test"
 
-    app.config.from_prefixed_env(prefix="SWE_CONFIG")
+    @app.route("/page")
+    async def page():
+        return ""
 
-    assert app.config["PARENT"]["CHILD"] == "nested"
-    assert app.config["UNCHANGED"] == "original"
+    async with app.test_request_context("/"):
+        result = url_for("page", _external=True)
+        assert "api.test" in result
+
+
+async def test_url_for_with_anchor():
+    app = make_app()
+
+    @app.route("/doc")
+    async def doc():
+        return ""
+
+    async with app.test_request_context("/"):
+        result = url_for("doc", _anchor="section")
+        assert result.endswith("#section")
+
+
+# =============================================================================
+# Route converters
+# =============================================================================
+
+
+async def test_int_converter_passes_integer():
+    app = make_app()
+
+    @app.route("/num/<int:n>")
+    async def handler(n):
+        return str(type(n).__name__)
+
+    client = app.test_client()
+    resp = await client.get("/num/5")
+    assert await resp.get_data(as_text=True) == "int"
+
+
+async def test_int_converter_rejects_non_integer():
+    app = make_app()
+
+    @app.route("/num/<int:n>")
+    async def handler(n):
+        return "ok"
+
+    client = app.test_client()
+    resp = await client.get("/num/abc")
+    assert resp.status_code == 404
+
+
+async def test_path_converter_includes_slashes():
+    app = make_app()
+
+    @app.route("/files/<path:filepath>")
+    async def handler(filepath):
+        return filepath
+
+    client = app.test_client()
+    resp = await client.get("/files/a/b/c.txt")
+    assert await resp.get_data(as_text=True) == "a/b/c.txt"
+
+
+# =============================================================================
+# Context copying
+# =============================================================================
+
+
+async def test_copy_current_app_context_preserves_g():
+    app = make_app()
+
+    async with app.app_context():
+        g.val = "captured"
+
+        @copy_current_app_context
+        async def task():
+            return g.val
+
+        assert await task() == "captured"
+
+
+async def test_copy_current_request_context_preserves_request():
+    app = make_app()
+
+    async with app.test_request_context("/ctx-path"):
+
+        @copy_current_request_context
+        async def task():
+            return request.path
+
+        assert await task() == "/ctx-path"
+
+
+async def test_copy_current_app_context_outside_raises():
+    with pytest.raises(RuntimeError):
+        @copy_current_app_context
+        async def task():
+            pass
+
+
+# =============================================================================
+# Configuration
+# =============================================================================
+
+
+async def test_config_from_prefixed_env(monkeypatch):
+    app = make_app()
+    monkeypatch.setenv("MYAPP_DEBUG", "true")
+    monkeypatch.setenv("MYAPP_PORT", "8080")
+    monkeypatch.setenv("OTHER_VAR", "ignored")
+    app.config.from_prefixed_env("MYAPP")
+    assert app.config["DEBUG"] == True
+    assert app.config["PORT"] == 8080
+    assert "OTHER_VAR" not in app.config
+
+
+# =============================================================================
+# after_this_request
+# =============================================================================
+
+
+async def test_after_this_request_outside_context_raises():
+    from quart import after_this_request
+    with pytest.raises(RuntimeError):
+        after_this_request(lambda resp: resp)

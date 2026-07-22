@@ -1,53 +1,17 @@
 # Spec2Repo oracle - integration tests for dynaconf-settings-fullrepro-001
 import json
-import os
-import subprocess
-import sys
-import textwrap
 from pathlib import Path
 
 import pytest
 
-import dynaconf
 from dynaconf import Dynaconf, LazySettings, ValidationError, Validator
 from dynaconf import add_converter, get_history, inspect_settings, post_hook, settings
 
-
-def _write(path: Path, text: str) -> Path:
-    path.write_text(textwrap.dedent(text).strip() + "\n", encoding="utf-8")
-    return path
-
-
-def _run_dynaconf_cli(tmp_path: Path, *args: str, env=None):
-    run_env = os.environ.copy()
-    if env:
-        run_env.update(env)
-    return subprocess.run(
-        [sys.executable, "-m", "dynaconf", *args],
-        cwd=tmp_path,
-        env=run_env,
-        text=True,
-        capture_output=True,
-        timeout=20,
-    )
-
-
-def test_public_import_surface_exposes_configured_visible_state():
-    assert dynaconf.Dynaconf is Dynaconf
-    assert dynaconf.LazySettings is LazySettings
-    assert isinstance(settings, LazySettings)
-    assert callable(add_converter)
-    assert callable(post_hook)
-    assert callable(inspect_settings)
-    assert callable(get_history)
-    assert issubclass(ValidationError, Exception)
-    assert callable(Validator)
-    configured = Dynaconf(envvar_prefix="TBIMPORT", PORT="8000", environments=False)
-    assert configured.PORT == "8000"
-    assert configured.as_dict()["PORT"] == "8000"
+from conftest import _write, _run_dynaconf_cli
 
 
 def test_envvar_overrides_file_and_casts_to_int(tmp_path, monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "settings.toml",
         """
@@ -70,6 +34,7 @@ def test_envvar_overrides_file_and_casts_to_int(tmp_path, monkeypatch):
 
 
 def test_local_file_overrides_base_file(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     base = _write(tmp_path / "settings.toml", 'COLOR = "blue"\nSIZE = "small"')
     _write(tmp_path / "settings.local.toml", 'COLOR = "green"')
 
@@ -85,6 +50,7 @@ def test_local_file_overrides_base_file(tmp_path):
 
 
 def test_includes_load_after_regular_settings(tmp_path):
+    """Seam: config interaction — multiple sources merge with documented precedence."""
     base = _write(
         tmp_path / "settings.toml",
         """
@@ -114,6 +80,7 @@ def test_includes_load_after_regular_settings(tmp_path):
 
 
 def test_nested_access_as_dict_and_env_dunder_merge(tmp_path, monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "settings.toml",
         """
@@ -138,6 +105,7 @@ def test_nested_access_as_dict_and_env_dunder_merge(tmp_path, monkeypatch):
 
 
 def test_merge_marker_combines_environment_dictionary(tmp_path, monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "settings.toml",
         """
@@ -162,6 +130,7 @@ def test_merge_marker_combines_environment_dictionary(tmp_path, monkeypatch):
 
 
 def test_environment_default_global_and_active_values(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "envs.toml",
         """
@@ -190,6 +159,7 @@ def test_environment_default_global_and_active_values(tmp_path):
 
 
 def test_from_env_returns_isolated_settings_without_changing_original(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "envs.toml",
         """
@@ -215,6 +185,7 @@ def test_from_env_returns_isolated_settings_without_changing_original(tmp_path):
 
 
 def test_setenv_and_using_env_restore_active_environment(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "envs.toml",
         """
@@ -241,6 +212,7 @@ def test_setenv_and_using_env_restore_active_environment(tmp_path):
 
 
 def test_validate_on_update_rejects_invalid_runtime_value():
+    """Seam: protocol handoff — command output matches artifact or API state."""
     settings = Dynaconf(
         envvar_prefix="TBUPDATE",
         validate_on_update=True,
@@ -255,6 +227,7 @@ def test_validate_on_update_rejects_invalid_runtime_value():
 
 
 def test_history_and_inspect_report_file_and_env_sources(tmp_path, monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(tmp_path / "settings.toml", "PORT = 8000")
     monkeypatch.setenv("TBHIST_PORT", "9900")
     settings = Dynaconf(
@@ -273,6 +246,7 @@ def test_history_and_inspect_report_file_and_env_sources(tmp_path, monkeypatch):
 
 
 def test_cli_get_list_and_inspect_observe_configured_instance(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     _write(
         tmp_path / "settings.toml",
         """
@@ -333,6 +307,7 @@ def test_cli_get_list_and_inspect_observe_configured_instance(tmp_path):
 
 
 def test_preload_regular_file_and_include_order(tmp_path):
+    """Seam: config interaction — multiple sources merge with documented precedence."""
     preload = _write(tmp_path / "pre.toml", 'VALUE = "pre"\nPRE = true')
     base = _write(tmp_path / "settings.toml", 'VALUE = "base"\nBASE = true')
     include = _write(tmp_path / "include.toml", 'VALUE = "include"\nINCLUDED = true')
@@ -353,6 +328,7 @@ def test_preload_regular_file_and_include_order(tmp_path):
 
 
 def test_file_declared_dynaconf_include_loads_relative_file(tmp_path):
+    """Seam: config interaction — multiple sources merge with documented precedence."""
     _write(tmp_path / "child.toml", 'CHILD = "yes"')
     settings_file = _write(
         tmp_path / "settings.toml",
@@ -374,6 +350,7 @@ def test_file_declared_dynaconf_include_loads_relative_file(tmp_path):
 
 
 def test_settings_files_accepts_semicolon_separated_paths(tmp_path):
+    """Seam: state consistency — integrated workflow preserves expected invariants."""
     first = _write(tmp_path / "first.toml", 'VALUE = "first"\nONLY_FIRST = true')
     second = _write(tmp_path / "second.toml", 'VALUE = "second"\nONLY_SECOND = true')
 
@@ -389,6 +366,7 @@ def test_settings_files_accepts_semicolon_separated_paths(tmp_path):
 
 
 def test_python_settings_file_loads_only_uppercase_names(tmp_path):
+    """Seam: state consistency — persisted and in-memory views stay aligned."""
     settings_file = _write(
         tmp_path / "settings.py",
         """
@@ -408,6 +386,7 @@ def test_python_settings_file_loads_only_uppercase_names(tmp_path):
 
 
 def test_multiple_envvar_prefixes_are_loaded(monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     monkeypatch.setenv("TBPX1_ALPHA", "1")
     monkeypatch.setenv("TBPX2_BETA", "2")
 
@@ -418,6 +397,7 @@ def test_multiple_envvar_prefixes_are_loaded(monkeypatch):
 
 
 def test_unprefixed_environment_variables_can_be_settings(monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     monkeypatch.setenv("TBUNPREFIXED_VALUE", "42")
 
     settings = Dynaconf(envvar_prefix=False, environments=False)
@@ -426,6 +406,7 @@ def test_unprefixed_environment_variables_can_be_settings(monkeypatch):
 
 
 def test_ignore_unknown_envvars_keeps_only_preexisting_keys(tmp_path, monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(tmp_path / "settings.toml", "KNOWN = 1")
     monkeypatch.setenv("TBIGNORE_KNOWN", "2")
     monkeypatch.setenv("TBIGNORE_UNKNOWN", "3")
@@ -442,6 +423,7 @@ def test_ignore_unknown_envvars_keeps_only_preexisting_keys(tmp_path, monkeypatc
 
 
 def test_sysenv_fallback_reads_unprefixed_missing_key(monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     monkeypatch.setenv("TBFALLBACK_ONLY", "visible")
 
     settings = Dynaconf(
@@ -454,6 +436,7 @@ def test_sysenv_fallback_reads_unprefixed_missing_key(monkeypatch):
 
 
 def test_sysenv_fallback_list_restricts_allowed_names(monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     monkeypatch.setenv("TB_ALLOWED_SYS", "yes")
     monkeypatch.setenv("TB_BLOCKED_SYS", "no")
 
@@ -468,6 +451,7 @@ def test_sysenv_fallback_list_restricts_allowed_names(monkeypatch):
 
 
 def test_comma_separated_active_envs_load_in_order(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "envs.toml",
         """
@@ -495,6 +479,7 @@ def test_comma_separated_active_envs_load_in_order(tmp_path):
 
 
 def test_from_env_keep_chains_existing_values(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "envs.toml",
         """
@@ -520,9 +505,9 @@ def test_from_env_keep_chains_existing_values(tmp_path):
     assert production.PROD_ONLY == "prod"
 
 
-def test_auto_cast_false_leaves_envvar_tokens_as_strings(monkeypatch):
+def test_plain_envvar_scalar_parses_when_auto_cast_false(monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     monkeypatch.setenv("TBNOCAST_PORT", "9900")
-    monkeypatch.setenv("TBNOCAST_MARKED", "@int 9900")
 
     settings = Dynaconf(
         envvar_prefix="TBNOCAST",
@@ -531,10 +516,23 @@ def test_auto_cast_false_leaves_envvar_tokens_as_strings(monkeypatch):
     )
 
     assert settings.PORT == 9900
+
+
+def test_auto_cast_false_leaves_envvar_tokens_as_strings(monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
+    monkeypatch.setenv("TBNOCAST_MARKED", "@int 9900")
+
+    settings = Dynaconf(
+        envvar_prefix="TBNOCAST",
+        auto_cast=False,
+        environments=False,
+    )
+
     assert settings.MARKED == "@int 9900"
 
 
 def test_insert_token_adds_list_item_at_requested_position(tmp_path, monkeypatch):
+    """Seam: protocol handoff — command output matches artifact or API state."""
     settings_file = _write(tmp_path / "settings.toml", 'PLUGINS = ["a", "c"]')
     monkeypatch.setenv("TBINSERT_PLUGINS", "@insert 1 b")
 
@@ -548,6 +546,7 @@ def test_insert_token_adds_list_item_at_requested_position(tmp_path, monkeypatch
 
 
 def test_del_token_removes_nested_envvar_value(tmp_path, monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
         tmp_path / "settings.toml",
         """
@@ -569,6 +568,7 @@ def test_del_token_removes_nested_envvar_value(tmp_path, monkeypatch):
 
 
 def test_global_merge_enabled_merges_later_dictionaries_and_lists(tmp_path, monkeypatch):
+    """Seam: config interaction — multiple sources merge with documented precedence."""
     settings_file = _write(
         tmp_path / "settings.toml",
         """
@@ -593,6 +593,7 @@ def test_global_merge_enabled_merges_later_dictionaries_and_lists(tmp_path, monk
 
 
 def test_local_file_top_level_merge_marker_merges_environment_section(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     _write(
         tmp_path / "settings.toml",
         """
@@ -625,6 +626,7 @@ def test_local_file_top_level_merge_marker_merges_environment_section(tmp_path):
 
 
 def test_runtime_set_creates_nested_value_visible_in_all_views():
+    """Seam: protocol handoff — command output matches artifact or API state."""
     settings = Dynaconf(envvar_prefix="TBRUNTIME", environments=False)
 
     settings.set("DATABASE.PORT", 5432)
@@ -635,6 +637,7 @@ def test_runtime_set_creates_nested_value_visible_in_all_views():
 
 
 def test_load_file_adds_runtime_values_and_history(tmp_path):
+    """Seam: config interaction — multiple sources merge with documented precedence."""
     later = _write(tmp_path / "later.toml", "LATER = 42")
     settings = Dynaconf(envvar_prefix="TBLOADFILE", environments=False)
 
@@ -645,6 +648,7 @@ def test_load_file_adds_runtime_values_and_history(tmp_path):
 
 
 def test_load_file_env_false_loads_top_level_without_environment_sections(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
     later = _write(
         tmp_path / "later.toml",
         """
@@ -662,6 +666,7 @@ def test_load_file_env_false_loads_top_level_without_environment_sections(tmp_pa
 
 
 def test_fresh_var_reloads_source_on_access(tmp_path):
+    """Seam: state consistency — persisted and in-memory views stay aligned."""
     settings_file = _write(tmp_path / "settings.toml", 'VALUE = "one"')
     settings = Dynaconf(
         envvar_prefix="TBFRESH",
@@ -677,6 +682,7 @@ def test_fresh_var_reloads_source_on_access(tmp_path):
 
 
 def test_constructor_post_hook_merges_returned_data(tmp_path):
+    """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     settings_file = _write(tmp_path / "settings.toml", 'BASE = "base"')
 
     def hook(settings):
@@ -693,6 +699,7 @@ def test_constructor_post_hook_merges_returned_data(tmp_path):
 
 
 def test_dynaconf_hooks_file_contributes_post_data(tmp_path):
+    """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     _write(
         tmp_path / "dynaconf_hooks.py",
         """
@@ -713,6 +720,7 @@ def test_dynaconf_hooks_file_contributes_post_data(tmp_path):
 
 
 def test_python_settings_post_hook_runs_when_file_loads(tmp_path):
+    """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     settings_file = _write(
         tmp_path / "settings.py",
         """
@@ -734,32 +742,8 @@ def test_python_settings_post_hook_runs_when_file_loads(tmp_path):
     assert settings.PY_HOOK_VALUE == "base-py"
 
 
-def test_cli_list_json_filters_by_key(tmp_path):
-    _write(
-        tmp_path / "app_settings.py",
-        """
-        from dynaconf import Dynaconf
-        settings = Dynaconf(envvar_prefix="TBCLILIST", FOO="bar", OTHER="x", environments=False)
-        """,
-    )
-
-    proc = _run_dynaconf_cli(
-        tmp_path,
-        "-i",
-        "app_settings.settings",
-        "list",
-        "--json",
-        "--key",
-        "FOO",
-    )
-
-    assert proc.returncode == 0, proc.stderr
-    data = json.loads(proc.stdout)
-    assert data["FOO"] == "bar"
-    assert "OTHER" not in data
-
-
 def test_cli_inspect_prints_json_report(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     _write(
         tmp_path / "settings.toml",
         "PORT = 8000",
@@ -789,3 +773,106 @@ def test_cli_inspect_prints_json_report(tmp_path):
 
     assert proc.returncode == 0, proc.stderr
     assert json.loads(proc.stdout)["current"] == 8000
+
+
+def test_constructor_option_from_environment_selects_prefix(monkeypatch):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
+    monkeypatch.setenv("ENVVAR_PREFIX_FOR_DYNACONF", "TBGAPOPT")
+    monkeypatch.setenv("TBGAPOPT_PORT", "8123")
+    configured = Dynaconf(settings_files=[], environments=False)
+    assert configured.PORT == 8123
+
+
+def test_settings_files_accepts_comma_separated_paths(tmp_path):
+    """Seam: state consistency — integrated workflow preserves expected invariants."""
+    first = _write(tmp_path / "first.toml", 'VALUE = "first"\nFIRST = true')
+    second = _write(tmp_path / "second.toml", 'VALUE = "second"\nSECOND = true')
+    configured = Dynaconf(
+        envvar_prefix="TBGAPCOMMA",
+        settings_files=f"{first},{second}",
+        environments=False,
+    )
+    assert configured.VALUE == "second"
+    assert configured.FIRST is True
+    assert configured.SECOND is True
+
+
+def test_json_settings_file_loads_nested_values(tmp_path):
+    """Seam: state consistency — persisted and in-memory views stay aligned."""
+    settings_file = _write(
+        tmp_path / "settings.json",
+        json.dumps({"SERVICE": {"HOST": "json.example", "PORT": 9000}}),
+    )
+    configured = Dynaconf(
+        envvar_prefix="TBGAPJSON",
+        settings_files=[str(settings_file)],
+        environments=False,
+    )
+    assert configured.get("service.host") == "json.example"
+    assert configured.get("service.port") == 9000
+
+
+def test_constructor_post_hooks_accepts_single_callable(tmp_path):
+    """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
+    settings_file = _write(tmp_path / "settings.toml", 'BASE = "loaded"')
+
+    def contribute(configured):
+        return {"HOOK_VALUE": configured.BASE + "-single"}
+
+    configured = Dynaconf(
+        envvar_prefix="TBGAPSINGLEHOOK",
+        settings_files=[str(settings_file)],
+        post_hooks=contribute,
+        environments=False,
+    )
+    assert configured.HOOK_VALUE == "loaded-single"
+
+
+def test_get_history_reports_runtime_set_contribution():
+    """Seam: config interaction — multiple sources merge with documented precedence."""
+    configured = Dynaconf(envvar_prefix="TBGAPHISTORY", environments=False)
+    configured.set("MODE", "runtime")
+    history = get_history(configured, key="MODE")
+    assert any(
+        entry["loader"] == "set_method" and entry["value"] == "runtime"
+        for entry in history
+    )
+
+
+def test_inspect_settings_writes_json_report(tmp_path):
+    """Seam: config interaction — multiple sources merge with documented precedence."""
+    configured = Dynaconf(envvar_prefix="TBGAPREPORT", environments=False)
+    configured.set("MODE", "written")
+    report_path = tmp_path / "inspection.json"
+    report = inspect_settings(
+        configured,
+        key="MODE",
+        dumper="json",
+        to_file=str(report_path),
+    )
+    written = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report["current"] == "written"
+    assert written["current"] == "written"
+    assert any(entry["loader"] == "set_method" for entry in written["history"])
+
+
+def test_cli_init_writes_json_settings_secrets_and_gitignore(tmp_path):
+    """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
+    proc = _run_dynaconf_cli(
+        tmp_path,
+        "init",
+        "--format",
+        "json",
+        "--vars",
+        "PORT=8000",
+        "--secrets",
+        "TOKEN=secret",
+        input_text="y\n",
+    )
+    assert proc.returncode == 0, proc.stderr
+    settings_data = json.loads((tmp_path / "settings.json").read_text(encoding="utf-8"))
+    secrets_data = json.loads((tmp_path / ".secrets.json").read_text(encoding="utf-8"))
+    gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
+    assert str(settings_data["PORT"]) == "8000"
+    assert secrets_data["TOKEN"] == "secret"
+    assert ".secrets" in gitignore

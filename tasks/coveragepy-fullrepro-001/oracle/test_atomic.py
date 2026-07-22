@@ -1,72 +1,14 @@
 # Spec2Repo oracle - atomic tests for coveragepy-fullrepro-001
 import json
-
-import os
-
-import subprocess
-
-import sys
-
-import xml.etree.ElementTree as ET
-
 from pathlib import Path
-
-from coverage import Coverage, CoverageData
-
-from coverage.exceptions import ConfigError, NoDataError, NoSource
-
-from xml.etree import ElementTree
 
 import pytest
 
 import coverage
+from coverage import Coverage, CoverageData
+from coverage.exceptions import ConfigError, NoDataError, NoSource, DataError
 
-from coverage.exceptions import ConfigError, DataError, NoDataError, NoSource
-
-def write_py(path: Path, text: str) -> Path:
-    path.write_text(text, encoding="utf-8")
-    return path
-
-
-def run_cli(cwd: Path, *args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
-    run_env = os.environ.copy()
-    if env:
-        run_env.update(env)
-    return subprocess.run(
-        [sys.executable, "-m", "coverage", *args],
-        cwd=cwd,
-        text=True,
-        capture_output=True,
-        env=run_env,
-        timeout=30,
-    )
-
-
-def measured_file(data: CoverageData, suffix: str) -> str:
-    return next(name for name in data.measured_files() if name.endswith(suffix))
-
-
-def collect_file(tmp_path: Path, source: str, *, branch: bool = False, context: str | None = None) -> tuple[Coverage, Path]:
-    program = write_py(tmp_path / "sample.py", source)
-    cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)], branch=branch, context=context)
-    cov.start()
-    exec(compile(program.read_text(encoding="utf-8"), str(program), "exec"), {})
-    cov.stop()
-    cov.save()
-    return cov, program
-
-
-def test_installable_surface_imports_version_and_module_cli(tmp_path):
-    import coverage
-
-    assert isinstance(coverage.__version__, str)
-    assert hasattr(coverage, "Coverage")
-    assert hasattr(coverage, "CoverageData")
-
-    result = run_cli(tmp_path, "--version")
-
-    assert result.returncode == 0
-    assert "Coverage.py" in result.stdout
+from conftest import write_py, run_cli, measured_file, collect_file
 
 
 def test_coverage_data_update_merges_line_data_objects(tmp_path):
@@ -108,57 +50,6 @@ def test_coverage_data_purge_files_removes_measured_file(tmp_path):
 
     assert data.lines(first) == []
     assert data.lines(second) == [2]
-
-
-def test_invalid_rcfile_reports_config_error_via_cli_and_api(tmp_path):
-    bad = tmp_path / ".coveragerc"
-    bad.write_text("[run\nbranch = true\n", encoding="utf-8")
-    cli = run_cli(tmp_path, "debug", "config")
-
-    def make_coverage():
-        Coverage(config_file=str(bad))
-
-    try:
-        make_coverage()
-    except ConfigError:
-        api_error = True
-    else:
-        api_error = False
-
-    assert cli.returncode != 0
-    assert api_error is True
-
-
-def test_report_without_data_raises_no_data_error(tmp_path):
-    cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)])
-
-    try:
-        cov.report()
-    except NoDataError:
-        raised = True
-    else:
-        raised = False
-
-    assert raised is True
-
-
-def test_missing_source_file_raises_no_source(tmp_path):
-    program = write_py(tmp_path / "gone.py", "print('gone')\n")
-    cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)])
-    cov.start()
-    exec(compile(program.read_text(encoding="utf-8"), str(program), "exec"), {})
-    cov.stop()
-    cov.save()
-    program.unlink()
-
-    try:
-        cov.report()
-    except NoSource:
-        raised = True
-    else:
-        raised = False
-
-    assert raised is True
 
 
 def test_cli_run_missing_script_fails_nonzero(tmp_path):
@@ -273,3 +164,62 @@ def test_cli_erase_removes_configured_data_file(tmp_path):
     assert (tmp_path / ".coverage").exists()
     assert run_cli(tmp_path, "erase").returncode == 0
     assert not (tmp_path / ".coverage").exists()
+
+
+def test_coverage_data_update_merges_measured_files(tmp_path):
+    left = CoverageData(no_disk=True)
+    right = CoverageData(no_disk=True)
+    a_file = str(tmp_path / "a.py")
+    b_file = str(tmp_path / "b.py")
+    left.add_lines({a_file: {1}})
+    right.add_lines({b_file: {2}})
+    left.update(right)
+    assert {Path(name).name for name in left.measured_files()} == {"a.py", "b.py"}
+
+
+def test_cli_debug_data_reports_measured_file(tmp_path):
+    write_py(tmp_path / "prog.py", "print('hello')\n")
+    assert run_cli(tmp_path, "run", "prog.py").returncode == 0
+
+    debug = run_cli(tmp_path, "debug", "data")
+
+    assert debug.returncode == 0
+    assert "prog.py" in debug.stdout
+
+
+def test_coverage_file_environment_selects_data_file(tmp_path):
+    write_py(tmp_path / "prog.py", "x = 1\n")
+    env = {"COVERAGE_FILE": str(tmp_path / "custom.coverage")}
+    assert run_cli(tmp_path, "run", "prog.py", env=env).returncode == 0
+    assert (tmp_path / "custom.coverage").exists()
+    assert not (tmp_path / ".coverage").exists()
+
+
+def test_cli_report_fail_under_returns_status_two(tmp_path):
+    write_py(tmp_path / "prog.py", "flag = True\nif flag:\n    x = 1\nelse:\n    x = 2\n")
+    assert run_cli(tmp_path, "run", "--branch", "prog.py").returncode == 0
+    result = run_cli(tmp_path, "report", "--fail-under=100")
+    assert result.returncode == 2
+
+
+def test_coverage_data_has_arcs_false_without_branch(tmp_path):
+    write_py(tmp_path / "prog.py", "y = 42\n")
+    cov = Coverage(source=[str(tmp_path)], data_file=str(tmp_path / ".cov"))
+    cov.start()
+    exec(compile((tmp_path / "prog.py").read_text(), "prog.py", "exec"))
+    cov.stop()
+    cov.save()
+    assert cov.get_data().has_arcs() is False
+
+
+def test_coverage_erase_removes_data_file(tmp_path):
+    write_py(tmp_path / "prog.py", "z = 7\n")
+    data_path = tmp_path / ".coverage_erase_test"
+    cov = Coverage(source=[str(tmp_path)], data_file=str(data_path))
+    cov.start()
+    exec(compile((tmp_path / "prog.py").read_text(), "prog.py", "exec"))
+    cov.stop()
+    cov.save()
+    assert data_path.exists()
+    cov.erase()
+    assert not data_path.exists()

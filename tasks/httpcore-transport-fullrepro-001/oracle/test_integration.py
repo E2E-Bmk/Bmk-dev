@@ -1,242 +1,152 @@
-# Spec2Repo oracle - integration tests for httpcore-transport-fullrepro-001
-import re
+"""Integration tests for httpcore-transport-fullrepro-001.
+
+Each test exercises ≥2 public API boundaries working together.
+These tests verify composition seams: state consistency across components,
+protocol handoff (Request→serializer→stream), error propagation,
+configuration interaction, and lifecycle transitions.
+"""
+from __future__ import annotations
+
 import ssl
 
 import pytest
 
 import httpcore
+from conftest import (
+    RecordingBackend,
+    RecordingStream,
+    assert_header,
+    header_block,
+    http11_response,
+    pool_with,
+    written_bytes,
+)
 
 
-def http11_response(status=200, reason=b"OK", headers=(), body=b"Hello"):
-    header_items = list(headers)
-    lower_names = {name.lower() for name, value in header_items}
-    if b"content-length" not in lower_names:
-        header_items.append((b"Content-Length", str(len(body)).encode("ascii")))
-    lines = [b"HTTP/1.1 %d %s\r\n" % (status, reason)]
-    lines += [name + b": " + value + b"\r\n" for name, value in header_items]
-    lines.append(b"\r\n")
-    if body:
-        lines.append(body)
-    return lines
+# =============================================================================
+# Request serialization through pool (Request model → HTTP/1.1 wire)
+# Seam: protocol handoff — Request attributes → serialized wire bytes
+# =============================================================================
 
 
-def written_bytes(stream):
-    return b"".join(stream.writes)
-
-
-def header_block(stream):
-    return written_bytes(stream).split(b"\r\n\r\n", 1)[0]
-
-
-def assert_header(stream, name, value):
-    lines = header_block(stream).split(b"\r\n")[1:]
-    assert name + b": " + value in lines
-
-
-class TLSInfo:
-    def selected_alpn_protocol(self):
-        return "http/1.1"
-
-
-class RecordingStream(httpcore.NetworkStream):
-    def __init__(self, chunks):
-        self.chunks = list(chunks)
-        self.writes = []
-        self.read_calls = []
-        self.close_calls = 0
-        self.tls_calls = []
-        self.extra_info_queries = []
-
-    def read(self, max_bytes, timeout=None):
-        self.read_calls.append((max_bytes, timeout))
-        if not self.chunks:
-            return b""
-        return self.chunks.pop(0)
-
-    def write(self, buffer, timeout=None):
-        self.writes.append(bytes(buffer))
-        self.write_timeout = timeout
-
-    def close(self):
-        self.close_calls += 1
-
-    def start_tls(self, ssl_context, server_hostname=None, timeout=None):
-        assert isinstance(ssl_context, ssl.SSLContext)
-        self.tls_calls.append((server_hostname, timeout))
-        return self
-
-    def get_extra_info(self, info):
-        self.extra_info_queries.append(info)
-        if info == "ssl_object":
-            return TLSInfo()
-        return None
-
-
-class RecordingBackend(httpcore.NetworkBackend):
-    def __init__(self, scripts):
-        self.scripts = list(scripts)
-        self.tcp_calls = []
-        self.uds_calls = []
-        self.sleep_calls = []
-        self.streams = []
-
-    def _next_stream(self):
-        script = self.scripts.pop(0)
-        if isinstance(script, BaseException):
-            raise script
-        stream = RecordingStream(script)
-        self.streams.append(stream)
-        return stream
-
-    def connect_tcp(
-        self, host, port, timeout=None, local_address=None, socket_options=None
-    ):
-        self.tcp_calls.append(
-            {
-                "host": host,
-                "port": port,
-                "timeout": timeout,
-                "local_address": local_address,
-                "socket_options": socket_options,
-            }
-        )
-        return self._next_stream()
-
-    def connect_unix_socket(self, path, timeout=None, socket_options=None):
-        self.uds_calls.append(
-            {"path": path, "timeout": timeout, "socket_options": socket_options}
-        )
-        return self._next_stream()
-
-    def sleep(self, seconds):
-        self.sleep_calls.append(seconds)
-
-
-def pool_with(script, **kwargs):
-    backend = RecordingBackend([script])
-    pool = httpcore.ConnectionPool(network_backend=backend, **kwargs)
-    return pool, backend
-
-
-def test_pool_request_returns_status_headers_content_and_extensions():
-    pool, backend = pool_with(
-        http11_response(
-            201,
-            b"Created",
-            [(b"X-Token", b"abc"), (b"X-Token", b"def")],
-            b"created",
-        )
-    )
-    response = pool.request("GET", "http://example.com/items")
-    assert response.status == 201
-    assert response.headers == [
-        (b"X-Token", b"abc"),
-        (b"X-Token", b"def"),
-        (b"Content-Length", b"7"),
-    ]
-    assert response.content == b"created"
-    assert response.extensions["http_version"] == b"HTTP/1.1"
-    assert response.extensions["reason_phrase"] == b"Created"
-    assert backend.tcp_calls[0]["host"] == "example.com"
-
-
-def test_request_line_uses_path_and_query_from_url():
+@pytest.mark.depends_on("test_request_stores_method_as_bytes", "test_request_url_is_parsed_url_object")
+def test_request_line_uses_method_path_and_query_on_wire():
+    """Seam: protocol handoff — Request method, path, and query serialized to HTTP/1.1 wire line."""
     pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("GET", "http://example.com/search?q=red&sort=asc")
+    pool.request("POST", "http://node.test/search?q=red&page=2")
     assert written_bytes(backend.streams[0]).startswith(
-        b"GET /search?q=red&sort=asc HTTP/1.1\r\n"
+        b"POST /search?q=red&page=2 HTTP/1.1\r\n"
     )
 
 
-def test_empty_url_path_is_sent_as_slash():
+@pytest.mark.depends_on("test_url_missing_path_produces_slash_target")
+def test_empty_url_path_serializes_as_slash():
+    """Seam: protocol handoff — bare URL path defaults to slash on the wire."""
     pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("GET", "http://example.com")
+    pool.request("GET", "http://bare.test")
     assert written_bytes(backend.streams[0]).startswith(b"GET / HTTP/1.1\r\n")
 
 
-def test_default_http_port_is_omitted_from_host_header():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("GET", "http://example.com:80/")
-    assert_header(backend.streams[0], b"Host", b"example.com")
-
-
-def test_non_default_http_port_is_included_in_host_header():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("GET", "http://example.com:8080/")
-    assert_header(backend.streams[0], b"Host", b"example.com:8080")
-
-
-def test_user_supplied_host_header_is_not_replaced():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("GET", "http://example.com/", headers={"Host": "alt.example"})
-    block = header_block(backend.streams[0])
-    assert b"Host: alt.example" in block.split(b"\r\n")
-    assert b"Host: example.com" not in block.split(b"\r\n")
-
-
-def test_mapping_headers_are_sent_as_http_headers():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("GET", "http://example.com/", headers={"User-Agent": "client"})
-    assert_header(backend.streams[0], b"User-Agent", b"client")
-
-
-def test_sequence_headers_preserve_duplicate_names():
+@pytest.mark.depends_on("test_request_target_extension_overrides_url_target")
+def test_target_extension_overrides_url_target_on_wire():
+    """Seam: protocol handoff — target extension overrides parsed URL target on wire."""
     pool, backend = pool_with(http11_response(body=b"ok"))
     pool.request(
         "GET",
-        "http://example.com/",
-        headers=[("Accept", "text/plain"), ("Accept", "application/json")],
+        "http://node.test/original",
+        extensions={"target": b"/override?x=1"},
     )
+    assert written_bytes(backend.streams[0]).startswith(
+        b"GET /override?x=1 HTTP/1.1\r\n"
+    )
+
+
+@pytest.mark.depends_on("test_request_target_extension_overrides_url_target")
+def test_options_star_target_is_sent_unchanged():
+    """Seam: protocol handoff — OPTIONS * target sent unchanged through pool."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    url = httpcore.URL(scheme=b"http", host=b"node.test", target=b"*")
+    pool.request("OPTIONS", url)
+    assert written_bytes(backend.streams[0]).startswith(b"OPTIONS * HTTP/1.1\r\n")
+
+
+# =============================================================================
+# Host header generation (URL → header serialization)
+# Seam: protocol handoff — URL port logic → Host header value
+# =============================================================================
+
+
+@pytest.mark.depends_on("test_url_default_http_port_is_80")
+def test_default_http_port_omitted_from_host_header():
+    """Seam: protocol handoff — default HTTP port omitted from Host header."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "http://node.test:80/")
+    assert_header(backend.streams[0], b"Host", b"node.test")
+
+
+def test_non_default_port_included_in_host_header():
+    """Seam: protocol handoff — non-default port included in Host header value."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "http://node.test:9090/")
+    assert_header(backend.streams[0], b"Host", b"node.test:9090")
+
+
+def test_caller_supplied_host_header_is_preserved():
+    """Seam: protocol handoff — caller-supplied Host header preserved over auto-generated value."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "http://node.test/", headers={"Host": "override.test"})
     block = header_block(backend.streams[0])
-    assert block.count(b"\r\nAccept: ") == 2
+    assert b"Host: override.test" in block.split(b"\r\n")
+    assert b"Host: node.test" not in block.split(b"\r\n")
 
 
-def test_bytes_method_and_url_are_accepted():
+# =============================================================================
+# Body framing (content → Content-Length / chunked serialization)
+# Seam: protocol handoff — body type → framing header + wire body
+# =============================================================================
+
+
+def test_bytes_content_adds_content_length_and_serializes_body():
+    """Seam: protocol handoff — bytes body adds Content-Length and serializes payload."""
     pool, backend = pool_with(http11_response(body=b"ok"))
-    response = pool.request(b"GET", b"http://example.com/bytes")
-    assert response.status == 200
-    assert written_bytes(backend.streams[0]).startswith(b"GET /bytes HTTP/1.1\r\n")
-
-
-def test_bytes_content_adds_content_length_and_body():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("POST", "http://example.com/upload", content=b"abcdef")
+    pool.request("POST", "http://node.test/upload", content=b"payload")
     wire = written_bytes(backend.streams[0])
-    assert b"\r\nContent-Length: 6\r\n" in wire
-    assert wire.endswith(b"\r\n\r\nabcdef")
+    assert b"\r\nContent-Length: 7\r\n" in wire
+    assert wire.endswith(b"\r\n\r\npayload")
 
 
-def test_empty_bytes_content_adds_zero_content_length():
+def test_empty_bytes_body_adds_zero_content_length():
+    """Seam: protocol handoff — empty bytes body framed with Content-Length: 0."""
     pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("POST", "http://example.com/upload", content=b"")
+    pool.request("PUT", "http://node.test/empty", content=b"")
     assert_header(backend.streams[0], b"Content-Length", b"0")
 
 
-def test_iterable_content_uses_chunked_transfer_encoding():
+def test_iterable_body_uses_chunked_transfer_encoding():
+    """Seam: protocol handoff — iterable body uses chunked transfer encoding on wire."""
     pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("POST", "http://example.com/upload", content=iter([b"ab", b"cde"]))
+    pool.request("POST", "http://node.test/stream", content=iter([b"ab", b"cde"]))
     wire = written_bytes(backend.streams[0])
     assert b"\r\nTransfer-Encoding: chunked\r\n" in wire
-    assert b"\r\n\r\n2\r\nab\r\n3\r\ncde\r\n0\r\n\r\n" in wire
+    assert b"2\r\nab\r\n3\r\ncde\r\n0\r\n\r\n" in wire
 
 
-def test_explicit_content_length_is_preserved():
+def test_explicit_content_length_header_is_preserved():
+    """Seam: protocol handoff — explicit Content-Length header preserved without duplication."""
     pool, backend = pool_with(http11_response(body=b"ok"))
     pool.request(
-        "POST",
-        "http://example.com/upload",
-        headers={"Content-Length": "3"},
-        content=b"abc",
+        "POST", "http://node.test/", headers={"Content-Length": "4"}, content=b"data"
     )
     lines = header_block(backend.streams[0]).split(b"\r\n")
-    assert lines.count(b"Content-Length: 3") == 1
+    assert lines.count(b"Content-Length: 4") == 1
 
 
 def test_explicit_transfer_encoding_prevents_auto_content_length():
+    """Seam: protocol handoff — explicit Transfer-Encoding prevents auto Content-Length."""
     pool, backend = pool_with(http11_response(body=b"ok"))
     pool.request(
         "POST",
-        "http://example.com/upload",
+        "http://node.test/",
         headers={"Transfer-Encoding": "chunked"},
         content=b"abc",
     )
@@ -245,377 +155,396 @@ def test_explicit_transfer_encoding_prevents_auto_content_length():
     assert all(not line.startswith(b"Content-Length:") for line in block.split(b"\r\n"))
 
 
-def test_stream_response_iterates_body_chunks_without_preloading_content():
+# =============================================================================
+# Response parsing (wire bytes → Response model)
+# Seam: protocol handoff — network bytes → Response status/headers/body/extensions
+# =============================================================================
+
+
+def test_pool_request_returns_status_headers_content_and_extensions():
+    """Seam: protocol handoff — wire bytes parsed into Response status, headers, content, and extensions."""
     pool, backend = pool_with(
-        http11_response(headers=[(b"Content-Length", b"10")], body=b"hello")
-        + [b"world"]
+        http11_response(201, b"Created", [(b"X-Id", b"99")], b"done")
     )
-    with pool.stream("GET", "http://example.com/") as response:
+    response = pool.request("GET", "http://node.test/resource")
+    assert response.status == 201
+    assert (b"X-Id", b"99") in response.headers
+    assert response.content == b"done"
+    assert response.extensions["http_version"] == b"HTTP/1.1"
+    assert response.extensions["reason_phrase"] == b"Created"
+
+
+def test_duplicate_response_headers_are_preserved():
+    """Seam: state consistency — duplicate response headers preserved across parse boundary."""
+    pool, _ = pool_with(
+        http11_response(200, headers=[(b"Set-Cookie", b"a=1"), (b"Set-Cookie", b"b=2")], body=b"ok")
+    )
+    response = pool.request("GET", "http://node.test/")
+    cookies = [v for n, v in response.headers if n == b"Set-Cookie"]
+    assert cookies == [b"a=1", b"b=2"]
+
+
+# =============================================================================
+# Streaming lifecycle (pool → stream → iter/read → close)
+# Seam: lifecycle crossing — stream state transitions
+# =============================================================================
+
+
+def test_stream_response_does_not_preload_body():
+    """Seam: lifecycle crossing — stream mode defers body read until iter_stream."""
+    pool, _ = pool_with(
+        http11_response(headers=[(b"Content-Length", b"5")], body=b"hello")
+    )
+    with pool.stream("GET", "http://node.test/") as response:
         with pytest.raises(RuntimeError):
             _ = response.content
-        assert list(response.iter_stream()) == [b"hello", b"world"]
-    assert backend.streams[0].close_calls == 0
+        assert list(response.iter_stream()) == [b"hello"]
 
 
-def test_stream_response_read_makes_content_available():
-    pool, backend = pool_with(
+def test_stream_read_makes_content_available():
+    """Seam: lifecycle crossing — stream read populates content for later access."""
+    pool, _ = pool_with(
         http11_response(headers=[(b"Content-Length", b"6")], body=b"abc") + [b"def"]
     )
-    with pool.stream("GET", "http://example.com/") as response:
+    with pool.stream("GET", "http://node.test/") as response:
         assert response.read() == b"abcdef"
         assert response.content == b"abcdef"
-    assert backend.streams[0].close_calls == 0
 
 
-def test_same_origin_reuses_connection_after_response_is_read():
+# =============================================================================
+# Connection reuse (pool state → connection lifecycle)
+# Seam: state consistency — pool tracks idle/active connections
+# =============================================================================
+
+
+def test_same_origin_reuses_connection_after_body_consumed():
+    """Seam: state consistency — pool reuses connection after body consumed for same origin."""
     backend = RecordingBackend(
-        [
-            http11_response(200, body=b"one")
-            + http11_response(200, body=b"two"),
-        ]
+        [http11_response(body=b"first") + http11_response(body=b"second")]
     )
     pool = httpcore.ConnectionPool(network_backend=backend)
-    assert pool.request("GET", "http://example.com/one").content == b"one"
-    assert pool.request("GET", "http://example.com/two").content == b"two"
+    assert pool.request("GET", "http://node.test/one").content == b"first"
+    assert pool.request("GET", "http://node.test/two").content == b"second"
     assert len(backend.tcp_calls) == 1
 
 
-def test_different_origins_open_distinct_connections():
+def test_different_origins_open_separate_connections():
+    """Seam: state consistency — different origins open separate TCP connections."""
     backend = RecordingBackend(
-        [http11_response(body=b"one"), http11_response(body=b"two")]
+        [http11_response(body=b"a"), http11_response(body=b"b")]
     )
     pool = httpcore.ConnectionPool(network_backend=backend)
-    pool.request("GET", "http://one.example/")
-    pool.request("GET", "http://two.example/")
-    assert [call["host"] for call in backend.tcp_calls] == [
-        "one.example",
-        "two.example",
-    ]
+    pool.request("GET", "http://alpha.test/")
+    pool.request("GET", "http://beta.test/")
+    assert [c["host"] for c in backend.tcp_calls] == ["alpha.test", "beta.test"]
+
+
+def test_zero_keepalive_closes_connection_after_response():
+    """Seam: lifecycle crossing — zero keepalive closes connection after response."""
+    pool, backend = pool_with(http11_response(body=b"ok"), max_keepalive_connections=0)
+    pool.request("GET", "http://node.test/")
+    assert backend.streams[0].close_calls == 1
 
 
 def test_pool_close_closes_idle_connections():
+    """Seam: lifecycle crossing — pool.close closes idle underlying streams."""
     pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request("GET", "http://example.com/")
+    pool.request("GET", "http://node.test/")
     pool.close()
     assert backend.streams[0].close_calls == 1
 
 
-def test_pool_context_manager_closes_idle_connections_on_exit():
+def test_pool_context_manager_closes_on_exit():
+    """Seam: lifecycle crossing — pool context manager closes connections on exit."""
     backend = RecordingBackend([http11_response(body=b"ok")])
     with httpcore.ConnectionPool(network_backend=backend) as pool:
-        pool.request("GET", "http://example.com/")
+        pool.request("GET", "http://node.test/")
     assert backend.streams[0].close_calls == 1
 
 
-def test_zero_keepalive_limit_closes_connection_after_response_body():
-    pool, backend = pool_with(http11_response(body=b"ok"), max_keepalive_connections=0)
-    pool.request("GET", "http://example.com/")
-    assert backend.streams[0].close_calls == 1
+def test_pool_connections_returns_list_snapshot():
+    """Seam: state consistency — pool.connections returns independent list snapshot."""
+    pool, _ = pool_with(http11_response(body=b"ok"))
+    assert pool.connections == []
+    pool.request("GET", "http://node.test/")
+    snapshot = pool.connections
+    snapshot.clear()
+    assert len(pool.connections) == 1
 
 
-def test_unsupported_protocol_raises_public_exception():
-    pool, _backend = pool_with(http11_response(body=b"unused"))
-    with pytest.raises(httpcore.UnsupportedProtocol):
-        pool.request("GET", "ftp://example.com/file")
+# =============================================================================
+# Direct HTTPConnection (single-origin connection lifecycle)
+# Seam: state consistency — connection state reflects body consumption
+# =============================================================================
 
 
-def test_missing_protocol_raises_public_exception():
-    pool, _backend = pool_with(http11_response(body=b"unused"))
-    with pytest.raises(httpcore.UnsupportedProtocol):
-        pool.request("GET", "example.com/file")
+def test_http_connection_returns_response_for_configured_origin():
+    """Seam: protocol handoff — HTTPConnection serves configured origin requests."""
+    backend = RecordingBackend([http11_response(202, b"Accepted", body=b"queued")])
+    origin = httpcore.Origin(b"http", b"node.test", 80)
+    conn = httpcore.HTTPConnection(origin, network_backend=backend)
+    req = httpcore.Request("GET", "http://node.test/job")
+    response = conn.handle_request(req)
+    assert response.read() == b"queued"
+    assert response.status == 202
 
 
-def test_local_address_is_passed_to_tcp_connect():
-    pool, backend = pool_with(http11_response(body=b"ok"), local_address="127.0.0.1")
-    pool.request("GET", "http://example.com/")
-    assert backend.tcp_calls[0]["local_address"] == "127.0.0.1"
-
-
-def test_socket_options_are_passed_to_tcp_connect():
-    options = [(1, 2, 3)]
-    pool, backend = pool_with(http11_response(body=b"ok"), socket_options=options)
-    pool.request("GET", "http://example.com/")
-    assert backend.tcp_calls[0]["socket_options"] is options
-
-
-def test_unix_domain_socket_uses_connect_unix_socket():
-    pool, backend = pool_with(http11_response(body=b"ok"), uds="/tmp/httpcore.sock")
-    pool.request("GET", "http://example.com/")
+def test_http_connection_rejects_different_origin():
+    """Seam: error propagation — HTTPConnection rejects requests to different origin."""
+    backend = RecordingBackend([http11_response(body=b"unused")])
+    origin = httpcore.Origin(b"http", b"node.test", 80)
+    conn = httpcore.HTTPConnection(origin, network_backend=backend)
+    with pytest.raises(RuntimeError):
+        conn.handle_request(httpcore.Request("GET", "http://other.test/"))
     assert backend.tcp_calls == []
-    assert backend.uds_calls[0]["path"] == "/tmp/httpcore.sock"
 
 
-def test_connect_timeout_extension_is_passed_to_backend_connect():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request(
-        "GET",
-        "http://example.com/",
-        extensions={"timeout": {"connect": 2.5}},
+def test_http_connection_becomes_idle_after_response_consumed():
+    """Seam: lifecycle crossing — HTTPConnection idle after response consumed enables reuse."""
+    backend = RecordingBackend(
+        [http11_response(body=b"one") + http11_response(body=b"two")]
     )
-    assert backend.tcp_calls[0]["timeout"] == 2.5
+    origin = httpcore.Origin(b"http", b"node.test", 80)
+    conn = httpcore.HTTPConnection(origin, network_backend=backend)
+    first = conn.handle_request(httpcore.Request("GET", "http://node.test/1"))
+    first.read()
+    first.close()
+    assert conn.is_idle() is True
+    second = conn.handle_request(httpcore.Request("GET", "http://node.test/2"))
+    assert second.read() == b"two"
+    assert len(backend.tcp_calls) == 1
 
 
-def test_read_timeout_extension_is_passed_to_stream_reads():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request(
-        "GET",
-        "http://example.com/",
-        extensions={"timeout": {"read": 3.5}},
-    )
-    assert any(call[1] == 3.5 for call in backend.streams[0].read_calls)
+def test_http_connection_close_closes_underlying_stream():
+    """Seam: lifecycle crossing — HTTPConnection.close closes underlying network stream."""
+    backend = RecordingBackend([http11_response(body=b"ok")])
+    origin = httpcore.Origin(b"http", b"node.test", 80)
+    conn = httpcore.HTTPConnection(origin, network_backend=backend)
+    conn.handle_request(httpcore.Request("GET", "http://node.test/")).read()
+    conn.close()
+    assert conn.is_closed() is True
+    assert backend.streams[0].close_calls == 1
 
 
-def test_write_timeout_extension_is_passed_to_stream_writes():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request(
-        "POST",
-        "http://example.com/",
-        content=b"data",
-        extensions={"timeout": {"write": 4.5}},
-    )
-    assert backend.streams[0].write_timeout == 4.5
+# =============================================================================
+# TLS (pool → backend → stream TLS upgrade)
+# Seam: configuration interaction — SSL context + hostname flow
+# =============================================================================
 
 
-def test_https_request_connects_to_default_tls_port_and_starts_tls():
+def test_https_connects_to_port_443_and_starts_tls():
+    """Seam: protocol handoff — HTTPS connects on 443 and upgrades stream with TLS."""
     pool, backend = pool_with(http11_response(body=b"secure"))
-    response = pool.request("GET", "https://example.com/")
+    response = pool.request("GET", "https://tls.test/")
     assert response.content == b"secure"
     assert backend.tcp_calls[0]["port"] == 443
-    assert backend.streams[0].tls_calls[0][0] == "example.com"
+    assert backend.streams[0].tls_calls[0][0] == "tls.test"
 
 
-def test_https_request_uses_sni_hostname_extension_when_present():
-    pool, backend = pool_with(http11_response(body=b"secure"))
-    pool.request(
-        "GET",
-        "https://example.com/",
-        extensions={"sni_hostname": "alt.example"},
-    )
-    assert backend.streams[0].tls_calls[0][0] == "alt.example"
+def test_sni_hostname_extension_overrides_tls_server_name():
+    """Seam: config interaction — sni_hostname extension overrides TLS server name."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "https://main.test/", extensions={"sni_hostname": "alt.test"})
+    assert backend.streams[0].tls_calls[0][0] == "alt.test"
 
 
-def test_https_non_default_port_is_used_for_connect_and_host_header():
-    pool, backend = pool_with(http11_response(body=b"secure"))
-    pool.request("GET", "https://example.com:8443/")
+def test_https_non_default_port_for_connect_and_host():
+    """Seam: config interaction — HTTPS non-default port used for connect and Host header."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "https://secure.test:8443/")
     assert backend.tcp_calls[0]["port"] == 8443
-    assert_header(backend.streams[0], b"Host", b"example.com:8443")
+    assert_header(backend.streams[0], b"Host", b"secure.test:8443")
 
 
-def test_connect_error_is_retried_when_retries_are_available():
+# =============================================================================
+# UDS, timeouts, and configuration forwarding
+# Seam: configuration interaction — pool config → backend call arguments
+# =============================================================================
+
+
+def test_uds_path_uses_connect_unix_socket():
+    """Seam: config interaction — UDS path routes pool connect through unix socket backend."""
+    pool, backend = pool_with(http11_response(body=b"ok"), uds="/var/run/app.sock")
+    pool.request("GET", "http://node.test/")
+    assert backend.tcp_calls == []
+    assert backend.uds_calls[0]["path"] == "/var/run/app.sock"
+
+
+def test_local_address_forwarded_to_backend():
+    """Seam: config interaction — local_address pool config forwarded to backend TCP connect."""
+    pool, backend = pool_with(http11_response(body=b"ok"), local_address="10.0.0.1")
+    pool.request("GET", "http://node.test/")
+    assert backend.tcp_calls[0]["local_address"] == "10.0.0.1"
+
+
+def test_socket_options_forwarded_to_backend():
+    """Seam: config interaction — socket_options forwarded from pool to backend connect."""
+    opts = [(6, 1, 1)]
+    pool, backend = pool_with(http11_response(body=b"ok"), socket_options=opts)
+    pool.request("GET", "http://node.test/")
+    assert backend.tcp_calls[0]["socket_options"] == opts
+
+
+def test_connect_timeout_forwarded_to_backend():
+    """Seam: config interaction — connect timeout extension forwarded to backend."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "http://node.test/", extensions={"timeout": {"connect": 1.5}})
+    assert backend.tcp_calls[0]["timeout"] == 1.5
+
+
+def test_read_timeout_forwarded_to_stream():
+    """Seam: config interaction — read timeout extension forwarded to network stream."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "http://node.test/", extensions={"timeout": {"read": 2.5}})
+    assert any(call[1] == 2.5 for call in backend.streams[0].read_calls)
+
+
+def test_write_timeout_forwarded_to_stream():
+    """Seam: config interaction — write timeout extension forwarded to network stream."""
+    pool, backend = pool_with(http11_response(body=b"ok"))
+    pool.request("POST", "http://node.test/", content=b"x", extensions={"timeout": {"write": 3.5}})
+    assert backend.streams[0].write_timeout == 3.5
+
+
+# =============================================================================
+# Retry behavior (pool → backend error → retry → success)
+# Seam: error propagation + state consistency — retry logic across connect attempts
+# =============================================================================
+
+
+def test_connect_error_retried_once_succeeds():
+    """Seam: error propagation — connect error retried once then succeeds through pool."""
     backend = RecordingBackend(
-        [httpcore.ConnectError("boom"), http11_response(body=b"ok")]
+        [httpcore.ConnectError("fail"), http11_response(body=b"ok")]
     )
     pool = httpcore.ConnectionPool(network_backend=backend, retries=1)
-    response = pool.request("GET", "http://example.com/")
-    assert response.content == b"ok"
+    assert pool.request("GET", "http://node.test/").content == b"ok"
     assert len(backend.tcp_calls) == 2
     assert backend.sleep_calls == [0]
 
 
-def test_connect_error_is_raised_when_no_retries_remain():
+def test_connect_error_exhausts_retries_and_raises():
+    """Seam: error propagation — exhausted connect retries propagate ConnectError."""
     backend = RecordingBackend([httpcore.ConnectError("boom")])
     pool = httpcore.ConnectionPool(network_backend=backend, retries=0)
     with pytest.raises(httpcore.ConnectError):
-        pool.request("GET", "http://example.com/")
-    assert len(backend.tcp_calls) == 1
+        pool.request("GET", "http://node.test/")
 
 
-def test_multiple_retries_use_exponential_backoff_sequence():
+def test_retry_backoff_uses_exponential_sequence():
+    """Seam: error propagation — retry backoff uses exponential sleep sequence."""
     backend = RecordingBackend(
         [
-            httpcore.ConnectError("one"),
-            httpcore.ConnectError("two"),
+            httpcore.ConnectError("1"),
+            httpcore.ConnectError("2"),
             http11_response(body=b"ok"),
         ]
     )
     pool = httpcore.ConnectionPool(network_backend=backend, retries=2)
-    assert pool.request("GET", "http://example.com/").content == b"ok"
+    assert pool.request("GET", "http://node.test/").content == b"ok"
     assert backend.sleep_calls == [0, 0.5]
 
 
-def test_http_connection_direct_handle_request_returns_response():
-    backend = RecordingBackend([http11_response(202, b"Accepted", body=b"accepted")])
-    origin = httpcore.Origin(b"http", b"example.com", 80)
-    connection = httpcore.HTTPConnection(origin, network_backend=backend)
-    request = httpcore.Request(
-        "GET", "http://example.com/direct", headers={"Host": "example.com"}
-    )
-    response = connection.handle_request(request)
-    assert response.status == 202
-    assert response.read() == b"accepted"
+# =============================================================================
+# Trace callbacks (pool → trace extension → event reporting)
+# Seam: configuration interaction — trace callback receives lifecycle events
+# =============================================================================
 
 
-def test_http_connection_rejects_requests_for_other_origins():
-    backend = RecordingBackend([http11_response(body=b"unused")])
-    origin = httpcore.Origin(b"http", b"example.com", 80)
-    connection = httpcore.HTTPConnection(origin, network_backend=backend)
-    request = httpcore.Request("GET", "http://other.example/")
-    with pytest.raises(RuntimeError):
-        connection.handle_request(request)
-    assert backend.tcp_calls == []
-
-
-def test_http_connection_close_closes_the_underlying_stream():
-    backend = RecordingBackend([http11_response(body=b"ok")])
-    origin = httpcore.Origin(b"http", b"example.com", 80)
-    connection = httpcore.HTTPConnection(origin, network_backend=backend)
-    connection.handle_request(
-        httpcore.Request("GET", "http://example.com/", headers={"Host": "example.com"})
-    ).read()
-    connection.close()
-    assert backend.streams[0].close_calls == 1
-
-
-def test_http_connection_reuses_its_stream_for_same_origin_requests():
-    backend = RecordingBackend(
-        [
-            http11_response(body=b"one")
-            + http11_response(body=b"two"),
-        ]
-    )
-    origin = httpcore.Origin(b"http", b"example.com", 80)
-    connection = httpcore.HTTPConnection(origin, network_backend=backend)
-    first = connection.handle_request(
-        httpcore.Request("GET", "http://example.com/1", headers={"Host": "example.com"})
-    )
-    assert first.read() == b"one"
-    first.close()
-    second = connection.handle_request(
-        httpcore.Request("GET", "http://example.com/2", headers={"Host": "example.com"})
-    )
-    assert second.read() == b"two"
-    second.close()
-    assert len(backend.tcp_calls) == 1
-
-
-def test_request_target_extension_overrides_url_target_on_the_wire():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    pool.request(
-        "GET",
-        "http://example.com/original",
-        extensions={"target": b"/override?x=1"},
-    )
-    assert written_bytes(backend.streams[0]).startswith(
-        b"GET /override?x=1 HTTP/1.1\r\n"
-    )
-
-
-def test_absolute_form_target_is_sent_unchanged():
-    pool, backend = pool_with(http11_response(body=b"ok"))
-    url = httpcore.URL(
-        scheme=b"http",
-        host=b"proxy.local",
-        port=8080,
-        target=b"http://example.com/path",
-    )
-    pool.request("GET", url)
-    assert written_bytes(backend.streams[0]).startswith(
-        b"GET http://example.com/path HTTP/1.1\r\n"
-    )
-
-
-def test_mock_backend_can_serve_documented_http11_response():
-    backend = httpcore.MockBackend(http11_response(200, headers=[(b"X-Doc", b"1")], body=b"doc"))
-    with httpcore.ConnectionPool(network_backend=backend) as pool:
-        response = pool.request("GET", "https://example.com/")
-    assert response.status == 200
-    assert response.headers == [(b"X-Doc", b"1"), (b"Content-Length", b"3")]
-    assert response.content == b"doc"
-
-
-def test_network_stream_extra_info_defaults_to_none():
-    class EmptyStream(httpcore.NetworkStream):
-        def read(self, max_bytes, timeout=None):
-            return b""
-
-        def write(self, buffer, timeout=None):
-            pass
-
-        def close(self):
-            pass
-
-        def start_tls(self, ssl_context, server_hostname=None, timeout=None):
-            return self
-
-    assert EmptyStream().get_extra_info("missing") is None
-
-
-def test_trace_extension_reports_started_and_complete_events():
+def test_trace_reports_tcp_connect_started_and_complete():
+    """Seam: config interaction — trace callback receives TCP connect lifecycle events."""
     events = []
-
-    def trace(name, info):
-        events.append((name, dict(info)))
-
-    pool, _backend = pool_with(http11_response(body=b"ok"))
-    response = pool.request(
-        "GET",
-        "http://example.com/",
-        extensions={"trace": trace},
-    )
-    assert response.content == b"ok"
-    names = [name for name, info in events]
-    assert "connection.connect_tcp.started" in names
-    assert "connection.connect_tcp.complete" in names
+    pool, _ = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "http://node.test/", extensions={"trace": lambda n, i: events.append(n)})
+    assert "connection.connect_tcp.started" in events
+    assert "connection.connect_tcp.complete" in events
 
 
-def test_trace_extension_reports_failed_connection_event():
+def test_trace_reports_tcp_connect_failed_on_error():
+    """Seam: error propagation — trace callback reports TCP connect failure on error."""
     events = []
-
-    def trace(name, info):
-        events.append((name, dict(info)))
-
     backend = RecordingBackend([httpcore.ConnectError("boom")])
     pool = httpcore.ConnectionPool(network_backend=backend)
     with pytest.raises(httpcore.ConnectError):
-        pool.request("GET", "http://example.com/", extensions={"trace": trace})
-    names = [name for name, info in events]
-    assert "connection.connect_tcp.failed" in names
-    assert any(isinstance(info.get("exception"), httpcore.ConnectError) for name, info in events)
+        pool.request("GET", "http://node.test/", extensions={"trace": lambda n, i: events.append(n)})
+    assert "connection.connect_tcp.failed" in events
 
 
-def test_premature_server_disconnect_raises_remote_protocol_error():
-    pool, _backend = pool_with([])
+def test_trace_reports_tls_events_for_https():
+    """Seam: protocol handoff — trace callback reports TLS start/complete for HTTPS."""
+    events = []
+    pool, _ = pool_with(http11_response(body=b"ok"))
+    pool.request("GET", "https://tls.test/", extensions={"trace": lambda n, i: events.append(n)})
+    assert "connection.start_tls.started" in events
+    assert "connection.start_tls.complete" in events
+
+
+# =============================================================================
+# Error conditions (wire → error propagation)
+# Seam: error propagation — malformed responses → documented exceptions
+# =============================================================================
+
+
+def test_premature_disconnect_raises_remote_protocol_error():
+    """Seam: error propagation — premature disconnect raises RemoteProtocolError."""
+    pool, _ = pool_with([])
     with pytest.raises(httpcore.RemoteProtocolError):
-        pool.request("GET", "http://example.com/")
+        pool.request("GET", "http://node.test/")
 
 
-def test_invalid_response_header_raises_remote_protocol_error():
-    pool, _backend = pool_with(
-        [b"HTTP/1.1 200 OK\r\n", b"Broken Header\r\n", b"\r\n", b"body"]
-    )
-    with pytest.raises(httpcore.RemoteProtocolError):
-        pool.request("GET", "http://example.com/")
+def test_invalid_method_bytes_raise_local_protocol_error():
+    """Seam: error propagation — invalid method bytes raise LocalProtocolError."""
+    pool, _ = pool_with(http11_response())
+    with pytest.raises(httpcore.LocalProtocolError):
+        pool.request(b"GET\n", "http://node.test/")
 
 
-def test_connect_response_exposes_network_stream_extension():
-    body = http11_response(200, headers=[(b"Content-Length", b"0")], body=b"")
-    pool, backend = pool_with(body)
-    with pool.stream("CONNECT", "http://example.com:80/") as response:
+# =============================================================================
+# CONNECT response network_stream extension
+# Seam: protocol handoff — CONNECT response exposes raw stream
+# =============================================================================
+
+
+def test_connect_response_exposes_network_stream():
+    """Seam: protocol handoff — CONNECT response exposes raw network_stream extension."""
+    pool, _ = pool_with(http11_response(200, headers=[(b"Content-Length", b"0")], body=b""))
+    with pool.stream("CONNECT", "http://tunnel.test:80/") as response:
         assert response.status == 200
-        network_stream = response.extensions["network_stream"]
-        assert hasattr(network_stream, "read")
-        assert hasattr(network_stream, "write")
-        assert hasattr(network_stream, "close")
+        ns = response.extensions["network_stream"]
+        assert hasattr(ns, "read")
+        assert hasattr(ns, "write")
+        assert hasattr(ns, "close")
 
 
-def test_pool_connections_property_returns_a_list_snapshot():
-    pool, _backend = pool_with(http11_response(body=b"ok"))
-    assert pool.connections == []
-    pool.request("GET", "http://example.com/")
-    first = pool.connections
-    first.clear()
-    assert len(pool.connections) == 1
+# =============================================================================
+# MockBackend integration with pool
+# Seam: state consistency — MockBackend byte chunks → pool response
+# =============================================================================
 
 
-def test_connection_available_state_is_publicly_queryable():
-    backend = RecordingBackend([http11_response(body=b"ok")])
-    origin = httpcore.Origin(b"http", b"example.com", 80)
-    connection = httpcore.HTTPConnection(origin, network_backend=backend)
-    assert connection.can_handle_request(origin) is True
-    assert connection.is_closed() is False
-    response = connection.handle_request(
-        httpcore.Request("GET", "http://example.com/", headers={"Host": "example.com"})
+def test_mock_backend_serves_response_through_pool():
+    """Seam: state consistency — MockBackend response served consistently through pool."""
+    backend = httpcore.MockBackend(
+        http11_response(200, headers=[(b"X-Mock", b"yes")], body=b"mocked")
     )
-    response.read()
-    response.close()
-    assert connection.is_idle() is True
+    with httpcore.ConnectionPool(network_backend=backend) as pool:
+        response = pool.request("GET", "https://mock.test/")
+    assert response.status == 200
+    assert (b"X-Mock", b"yes") in response.headers
+    assert response.content == b"mocked"
+
+def test_unsupported_protocol_is_raised_for_ftp_scheme():
+    """Seam: error propagation — unsupported URL scheme raises through pool.request."""
+    from conftest import pool_with, http11_response
+
+    pool, _ = pool_with(http11_response(body=b"unused"))
+    with pytest.raises(httpcore.UnsupportedProtocol):
+        pool.request("GET", "ftp://example.com/")
+
+def test_unsupported_protocol_is_raised_for_missing_scheme():
+    """Seam: error propagation — missing URL scheme raises through pool.request."""
+    from conftest import pool_with, http11_response
+
+    pool, _ = pool_with(http11_response(body=b"unused"))
+    with pytest.raises(httpcore.UnsupportedProtocol):
+        pool.request("GET", "example.com/no-scheme")

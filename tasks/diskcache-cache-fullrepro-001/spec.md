@@ -361,6 +361,10 @@ There is no required command-line interface for this package profile. `python -m
 
 Expected package usage is direct Python import from the `diskcache` package. The implementation should be placed so that `import diskcache` loads the candidate package.
 
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
 ## Implementation Guidance
 
-The package will be exercised through public Python imports. Checks cover key-value cache operations, persistence across reopened objects, metadata and expiration behavior, queue helpers, fanout named views, persistent containers, recipe helpers, and documented error behavior. The tests focus on observable return values, raised exception classes, public attributes, and filesystem-backed persistence.
+Cache methods, mapping operations, reopened objects, fanout views, persistent containers, and recipe helpers should all project the same filesystem-backed state described above. Public return values, exception classes, documented attributes, and durable side effects form the compatibility boundary; SQLite schema and helper layout do not.

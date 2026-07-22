@@ -361,6 +361,10 @@ CLI return code behavior:
 
 When several configured nonzero categories apply, the process must exit with the numerically greatest configured code.
 
-## Implementation Guidance
+## Environment
 
-Public checks for this package exercise behavior through user-facing imports, task classes, local output files, configuration files, command-line invocations, local scheduler runs, and `luigi.build`/`luigi.run` return values. They focus on observable task graph behavior, parameter resolution and parsing, completion state, local target side effects, worker/scheduler outcomes, and documented error classes. They do not require exact private data layouts, exact log wording, browser output, daemon process management, or external service integrations.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment. Core workflows use local scheduler execution, local configuration files, and local targets.
+
+## Evaluation Notes
+
+Assessment compares user-facing imports, task objects, output files, configuration, command invocations, local scheduler runs, and `luigi.build` or `luigi.run` outcomes. Task graphs, parameters, completion state, target side effects, worker results, and public errors are checked without depending on private layouts, exact log wording, browser output, daemon management, or external services.

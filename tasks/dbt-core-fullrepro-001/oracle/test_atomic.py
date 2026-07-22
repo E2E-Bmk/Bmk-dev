@@ -1,250 +1,313 @@
-# Spec2Repo oracle - atomic tests for dbt-core-fullrepro-001
+"""Atomic oracle tests for dbt-core-fullrepro-001.
+
+Each test exercises ONE public API and ONE behavior.
+Independently solvable: passes if only the tested API is correctly implemented.
+"""
+
 import json
-import os
-import time
+import subprocess
+import sys
 from pathlib import Path
 
-import pytest
-
-from dbt.cli import dbt_cli
 from dbt.cli.main import cli, dbtRunner, dbtRunnerResult
+from dbt.cli import dbt_cli
+
+from conftest import (
+    PROJECT_NAME,
+    MODEL_ALPHA,
+    MODEL_BETA,
+    MODEL_GAMMA,
+    base_args,
+    create_dbt_project,
+    invoke_dbt,
+    write_text,
+)
 
 
-def _write_text(path: Path, text: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
+# ---------------------------------------------------------------------------
+# Helper: single-model project for atomic isolation
+# ---------------------------------------------------------------------------
 
 
-def _make_project(root: Path, name: str = "sample"):
-    project = root / name
+def _atomic_project(root: Path) -> list:
+    """Minimal one-model project returning base CLI args."""
+    project = root / PROJECT_NAME
     profiles = root / "profiles"
     target = root / "target"
-    profiles.mkdir(parents=True, exist_ok=True)
-    _write_text(
+
+    write_text(
         project / "dbt_project.yml",
-        "\n".join(
-            [
-                f"name: {name}",
-                "version: 1.0",
-                f"profile: {name}",
-                "model-paths: [models]",
-                "analysis-paths: [analyses]",
-                "test-paths: [tests]",
-                "seed-paths: [seeds]",
-                "models:",
-                f"  {name}:",
-                "    +materialized: view",
-            ]
-        )
-        + "\n",
+        f"name: {PROJECT_NAME}\nversion: '2.0'\nprofile: {PROJECT_NAME}\n"
+        f"model-paths: [models]\n",
     )
-    _write_text(
+    write_text(
         profiles / "profiles.yml",
-        "\n".join(
-            [
-                f"{name}:",
-                "  target: dev",
-                "  outputs:",
-                "    dev:",
-                "      type: duckdb",
-                f"      path: {root / 'warehouse.duckdb'}",
-                "      schema: main",
-                "      threads: 2",
-            ]
-        )
-        + "\n",
+        "\n".join([
+            f"{PROJECT_NAME}:",
+            "  target: dev",
+            "  outputs:",
+            "    dev:",
+            "      type: duckdb",
+            f"      path: {root / 'atomic.duckdb'}",
+            "      schema: main",
+            "      threads: 1",
+        ]) + "\n",
     )
-    _write_text(project / "models" / "alpha.sql", "select 1 as id, 'alpha' as label\n")
-    _write_text(project / "models" / "beta.sql", "select * from {{ ref('alpha') }}\n")
-    _write_text(project / "analyses" / "rollup.sql", "select count(*) as n from {{ ref('alpha') }}\n")
-    _write_text(project / "tests" / "assert_alpha.sql", "select * from {{ ref('alpha') }} where id != 1\n")
-    _write_text(project / "seeds" / "seed_table.csv", "id,name\n1,Ada\n2,Grace\n")
-    _write_text(
-        project / "models" / "schema.yml",
-        "\n".join(
-            [
-                "version: 2",
-                "models:",
-                "  - name: alpha",
-                "    description: Alpha model",
-                "    columns:",
-                "      - name: id",
-                "        tests:",
-                "          - not_null",
-                "  - name: beta",
-                "sources:",
-                "  - name: raw",
-                "    schema: main",
-                "    tables:",
-                "      - name: orders",
-                "exposures:",
-                "  - name: weekly_dashboard",
-                "    type: dashboard",
-                "    maturity: low",
-                "    url: https://example.invalid/dashboard",
-                "    depends_on:",
-                "      - ref('alpha')",
-                "    owner:",
-                "      name: Analytics",
-                "      email: analytics@example.invalid",
-            ]
-        )
-        + "\n",
+    write_text(
+        project / "models" / f"{MODEL_ALPHA}.sql",
+        "select 42 as region_id, 'north' as region_name\n",
     )
-    return project, profiles, target
+    return base_args(project, profiles, target)
 
 
-def _base_args(project: Path, profiles: Path, target: Path):
-    return [
-        "--project-dir",
-        str(project),
-        "--profiles-dir",
-        str(profiles),
-        "--target-path",
-        str(target),
-        "--no-version-check",
-        "--quiet",
-    ]
+# ===========================================================================
+# Runner instantiation and API surface
+# ===========================================================================
 
 
-def _invoke(args):
-    return dbtRunner().invoke(args)
+def test_runner_instantiation_returns_runner_object():
+    runner = dbtRunner()
+    assert runner is not None
+    assert isinstance(runner, dbtRunner)
+    outcome = runner.invoke(["--version"])
+    assert outcome.success is True
 
 
-def _load_json(path: Path):
-    return json.loads(path.read_text(encoding="utf-8"))
+def test_runner_accepts_manifest_keyword_argument():
+    runner = dbtRunner(manifest=None)
+    outcome = runner.invoke(["--version"])
+    assert outcome.success is True
 
 
-@pytest.fixture(scope="module")
-def project_state(tmp_path_factory):
-    root = tmp_path_factory.mktemp("dbt_project")
-    project, profiles, target = _make_project(root)
-    base = _base_args(project, profiles, target)
+def test_runner_result_exposes_success_attribute():
+    outcome = dbtRunnerResult(success=True)
+    assert outcome.success is True
 
-    parse_result = _invoke(["parse", *base])
-    manifest_path = target / "manifest.json"
-    semantic_manifest_path = target / "semantic_manifest.json"
-    perf_info_path = target / "perf_info.json"
-    partial_parse_path = target / "partial_parse.msgpack"
-    manifest = _load_json(manifest_path)
 
-    list_names = _invoke(["list", *base, "--output", "name"])
-    list_paths = _invoke(["list", *base, "--output", "path"])
-    list_json = _invoke(
-        [
-            "list",
-            *base,
-            "--output",
-            "json",
-            "--output-keys",
-            "name",
-            "resource_type",
-            "unique_id",
-            "original_file_path",
-        ]
+def test_runner_result_exposes_exception_attribute():
+    outcome = dbtRunnerResult(success=True)
+    assert outcome.exception is None
+
+
+def test_runner_result_exposes_result_attribute():
+    outcome = dbtRunnerResult(success=True)
+    assert outcome.result is None
+
+
+def test_runner_result_preserves_attached_exception():
+    err = RuntimeError("test_error_sentinel")
+    outcome = dbtRunnerResult(success=False, exception=err)
+    assert outcome.exception is err
+    assert outcome.success is False
+
+
+def test_dbt_cli_is_same_object_as_cli():
+    assert dbt_cli is cli
+
+
+def test_runner_supports_repeated_invocations():
+    runner = dbtRunner()
+    first = runner.invoke(["--version"])
+    second = runner.invoke(["--version"])
+    assert first.success is True
+    assert second.success is True
+
+
+# ===========================================================================
+# Parse command — single behaviors
+# ===========================================================================
+
+
+def test_parse_valid_project_returns_success(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["parse", *args])
+    assert isinstance(outcome, dbtRunnerResult)
+    assert outcome.success is True
+
+
+def test_parse_result_contains_project_model(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["parse", *args])
+    assert outcome.success is True
+    assert f"model.{PROJECT_NAME}.{MODEL_ALPHA}" in outcome.result.nodes
+
+
+def test_parse_invalid_project_dir_fails(tmp_path):
+    outcome = invoke_dbt([
+        "parse",
+        "--project-dir", str(tmp_path / "nonexistent_project"),
+        "--no-version-check", "--quiet",
+    ])
+    assert outcome.success is False
+
+
+def test_parse_writes_manifest_json(tmp_path):
+    args = _atomic_project(tmp_path)
+    invoke_dbt(["parse", *args])
+    assert (tmp_path / "target" / "manifest.json").is_file()
+
+
+def test_parse_writes_semantic_manifest_json(tmp_path):
+    args = _atomic_project(tmp_path)
+    invoke_dbt(["parse", *args])
+    assert (tmp_path / "target" / "semantic_manifest.json").is_file()
+
+
+def test_parse_writes_perf_info_json(tmp_path):
+    args = _atomic_project(tmp_path)
+    invoke_dbt(["parse", *args])
+    assert (tmp_path / "target" / "perf_info.json").is_file()
+
+
+def test_parse_writes_partial_parse_msgpack(tmp_path):
+    args = _atomic_project(tmp_path)
+    invoke_dbt(["parse", *args])
+    assert (tmp_path / "target" / "partial_parse.msgpack").is_file()
+
+
+def test_parse_no_write_json_suppresses_manifest(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["parse", *args, "--no-write-json"])
+    assert outcome.success is True
+    assert not (tmp_path / "target" / "manifest.json").exists()
+
+
+def test_parse_no_partial_parse_still_succeeds(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["parse", *args, "--no-partial-parse"])
+    assert outcome.success is True
+    assert outcome.result is not None
+    assert f"model.{PROJECT_NAME}.{MODEL_ALPHA}" in outcome.result.nodes
+
+
+def test_parse_accepts_threads_option(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["parse", *args, "--threads", "4"])
+    assert outcome.success is True
+
+
+# ===========================================================================
+# List command — output modes
+# ===========================================================================
+
+
+def test_list_output_name_returns_model_name(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["list", *args, "--output", "name"])
+    assert outcome.success is True
+    assert MODEL_ALPHA in outcome.result
+
+
+def test_list_output_path_returns_file_path(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["list", *args, "--output", "path"])
+    assert outcome.success is True
+    assert any(MODEL_ALPHA in p for p in outcome.result)
+
+
+def test_list_output_json_returns_parseable_json(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["list", *args, "--output", "json"])
+    assert outcome.success is True
+    rows = [json.loads(r) for r in outcome.result]
+    assert all(isinstance(r, dict) for r in rows)
+    assert len(rows) >= 1
+
+
+def test_list_output_selector_returns_fqn_strings(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["list", *args, "--output", "selector"])
+    assert outcome.success is True
+    assert f"{PROJECT_NAME}.{MODEL_ALPHA}" in outcome.result
+
+
+def test_list_output_json_respects_output_keys(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt([
+        "list", *args, "--output", "json",
+        "--output-keys", "name", "unique_id",
+    ])
+    assert outcome.success is True
+    row = json.loads(outcome.result[0])
+    assert set(row.keys()) == {"name", "unique_id"}
+
+
+# ===========================================================================
+# Error semantics — usage rejections
+# ===========================================================================
+
+
+def test_list_models_and_select_conflict(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["list", *args, "--models", MODEL_ALPHA, "--select", MODEL_BETA])
+    assert outcome.success is False
+    assert isinstance(outcome.exception, BaseException)
+
+
+def test_unknown_command_fails():
+    outcome = invoke_dbt(["nonexistent_subcommand_xyz"])
+    assert outcome.success is False
+    assert isinstance(outcome.exception, BaseException)
+
+
+def test_invalid_output_choice_fails(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["list", *args, "--output", "xml"])
+    assert outcome.success is False
+
+
+def test_empty_selection_returns_empty_result(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["list", *args, "--select", "tag:nonexistent_tag_xyz", "--output", "name"])
+    assert outcome.success is True
+    assert outcome.result == []
+
+
+# ===========================================================================
+# Compile command — single behaviors
+# ===========================================================================
+
+
+def test_compile_selected_model_succeeds(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["compile", *args, "--select", MODEL_ALPHA])
+    assert outcome.success is True
+    assert outcome.exception is None
+
+
+def test_compile_writes_run_results_json(tmp_path):
+    args = _atomic_project(tmp_path)
+    invoke_dbt(["compile", *args, "--select", MODEL_ALPHA])
+    rr_path = tmp_path / "target" / "run_results.json"
+    assert rr_path.is_file()
+
+
+def test_compile_inline_query_succeeds(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt([
+        "compile", *args,
+        "--inline", "select {{ 2 + 3 }} as five",
+        "--output", "json",
+    ])
+    assert outcome.success is True
+
+
+# ===========================================================================
+# Module-level execution
+# ===========================================================================
+
+
+def test_version_flag_succeeds_without_project():
+    outcome = invoke_dbt(["--version"])
+    assert isinstance(outcome, dbtRunnerResult)
+    assert outcome.success is True
+    assert outcome.exception is None
+
+
+def test_module_execution_returns_zero_exit():
+    proc = subprocess.run(
+        [sys.executable, "-m", "dbt.cli.main", "--version"],
+        capture_output=True, text=True, check=False,
     )
-    ls_names = _invoke(["ls", *base, "--output", "name"])
-
-    compile_alpha = _invoke(["compile", *base, "--select", "alpha"])
-    compiled_manifest = _load_json(target / "manifest.json")
-    run_results = _load_json(target / "run_results.json")
-    compiled_files = sorted(p for p in target.rglob("*.sql") if "compiled" in p.parts)
-
-    inline_target = root / "inline_target"
-    inline_base = _base_args(project, profiles, inline_target)
-    inline_compile = _invoke(
-        ["compile", *inline_base, "--inline", "select {{ 1 + 1 }} as two", "--output", "json"]
-    )
-    inline_manifest = _load_json(inline_target / "manifest.json")
-
-    no_json_target = root / "no_json_target"
-    no_json_result = _invoke(["parse", *_base_args(project, profiles, no_json_target), "--no-write-json"])
-
-    second_target = root / "second_target"
-    second_base = _base_args(project, profiles, second_target)
-    first_partial = _invoke(["parse", *second_base])
-    cache_path = second_target / "partial_parse.msgpack"
-    first_mtime = cache_path.stat().st_mtime
-    time.sleep(0.01)
-    second_partial = _invoke(["parse", *second_base])
-    second_mtime = cache_path.stat().st_mtime
-    no_partial_target = root / "no_partial_target"
-    no_partial_result = _invoke(["parse", *_base_args(project, profiles, no_partial_target), "--no-partial-parse"])
-
-    invalid_root = tmp_path_factory.mktemp("invalid_dbt_project")
-    invalid_project, invalid_profiles, invalid_target = _make_project(invalid_root, "broken")
-    _write_text(invalid_project / "models" / "broken.sql", "select * from {{ ref('missing_model') }}\n")
-    invalid_parse = _invoke(["parse", *_base_args(invalid_project, invalid_profiles, invalid_target)])
-    invalid_combo = _invoke(["list", *base, "--models", "alpha", "--select", "beta"])
-    missing_project = _invoke(
-        [
-            "parse",
-            "--project-dir",
-            str(root / "missing"),
-            "--profiles-dir",
-            str(profiles),
-            "--target-path",
-            str(root / "missing_target"),
-            "--no-version-check",
-            "--quiet",
-        ]
-    )
-
-    json_rows = [json.loads(row) for row in list_json.result]
-    nodes_by_name = {node["name"]: node for node in manifest["nodes"].values()}
-
-    return {
-        "project": project,
-        "profiles": profiles,
-        "target": target,
-        "parse_result": parse_result,
-        "manifest": manifest,
-        "manifest_path": manifest_path,
-        "semantic_manifest_path": semantic_manifest_path,
-        "perf_info_path": perf_info_path,
-        "partial_parse_path": partial_parse_path,
-        "list_names": list_names,
-        "list_paths": list_paths,
-        "list_json": list_json,
-        "json_rows": json_rows,
-        "ls_names": ls_names,
-        "compile_alpha": compile_alpha,
-        "run_results": run_results,
-        "compiled_manifest": compiled_manifest,
-        "compiled_files": compiled_files,
-        "inline_compile": inline_compile,
-        "inline_manifest": inline_manifest,
-        "no_json_result": no_json_result,
-        "no_json_target": no_json_target,
-        "first_partial": first_partial,
-        "second_partial": second_partial,
-        "no_partial_result": no_partial_result,
-        "cache_path": cache_path,
-        "first_mtime": first_mtime,
-        "second_mtime": second_mtime,
-        "invalid_parse": invalid_parse,
-        "invalid_combo": invalid_combo,
-        "missing_project": missing_project,
-        "nodes_by_name": nodes_by_name,
-    }
-
-
-def _model_node(state, name):
-    return state["nodes_by_name"][name]
-
-
-def test_invalid_ref_parse_fails(project_state):
-    assert project_state["invalid_parse"].success is False
-
-
-def test_missing_project_fails(project_state):
-    assert project_state["missing_project"].success is False
-
-
-def test_models_and_select_are_mutually_exclusive(project_state):
-    assert project_state["invalid_combo"].success is False
-    assert project_state["invalid_combo"].exception is not None
-
-
-def test_usage_failure_has_no_result(project_state):
-    assert project_state["invalid_combo"].result is None
+    assert proc.returncode == 0
+    assert len(proc.stdout.strip()) > 0

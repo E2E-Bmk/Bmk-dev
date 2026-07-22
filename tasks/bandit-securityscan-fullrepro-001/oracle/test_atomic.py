@@ -1,69 +1,10 @@
 # Spec2Repo oracle - atomic tests for bandit-securityscan-fullrepro-001
-import csv
-import io
 import json
-import os
 from pathlib import Path
-import shlex
-import subprocess
-import xml.etree.ElementTree as ET
 
 import pytest
-import yaml
 
-
-def _tool(name):
-    override = os.environ.get(name.upper().replace("-", "_") + "_BIN")
-    return override or name
-
-
-def _run(name, args, *, cwd=None, stdin=None):
-    env = os.environ.copy()
-    bandit_command = shlex.split(_tool("bandit"))[0]
-    if os.path.isabs(bandit_command):
-        env["PATH"] = str(Path(bandit_command).parent) + os.pathsep + env.get("PATH", "")
-    return subprocess.run(
-        [*shlex.split(_tool(name)), *args],
-        cwd=cwd,
-        env=env,
-        input=stdin,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-    )
-
-
-def _write(tmp_path, name, text):
-    path = tmp_path / name
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
-    return path
-
-
-def _json_scan(tmp_path, source, *args, name="sample.py"):
-    target = _write(tmp_path, name, source)
-    proc = _run("bandit", ["-q", "-f", "json", *args, str(target)])
-    return proc, json.loads(proc.stdout), target
-
-
-def _one_issue(tmp_path, source, expected_id, *, severity=None, confidence=None, cwe=None):
-    proc, report, _ = _json_scan(tmp_path, source, "-t", expected_id)
-    assert proc.returncode == 1
-    assert len(report["results"]) == 1
-    issue = report["results"][0]
-    assert issue["test_id"] == expected_id
-    if severity:
-        assert issue["issue_severity"] == severity
-    if confidence:
-        assert issue["issue_confidence"] == confidence
-    if cwe:
-        assert issue["issue_cwe"]["id"] == cwe
-    return issue
-
-
-def _ids(report):
-    return {item["test_id"] for item in report["results"]}
+from conftest import run_bandit, write_source, json_scan, one_issue, ids
 
 
 def test_package_rating_constants_are_public():
@@ -102,86 +43,184 @@ def test_public_decorators_accept_documented_forms():
 
 
 def test_rule_b101_assert_used(tmp_path):
-    _one_issue(tmp_path, "assert value\n", "B101", severity="LOW", confidence="HIGH", cwe=703)
+    issue = one_issue(tmp_path, "assert value\n", "B101", severity="LOW", confidence="HIGH", cwe=703)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "assert_used"
+    assert "assert" in issue["issue_text"].lower()
 
 
 def test_rule_b102_exec_used(tmp_path):
-    _one_issue(tmp_path, "exec('x = 1')\n", "B102", severity="MEDIUM", confidence="HIGH", cwe=78)
+    issue = one_issue(tmp_path, "exec('x = 1')\n", "B102", severity="MEDIUM", confidence="HIGH", cwe=78)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "exec_used"
+    assert "exec" in issue["issue_text"].lower()
 
 
 def test_rule_b104_bind_all_interfaces(tmp_path):
-    _one_issue(tmp_path, "host = '0.0.0.0'\n", "B104", severity="MEDIUM", confidence="MEDIUM", cwe=605)
+    issue = one_issue(tmp_path, "host = '0.0.0.0'\n", "B104", severity="MEDIUM", confidence="MEDIUM", cwe=605)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "hardcoded_bind_all_interfaces"
+    assert "binding" in issue["issue_text"].lower()
 
 
 def test_rule_b105_hardcoded_password(tmp_path):
-    _one_issue(tmp_path, "password = 'secret-value'\n", "B105", severity="LOW", confidence="MEDIUM", cwe=259)
+    issue = one_issue(tmp_path, "password = 'secret-value'\n", "B105", severity="LOW", confidence="MEDIUM", cwe=259)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "hardcoded_password_string"
+    assert "hardcoded password" in issue["issue_text"].lower()
 
 
 def test_rule_b108_hardcoded_tmp_path(tmp_path):
-    _one_issue(tmp_path, "path = '/tmp/session-token'\n", "B108", severity="MEDIUM", confidence="MEDIUM", cwe=377)
+    issue = one_issue(tmp_path, "path = '/tmp/session-token'\n", "B108", severity="MEDIUM", confidence="MEDIUM", cwe=377)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "hardcoded_tmp_directory"
+    assert "temp" in issue["issue_text"].lower()
 
 
 def test_rule_b113_request_without_timeout(tmp_path):
-    _one_issue(tmp_path, "import requests\nrequests.get('https://example.invalid')\n", "B113", severity="MEDIUM", confidence="LOW", cwe=400)
+    issue = one_issue(
+        tmp_path,
+        "import requests\nrequests.get('https://example.invalid')\n",
+        "B113",
+        severity="MEDIUM",
+        confidence="LOW",
+        cwe=400,
+    )
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "request_without_timeout"
+    assert "timeout" in issue["issue_text"].lower()
 
 
 def test_rule_b301_pickle_deserialization(tmp_path):
-    _one_issue(tmp_path, "import pickle\npickle.loads(data)\n", "B301", severity="MEDIUM", confidence="HIGH", cwe=502)
+    issue = one_issue(tmp_path, "import pickle\npickle.loads(data)\n", "B301", severity="MEDIUM", confidence="HIGH", cwe=502)
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "blacklist"
+    assert "pickle" in issue["issue_text"].lower()
 
 
 def test_rule_b303_weak_crypto_constructor(tmp_path):
-    _one_issue(tmp_path, "from Crypto.Hash import MD5\nMD5.new()\n", "B303", severity="MEDIUM", confidence="HIGH", cwe=327)
+    issue = one_issue(tmp_path, "from Crypto.Hash import MD5\nMD5.new()\n", "B303", severity="MEDIUM", confidence="HIGH", cwe=327)
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "blacklist"
+    assert "md5" in issue["issue_text"].lower()
 
 
 def test_rule_b307_eval(tmp_path):
-    _one_issue(tmp_path, "value = eval(user_text)\n", "B307", severity="MEDIUM", confidence="HIGH", cwe=78)
+    issue = one_issue(tmp_path, "value = eval(user_text)\n", "B307", severity="MEDIUM", confidence="HIGH", cwe=78)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "blacklist"
+    assert "eval" in issue["issue_text"].lower()
 
 
 def test_rule_b311_random_generator(tmp_path):
-    _one_issue(tmp_path, "import random\nvalue = random.random()\n", "B311", severity="LOW", confidence="HIGH", cwe=330)
+    issue = one_issue(tmp_path, "import random\nvalue = random.random()\n", "B311", severity="LOW", confidence="HIGH", cwe=330)
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "blacklist"
+    assert "random" in issue["issue_text"].lower()
 
 
 def test_rule_b401_telnet_import(tmp_path):
-    _one_issue(tmp_path, "import telnetlib\n", "B401", severity="HIGH", confidence="HIGH", cwe=319)
+    issue = one_issue(tmp_path, "import telnetlib\n", "B401", severity="HIGH", confidence="HIGH", cwe=319)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "blacklist"
+    assert "telnet" in issue["issue_text"].lower()
 
 
 def test_rule_b403_pickle_import(tmp_path):
-    _one_issue(tmp_path, "import pickle\n", "B403", severity="LOW", confidence="HIGH", cwe=502)
+    issue = one_issue(tmp_path, "import pickle\n", "B403", severity="LOW", confidence="HIGH", cwe=502)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "blacklist"
+    assert "pickle" in issue["issue_text"].lower()
 
 
 def test_rule_b404_subprocess_import(tmp_path):
-    _one_issue(tmp_path, "import subprocess\n", "B404", severity="LOW", confidence="HIGH", cwe=78)
+    issue = one_issue(tmp_path, "import subprocess\n", "B404", severity="LOW", confidence="HIGH", cwe=78)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "blacklist"
+    assert "subprocess" in issue["issue_text"].lower()
 
 
 def test_rule_b501_disabled_certificate_validation(tmp_path):
-    _one_issue(tmp_path, "import requests\nrequests.get(url, verify=False)\n", "B501", severity="HIGH", confidence="HIGH", cwe=295)
+    issue = one_issue(
+        tmp_path,
+        "import requests\nrequests.get(url, verify=False)\n",
+        "B501",
+        severity="HIGH",
+        confidence="HIGH",
+        cwe=295,
+    )
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "request_with_no_cert_validation"
+    assert "verify=false" in issue["issue_text"].lower()
 
 
 def test_rule_b506_unsafe_yaml_load(tmp_path):
-    _one_issue(tmp_path, "import yaml\nyaml.load(payload)\n", "B506", severity="MEDIUM", confidence="HIGH", cwe=20)
+    issue = one_issue(tmp_path, "import yaml\nyaml.load(payload)\n", "B506", severity="MEDIUM", confidence="HIGH", cwe=20)
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "yaml_load"
+    assert "yaml load" in issue["issue_text"].lower()
 
 
 def test_rule_b602_subprocess_shell_true(tmp_path):
-    _one_issue(tmp_path, "import subprocess\ncommand = input()\nsubprocess.Popen(command, shell=True)\n", "B602", severity="HIGH", confidence="HIGH", cwe=78)
+    issue = one_issue(
+        tmp_path,
+        "import subprocess\ncommand = input()\nsubprocess.Popen(command, shell=True)\n",
+        "B602",
+        severity="HIGH",
+        confidence="HIGH",
+        cwe=78,
+    )
+    assert issue["line_number"] == 3
+    assert issue["test_name"] == "subprocess_popen_with_shell_equals_true"
+    assert "shell=true" in issue["issue_text"].lower()
 
 
 def test_rule_b608_string_built_sql(tmp_path):
-    _one_issue(tmp_path, "query = 'SELECT * FROM users WHERE id = %s' % user_id\n", "B608", severity="MEDIUM", cwe=89)
+    issue = one_issue(
+        tmp_path,
+        "query = 'SELECT * FROM users WHERE id = %s' % user_id\n",
+        "B608",
+        severity="MEDIUM",
+        cwe=89,
+    )
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "hardcoded_sql_expressions"
+    assert "sql" in issue["issue_text"].lower()
 
 
 def test_rule_b701_jinja_autoescape_false(tmp_path):
-    _one_issue(tmp_path, "from jinja2 import Environment\nEnvironment(autoescape=False)\n", "B701", severity="HIGH", confidence="HIGH", cwe=94)
+    issue = one_issue(
+        tmp_path,
+        "from jinja2 import Environment\nEnvironment(autoescape=False)\n",
+        "B701",
+        severity="HIGH",
+        confidence="HIGH",
+        cwe=94,
+    )
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "jinja2_autoescape_false"
+    assert "autoescape=false" in issue["issue_text"].lower()
 
 
 def test_rule_b704_dynamic_markup(tmp_path):
-    _one_issue(tmp_path, "from markupsafe import Markup\nvalue = Markup(user_input)\n", "B704", severity="MEDIUM", confidence="HIGH", cwe=79)
+    issue = one_issue(
+        tmp_path,
+        "from markupsafe import Markup\nvalue = Markup(user_input)\n",
+        "B704",
+        severity="MEDIUM",
+        confidence="HIGH",
+        cwe=79,
+    )
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "markupsafe_markup_xss"
+    assert "markup" in issue["issue_text"].lower()
 
 
 def test_no_target_exits_two():
-    proc = _run("bandit", ["-q"])
+    proc = run_bandit("bandit", ["-q"])
     assert proc.returncode == 2
 
 
 def test_config_generator_no_action_returns_one():
-    proc = _run("bandit-config-generator", [])
+    proc = run_bandit("bandit-config-generator", [])
     assert proc.returncode == 1

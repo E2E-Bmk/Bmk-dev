@@ -1,4 +1,6 @@
 # Spec2Repo oracle - atomic tests for nbformat-notebook-fullrepro-001
+from __future__ import annotations
+
 import io
 
 import json
@@ -15,22 +17,13 @@ import pytest
 
 import nbformat
 
-from nbformat import NO_CONVERT, NotebookNode, ValidationError, from_dict
-
-from nbformat import v4
-
-from nbformat.sign import MemorySignatureStore, NotebookNotary
-
-from nbformat.validator import isvalid, iter_validate, normalize
-
-from __future__ import annotations
-
 from nbformat import (
     NO_CONVERT,
     NotebookNode,
     ValidationError,
-    convert,
     from_dict,
+    v4,
+    convert,
     read,
     reads,
     validate,
@@ -38,9 +31,13 @@ from nbformat import (
     writes,
 )
 
-from nbformat.validator import isvalid
+
+from nbformat.sign import MemorySignatureStore, NotebookNotary
+
+from nbformat.validator import isvalid, iter_validate, normalize
 
 from nbformat.v3 import parse_filename
+from nbformat.v2 import parse_filename as parse_filename_v2
 
 from nbformat.v4 import (
     new_code_cell,
@@ -50,109 +47,7 @@ from nbformat.v4 import (
     new_raw_cell,
 )
 
-
-_TRUST_COMMAND = None
-
-
-def _notebook(source="print('ready')", output_text="ready\n"):
-    return v4.new_notebook(
-        cells=[
-            v4.new_markdown_cell("# Analysis"),
-            v4.new_code_cell(
-                source,
-                outputs=[v4.new_output("stream", text=output_text)],
-            ),
-        ]
-    )
-
-
-def _cli_env(tmp_path):
-    env = os.environ.copy()
-    env.pop("PYTHONPATH", None)
-    for name in ("JUPYTER_CONFIG_DIR", "JUPYTER_DATA_DIR", "JUPYTER_RUNTIME_DIR", "IPYTHONDIR"):
-        path = tmp_path / name.lower()
-        path.mkdir(exist_ok=True)
-        env[name] = str(path)
-    return env
-
-
-def _trust_command(tmp_path):
-    global _TRUST_COMMAND
-    if _TRUST_COMMAND is not None:
-        return _TRUST_COMMAND
-
-    assert sys.version_info[:2] == (3, 11)
-    assert sys.prefix != sys.base_prefix, "CLI scoring requires an isolated Python environment"
-    package_file = Path(nbformat.__file__).resolve()
-    project_root = next(
-        (
-            parent
-            for parent in package_file.parents
-            if any((parent / marker).is_file() for marker in ("pyproject.toml", "setup.py", "setup.cfg"))
-        ),
-        None,
-    )
-    assert project_root is not None, f"no installable project owns {package_file}"
-
-    venv_root = Path(sys.prefix).resolve()
-    venv_python = Path(sys.executable)
-    scripts_dir = venv_python.parent
-    subprocess.run(
-        [
-            str(venv_python),
-            "-m",
-            "pip",
-            "install",
-            "--disable-pip-version-check",
-            "--force-reinstall",
-            "--no-deps",
-            str(project_root),
-        ],
-        check=True,
-        text=True,
-        capture_output=True,
-        timeout=120,
-    )
-
-    probe = subprocess.run(
-        [
-            str(venv_python),
-            "-c",
-            (
-                "import json, sys; from importlib.metadata import distribution; "
-                "from pathlib import Path; import nbformat; "
-                "d=distribution('nbformat'); "
-                "ep=next(e for e in d.entry_points if e.group=='console_scripts' and e.name=='jupyter-trust'); "
-                "print(json.dumps({'package_file': str(Path(nbformat.__file__).resolve()), "
-                "'prefix': str(Path(sys.prefix).resolve()), 'entry_point': ep.value}))"
-            ),
-        ],
-        env=_cli_env(tmp_path),
-        check=True,
-        text=True,
-        capture_output=True,
-        timeout=30,
-    )
-    provenance = json.loads(probe.stdout)
-    installed_package = Path(provenance["package_file"])
-    script = scripts_dir / ("jupyter-trust.exe" if os.name == "nt" else "jupyter-trust")
-    assert Path(provenance["prefix"]) == venv_root
-    assert installed_package.is_relative_to(venv_root)
-    assert script.is_file() and script.resolve().is_relative_to(venv_root)
-    assert provenance["entry_point"]
-    print(
-        "CLI_PROVENANCE "
-        + json.dumps(
-            {
-                **provenance,
-                "project_root": str(project_root),
-                "script": str(script.resolve()),
-            },
-            sort_keys=True,
-        )
-    )
-    _TRUST_COMMAND = [str(script)]
-    return _TRUST_COMMAND
+from conftest import make_notebook, make_notary
 
 
 def test_notebooknode_update_accepts_dictionary_patterns():
@@ -175,7 +70,7 @@ def test_from_dict_converts_lists_tuples_and_scalars():
 
 
 def test_convert_existing_major_is_same_object():
-    notebook = _notebook()
+    notebook = make_notebook()
     converted = nbformat.convert(notebook, 4)
     assert converted is notebook
     converted.metadata.answer = 42
@@ -184,11 +79,11 @@ def test_convert_existing_major_is_same_object():
 
 def test_convert_unknown_version_raises_value_error():
     with pytest.raises(ValueError):
-        nbformat.convert(_notebook(), 99)
+        nbformat.convert(make_notebook(), 99)
 
 
 def test_validation_accepts_nbjson_alias_and_requires_input():
-    notebook = _notebook()
+    notebook = make_notebook()
     assert nbformat.validate(nbjson=notebook) is None
     assert nbformat.validate(notebook, version=4, version_minor=notebook.nbformat_minor) is None
     with pytest.raises(TypeError):
@@ -196,7 +91,7 @@ def test_validation_accepts_nbjson_alias_and_requires_input():
 
 
 def test_isvalid_reports_schema_result_without_mutation():
-    valid = _notebook()
+    valid = make_notebook()
     invalid = {"nbformat": 4, "nbformat_minor": 5, "metadata": {}, "cells": [{"id": "ok", "cell_type": "code", "metadata": {}, "source": "", "outputs": [], "execution_count": "bad"}]}
     before = json.loads(json.dumps(invalid))
     assert isvalid(valid) is True
@@ -255,7 +150,7 @@ def test_output_from_msg_converts_stream_display_and_error():
 
 
 def test_dictionary_and_attribute_mutations_share_one_projection():
-    notebook = _notebook()
+    notebook = make_notebook()
     notebook["metadata"]["owner"] = {"name": "Ada"}
     assert notebook.metadata.owner.name == "Ada"
     notebook.metadata.owner.name = "Grace"
@@ -408,13 +303,13 @@ def test_parse_filename_python():
     assert parse_filename("test.py") == ("test.py", "test", "py")
 
 
-def _notary():
-    return NotebookNotary(store_factory=MemorySignatureStore, secret=b"secret")
+def test_v2_parse_filename_adds_json_notebook_extension():
+    assert parse_filename_v2("legacy") == ("legacy.ipynb", "legacy", "json")
 
 
 def test_notary_secret_changes_signature():
     nb = new_notebook(cells=[new_code_cell("1 + 1")])
-    first = _notary().compute_signature(nb)
+    first = make_notary().compute_signature(nb)
     second = NotebookNotary(store_factory=MemorySignatureStore, secret=b"other").compute_signature(nb)
     assert first != second
 
@@ -428,3 +323,40 @@ def test_memory_signature_store_lifecycle():
     assert store.check_signature(digest, algorithm) is True
     store.remove_signature(digest, algorithm)
     assert store.check_signature(digest, algorithm) is False
+
+def test_v4_code_cell_with_outputs():
+    """Seam: state consistency — code cell constructor preserves execution_count and outputs."""
+    outputs = [
+        new_output("stream", text="hello"),
+        new_output("execute_result", {"text/plain": "10"}, execution_count=10),
+    ]
+    cell = new_code_cell(execution_count=10, outputs=outputs)
+    assert cell.execution_count == 10
+    assert cell.outputs == outputs
+
+def test_v4_invalid_code_cell():
+    """Seam: error propagation — invalid code cell source raises ValidationError."""
+    cell = new_code_cell()
+    cell.source = 5
+    with pytest.raises(ValidationError):
+        validate(cell, ref="code_cell", version=4)
+
+def test_v4_invalid_markdown_cell():
+    """Seam: error propagation — missing markdown metadata raises ValidationError."""
+    cell = new_markdown_cell()
+    del cell["metadata"]
+    with pytest.raises(ValidationError):
+        validate(cell, ref="markdown_cell", version=4)
+
+def test_v4_invalid_raw_cell():
+    """Seam: error propagation — missing raw cell source raises ValidationError."""
+    cell = new_raw_cell()
+    del cell["source"]
+    with pytest.raises(ValidationError):
+        validate(cell, ref="raw_cell", version=4)
+
+def test_v4_sample_notebook_validates():
+    """Seam: state consistency — constructed v4 notebook passes validate and isvalid."""
+    nb = new_notebook(cells=[new_markdown_cell("title"), new_code_cell("1 + 1")])
+    assert validate(nb) is None
+    assert isvalid(nb)

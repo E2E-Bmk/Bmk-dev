@@ -311,6 +311,10 @@ This specification does not require byte-for-byte equality of complete `manifest
 
 This specification does not require reproducing private helper modules, `dbt.tests` fixtures, hidden Click parameters, internal parser class names, internal msgpack schema details, or exact terminal log wording.
 
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
 ## Invocation Protocol
 
 The supported console script is `dbt`.
@@ -327,7 +331,7 @@ Exit behavior:
 
 ## Implementation Guidance
 
-Automated checks exercise public behavior through local project files, CLI invocations, Python `dbtRunner` calls, and emitted artifacts. They inspect command status, runner result objects, selected list output, artifact presence, key artifact fields, compiled SQL projections, partial-parse cache reuse and invalidation, and the relationships between list output, manifest entries, run results, and compiled files.
+Local project files, `dbtRunner` results, list output, manifests, run results, compiled SQL, and partial-parse state are different views of the same project graph. Implementations should derive those views from shared graph state so selection and identity remain consistent across commands.
 
-The checks intentionally avoid service dependencies and adapter conformance suites. They compare observable behavior and public fields rather than private helper objects, complete JSON snapshots, or exact terminal wording.
+Service integrations, adapter conformance internals, private helper objects, complete JSON key ordering, and exact terminal wording are outside this contract.
 

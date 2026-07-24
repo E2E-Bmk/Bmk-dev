@@ -218,6 +218,15 @@ Missing default settings produce an empty `Settings`. If `COPIER_SETTINGS_PATH` 
 
 `VcsRef.CURRENT` has value `":current:"`. It selects the template ref already recorded for the project.
 
+## Product State Model
+
+A Copier project has one template source and revision, one resolved answer set, one destination tree, one answers-file projection, and one update history. The Python API and CLI operate on these same public projections.
+
+- Values selected from defaults, settings, data files, and direct data must agree in rendered paths, rendered contents, task context, and the recorded answers file.
+- Recopy and update must read the same recorded template source and answers that a prior copy wrote, unless the caller supplies a documented override.
+- Pretend mode must compute the requested operation without changing the destination tree or answers file.
+- Trust decisions must apply consistently to tasks, migrations, Jinja extensions, and external data from both CLI and Python entry points.
+
 ## CLI Behavior
 
 Shared CLI options for copy-like commands include:
@@ -499,9 +508,15 @@ JSON output is for reporting. Quiet mode is for scripts: exit code `2` means a n
 - It does not require reproducing private test helpers, private attributes, or internal metadata structures beyond the documented answers file and public template variables.
 - It does not require supporting template features that depend on third-party extensions unless those extensions are installed and explicitly trusted.
 
-## Implementation Guidance
+## Invocation Protocol
 
-The expected implementation focuses on public behavior through the documented Python API, CLI commands, generated destination trees, answers files, update/check-update outcomes, template configuration semantics, user settings, and documented error classes. Tests may compare API and CLI projections of the same operation, verify answer precedence, inspect rendered files and answers files, exercise local Git update flows, check unsafe-feature refusal and trust behavior, and validate documented exceptions and warnings.
+The console command is `copier`, with covered `copy`, `recopy`, `update`, and `check-update` operations. Successful copy, recopy, and update operations must return status 0. Configuration errors, unsafe operations without trust, unsupported template versions, and generation failures must return a nonzero status; unsafe-feature refusal uses status 4. Running `python -m copier` is not supported by this specification.
 
-Scoring should reward behavior that follows this specification from public inputs and outputs. It should not depend on private import paths, private class names, exact internal object layouts, network repositories, or terminal styling. Fixture templates are examples of the documented concepts rather than hidden requirements; a correct implementation should generalize from the documented contracts.
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
+## Evaluation Notes
+
+Assessment exercises copy, recopy, update, settings, rendering, answer persistence, trust decisions, error conditions, and CLI/API agreement. It observes returned paths, destination files, answers files, command output modes, exceptions, and exit statuses. Private worker classes, filesystem staging, VCS-helper layout, exact progress wording, fixture-specific shapes, and source organization are not assessed.
 

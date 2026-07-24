@@ -13,45 +13,11 @@ from pgqueuer.models import Context, ScheduleContext
 from pgqueuer.types import JobId, QueueExecutionMode
 
 
-def run(coro):
-    return asyncio.run(coro)
-
-
-def latest_status(rows, job_id):
-    requested = int(job_id)
-    if isinstance(rows, Mapping):
-        for key in (job_id, requested, str(requested)):
-            if key in rows:
-                return rows[key]
-        raise AssertionError(f"job id {requested} missing from job_status result")
-
-    for row in rows:
-        if isinstance(row, Mapping):
-            key = row.get("job_id", row.get("id"))
-            status = row.get("status")
-        elif hasattr(row, "job_id") and hasattr(row, "status"):
-            key = row.job_id
-            status = row.status
-        elif hasattr(row, "id") and hasattr(row, "status"):
-            key = row.id
-            status = row.status
-        else:
-            key, status = row
-        if int(key) == requested:
-            return status
-    raise AssertionError(f"job id {requested} missing from job_status result")
-
-
-def latest_statuses(rows, ids):
-    return {int(job_id): latest_status(rows, job_id) for job_id in ids}
-
-
-async def make_queries() -> InMemoryQueries:
-    pgq = PgQueuer.in_memory()
-    return pgq.qm.queries
+from conftest import run, latest_status, latest_statuses, make_queries
 
 
 def test_in_memory_factory_wires_public_managers_and_queries():
+    """Seam: state consistency — in memory factory wires public managers and queries."""
     pgq = PgQueuer.in_memory(resources={"name": "shared"})
     assert isinstance(pgq.connection, InMemoryDriver)
     assert isinstance(pgq.queries, InMemoryQueries)
@@ -62,6 +28,7 @@ def test_in_memory_factory_wires_public_managers_and_queries():
 
 
 def test_enqueue_batch_preserves_order_and_payloads():
+    """Seam: state consistency — enqueue batch preserves order and payloads."""
     async def scenario():
         seen = []
         pgq = PgQueuer.in_memory()
@@ -90,6 +57,7 @@ def test_enqueue_batch_preserves_order_and_payloads():
 
 
 def test_dequeue_raises_for_zero_batch_size():
+    """Seam: protocol handoff — dequeue raises for zero batch size."""
     async def scenario():
         queries = await make_queries()
         with pytest.raises(ValueError):
@@ -99,6 +67,7 @@ def test_dequeue_raises_for_zero_batch_size():
 
 
 def test_dequeue_empty_entrypoints_returns_empty():
+    """Seam: protocol handoff — dequeue empty entrypoints returns empty."""
     async def scenario():
         queries = await make_queries()
         await queries.enqueue("a", b"x")
@@ -108,6 +77,7 @@ def test_dequeue_empty_entrypoints_returns_empty():
 
 
 def test_dequeue_filters_by_registered_entrypoints():
+    """Seam: protocol handoff — dequeue filters by registered entrypoints."""
     async def scenario():
         seen = []
         pgq = PgQueuer.in_memory()
@@ -131,6 +101,7 @@ def test_dequeue_filters_by_registered_entrypoints():
 
 
 def test_dequeue_orders_by_priority_then_id():
+    """Seam: protocol handoff — dequeue orders by priority then id."""
     async def scenario():
         seen = []
         pgq = PgQueuer.in_memory()
@@ -158,6 +129,7 @@ def test_dequeue_orders_by_priority_then_id():
 
 
 def test_dequeue_marks_jobs_picked_and_job_status_reflects_latest():
+    """Seam: state consistency — dequeue marks jobs picked and job status reflects latest."""
     async def scenario():
         seen_statuses = []
         pgq = PgQueuer.in_memory()
@@ -181,6 +153,7 @@ def test_dequeue_marks_jobs_picked_and_job_status_reflects_latest():
 
 
 def test_dequeue_respects_per_entrypoint_concurrency_limit():
+    """Seam: protocol handoff — dequeue respects per entrypoint concurrency limit."""
     async def scenario():
         running = 0
         max_seen = 0
@@ -207,6 +180,7 @@ def test_dequeue_respects_per_entrypoint_concurrency_limit():
 
 
 def test_dequeue_respects_global_concurrency_limit():
+    """Seam: protocol handoff — dequeue respects global concurrency limit."""
     async def scenario():
         running = 0
         max_seen = 0
@@ -235,12 +209,14 @@ def test_dequeue_respects_global_concurrency_limit():
 
 
 def test_entrypoint_rejects_non_boolean_accepts_context():
+    """Seam: error propagation — entrypoint rejects non boolean accepts context."""
     pgq = PgQueuer.in_memory()
     with pytest.raises(ValueError):
         pgq.entrypoint("bad", accepts_context="yes")
 
 
 def test_queue_manager_run_drain_processes_priority_order_and_success_logs():
+    """Seam: lifecycle crossing — queue manager run drain processes priority order and success logs."""
     async def scenario():
         seen = []
         pgq = PgQueuer.in_memory(resources={"seen": seen})
@@ -267,6 +243,7 @@ def test_queue_manager_run_drain_processes_priority_order_and_success_logs():
 
 
 def test_context_auto_detects_context_annotation():
+    """Seam: state consistency — context auto detects context annotation."""
     async def scenario():
         pgq = PgQueuer.in_memory(resources={"count": 0})
 
@@ -287,6 +264,7 @@ def test_context_auto_detects_context_annotation():
 
 
 def test_accepts_context_false_suppresses_annotation_injection():
+    """Seam: state consistency — accepts context false suppresses annotation injection."""
     async def scenario():
         pgq = PgQueuer.in_memory(resources={"called": False})
 
@@ -307,6 +285,7 @@ def test_accepts_context_false_suppresses_annotation_injection():
 
 
 def test_retry_requested_requeues_same_job_and_increments_attempts():
+    """Seam: lifecycle crossing — retry requested requeues same job and increments attempts."""
     async def scenario():
         pgq = PgQueuer.in_memory()
         calls = []
@@ -331,6 +310,7 @@ def test_retry_requested_requeues_same_job_and_increments_attempts():
 
 
 def test_unhandled_exception_delete_policy_logs_exception_and_removes_job():
+    """Seam: error propagation — unhandled exception delete policy logs exception and removes job."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -352,6 +332,7 @@ def test_unhandled_exception_delete_policy_logs_exception_and_removes_job():
 
 
 def test_unhandled_exception_hold_policy_keeps_failed_job_visible():
+    """Seam: error propagation — unhandled exception hold policy keeps failed job visible."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -374,6 +355,7 @@ def test_unhandled_exception_hold_policy_keeps_failed_job_visible():
 
 
 def test_requeue_jobs_restores_failed_job_and_resets_attempts():
+    """Seam: lifecycle crossing — requeue jobs restores failed job and resets attempts."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -396,6 +378,7 @@ def test_requeue_jobs_restores_failed_job_and_resets_attempts():
 
 
 def test_clear_queue_without_filter_removes_jobs_without_delete_logs():
+    """Seam: lifecycle crossing — clear queue without filter removes jobs without delete logs."""
     async def scenario():
         queries = await make_queries()
         ids = await queries.enqueue(["a", "b"], [b"a", b"b"], [0, 0])
@@ -407,6 +390,7 @@ def test_clear_queue_without_filter_removes_jobs_without_delete_logs():
 
 
 def test_clear_queue_with_entrypoint_logs_deleted_for_matching_jobs():
+    """Seam: lifecycle crossing — clear queue with entrypoint logs deleted for matching jobs."""
     async def scenario():
         queries = await make_queries()
         ids = await queries.enqueue(["a", "b"], [b"a", b"b"], [0, 0])
@@ -419,6 +403,7 @@ def test_clear_queue_with_entrypoint_logs_deleted_for_matching_jobs():
 
 
 def test_clear_queue_with_entrypoint_list_filters_any_match():
+    """Seam: lifecycle crossing — clear queue with entrypoint list filters any match."""
     async def scenario():
         queries = await make_queries()
         ids = await queries.enqueue(["a", "b", "c"], [b"a", b"b", b"c"], [0, 0, 0])
@@ -433,6 +418,7 @@ def test_clear_queue_with_entrypoint_list_filters_any_match():
 
 
 def test_dedupe_key_released_after_successful_log():
+    """Seam: state consistency — dedupe key released after successful log."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -455,6 +441,7 @@ def test_dedupe_key_released_after_successful_log():
 
 
 def test_dedupe_key_released_after_failed_hold():
+    """Seam: state consistency — dedupe key released after failed hold."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -476,6 +463,7 @@ def test_dedupe_key_released_after_failed_hold():
 
 
 def test_queue_log_is_append_ordered_across_transitions():
+    """Seam: state consistency — queue log is append ordered across transitions."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -501,6 +489,7 @@ def test_queue_log_is_append_ordered_across_transitions():
 
 
 def test_log_statistics_aggregates_once_and_respects_limit():
+    """Seam: state consistency — log statistics aggregates once and respects limit."""
     async def scenario():
         queries = await make_queries()
         await queries.enqueue(["a", "a", "b"], [b"1", b"2", b"3"], [0, 0, 1])
@@ -520,6 +509,7 @@ def test_log_statistics_aggregates_once_and_respects_limit():
 
 
 def test_clear_statistics_log_removes_selected_entrypoint_only():
+    """Seam: protocol handoff — clear statistics log removes selected entrypoint only."""
     async def scenario():
         queries = await make_queries()
         await queries.enqueue(["a", "b"], [b"1", b"2"], [0, 0])
@@ -532,6 +522,7 @@ def test_clear_statistics_log_removes_selected_entrypoint_only():
 
 
 def test_clear_queue_log_removes_selected_entrypoint_only():
+    """Seam: protocol handoff — clear queue log removes selected entrypoint only."""
     async def scenario():
         queries = await make_queries()
         await queries.enqueue(["a", "b"], [b"1", b"2"], [0, 0])
@@ -542,6 +533,7 @@ def test_clear_queue_log_removes_selected_entrypoint_only():
 
 
 def test_scheduler_run_populates_peek_schedule_with_registered_schedule():
+    """Seam: lifecycle crossing — scheduler run populates peek schedule with registered schedule."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -559,6 +551,7 @@ def test_scheduler_run_populates_peek_schedule_with_registered_schedule():
 
 
 def test_scheduler_run_skips_duplicate_entrypoint_expression():
+    """Seam: lifecycle crossing — scheduler run skips duplicate entrypoint expression."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -574,6 +567,7 @@ def test_scheduler_run_skips_duplicate_entrypoint_expression():
 
 
 def test_scheduler_run_marks_due_schedule_picked_and_restores_queued():
+    """Seam: lifecycle crossing — scheduler run marks due schedule picked and restores queued."""
     async def scenario():
         seen = []
         pgq = PgQueuer.in_memory()
@@ -593,6 +587,7 @@ def test_scheduler_run_marks_due_schedule_picked_and_restores_queued():
 
 
 def test_delete_schedule_by_entrypoint_removes_matching_schedules():
+    """Seam: lifecycle crossing — delete schedule by entrypoint removes matching schedules."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -614,6 +609,7 @@ def test_delete_schedule_by_entrypoint_removes_matching_schedules():
 
 
 def test_clear_schedule_removes_all_schedules():
+    """Seam: lifecycle crossing — clear schedule removes all schedules."""
     async def scenario():
         pgq = PgQueuer.in_memory()
 
@@ -629,6 +625,7 @@ def test_clear_schedule_removes_all_schedules():
 
 
 def test_schedule_dispatch_injects_schedule_context_resources_and_requeues():
+    """Seam: protocol handoff — schedule dispatch injects schedule context resources and requeues."""
     async def scenario():
         pgq = PgQueuer.in_memory(resources={"seen": []})
 
@@ -640,5 +637,62 @@ def test_schedule_dispatch_injects_schedule_context_resources_and_requeues():
         await asyncio.wait_for(pgq.sm.run(), timeout=3)
         assert pgq.resources["seen"] == ["tick"]
         assert (await pgq.sm.queries.peek_schedule())[0].status == "queued"
+
+    run(scenario())
+
+def test_retry_preserves_payload_priority_and_job_id():
+    """Seam: lifecycle crossing — retry preserves payload, priority, and job id."""
+    async def scenario():
+        pgq = PgQueuer.in_memory()
+        observed = []
+
+        @pgq.entrypoint("flaky")
+        async def flaky(job: Job) -> None:
+            observed.append((int(job.id), job.payload, job.priority, job.attempts))
+            if job.attempts == 0:
+                raise RetryRequested()
+
+        await pgq.qm.queries.enqueue("flaky", b"keep", priority=8)
+        await pgq.qm.run(
+            batch_size=1,
+            mode=QueueExecutionMode.drain,
+            max_concurrent_tasks=2,
+            dequeue_timeout=timedelta(seconds=0.01),
+        )
+        assert observed == [(1, b"keep", 8, 0), (1, b"keep", 8, 1)]
+
+    run(scenario())
+
+def test_schedule_six_field_trailing_seconds_is_registered():
+    """Seam: lifecycle crossing — six-field cron schedule registers via scheduler run."""
+    async def scenario():
+        pgq = PgQueuer.in_memory()
+
+        @pgq.schedule("heartbeat", "* * * * * */1")
+        async def heartbeat(schedule):
+            pgq.shutdown.set()
+
+        await asyncio.wait_for(pgq.sm.run(), timeout=3)
+        schedules = await pgq.sm.queries.peek_schedule()
+        assert [(row.entrypoint, row.status) for row in schedules] == [("heartbeat", "queued")]
+
+    run(scenario())
+
+def test_update_schedule_heartbeat_changes_heartbeat_without_status_change():
+    """Seam: lifecycle crossing — update_schedule_heartbeat advances schedule heartbeat."""
+    async def scenario():
+        pgq = PgQueuer.in_memory()
+
+        @pgq.schedule("tick", "* * * * * */1")
+        async def tick(schedule):
+            pgq.shutdown.set()
+
+        await asyncio.wait_for(pgq.sm.run(), timeout=3)
+        before = (await pgq.sm.queries.peek_schedule())[0]
+        await pgq.sm.queries.update_schedule_heartbeat({before.id})
+        after = (await pgq.sm.queries.peek_schedule())[0]
+        assert after.id == before.id
+        assert after.status == "queued"
+        assert after.heartbeat >= before.heartbeat
 
     run(scenario())

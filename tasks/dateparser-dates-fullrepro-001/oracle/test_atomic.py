@@ -9,9 +9,7 @@ from dateparser.conf import SettingValidationError
 from dateparser.date import DateData
 from dateparser.search import search_dates
 
-
-BASE = datetime(2020, 1, 15, 9, 30)
-MIDYEAR = datetime(2020, 6, 16, 0, 0)
+from conftest import BASE, MIDYEAR
 
 
 def test_parse_absolute_english_month_name():
@@ -299,3 +297,32 @@ def test_date_data_unknown_key_write_raises_key_error():
     data = DateData()
     with pytest.raises(KeyError):
         data["missing"] = "value"
+
+
+# --- composition fix additions (2026-07-20) ---
+
+
+def test_parse_date_order_permutations_disambiguate_numeric_input():
+    assert parse("10-11-12", settings={"DATE_ORDER": "YMD"}) == datetime(2010, 11, 12)
+    assert parse("10-11-12", settings={"DATE_ORDER": "DMY"}) == datetime(2012, 11, 10)
+
+
+def test_parse_negative_timestamp_returns_pre_epoch_utc_datetime():
+    settings = {"PARSERS": ["negative-timestamp"], "TIMEZONE": "UTC"}
+    assert parse("-1483228800", settings=settings) == datetime(1923, 1, 1)
+
+
+def test_parse_relative_hours_and_minutes_use_relative_base():
+    assert parse("in 2 hours", settings={"RELATIVE_BASE": BASE}) == datetime(2020, 1, 15, 11, 30)
+    assert parse("30 minutes ago", settings={"RELATIVE_BASE": BASE}) == datetime(2020, 1, 15, 9, 0)
+
+
+def test_parse_timestamp_applies_to_timezone_conversion():
+    settings = {"TIMEZONE": "UTC", "TO_TIMEZONE": "US/Eastern"}
+    result = parse("1483228800", settings=settings)
+    assert result.replace(tzinfo=None) == datetime(2016, 12, 31, 19, 0)
+
+
+def test_parse_german_and_portuguese_absolute_dates():
+    assert parse("18. Oktober 2014", languages=["de"]) == datetime(2014, 10, 18)
+    assert parse("13 de agosto de 2015", languages=["pt"]) == datetime(2015, 8, 13)

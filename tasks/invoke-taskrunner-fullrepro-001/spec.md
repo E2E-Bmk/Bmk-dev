@@ -208,8 +208,10 @@ Exit behavior:
 
 `Program.run(argv=None, exit=True)` must use `sys.argv` when `argv` is `None`, split a string `argv` on whitespace when a string is supplied, and use a supplied list as-is. With `exit=False`, it must not call `sys.exit` for handled `Exit`, `ParseError`, or `UnexpectedExit` conditions.
 
-## Implementation Guidance
+## Environment
 
-Assessment should exercise the same public behavior from both Python and CLI entry points. Useful dimensions include task decorator metadata, task argument parsing, namespace defaults and aliases, module loading, config source precedence, context proxy access, `Context.run` success and failure paths, `Result` truth and stream behavior, watcher response behavior, sudo authentication failure translation, and intentional CLI exits.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment. Command workflows run against local temporary task collections and local subprocesses.
 
-Scoring should reward observable compatibility with the documented contracts above. Exact terminal wrapping, colors, completion script contents, PTY edge cases, timing-sensitive signal behavior, and repository-local development tasks are outside this spec and should not determine correctness.
+## Evaluation Notes
+
+Assessment compares Python and CLI behavior for task metadata, parsing, namespaces, module loading, configuration precedence, contexts, runners, results, watchers, sudo failures, and intentional exits. Terminal wrapping, colors, completion script bodies, PTY edge cases, timing-sensitive signals, and repository-local development tasks are not checked.

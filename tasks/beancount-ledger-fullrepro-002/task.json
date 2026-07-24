@@ -1,6 +1,6 @@
 {
   "instance_id": "beancount-ledger-fullrepro-002",
-  "status": "QUALIFIED",
+  "status": "REVALIDATION-REQUIRED",
   "repo": "",
   "repo_commit": "",
   "spec_version": "v1",
@@ -9,72 +9,238 @@
       "oracle/test_atomic.py",
       "oracle/test_integration.py"
     ],
-    "count": 51,
+    "count": 54,
     "scorer_isolation": [
       "--remove-path"
     ]
   },
   "taxonomy": {
-    "rewritten_public_surface_tests::test_root_api_exports_match_api_module": "atomic",
-    "rewritten_public_surface_tests::test_decimal_constructor_normalizes_public_inputs": "atomic",
-    "rewritten_public_surface_tests::test_amount_parsing_comparison_and_boolean_behavior": "atomic",
-    "rewritten_public_surface_tests::test_position_from_string_and_value_helpers": "atomic",
-    "rewritten_public_surface_tests::test_account_helpers_component_semantics": "atomic",
-    "rewritten_public_surface_tests::test_account_type_helpers_default_signs_and_sorting": "atomic",
-    "rewritten_public_surface_tests::test_directive_objects_metadata_and_filter_txns": "atomic",
-    "rewritten_public_surface_tests::test_getters_report_accounts_and_lifecycle": "atomic",
-    "rewritten_public_surface_tests::test_inventory_operations_preserve_lots_and_currencies": "atomic",
-    "rewritten_public_surface_tests::test_inventory_add_amount_aggregates_and_removes_zero_lots": "atomic",
-    "rewritten_public_surface_tests::test_inventory_bool_requires_explicit_empty_check": "atomic",
-    "rewritten_public_surface_tests::test_price_map_lookup_latest_inverse_and_identity": "atomic",
-    "rewritten_public_surface_tests::test_conversion_helpers_use_prices_or_return_original_amount": "atomic",
-    "rewritten_public_surface_tests::test_load_file_returns_entries_errors_and_options": "integration",
-    "rewritten_public_surface_tests::test_load_file_resolves_relative_includes_and_aggregates_options": "integration",
-    "rewritten_public_surface_tests::test_load_file_reports_missing_include_as_error": "integration",
-    "rewritten_public_surface_tests::test_load_file_balance_validation_error_contains_entry": "integration",
-    "rewritten_public_surface_tests::test_load_doc_decorator_supplies_parsed_ledger_to_function": "integration",
-    "rewritten_public_surface_tests::test_load_doc_expect_errors_accepts_invalid_docstring": "integration",
-    "rewritten_public_surface_tests::test_loader_plugin_can_append_directive_via_public_contract": "integration",
-    "rewritten_public_surface_tests::test_plugin_import_failure_is_returned_as_load_error": "integration",
-    "rewritten_public_surface_tests::test_realize_builds_tree_and_account_postings_from_loaded_entries": "system_e2e",
-    "rewritten_public_surface_tests::test_realize_min_accounts_creates_empty_requested_accounts": "integration",
-    "rewritten_public_surface_tests::test_real_account_child_constraints_are_enforced": "atomic",
-    "rewritten_public_surface_tests::test_format_entry_omits_source_metadata_and_sorts_tags_links": "atomic",
-    "rewritten_public_surface_tests::test_print_entry_and_print_entries_write_public_syntax": "atomic",
-    "rewritten_public_surface_tests::test_same_day_ordering_balance_before_transaction_and_close_last": "system_e2e",
-    "rewritten_public_surface_tests::test_configured_root_account_names_affect_parsing_and_signs": "system_e2e",
-    "rewritten_public_surface_tests::test_account_validation_helpers_accept_components_and_reject_bad_names": "atomic",
-    "rewritten_public_surface_tests::test_amount_negation_and_currency_first_sorting": "atomic",
-    "rewritten_public_surface_tests::test_position_arithmetic_preserves_lot_cost": "atomic",
-    "rewritten_public_surface_tests::test_inventory_split_average_and_only_position_behavior": "integration",
-    "rewritten_public_surface_tests::test_inventory_add_position_and_add_inventory_accumulate_units": "integration",
-    "rewritten_public_surface_tests::test_inventory_reduce_does_not_mutate_original_inventory": "integration",
-    "rewritten_public_surface_tests::test_price_map_duplicate_dates_keep_later_price_and_add_inverse": "integration",
-    "rewritten_public_surface_tests::test_get_weight_uses_cost_before_price_and_price_without_cost": "integration",
-    "rewritten_public_surface_tests::test_get_value_infers_value_currency_from_cost_or_price": "integration",
-    "rewritten_public_surface_tests::test_get_accounts_includes_pad_note_document_and_balance_accounts": "atomic",
-    "rewritten_public_surface_tests::test_get_account_open_close_keeps_first_lifecycle_directives": "integration",
-    "rewritten_public_surface_tests::test_load_file_duplicate_include_is_reported_as_load_error": "integration",
-    "rewritten_public_surface_tests::test_load_file_unmatched_include_glob_is_returned_as_error": "integration",
-    "rewritten_public_surface_tests::test_plugin_exception_is_converted_to_load_error": "integration",
-    "rewritten_public_surface_tests::test_plugin_systemexit_is_allowed_to_propagate": "integration",
-    "rewritten_public_surface_tests::test_realize_stores_account_attached_directives_and_pad_on_both_accounts": "system_e2e",
-    "rewritten_public_surface_tests::test_realize_compute_balance_false_preserves_postings_without_balance": "system_e2e",
-    "rewritten_public_surface_tests::test_format_entry_write_source_emits_source_comment": "atomic",
-    "rewritten_public_surface_tests::test_load_file_parses_note_event_query_price_and_custom": "system_e2e",
-    "rewritten_public_surface_tests::test_tags_and_links_store_without_markers_and_print_with_markers": "atomic",
-    "rewritten_public_surface_tests::test_load_file_raw_plugin_mode_skips_standard_balance_validation": "system_e2e",
-    "rewritten_public_surface_tests::test_price_lookup_is_as_of_requested_date": "integration",
-    "rewritten_public_surface_tests::test_realized_transaction_postings_preserve_parent_transaction": "system_e2e"
+    "atomic": 22,
+    "entries": [
+      {
+        "taxonomy_key": "test_atomic::test_root_api_exports_match_api_module",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_decimal_constructor_normalizes_public_inputs",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_amount_parsing_comparison_and_boolean_behavior",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_position_from_string_and_value_helpers",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_account_helpers_component_semantics",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_account_type_helpers_default_signs_and_sorting",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_directive_objects_metadata_and_filter_txns",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_getters_report_accounts_and_lifecycle",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_inventory_operations_preserve_lots_and_currencies",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_inventory_add_amount_aggregates_and_removes_zero_lots",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_inventory_bool_requires_explicit_empty_check",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_price_map_lookup_latest_inverse_and_identity",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_conversion_helpers_use_prices_or_return_original_amount",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_real_account_child_constraints_are_enforced",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_format_entry_omits_source_metadata_and_sorts_tags_links",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_print_entry_and_print_entries_write_public_syntax",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_account_validation_helpers_accept_components_and_reject_bad_names",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_amount_negation_and_currency_first_sorting",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_position_arithmetic_preserves_lot_cost",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_get_accounts_includes_pad_note_document_and_balance_accounts",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_format_entry_write_source_emits_source_comment",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_tags_and_links_store_without_markers_and_print_with_markers",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_file_returns_entries_errors_and_options",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_file_resolves_relative_includes_and_aggregates_options",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_file_reports_missing_include_as_error",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_file_balance_validation_error_contains_entry",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_doc_decorator_supplies_parsed_ledger_to_function",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_doc_expect_errors_accepts_invalid_docstring",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_loader_plugin_can_append_directive_via_public_contract",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_plugin_import_failure_is_returned_as_load_error",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_realize_builds_tree_and_account_postings_from_loaded_entries",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_realize_min_accounts_creates_empty_requested_accounts",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_same_day_ordering_balance_before_transaction_and_close_last",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_configured_root_account_names_affect_parsing_and_signs",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_booking_enum_exposes_public_methods",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_inventory_split_average_and_only_position_behavior",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_inventory_add_position_and_add_inventory_accumulate_units",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_inventory_reduce_does_not_mutate_original_inventory",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_price_map_duplicate_dates_keep_later_price_and_add_inverse",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_get_weight_uses_cost_before_price_and_price_without_cost",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_get_value_infers_value_currency_from_cost_or_price",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_directive_namespace_contains_public_directive_classes",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_note_event_query_document_and_custom_fields_are_public",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_get_account_open_close_keeps_first_lifecycle_directives",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_file_duplicate_include_is_reported_as_load_error",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_file_unmatched_include_glob_is_returned_as_error",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_plugin_exception_is_converted_to_load_error",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_plugin_systemexit_is_allowed_to_propagate",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_realize_stores_account_attached_directives_and_pad_on_both_accounts",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_realize_compute_balance_false_preserves_postings_without_balance",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_file_parses_note_event_query_price_and_custom",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_load_file_raw_plugin_mode_skips_standard_balance_validation",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_price_lookup_is_as_of_requested_date",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_realized_transaction_postings_preserve_parent_transaction",
+        "layer": "system_e2e"
+      }
+    ],
+    "integration_system_e2e": 32
   },
   "stats": {
     "atomic": 22,
-    "integration": 21,
+    "integration": 24,
     "system_e2e": 8
   },
-  "reference_pass_rate": 1.0,
-  "candidate_score": {
-    "passed": 44,
-    "total": 51
-  }
+  "reference_pass_rate": null,
+  "candidate_score": null
 }

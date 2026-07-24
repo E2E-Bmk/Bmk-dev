@@ -1,100 +1,123 @@
-# Loguru Specification
+﻿# Loguru Specification
+
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
 
 ## Product Overview
 
-Loguru provides a pre-instanced Python logger designed for direct application and library use. Users import `logger` from `loguru`, register one or more sinks, and emit structured log records through severity methods. The logger owns handler registration, message formatting, contextual data, exception reporting, file output management, asynchronous completion, and interoperability with the standard `logging` package.
+Loguru is a Python logging library centered on a pre-instanced `logger` object. Applications and libraries import `logger`, register one or more sinks, and emit structured log records through severity methods. The logger owns handler registration, message formatting, contextual data, exception reporting, file output management, asynchronous completion, and interoperability with the standard `logging` package.
 
-The package must be usable with `from loguru import logger`.
+The package must be usable with `from loguru import logger`. The module also exposes `__version__` as a non-empty string. Users must not need to instantiate a logger class before logging; a default stderr handler must be available at import time unless automatic initialization is disabled by environment configuration.
 
-The package also exposes `__version__` as a string.
+## Non-Goals
 
-## Scope
+- This specification does not require private helper modules, private handler classes, parser internals, or documentation build tooling.
+- This specification does not require exact traceback frame-walking internals, exact stderr diagnostic wording for caught sink failures beyond the required exception type and message, or exact file names chosen for rotated files beyond the documented rotation, retention, and compression side effects.
+- This specification does not require direct construction of a concrete logger implementation class.
+- This specification does not require a console script entry point or `python -m loguru` invocation mode.
+- This specification does not require exact rich or text representation strings, exact log message wording, or private attribute layout.
 
-This specification covers observable behavior available through the public `loguru` import surface and the public logger object. It includes logger configuration, sink registration and removal, message emission, record contents, formatting, colors, serialization, file sinks, exception capture, context propagation, standard logging handler support, parsing helpers, and documented type-hint contracts.
+## Representative Workflows
 
-The concrete implementation classes, helper modules, parser internals, handler internals, and documentation build tooling are out of scope unless their behavior is visible through the public logger object.
+### Application Logging To Console And File
 
-## Installable Surface
+```python
+import sys
+from loguru import logger
 
-An installed implementation must provide a `loguru` package importable on Python. `from loguru import logger` must return a reusable logger object. `import loguru; loguru.logger` must refer to the same public logger object for normal imports in the same interpreter.
+logger.remove()
+logger.add(sys.stderr, level="INFO", format="console:{level.name}:{message}")
+logger.add("workflow.log", level="DEBUG", format="file:{level.name}:{extra[request]}:{message}")
+request_logger = logger.bind(request="r42")
+request_logger.debug("debug detail")
+request_logger.info("user visible")
+```
 
-The package must define `loguru.__version__` as a non-empty string.
+Console output must contain accepted high-level messages. The file must contain both debug and high-level messages with bound context visible in formatted output.
 
-The public package must not require users to instantiate a logger class before logging. A default stderr handler must be available at import time unless automatic initialization is disabled by environment configuration.
+### Library Quiet By Default
 
-## Public API
+```python
+from loguru import logger
 
-The logger object must provide these methods: `add()`, `remove()`, `complete()`, `catch()`, `opt()`, `bind()`, `contextualize()`, `patch()`, `level()`, `disable()`, `enable()`, `configure()`, `reinstall()`, `parse()`, `trace()`, `debug()`, `info()`, `success()`, `warning()`, `error()`, `critical()`, `exception()`, `log()`, `start()`, and `stop()`.
+logger.disable(__name__)
+logger.debug("internal detail")
+logger.enable(__name__)
+logger.add(lambda m: None, format="{message}")
+logger.debug("now visible")
+```
 
-`add()` must accept `sink` and keyword-only options `level`, `format`, `filter`, `colorize`, `serialize`, `backtrace`, `diagnose`, `enqueue`, `context`, `catch`, plus sink-specific options. It must return an integer handler id.
+Records from a disabled module namespace must be suppressed until that namespace is enabled and a sink accepts them.
 
-`catch()` must accept `exception`, `level`, `reraise`, `onerror`, `exclude`, `default`, and `message`. `opt()` must accept `exception`, `record`, `lazy`, `colors`, `raw`, `capture`, `depth`, and deprecated `ansi`. `configure()` must accept `handlers`, `levels`, `extra`, `patcher`, and `activation`. `parse()` must accept `file`, `pattern`, `cast`, and `chunk`.
+### Exception Guard
 
-`logger.add()` must accept these sink categories:
+```python
+from loguru import logger
 
-- Text streams such as `sys.stderr` and `sys.stdout`.
-- File path strings and path-like objects.
-- File-like objects with a `write()` method.
-- Callable sinks receiving a single message object.
-- Coroutine functions used as asynchronous sinks.
-- Standard `logging.Handler` instances.
+@logger.catch(default="fallback")
+def fail():
+    raise ValueError("bad")
 
-When the corresponding environment variables are not set before import, `logger.add()` defaults must be equivalent to `level="DEBUG"`, a human-readable format containing time, level, caller name, function, line, and message fields, `filter=None`, `colorize=None`, `serialize=False`, `backtrace=True`, `diagnose=True`, `enqueue=False`, `context=None`, and `catch=True`.
+result = fail()
+```
 
-`logger.start()` must behave as a deprecated alias of `logger.add()`. `logger.stop()` must behave as a deprecated alias of `logger.remove()`.
+The logger must emit an error record containing exception information. The decorated call must return the configured default when reraising is disabled and must raise the original exception when reraising is enabled.
 
-Severity methods must log at the named level implied by the method. `logger.log()` must accept a level name or a numeric severity. `logger.exception()` must attach the active exception information in the same way as `logger.opt(exception=True).error(...)`.
+### Async Sink Completion
 
-## Product State Model
+```python
+import asyncio
+from loguru import logger
 
-The logger maintains process-local mutable state:
+async def sink(message):
+    await asyncio.sleep(0)
 
-- A handler registry mapping integer handler ids to active sinks and their options.
-- A level registry mapping level names to severity numbers, colors, and icons.
-- A global `extra` mapping configured through `configure()`.
-- Logger views created by `bind()`, `patch()`, and `opt()`.
-- Context-local `extra` values installed by `contextualize()`.
-- Activation rules installed by `enable()`, `disable()`, and `configure(activation=...)`.
-- Queues and asynchronous tasks created for handlers using enqueueing or coroutine sinks.
+async def main():
+    logger.add(sink, format="{message}")
+    logger.info("async")
+    await logger.complete()
 
-Calling a logging method creates a record, merges logger state into that record, filters the record for each active handler, formats or serializes a message per handler, and writes the resulting message to each accepted sink. Removing or reconfiguring handlers affects subsequent records and must not rewrite already emitted messages.
+asyncio.run(main())
+```
 
-When multiple sources provide the same `record["extra"]` key, later sources must replace earlier values in this order: default `extra` configured by `configure(extra=...)`, then context-local values from `contextualize()`, then values from `bind()`, then captured keyword arguments from the logging call.
-
-The handler registry must use the current level registry when deciding whether a record reaches a sink. The context state must be reflected in the record state before filters, formatters, and sinks observe the record. Activation state must suppress disabled module records before any handler writes them.
+All accepted coroutine sink messages scheduled before completion must have finished before the await returns.
 
 ## Sink Registration And Message Emission
 
 `logger.add()` must register a handler and return an integer id unique among active handlers at the time it is returned. The handler must receive records whose level is greater than or equal to the handler threshold and whose filter accepts the record.
 
+`add()` must accept `sink` and keyword-only options `level`, `format`, `filter`, `colorize`, `serialize`, `backtrace`, `diagnose`, `enqueue`, `context`, and `catch`, plus sink-specific options. Supported sink categories include text streams, file path strings and path-like objects, file-like objects with a `write()` method, callable sinks, coroutine functions, and standard `logging.Handler` instances.
+
+When the corresponding environment variables are not set before import, `logger.add()` defaults must be equivalent to `level="DEBUG"`, a human-readable format containing time, level, caller name, function, line, and message fields, `filter=None`, `colorize=None`, `serialize=False`, `backtrace=True`, `diagnose=True`, `enqueue=False`, `context=None`, and `catch=True`.
+
 The `level` argument must accept a level name, a numeric severity, or a custom level previously registered through `level()`. A handler must reject records below its threshold.
 
-The `filter` argument must support:
+The `filter` argument must support `None`, a callable whose truth value selects the record, a string naming a module namespace, or a dictionary mapping module namespace names, `None`, or empty string to booleans or level thresholds.
 
-- `None`, meaning no extra filtering.
-- A callable that receives the record and whose truth value selects the record.
-- A string naming a module namespace accepted for records from that namespace.
-- A dictionary mapping module namespace names, `None`, or empty string to booleans or level thresholds.
-
-The `format` argument must support a format string or a callable receiving the record and returning a format string. Format strings must be applied with record fields and message arguments. Logging calls must use `{}` formatting with positional and keyword arguments supplied to the logging call. Ordinary formatted handler output must be terminated as one log line, so a handler format such as `{message}` writes or delivers the rendered message followed by a newline.
+The `format` argument must support a format string or a callable receiving the record and returning a format string. Format strings must be applied with record fields and message arguments. Logging calls must use `{}` formatting with positional and keyword arguments supplied to the logging call. Ordinary formatted handler output must be terminated as one log line.
 
 The message object passed to callable sinks must behave like a string and must expose a `.record` attribute containing the record dictionary used to produce the message.
 
-If `catch=True` for a handler, exceptions raised by that sink must be caught and reported to the fallback error stream without propagating to the logging call. The fallback report must include the sink exception type and exception message, while the exact diagnostic wording and traceback layout are not part of the contract. If `catch=False`, sink exceptions must propagate to the caller.
+If `catch=True` for a handler, exceptions raised by that sink must be caught and reported to the fallback error stream without propagating to the logging call. The fallback report must include the sink exception type and exception message. If `catch=False`, sink exceptions must propagate to the caller.
 
 `logger.remove(id)` must deactivate the matching handler. `logger.remove()` with no argument must remove all active handlers. Removing an unknown active id must raise `ValueError`; passing an invalid id type must raise `TypeError`.
 
+`logger.start()` must behave as a deprecated alias of `logger.add()`. `logger.stop()` must behave as a deprecated alias of `logger.remove()`.
+
+Severity methods must log at the named level implied by the method. `logger.log()` must accept a level name or a numeric severity. `logger.exception()` must attach the active exception information in the same way as `logger.opt(exception=True).error(...)`.
+
 ## Formatting, Records, Colors, And Serialization
 
-Every emitted record must include at least these keys:
+Every emitted record must include at least these keys: `elapsed`, `exception`, `extra`, `file`, `function`, `level`, `line`, `message`, `module`, `name`, `process`, `thread`, and `time`.
 
-`elapsed`, `exception`, `extra`, `file`, `function`, `level`, `line`, `message`, `module`, `name`, `process`, `thread`, and `time`.
-
-The `message` field must contain the formatted user message without handler prefix/suffix formatting. The `record["level"]` field must expose level name, numeric severity, and icon attributes. Level color information must be exposed by `logger.level(name)` and by configured level metadata, not by `record["level"]`. The `file`, `process`, and `thread` fields must expose named attributes documented by the type-hint contract.
+The `message` field must contain the formatted user message without handler prefix or suffix formatting. The `record["level"]` field must expose level name, numeric severity, and icon attributes. Level color information must be exposed by `logger.level(name)` and by configured level metadata, not by `record["level"]`. The `file`, `process`, and `thread` fields must expose named attributes documented by the type-hint contract.
 
 When `serialize=True`, the handler output must be a JSON text representation containing the rendered text and record information. The output must remain line-delimited for ordinary message emission.
 
-Color markup such as `<red>...</red>` must be interpreted when color handling is enabled for the handler or per-call option. Escaped tags must remain literal. Unknown or malformed markup in a color-enabled message must raise a value error before the message is written. When `colorize=None`, path sinks, standard `logging.Handler` sinks, callable sinks, coroutine sinks, and serialized handlers must behave as non-colorized handlers. Only file-like stream sinks must use automatic color detection: color markup is converted to ANSI codes when the stream is detected as color-capable and stripped otherwise. For standard output and standard error streams, a non-empty `NO_COLOR` environment variable must disable automatic colorization; a non-empty `FORCE_COLOR` environment variable must enable automatic colorization when `NO_COLOR` is not active.
+Color markup such as `<red>...</red>` must be interpreted when color handling is enabled for the handler or per-call option. Escaped tags must remain literal. Unknown or malformed markup in a color-enabled message must raise a value error before the message is written. When `colorize=None`, path sinks, standard `logging.Handler` sinks, callable sinks, coroutine sinks, and serialized handlers must behave as non-colorized handlers. Only file-like stream sinks must use automatic color detection: color markup is converted to ANSI codes when the stream is detected as color-capable (for example, when the stream reports `isatty()` as true) and stripped otherwise.
 
 `raw=True` in `opt()` must cause the emitted message text to bypass the handler format template and must not add an implicit line terminator beyond the raw message text. `record=True` must allow `{record[...]}` placeholders in the message format arguments. `lazy=True` must call argument callables only when at least one handler accepts the record.
 
@@ -142,8 +165,6 @@ When `enqueue=True`, records must be transferred through a queue before sink wri
 
 Coroutine sinks must schedule one task per accepted message on the configured or running event loop. A coroutine sink without an available usable loop must drop or report the task according to handler error handling and must not silently corrupt synchronous handlers.
 
-`logger.reinstall()` must restore handler usability after child-process interpreter setup that invalidates inherited queue or stream state.
-
 ## Exceptions And Standard Logging Interop
 
 `logger.catch()` must work as both a decorator and a context manager. It must catch exceptions matching the `exception` argument except those matching `exclude`, log a record at the requested level with the configured message, and then apply `reraise`, `default`, and `onerror` behavior. If `reraise=True`, the original exception must be raised after logging. If `default` is set for a decorated function and the exception is suppressed, that value must be returned.
@@ -160,30 +181,50 @@ Records emitted by standard `logging` and forwarded into Loguru by user-installe
 
 The parser must stream through the file in chunks and must produce matches spanning chunk boundaries when the pattern allows them.
 
-## Type Hints
+## State Model
 
-The project publishes type information for the public logger and associated record structures. Static type checkers must understand the `logger` object as a `Logger`-like value with the documented method signatures. The installed package must include a readable `loguru/__init__.pyi` type stub or equivalent package-local type information sufficient for static analysis.
+The logger maintains process-local mutable state:
 
-The documented type names `Logger`, `Message`, `Record`, `Level`, `Catcher`, `Contextualizer`, `AwaitableCompleter`, `RecordFile`, `RecordLevel`, `RecordThread`, `RecordProcess`, and `RecordException` describe the public typing contract. The `RecordLevel` typing contract must include name, numeric severity, and icon fields, and must not require a color field on message record level objects. Implementations do not need to expose each type name as a runtime import from `loguru` unless they choose to do so; runtime behavior remains centered on `logger`.
+- A handler registry mapping integer handler ids to active sinks and their options.
+- A level registry mapping level names to severity numbers, colors, and icons.
+- A global `extra` mapping configured through `configure()`.
+- Logger views created by `bind()`, `patch()`, and `opt()`.
+- Context-local `extra` values installed by `contextualize()`.
+- Activation rules installed by `enable()`, `disable()`, and `configure(activation=...)`.
+- Queues and asynchronous tasks created for handlers using enqueueing or coroutine sinks.
+
+Calling a logging method creates a record, merges logger state into that record, filters the record for each active handler, formats or serializes a message per handler, and writes the resulting message to each accepted sink. Removing or reconfiguring handlers affects subsequent records and must not rewrite already emitted messages.
+
+When multiple sources provide the same `record["extra"]` key, later sources must replace earlier values in this order: default `extra` configured by `configure(extra=...)`, then context-local values from `contextualize()`, then values from `bind()`, then captured keyword arguments from the logging call.
+
+The public projections of this state are:
+
+- Sink output delivered to registered handlers.
+- Record dictionaries exposed through callable sink message objects.
+- Serialized JSON output when `serialize=True`.
+- File contents written by path sinks, including rotated and compressed artifacts.
+- Standard `logging.LogRecord` objects delivered to registered standard handlers.
+- Parsed dictionaries yielded by `logger.parse()`.
+- Level metadata returned by `logger.level()`.
 
 ## Error Semantics
 
-| Operation | Condition | Required exception behavior |
-| --- | --- | --- |
-| `add()` | Sink object is not a supported sink category | Raise `TypeError` or `ValueError` before registering a handler. |
-| `add()` | Invalid level name, level number, filter, formatter, color option, queue context, or file option | Raise `TypeError` or `ValueError` before registering a handler. |
-| `add()` | Color-enabled format or message contains malformed markup | Raise `ValueError` before writing the malformed message. |
-| `remove()` | Handler id type is invalid | Raise `TypeError`. |
-| `remove()` | Handler id does not identify an active handler | Raise `ValueError`. |
-| `level()` | Unknown level is queried without creation parameters | Raise `ValueError`. |
-| `level()` | Level name, number, color, or icon is invalid | Raise `TypeError` or `ValueError`. |
-| Logging call | Message formatting fails because placeholders and arguments do not match | Raise `ValueError` to the caller. |
-| Logging call | Sink raises while handler has `catch=False` | Propagate the sink exception to the caller. |
-| Logging call | Sink raises while handler has `catch=True` | Do not propagate the sink exception; report the sink failure to the fallback error stream with the exception type and message. |
-| `catch()` | Suppressed exception matches `exclude` | Do not suppress it; raise the original exception. |
-| `parse()` | File path is not openable or readable | Propagate the underlying file or I/O exception. |
-| `parse()` | File argument is neither a path nor a readable file object | Raise `TypeError`. |
-| `parse()` | Pattern is neither a string, bytes pattern, nor compiled regular expression object compatible with the input stream type | Raise `TypeError`. |
+| Condition | Required result |
+| --- | --- |
+| `add()` sink object is not a supported sink category | Raise `TypeError` or `ValueError` before registering a handler |
+| `add()` invalid level name, level number, filter, formatter, color option, queue context, or file option | Raise `TypeError` or `ValueError` before registering a handler |
+| `add()` color-enabled format or message contains malformed markup | Raise `ValueError` before writing the malformed message |
+| `remove()` handler id type is invalid | Raise `TypeError` |
+| `remove()` handler id does not identify an active handler | Raise `ValueError` |
+| `level()` unknown level is queried without creation parameters | Raise `ValueError` |
+| `level()` level name, number, color, or icon is invalid | Raise `TypeError` or `ValueError` |
+| Logging call message formatting fails because placeholders and arguments do not match | Raise `IndexError` to the caller |
+| Logging call sink raises while handler has `catch=False` | Propagate the sink exception to the caller |
+| Logging call sink raises while handler has `catch=True` | Do not propagate; report sink failure to fallback error stream with exception type and message |
+| `catch()` suppressed exception matches `exclude` | Do not suppress it; raise the original exception |
+| `parse()` file path is not openable or readable | Propagate the underlying file or I/O exception |
+| `parse()` file argument is neither a path nor a readable file object | Raise `TypeError` |
+| `parse()` pattern is neither a string, bytes pattern, nor compiled regular expression object compatible with the input stream type | Raise `TypeError` |
 
 ## Cross-View Invariants
 
@@ -200,52 +241,60 @@ The documented type names `Logger`, `Message`, `Record`, `Level`, `Catcher`, `Co
 11. `logger.configure(handlers=[...])` must replace the handler set atomically from the caller viewpoint: subsequent records use the new handler set.
 12. The type-hint record shape must match keys present in message `.record` objects passed to callable sinks.
 
-## Representative Workflows
+## Public Interface
 
-### Application Logging To Console And File
+### Import Surface
 
-An application imports `logger`, removes the default stderr handler, adds a colorized console sink at `INFO`, adds a rotating file sink at `DEBUG`, binds a request id, and emits messages. Console output must contain accepted high-level messages. The file must contain both debug and high-level messages and must rotate when the configured size or time rule is reached.
+The package is installed as `loguru`.
 
-### Library Quiet By Default
+```python
+import loguru
+from loguru import logger
+```
 
-A library imports `logger`, calls `disable(__name__)`, and logs internally. Applications that do not enable the library namespace must not receive those records. An application that later calls `enable()` for that namespace and registers a sink must receive subsequent records.
+Advanced users may import documented type names from the package stub when available. Runtime behavior remains centered on `logger`.
 
-### Exception Guard
+### API Catalog
 
-A function decorated with `logger.catch(default=...)` raises a matching exception. The logger must emit an error record containing exception information. The decorated call must return the configured default when reraising is disabled and must raise the original exception when reraising is enabled.
+| Name | Kind | Role |
+| --- | --- | --- |
+| logger | object | Pre-instanced public logger |
+| __version__ | constant | Package version string |
+| add | method | Register a sink handler and return its id |
+| remove | method | Deactivate one or all handlers |
+| complete | method | Drain queued records and return an awaitable completer |
+| catch | method | Decorator or context manager for exception logging |
+| opt | method | Return a logger view with per-call options |
+| bind | method | Return a logger view with bound extra values |
+| contextualize | method | Context manager or decorator for context-local extra |
+| patch | method | Return a logger view with a record patcher |
+| level | method | Query or register a log level |
+| disable | method | Suppress records from a module namespace |
+| enable | method | Re-enable records from a module namespace |
+| configure | method | Replace handlers, levels, extra, patcher, or activation |
+| parse | method | Parse log files with regular expressions |
+| trace | method | Emit a TRACE record |
+| debug | method | Emit a DEBUG record |
+| info | method | Emit an INFO record |
+| success | method | Emit a SUCCESS record |
+| warning | method | Emit a WARNING record |
+| error | method | Emit an ERROR record |
+| critical | method | Emit a CRITICAL record |
+| exception | method | Emit an ERROR record with active exception info |
+| log | method | Emit a record at a named or numeric level |
+| start | method | Deprecated alias of add |
+| stop | method | Deprecated alias of remove |
 
-### Async Sink Completion
+Documented type names include `Logger`, `Message`, `Record`, `Level`, `Catcher`, `Contextualizer`, `AwaitableCompleter`, `RecordFile`, `RecordLevel`, `RecordThread`, `RecordProcess`, and `RecordException`. The installed package must include readable package-local type information such as `loguru/__init__.pyi`.
 
-An application registers a coroutine sink, emits messages inside an event loop, calls `logger.complete()`, awaits the returned object, and then inspects the sink side effects. All accepted coroutine sink messages scheduled before completion must have finished before the await returns.
+## Appendix A: Environment
 
-### Parsing Generated Logs
+The working environment runs Python 3.11 on Linux without network access. The following third-party packages are preinstalled and importable: `loguru`, `pytest`.
 
-An application writes structured text logs to a file and then calls `logger.parse()` with named groups and cast functions. The parser must yield dictionaries containing the captured and converted values in file order.
+The assessment environment provides the same interpreter and package set.
 
-## Non-Goals
+The project must declare its packaging metadata in a standard `pyproject.toml` (or `setup.py`) at the project root so the package can be installed with pip.
 
-This specification does not require compatibility with private helper modules, private handler classes, concrete parser internals, documentation generation, external artifacts, exact traceback frame-walking internals, exact stderr diagnostic wording for caught sink failures beyond the required exception type and message, or exact file names chosen for rotated files beyond the documented rotation, retention, and compression side effects.
+## Appendix B: Assessment Notes
 
-Direct construction of a concrete logger implementation class is not required. Users must interact with the pre-instanced `logger` object.
-
-## Invocation Protocol
-
-User code must import and exercise the package as an installed Python package with `import loguru` or `from loguru import logger`.
-
-The package does not provide a console script entry point. Running `python -m loguru` is not a supported invocation mode; the package is a library import surface rather than a command-line application.
-
-| Invocation | Required behavior |
-| --- | --- |
-| `import loguru` | Import succeeds and exposes the public module attributes. |
-| `from loguru import logger` | Import succeeds and returns the pre-instanced logger object. |
-| `python -m loguru` | Not supported as a public interface; no success exit-code contract is provided. |
-
-Code that needs isolated global logger state must remove handlers it adds and restore the desired defaults. Code that writes files must choose its own writable paths. Code involving queues or asynchronous sinks must call `logger.complete()` before checking sink side effects.
-
-## Environment
-
-The implementation is allowed to use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
-
-## Evaluation Notes
-
-Checks focus on observable public behavior: return values, emitted sink contents, file side effects, context isolation, asynchronous completion, and exception types. Checks avoid private class names, private module paths, exact diagnostic wording, and implementation-specific representations.
+Implementations are exercised through public Python APIs. The checks cover handler registration and removal, message emission, record contents, formatting, colors, serialization, context propagation, patching, level management, activation rules, configuration, file sinks, rotation and compression, asynchronous completion, exception capture, standard logging interoperability, and log parsing. Tests use temporary files and in-memory sinks instead of live network services. The focus is on observable behavior from the public contract above, not private data structures or exact textual representations.

@@ -95,9 +95,9 @@ When ordering is enabled, ordering comparisons must use participating fields in 
 
 Hash behavior must follow the decorator options. Frozen value classes with equality enabled must be hashable unless options request otherwise. Mutable classes with equality enabled must be unhashable unless unsafe hash behavior is requested.
 
-When `slots=True`, instances must not have a normal per-instance `__dict__` for declared fields. When `slots=False`, instances must support normal attribute dictionaries. `attrs.define`, `attrs.mutable`, and `attrs.frozen` default to `slots=True`.
+`attrs.define`, `attrs.mutable`, and `attrs.frozen` must accept the documented `slots` option and default it to `True`. The exact instance storage layout is not part of this contract.
 
-When `match_args=True`, generated classes must expose `__match_args__` for positional pattern matching using initializer fields in order, excluding keyword-only fields.
+When `match_args=True`, positional structural pattern matching must use initializer fields in declaration order and must exclude keyword-only fields.
 
 ## Assignment, Frozen Classes, and Setters
 
@@ -269,6 +269,10 @@ The package is used as an importable Python library. There is no console script 
 
 When public APIs succeed, they must return the documented value or mutate the documented public state. When public APIs reject invalid input, they must raise the documented exception type. Importing public namespaces must not print to stdout or stderr.
 
-## Implementation Guidance
+## Environment
 
-Tests exercise the public behavior described here by importing `attrs` and `attr`, defining classes, instantiating them, inspecting fields, converting instances to collections, applying validators and converters, assigning attributes, creating frozen instances, evolving instances, and checking namespace compatibility. They avoid private modules, private helper functions, exact internal object layouts, and exact exception message wording.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
+## Evaluation Notes
+
+Assessment exercises individual field declarations and validators, interactions among initialization, conversion, validation, assignment, and collection conversion, and complete class-definition workflows. It observes only the documented `attrs`, `attr`, and shared-submodule interfaces. Private modules, generated source text, helper class names, exact internal layouts, exact error wording, and exact object representation are not assessed.

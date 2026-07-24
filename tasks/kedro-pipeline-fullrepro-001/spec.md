@@ -28,6 +28,7 @@ from kedro.io import AbstractDataset, DataCatalog, MemoryDataset
 from kedro.io import DatasetError, DatasetNotFoundError, DatasetAlreadyExistsError
 from kedro.config import AbstractConfigLoader, BadConfigException, MissingConfigException, OmegaConfigLoader
 from kedro.framework.session import KedroSession
+from kedro.framework.startup import ProjectMetadata, bootstrap_project
 from kedro.runner import SequentialRunner
 ```
 
@@ -177,6 +178,8 @@ When a node raises, its downstream nodes must not execute and the original excep
 
 ## Session Execution
 
+`bootstrap_project(project_path) -> ProjectMetadata` must locate `pyproject.toml`, read the `[tool.kedro]` project metadata, add the configured source directory to Python's import path, and configure the named project package. It must be called before direct `KedroSession` use in a fresh Python process. The `kedro` command performs this bootstrap automatically when it recognizes a project.
+
 ```python
 KedroSession.create(
     project_path=None,
@@ -281,6 +284,7 @@ conf_loader = OmegaConfigLoader(
     runtime_params={"example": 1},
 )
 
+bootstrap_project(Path.cwd())
 with KedroSession.create(
     project_path=Path.cwd(),
     runtime_params={"example": 2},
@@ -304,6 +308,10 @@ This specification excludes project creation from starters, cookiecutter templat
 | `kedro run` outside a Kedro project | supported failure | exits non-zero and reports that project commands require a project |
 | `python -m kedro run` inside a Kedro project | supported | follows the same project command behavior as the console script |
 
-## Implementation Guidance
+## Environment
 
-Validation exercises the public behavior described above from multiple entry points. It checks import paths, node and pipeline graph construction, graph filtering, catalog mapping behavior, in-memory dataset state changes, configuration loading and merge rules, `KedroSession.run`, `kedro run` option mapping, and consistency between API-visible graph state, catalog state, configuration values, and run outputs. Scoring is based on observable behavior, public exceptions, and cross-view consistency rather than internal helper names, private attributes, or exact terminal styling.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment. Project, catalog, and configuration workflows use local temporary directories and in-memory datasets.
+
+## Evaluation Notes
+
+Assessment covers the documented imports, graph construction and filtering, catalog behavior, dataset state, configuration merges, session execution, command option mapping, and agreement among graph, catalog, configuration, and run outputs. Internal helper names, private attributes, exact log prose, and terminal styling are outside the contract.

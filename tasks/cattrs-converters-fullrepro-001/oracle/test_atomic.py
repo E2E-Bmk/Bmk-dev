@@ -1,4 +1,8 @@
-# Spec2Repo oracle - atomic tests for cattrs-converters-fullrepro-001
+"""Atomic tests for cattrs-converters-fullrepro-001.
+
+Each test verifies ONE public API entry point, ONE behavior.
+"""
+
 from collections import OrderedDict, deque
 from dataclasses import dataclass
 from enum import Enum
@@ -22,379 +26,388 @@ from cattrs import (
 from cattrs.gen import make_dict_structure_fn, make_dict_unstructure_fn
 
 
-def test_public_surface_exports_converter_core_names():
-    expected = {
-        "Converter",
-        "BaseConverter",
-        "GenConverter",
-        "UnstructureStrategy",
-        "structure",
-        "unstructure",
-        "override",
-        "transform_error",
-        "ClassValidationError",
-        "IterableValidationError",
-        "ForbiddenExtraKeysError",
-    }
-
-    assert expected <= set(cattrs.__all__)
-    for name in expected:
-        assert hasattr(cattrs, name)
+# --- Primitive structuring ---
 
 
-def test_converter_constructs_with_documented_defaults():
-    converter = Converter()
-
-    assert converter.unstruct_strat is UnstructureStrategy.AS_DICT
-    assert converter.structure("7", int) == 7
+def test_structure_int_from_string():
+    assert cattrs.structure("12", int) == 12
 
 
-def test_primitive_structure_coerces_with_target_type():
-    converter = Converter()
-
-    assert converter.structure("5", int) == 5
-    assert converter.structure(5, str) == "5"
-    assert converter.structure("2.5", float) == 2.5
+def test_structure_float_from_string():
+    assert cattrs.structure("3.14", float) == 3.14
 
 
-def test_primitive_structure_propagates_conversion_failure():
+def test_structure_str_from_int():
+    assert cattrs.structure(99, str) == "99"
+
+
+def test_structure_invalid_int_raises_value_error():
     with pytest.raises(ValueError):
-        cattrs.structure("not-an-int", int)
+        cattrs.structure("not-a-number", int)
 
 
-def test_any_structure_returns_original_object():
-    payload = {"a": [1, 2]}
+# --- Any / Optional / Literal ---
 
+
+def test_structure_any_returns_unchanged():
+    payload = {"nested": [1, 2]}
     assert cattrs.structure(payload, Any) is payload
 
 
-def test_optional_accepts_none_and_structures_present_value():
+def test_structure_optional_none():
     assert cattrs.structure(None, Optional[int]) is None
-    assert cattrs.structure("4", Optional[int]) == 4
+
+
+def test_structure_optional_value():
+    assert cattrs.structure("7", Optional[int]) == 7
+
+
+def test_structure_union_none_syntax():
     assert cattrs.structure(None, int | None) is None
+    assert cattrs.structure("5", int | None) == 5
 
 
-def test_literal_accepts_member_and_rejects_non_member():
-    assert cattrs.structure("red", Literal["red", "blue"]) == "red"
-
-    with pytest.raises(Exception) as exc:
-        cattrs.structure("green", Literal["red", "blue"])
-    assert exc.value.__class__.__module__.startswith("cattrs")
+def test_structure_literal_accepted_value():
+    assert cattrs.structure("active", Literal["active", "inactive"]) == "active"
 
 
-def test_list_structure_accepts_any_iterable_and_converts_elements():
+def test_structure_literal_rejected_value():
+    with pytest.raises((ValueError, TypeError, ClassValidationError)):
+        cattrs.structure("unknown", Literal["active", "inactive"])
+
+
+# --- Collections ---
+
+
+def test_structure_list_from_tuple_input():
     assert cattrs.structure(("1", 2, 3.0), list[int]) == [1, 2, 3]
 
 
-def test_homogeneous_tuple_structure_converts_each_element():
-    assert cattrs.structure(["1", 2, 3.0], tuple[int, ...]) == (1, 2, 3)
+def test_structure_homogeneous_tuple():
+    assert cattrs.structure(["1", "2", "3"], tuple[int, ...]) == (1, 2, 3)
 
 
-def test_heterogeneous_tuple_structure_uses_position_types():
-    assert cattrs.structure(["1", 2, "3.5"], tuple[int, str, float]) == (
-        1,
-        "2",
-        3.5,
-    )
+def test_structure_heterogeneous_tuple():
+    assert cattrs.structure(["1", 2, "3.5"], tuple[int, str, float]) == (1, "2", 3.5)
 
 
-def test_heterogeneous_tuple_length_mismatch_fails():
+def test_structure_heterogeneous_tuple_length_mismatch():
     with pytest.raises(IterableValidationError):
         cattrs.structure(["1"], tuple[int, str])
 
 
-def test_sets_and_frozensets_structure_to_expected_collection_type():
+def test_structure_set_deduplicates():
     assert cattrs.structure(["1", "2", "2"], set[int]) == {1, 2}
-    assert cattrs.structure(["1", "2"], frozenset[int]) == frozenset({1, 2})
 
 
-def test_mapping_structure_converts_keys_and_values():
+def test_structure_frozenset():
+    assert cattrs.structure(["3", "4"], frozenset[int]) == frozenset({3, 4})
+
+
+def test_structure_mapping_converts_keys_and_values():
     result = cattrs.structure(OrderedDict([(1, "2"), (3, "4")]), dict[str, int])
-
     assert result == {"1": 2, "3": 4}
 
 
-def test_missing_required_attrs_field_raises_class_validation_error():
+# --- Enum ---
+
+
+def test_structure_enum_from_value():
+    class Status(Enum):
+        ACTIVE = "active"
+        PAUSED = "paused"
+
+    assert cattrs.structure("active", Status) is Status.ACTIVE
+
+
+def test_unstructure_enum_to_value():
+    class Status(Enum):
+        ACTIVE = "active"
+        PAUSED = "paused"
+
+    assert cattrs.unstructure(Status.PAUSED) == "paused"
+
+
+# --- Class structuring ---
+
+
+def test_structure_attrs_class_from_dict():
     @define
-    class Model:
+    class Item:
+        count: int
+
+    assert cattrs.structure({"count": "5"}, Item) == Item(5)
+
+
+def test_structure_missing_required_field_raises_class_validation_error():
+    @define
+    class Item:
         required: int
 
     with pytest.raises(ClassValidationError):
-        cattrs.structure({}, Model)
+        cattrs.structure({}, Item)
 
 
-def test_unknown_keys_are_ignored_by_default_for_attrs_classes():
+def test_structure_ignores_unknown_keys_by_default():
     @define
-    class Model:
-        value: int = 1
+    class Item:
+        v: int = 1
 
-    assert cattrs.structure({"value": "2", "extra": "ignored"}, Model) == Model(2)
+    assert cattrs.structure({"v": "2", "extra": "x"}, Item) == Item(2)
 
 
-def test_forbid_extra_keys_groups_public_error():
+def test_structure_attrs_fromtuple():
     @define
-    class Model:
-        value: int = 1
+    class Pair:
+        a: int
+        b: str
 
-    converter = Converter(forbid_extra_keys=True)
-
-    with pytest.raises(ClassValidationError) as exc:
-        converter.structure({"value": 2, "extra": 3}, Model)
-
-    assert any(isinstance(sub, ForbiddenExtraKeysError) for sub in exc.value.exceptions)
+    assert cattrs.structure_attrs_fromtuple(["7", 8], Pair) == Pair(7, "8")
 
 
-def test_structure_attrs_fromtuple_uses_field_order():
-    @define
-    class Model:
-        left: int
-        right: str
-
-    assert cattrs.structure_attrs_fromtuple(["1", 2], Model) == Model(1, "2")
-
-
-def test_attrs_unstructure_defaults_to_dictionary():
-    @define
-    class Model:
-        count: int
-        labels: list[int]
-
-    assert cattrs.unstructure(Model(1, [2, 3])) == {"count": 1, "labels": [2, 3]}
-
-
-def test_dataclass_unstructure_defaults_to_dictionary():
+def test_structure_dataclass_from_dict():
     @dataclass
-    class Model:
+    class Record:
         count: int
-        pair: tuple[int, str]
+        label: str
 
-    assert cattrs.unstructure(Model(1, (2, "3"))) == {"count": 1, "pair": (2, "3")}
+    assert cattrs.structure({"count": "3", "label": 4}, Record) == Record(3, "4")
 
 
-def test_as_tuple_strategy_unstructures_attrs_class_to_tuple():
+# --- Unstructuring ---
+
+
+def test_unstructure_attrs_class_to_dict():
     @define
-    class Model:
-        count: int
-        labels: list[int]
+    class Item:
+        value: int
+        tags: list[int]
+
+    assert cattrs.unstructure(Item(1, [2, 3])) == {"value": 1, "tags": [2, 3]}
+
+
+def test_unstructure_dataclass_to_dict():
+    @dataclass
+    class Item:
+        value: int
+
+    assert cattrs.unstructure(Item(5)) == {"value": 5}
+
+
+def test_unstructure_as_tuple_strategy():
+    @define
+    class Item:
+        a: int
+        b: str
 
     converter = Converter(unstruct_strat=UnstructureStrategy.AS_TUPLE)
+    assert converter.unstructure(Item(1, "x")) == (1, "x")
 
-    assert converter.unstructure(Model(1, [2])) == (1, [2])
 
-
-def test_deque_unstructures_to_list_with_converter():
+def test_unstructure_deque_to_list():
     assert Converter().unstructure(deque([1, 2, 3])) == [1, 2, 3]
 
 
-def test_explicit_structure_hook_overrides_default_for_type():
+# --- Hook registration ---
+
+
+def test_register_structure_hook_overrides_default():
     converter = Converter()
-    converter.register_structure_hook(int, lambda value, _: int(value) + 10)
+    converter.register_structure_hook(int, lambda v, _: int(v) + 50)
 
-    assert converter.structure("5", int) == 15
+    assert converter.structure("3", int) == 53
 
 
-def test_explicit_unstructure_hook_overrides_default_for_type():
+def test_register_unstructure_hook_overrides_default():
     converter = Converter()
-    converter.register_unstructure_hook(int, lambda value: f"int:{value}")
+    converter.register_unstructure_hook(int, lambda v: f"n:{v}")
 
-    assert converter.unstructure(4) == "int:4"
+    assert converter.unstructure(7) == "n:7"
 
 
 def test_structure_hook_decorator_infers_return_type():
     converter = Converter()
 
     @converter.register_structure_hook
-    def parse_int(value, _) -> int:
+    def hook(value, _) -> int:
         return int(value) + 1
 
-    assert converter.structure("4", int) == 5
+    assert converter.structure("9", int) == 10
 
 
-def test_unstructure_hook_decorator_infers_first_argument_type():
+def test_unstructure_hook_decorator_infers_argument_type():
     converter = Converter()
 
     @converter.register_unstructure_hook
-    def dump_int(value: int) -> str:
-        return f"dump:{value}"
+    def hook(value: int) -> str:
+        return f"v:{value}"
 
-    assert converter.unstructure(9) == "dump:9"
+    assert converter.unstructure(4) == "v:4"
 
 
-def test_structure_hook_func_applies_predicate_rule():
+def test_structure_hook_func_uses_predicate():
     UserId = NewType("UserId", int)
     converter = Converter()
     converter.register_structure_hook_func(
-        lambda target: target is UserId, lambda value, _: UserId(int(value) + 1)
+        lambda t: t is UserId, lambda v, _: UserId(int(v) + 5)
     )
 
-    assert converter.structure("41", UserId) == UserId(42)
+    assert converter.structure("10", UserId) == UserId(15)
 
 
-def test_unstructure_hook_func_applies_predicate_rule():
-    UserId = NewType("UserId2", int)
+def test_unstructure_hook_func_uses_predicate():
+    TagId = NewType("TagId", int)
     converter = Converter()
     converter.register_unstructure_hook_func(
-        lambda target: target is UserId, lambda value: f"user:{int(value)}"
+        lambda t: t is TagId, lambda v: f"tag:{v}"
     )
 
-    assert converter.unstructure(UserId(7), unstructure_as=UserId) == "user:7"
+    assert converter.unstructure(TagId(3), unstructure_as=TagId) == "tag:3"
 
 
-def test_override_omit_skips_field_when_unstructuring():
+# --- Hook lookup ---
+
+
+def test_get_structure_hook_returns_callable():
     @define
-    class Model:
-        value: int
+    class Item:
+        v: int
 
-    converter = Converter()
-    converter.register_unstructure_hook(
-        Model, make_dict_unstructure_fn(Model, converter, value=override(omit=True))
-    )
-
-    assert converter.unstructure(Model(5)) == {}
+    hook = cattrs.get_structure_hook(Item)
+    assert callable(hook)
 
 
-def test_override_omit_skips_input_field_when_default_exists():
-    @define
-    class Model:
-        value: int = 3
-
-    converter = Converter()
-    converter.register_structure_hook(
-        Model, make_dict_structure_fn(Model, converter, value=override(omit=True))
-    )
-
-    assert converter.structure({"value": "99"}, Model) == Model(3)
-
-
-def test_omit_if_default_skips_default_factory_value():
-    @define
-    class Model:
-        value: int
-        tags: list[int] = Factory(list)
-
-    converter = Converter()
-    converter.register_unstructure_hook(
-        Model,
-        make_dict_unstructure_fn(
-            Model, converter, tags=override(omit_if_default=True)
-        ),
-    )
-
-    assert converter.unstructure(Model(1)) == {"value": 1}
-    assert converter.unstructure(Model(1, [2])) == {"value": 1, "tags": [2]}
-
-
-def test_class_level_omit_if_default_can_be_disabled_per_field():
-    @define
-    class Model:
-        value: int = 1
-        keep: int = 2
-
-    converter = Converter()
-    converter.register_unstructure_hook(
-        Model,
-        make_dict_unstructure_fn(
-            Model,
-            converter,
-            _cattrs_omit_if_default=True,
-            keep=override(omit_if_default=False),
-        ),
-    )
-
-    assert converter.unstructure(Model()) == {"keep": 2}
-
-
-def test_converter_omit_if_default_sets_generated_default_behavior():
-    @define
-    class Model:
-        value: int = 1
-        tags: list[int] = Factory(list)
-
-    converter = Converter(omit_if_default=True)
-
-    assert converter.unstructure(Model()) == {}
-    assert converter.unstructure(Model(2, [])) == {"value": 2}
-
-
-def test_override_struct_hook_controls_single_field():
-    @define
-    class Model:
-        value: int
-
-    converter = Converter()
-    converter.register_structure_hook(
-        Model,
-        make_dict_structure_fn(
-            Model, converter, value=override(struct_hook=lambda value, _: int(value) + 4)
-        ),
-    )
-
-    assert converter.structure({"value": "6"}, Model) == Model(10)
-
-
-def test_override_unstruct_hook_controls_single_field():
-    @define
-    class Model:
-        value: int
-
-    converter = Converter()
-    converter.register_unstructure_hook(
-        Model,
-        make_dict_unstructure_fn(
-            Model, converter, value=override(unstruct_hook=lambda value: value + 4)
-        ),
-    )
-
-    assert converter.unstructure(Model(6)) == {"value": 10}
-
-
-def test_non_detailed_validation_raises_first_underlying_error():
-    @define
-    class Model:
-        value: int
-
-    converter = Converter(detailed_validation=False)
-
-    with pytest.raises(ValueError):
-        converter.structure({"value": "not-an-int"}, Model)
-
-
-def test_iterable_validation_error_is_public_error_group():
-    with pytest.raises(IterableValidationError) as exc:
-        cattrs.structure(["x"], list[int])
-
-    assert isinstance(exc.value, BaseValidationError)
-
-
-def test_mapping_validation_error_transform_path_contains_key():
-    with pytest.raises(IterableValidationError) as exc:
-        cattrs.structure({"bad": "x"}, dict[str, int])
-
-    assert "invalid value for type, expected int @ $['bad']" in transform_error(
-        exc.value
-    )
-
-
-def test_forbidden_extra_key_error_exposes_class_and_extra_fields():
-    @define
-    class Model:
-        value: int
-
-    converter = Converter(forbid_extra_keys=True)
-
-    with pytest.raises(ClassValidationError) as exc:
-        converter.structure({"value": 1, "extra": 2}, Model)
-
-    [extra] = [sub for sub in exc.value.exceptions if isinstance(sub, ForbiddenExtraKeysError)]
-    assert extra.cl is Model
-    assert extra.extra_fields == {"extra"}
-
-
-def test_missing_structure_handler_raises_public_exception():
-    class Unsupported:
+def test_get_structure_hook_missing_type_raises():
+    class Unknown:
         pass
 
     converter = Converter()
-
     with pytest.raises(StructureHandlerNotFoundError):
-        converter.get_structure_hook(Unsupported)
+        converter.get_structure_hook(Unknown)
+
+
+# --- Converter construction ---
+
+
+def test_converter_default_strategy_is_as_dict():
+    converter = Converter()
+    assert converter.unstruct_strat is UnstructureStrategy.AS_DICT
+
+
+def test_forbid_extra_keys_converter_raises_on_extra():
+    @define
+    class Item:
+        v: int = 0
+
+    converter = Converter(forbid_extra_keys=True)
+    with pytest.raises(ClassValidationError) as exc:
+        converter.structure({"v": 1, "extra": 2}, Item)
+
+    assert any(isinstance(e, ForbiddenExtraKeysError) for e in exc.value.exceptions)
+
+
+def test_non_detailed_validation_raises_first_error():
+    @define
+    class Item:
+        v: int
+
+    converter = Converter(detailed_validation=False)
+    with pytest.raises(ValueError):
+        converter.structure({"v": "bad"}, Item)
+
+
+# --- Override in generated hooks ---
+
+
+def test_override_omit_skips_field_during_unstructure():
+    @define
+    class Item:
+        v: int
+
+    converter = Converter()
+    converter.register_unstructure_hook(
+        Item, make_dict_unstructure_fn(Item, converter, v=override(omit=True))
+    )
+
+    assert converter.unstructure(Item(5)) == {}
+
+
+def test_override_omit_skips_input_during_structure():
+    @define
+    class Item:
+        v: int = 7
+
+    converter = Converter()
+    converter.register_structure_hook(
+        Item, make_dict_structure_fn(Item, converter, v=override(omit=True))
+    )
+
+    assert converter.structure({"v": "99"}, Item) == Item(7)
+
+
+def test_override_omit_if_default_skips_default_value():
+    @define
+    class Item:
+        v: int
+        tags: list[int] = Factory(list)
+
+    converter = Converter()
+    converter.register_unstructure_hook(
+        Item, make_dict_unstructure_fn(Item, converter, tags=override(omit_if_default=True))
+    )
+
+    assert converter.unstructure(Item(1)) == {"v": 1}
+    assert converter.unstructure(Item(1, [2])) == {"v": 1, "tags": [2]}
+
+
+def test_override_struct_hook_per_field():
+    @define
+    class Item:
+        v: int
+
+    converter = Converter()
+    converter.register_structure_hook(
+        Item, make_dict_structure_fn(
+            Item, converter, v=override(struct_hook=lambda v, _: int(v) + 7)
+        )
+    )
+
+    assert converter.structure({"v": "3"}, Item) == Item(10)
+
+
+def test_override_unstruct_hook_per_field():
+    @define
+    class Item:
+        v: int
+
+    converter = Converter()
+    converter.register_unstructure_hook(
+        Item, make_dict_unstructure_fn(
+            Item, converter, v=override(unstruct_hook=lambda v: v * 2)
+        )
+    )
+
+    assert converter.unstructure(Item(5)) == {"v": 10}
+
+
+# --- Validation errors ---
+
+
+def test_iterable_validation_error_is_base_validation_subclass():
+    with pytest.raises(IterableValidationError) as exc:
+        cattrs.structure(["bad"], list[int])
+
+    assert isinstance(exc.value, BaseValidationError)
+    assert len(transform_error(exc.value)) >= 1
+
+
+def test_class_validation_error_is_base_validation_subclass():
+    @define
+    class Item:
+        v: int
+
+    with pytest.raises(ClassValidationError) as exc:
+        cattrs.structure({"v": "bad"}, Item)
+
+    assert isinstance(exc.value, BaseValidationError)
+    assert any("$.v" in path for path in transform_error(exc.value))

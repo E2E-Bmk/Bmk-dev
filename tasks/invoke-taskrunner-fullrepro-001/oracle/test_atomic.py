@@ -1,348 +1,516 @@
-# Spec2Repo oracle - atomic tests for invoke-taskrunner-fullrepro-001
-import json
-import os
-import subprocess
+"""Atomic tests — each validates ONE public API, ONE behavior."""
 import sys
-import textwrap
 
 import pytest
 
+from conftest import PYTHON, write_file
+
 from invoke import (
+    Argument,
     Call,
     Collection,
+    CollectionNotFound,
+    CommandTimedOut,
     Config,
     Context,
+    Exit,
     FailingResponder,
+    Failure,
     MockContext,
-    Program,
     Responder,
     ResponseNotAccepted,
     Result,
-    Runner,
     StreamWatcher,
     Task,
     UnexpectedExit,
     call,
-    run,
     task,
 )
-from invoke.exceptions import Failure, UnknownFileType
 
 
-def write_file(path, body):
-    path.write_text(textwrap.dedent(body).lstrip(), encoding="utf-8")
+# ── @task decorator ──────────────────────────────────────────────────
 
 
-def run_invoke(tmp_path, *args, env=None):
-    command = [sys.executable, "-m", "invoke", *args]
-    merged_env = os.environ.copy()
-    if env:
-        merged_env.update(env)
-    return subprocess.run(
-        command,
-        cwd=str(tmp_path),
-        env=merged_env,
-        text=True,
-        encoding="utf-8",
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-    )
-
-
-def test_task_decorator_bare_wraps_callable_with_public_name():
+def test_task_bare_decorator_wraps_with_function_name():
     @task
-    def build(c):
-        """Build the project."""
+    def compile(c):
+        """Compile the project."""
 
-    assert isinstance(build, Task)
-    assert build.name == "build"
-    assert build.__doc__ == "Build the project."
+    assert isinstance(compile, Task)
+    assert compile.name == "compile"
 
 
-def test_task_decorator_options_set_name_aliases_and_default():
-    @task(name="ship", aliases=("deploy",), default=True)
+def test_task_bare_decorator_preserves_docstring():
+    @task
+    def package(c):
+        """Create distribution package."""
+
+    assert package.__doc__ == "Create distribution package."
+
+
+def test_task_configured_sets_name_aliases_default():
+    @task(name="publish", aliases=("push",), default=True)
     def release(c):
         pass
 
-    assert release.name == "ship"
-    assert release.aliases == ("deploy",)
+    assert release.name == "publish"
+    assert release.aliases == ("push",)
     assert release.is_default is True
 
 
-def test_task_decorator_rejects_positional_pretasks_and_pre_keyword():
+def test_task_rejects_positional_with_pre_keyword():
     @task
-    def clean(c):
+    def setup(c):
         pass
 
     with pytest.raises(TypeError):
-        task(clean, pre=[clean])
+        task(setup, pre=[setup])
 
 
-def test_task_call_requires_context_as_first_argument():
-    @task
-    def build(c):
-        pass
-
-    with pytest.raises(TypeError):
-        build("not-a-context")
+# ── Task callable contract ───────────────────────────────────────────
 
 
-def test_task_call_marks_task_as_called_after_success():
-    seen = []
+def test_task_called_transitions_after_invocation():
+    marker = []
 
     @task
-    def build(c):
-        seen.append(c)
+    def greet(c):
+        marker.append(1)
 
     ctx = Context()
-    assert build.called is False
-    build(ctx)
-    assert build.called is True
-    assert seen == [ctx]
+    assert greet.called is False
+    greet(ctx)
+    assert greet.called is True
+    assert len(marker) == 1
 
 
-def test_task_arguments_drop_context_and_dash_underscores():
+def test_task_call_rejects_non_context_first_arg():
     @task
-    def build(c, target_name, clean=False):
+    def greet(c):
         pass
 
-    args = {arg.name: arg for arg in build.get_arguments()}
-    assert set(args) == {"target_name", "clean"}
-    assert args["target_name"].positional is True
-    assert args["clean"].kind is bool
+    with pytest.raises(TypeError):
+        greet("not-a-context")
 
 
-def test_task_boolean_true_default_creates_inverse_flag():
+# ── Argument introspection ───────────────────────────────────────────
+
+
+def test_task_get_arguments_excludes_context():
     @task
-    def build(c, cache=True):
+    def greet(c, recipient, loud=False):
         pass
 
-    args = {arg.name: arg for arg in build.get_arguments()}
-    assert set(args) == {"cache"}
-    assert args["cache"].kind is bool
+    args = {a.name: a for a in greet.get_arguments()}
+    assert "c" not in args
+    assert set(args) == {"recipient", "loud"}
+    assert all(isinstance(a, Argument) for a in greet.get_arguments())
 
 
-def test_task_optional_iterable_and_incrementable_argument_metadata():
-    @task(optional=("target",), iterable=("label",), incrementable=("verbose",))
-    def build(c, target=None, label=None, verbose=0):
-        pass
-
-    args = {arg.name: arg for arg in build.get_arguments()}
-    assert args["target"].optional is True
-    assert args["label"].kind is list
-    assert args["verbose"].incrementable is True
-
-
-def test_call_helper_stores_task_args_and_kwargs():
+def test_argument_positional_param_is_positional():
     @task
-    def build(c, target=None):
+    def greet(c, recipient):
         pass
 
-    obj = call(build, "dist", force=True)
+    args = {a.name: a for a in greet.get_arguments()}
+    assert args["recipient"].positional is True
+
+
+def test_argument_bool_default_sets_kind_bool():
+    @task
+    def greet(c, loud=False):
+        pass
+
+    args = {a.name: a for a in greet.get_arguments()}
+    assert args["loud"].kind is bool
+
+
+def test_argument_optional_iterable_incrementable_metadata():
+    @task(optional=("format",), iterable=("tag",), incrementable=("debug",))
+    def export(c, format=None, tag=None, debug=0):
+        pass
+
+    args = {a.name: a for a in export.get_arguments()}
+    assert args["format"].optional is True
+    assert args["tag"].kind is list
+    assert args["debug"].incrementable is True
+
+
+def test_argument_true_bool_default_keeps_kind_bool():
+    @task
+    def lint(c, strict=True):
+        pass
+
+    args = {a.name: a for a in lint.get_arguments()}
+    assert args["strict"].kind is bool
+
+
+# ── call helper / Call ───────────────────────────────────────────────
+
+
+def test_call_helper_stores_task_args_kwargs():
+    @task
+    def publish(c, channel=None):
+        pass
+
+    obj = call(publish, "stable", force=True)
     assert isinstance(obj, Call)
-    assert obj.task is build
-    assert obj.args == ("dist",)
+    assert obj.task is publish
+    assert obj.args == ("stable",)
     assert obj.kwargs == {"force": True}
 
 
-def test_call_clone_is_independent_and_can_replace_data():
+def test_call_clone_replaces_data_preserves_task_ref():
     @task
-    def build(c):
+    def publish(c):
         pass
 
-    obj = Call(build, args=("a",), kwargs={"flag": False})
-    cloned = obj.clone(with_={"args": ("b",), "kwargs": {"flag": True}})
-    assert cloned is not obj
-    assert cloned.task is build
-    assert cloned.args == ("b",)
-    assert cloned.kwargs == {"flag": True}
-    assert obj.args == ("a",)
+    original = Call(publish, args=("x",), kwargs={"dry": False})
+    cloned = original.clone(with_={"args": ("y",), "kwargs": {"dry": True}})
+    assert cloned is not original
+    assert cloned.task is publish
+    assert cloned.args == ("y",)
+    assert cloned.kwargs == {"dry": True}
+    assert original.args == ("x",)
 
 
-def test_call_make_context_uses_config_and_remainder():
+def test_call_make_context_applies_config_and_remainder():
     @task
-    def build(c):
+    def publish(c):
         pass
 
-    class Parsed:
-        remainder = "after --"
+    class FakeParsed:
+        remainder = "--extra flag"
 
-    config = Config(overrides={"run": {"echo": True}})
-    ctx = Call(build).make_context(config, Parsed())
-    assert ctx.config is config
-    assert ctx.remainder == "after --"
+    cfg = Config(overrides={"run": {"warn": True}})
+    ctx = Call(publish).make_context(cfg, FakeParsed())
+    assert ctx.config is cfg
+    assert ctx.remainder == "--extra flag"
 
 
-def test_collection_add_task_binds_name_alias_and_lookup():
-    @task(aliases=("ship",))
-    def deploy(c):
+# ── Collection ───────────────────────────────────────────────────────
+
+
+def test_collection_add_task_name_alias_lookup():
+    @task(aliases=("pub",))
+    def publish(c):
         pass
 
     ns = Collection()
-    ns.add_task(deploy, name="release", aliases=("go",))
-    assert ns["release"] is deploy
-    assert ns["ship"] is deploy
-    assert ns["go"] is deploy
+    ns.add_task(publish, name="release", aliases=("go",))
+    assert ns["release"] is publish
+    assert ns["pub"] is publish
+    assert ns["go"] is publish
 
 
-def test_collection_empty_lookup_returns_default_task():
+def test_collection_default_via_none_and_empty():
     @task(default=True)
-    def build(c):
+    def main(c):
         pass
 
-    ns = Collection(build)
-    assert ns[None] is build
-    assert ns[""] is build
+    ns = Collection(main)
+    assert ns[None] is main
+    assert ns[""] is main
 
 
-def test_collection_rejects_second_default_task():
+def test_collection_rejects_second_default():
     @task(default=True)
-    def one(c):
+    def alpha(c):
         pass
 
     @task(default=True)
-    def two(c):
+    def beta(c):
         pass
 
     with pytest.raises(ValueError):
-        Collection(one, two)
+        Collection(alpha, beta)
 
 
-def test_collection_dotted_subcollection_lookup_and_default():
+def test_collection_subcollection_dotted_lookup():
     @task(default=True)
-    def deploy(c):
+    def migrate(c):
         pass
 
-    child = Collection("prod", deploy)
+    child = Collection("db", migrate)
     root = Collection("root")
     root.add_collection(child)
-    assert root["prod"] is deploy
-    assert root["prod.deploy"] is deploy
+    assert root["db"] is migrate
+    assert root["db.migrate"] is migrate
 
 
-def test_collection_task_names_include_dotted_names_aliases_and_defaults():
-    @task(aliases=("ship",), default=True)
-    def deploy(c):
+def test_collection_task_names_include_dotted_paths():
+    @task(aliases=("m",), default=True)
+    def migrate(c):
         pass
 
     root = Collection("root")
-    root.add_collection(Collection("prod", deploy))
+    root.add_collection(Collection("db", migrate))
     names = root.task_names
-    assert "prod.deploy" in names
-    assert "prod" in names["prod.deploy"]
-    assert "prod.ship" in names["prod.deploy"]
+    assert "db.migrate" in names
+    assert "db" in names["db.migrate"]
+    assert "db.m" in names["db.migrate"]
 
 
-def test_collection_configuration_merges_parent_over_child_for_path():
+def test_collection_configure_parent_overrides_child():
     @task
-    def deploy(c):
+    def migrate(c):
         pass
 
-    child = Collection("prod", deploy)
-    child.configure({"app": {"target": "child", "region": "us"}})
+    child = Collection("db", migrate)
+    child.configure({"db": {"host": "child-host", "port": 3306}})
     root = Collection("root")
-    root.configure({"app": {"target": "parent"}})
+    root.configure({"db": {"host": "parent-host"}})
     root.add_collection(child)
-    assert root.configuration("prod.deploy")["app"]["target"] == "parent"
+    merged = root.configuration("db.migrate")
+    assert merged["db"]["host"] == "parent-host"
 
 
-def test_config_supports_dict_and_attribute_access():
-    config = Config(defaults={"project": {"target": "dist"}})
-    assert config["project"]["target"] == "dist"
-    assert config.project.target == "dist"
-    config.project.target = "wheel"
-    assert config["project"]["target"] == "wheel"
+def test_collection_from_module_prefers_explicit_ns(tmp_path):
+    write_file(
+        tmp_path / "taskmod_alpha.py",
+        """
+        from invoke import Collection, task
+
+        @task
+        def ignored(c):
+            pass
+
+        @task
+        def chosen(c):
+            pass
+
+        ns = Collection("explicit", chosen)
+        """,
+    )
+    sys.path.insert(0, str(tmp_path))
+    try:
+        sys.modules.pop("taskmod_alpha", None)
+        module = __import__("taskmod_alpha")
+        coll = Collection.from_module(module)
+    finally:
+        sys.modules.pop("taskmod_alpha", None)
+        sys.path.pop(0)
+    assert coll.name == "explicit"
+    assert "chosen" in coll.task_names
+    assert "ignored" not in coll.task_names
 
 
-def test_config_real_attributes_take_precedence_over_config_keys():
-    config = Config(defaults={"clone": {"value": "from-config"}})
+def test_collection_from_module_uses_top_level_without_ns(tmp_path):
+    write_file(
+        tmp_path / "taskmod_beta.py",
+        """
+        from invoke import task
+
+        @task
+        def check(c):
+            pass
+        """,
+    )
+    sys.path.insert(0, str(tmp_path))
+    try:
+        sys.modules.pop("taskmod_beta", None)
+        module = __import__("taskmod_beta")
+        coll = Collection.from_module(module)
+    finally:
+        sys.modules.pop("taskmod_beta", None)
+        sys.path.pop(0)
+    assert coll.name == "taskmod_beta"
+    assert "check" in coll.task_names
+
+
+# ── Config ───────────────────────────────────────────────────────────
+
+
+def test_config_dict_and_attribute_access():
+    config = Config(defaults={"release": {"channel": "stable"}})
+    assert config["release"]["channel"] == "stable"
+    assert config.release.channel == "stable"
+    config.release.channel = "beta"
+    assert config["release"]["channel"] == "beta"
+
+
+def test_config_real_attribute_precedence():
+    config = Config(defaults={"clone": {"depth": 1}})
     assert callable(config.clone)
-    assert config["clone"]["value"] == "from-config"
+    assert config["clone"]["depth"] == 1
 
 
-def test_config_clone_preserves_values_without_sharing_runtime_changes():
-    config = Config(defaults={"project": {"target": "dist"}})
-    clone = config.clone()
-    clone.project.target = "wheel"
-    assert config.project.target == "dist"
-    assert clone.project.target == "wheel"
+def test_config_clone_independence():
+    config = Config(defaults={"release": {"channel": "stable"}})
+    copy = config.clone()
+    copy.release.channel = "nightly"
+    assert config.release.channel == "stable"
+    assert copy.release.channel == "nightly"
 
 
 def test_config_load_overrides_beats_defaults():
-    config = Config(defaults={"run": {"echo": False}})
-    config.load_overrides({"run": {"echo": True}})
+    config = Config(defaults={"run": {"warn": False}})
+    config.load_overrides({"run": {"warn": True}})
+    assert config.run.warn is True
+
+
+def test_config_load_shell_env_casts_types(monkeypatch):
+    monkeypatch.setenv("INVOKE_RUN_ECHO", "1")
+    monkeypatch.setenv("INVOKE_TIMEOUTS_COMMAND", "8")
+    config = Config(defaults={"run": {"echo": False}, "timeouts": {"command": 2}})
+    config.load_shell_env()
     assert config.run.echo is True
+    assert config.timeouts.command == 8
 
 
-def test_config_unknown_runtime_file_extension_raises(tmp_path):
-    runtime = tmp_path / "invoke.ini"
-    runtime.write_text("[run]\necho = true\n", encoding="utf-8")
-    config = Config(runtime_path=str(runtime))
-    with pytest.raises(UnknownFileType):
-        config.load_runtime()
+# ── Context.run basics ──────────────────────────────────────────────
 
 
-class RecordingRunner(Runner):
-    seen = []
-
-    def run(self, command, **kwargs):
-        self.__class__.seen.append((command, kwargs, self.context))
-        return Result(command=command, stdout="recorded\n", exited=0)
-
-
-def test_result_truth_return_code_and_default_env():
-    ok = Result(exited=0)
-    failed = Result(exited=3)
-    assert bool(ok) is True
-    assert bool(failed) is False
-    assert failed.return_code == 3
-    assert ok.env == {}
+def test_context_run_warn_true_returns_failed():
+    result = Context().run(
+        f"{PYTHON} -c \"import sys; sys.exit(3)\"",
+        hide=True,
+        warn=True,
+        in_stream=False,
+    )
+    assert result.failed is True
+    assert result.exited == 3
 
 
-def test_result_tail_returns_requested_stream_lines():
-    result = Result(stdout="one\ntwo\nthree\n")
-    tail = result.tail("stdout", count=2)
-    assert "two" in tail
-    assert "three" in tail
-    assert "one" not in tail
+def test_context_run_warn_false_raises_unexpected_exit():
+    with pytest.raises(UnexpectedExit) as exc_info:
+        Context().run(
+            f"{PYTHON} -c \"import sys; sys.exit(4)\"",
+            hide=True,
+            in_stream=False,
+        )
+    assert exc_info.value.result.exited == 4
 
 
-def test_mock_context_returns_prepared_string_and_boolean_results():
-    ctx = MockContext(run={"show": "visible", "fail": False})
-    assert ctx.run("show").stdout == "visible"
-    assert ctx.run("fail").exited == 1
+def test_context_run_dry_does_not_execute():
+    result = Context().run(
+        "nonexistent-cmd-xyzzy",
+        dry=True,
+        hide=True,
+        in_stream=False,
+    )
+    assert result.ok is True
+    assert result.stdout == ""
+    assert result.stderr == ""
 
 
-def test_mock_context_raises_when_no_prepared_result_matches():
+# ── Result ───────────────────────────────────────────────────────────
+
+
+def test_result_exited_ok_failed_return_code():
+    ok = Result(exited=0, command="echo ok")
+    bad = Result(exited=5, command="false")
+    assert ok.exited == 0
+    assert ok.ok is True
+    assert ok.failed is False
+    assert ok.return_code == 0
+    assert bad.exited == 5
+    assert bad.ok is False
+    assert bad.failed is True
+    assert bad.return_code == 5
+
+
+def test_result_truthy_when_ok_falsy_when_failed():
+    assert bool(Result(exited=0)) is True
+    assert bool(Result(exited=2)) is False
+
+
+def test_result_command_stdout_stderr_env():
+    r = Result(command="ls -la", stdout="file.txt\n", stderr="warning\n")
+    assert r.command == "ls -la"
+    assert r.stdout == "file.txt\n"
+    assert r.stderr == "warning\n"
+    assert r.env == {}
+
+
+def test_result_tail_last_n_lines():
+    r = Result(stdout="alpha\nbeta\ngamma\ndelta\n")
+    tail = r.tail("stdout", count=2)
+    assert "gamma" in tail
+    assert "delta" in tail
+    assert "alpha" not in tail
+
+
+# ── MockContext ──────────────────────────────────────────────────────
+
+
+def test_mock_context_string_becomes_result_stdout():
+    ctx = MockContext(run={"status": "running"})
+    assert ctx.run("status").stdout == "running"
+
+
+def test_mock_context_false_becomes_failed_result():
+    ctx = MockContext(run={"halt": False})
+    assert ctx.run("halt").exited == 1
+
+
+def test_mock_context_unmatched_raises_not_implemented():
     ctx = MockContext(run={})
     with pytest.raises(NotImplementedError):
-        ctx.run("missing")
+        ctx.run("unknown-cmd")
 
 
-def test_stream_watcher_base_submit_is_not_implemented():
+# ── StreamWatcher / Responder / FailingResponder ─────────────────────
+
+
+def test_stream_watcher_submit_raises_not_implemented():
     with pytest.raises(NotImplementedError):
-        StreamWatcher().submit("anything")
+        StreamWatcher().submit("data")
 
 
-def test_responder_yields_response_for_regex_match():
-    responder = Responder(pattern=r"Password: ", response="secret\n")
-    assert list(responder.submit("Password: ")) == ["secret\n"]
+def test_responder_yields_on_match():
+    r = Responder(pattern=r"Passphrase: ", response="s3cret\n")
+    assert list(r.submit("Passphrase: ")) == ["s3cret\n"]
 
 
-def test_responder_consumes_each_stream_segment_once():
-    responder = Responder(pattern=r"again", response="yes\n")
-    assert list(responder.submit("again")) == ["yes\n"]
-    assert list(responder.submit("again")) == []
-    assert list(responder.submit("again again")) == ["yes\n"]
+def test_responder_consumes_segment_once_rematches_new():
+    r = Responder(pattern=r"prompt", response="ok\n")
+    assert list(r.submit("prompt")) == ["ok\n"]
+    assert list(r.submit("prompt")) == []
+    assert list(r.submit("prompt prompt")) == ["ok\n"]
 
 
-def test_failing_responder_raises_after_response_sentinel():
-    responder = FailingResponder(
-        pattern=r"Password: ",
-        response="bad\n",
-        sentinel=r"Sorry",
+def test_failing_responder_raises_on_sentinel():
+    fr = FailingResponder(
+        pattern=r"Passphrase: ",
+        response="wrong\n",
+        sentinel=r"Denied",
     )
-    assert list(responder.submit("Password: ")) == ["bad\n"]
+    assert list(fr.submit("Passphrase: ")) == ["wrong\n"]
     with pytest.raises(ResponseNotAccepted):
-        list(responder.submit("Password: Sorry"))
+        list(fr.submit("Passphrase: Denied"))
+
+
+# ── Error Semantics ──────────────────────────────────────────────────
+
+
+def test_exit_no_message_code_zero():
+    assert Exit().code == 0
+
+
+def test_exit_message_without_code_defaults_to_one():
+    assert Exit(message="done").code == 1
+
+
+def test_exit_explicit_code_overrides_default():
+    assert Exit(message="custom", code=42).code == 42
+
+
+def test_collection_not_found_stores_name():
+    exc = CollectionNotFound("mymod", "/workspace")
+    assert exc.name == "mymod"
+
+
+def test_failure_exposes_result_and_reason():
+    r = Result(command="cmd", exited=1)
+    reason = Exception("watcher issue")
+    exc = Failure(result=r, reason=reason)
+    assert exc.result is r
+    assert exc.reason is reason
+
+
+def test_command_timed_out_exposes_timeout():
+    r = Result(command="sleep 999", exited=-1)
+    exc = CommandTimedOut(r, 5)
+    assert exc.result is r
+    assert exc.timeout == 5

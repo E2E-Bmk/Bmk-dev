@@ -1,5 +1,7 @@
-"""Atomic public-API behavioral tests for Curio."""
+"""Atomic public-API behavioral tests for Curio.
 
+Each test exercises a single public API entry point and a single behavior.
+"""
 import pytest
 
 from curio import (
@@ -11,8 +13,11 @@ from curio import (
     Queue,
     RLock,
     Result,
+    Semaphore,
     TaskError,
     TaskTimeout,
+    clock,
+    current_task,
     ignore_after,
     run,
     sleep,
@@ -20,22 +25,13 @@ from curio import (
     timeout_after,
 )
 
-
-async def _value(value):
-    return value
+from conftest import async_failure, async_value, wait_for_event
 
 
-async def _failure():
-    raise ValueError("child failure")
-
-
-async def _wait_for_event(event):
-    await event.wait()
-    return "released"
-
+# ── Runtime entry ─────────────────────────────────────────────────
 
 def test_run_returns_coroutine_value():
-    assert run(_value, 42) == 42
+    assert run(async_value, 42) == 42
 
 
 def test_run_passes_all_arguments_to_coroutine():
@@ -48,12 +44,22 @@ def test_run_passes_all_arguments_to_coroutine():
 def test_run_rejects_nested_runtime():
     async def main():
         with pytest.raises(RuntimeError):
-            run(_value, 42)
+            run(async_value, 42)
 
     run(main)
 
 
-def test_task_ids_are_increasing_integers_without_positivity_assumption():
+# ── Task creation and attributes ──────────────────────────────────
+
+def test_spawn_rejects_non_coroutine_callable():
+    async def main():
+        with pytest.raises(TypeError):
+            await spawn(lambda: 42)
+
+    run(main)
+
+
+def test_task_ids_are_increasing_integers():
     async def main():
         release = Event()
 
@@ -72,9 +78,19 @@ def test_task_ids_are_increasing_integers_without_positivity_assumption():
     assert run(main) == (True, True, True)
 
 
+def test_current_task_raises_outside_runtime():
+    async def main():
+        ct = await current_task()
+        return ct is not None
+
+    assert run(main) is True
+
+
+# ── Waiting and joining ──────────────────────────────────────────
+
 def test_task_join_returns_child_value():
     async def main():
-        task = await spawn(_value, "done")
+        task = await spawn(async_value, "done")
         return await task.join()
 
     assert run(main) == "done"
@@ -82,13 +98,58 @@ def test_task_join_returns_child_value():
 
 def test_task_join_wraps_child_failure_with_cause():
     async def main():
-        task = await spawn(_failure)
+        task = await spawn(async_failure)
         with pytest.raises(TaskError) as raised:
             await task.join()
         return raised.value.__cause__
 
     assert isinstance(run(main), ValueError)
 
+
+# ── Result access ────────────────────────────────────────────────
+
+def test_task_result_raises_before_termination():
+    async def main():
+        started = Event()
+        release = Event()
+
+        async def child():
+            await started.set()
+            await release.wait()
+            return 88
+
+        task = await spawn(child)
+        await started.wait()
+        with pytest.raises(RuntimeError):
+            _ = task.result
+        await release.set()
+        await task.join()
+        return task.result
+
+    assert run(main) == 88
+
+
+def test_task_exception_raises_before_termination():
+    async def main():
+        started = Event()
+        release = Event()
+
+        async def child():
+            await started.set()
+            await release.wait()
+
+        task = await spawn(child)
+        await started.wait()
+        with pytest.raises(RuntimeError):
+            _ = task.exception
+        await release.set()
+        await task.join()
+        return task.exception
+
+    assert run(main) is None
+
+
+# ── Queue types ──────────────────────────────────────────────────
 
 def test_queue_returns_items_in_fifo_order():
     async def main():
@@ -143,6 +204,8 @@ def test_queue_public_size_and_capacity_state():
     assert run(main) == ((True, False, 0), (False, True, 1))
 
 
+# ── Queue work tracking ──────────────────────────────────────────
+
 def test_queue_join_waits_for_task_done_obligation():
     async def worker(queue):
         item = await queue.get()
@@ -159,16 +222,30 @@ def test_queue_join_waits_for_task_done_obligation():
     assert run(main) == ("work", True)
 
 
+# ── Event ─────────────────────────────────────────────────────────
+
 def test_event_set_releases_waiter_and_sets_flag():
     async def main():
         event = Event()
-        waiter = await spawn(_wait_for_event, event)
+        waiter = await spawn(wait_for_event, event)
         await sleep(0)
         await event.set()
         return event.is_set(), await waiter.join()
 
     assert run(main) == (True, "released")
 
+
+def test_event_clear_resets_flag():
+    async def main():
+        event = Event()
+        await event.set()
+        event.clear()
+        return event.is_set()
+
+    assert run(main) is False
+
+
+# ── Result ────────────────────────────────────────────────────────
 
 def test_result_unwrap_returns_supplied_value():
     async def main():
@@ -188,6 +265,8 @@ def test_result_unwrap_reraises_supplied_exception():
 
     run(main)
 
+
+# ── Lock and RLock ────────────────────────────────────────────────
 
 def test_lock_reports_locked_while_held():
     async def main():
@@ -214,6 +293,25 @@ def test_rlock_allows_recursive_owner_acquisition():
 
     assert run(main) == (True, True, False)
 
+
+def test_rlock_non_owner_release_raises():
+    async def main():
+        lock = RLock()
+        await lock.acquire()
+        child = await spawn(_try_release, lock)
+        return await child.join()
+
+    async def _try_release(lock):
+        try:
+            await lock.release()
+        except RuntimeError:
+            return "rejected"
+        return "allowed"
+
+    assert run(main) == "rejected"
+
+
+# ── Condition ─────────────────────────────────────────────────────
 
 def test_condition_wait_requires_held_lock():
     async def main():
@@ -242,20 +340,48 @@ def test_condition_wait_for_returns_truthy_predicate_value():
     assert run(main) == "ready"
 
 
+# ── Semaphore ─────────────────────────────────────────────────────
+
+def test_semaphore_locked_when_value_is_zero():
+    async def main():
+        sem = Semaphore(1)
+        before = sem.locked()
+        await sem.acquire()
+        during = sem.locked()
+        await sem.release()
+        return before, during
+
+    assert run(main) == (False, True)
+
+
+# ── Clock and sleep ──────────────────────────────────────────────
+
+def test_clock_returns_monotonic_value():
+    async def main():
+        t1 = await clock()
+        await sleep(0)
+        t2 = await clock()
+        return isinstance(t1, float), t2 >= t1
+
+    assert run(main) == (True, True)
+
+
+# ── Timeout ──────────────────────────────────────────────────────
+
 def test_timeout_after_returns_value_before_deadline():
-    assert run(timeout_after, 1, _value, "on time") == "on time"
+    assert run(timeout_after, 1, async_value, "on time") == "on time"
 
 
-def test_timeout_after_raises_task_timeout_when_blocking_operation_expires():
+def test_timeout_after_raises_task_timeout_when_expires():
     with pytest.raises(TaskTimeout):
         run(timeout_after, 0, sleep, 1)
 
 
 def test_ignore_after_returns_value_before_deadline():
-    assert run(ignore_after, 1, _value, "on time") == "on time"
+    assert run(ignore_after, 1, async_value, "on time") == "on time"
 
 
-def test_ignore_after_returns_timeout_result_after_expiry():
+def test_ignore_after_returns_none_on_expiry():
     async def main():
         return await ignore_after(0, sleep, 1, timeout_result="expired")
 
@@ -265,7 +391,7 @@ def test_ignore_after_returns_timeout_result_after_expiry():
 def test_ignore_after_context_reports_non_expiration():
     async def main():
         async with ignore_after(1) as scope:
-            value = await _value("complete")
+            value = await async_value("complete")
         return scope.expired, value
 
     assert run(main) == (False, "complete")
@@ -289,3 +415,10 @@ def test_timeout_context_delivers_task_timeout_to_matching_scope():
             return "timed out"
 
     assert run(main) == "timed out"
+
+def test_universal_event_clear_resets_shared_flag():
+    """CVI-6: UniversalEvent clear resets shared flag."""
+    event = UniversalEvent()
+    event.set()
+    event.clear()
+    assert event.is_set() is False

@@ -63,14 +63,11 @@ Shared configuration options for commands that load a project are:
 --use-directory-urls / --no-directory-urls
 ```
 
-The main public Python import paths are:
+The main public Python import paths are `mkdocs.config.load_config`; `build` and `site_directory_contains_stale_files` from `mkdocs.commands.build`; `get_context` from `mkdocs.utils.templates`; and the exception classes `MkDocsException`, `Abort`, `ConfigurationError`, `BuildError`, and `PluginError` from `mkdocs.exceptions`.
 
-```python
-from mkdocs.config import load_config
-from mkdocs.commands.build import build
-from mkdocs.exceptions import MkDocsException, Abort, ConfigurationError, BuildError, PluginError
-from mkdocs.plugins import BasePlugin, event_priority, get_plugin_logger
-```
+Configuration schemas use `Config` from `mkdocs.config.base` and the documented validators in `mkdocs.config.config_options`. Plugin authors import `BasePlugin`, `CombinedEvent`, `PluginCollection`, `event_priority`, and `get_plugin_logger` from `mkdocs.plugins`.
+
+The documented site model is imported through `File`, `Files`, `InclusionLevel`, and `get_files` from `mkdocs.structure.files`; `Page` from `mkdocs.structure.pages`; `Navigation`, `Section`, `Link`, and `get_navigation` from `mkdocs.structure.nav`; and `AnchorLink`, `TableOfContents`, and `get_toc` from `mkdocs.structure.toc`. Themes use `Theme` from `mkdocs.theme`. The date, file, URL, path, theme-discovery, and logging helpers listed under Utilities are public names in `mkdocs.utils`, except `DuplicateFilter` and `CountHandler`, which are imported from `mkdocs.utils.log`.
 
 The built-in theme entry points are named `mkdocs` and `readthedocs`. The built-in plugin entry point is named `search`.
 
@@ -497,8 +494,14 @@ The plugin can be enabled through `plugins`, receives validated config, particip
 - Guaranteeing compatibility with arbitrary third-party themes, plugins, or Markdown extensions beyond the public entry point, config, hook, and event contracts.
 - Preserving soft-deprecated internals beyond their documented importability and stated behavior.
 
-## Implementation Guidance
+## Invocation Protocol
 
-The expected implementation exercises the public behavior described above through command-line workflows, programmatic API calls, configuration loading, site builds in temporary local projects, plugin and hook interactions, theme/template context rendering, search output generation, navigation/page/file object behavior, URL/link handling, metadata parsing, error handling, and selected utility functions.
+The `mkdocs` console script and `python -m mkdocs` are supported and expose the same global options and commands. `--help` and `--version` exit with status `0`. A successful `new`, `build`, or `get-deps` command exits with status `0`; invalid command arguments, configuration failures, and build failures exit nonzero. `serve` remains active until interrupted after its initial build and is not required to terminate on its own.
 
-The Assessment is behavioral. It checks whether observable outputs, returned objects, logged/raised error classes, and cross-view relationships match this specification. Tests are not intended to require private modules, private attributes, source-code layout, exact internal helper call order, or hidden fixture knowledge. A correct implementation may choose its own internal organization as long as the public contracts, invariants, and error semantics are preserved.
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment. Site builds and deployment dry runs operate on local temporary projects; network publication is not required.
+
+## Evaluation Notes
+
+Assessment exercises command workflows, public APIs, configuration, local site builds, plugins and hooks, themes and templates, search output, navigation and page objects, links, metadata, errors, and documented utilities. It checks observable outputs, returned objects, public exception classes, and cross-view relationships without depending on private modules, private attributes, source layout, internal call order, or hidden fixture shapes.

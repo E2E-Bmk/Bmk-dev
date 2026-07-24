@@ -234,6 +234,15 @@ Child keys must be non-empty strings, child values must be `RealAccount` instanc
 
 Formatting is meant to produce valid Beancount syntax for public directive objects. It is not a guarantee that user comments and original file layout survive a parse-and-print round trip.
 
+## Product State Model
+
+A ledger has one ordered directive stream, an options map, a load-error stream, derived inventories and price maps, and a realized account tree. These are public projections of the same parsed financial state.
+
+- Directives returned by `load_file()` must be the directives consumed by getters, realization, printing, plugins, and validation.
+- Entries appended or transformed by a plugin must appear in the returned ordered stream and in every derived view built from that stream.
+- Inventory balances, conversion results, and realized account balances must preserve the units, costs, and prices represented by the source directives.
+- Printing and loading a supported directive must preserve its public date, account, currencies, tags, links, metadata, and posting semantics.
+
 ## Behavioral Sections
 
 ### Ledger Loading and Validation
@@ -400,10 +409,14 @@ When enabled by a ledger `plugin` option, the function receives the current dire
 - Inventory objects are not immutable. Directive objects are immutable tuple-like records, but inventories intentionally mutate when positions are added.
 - Command-line tools are not required to fetch live prices or contact external services for the covered behavior.
 
-## Implementation Guidance
+## Invocation Protocol
 
-The expected implementation focuses on public behavior observable from the documented package surface. Tests may construct public directive objects, load small Beancount ledgers, inspect returned entries/errors/options, realize account trees, build price maps, reduce inventories, format directives, and invoke the installed command-line tools.
+The covered console commands are `bean-check` and `bean-format`. `bean-check FILE` must parse and validate the ledger, return status 0 when no errors are produced, and return a nonzero status when load or validation errors are produced. `bean-format FILE` must emit formatted ledger text to standard output and return status 0 for valid input. Running `python -m beancount` is not supported by this specification.
 
-The expected implementation should preserve the relationships among views: loader output, account getters, inventories, realized trees, price maps, printed syntax, plugin errors, and CLI status/output should all be derived from the same ledger facts. Scoring rewards correct behavior across those projections rather than matching a particular internal organization.
+## Environment
 
-Tests may cover edge cases such as include resolution, same-day directive ordering, duplicate price dates, missing price conversions, zero inventory lots, configured root account names, plugin failures, JSON check output, and formatter argument combinations. They do not require private module names, private parser internals, hidden fixture layouts, or network access.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
+## Evaluation Notes
+
+Assessment exercises numeric and directive objects, loading and include behavior, plugins, inventories, prices, realization, getters, printing, and the covered command-line workflows. It compares public values, derived views, files, and exit statuses, including include resolution, same-day ordering, duplicate price dates, missing conversions, configured root names, and plugin failures. Private parser internals, caches, helper types, exact diagnostic wording, and source layout are not assessed.

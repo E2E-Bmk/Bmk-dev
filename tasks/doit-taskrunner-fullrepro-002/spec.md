@@ -73,6 +73,12 @@ from doit.exceptions import TaskFailed, TaskError
 
 `CmdAction(action, task=None, save_out=None, shell=True, encoding="utf-8", decode_error="replace", buffering=0, **pkwargs)` creates an explicit shell action. `action` may be a string, a list of strings and `pathlib` paths, or a callable returning a command string. `save_out` stores captured stdout under the given value name. `shell` defaults to `True`, unlike `subprocess.Popen`; `stdout` and `stderr` are reserved and are not accepted as `pkwargs`.
 
+## Product State Model
+
+The task graph is the shared logical state. A loaded task contributes actions, declared dependencies, targets, parameters, and lifecycle hooks. A successful execution adds saved dependency, result, and ignored-state records to the selected dependency backend. Generated target files are the materialized view of that same state.
+
+Command selection, Python `DoitMain` execution, reporter events, the dependency backend, and filesystem outputs must agree about which tasks were selected, which ran, which were skipped, and which failed. A later invocation may skip a task only when its declared freshness inputs and stored success state still justify that decision.
+
 ## Task Definitions
 
 A task creator is a function or method whose name starts with `task_`, or an object exposed in the dodo namespace with a `create_doit_tasks` callable. The task name is the creator name without the `task_` prefix unless a task dictionary uses `basename`.
@@ -87,7 +93,7 @@ Supported task dictionary fields:
 - `file_dep`: file dependency paths as strings or `pathlib` paths.
 - `targets`: output file or directory paths as strings or `pathlib` paths.
 - `task_dep`: task names that must be processed before this task.
-- `setup`: task names that run only when this task is going to execute.
+- `setup`: task names that are processed before the selected task's status check and actions.
 - `uptodate`: freshness checks as booleans, `None`, shell command strings, callables, or `(callable, args, kwargs)` tuples.
 - `calc_dep`: task names whose action results can add `file_dep`, `task_dep`, `uptodate`, or more `calc_dep` entries.
 - `getargs`: a mapping from action argument name to `(task_name, value_name)`.
@@ -138,7 +144,7 @@ Targets are checked for existence only. If a target exists and file dependencies
 
 `file_dep` is file-oriented and does not treat directories as content dependencies. A dodo file is not automatically a dependency of every task; users force reruns after task-definition changes with `forget`, `--always-execute`, or explicit file dependencies.
 
-`task_dep` controls execution order, not freshness. A task that only has `task_dep` and no own freshness inputs runs whenever selected. `setup` tasks run after the selected task is found out-of-date and before its actions execute.
+`task_dep` controls execution order, not freshness. A task that only has `task_dep` and no own freshness inputs runs whenever selected. `setup` tasks are processed before the selected task's up-to-date decision; a setup task with no own freshness rule may therefore execute even when the selected task is ultimately skipped.
 
 `uptodate` accepts:
 
@@ -324,10 +330,14 @@ Running `doit` creates `source.txt`, saves `line_count`, passes it to `shout`, a
 - This specification does not require implementing undocumented plugin discovery internals beyond the documented local configuration and installed entry-point categories.
 - This specification does not require preserving internal helper names that are not exported, documented, or shown in public examples.
 
+## Invocation Protocol
+
+The installed `doit` console command and `python -m doit` are both supported. A successful command returns exit code `0`; task failures return `1`, task execution errors return `2`, and ordinary command/configuration errors reported through `DoitMain.run` return `3`.
+
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
 ## Implementation Guidance
 
-The expected implementation exercises public behavior through both Python APIs and command-line workflows. Tests may create temporary dodo files, invoke `python -m doit` or `doit`, inspect task output/status, use multiple dependency backends, verify persistence across invocations, and call documented public helpers directly.
-
-The expected implementation should be assessed on behavioral compatibility: task loading, action execution, dependency decisions, saved values/results, command semantics, configuration precedence, reporter outcomes, and documented extension APIs. A correct implementation should not require on private modules, hidden attributes, exact internal class layouts, or source-only implementation details.
-
-Fixtures are ordinary temporary projects and task definitions. Passing does not require knowing their names in advance; it requires honoring the public contracts described above.
+The implementation must preserve the same public behavior through both Python APIs and command-line workflows. Compatibility covers task loading, action execution, dependency decisions, saved values and results, command semantics, configuration precedence, reporter outcomes, and documented extension APIs. Internal modules, hidden attributes, and exact private class layouts are not part of this contract.

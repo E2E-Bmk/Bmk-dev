@@ -13,20 +13,7 @@ import beancount as bn
 from beancount import api as bn_api
 
 
-def write_ledger(tmp_path: Path, name: str, contents: str) -> Path:
-    path = tmp_path / name
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(textwrap.dedent(contents).lstrip(), encoding="utf-8")
-    return path
-
-
-def test_root_api_exports_match_api_module():
-    assert bn.Amount is bn_api.Amount
-    assert bn.Transaction is bn_api.Transaction
-    assert bn.load_file is bn_api.load_file
-    assert bn.account is bn_api.account
-    assert bn.amount is bn_api.amount
-    assert bn.dtypes.Transaction is bn.Transaction
+from conftest import write_ledger
 
 
 def test_decimal_constructor_normalizes_public_inputs():

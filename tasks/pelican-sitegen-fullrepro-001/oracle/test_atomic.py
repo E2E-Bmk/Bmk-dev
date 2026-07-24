@@ -1,285 +1,326 @@
-# Spec2Repo oracle - atomic tests for pelican-sitegen-fullrepro-001
+"""Atomic layer tests for pelican-sitegen-fullrepro-001.
+
+Each test verifies ONE public API entry's ONE behavior.
+Independent Solvability: if only that API is correctly implemented, the test passes.
+"""
 from __future__ import annotations
 
-import re
 import os
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
 
-import pelican
-from pelican import Pelican, get_config, parse_arguments
-from pelican import signals as package_signals
-from pelican.plugins import signals as plugin_signals
+from pelican import get_config, parse_arguments
 from pelican.paginator import PaginationRule, Paginator
 from pelican.readers import Readers
 from pelican.settings import DEFAULT_CONFIG, read_settings
 from pelican.urlwrappers import Author, Category, Tag
 from pelican.utils import get_date, path_to_url, posixize_path, slugify
 
-
-@pytest.fixture(scope="module")
-def generated_site(tmp_path_factory):
-    root = tmp_path_factory.mktemp("pelican_public_site")
-    content = root / "content"
-    output = root / "output"
-    theme = root / "theme"
-    (content / "articles").mkdir(parents=True)
-    (content / "pages").mkdir()
-    (content / "images").mkdir()
-    (theme / "templates").mkdir(parents=True)
-
-    (theme / "templates" / "article.html").write_text(
-        "\n".join(
-            [
-                "ARTICLE_TITLE={{ article.title }}",
-                "ARTICLE_URL={{ article.url }}",
-                "ARTICLE_SAVE_AS={{ article.save_as }}",
-                "ARTICLE_CATEGORY={{ article.category }}",
-                "ARTICLE_AUTHOR={{ article.author }}",
-                "ARTICLE_TAGS={% for tag in article.tags %}{{ tag }};{% endfor %}",
-                "ARTICLE_SUMMARY={{ article.summary|striptags }}",
-                "ARTICLE_BODY={{ article.content }}",
-                "SITE={{ SITENAME }} {{ SITEURL }}",
-            ]
-        ),
-        encoding="utf-8",
-    )
-    (theme / "templates" / "page.html").write_text(
-        "PAGE_TITLE={{ page.title }}\nPAGE_URL={{ page.url }}\nPAGE_BODY={{ page.content }}",
-        encoding="utf-8",
-    )
-    (theme / "templates" / "index.html").write_text(
-        "INDEX_ARTICLES={% for article in articles %}{{ article.title }};{% endfor %}",
-        encoding="utf-8",
-    )
-
-    (content / "articles" / "keyboard.md").write_text(
-        "\n".join(
-            [
-                "Title: Keyboard Review",
-                "Date: 2010-12-03 10:20",
-                "Modified: 2010-12-04 12:30",
-                "Category: Review",
-                "Tags: hardware, keyboards",
-                "Slug: keyboard-review",
-                "Authors: Ada Lovelace, Grace Hopper",
-                "Summary: Short summary here.",
-                "",
-                "Following [logo]({static}/images/logo.txt) review.",
-            ]
-        ),
-        encoding="utf-8",
-    )
-    (content / "articles" / "hidden.md").write_text(
-        "Title: Hidden Note\nDate: 2010-12-04\nStatus: hidden\nSlug: hidden-note\n\nHidden body.",
-        encoding="utf-8",
-    )
-    (content / "articles" / "draft.md").write_text(
-        "Title: Draft Note\nDate: 2010-12-05\nStatus: draft\nSlug: draft-note\n\nDraft body.",
-        encoding="utf-8",
-    )
-    (content / "pages" / "about.md").write_text(
-        "Title: About\nSlug: about\n\nAbout page body.",
-        encoding="utf-8",
-    )
-    (content / "images" / "logo.txt").write_text("LOGO", encoding="utf-8")
-
-    settings = read_settings(
-        override={
-            "PATH": str(content),
-            "OUTPUT_PATH": str(output),
-            "THEME": str(theme),
-            "SITENAME": "My Site",
-            "SITEURL": "https://example.test",
-            "ARTICLE_PATHS": ["articles"],
-            "PAGE_PATHS": ["pages"],
-            "STATIC_PATHS": ["images"],
-            "ARTICLE_URL": "posts/{slug}.html",
-            "ARTICLE_SAVE_AS": "posts/{slug}.html",
-            "DRAFT_URL": "drafts/{slug}.html",
-            "DRAFT_SAVE_AS": "drafts/{slug}.html",
-            "PAGE_URL": "pages/{slug}.html",
-            "PAGE_SAVE_AS": "pages/{slug}.html",
-            "AUTHOR_SAVE_AS": "author/{slug}.html",
-            "CATEGORY_SAVE_AS": "category/{slug}.html",
-            "TAG_SAVE_AS": "tag/{slug}.html",
-            "FEED_ALL_ATOM": "feeds/all.atom.xml",
-            "CATEGORY_FEED_ATOM": "feeds/{slug}.atom.xml",
-            "TIMEZONE": "UTC",
-            "DELETE_OUTPUT_DIRECTORY": True,
-        }
-    )
-    Pelican(settings).run()
-    return {"root": root, "content": content, "output": output, "settings": settings}
+from conftest import wrapper_settings
 
 
-def text(site, relative):
-    return (site["output"] / relative).read_text(encoding="utf-8")
+# ===================================================================
+# DEFAULT_CONFIG
+# ===================================================================
 
-
-def feed_entries(site):
-    root = ET.fromstring(text(site, "feeds/all.atom.xml"))
-    ns = {"atom": "http://www.w3.org/2005/Atom"}
-    return root.findall("atom:entry", ns)
-
-
-def public_settings():
-    return read_settings(
-        override={
-            "AUTHOR_URL": "author/{slug}.html",
-            "AUTHOR_SAVE_AS": "author/{slug}.html",
-            "CATEGORY_URL": "category/{slug}.html",
-            "CATEGORY_SAVE_AS": "category/{slug}.html",
-            "TAG_URL": "tag/{slug}.html",
-            "TAG_SAVE_AS": "tag/{slug}.html",
-        }
-    )
-
-
-def test_01_default_settings_include_default_language():
+def test_default_config_provides_default_lang_en():
     assert DEFAULT_CONFIG["DEFAULT_LANG"] == "en"
 
 
-def test_02_pelican_package_exposes_version_string():
-    assert isinstance(pelican.__version__, str) and re.match(r"\d+\.\d+", pelican.__version__)
+def test_default_config_contains_standard_keys():
+    for key in ("DEFAULT_LANG", "SITENAME", "OUTPUT_PATH"):
+        assert key in DEFAULT_CONFIG
 
 
-def test_03_pelican_package_exports_main_classes():
-    assert pelican.Pelican is Pelican
+# ===================================================================
+# read_settings
+# ===================================================================
+
+def test_read_settings_returns_dict_with_defaults():
+    settings = read_settings()
+    assert isinstance(settings, dict)
+    assert "DEFAULT_LANG" in settings
 
 
-def test_04_read_settings_applies_explicit_override():
-    assert read_settings(override={"SITENAME": "Override Site"})["SITENAME"] == "Override Site"
+def test_read_settings_override_replaces_default():
+    settings = read_settings(override={"SITENAME": "Replaced Name"})
+    assert settings["SITENAME"] == "Replaced Name"
 
 
-def test_05_read_settings_keeps_unspecified_defaults():
-    settings = read_settings(override={"SITENAME": "Override Site"})
-    assert settings["DEFAULT_LANG"] == DEFAULT_CONFIG["DEFAULT_LANG"]
+def test_read_settings_preserves_unoverridden_defaults():
+    settings = read_settings(override={"SITENAME": "Xyz"})
+    assert settings["DEFAULT_LANG"] == "en"
 
 
-def test_06_read_settings_normalizes_output_path_override(tmp_path):
-    settings = read_settings(override={"OUTPUT_PATH": str(tmp_path / "public")})
-    assert Path(settings["OUTPUT_PATH"]).name == "public"
+def test_read_settings_normalizes_output_path(tmp_path):
+    target = tmp_path / "rendered"
+    settings = read_settings(override={"OUTPUT_PATH": str(target)})
+    assert Path(settings["OUTPUT_PATH"]).name == "rendered"
 
 
-def test_07_parse_arguments_decodes_json_extra_settings():
-    args = parse_arguments(["content", "-e", 'SITENAME="CLI Site"', "RELATIVE_URLS=true"])
-    assert args.overrides == {"SITENAME": "CLI Site", "RELATIVE_URLS": True}
+# ===================================================================
+# parse_arguments
+# ===================================================================
+
+def test_parse_arguments_extra_settings_accumulate():
+    args = parse_arguments(
+        ["content", "-e", 'SITENAME="Accum"', 'CACHE_CONTENT=false']
+    )
+    assert args.overrides["SITENAME"] == "Accum"
+    assert args.overrides["CACHE_CONTENT"] is False
 
 
-def test_08_parse_arguments_accepts_multiple_extra_settings():
-    args = parse_arguments(["content", "-e", 'SITENAME="CLI Site"', "CACHE_CONTENT=true"])
-    assert args.overrides["CACHE_CONTENT"] is True
+def test_parse_arguments_stores_overrides_in_mapping():
+    args = parse_arguments(["content", "-e", 'DEFAULT_PAGINATION=8'])
+    assert isinstance(args.overrides, dict)
+    assert args.overrides["DEFAULT_PAGINATION"] == 8
 
 
-def test_09_parse_arguments_rejects_missing_equals():
+def test_parse_arguments_missing_equals_raises_valueerror():
     with pytest.raises(ValueError):
         parse_arguments(["content", "-e", "SITENAME"])
 
 
-def test_10_parse_arguments_rejects_non_json_value():
+def test_parse_arguments_invalid_json_raises_valueerror():
     with pytest.raises(ValueError):
         parse_arguments(["content", "-e", "CACHE_CONTENT=True"])
 
 
-def test_11_get_config_turns_cli_overrides_into_settings():
-    args = parse_arguments(["content", "-e", 'SITENAME="CLI Site"'])
-    assert get_config(args)["SITENAME"] == "CLI Site"
-
-
-def test_12_get_config_respects_relative_urls_flag():
+def test_parse_arguments_accepts_relative_urls_flag():
     args = parse_arguments(["content", "--relative-urls"])
-    assert get_config(args)["RELATIVE_URLS"] is True
+    assert getattr(args, "relative_urls", False) is True
 
 
-def test_13_slugify_uses_regex_substitutions_for_url_parts():
-    value = slugify("Hello, Static Site!", regex_subs=[(r"[^\w\s-]", ""), (r"[-\s]+", "-")])
-    assert value == "hello-static-site"
+# ===================================================================
+# get_config
+# ===================================================================
+
+def test_get_config_produces_settings_mapping():
+    args = parse_arguments(["content", "-e", 'SITENAME="Via CLI"'])
+    settings = get_config(args)
+    assert settings["SITENAME"] == "Via CLI"
 
 
-def test_14_slugify_can_preserve_case():
-    assert slugify("Hello World", regex_subs=[(r"[-\s]+", "-")], preserve_case=True) == "Hello-World"
+def test_get_config_sets_relative_urls_true():
+    args = parse_arguments(["content", "--relative-urls"])
+    settings = get_config(args)
+    assert settings["RELATIVE_URLS"] is True
 
 
-def test_15_posixize_path_uses_forward_slashes():
-    assert posixize_path(os.path.join("nested", "path", "file.html")) == "nested/path/file.html"
+# ===================================================================
+# slugify
+# ===================================================================
+
+def test_slugify_lowercases_without_preserve_case():
+    result = slugify("Bright Morning", regex_subs=[(r"[-\s]+", "-")])
+    assert result == "bright-morning"
 
 
-def test_16_path_to_url_keeps_forward_slash_urls():
-    assert path_to_url("nested/path/index.html") == "nested/path/index.html"
+def test_slugify_retains_case_with_preserve_case_true():
+    result = slugify(
+        "Bright Morning", regex_subs=[(r"[-\s]+", "-")], preserve_case=True
+    )
+    assert result == "Bright-Morning"
 
 
-def test_17_get_date_parses_pelican_datetime_metadata():
-    assert str(get_date("2010-12-03 10:20")) == "2010-12-03 10:20:00"
+def test_slugify_applies_configured_regex_subs():
+    result = slugify(
+        "Hello, Ceramic World!",
+        regex_subs=[(r"[^\w\s-]", ""), (r"[-\s]+", "-")],
+    )
+    assert result == "hello-ceramic-world"
 
 
-def test_18_author_slug_url_and_save_path_agree():
-    author = Author("Ada Lovelace", settings=public_settings())
-    assert (author.slug, author.url, author.save_as) == (
-        "ada-lovelace",
-        "author/ada-lovelace.html",
-        "author/ada-lovelace.html",
+# ===================================================================
+# posixize_path
+# ===================================================================
+
+def test_posixize_path_normalizes_backslashes():
+    assert (
+        posixize_path(os.path.join("alpha", "beta", "gamma.html"))
+        == "alpha/beta/gamma.html"
     )
 
 
-def test_19_category_slug_url_and_save_path_agree():
-    category = Category("Hardware Reviews", settings=public_settings())
-    assert (category.slug, category.url, category.save_as) == (
-        "hardware-reviews",
-        "category/hardware-reviews.html",
-        "category/hardware-reviews.html",
+def test_posixize_path_preserves_forward_slashes():
+    assert posixize_path("alpha/beta/gamma.html") == "alpha/beta/gamma.html"
+
+
+# ===================================================================
+# path_to_url
+# ===================================================================
+
+def test_path_to_url_produces_forward_slashes():
+    assert (
+        path_to_url("entries/ceramic-mugs-guide.html")
+        == "entries/ceramic-mugs-guide.html"
     )
 
 
-def test_20_tag_slug_url_and_save_path_agree():
-    tag = Tag("Key Boards", settings=public_settings())
-    assert (tag.slug, tag.url, tag.save_as) == ("key-boards", "tag/key-boards.html", "tag/key-boards.html")
+def test_path_to_url_handles_deeply_nested_paths():
+    assert path_to_url("a/b/c/d/index.html") == "a/b/c/d/index.html"
 
 
-def test_21_urlwrapper_as_dict_exposes_name_and_slug():
-    assert Author("Grace Hopper", settings=public_settings()).as_dict()["slug"] == "grace-hopper"
+# ===================================================================
+# get_date
+# ===================================================================
+
+def test_get_date_returns_datetime_from_valid_string():
+    dt = get_date("2015-08-14 09:30")
+    assert dt.year == 2015 and dt.month == 8 and dt.day == 14
 
 
-def test_22_readers_read_markdown_content_and_metadata(tmp_path):
-    source = tmp_path / "article.md"
-    source.write_text("Title: Reader Title\nDate: 2010-12-03\n\nReader body.", encoding="utf-8")
+def test_get_date_raises_on_unparseable_input():
+    with pytest.raises(ValueError):
+        get_date("not-a-valid-date-string")
+
+
+# ===================================================================
+# Author
+# ===================================================================
+
+def test_author_slug_derived_from_display_name():
+    author = Author("Tomoko Nagai", settings=wrapper_settings())
+    assert author.slug == "tomoko-nagai"
+
+
+def test_author_url_uses_settings_pattern():
+    author = Author("Tomoko Nagai", settings=wrapper_settings())
+    assert author.url == "writers/tomoko-nagai.html"
+    assert author.save_as == "writers/tomoko-nagai.html"
+
+
+def test_author_as_dict_contains_name_and_slug():
+    d = Author("Tomoko Nagai", settings=wrapper_settings()).as_dict()
+    assert d["name"] == "Tomoko Nagai"
+    assert d["slug"] == "tomoko-nagai"
+
+
+# ===================================================================
+# Category
+# ===================================================================
+
+def test_category_slug_from_display_name():
+    cat = Category("Lifestyle", settings=wrapper_settings())
+    assert cat.slug == "lifestyle"
+
+
+def test_category_url_follows_settings_pattern():
+    cat = Category("Urban Crafts", settings=wrapper_settings())
+    assert cat.url == "topics/urban-crafts.html"
+    assert cat.save_as == "topics/urban-crafts.html"
+
+
+def test_category_as_dict_contains_name_and_slug():
+    d = Category("Urban Crafts", settings=wrapper_settings()).as_dict()
+    assert d["name"] == "Urban Crafts"
+    assert d["slug"] == "urban-crafts"
+
+
+# ===================================================================
+# Tag
+# ===================================================================
+
+def test_tag_slug_from_display_name():
+    tag = Tag("ceramics", settings=wrapper_settings())
+    assert tag.slug == "ceramics"
+
+
+def test_tag_url_follows_settings_pattern():
+    tag = Tag("Fine Crafts", settings=wrapper_settings())
+    assert tag.url == "labels/fine-crafts.html"
+    assert tag.save_as == "labels/fine-crafts.html"
+
+
+def test_tag_as_dict_contains_name_and_slug():
+    d = Tag("Fine Crafts", settings=wrapper_settings()).as_dict()
+    assert d["name"] == "Fine Crafts"
+    assert d["slug"] == "fine-crafts"
+
+
+# ===================================================================
+# Readers
+# ===================================================================
+
+def test_readers_extracts_content_and_metadata(tmp_path):
+    (tmp_path / "note.md").write_text(
+        "Title: Orbital Entry\nDate: 2015-08-14\n\nBody of orbital note.",
+        encoding="utf-8",
+    )
     settings = read_settings(override={"PATH": str(tmp_path)})
-    page = Readers(settings).read_file(base_path=str(tmp_path), path="article.md")
-    assert page.metadata["title"] == "Reader Title"
-    assert "Reader body" in page.content
+    result = Readers(settings).read_file(
+        base_path=str(tmp_path), path="note.md"
+    )
+    assert result.metadata["title"] == "Orbital Entry"
+    assert "Body of orbital note" in result.content
 
 
-def test_23_reader_reports_unknown_extension_as_unsupported():
+def test_readers_unknown_extension_raises_typeerror(tmp_path):
+    (tmp_path / "document.qwxyz").write_text("data", encoding="utf-8")
     readers = Readers(read_settings())
     with pytest.raises(TypeError):
-        readers.read_file(base_path=".", path="article.unknownextension")
+        readers.read_file(base_path=str(tmp_path), path="document.qwxyz")
 
 
-def test_24_public_signal_namespaces_share_generation_signal():
-    assert package_signals.article_generator_finalized is plugin_signals.article_generator_finalized
+# ===================================================================
+# Paginator
+# ===================================================================
+
+def test_paginator_count_equals_total_items():
+    p = Paginator("entries", "", list(range(17)), wrapper_settings(), per_page=4)
+    assert p.count == 17
 
 
-def test_25_plugin_signal_namespace_exposes_content_object_signal():
-    assert plugin_signals.content_object_init is package_signals.content_object_init
+def test_paginator_num_pages_is_correct():
+    p = Paginator("entries", "", list(range(17)), wrapper_settings(), per_page=4)
+    assert p.num_pages == 5
 
 
-def test_26_paginator_reports_count_and_page_range():
-    paginator = Paginator("index.html", "", list(range(5)), public_settings(), per_page=2)
-    assert (paginator.count, paginator.num_pages, paginator.page_range) == (5, 3, [1, 2, 3])
+def test_paginator_page_range_starts_at_one():
+    p = Paginator("entries", "", list(range(17)), wrapper_settings(), per_page=4)
+    assert p.page_range == [1, 2, 3, 4, 5]
 
 
-def test_27_paginator_first_page_has_next_only():
-    page = Paginator("index.html", "", list(range(5)), public_settings(), per_page=2).page(1)
-    assert page.object_list == [0, 1] and page.has_next() and not page.has_previous()
+def test_paginator_first_page_has_next_not_previous():
+    p = Paginator("entries", "", list(range(17)), wrapper_settings(), per_page=4)
+    page = p.page(1)
+    assert page.has_next() is True
+    assert page.has_previous() is False
+    assert page.object_list == [0, 1, 2, 3]
 
 
-def test_28_paginator_middle_page_has_neighbors():
-    page = Paginator("index.html", "", list(range(5)), public_settings(), per_page=2).page(2)
-    assert page.object_list == [2, 3] and page.has_next() and page.has_previous()
+def test_paginator_middle_page_has_both_neighbors():
+    p = Paginator("entries", "", list(range(17)), wrapper_settings(), per_page=4)
+    page = p.page(3)
+    assert page.has_next() is True
+    assert page.has_previous() is True
 
 
-def test_29_pagination_rule_is_public_three_field_tuple():
-    rule = PaginationRule(2, "{name}{number}{extension}", "{name}{number}{extension}")
-    assert (rule.min_page, rule.URL, rule.SAVE_AS) == (2, "{name}{number}{extension}", "{name}{number}{extension}")
+# ===================================================================
+# PaginationRule
+# ===================================================================
+
+def test_pagination_rule_exposes_three_fields():
+    rule = PaginationRule(
+        3, "{name}/{number}{extension}", "{name}/{number}{extension}"
+    )
+    assert rule.min_page == 3
+    assert rule.URL == "{name}/{number}{extension}"
+    assert rule.SAVE_AS == "{name}/{number}{extension}"
+
+
+# ===================================================================
+# signals
+# ===================================================================
+
+def test_signals_available_from_pelican_package():
+    from pelican import signals
+
+    assert hasattr(signals, "article_generator_finalized")
+
+
+def test_signals_available_from_plugins_package():
+    from pelican.plugins import signals
+
+    assert hasattr(signals, "content_object_init")

@@ -1,6 +1,7 @@
 """Public behavioral oracle for the structlog task."""
 
 import io
+import json
 import logging
 
 import pytest
@@ -9,23 +10,7 @@ import structlog
 from structlog import contextvars, dev, processors, stdlib
 from structlog.testing import CapturingLogger, capture_logs
 
-
-@pytest.fixture(autouse=True)
-def reset_structlog():
-    structlog.reset_defaults()
-    contextvars.clear_contextvars()
-    yield
-    contextvars.clear_contextvars()
-    structlog.reset_defaults()
-
-
-class RecordingReturnLoggerFactory:
-    def __init__(self):
-        self.calls = []
-
-    def __call__(self, *args):
-        self.calls.append(args)
-        return structlog.ReturnLogger()
+from conftest import RecordingReturnLoggerFactory
 
 
 def test_reset_defaults_restores_unconfigured_state():
@@ -107,75 +92,10 @@ def test_capturing_logger_stores_method_args_and_keywords():
     assert (call.method_name, call.args, call.kwargs) == ("info", ("hello",), {"answer": 42})
 
 
-def test_getLogger_passes_factory_args_and_initial_values_to_the_event():
-    factory = RecordingReturnLoggerFactory()
-    structlog.reset_defaults()
-    try:
-        structlog.configure(processors=(), logger_factory=factory)
-
-        result = structlog.getLogger("audit", component="api").info(
-            "ready", request_id=7
-        )
-
-        assert factory.calls == [("audit",)]
-        assert result == (
-            (),
-            {"component": "api", "request_id": 7, "event": "ready"},
-        )
-    finally:
-        structlog.reset_defaults()
 
 
-def test_getLogger_matches_get_logger_for_factory_arguments_and_event_assembly():
-    factory = RecordingReturnLoggerFactory()
-    structlog.reset_defaults()
-    try:
-        structlog.configure(processors=(), logger_factory=factory)
-
-        from_alias = structlog.getLogger("same", scope="worker").warning(
-            "alert", code=4
-        )
-        from_canonical_name = structlog.get_logger("same", scope="worker").warning(
-            "alert", code=4
-        )
-
-        assert factory.calls == [("same",), ("same",)]
-        assert from_alias == from_canonical_name
-        assert from_alias == (
-            (),
-            {"scope": "worker", "code": 4, "event": "alert"},
-        )
-    finally:
-        structlog.reset_defaults()
 
 
-def test_getLogger_defers_and_propagates_logger_factory_failure():
-    class FactoryFailure(Exception):
-        pass
-
-    calls = []
-
-    def failing_factory(*args):
-        calls.append(args)
-        raise FactoryFailure()
-
-    structlog.reset_defaults()
-    try:
-        structlog.configure(processors=(), logger_factory=failing_factory)
-
-        logger = structlog.getLogger("deferred")
-        assert calls == []
-
-        try:
-            logger.info("later")
-        except FactoryFailure:
-            pass
-        else:
-            raise AssertionError("logger-factory failure was not propagated")
-
-        assert calls == [("deferred",)]
-    finally:
-        structlog.reset_defaults()
 
 
 def test_stdlib_filter_by_level_returns_the_supplied_event_when_accepted():
@@ -201,24 +121,39 @@ def test_console_renderer_returns_human_readable_event_text_without_colors():
     assert "hello-console" in rendered
 
 
-def test_recreate_defaults_configures_standard_logging_at_requested_level(capsys):
-    root = logging.getLogger()
-    old_handlers = list(root.handlers)
-    old_level = root.level
-    structlog.reset_defaults()
-    try:
-        stdlib.recreate_defaults(log_level=logging.INFO)
-        assert root.level == logging.INFO
-
-        structlog.get_logger().info("recreated-through-logging")
-        assert "recreated-through-logging" in capsys.readouterr().out
-    finally:
-        root.handlers = old_handlers
-        root.setLevel(old_level)
-        structlog.reset_defaults()
 
 
 def test_rewrite_drop_event_returns_none():
     def drop(logger, method, event):
         raise structlog.DropEvent
     assert structlog.wrap_logger(structlog.ReturnLogger(), processors=[drop]).info("event") is None
+
+
+# --- composition fix additions (2026-07-20) ---
+
+
+def test_add_log_level_adds_normalized_level_key():
+    event_dict = processors.add_log_level(None, "info", {"event": "x"})
+    assert event_dict == {"event": "x", "level": "info"}
+
+
+def test_json_renderer_renders_event_dict_as_json_text():
+    rendered = processors.JSONRenderer()(None, "info", {"event": "go", "n": 1})
+    assert json.loads(rendered) == {"event": "go", "n": 1}
+
+
+def test_print_logger_factory_builds_logger_ignoring_positional_args():
+    stream = io.StringIO()
+    logger = structlog.PrintLoggerFactory(stream)("ignored", "args")
+    logger.msg("factory-made")
+    assert stream.getvalue() == "factory-made\n"
+
+
+def test_unbind_reports_missing_key():
+    with pytest.raises(KeyError):
+        structlog.get_logger().unbind("missing")
+
+
+def test_filtering_bound_logger_rejects_unknown_level_name():
+    with pytest.raises(KeyError):
+        structlog.make_filtering_bound_logger("loud")

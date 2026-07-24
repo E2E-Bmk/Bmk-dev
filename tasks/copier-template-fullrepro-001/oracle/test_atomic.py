@@ -1,231 +1,161 @@
-# Spec2Repo oracle - atomic tests for copier-template-fullrepro-001
+"""Atomic tests for copier-template-fullrepro-001.
+
+Each test targets ONE public API entry and ONE behavior point.
+"""
 from __future__ import annotations
 
-import json
-import subprocess
 import sys
 from pathlib import Path
 
 import pytest
-import yaml
+
+from conftest import (
+    ANSWERS_FILE_ENTRY,
+    ANSWERS_TEMPLATE,
+    MULTI_QUESTION_YML,
+    SIMPLE_COPIER_YML,
+    build_template,
+    read_yaml,
+)
 
 
-def build_tree(entries: dict[Path, str]) -> None:
-    for path, text in entries.items():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text, encoding="utf-8")
+# ---------------------------------------------------------------------------
+# run_copy basics
+# ---------------------------------------------------------------------------
 
 
-def answers_file_template() -> str:
-    return "{{ _copier_answers|to_nice_yaml -}}\n"
-
-
-def read_yaml(path: Path) -> dict:
-    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-
-
-def run_copier_cli(*args: str) -> subprocess.CompletedProcess[str]:
-    # Invoke the documented module entry point so the test does not depend on
-    # how a console-script wrapper is installed or named in the carrier.
-    command = [sys.executable, "-m", "copier", *args]
-    return subprocess.run(command, text=True, capture_output=True, check=False)
-
-
-def test_defaults_mode_uses_question_defaults(tmp_path: Path):
+def test_run_copy_defaults_generates_destination_files(tmp_path: Path):
+    """run_copy with defaults=True uses question defaults to render output."""
     from copier import run_copy
 
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree(
-        {
-            src / "copier.yml": "name:\n  type: str\n  default: DefaultName\n",
-            src / "value.txt.jinja": "{{ name }}\n",
-            src / "{{ _copier_conf.answers_file }}.jinja": answers_file_template(),
-        }
+    src = build_template(
+        tmp_path,
+        SIMPLE_COPIER_YML,
+        {"output.txt.jinja": "svc={{ billing_svc }}\n", ANSWERS_FILE_ENTRY: ANSWERS_TEMPLATE},
     )
+    dst = tmp_path / "dest"
 
     run_copy(str(src), dst, defaults=True)
 
-    assert (dst / "value.txt").read_text(encoding="utf-8") == "DefaultName\n"
-    assert read_yaml(dst / ".copier-answers.yml")["name"] == "DefaultName"
+    assert (dst / "output.txt").read_text(encoding="utf-8") == "svc=payments\n"
+    answers = read_yaml(dst / ".copier-answers.yml")
+    assert answers["billing_svc"] == "payments"
 
 
-def test_api_data_overrides_template_default(tmp_path: Path):
+def test_run_copy_data_overrides_default(tmp_path: Path):
+    """run_copy data parameter overrides question default."""
     from copier import run_copy
 
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree(
-        {
-            src / "copier.yml": "name:\n  type: str\n  default: Default\n",
-            src / "value.txt.jinja": "{{ name }}\n",
-            src / "{{ _copier_conf.answers_file }}.jinja": answers_file_template(),
-        }
+    src = build_template(
+        tmp_path,
+        SIMPLE_COPIER_YML,
+        {"output.txt.jinja": "svc={{ billing_svc }}\n", ANSWERS_FILE_ENTRY: ANSWERS_TEMPLATE},
     )
+    dst = tmp_path / "dest"
 
-    run_copy(str(src), dst, data={"name": "FromAPI"}, defaults=True)
+    run_copy(str(src), dst, data={"billing_svc": "orders"}, defaults=True)
 
-    assert (dst / "value.txt").read_text(encoding="utf-8") == "FromAPI\n"
-    assert read_yaml(dst / ".copier-answers.yml")["name"] == "FromAPI"
+    assert (dst / "output.txt").read_text(encoding="utf-8") == "svc=orders\n"
+    assert read_yaml(dst / ".copier-answers.yml")["billing_svc"] == "orders"
 
 
-def test_exclude_omits_matching_template_files(tmp_path: Path):
+def test_run_copy_overwrite_replaces_existing_file(tmp_path: Path):
+    """run_copy with overwrite=True replaces pre-existing destination files."""
     from copier import run_copy
 
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree(
-        {
-            src / "copier.yml": "_exclude:\n  - ignored.txt\n",
-            src / "ignored.txt": "ignore\n",
-            src / "kept.txt": "keep\n",
-        }
+    src = build_template(tmp_path, "", {"config.txt": "from_template\n"})
+    dst = tmp_path / "dest"
+    dst.mkdir()
+    (dst / "config.txt").write_text("local_edit\n", encoding="utf-8")
+
+    run_copy(str(src), dst, defaults=True, overwrite=True)
+
+    assert (dst / "config.txt").read_text(encoding="utf-8") == "from_template\n"
+
+
+def test_run_copy_pretend_does_not_create_destination(tmp_path: Path):
+    """run_copy pretend=True produces no filesystem changes."""
+    from copier import run_copy
+
+    src = build_template(tmp_path, SIMPLE_COPIER_YML, {"data.txt.jinja": "{{ billing_svc }}\n"})
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True, pretend=True)
+
+    assert not dst.exists()
+
+
+def test_run_copy_quiet_still_renders_correctly(tmp_path: Path):
+    """run_copy quiet=True suppresses output but renders files identically."""
+    from copier import run_copy
+
+    src = build_template(
+        tmp_path,
+        SIMPLE_COPIER_YML,
+        {"output.txt.jinja": "{{ billing_svc }}\n"},
     )
+    dst = tmp_path / "dest"
 
-    run_copy(str(src), dst, defaults=True)
+    run_copy(str(src), dst, defaults=True, quiet=True)
 
-    assert not (dst / "ignored.txt").exists()
-    assert (dst / "kept.txt").read_text(encoding="utf-8") == "keep\n"
-
-
-def test_multiple_config_files_raise_documented_error(tmp_path: Path):
-    from copier import run_copy
-    from copier.errors import MultipleConfigFilesError
-
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree({src / "copier.yml": "name: Demo\n", src / "copier.yaml": "name: Demo\n"})
-
-    with pytest.raises(MultipleConfigFilesError):
-        run_copy(str(src), dst, defaults=True)
+    assert (dst / "output.txt").read_text(encoding="utf-8") == "payments\n"
 
 
-def test_minimum_version_blocks_unsupported_template(tmp_path: Path):
-    from copier import run_copy
-    from copier.errors import UnsupportedVersionError
-
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree({src / "copier.yml": "_min_copier_version: '9999.0.0'\n"})
-
-    with pytest.raises(UnsupportedVersionError):
-        run_copy(str(src), dst, defaults=True)
+# ---------------------------------------------------------------------------
+# Settings
+# ---------------------------------------------------------------------------
 
 
-def test_load_settings_reads_yaml_defaults_and_trust(tmp_path: Path, monkeypatch):
-    import platformdirs
-    from copier import load_settings
+def test_settings_empty_defaults_and_trust():
+    """Settings() produces empty defaults dict and empty trust list."""
+    from copier import Settings
 
-    config = tmp_path / "config"
-    config.mkdir()
-    settings = config / "settings.yml"
-    settings.write_text("defaults:\n  project: FromFile\ntrust:\n  - /tmp/template\n", encoding="utf-8")
-    monkeypatch.setenv("COPIER_SETTINGS_PATH", str(settings))
-    monkeypatch.setattr(platformdirs, "user_config_path", lambda *args, **kwargs: config)
-
-    loaded = load_settings()
-
-    assert loaded.defaults["project"] == "FromFile"
-    assert "/tmp/template" in loaded.trust
+    s = Settings()
+    assert s.defaults == {}
+    assert s.trust == []
 
 
-def test_invalid_settings_yaml_raises_settings_error(tmp_path: Path, monkeypatch):
-    from copier import load_settings
-    from copier.errors import SettingsError
+def test_settings_is_frozen():
+    """Settings instances are immutable (frozen dataclass)."""
+    from copier import Settings
 
-    settings = tmp_path / "settings.yml"
-    settings.write_text("defaults: [unterminated\n", encoding="utf-8")
-    monkeypatch.setenv("COPIER_SETTINGS_PATH", str(settings))
-
-    with pytest.raises(SettingsError):
-        load_settings()
+    s = Settings()
+    with pytest.raises((AttributeError, TypeError)):
+        s.defaults = {"x": 1}  # type: ignore[misc]
 
 
-def test_question_type_int_parses_api_data(tmp_path: Path):
-    from copier import run_copy
+def test_settings_defaults_populates_unanswered_questions(tmp_path: Path):
+    """Settings.defaults provides fallback values for questions without data."""
+    from copier import Settings, run_copy
 
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree({src / "copier.yml": "count:\n  type: int\n  default: 1\n", src / "value.txt.jinja": "{{ count + 2 }}\n"})
+    src = build_template(
+        tmp_path,
+        SIMPLE_COPIER_YML,
+        {"output.txt.jinja": "{{ billing_svc }}\n", ANSWERS_FILE_ENTRY: ANSWERS_TEMPLATE},
+    )
+    dst = tmp_path / "dest"
 
-    run_copy(str(src), dst, data={"count": "5"}, defaults=True)
+    run_copy(str(src), dst, defaults=True, settings=Settings(defaults={"billing_svc": "invoicing"}))
 
-    assert (dst / "value.txt").read_text(encoding="utf-8") == "7\n"
-
-
-def test_question_type_float_parses_api_data(tmp_path: Path):
-    from copier import run_copy
-
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree({src / "copier.yml": "amount:\n  type: float\n  default: 1.5\n", src / "value.txt.jinja": "{{ amount + 0.5 }}\n"})
-
-    run_copy(str(src), dst, data={"amount": "2.5"}, defaults=True)
-
-    assert (dst / "value.txt").read_text(encoding="utf-8") == "3.0\n"
+    assert (dst / "output.txt").read_text(encoding="utf-8") == "invoicing\n"
 
 
-def test_question_type_yaml_preserves_list_value(tmp_path: Path):
-    from copier import run_copy
-
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree({src / "copier.yml": "items:\n  type: yaml\n  default: []\n", src / "value.json.jinja": "{{ items|tojson }}\n"})
-
-    run_copy(str(src), dst, data={"items": "[1, 2, 3]"}, defaults=True)
-
-    assert json.loads((dst / "value.json").read_text(encoding="utf-8")) == [1, 2, 3]
+# ---------------------------------------------------------------------------
+# Phase enum
+# ---------------------------------------------------------------------------
 
 
-def test_configuration_defaults_are_available_to_rendering(tmp_path: Path):
-    from copier import run_copy
+def test_phase_current_returns_phase_value():
+    """Phase.current() returns a Phase member."""
+    from copier import Phase
 
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree({src / "copier.yml": "_answers_file: answers.yml\n", src / "conf.txt.jinja": "{{ _copier_conf.answers_file }}\n"})
-
-    run_copy(str(src), dst, defaults=True)
-
-    assert (dst / "conf.txt").read_text(encoding="utf-8") == "answers.yml\n"
+    current = Phase.current()
+    assert current is not None
+    assert hasattr(current, "value")
 
 
-def test_phase_variable_is_render_during_file_render(tmp_path: Path):
-    from copier import run_copy
-
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree({src / "copier.yml": "", src / "phase.txt.jinja": "{{ _copier_phase }}\n"})
-
-    run_copy(str(src), dst, defaults=True)
-
-    assert (dst / "phase.txt").read_text(encoding="utf-8") == "render\n"
-
-
-def test_python_variable_points_to_current_interpreter(tmp_path: Path):
-    from copier import run_copy
-
-    src = tmp_path / "template"
-    dst = tmp_path / "project"
-    build_tree({src / "copier.yml": "", src / "python.txt.jinja": "{{ _copier_python }}\n"})
-
-    run_copy(str(src), dst, defaults=True)
-
-    assert (dst / "python.txt").read_text(encoding="utf-8").strip() == sys.executable
-
-
-def test_public_import_surface_includes_recopy_update_phase_and_vcsref():
-    from copier import Phase, Settings, VcsRef, load_settings, run_copy, run_recopy, run_update
-
-    assert callable(run_copy)
-    assert callable(run_recopy)
-    assert callable(run_update)
-    assert callable(load_settings)
-    assert Settings().defaults == {}
-    assert Phase.RENDER.value == "render"
-    assert VcsRef.CURRENT.value == ":current:"
-
-
-def test_phase_context_manager_restores_previous_phase():
+def test_phase_use_temporarily_sets_phase():
+    """Phase.use() context manager sets and restores phase."""
     from copier import Phase
 
     before = Phase.current()
@@ -234,61 +164,365 @@ def test_phase_context_manager_restores_previous_phase():
     assert Phase.current() is before
 
 
-def test_vcsref_current_string_is_accepted_by_copy_api(tmp_path: Path):
+# ---------------------------------------------------------------------------
+# VcsRef
+# ---------------------------------------------------------------------------
+
+
+def test_vcsref_current_value():
+    """VcsRef.CURRENT has sentinel value ':current:'."""
     from copier import VcsRef
 
-    assert str(VcsRef.CURRENT) == "VcsRef.CURRENT"
     assert VcsRef.CURRENT.value == ":current:"
 
 
-def test_external_data_requires_trust(tmp_path: Path):
-    from copier.errors import CopierError, UnsafeTemplateError
-
-    assert issubclass(UnsafeTemplateError, CopierError)
-
-
-def test_external_data_renders_when_template_is_trusted(tmp_path: Path):
-    from copier import Settings
-
-    trusted = Settings(trust=[str(tmp_path) + "/"])
-    assert str(tmp_path) + "/" in trusted.trust
+# ---------------------------------------------------------------------------
+# load_settings
+# ---------------------------------------------------------------------------
 
 
-def test_settings_default_factory_isolated_between_instances():
-    from copier import Settings
-
-    first = Settings()
-    second = Settings()
-
-    assert first.defaults == {}
-    assert second.defaults == {}
-    assert first.defaults is not second.defaults
-
-
-def test_load_settings_missing_env_path_returns_empty_with_warning(tmp_path: Path, monkeypatch):
+def test_load_settings_missing_path_warns(tmp_path: Path, monkeypatch):
+    """load_settings with non-existent COPIER_SETTINGS_PATH emits MissingSettingsWarning."""
     from copier import load_settings
     from copier.errors import MissingSettingsWarning
 
-    missing = tmp_path / "missing.yml"
-    monkeypatch.setenv("COPIER_SETTINGS_PATH", str(missing))
+    monkeypatch.setenv("COPIER_SETTINGS_PATH", str(tmp_path / "nonexistent.yml"))
 
     with pytest.warns(MissingSettingsWarning):
-        settings = load_settings()
-    assert settings.defaults == {}
-    assert len(settings.trust) == 0
+        result = load_settings()
+
+    assert result.defaults == {}
+    assert result.trust == []
 
 
-def test_cli_help_lists_copy_recopy_update_and_check_update():
-    result = run_copier_cli("--help")
+def test_load_settings_invalid_yaml_raises_settings_error(tmp_path: Path, monkeypatch):
+    """load_settings with malformed YAML raises SettingsError."""
+    from copier import load_settings
+    from copier.errors import SettingsError
 
-    assert result.returncode == 0, result.stdout + result.stderr
-    for command in ["copy", "recopy", "update", "check-update"]:
-        assert command in result.stdout
+    bad = tmp_path / "bad.yml"
+    bad.write_text("trust: [unclosed\n", encoding="utf-8")
+    monkeypatch.setenv("COPIER_SETTINGS_PATH", str(bad))
+
+    with pytest.raises(SettingsError):
+        load_settings()
 
 
-def test_error_namespace_exports_documented_base_classes():
-    from copier.errors import CopierError, CopierWarning, TaskError, UserMessageError
+# ---------------------------------------------------------------------------
+# Error semantics - template config
+# ---------------------------------------------------------------------------
 
+
+def test_multiple_config_files_raises_error(tmp_path: Path):
+    """Both copier.yml and copier.yaml present raises MultipleConfigFilesError."""
+    from copier import run_copy
+    from copier.errors import MultipleConfigFilesError
+
+    src = tmp_path / "tpl"
+    src.mkdir()
+    (src / "copier.yml").write_text("region: us\n", encoding="utf-8")
+    (src / "copier.yaml").write_text("region: eu\n", encoding="utf-8")
+    dst = tmp_path / "dest"
+
+    with pytest.raises(MultipleConfigFilesError):
+        run_copy(str(src), dst, defaults=True)
+
+
+def test_min_copier_version_too_high_raises(tmp_path: Path):
+    """_min_copier_version exceeding installed version raises UnsupportedVersionError."""
+    from copier import run_copy
+    from copier.errors import UnsupportedVersionError
+
+    src = build_template(tmp_path, "_min_copier_version: '9999.1.0'\n")
+    dst = tmp_path / "dest"
+
+    with pytest.raises(UnsupportedVersionError):
+        run_copy(str(src), dst, defaults=True)
+
+
+def test_invalid_question_type_raises(tmp_path: Path):
+    """A question with an invalid type raises InvalidTypeError."""
+    from copier import run_copy
+    from copier.errors import InvalidTypeError
+
+    src = build_template(tmp_path, "item:\n  type: nosuchtype\n  default: x\n")
+    dst = tmp_path / "dest"
+
+    with pytest.raises(InvalidTypeError):
+        run_copy(str(src), dst, defaults=True)
+
+
+def test_unsafe_template_without_trust_raises(tmp_path: Path):
+    """Template with _tasks and no trust raises UnsafeTemplateError."""
+    from copier import run_copy
+    from copier.errors import UnsafeTemplateError
+
+    src = build_template(tmp_path, "_tasks:\n  - echo hello\n", {"stub.txt": "x\n"})
+    dst = tmp_path / "dest"
+
+    with pytest.raises(UnsafeTemplateError):
+        run_copy(str(src), dst, defaults=True)
+
+
+# ---------------------------------------------------------------------------
+# Question behaviors
+# ---------------------------------------------------------------------------
+
+
+def test_question_when_false_not_recorded_but_default_renders(tmp_path: Path):
+    """when: false skips recording but default is still in render context."""
+    from copier import run_copy
+
+    yml = (
+        "enable_metrics:\n  type: bool\n  default: false\n"
+        "metrics_port:\n  type: int\n  default: 9090\n  when: '{{ enable_metrics }}'\n"
+    )
+    src = build_template(
+        tmp_path,
+        yml,
+        {"port.txt.jinja": "{{ metrics_port }}\n", ANSWERS_FILE_ENTRY: ANSWERS_TEMPLATE},
+    )
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, data={"enable_metrics": False}, defaults=True)
+
+    assert (dst / "port.txt").read_text(encoding="utf-8") == "9090\n"
+    answers = read_yaml(dst / ".copier-answers.yml")
+    assert "metrics_port" not in answers
+    assert answers["enable_metrics"] is False
+
+
+def test_secret_question_not_in_answers_file(tmp_path: Path):
+    """Secret questions render but are excluded from answers file."""
+    from copier import run_copy
+
+    yml = "api_key:\n  type: str\n  secret: true\n  default: sk-abc123\n"
+    src = build_template(
+        tmp_path,
+        yml,
+        {"key.txt.jinja": "{{ api_key }}\n", ANSWERS_FILE_ENTRY: ANSWERS_TEMPLATE},
+    )
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "key.txt").read_text(encoding="utf-8") == "sk-abc123\n"
+    assert "api_key" not in read_yaml(dst / ".copier-answers.yml")
+
+
+def test_exclude_prevents_file_copy(tmp_path: Path):
+    """_exclude patterns prevent matching files from appearing in destination."""
+    from copier import run_copy
+
+    src = build_template(
+        tmp_path,
+        "_exclude:\n  - '*.bak'\n",
+        {"data.txt": "keep\n", "data.bak": "drop\n"},
+    )
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "data.txt").read_text(encoding="utf-8") == "keep\n"
+    assert not (dst / "data.bak").exists()
+
+
+def test_skip_if_exists_preserves_existing(tmp_path: Path):
+    """_skip_if_exists keeps pre-existing destination file unchanged."""
+    from copier import run_copy
+
+    src = build_template(
+        tmp_path,
+        "_skip_if_exists:\n  - preserved.cfg\n",
+        {"preserved.cfg": "template_version\n"},
+    )
+    dst = tmp_path / "dest"
+    dst.mkdir()
+    (dst / "preserved.cfg").write_text("user_edit\n", encoding="utf-8")
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "preserved.cfg").read_text(encoding="utf-8") == "user_edit\n"
+
+
+def test_jinja_suffix_renders_and_strips(tmp_path: Path):
+    """Files ending in .jinja are rendered and the suffix is stripped."""
+    from copier import run_copy
+
+    src = build_template(
+        tmp_path,
+        "cluster:\n  type: str\n  default: prod-east\n",
+        {"info.cfg.jinja": "cluster={{ cluster }}\n"},
+    )
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "info.cfg").read_text(encoding="utf-8") == "cluster=prod-east\n"
+    assert not (dst / "info.cfg.jinja").exists()
+
+
+def test_subdirectory_selects_subtree(tmp_path: Path):
+    """_subdirectory limits copying to the specified subdirectory."""
+    from copier import run_copy
+
+    src = build_template(
+        tmp_path,
+        "_subdirectory: core\n",
+        {"core/main.py": "print('core')\n", "extras/plugin.py": "print('extra')\n"},
+    )
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "main.py").read_text(encoding="utf-8") == "print('core')\n"
+    assert not (dst / "extras").exists()
+    assert not (dst / "plugin.py").exists()
+
+
+def test_envops_changes_delimiters(tmp_path: Path):
+    """_envops with custom variable delimiters affects rendering."""
+    from copier import run_copy
+
+    yml = (
+        "_envops:\n"
+        "  variable_start_string: '<%'\n"
+        "  variable_end_string: '%>'\n"
+        "region_code:\n  type: str\n  default: ap-south-1\n"
+    )
+    src = build_template(tmp_path, yml, {"region.txt.jinja": "<% region_code %>\n"})
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "region.txt").read_text(encoding="utf-8") == "ap-south-1\n"
+
+
+def test_choices_multiselect_returns_list(tmp_path: Path):
+    """A multiselect choices question returns a list value."""
+    from copier import run_copy
+
+    yml = (
+        "features:\n"
+        "  type: str\n"
+        "  multiselect: true\n"
+        "  choices:\n"
+        "    - auth\n"
+        "    - logging\n"
+        "    - metrics\n"
+        "  default:\n"
+        "    - auth\n"
+        "    - metrics\n"
+    )
+    src = build_template(
+        tmp_path,
+        yml,
+        {"features.txt.jinja": "{{ features|tojson }}\n", ANSWERS_FILE_ENTRY: ANSWERS_TEMPLATE},
+    )
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    import json
+    result = json.loads((dst / "features.txt").read_text(encoding="utf-8"))
+    assert isinstance(result, list)
+    assert set(result) == {"auth", "metrics"}
+
+
+# ---------------------------------------------------------------------------
+# Template variables during rendering
+# ---------------------------------------------------------------------------
+
+
+def test_copier_phase_is_render_during_file_rendering(tmp_path: Path):
+    """_copier_phase equals 'render' when template files are being rendered."""
+    from copier import run_copy
+
+    src = build_template(tmp_path, "", {"phase.txt.jinja": "{{ _copier_phase }}\n"})
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "phase.txt").read_text(encoding="utf-8") == "render\n"
+
+
+def test_copier_python_is_current_interpreter(tmp_path: Path):
+    """_copier_python points to the running Python interpreter."""
+    from copier import run_copy
+
+    src = build_template(tmp_path, "", {"py.txt.jinja": "{{ _copier_python }}\n"})
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "py.txt").read_text(encoding="utf-8").strip() == sys.executable
+
+
+def test_copier_operation_is_copy(tmp_path: Path):
+    """_copier_operation equals 'copy' during run_copy."""
+    from copier import run_copy
+
+    src = build_template(tmp_path, "", {"op.txt.jinja": "{{ _copier_operation }}\n"})
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "op.txt").read_text(encoding="utf-8") == "copy\n"
+
+
+def test_to_nice_yaml_filter_renders_yaml(tmp_path: Path):
+    """to_nice_yaml Jinja filter produces valid YAML output."""
+    from copier import run_copy
+
+    yml = "tags:\n  type: yaml\n  default: [alpha, beta]\n"
+    src = build_template(
+        tmp_path,
+        yml,
+        {"tags.yml.jinja": "{{ tags|to_nice_yaml }}"},
+    )
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, defaults=True)
+
+    import yaml as _yaml
+    loaded = _yaml.safe_load((dst / "tags.yml").read_text(encoding="utf-8"))
+    assert loaded == ["alpha", "beta"]
+
+
+def test_copier_answers_variable_contains_question_data(tmp_path: Path):
+    """_copier_answers variable in Jinja context contains answered question data."""
+    from copier import run_copy
+
+    src = build_template(
+        tmp_path,
+        SIMPLE_COPIER_YML,
+        {ANSWERS_FILE_ENTRY: ANSWERS_TEMPLATE},
+    )
+    dst = tmp_path / "dest"
+
+    run_copy(str(src), dst, data={"billing_svc": "shipments"}, defaults=True)
+
+    answers = read_yaml(dst / ".copier-answers.yml")
+    assert answers["billing_svc"] == "shipments"
+    assert "_src_path" in answers
+
+
+# ---------------------------------------------------------------------------
+# Error hierarchy
+# ---------------------------------------------------------------------------
+
+
+def test_error_hierarchy_base_classes():
+    """Error classes follow documented inheritance."""
+    from copier.errors import (
+        CopierError,
+        CopierWarning,
+        TaskError,
+        UnsafeTemplateError,
+        UserMessageError,
+    )
+
+    assert issubclass(UnsafeTemplateError, CopierError)
     assert issubclass(TaskError, CopierError)
     assert issubclass(UserMessageError, CopierError)
     assert issubclass(CopierWarning, Warning)

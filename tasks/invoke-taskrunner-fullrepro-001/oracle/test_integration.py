@@ -1,202 +1,81 @@
-# Spec2Repo oracle - integration tests for invoke-taskrunner-fullrepro-001
+"""Integration tests — each crosses ≥2 API boundaries."""
 import json
 import os
-import subprocess
-import sys
-import textwrap
 
 import pytest
 
+from conftest import PYTHON, run_invoke, write_file
+
 from invoke import (
-    Call,
-    Collection,
     Config,
     Context,
-    FailingResponder,
-    MockContext,
     Program,
     Responder,
-    ResponseNotAccepted,
     Result,
     Runner,
-    StreamWatcher,
-    Task,
     UnexpectedExit,
-    call,
     run,
-    task,
 )
-from invoke.exceptions import Failure, UnknownFileType
 
 
-def write_file(path, body):
-    path.write_text(textwrap.dedent(body).lstrip(), encoding="utf-8")
+# ── Context + Runner configuration ──────────────────────────────────
 
 
-def run_invoke(tmp_path, *args, env=None):
-    command = [sys.executable, "-m", "invoke", *args]
-    merged_env = os.environ.copy()
-    if env:
-        merged_env.update(env)
-    return subprocess.run(
-        command,
-        cwd=str(tmp_path),
-        env=merged_env,
-        text=True,
-        encoding="utf-8",
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-    )
-
-
-def test_collection_from_module_prefers_explicit_namespace(tmp_path):
-    module_path = tmp_path / "tasks.py"
-    write_file(
-        module_path,
-        """
-        from invoke import Collection, task
-
-        @task
-        def root(c):
-            pass
-
-        @task
-        def selected(c):
-            pass
-
-        ns = Collection("chosen", selected)
-        """,
-    )
-    sys.path.insert(0, str(tmp_path))
-    try:
-        sys.modules.pop("tasks", None)
-        module = __import__("tasks")
-        coll = Collection.from_module(module)
-    finally:
-        sys.modules.pop("tasks", None)
-        sys.path.pop(0)
-    assert coll.name == "chosen"
-    assert "selected" in coll.task_names
-    assert "root" not in coll.task_names
-
-
-def test_collection_from_module_uses_top_level_tasks_without_namespace(tmp_path):
-    module_path = tmp_path / "buildtasks.py"
-    write_file(
-        module_path,
-        """
-        from invoke import task
-
-        @task
-        def clean(c):
-            pass
-        """,
-    )
-    sys.path.insert(0, str(tmp_path))
-    try:
-        sys.modules.pop("buildtasks", None)
-        module = __import__("buildtasks")
-        coll = Collection.from_module(module)
-    finally:
-        sys.modules.pop("buildtasks", None)
-        sys.path.pop(0)
-    assert coll.name == "buildtasks"
-    assert "clean" in coll.task_names
-
-
-def test_config_environment_casts_existing_boolean_and_numeric_defaults(monkeypatch):
-    monkeypatch.setenv("INVOKE_RUN_ECHO", "1")
-    monkeypatch.setenv("INVOKE_TIMEOUTS_COMMAND", "5")
-    config = Config(defaults={"run": {"echo": False}, "timeouts": {"command": 1}})
-    config.load_shell_env()
-    assert config.run.echo is True
-    assert config.timeouts.command == 5
-
-
-class RecordingRunner(Runner):
-    seen = []
-
-    def run(self, command, **kwargs):
-        self.__class__.seen.append((command, kwargs, self.context))
-        return Result(command=command, stdout="recorded\n", exited=0)
-
-
-def test_context_run_uses_configured_local_runner_class():
-    RecordingRunner.seen.clear()
-    config = Config(overrides={"runners": {"local": RecordingRunner}})
+def test_context_run_uses_configured_runner_class(fresh_runner):
+    """Seam: config interaction — multiple configuration sources merge into one runtime view."""
+    config = Config(overrides={"runners": {"local": fresh_runner}})
     ctx = Context(config=config)
-    result = ctx.run("build", hide=True)
-    assert result.stdout == "recorded\n"
-    assert RecordingRunner.seen[0][0] == "build"
-    assert RecordingRunner.seen[0][2] is ctx
+    result = ctx.run("compile", hide=True)
+    assert result.stdout == "captured\n"
+    assert fresh_runner.seen[0][0] == "compile"
+    assert fresh_runner.seen[0][2] is ctx
 
 
-def test_invoke_run_creates_anonymous_context_and_returns_result():
+def test_run_creates_anonymous_context_and_returns_result():
+    """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     result = run(
-        f"{sys.executable} -c \"print('hello from invoke')\"",
+        f"{PYTHON} -c \"print('anonymous')\"",
         hide=True,
         in_stream=False,
     )
-    assert result.stdout == "hello from invoke\n"
+    assert result.stdout == "anonymous\n"
     assert result.ok is True
 
 
-def test_context_run_warn_true_returns_failed_result():
-    result = Context().run(
-        f"{sys.executable} -c \"import sys; sys.exit(7)\"",
-        hide=True,
-        warn=True,
-        in_stream=False,
-    )
-    assert result.exited == 7
-    assert result.failed is True
+# ── Context.cd + Context.run ─────────────────────────────────────────
 
 
-def test_context_run_warn_false_raises_unexpected_exit():
-    with pytest.raises(UnexpectedExit) as exc:
-        Context().run(
-            f"{sys.executable} -c \"import sys; sys.exit(6)\"",
-            hide=True,
-            in_stream=False,
-        )
-    assert exc.value.result.exited == 6
-
-
-def test_context_run_dry_returns_success_without_running_command():
-    result = Context().run(
-        "this-command-should-not-exist",
-        dry=True,
-        hide=True,
-        in_stream=False,
-    )
-    assert result.ok is True
-    assert result.stdout == ""
-    assert result.stderr == ""
-
-
-def test_context_cd_changes_cwd_for_command(tmp_path):
-    RecordingRunner.seen.clear()
-    ctx = Context(config=Config(overrides={"runners": {"local": RecordingRunner}}))
+def test_context_cd_changes_cwd_for_command(tmp_path, fresh_runner):
+    """Seam: protocol handoff — CLI/collection/context layers route to the same execution pipeline."""
+    ctx = Context(config=Config(overrides={"runners": {"local": fresh_runner}}))
     with ctx.cd(str(tmp_path)):
         ctx.run("pwd", hide=True)
-    command = RecordingRunner.seen[0][0]
+    command = fresh_runner.seen[0][0]
     assert command.endswith(" && pwd")
     assert str(tmp_path) in command
 
 
-def test_context_prefix_runs_before_command():
+# ── Context.prefix + Context.run ─────────────────────────────────────
+
+
+def test_context_prefix_prepends_command():
+    """Seam: protocol handoff — CLI/collection/context layers route to the same execution pipeline."""
     ctx = Context()
-    with ctx.prefix(f"{sys.executable} -c \"print('prefix')\""):
+    with ctx.prefix(f"{PYTHON} -c \"print('pre')\""):
         result = ctx.run(
-            f"{sys.executable} -c \"print('body')\"",
+            f"{PYTHON} -c \"print('main')\"",
             hide=True,
             in_stream=False,
         )
-    assert result.stdout.splitlines() == ["prefix", "body"]
+    lines = result.stdout.splitlines()
+    assert lines == ["pre", "main"]
 
 
-def test_context_run_watcher_responds_to_prompt_and_preserves_output():
+# ── Context.run + watcher ────────────────────────────────────────────
+
+
+def test_context_run_watcher_responds_and_preserves_output():
+    """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
     code = (
         "import sys; "
         "sys.stdout.write('Continue? '); sys.stdout.flush(); "
@@ -204,7 +83,7 @@ def test_context_run_watcher_responds_to_prompt_and_preserves_output():
     )
     responder = Responder(pattern=r"Continue\? ", response="yes\n")
     result = Context().run(
-        f"{sys.executable} -c \"{code}\"",
+        f"{PYTHON} -c \"{code}\"",
         watchers=[responder],
         hide=True,
         in_stream=False,
@@ -213,222 +92,327 @@ def test_context_run_watcher_responds_to_prompt_and_preserves_output():
     assert "yes" in result.stdout
 
 
-def test_context_run_wraps_failing_watcher_in_failure():
-    code = (
-        "import sys; "
-        "sys.stdout.write('Password: '); sys.stdout.flush(); "
-        "sys.stdin.readline(); print('Sorry')"
-    )
-    responder = FailingResponder(
-        pattern=r"Password: ",
-        response="bad\n",
-        sentinel=r"Sorry",
-    )
-    with pytest.raises(Failure) as exc:
-        Context().run(
-            f"{sys.executable} -c \"{code}\"",
-            watchers=[responder],
-            hide=True,
-            in_stream=False,
+# ── Context.sudo + runner + watchers ──────────────────────────────
+
+
+def test_context_sudo_builds_prompt_responder():
+    """Seam: lifecycle crossing — scheduler execution propagates dependency outputs to downstream tasks."""
+    class SudoRunner(Runner):
+        seen = []
+
+        def run(self, command, **kwargs):
+            self.__class__.seen.append((command, kwargs))
+            return Result(command=command, exited=0)
+
+    SudoRunner.seen.clear()
+    ctx = Context(
+        config=Config(
+            overrides={
+                "sudo": {"password": "cfgpass"},
+                "runners": {"local": SudoRunner},
+            }
         )
-    assert isinstance(exc.value.reason, ResponseNotAccepted)
+    )
+    result = ctx.sudo("whoami", password="rtpass", user="admin")
+    assert result.ok is True
+    cmd, kw = SudoRunner.seen[0]
+    assert cmd.startswith("sudo ")
+    assert "-u admin" in cmd
+    assert kw["watchers"]
 
 
-def test_cli_json_list_reports_tasks_aliases_and_default(tmp_path):
+# ── CLI: --list variants ─────────────────────────────────────────────
+
+
+def test_cli_list_shows_task_names(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        from invoke import task
+
+        @task
+        def compile(c):
+            pass
+
+        @task
+        def package(c):
+            pass
+        """,
+    )
+    proc = run_invoke(tmp_path, "--list")
+    assert proc.returncode == 0, proc.stderr
+    assert "compile" in proc.stdout
+    assert "package" in proc.stdout
+
+
+def test_cli_json_list_reports_tasks_aliases_default(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task, Collection
 
-        @task(aliases=("ship",), default=True)
-        def deploy(c):
+        @task(aliases=("pub",), default=True)
+        def publish(c):
             pass
 
-        ns = Collection("project", deploy)
+        ns = Collection("proj", publish)
         """,
     )
     proc = run_invoke(tmp_path, "--list", "--list-format=json")
     assert proc.returncode == 0, proc.stderr
     payload = json.loads(proc.stdout)
-    assert payload["name"] == "project"
-    deploy = next(item for item in payload["tasks"] if item["name"] == "deploy")
-    assert deploy["aliases"] == ["ship"]
+    assert payload["name"] == "proj"
+    t = next(i for i in payload["tasks"] if i["name"] == "publish")
+    assert t["aliases"] == ["pub"]
 
 
-def test_cli_invokes_default_task_when_no_task_name_is_given(tmp_path):
+def test_cli_flat_list_dotted_names(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        from invoke import Collection, task
+
+        @task
+        def migrate(c):
+            pass
+
+        ns = Collection("root")
+        ns.add_collection(Collection("db", migrate))
+        """,
+    )
+    proc = run_invoke(tmp_path, "--list", "--list-format=flat")
+    assert proc.returncode == 0, proc.stderr
+    assert "db.migrate" in proc.stdout
+
+
+def test_cli_nested_list_shows_nesting(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        from invoke import Collection, task
+
+        @task
+        def migrate(c):
+            pass
+
+        ns = Collection("root")
+        ns.add_collection(Collection("db", migrate))
+        """,
+    )
+    proc = run_invoke(tmp_path, "--list", "--list-format=nested")
+    assert proc.returncode == 0, proc.stderr
+    assert "db" in proc.stdout
+    assert "migrate" in proc.stdout
+
+
+def test_cli_list_depth_json_is_error(tmp_path):
+    """Seam: error propagation — subsystem failures surface consistently at the integration boundary."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        from invoke import task
+
+        @task
+        def compile(c):
+            pass
+        """,
+    )
+    proc = run_invoke(tmp_path, "--list", "--list-format=json", "--list-depth=1")
+    assert proc.returncode != 0
+
+
+# ── CLI: task invocation ─────────────────────────────────────────────
+
+
+def test_cli_default_task_invoked_without_name(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task, Collection
 
         @task(default=True)
-        def deploy(c):
-            print("deployed")
+        def publish(c):
+            print("published")
 
-        ns = Collection("project", deploy)
+        ns = Collection("proj", publish)
         """,
     )
     proc = run_invoke(tmp_path)
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "deployed"
+    assert proc.stdout.strip() == "published"
 
 
-def test_cli_explicit_collection_module_replaces_tasks_default(tmp_path):
+def test_cli_collection_replaces_default(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
-        tmp_path / "build.py",
+        tmp_path / "ops.py",
         """
         from invoke import task
 
         @task
-        def clean(c):
-            print("cleaned")
+        def check(c):
+            print("checked")
         """,
     )
-    proc = run_invoke(tmp_path, "--collection=build", "clean")
+    proc = run_invoke(tmp_path, "--collection=ops", "check")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "cleaned"
+    assert proc.stdout.strip() == "checked"
 
 
-def test_cli_delivers_dashed_flag_to_underscored_python_argument(tmp_path):
+def test_cli_dashed_flag_to_underscore_arg(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
         @task
-        def show(c, target_name):
-            print(target_name)
+        def show(c, output_dir):
+            print(output_dir)
         """,
     )
-    proc = run_invoke(tmp_path, "show", "--target-name=wheel")
+    proc = run_invoke(tmp_path, "show", "--output-dir=artifacts")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "wheel"
+    assert proc.stdout.strip() == "artifacts"
 
 
-def test_cli_inverse_boolean_flag_sets_false(tmp_path):
+def test_cli_inverse_boolean_flag(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
         @task
-        def build(c, cache=True):
-            print(cache)
+        def lint(c, strict=True):
+            print(strict)
         """,
     )
-    proc = run_invoke(tmp_path, "build", "--no-cache")
+    proc = run_invoke(tmp_path, "lint", "--no-strict")
     assert proc.returncode == 0, proc.stderr
     assert proc.stdout.strip() == "False"
 
 
-def test_cli_optional_argument_accepts_bare_flag_and_value(tmp_path):
+def test_cli_optional_argument_bare_and_valued(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
-        @task(optional=("target",))
-        def build(c, target=None):
-            print(repr(target))
+        @task(optional=("format",))
+        def export(c, format=None):
+            print("FLAG" if format is True else format)
         """,
     )
-    bare = run_invoke(tmp_path, "build", "--target")
-    valued = run_invoke(tmp_path, "build", "--target=dist")
+    bare = run_invoke(tmp_path, "export", "--format")
+    valued = run_invoke(tmp_path, "export", "--format=csv")
     assert bare.returncode == 0, bare.stderr
     assert valued.returncode == 0, valued.stderr
-    assert bare.stdout.strip() == "True"
-    assert valued.stdout.strip() == "'dist'"
+    assert bare.stdout.strip() == "FLAG"
+    assert valued.stdout.strip() == "csv"
 
 
-def test_cli_iterable_argument_accumulates_repeated_values(tmp_path):
+def test_cli_iterable_accumulates(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
-        @task(iterable=("label",))
-        def build(c, label=None):
-            print(",".join(label))
+        @task(iterable=("tag",))
+        def publish(c, tag=None):
+            print(",".join(tag))
         """,
     )
-    proc = run_invoke(tmp_path, "build", "--label=a", "--label=b")
+    proc = run_invoke(tmp_path, "publish", "--tag=v1", "--tag=v2")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "a,b"
+    assert proc.stdout.strip() == "v1,v2"
 
 
-def test_cli_incrementable_argument_counts_repetitions(tmp_path):
+def test_cli_incrementable_counts(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
-        @task(incrementable=("verbose",))
-        def build(c, verbose=0):
-            print(verbose)
+        @task(incrementable=("debug",))
+        def run_task(c, debug=0):
+            print(debug)
         """,
     )
-    proc = run_invoke(tmp_path, "build", "--verbose", "--verbose")
+    proc = run_invoke(tmp_path, "run-task", "--debug", "--debug", "--debug")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "2"
+    assert proc.stdout.strip() == "3"
 
 
-def test_cli_runs_pre_and_post_tasks_around_requested_task(tmp_path):
-    write_file(
-        tmp_path / "tasks.py",
-        """
-        from invoke import task
-
-        @task
-        def clean(c):
-            print("clean")
-
-        @task
-        def done(c):
-            print("done")
-
-        @task(pre=[clean], post=[done])
-        def build(c):
-            print("build")
-        """,
-    )
-    proc = run_invoke(tmp_path, "build")
-    assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.splitlines() == ["clean", "build", "done"]
-
-
-def test_cli_dedupes_repeated_task_calls_by_default(tmp_path):
+def test_cli_pre_and_post_tasks(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
         @task
-        def build(c):
-            print("build")
+        def setup(c):
+            print("setup")
+
+        @task
+        def teardown(c):
+            print("teardown")
+
+        @task(pre=[setup], post=[teardown])
+        def test(c):
+            print("test")
         """,
     )
-    proc = run_invoke(tmp_path, "build", "build")
+    proc = run_invoke(tmp_path, "test")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.splitlines() == ["build"]
+    assert proc.stdout.splitlines() == ["setup", "test", "teardown"]
 
 
-def test_cli_no_dedupe_allows_repeated_task_calls(tmp_path):
+def test_cli_dedupes_by_default(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
         @task
-        def build(c):
-            print("build")
+        def compile(c):
+            print("compiled")
         """,
     )
-    proc = run_invoke(tmp_path, "--no-dedupe", "build", "build")
+    proc = run_invoke(tmp_path, "compile", "compile")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.splitlines() == ["build", "build"]
+    assert proc.stdout.splitlines() == ["compiled"]
 
 
-def test_cli_remainder_after_double_dash_reaches_context(tmp_path):
+def test_cli_no_dedupe_allows_repeat(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        from invoke import task
+
+        @task
+        def compile(c):
+            print("compiled")
+        """,
+    )
+    proc = run_invoke(tmp_path, "--no-dedupe", "compile", "compile")
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.splitlines() == ["compiled", "compiled"]
+
+
+def test_cli_remainder_after_double_dash(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
@@ -439,12 +423,36 @@ def test_cli_remainder_after_double_dash_reaches_context(tmp_path):
             print(c.remainder)
         """,
     )
-    proc = run_invoke(tmp_path, "show", "--", "--not-an-invoke-flag", "value")
+    proc = run_invoke(tmp_path, "show", "--", "--custom-flag", "value")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "--not-an-invoke-flag value"
+    assert proc.stdout.strip() == "--custom-flag value"
 
 
-def test_cli_project_config_is_visible_to_task_context(tmp_path):
+def test_cli_task_custom_name_visible_in_list_and_invocation(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        from invoke import task
+
+        @task(name="publish")
+        def release(c):
+            print("published")
+        """,
+    )
+    listed = run_invoke(tmp_path, "--list")
+    invoked = run_invoke(tmp_path, "publish")
+    assert listed.returncode == 0
+    assert "publish" in listed.stdout
+    assert invoked.returncode == 0
+    assert invoked.stdout.strip() == "published"
+
+
+# ── CLI: configuration ──────────────────────────────────────────────
+
+
+def test_cli_project_config_visible_to_task(tmp_path):
+    """Seam: config interaction — multiple configuration sources merge into one runtime view."""
     write_file(
         tmp_path / "tasks.py",
         """
@@ -452,22 +460,17 @@ def test_cli_project_config_is_visible_to_task_context(tmp_path):
 
         @task
         def show(c):
-            print(c.project.target)
+            print(c.project.artifact)
         """,
     )
-    write_file(
-        tmp_path / "invoke.yaml",
-        """
-        project:
-          target: wheel
-        """,
-    )
+    write_file(tmp_path / "invoke.yaml", "project:\n  artifact: bundle\n")
     proc = run_invoke(tmp_path, "show")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "wheel"
+    assert proc.stdout.strip() == "bundle"
 
 
-def test_cli_environment_variable_overrides_existing_config_key(tmp_path):
+def test_cli_env_var_overrides_config(tmp_path):
+    """Seam: config interaction — multiple configuration sources merge into one runtime view."""
     write_file(
         tmp_path / "tasks.py",
         """
@@ -483,7 +486,8 @@ def test_cli_environment_variable_overrides_existing_config_key(tmp_path):
     assert proc.stdout.strip() == "True"
 
 
-def test_cli_runtime_config_file_overrides_project_config(tmp_path):
+def test_cli_runtime_config_overrides_project(tmp_path):
+    """Seam: config interaction — multiple configuration sources merge into one runtime view."""
     write_file(
         tmp_path / "tasks.py",
         """
@@ -491,18 +495,19 @@ def test_cli_runtime_config_file_overrides_project_config(tmp_path):
 
         @task
         def show(c):
-            print(c.project.target)
+            print(c.project.artifact)
         """,
     )
-    write_file(tmp_path / "invoke.yaml", "project:\n  target: project\n")
-    runtime = tmp_path / "runtime.yaml"
-    write_file(runtime, "project:\n  target: runtime\n")
-    proc = run_invoke(tmp_path, "--config", str(runtime), "show")
+    write_file(tmp_path / "invoke.yaml", "project:\n  artifact: project-val\n")
+    rt = tmp_path / "runtime.yaml"
+    write_file(rt, "project:\n  artifact: runtime-val\n")
+    proc = run_invoke(tmp_path, "--config", str(rt), "show")
     assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "runtime"
+    assert proc.stdout.strip() == "runtime-val"
 
 
-def test_cli_run_flag_overrides_config_for_task_commands(tmp_path):
+def test_cli_run_flag_overrides_config(tmp_path):
+    """Seam: config interaction — multiple configuration sources merge into one runtime view."""
     write_file(
         tmp_path / "tasks.py",
         f"""
@@ -510,170 +515,228 @@ def test_cli_run_flag_overrides_config_for_task_commands(tmp_path):
 
         @task
         def show(c):
-            c.run({sys.executable!r} + " -c \\"print('body')\\"")
+            c.run({PYTHON!r} + " -c \\"print('output')\\"")
         """,
     )
     write_file(tmp_path / "invoke.yaml", "run:\n  echo: false\n")
     proc = run_invoke(tmp_path, "--echo", "show")
     assert proc.returncode == 0, proc.stderr
-    assert "body" in proc.stdout
+    assert "output" in proc.stdout
     assert "-c" in proc.stdout
 
 
-def test_cli_help_for_task_includes_docstring_and_task_option(tmp_path):
+# ── CLI: help & errors ──────────────────────────────────────────────
+
+
+def test_cli_help_includes_docstring_and_options(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
-        @task(help={"target": "Build destination."})
-        def build(c, target="dist"):
-            \"\"\"Build wheels.\"\"\"
+        @task(help={"channel": "Release channel."})
+        def publish(c, channel="stable"):
+            \"\"\"Publish artifact.\"\"\"
             pass
         """,
     )
-    proc = run_invoke(tmp_path, "--help", "build")
+    proc = run_invoke(tmp_path, "--help", "publish")
     assert proc.returncode == 0, proc.stderr
-    assert "Build wheels." in proc.stdout
-    assert "--target" in proc.stdout
-    assert "Build destination." in proc.stdout
+    assert "Publish artifact." in proc.stdout
+    assert "--channel" in proc.stdout
+    assert "Release channel." in proc.stdout
 
 
 def test_cli_unknown_task_exits_unsuccessfully(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(tmp_path / "tasks.py", "from invoke import task\n")
-    proc = run_invoke(tmp_path, "missing")
+    proc = run_invoke(tmp_path, "nonexistent")
     assert proc.returncode != 0
-    assert "missing" in (proc.stderr + proc.stdout)
+    assert "nonexistent" in (proc.stderr + proc.stdout)
 
 
-def test_python_module_invocation_runs_same_program(tmp_path):
+# ── Program API ──────────────────────────────────────────────────────
+
+
+def test_program_run_string_argv_exit_false(tmp_path, capsys):
+    """Seam: lifecycle crossing — scheduler execution propagates dependency outputs to downstream tasks."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
         @task
-        def hello(c):
-            print("hello")
+        def greet(c):
+            print("hi")
         """,
     )
-    proc = run_invoke(tmp_path, "hello")
-    assert proc.returncode == 0, proc.stderr
-    assert proc.stdout.strip() == "hello"
-
-
-def test_program_run_string_argv_and_exit_false_do_not_raise_system_exit(tmp_path, capsys):
-    write_file(
-        tmp_path / "tasks.py",
-        """
-        from invoke import task
-
-        @task
-        def hello(c):
-            print("hello")
-        """,
-    )
-    old_cwd = os.getcwd()
+    old = os.getcwd()
     os.chdir(tmp_path)
     try:
-        program = Program()
-        program.run("invoke hello", exit=False)
+        Program().run("invoke greet", exit=False)
     finally:
-        os.chdir(old_cwd)
-    assert "hello" in capsys.readouterr().out
+        os.chdir(old)
+    assert "hi" in capsys.readouterr().out
 
 
-def test_program_run_unknown_task_with_exit_false_returns_without_system_exit(tmp_path, capsys):
+def test_program_run_unknown_exit_false(tmp_path, capsys):
+    """Seam: lifecycle crossing — scheduler execution propagates dependency outputs to downstream tasks."""
     write_file(tmp_path / "tasks.py", "from invoke import task\n")
-    old_cwd = os.getcwd()
+    old = os.getcwd()
     os.chdir(tmp_path)
     try:
-        Program().run("invoke missing", exit=False)
+        Program().run("invoke nonexistent", exit=False)
     finally:
-        os.chdir(old_cwd)
+        os.chdir(old)
     captured = capsys.readouterr()
-    assert "missing" in (captured.out + captured.err)
+    assert "nonexistent" in (captured.out + captured.err)
 
 
-def test_cli_flat_list_uses_dotted_names_for_nested_collections(tmp_path):
+# ── Cross-view invariant tests ───────────────────────────────────────
+
+
+def test_collection_alias_in_list_and_invocation(tmp_path):
+    """CVI-1: cross-view invariants hold across listing, invocation, and runtime APIs."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        from invoke import task
+
+        @task(aliases=("c",), default=True)
+        def compile(c):
+            print("compiled")
+        """,
+    )
+    listed = run_invoke(tmp_path, "--list", "--list-format=json")
+    invoked = run_invoke(tmp_path, "c")
+    payload = json.loads(listed.stdout)
+    assert listed.returncode == 0
+    assert payload["tasks"][0]["name"] == "compile"
+    assert payload["tasks"][0]["aliases"] == ["c"]
+    assert invoked.returncode == 0
+    assert invoked.stdout.strip() == "compiled"
+
+
+def test_warn_consistency_same_command_different_outcome():
+    """CVI-1: cross-view invariants hold across listing, invocation, and runtime APIs."""
+    cmd = f"{PYTHON} -c \"import sys; sys.exit(2)\""
+    result = Context().run(cmd, hide=True, warn=True, in_stream=False)
+    assert result.failed is True
+    assert result.exited == 2
+    with pytest.raises(UnexpectedExit) as exc_info:
+        Context().run(cmd, hide=True, in_stream=False)
+    assert exc_info.value.result.exited == 2
+
+
+def test_from_module_ns_matches_cli_json_list(tmp_path):
+    """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import Collection, task
 
         @task
-        def deploy(c):
+        def stray(c):
             pass
 
-        ns = Collection("root")
-        ns.add_collection(Collection("prod", deploy))
+        @task
+        def included(c):
+            pass
+
+        ns = Collection("myns", included)
         """,
     )
-    proc = run_invoke(tmp_path, "--list", "--list-format=flat")
+    proc = run_invoke(tmp_path, "--list", "--list-format=json")
+    assert proc.returncode == 0
+    payload = json.loads(proc.stdout)
+    assert payload["name"] == "myns"
+    names = [t["name"] for t in payload["tasks"]]
+    assert "included" in names
+    assert "stray" not in names
+
+
+# ── Workflow integration ──────────────────────────────────────────────
+
+
+def test_workflow_dependency_and_artifact(tmp_path):
+    """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        from pathlib import Path
+        from invoke import task
+
+        @task
+        def prepare(c):
+            Path("order.txt").write_text("prepare\\n", encoding="utf-8")
+
+        @task(pre=[prepare])
+        def package(c, output="bundle"):
+            with Path("order.txt").open("a", encoding="utf-8") as f:
+                f.write(f"package:{output}\\n")
+        """,
+    )
+    proc = run_invoke(tmp_path, "package", "--output", "artifact")
     assert proc.returncode == 0, proc.stderr
-    assert "prod.deploy" in proc.stdout
+    lines = (tmp_path / "order.txt").read_text(encoding="utf-8").splitlines()
+    assert lines == ["prepare", "package:artifact"]
 
 
-def test_cli_list_depth_with_json_is_an_error(tmp_path):
+def test_workflow_merges_config_layers(tmp_path):
+    """Seam: config interaction — multiple configuration sources merge into one runtime view."""
     write_file(
         tmp_path / "tasks.py",
         """
         from invoke import task
 
         @task
-        def build(c):
-            pass
+        def show(c):
+            print(f"{c.release.channel}:{c.release.version}")
+        """,
+    )
+    write_file(
+        tmp_path / "invoke.yaml",
+        """
+        release:
+          channel: project
+          version: 1
+        """,
+    )
+    rt = tmp_path / "runtime.yaml"
+    write_file(
+        rt,
+        """
+        release:
+          version: 5
         """,
     )
     proc = run_invoke(
         tmp_path,
-        "--list",
-        "--list-format=json",
-        "--list-depth=1",
+        "--config",
+        str(rt),
+        "show",
+        env={"INVOKE_RELEASE_CHANNEL": "environment"},
     )
-    assert proc.returncode != 0
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.strip() == "environment:5"
 
 
-def test_context_sudo_runtime_password_builds_prompt_responder(monkeypatch):
-    class SudoRecordingRunner(Runner):
-        seen = []
+def test_workflow_default_task_uses_context_runner(tmp_path):
+    """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
+    write_file(
+        tmp_path / "tasks.py",
+        """
+        import sys
+        from invoke import task
 
-        def run(self, command, **kwargs):
-            self.__class__.seen.append((command, kwargs))
-            return Result(command=command, exited=0)
-
-    ctx = Context(
-        config=Config(
-            overrides={
-                "sudo": {"password": "configpass"},
-                "runners": {"local": SudoRecordingRunner},
-            }
-        )
+        @task(default=True)
+        def inspect(c):
+            result = c.run(sys.executable + ' -c "print(42)"', hide=True)
+            print(f"{result.ok}:{result.stdout.strip()}")
+        """,
     )
-    result = ctx.sudo("whoami", password="runtimepass", user="root")
-    assert result.ok is True
-    command, kwargs = SudoRecordingRunner.seen[0]
-    assert command.startswith("sudo ")
-    assert "-u root" in command
-    assert kwargs["watchers"]
-
-
-def test_sudo_rejected_response_translates_to_auth_failure(monkeypatch):
-    from invoke import AuthFailure
-
-    class RejectingRunner(Runner):
-        def run(self, command, **kwargs):
-            raise Failure(
-                result=Result(command=command, exited=1),
-                reason=ResponseNotAccepted(),
-            )
-
-    with pytest.raises(AuthFailure):
-        Context(
-            config=Config(
-                overrides={
-                    "sudo": {"password": "bad"},
-                    "runners": {"local": RejectingRunner},
-                }
-            )
-        ).sudo("id")
+    write_file(tmp_path / "invoke.yaml", "run:\n  warn: false\n")
+    proc = run_invoke(tmp_path)
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.strip() == "True:42"

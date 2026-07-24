@@ -1,212 +1,327 @@
-# Nikola Specification
+﻿# Static Site Generator Specification
+
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
 
 ## Product Overview
 
-Nikola is a static site and blog generator. A project contains configuration, content source files, themes, assets, plugins, and generated output. The `nikola` command and the Python API both operate on the same project state: source posts and pages are scanned, metadata is resolved, paths and links are computed, compilers render source documents, tasks produce files, and the output directory contains the generated website.
+This package is a static site and blog generator. A project contains configuration, content source files, themes, assets, plugins, and generated output. The console command and the Python API operate on the same project state: source posts and pages are scanned, metadata is resolved, paths and links are computed, compilers render source documents, build tasks produce files, and the output directory contains the generated website.
 
-Nikola is modular. Commands, compilers, template systems, taxonomies, metadata extractors, shortcodes, and tasks are plugin categories. A local site build must work without network access when the project uses local content, local themes, and installed Python dependencies.
+The system is modular. Commands, compilers, template systems, taxonomies, metadata extractors, shortcodes, and tasks are plugin categories. A local site build must work without network access when the project uses local content, local themes, and installed Python dependencies.
 
-## Scope
+## Non-Goals
 
-This specification covers the documented local site lifecycle:
-
-- package import and version/debug flags;
-- the `nikola` command line interface for local commands including `init`, `build`, `check`, `new_post`, `new_page`, `serve`, `help`, `version`, and `import_wordpress`;
-- `nikola.Nikola` as the site object that owns configuration, posts, path handlers, compilers, template rendering, shortcodes, filters, taxonomies, and generated tasks;
-- `nikola.post.Post` as the public post/page object with metadata, translations, source paths, destination paths, permalinks, dependencies, and rendered text;
-- metadata extraction from source text, sidecar metadata files, filename patterns, and configured metadata formats;
-- Markdown, reStructuredText, HTML, and notebook-style page compiler behavior at the level of accepted source files and generated fragments;
-- path handlers, links, permalinks, slugs, taxonomy/category/tag paths, RSS/Atom output, sitemap output, and generated file-tree invariants;
-- public plugin category base classes and hooks needed to author local command, task, compiler, metadata, shortcode, taxonomy, and template plugins.
-
-This specification describes public behavior and observable project state. It does not define exact theme markup, private task dictionaries, internal dependency-cache keys, or implementation order.
-
-## Installable Surface
-
-The package is imported as `nikola`. The console entry point is `nikola`, which calls `nikola.__main__.main(args=None)`. The top-level package exposes `nikola.Nikola`, `nikola.__version__`, and debug flags derived from environment variables.
-
-Public documentation and automodule pages expose `nikola.nikola.Nikola`, `nikola.post.Post`, `nikola.metadata_extractors`, `nikola.plugin_categories`, `nikola.shortcodes`, and selected utility APIs from `nikola.utils`. Public plugin modules under `nikola.plugins.command`, `nikola.plugins.compile`, `nikola.plugins.task`, `nikola.plugins.template`, and `nikola.plugins.misc` are extension points when they implement documented plugin categories.
-
-The supported local source formats in this scope are reStructuredText, Markdown, HTML fragments, and notebook files when the corresponding dependencies are installed. The implementation is permitted to use any template engine internally, but public behavior must expose template rendering through the `Nikola` and `TemplateSystem` contracts.
-
-## Public API
-
-`nikola.__version__` returns the package version string. `nikola.DEBUG`, `nikola.TEMPLATES_TRACE`, and `nikola.SHOW_TRACEBACKS` are booleans derived from `NIKOLA_DEBUG`, `NIKOLA_TEMPLATES_TRACE`, and `NIKOLA_SHOW_TRACEBACKS`.
-
-`main(args=None)` runs the command line interface. When `args` is `None`, it uses process command-line arguments. It returns an integer exit status. Commands that do not require a site configuration, such as `init`, `version`, and import commands, must run without a `conf.py`. Commands that operate on an existing site must locate or load the configuration file before creating the site object.
-
-`Nikola(**config)` constructs a site object from configuration values. The object must expose configuration values, source/output folders, compilers, path handlers, posts, translations, taxonomies, and task plugins through public methods. Missing required configuration values must be reported as command/configuration errors rather than producing a partial successful build.
-
-`Post(source_path, config, destination, use_in_feeds, messages, template_name, compiler, destination_base=None, metadata_extractors_by=None)` represents a post or page source. It must resolve source paths, translations, metadata, destination paths, permalink, rendered text, dependencies, title, author, description, tags, and status from the source file, sidecar files, configuration, and compiler.
-
-`nikola.plugin_categories` defines author-facing plugin base classes: `BasePlugin`, `Command`, `Task`, `LateTask`, `TemplateSystem`, `PageCompiler`, `CompilerExtension`, `MetadataExtractor`, `ShortcodePlugin`, `Importer`, and `Taxonomy`. Each plugin receives the active site with `set_site(site)` when loaded. Plugins must report dependencies and generated tasks through their public category methods.
-
-`nikola.metadata_extractors` exposes metadata source, priority, and condition objects plus extractors for Nikola metadata comments, YAML metadata, TOML metadata, and filename-regex metadata. Metadata extractors return dictionaries of metadata keys and values, and metadata writers produce text in their declared format.
-
-`nikola.shortcodes.extract_shortcodes(data)` returns parsed shortcode occurrences from text. `nikola.shortcodes.apply_shortcodes(data, registry, site, filename, raise_exceptions, lang, extra_context)` returns text with registered shortcodes expanded. Malformed shortcode syntax must raise `ParsingError` when errors are not suppressed.
-
-The selected utility surface includes `slugify`, `unslugify`, `encodelink`, `get_translation_candidate`, `write_metadata`, `bool_from_meta`, `TranslatableSetting`, `LocaleBorg`, `config_changed`, `get_root_dir`, `create_redirect`, `load_data`, and `rss_writer`. These functions must operate on public strings, paths, metadata dictionaries, locale values, and generated files rather than on private site internals.
-
-## Product State Model
-
-Nikola exposes the same site through three public projections.
-
-The configuration projection is the `conf.py` and runtime configuration dictionary. It defines folders, post/page patterns, languages, URL style, path handlers, compilers, themes, template variables, metadata formats, taxonomies, feeds, and build options.
-
-The content projection is the source tree. It contains posts, pages, translations, sidecar metadata files, static assets, themes, templates, and plugin files. `Post` objects and metadata extractors read this projection.
-
-The generated projection is the output site. It contains rendered HTML and other pages, feeds, sitemaps, copied assets, redirect files, and path/taxonomy outputs. CLI commands and Python render methods write this projection.
-
-State written through one projection must be visible through the others on the same project. A post source added by `new_post` must be discoverable by a later build. A path produced by a path handler must match both the `Post.permalink()` result and the generated output location. A configuration change that changes URLs, translations, post patterns, or output folders must change the generated projection on the next build.
-
-## Project Initialization And CLI Commands
-
-`nikola init TARGET` must create a local project directory. An empty project must include a configuration file and folders needed for content and generated output. A demo project must additionally include sample content that is buildable. If the target exists and is not usable as a destination, the command must fail without claiming success.
-
-`nikola build` must build the current site. It must read configuration, scan posts/pages, load plugins, produce build tasks, and write generated files to the configured output folder. With strict mode enabled, warnings that would otherwise be non-fatal must cause a non-zero result. With invariant mode enabled and the required dependency available, time-dependent output must use the invariant timestamp.
-
-`nikola check` must inspect generated site links and files. It returns success when checked links and generated paths satisfy the command's selected constraints. It returns a non-zero status when required files or links are missing.
-
-`nikola new_post` and `nikola new_page` must create content source files with metadata. The commands must respect configured post/page folders, default compiler, title, slug, date, scheduled publication options, and page/post selection. If the requested destination file already exists, the command must fail rather than overwrite silently.
-
-`nikola import_wordpress` must read a WordPress export file and create local Nikola content files and metadata. It must transform WordPress post/page content into Nikola source files, preserve titles, dates, slugs, tags/categories, status, and attachments when those values are present, and report malformed input as an import failure.
-
-`nikola help` and `nikola version` must run without a project configuration. Unknown commands and invalid command options must return non-zero status.
-
-## Configuration, Content, And Metadata
-
-Configuration values control folders, post/page source patterns, URLs, languages, compilers, feeds, taxonomies, templates, and plugin behavior. Values loaded from the active configuration file must be available to the site object and to plugins after the site is constructed.
-
-Posts and pages are source files paired with metadata. Metadata is accepted from Nikola metadata comments, YAML, TOML, sidecar metadata files, or filename-derived metadata when configured. Metadata from an invalid format must raise or report a metadata error. Missing optional metadata must fall back to configured defaults. Required title/path/date values must be present before rendering the post as a normal published item.
-
-A post status of published, draft, private, or scheduled must affect visibility in indexes and feeds. Draft and private posts must not appear in normal public indexes and feeds. Future-dated or scheduled posts must not be published in normal builds until the configured publication condition is satisfied.
-
-Translations are keyed by language. A translated source must map to the same logical post/page as the default-language source. When a translation is absent, translation lookup returns the configured fallback candidate or reports that the translation is unavailable.
-
-## Paths, Links, And Taxonomies
-
-Path handlers map named entities to URL path components. `register_path_handler(kind, f)` must register a callable for `kind`. `path(kind, name, lang, is_link)` must return the configured path for that entity and language. Asking for an unknown path kind must fail with an error rather than returning an arbitrary path.
-
-`post_path`, `slug_path`, `slug_source`, and `filename_path` must produce paths consistent with the configured URL style, language, and index-file policy. `Post.destination_path(lang, extension, sep)` and `Post.permalink(lang, absolute, extension, query)` must agree with the site's path handlers.
-
-`link`, `abs_link`, and `rel_link` must generate URLs using the configured site URL, base path, language, and URL style. Relative links must be computed from the source page to the target page. Encoded links must preserve valid URL characters and escape unsafe characters.
-
-Taxonomy plugins classify posts into tags, categories, authors, and configured classification sets. Classification pages, feeds, and paths must reflect the same post membership as the post metadata. Sorting taxonomies must use the configured sort policy and language-specific friendly names.
-
-## Compilation, Rendering, And Generated Files
-
-A compiler maps a source file to an output fragment or document. `get_compiler(source_name)` must select a compiler based on the source extension and configured compiler registry. If no compiler supports the source, the site must report an unsupported-source error.
-
-Markdown and reStructuredText compilers must read source text, split metadata when the format supports it, render content to HTML fragments, and report syntax or dependency errors as build failures. HTML source must pass through as HTML content while still participating in metadata and path behavior.
-
-`render_template(template_name, output_name, context, url_type, is_fragment)` must render a template with the supplied context and write or return output according to the call. Missing templates or render failures must fail the build or rendering operation. Template variables must include site, post, navigation, translations, and configured values when those are documented for templates.
-
-`generic_renderer`, `generic_page_renderer`, `generic_post_list_renderer`, RSS/Atom renderers, and sitemap tasks must write files under the configured output directory. The generated files must be internally consistent: links point to generated paths, feeds include feed-eligible posts, and sitemap entries correspond to generated public pages.
-
-## Shortcodes And Filters
-
-Shortcodes are named functions embedded in source text. Registering a shortcode name must make it available to later shortcode application. Applying shortcodes must replace each shortcode invocation with the registered function result using the active site, filename, language, and extra context. Unknown shortcodes or malformed syntax must raise `ParsingError` or report a build error when exceptions are enabled.
-
-Filters are named transformations applied to generated output files. Registering a filter must make it available by name in configuration and task generation. Unknown filters must fail when a task attempts to use them.
-
-## Plugin And Task Contracts
-
-Plugins must receive the active site before they are used. A `Command` plugin must expose command-line behavior through `execute(options, args)`. A `Task` or `LateTask` plugin must yield build tasks with observable targets, file dependencies, and actions. A `PageCompiler` must compile source files and report supported extensions. A `MetadataExtractor` must extract metadata from source text, filenames, or sidecar files. A `Taxonomy` must classify posts and provide paths and contexts for classification pages.
-
-Task generation must be deterministic for the same configuration and content state. Tasks that write generated files must declare those files as targets. A task that cannot satisfy its dependencies must fail rather than silently skipping required output.
-
-## Error Semantics
-
-Loading an invalid configuration file must return a non-zero CLI status and must not create a successful site object.
-
-Building without a required configuration file must fail for commands that require an existing project. Commands documented as configuration-free, including `init`, `help`, `version`, and import commands, must not require `conf.py`.
-
-Unknown CLI commands and invalid command options must return non-zero status. `help` and `version` must return status `0`.
-
-Unknown path handler kinds, unsupported source extensions, missing compilers, missing templates, malformed metadata, malformed shortcodes, and invalid import input must raise an exception or return a non-zero command result appropriate to the calling surface.
-
-Attempts to overwrite existing content with `new_post` or `new_page` must fail unless an explicit overwrite behavior is selected by the command.
-
-## Cross-View Invariants
-
-1. A site initialized by `nikola init` must contain configuration and content folders that a later `nikola build` reads from the same project directory.
-2. A source file created by `nikola new_post` or `nikola new_page` must be discoverable as a `Post` on the next scan using the same configuration.
-3. A `Post.destination_path()` value must match the generated file path written during a build for the same post, language, extension, and URL style.
-4. A `Post.permalink()` value must match the URL produced by the site's path/link handlers for the same post and language.
-5. Tags, categories, authors, and other taxonomy pages must contain the same posts that the corresponding post metadata assigns to those classifications.
-6. RSS and Atom feeds must include feed-eligible published posts and must exclude draft, private, and not-yet-published scheduled posts.
-7. A template variable documented for generated pages must have the same value whether it is read by a template plugin or by a renderer context for the same page.
-8. A registered shortcode must produce the same replacement text when applied through the site object and when applied through the standalone shortcode API with the same registry and context.
-9. A generated sitemap entry must correspond to a generated public output file and public URL.
-10. A compiler selected for a source file must be the compiler that reads that file during a build.
+- This specification does not require private helper functions, private attributes, internal task dictionaries, dependency-cache keys, plugin-manager internals, or exact dependency-graph construction order.
+- This specification does not require exact theme-specific HTML bytes, whitespace, asset ordering, or template implementation details.
+- This specification does not require live deployment, plugin download or install behavior, external network checks, or image-processing algorithms.
+- This specification does not require every optional plugin shipped with the upstream project. It covers the public plugin category contracts and the local site lifecycle commands listed below.
+- Exact rich or text representation strings, log message text, and warning wording are not part of the contract.
 
 ## Representative Workflows
 
-Create and build a local site:
+### Initialize, Author, and Build
 
 ```python
 from pathlib import Path
 from nikola.__main__ import main
 
-root = Path("example-site")
-assert main(["init", "--quiet", str(root)]) == 0
-assert main(["--conf=" + str(root / "conf.py"), "new_post", "-t", "Hello"]) == 0
+root = Path("orbital-site")
+assert main(["init", "--quiet", str(root)]) in (0, None)
+assert main(["--conf=" + str(root / "conf.py"), "new_post", "-t", "Ceramic Mugs Guide"]) in (0, None)
 assert main(["--conf=" + str(root / "conf.py"), "build"]) == 0
-assert (root / "output").exists()
+assert (root / "output" / "index.html").is_file()
 ```
 
-Register and apply a shortcode:
+The initialization command must create a local project with configuration and content folders. A post created afterward must be discoverable during a later build, and the build must write generated pages under the configured output directory.
+
+### Register and Apply a Shortcode
 
 ```python
 from nikola import Nikola
 
-site = Nikola(SITE_URL="https://example.invalid/", TRANSLATIONS={"en": ""}, DEFAULT_LANG="en")
-site.register_shortcode("hello", lambda site, data, lang, post=None: "Hello")
-assert site.apply_shortcodes("{{% hello %}}", "post.rst", "en", {}) == "Hello"
+site = Nikola(SITE_URL="https://orbital.test/", TRANSLATIONS={"en": ""}, DEFAULT_LANG="en")
+site.register_shortcode("marker", lambda site, data, lang, post=None: "MARKER")
+rendered, deps = site.apply_shortcodes("{{% marker %}}", "fragment.rst", "en", {})
+assert rendered == "MARKER"
+assert deps == []
 ```
 
-Resolve a post path:
+Registering a shortcode on the site object must make it available to later shortcode application through the same registry and context.
+
+### Resolve Post Paths
 
 ```python
 post = site.posts[0]
-path = post.destination_path("en")
-url = post.permalink("en")
-assert path.endswith("index.html") or path.endswith(".html")
-assert url
+destination = post.destination_path("en")
+permalink = post.permalink("en")
+assert destination.endswith("index.html") or destination.endswith(".html")
+assert permalink.startswith("/")
 ```
 
-## Non-Goals
+For a scanned post, the destination path and permalink must agree with the site's configured URL style and path handlers.
 
-This specification does not define private helper functions, private attributes, internal task dictionaries, doit internals, cache key formats, plugin manager internals, or exact dependency-graph construction order.
+## Site Initialization and CLI Commands
 
-This specification does not define exact theme-specific HTML bytes, whitespace, asset ordering, or template implementation details.
+The supported console command is `nikola`. Direct invocation through `nikola.__main__.main(args)` is supported as the Python entry surface.
 
-This specification does not define live deployment, GitHub Pages deployment, plugin download/install behavior, external network checks, live HTTP server behavior beyond local command startup, or image-processing algorithms.
+**Configuration-free commands.** `help`, `version`, `init`, and import commands must run without an existing project configuration. `help` and `version` must return success.
 
-This specification does not require every Nikola plugin shipped with the project. It covers the public plugin category contracts and the local site lifecycle plugins listed in Scope.
+**Project initialization.** `init TARGET` must create a local project directory containing a configuration file and folders needed for content and generated output. If the target cannot be used as a destination, the command must fail without claiming success.
 
-## Invocation Protocol
+**Build.** `build` must read configuration, scan posts and pages, load plugins, produce build tasks, and write generated files to the configured output folder. When strict mode is enabled, warnings that would otherwise be non-fatal must cause a non-zero result.
 
-The supported console command is `nikola`.
+**Check.** `check` must inspect generated site links and files. It returns success when checked links and generated paths satisfy the selected constraints.
 
-`python -m nikola` is supported when the package provides a module entry point equivalent to the console command. Directly calling `nikola.__main__.main(args)` is supported as the Python invocation surface.
+**Content creation.** `new_post` and `new_page` must create source files with metadata in the configured folders. If the requested destination file already exists, the command must fail rather than overwrite silently.
 
-Exit codes:
+**Import.** `import_wordpress` must read a WordPress export file and create local content files and metadata. Malformed import input must fail as an import error.
 
-| Invocation outcome | Exit code |
+**Failure handling.** Unknown commands, invalid command options, malformed configuration files, missing required configuration files for commands that need a project, and duplicate `new_post` or `new_page` targets must return non-zero status.
+
+## Text Utilities and Metadata Helpers
+
+The utility surface provides string, path, metadata, and locale helpers used across the site lifecycle.
+
+**Slug helpers.** `slugify` must lowercase ASCII words, transliterate diacritics, and remove unsafe punctuation from slugs. `unslugify` must restore a human-readable title from a slug.
+
+**Link encoding.** `encodelink` must percent-encode spaces and Unicode characters while preserving already-encoded sequences.
+
+**Translation filenames.** `get_translation_candidate(config, path, lang)` must derive translated source filenames from `TRANSLATIONS`, `DEFAULT_LANG`, and `TRANSLATIONS_PATTERN`. Supported patterns include `{path}.{lang}.{ext}` and `{path}.{ext}.{lang}`.
+
+**Metadata booleans.** `bool_from_meta(meta, key, fallback=..., blank=...)` must treat `true`, `yes`, and `1` as true; `false`, `no`, and `0` as false; use `blank` when the key is missing; and use `fallback` for unrecognized text.
+
+**Metadata writing.** `write_metadata(data, format_name)` must serialize declared metadata keys. For the Nikola metadata format, title and slug entries must appear as `.. title:` and `.. slug:` lines followed by a blank line.
+
+**Redirect and data files.** `create_redirect(path, url)` must write an HTML redirect document containing the target URL. `load_data(path)` must load JSON mappings from `.json` files.
+
+**Locale settings.** `TranslatableSetting(name, inp, translations)` must return language-specific values through `setting(lang)`. When `inp` is a `{lang: value}` mapping, each configured language must receive its declared value. `config_changed(config, identifier)` must store the configuration snapshot and expose it through `config` and `identifier`. `LocaleBorg.initialize(locales, initial_lang)` must initialize locale state used by translatable settings.
+
+## Shortcode Processing
+
+Shortcodes are named functions embedded in source text.
+
+**Extraction.** `extract_shortcodes(data)` must replace each shortcode occurrence with a token placeholder and return the tokenized text plus a replacement map.
+
+**Application.** `apply_shortcodes(data, registry, site, filename, raise_exceptions, lang, extra_context)` must expand registered shortcodes and return the rendered text plus dependency paths. Unknown shortcodes with exceptions enabled must yield empty rendered output. Shortcodes with body content must pass the body to the handler.
+
+**Site integration.** `Nikola.register_shortcode(name, handler)` must store the handler in `shortcode_registry`. `Nikola.apply_shortcodes(data, filename, lang, extra_context)` must expand shortcodes using that registry and return the same rendered result as the standalone shortcode API when given the same registry and context.
+
+**Errors.** Malformed shortcode syntax must raise `ParsingError` when exceptions are not suppressed.
+
+## Path Resolution and Link Generation
+
+Path handlers map named entities to URL path components.
+
+**Registration.** `register_path_handler(kind, handler)` must register a callable for `kind`. `path(kind, name, lang, is_link)` must return the configured path for that entity and language. When `is_link` is true, the result must be an absolute link path beginning with `/`. When `is_link` is false, the result must be relative to the output directory using platform separators. Unknown path kinds must return an empty string.
+
+**Post paths.** `Post.destination_path(lang, extension, sep)` must return the generated output path for a scanned post. `Post.permalink(lang, absolute, extension, query)` must return the public URL path for the same post and language.
+
+**Links.** `rel_link(from_path, to_path)` must compute a relative link between two generated page paths under pretty URLs.
+
+## Content Scanning, Compilation, and Build Output
+
+**Scanning.** After `init_plugins()` and `scan_posts()`, the site must expose scanned content through `site.posts`. A source file created by `new_post` or `new_page` must appear in `site.posts` or the page collection on the next scan using the same configuration.
+
+**Compiler selection.** `get_compiler(source_name)` must select a compiler based on the source extension and configured compiler registry. A `.rst` post source must resolve to the reStructuredText compiler.
+
+**Generated projections.** A successful `build` must write at minimum:
+
+- the site index page;
+- post and page output files under `output/posts/` and `output/pages/`;
+- archive, category, RSS, and sitemap outputs when enabled by default configuration;
+- category pages for tag metadata attached to published posts.
+
+**Publication status.** Draft posts must be excluded from the public RSS feed and from public index listings. Published posts must appear in RSS and in the site index.
+
+**Cross-output consistency.** The site index, RSS feed, and sitemap must reference the same public post URL for a published post.
+
+## Plugin Contracts
+
+Plugins must receive the active site through `set_site(site)` before they are used.
+
+- A `Command` plugin must expose command-line behavior through `execute(options, args)`.
+- A `Task` or `LateTask` plugin must yield build tasks with observable targets, file dependencies, and actions.
+- A `PageCompiler` plugin must compile supported source files.
+- A `MetadataExtractor` plugin must extract metadata from source text, filenames, or sidecar files.
+- A `ShortcodePlugin` must register its handler on the active site when `set_site()` is called.
+- A `Taxonomy` plugin must classify posts and provide paths and contexts for classification pages.
+
+Task generation must be deterministic for the same configuration and content state.
+
+## State Model
+
+The system exposes one project through three public projections.
+
+1. **Configuration projection** — the configuration file and runtime configuration dictionary. It defines folders, post and page patterns, languages, URL style, compilers, themes, feeds, taxonomies, and build options.
+2. **Content projection** — the source tree containing posts, pages, translations, sidecar metadata files, static assets, themes, templates, and plugin files. `Post` objects and metadata extractors read this projection.
+3. **Generated projection** — the output site containing rendered HTML pages, feeds, sitemaps, copied assets, and taxonomy outputs. CLI commands and render methods write this projection.
+
+State written through one projection must be visible through the others on the same project.
+
+## Error Semantics
+
+| Condition | Required result |
 | --- | --- |
-| help or version succeeds | 0 |
-| a local command completes successfully | 0 |
-| invalid command, invalid option, malformed configuration, missing required file, unsupported source, or build failure | non-zero |
+| Invalid configuration file passed to `--conf=` | Non-zero CLI status; no successful build |
+| Missing configuration file for a command that requires a project | Non-zero CLI status |
+| Unknown CLI command | Non-zero CLI status |
+| Invalid CLI option | Non-zero CLI status |
+| Duplicate `new_post` or `new_page` destination | Non-zero CLI status |
+| Malformed shortcode with exceptions enabled | Raise `ParsingError` |
+| Unknown shortcode with exceptions enabled | Empty rendered output |
+| Unknown path handler kind | Return empty path string from `path()` |
+| Unsupported source extension in `get_compiler()` | Terminate with non-zero process status |
 
-## Environment
+`help` and `version` must return success without a project configuration.
 
-The implementation is permitted to use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+## Cross-View Invariants
 
-Nikola's normal local workflows use filesystem access and Python packages for rendering, feeds, dates, templates, localization, images, and markup parsing. Local checks are permitted to use temporary project directories. Network services, deploy targets, and plugin downloads are outside this specification.
+1. A site initialized by `init` must contain configuration and content folders that a later `build` reads from the same project directory.
+2. A source file created by `new_post` must be discoverable as a scanned `Post` on the next scan using the same configuration.
+3. A `Post.destination_path()` value must match the generated file path written during a build for the same post, language, extension, and URL style.
+4. A `Post.permalink()` value must match the URL produced by the site's path and link handlers for the same post and language.
+5. Category pages must contain the same posts that the corresponding post tag metadata assigns to those classifications.
+6. RSS feeds must include feed-eligible published posts and must exclude draft posts.
+7. A scanned post title must appear in the rendered HTML output for that post.
+8. A shortcode registered on the site must produce the same replacement text through `Nikola.apply_shortcodes()` and through the standalone shortcode API with the same registry and context.
+9. A sitemap entry must correspond to a generated public output file and public URL.
+10. The compiler selected for a scanned post source extension must be the compiler used for that source during build.
 
-## Evaluation Notes
+## Public Interface
 
-Assessment focuses on public behavior through the `nikola` command, package imports, public site/post/plugin objects, and generated local files. Checks exercise initialization, configuration loading, content creation, metadata extraction, path/permalink/taxonomy projections, compiler selection, shortcode expansion, build output consistency, feeds, sitemaps, command exit status, and cross-view consistency between Python objects and generated files.
+### Import Surface
 
-Private helpers, exact template bytes, internal task dictionaries, dependency-cache internals, and undocumented support fixtures are not assessed. Correct behavior is measured by public return values, exceptions or exit status, generated files, and durable project state.
+The package is imported as `nikola`.
+
+```python
+import nikola
+from nikola import Nikola
+from nikola.__main__ import main
+from nikola.post import Post
+from nikola.shortcodes import ParsingError, apply_shortcodes, extract_shortcodes
+from nikola.utils import (
+    LocaleBorg,
+    TranslatableSetting,
+    bool_from_meta,
+    config_changed,
+    create_redirect,
+    encodelink,
+    get_translation_candidate,
+    get_root_dir,
+    load_data,
+    slugify,
+    unslugify,
+    write_metadata,
+)
+from nikola.plugin_categories import (
+    BasePlugin,
+    Command,
+    CompilerExtension,
+    Importer,
+    LateTask,
+    MetadataExtractor,
+    PageCompiler,
+    ShortcodePlugin,
+    Task,
+    Taxonomy,
+    TemplateSystem,
+)
+from nikola.metadata_extractors import default_metadata_extractors_by
+```
+
+### API Catalog
+
+| Name | Kind | Role |
+| --- | --- | --- |
+| Nikola | class | Site object owning configuration, posts, compilers, and renderers |
+| Post | class | Public post or page object with metadata, paths, and permalinks |
+| main | function | Console entry point returning integer exit status |
+| __version__ | constant | Package version string |
+| DEBUG | constant | Debug flag derived from environment |
+| TEMPLATES_TRACE | constant | Template trace flag derived from environment |
+| SHOW_TRACEBACKS | constant | Traceback display flag derived from environment |
+| slugify | function | Convert text into a URL slug |
+| unslugify | function | Convert a slug into a readable title |
+| encodelink | function | Percent-encode a link path |
+| get_translation_candidate | function | Derive translated source filenames |
+| bool_from_meta | function | Parse boolean metadata values |
+| write_metadata | function | Serialize metadata to text |
+| create_redirect | function | Write an HTML redirect document |
+| load_data | function | Load structured data from a file |
+| TranslatableSetting | class | Language-aware configuration value |
+| LocaleBorg | class | Locale state shared across rendering |
+| config_changed | class | Track configuration snapshots for rebuild detection |
+| get_root_dir | function | Locate the project root directory |
+| apply_shortcodes | function | Expand shortcodes in text |
+| extract_shortcodes | function | Tokenize shortcodes in text |
+| ParsingError | exception | Raised for malformed shortcode syntax |
+| BasePlugin | class | Base class for plugins |
+| Command | class | Plugin category for CLI commands |
+| Task | class | Plugin category for build tasks |
+| LateTask | class | Plugin category for late build tasks |
+| PageCompiler | class | Plugin category for source compilers |
+| CompilerExtension | class | Plugin category for compiler extensions |
+| MetadataExtractor | class | Plugin category for metadata extraction |
+| ShortcodePlugin | class | Plugin category for shortcodes |
+| Taxonomy | class | Plugin category for classifications |
+| TemplateSystem | class | Plugin category for template engines |
+| Importer | class | Plugin category for import commands |
+| default_metadata_extractors_by | mapping | Registry of built-in metadata extractors |
+
+### CLI Entry Points
+
+Console script: `nikola`
+
+Supported commands in this specification:
+
+| Command | Role |
+| --- | --- |
+| init | Create a new project |
+| build | Build the current site |
+| check | Validate generated links and files |
+| new_post | Create a new post source file |
+| new_page | Create a new page source file |
+| import_wordpress | Import content from a WordPress export |
+| help | Show command help |
+| version | Print package version |
+
+| Exit code | Meaning |
+| ---: | --- |
+| 0 | Success, including successful `help` and `version` |
+| non-zero | Unknown command, invalid option, malformed configuration, missing required file, duplicate content target, or build failure |
+
+## Appendix A: Environment
+
+The working environment runs Python 3.11 on Linux without network access.
+The following third-party packages are preinstalled and importable:
+pytest, docutils, markdown, jinja2, pygments, python-dateutil, pytz,
+unidecode, lxml, feedgenerator, blinker, doit, mako, Babel, requests,
+Pillow, piexif, PyRSS2Gen, and natsort.
+
+The assessment environment provides the same interpreter and package set.
+
+The project must declare its packaging metadata in a standard
+`pyproject.toml` (or `setup.py`) at the project root so the package
+can be installed with pip.
+
+Local workflows use filesystem access and installed Python packages for
+rendering, feeds, dates, templates, localization, and markup parsing.
+Temporary project directories are used for assessment instead of live
+network services.
+
+## Appendix B: Assessment Notes
+
+Implementations are exercised through public Python APIs, the `nikola`
+console command, and generated local files. Checks cover initialization,
+configuration loading, content creation, metadata helpers, path and
+permalink generation, shortcode expansion, plugin contracts, build output
+consistency, feeds, sitemaps, command exit status, and cross-view
+consistency between Python objects and generated files.
+
+The focus is on observable behavior from the public contract above, not
+private data structures, exact template bytes, or internal task dictionaries.
+Tests use anti-memorization parameter values and local temporary project
+directories instead of live network services.

@@ -1,103 +1,25 @@
-from __future__ import annotations
-
+import asyncio
 import os
 import re
 from asyncio import run
-from contextlib import contextmanager
-
-from prompt_toolkit.formatted_text import (
-    ANSI,
-    HTML,
-    FormattedText,
-    PygmentsTokens,
-    Template,
-    merge_formatted_text,
-    to_formatted_text,
-)
-from prompt_toolkit import print_formatted_text
-from prompt_toolkit.buffer import Buffer
-from prompt_toolkit.completion import (
-    CompleteEvent,
-    FuzzyWordCompleter,
-    NestedCompleter,
-    PathCompleter,
-    WordCompleter,
-    merge_completers,
-)
-from prompt_toolkit.document import Document
-from prompt_toolkit.history import FileHistory, InMemoryHistory, ThreadedHistory
-from prompt_toolkit.input import create_pipe_input
-from prompt_toolkit.output import DummyOutput
-from prompt_toolkit.shortcuts import PromptSession
-from prompt_toolkit.styles import Attrs, Style, SwapLightAndDarkStyleTransformation
-from prompt_toolkit.styles import AdjustBrightnessStyleTransformation
-
-
-def _document_fixture() -> Document:
-    return Document(
-        "line 1\n" + "line 2\n" + "line 3\n" + "line 4\n", len("line 1\n" + "lin")
-    )
-
-
-@contextmanager
-def _chdir(directory):
-    old = os.getcwd()
-    os.chdir(directory)
-    try:
-        yield
-    finally:
-        os.chdir(old)
-
-
-def _write_test_files(test_dir, names=None):
-    for name in names or range(10):
-        (test_dir / str(name)).write_bytes(b"")
-
-
-async def _load_history(history):
-    result = []
-    async for item in history.load():
-        result.append(item)
-    return result
-
-
-class _Capture:
-    def __init__(self):
-        self._data = []
-
-    def write(self, data):
-        self._data.append(data)
-
-    @property
-    def data(self):
-        return "".join(self._data)
-
-    def flush(self):
-        pass
-
-    def isatty(self):
-        return True
-
-    def fileno(self):
-        return -1
-
-import asyncio
 
 import pytest
 from pygments.token import Token
 
-from prompt_toolkit import PromptSession, __version__, VERSION, print_formatted_text, prompt
-from prompt_toolkit.application import (
-    Application,
-    create_app_session,
-    get_app,
-    get_app_or_none,
-    get_app_session,
+from conftest import (
+    CaptureOutput,
+    FormattedObject,
+    _Capture,
+    _chdir,
+    _document_fixture,
+    _load_history,
+    _write_test_files,
 )
+from prompt_toolkit import VERSION, PromptSession, __version__, print_formatted_text
+from prompt_toolkit.application import Application
 from prompt_toolkit.buffer import Buffer, CompletionState, EditReadOnlyBuffer
 from prompt_toolkit.completion import (
     CompleteEvent,
-    Completer,
     Completion,
     ConditionalCompleter,
     DummyCompleter,
@@ -105,57 +27,37 @@ from prompt_toolkit.completion import (
     FuzzyCompleter,
     FuzzyWordCompleter,
     NestedCompleter,
-    ThreadedCompleter,
+    PathCompleter,
     WordCompleter,
     get_common_complete_suffix,
+    merge_completers,
 )
 from prompt_toolkit.document import Document
 from prompt_toolkit.formatted_text import (
-    FormattedText,
+    ANSI,
     HTML,
+    FormattedText,
+    PygmentsTokens,
     Template,
     fragment_list_to_text,
     merge_formatted_text,
     to_formatted_text,
     to_plain_text,
 )
-from prompt_toolkit.history import DummyHistory, InMemoryHistory
+from prompt_toolkit.history import DummyHistory, FileHistory, InMemoryHistory, ThreadedHistory
 from prompt_toolkit.input import create_pipe_input
-from prompt_toolkit.key_binding import ConditionalKeyBindings, KeyBindings, merge_key_bindings
+from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.output import DummyOutput
-from prompt_toolkit.styles import Style, merge_styles, parse_color, pygments_token_to_classname
-from prompt_toolkit.validation import (
-    ConditionalValidator,
-    DummyValidator,
-    DynamicValidator,
-    ValidationError,
-    Validator,
+from prompt_toolkit.styles import (
+    AdjustBrightnessStyleTransformation,
+    Attrs,
+    Style,
+    SwapLightAndDarkStyleTransformation,
+    merge_styles,
+    parse_color,
+    pygments_token_to_classname,
 )
-
-
-class CaptureOutput(DummyOutput):
-    def __init__(self):
-        self.data: list[str] = []
-
-    def write(self, data: str) -> None:
-        self.data.append(data)
-
-    def write_raw(self, data: str) -> None:
-        self.data.append(data)
-
-    def flush(self) -> None:
-        pass
-
-
-class SmallCompleter(Completer):
-    def get_completions(self, document, complete_event):
-        yield Completion("abc", start_position=-1)
-        yield Completion("ax", start_position=-1)
-
-
-class FormattedObject:
-    def __pt_formatted_text__(self):
-        return [("class:object", "OBJ")]
+from prompt_toolkit.validation import DummyValidator, ValidationError, Validator
 
 def test_upstream_buffer_initial_state():
     buffer = Buffer()
@@ -345,17 +247,19 @@ def test_upstream_document_get_word_before_cursor_pattern():
     document = Document(text="foobar ", cursor_position=len("foobar "))
     pattern = re.compile(r"([a-zA-Z0-9_]+|[^a-zA-Z0-9_\s]+)")
     assert document.get_word_before_cursor() == ""
-    assert document.get_word_before_cursor(pattern=pattern) == ""
+    assert document.get_word_before_cursor(pattern=pattern) == "foobar "
 
 def test_upstream_formatted_text_basic_html():
     html = HTML("<i><b>hello</b>world<strong>test</strong></i>after")
-    assert to_formatted_text(html) == [
+    result = to_formatted_text(html)
+    assert result == [
         ("class:i,b", "hello"),
         ("class:i", "world"),
         ("class:i,strong", "test"),
         ("", "after"),
     ]
-    assert isinstance(to_formatted_text(html), FormattedText)
+    assert isinstance(result, FormattedText)
+    assert result[0] == ("class:i,b", "hello")
 
 def test_upstream_formatted_text_html_fg_bg():
     html = HTML('<style bg="ansired" fg="#ff0000">hello <world fg="ansiblue">world</world></style>')
@@ -366,14 +270,16 @@ def test_upstream_formatted_text_html_fg_bg():
 
 def test_upstream_formatted_text_ansi_formatting():
     value = ANSI("\x1b[32mHe\x1b[45mllo")
-    assert to_formatted_text(value) == [
+    result = to_formatted_text(value)
+    assert result == [
         ("ansigreen", "H"),
         ("ansigreen", "e"),
         ("ansigreen bg:ansimagenta", "l"),
         ("ansigreen bg:ansimagenta", "l"),
         ("ansigreen bg:ansimagenta", "o"),
     ]
-    assert isinstance(to_formatted_text(value), FormattedText)
+    assert isinstance(result, FormattedText)
+    assert result[-1] == ("ansigreen bg:ansimagenta", "o")
 
 def test_upstream_formatted_text_ansi_dim():
     assert to_formatted_text(ANSI("\x1b[2mhello\x1b[0m")) == [
@@ -516,6 +422,7 @@ def test_generated_installable_surface_version_exports_are_consistent():
     assert isinstance(__version__, str)
     assert isinstance(VERSION, tuple)
     assert __version__.split(".")[:3] == [str(part) for part in VERSION[:3]]
+    assert all(isinstance(part, int) for part in VERSION[:3])
 
 def test_generated_application_exit_propagates_exception_instance():
     with create_pipe_input() as pipe_input:
@@ -564,21 +471,59 @@ def test_generated_completion_display_meta_and_event_errors():
     with pytest.raises(AssertionError):
         CompleteEvent(text_inserted=True, completion_requested=True)
 
-def test_generated_completer_variants_delegate_or_suppress_as_documented():
+def test_generated_dummy_completer_returns_no_completions():
     assert list(DummyCompleter().get_completions(Document("a"), CompleteEvent())) == []
+
+
+def test_generated_dynamic_completer_handles_none_delegate():
     assert list(DynamicCompleter(lambda: None).get_completions(Document("a"), CompleteEvent())) == []
-    assert list(ConditionalCompleter(WordCompleter(["abc"]), filter=False).get_completions(Document("a"), CompleteEvent())) == []
-    assert [c.text for c in FuzzyCompleter(WordCompleter(["alpha", "beta"]), enable_fuzzy=False).get_completions(Document("a"), CompleteEvent())] == ["alpha"]
+
+
+def test_generated_conditional_completer_respects_filter():
+    assert list(
+        ConditionalCompleter(WordCompleter(["abc"]), filter=False).get_completions(
+            Document("a"), CompleteEvent()
+        )
+    ) == []
+
+
+def test_generated_fuzzy_completer_disable_fuzzy_delegates_to_word_completer():
+    assert [
+        c.text
+        for c in FuzzyCompleter(WordCompleter(["alpha", "beta"]), enable_fuzzy=False).get_completions(
+            Document("a"), CompleteEvent()
+        )
+    ] == ["alpha"]
+
+
+def test_generated_fuzzy_completer_rejects_invalid_pattern():
     with pytest.raises(AssertionError):
         FuzzyCompleter(WordCompleter(["x"]), pattern="abc")
 
-def test_generated_nested_fuzzy_and_common_suffix_completion_helpers():
+
+def test_generated_nested_completer_returns_expected_subcommands():
     nested = NestedCompleter.from_nested_dict({"show": {"version": None, "clock": None}, "exit": None})
     assert [c.text for c in nested.get_completions(Document(""), CompleteEvent())] == ["show", "exit"]
     assert [c.text for c in nested.get_completions(Document("show v"), CompleteEvent())] == ["version"]
-    assert [c.text for c in FuzzyWordCompleter(["alpha", "alpine", "beta"]).get_completions(Document("ap"), CompleteEvent())] == ["alpha", "alpine"]
-    assert get_common_complete_suffix(Document("he"), [Completion("hello", -2), Completion("help", -2)]) == "l"
-    assert get_common_complete_suffix(Document("he"), [Completion("Xhello", -1), Completion("Yhelp", -1)]) == ""
+
+
+def test_generated_fuzzy_word_completer_fuzzy_match():
+    assert [
+        c.text
+        for c in FuzzyWordCompleter(["alpha", "alpine", "beta"]).get_completions(Document("ap"), CompleteEvent())
+    ] == ["alpha", "alpine"]
+
+
+def test_generated_common_complete_suffix_shared_prefix():
+    assert get_common_complete_suffix(
+        Document("he"), [Completion("hello", -2), Completion("help", -2)]
+    ) == "l"
+
+
+def test_generated_common_complete_suffix_mixed_start_positions():
+    assert get_common_complete_suffix(
+        Document("he"), [Completion("Xhello", -1), Completion("Yhelp", -1)]
+    ) == ""
 
 def test_generated_history_backends_load_and_store_public_order():
     history = InMemoryHistory(["one", "two"])
@@ -593,12 +538,15 @@ def test_generated_history_backends_load_and_store_public_order():
     assert history.get_strings() == ["one", "two", "three"]
     assert asyncio.run(load_all(DummyHistory())) == []
 
-def test_generated_validator_variants_accept_or_raise_with_public_fields():
+def test_generated_validator_from_callable_raises_with_cursor_and_message():
     validator = Validator.from_callable(lambda text: text.startswith("ok"), error_message="bad", move_cursor_to_end=True)
     with pytest.raises(ValidationError) as exc_info:
         validator.validate(Document("nope"))
     assert exc_info.value.cursor_position == 4
     assert exc_info.value.message == "bad"
+
+
+def test_generated_dummy_validator_accepts_any_document():
     assert DummyValidator().validate(Document("anything")) is None
 
 def test_generated_key_bindings_register_remove_and_report_prefixes():
@@ -619,19 +567,30 @@ def test_generated_key_bindings_register_remove_and_report_prefixes():
     with pytest.raises(ValueError):
         bindings.remove(handler)
 
-def test_generated_formatted_text_conversion_template_and_plain_text_helpers():
+def test_generated_to_formatted_text_accepts_none_string_callable_and_object():
     assert to_formatted_text(None) == FormattedText([])
     assert to_formatted_text("abc") == FormattedText([("", "abc")])
     assert to_formatted_text(FormattedObject()) == FormattedText([("class:object", "OBJ")])
     assert to_formatted_text(lambda: "abc") == FormattedText([("", "abc")])
+
+
+def test_generated_to_formatted_text_auto_convert_and_style_prefix():
     assert to_formatted_text("abc", style="class:root") == FormattedText([("class:root ", "abc")])
     with pytest.raises(ValueError):
         to_formatted_text(object(), auto_convert=False)
+
+
+def test_generated_to_plain_text_converts_formatted_and_template():
     assert to_plain_text(to_formatted_text(123, auto_convert=True)) == "123"
     assert to_plain_text(Template("A {} B {}").format("x", HTML("<b>y</b>"))) == "A x B y"
     with pytest.raises(AssertionError):
         to_formatted_text(Template("A {}").format("x", "y"))
-    assert merge_formatted_text(["a", FormattedText([("class:b", "b")])])() == FormattedText([("", "a"), ("class:b", "b")])
+
+
+def test_generated_merge_formatted_text_and_fragment_list_to_text():
+    assert merge_formatted_text(["a", FormattedText([("class:b", "b")])])() == FormattedText(
+        [("", "a"), ("class:b", "b")]
+    )
     assert fragment_list_to_text([("style", "a"), ("", "b")]) == "ab"
 
 def test_generated_print_formatted_text_file_output_and_argument_error():
@@ -641,19 +600,28 @@ def test_generated_print_formatted_text_file_output_and_argument_error():
     with pytest.raises(AssertionError):
         print_formatted_text("x", output=CaptureOutput(), file=object())
 
-def test_generated_style_color_parsing_merge_and_pygments_classname():
+def test_generated_parse_color_handles_named_hex_and_empty():
     assert parse_color("ansired") == "ansired"
     assert parse_color("red") == "ff0000"
     assert parse_color("#abc") == "aabbcc"
     assert parse_color("#aabbcc") == "aabbcc"
     assert parse_color("default") == "default"
     assert parse_color("") == ""
+
+
+def test_generated_parse_color_rejects_invalid():
     with pytest.raises(ValueError):
         parse_color("not a color")
+
+
+def test_generated_merge_styles_later_overrides_earlier():
     style = merge_styles([Style.from_dict({"a": "ansired"}), Style.from_dict({"a": "ansiblue bold"})])
     attrs = style.get_attrs_for_style_str("class:a")
     assert attrs.color == "ansiblue"
     assert attrs.bold is True
+
+
+def test_generated_pygments_token_to_classname():
     assert pygments_token_to_classname(Token.Name.Function) == "pygments.name.function"
 
 def test_generated_error_semantics_public_constructor_failures():

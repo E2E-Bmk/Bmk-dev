@@ -293,6 +293,10 @@ The implementation does not need to support remote credentials, real HTTP range 
 
 Exact exception message wording, exact object representation strings, private attributes, helper modules under `fsspec.tests`, and hidden cache metadata file formats are not part of the public contract.
 
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
 ## Invocation Protocol
 
 There is no required console script for the covered task. `python -m fsspec` is not supported.
@@ -304,4 +308,4 @@ There is no required console script for the covered task. `python -m fsspec` is 
 
 ## Implementation Guidance
 
-The tests exercise public filesystem behavior through local-only backends. They check API imports, protocol lookup, byte reads and writes, directory listings, path expansion, mapping views, directory-prefix views, ZIP archive views, simple cache reads and writes, transactions, error types, and cross-view consistency. The tests do not require network services or optional remote storage packages. Scoring runs with the candidate package placed ahead of the reference package and with the reference package path removed from the test carrier.
+An implementation may choose any internal module layout while preserving the public filesystem behavior described above. Local-only backends are sufficient for this scope; network services and optional remote storage packages are not required.

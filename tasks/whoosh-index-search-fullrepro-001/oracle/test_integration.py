@@ -1,4 +1,4 @@
-"""Track B public behavioral oracle generated from spec_v3 and reference observations."""
+"""Integration tests for whoosh-index-search-fullrepro-001."""
 
 from __future__ import annotations
 
@@ -20,33 +20,11 @@ from whoosh.qparser import MultifieldParser, QueryParser, SimpleParser
 from whoosh.query import And, Or, Term
 from whoosh.searching import NoTermsException
 
-
-def make_index(tmp_path, name=None):
-    directory = tmp_path / (name or "index")
-    directory.mkdir()
-    schema = Schema(
-        path=ID(stored=True, unique=True),
-        body=TEXT(stored=True),
-        tags=KEYWORD(stored=True, commas=True, lowercase=True),
-        note=STORED,
-        number=NUMERIC(stored=True),
-        flag=BOOLEAN(stored=True),
-    )
-    return directory, index.create_in(str(directory), schema, indexname=name)
-
-
-def add_two(ix):
-    with ix.writer() as writer:
-        writer.add_document(path="a", body="alpha beta", tags="Red,Blue", note="first", number=1, flag=True)
-        writer.add_document(path="b", body="beta gamma", tags="Blue", note="second", number=2, flag=False)
-
-
-def paths(ix, query, **kwargs):
-    with ix.searcher() as searcher:
-        return {hit["path"] for hit in searcher.search(query, limit=None, **kwargs)}
+from conftest import add_two, make_index, paths
 
 
 def test_installable_index_surface_creates_an_index(tmp_path):
+    """Seam: lifecycle crossing from create_in to exists_in recognition."""
     directory = tmp_path / "surface-index"
     directory.mkdir()
     index.create_in(str(directory), Schema(path=ID(stored=True)))
@@ -54,6 +32,7 @@ def test_installable_index_surface_creates_an_index(tmp_path):
 
 
 def test_installable_query_and_parser_surfaces_search_documents(tmp_path):
+    """Seam: protocol handoff from QueryParser parse to searcher results."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     parsed = QueryParser("body", ix.schema).parse("alpha")
@@ -61,6 +40,7 @@ def test_installable_query_and_parser_surfaces_search_documents(tmp_path):
 
 
 def test_product_state_commit_is_visible_to_a_new_searcher(tmp_path):
+    """Seam: state consistency between writer commit and searcher visibility."""
     _, ix = make_index(tmp_path)
     with ix.writer() as writer:
         writer.add_document(path="a", body="alpha")
@@ -68,6 +48,7 @@ def test_product_state_commit_is_visible_to_a_new_searcher(tmp_path):
 
 
 def test_product_state_cancel_keeps_previously_committed_projection(tmp_path):
+    """Seam: state consistency when writer cancel preserves prior commit."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     writer = ix.writer()
@@ -77,6 +58,7 @@ def test_product_state_cancel_keeps_previously_committed_projection(tmp_path):
 
 
 def test_product_state_existing_searcher_keeps_its_open_generation(tmp_path):
+    """CVI-1: committed writes visible only after old searcher closes."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.searcher() as old_searcher:
@@ -87,15 +69,18 @@ def test_product_state_existing_searcher_keeps_its_open_generation(tmp_path):
 
 
 def test_exists_in_is_false_for_directory_without_an_index(tmp_path):
+    """Seam: lifecycle crossing for empty directory before index creation."""
     assert index.exists_in(str(tmp_path)) is False
 
 
 def test_create_in_makes_a_recognizable_index(tmp_path):
+    """Seam: lifecycle crossing from create_in to exists_in."""
     directory, _ = make_index(tmp_path)
     assert index.exists_in(str(directory)) is True
 
 
 def test_open_dir_reopens_committed_documents(tmp_path):
+    """Seam: state consistency between in-process index and reopened directory."""
     directory, ix = make_index(tmp_path)
     add_two(ix)
     reopened = index.open_dir(str(directory))
@@ -103,6 +88,7 @@ def test_open_dir_reopens_committed_documents(tmp_path):
 
 
 def test_named_indexes_are_independently_openable(tmp_path):
+    """Seam: config interaction between named indexes in one directory."""
     directory = tmp_path / "named"
     directory.mkdir()
     schema = Schema(path=ID(stored=True), body=TEXT(stored=True))
@@ -117,6 +103,7 @@ def test_named_indexes_are_independently_openable(tmp_path):
 
 
 def test_creating_an_existing_named_index_clears_its_documents(tmp_path):
+    """Seam: lifecycle crossing when recreate clears committed documents."""
     directory, ix = make_index(tmp_path)
     add_two(ix)
     replacement = index.create_in(str(directory), ix.schema)
@@ -124,6 +111,7 @@ def test_creating_an_existing_named_index_clears_its_documents(tmp_path):
 
 
 def test_writer_context_commits_on_normal_exit(tmp_path):
+    """Seam: lifecycle crossing through writer context manager commit."""
     _, ix = make_index(tmp_path)
     with ix.writer() as writer:
         writer.add_document(path="a", body="alpha")
@@ -131,6 +119,7 @@ def test_writer_context_commits_on_normal_exit(tmp_path):
 
 
 def test_writer_context_cancels_on_exception(tmp_path):
+    """Seam: error propagation from writer exception to cancel without commit."""
     _, ix = make_index(tmp_path)
     with pytest.raises(RuntimeError):
         with ix.writer() as writer:
@@ -140,6 +129,7 @@ def test_writer_context_cancels_on_exception(tmp_path):
 
 
 def test_add_document_rejects_unknown_schema_field(tmp_path):
+    """Seam: error propagation from UnknownFieldError before commit."""
     _, ix = make_index(tmp_path)
     writer = ix.writer()
     with pytest.raises(UnknownFieldError):
@@ -149,6 +139,7 @@ def test_add_document_rejects_unknown_schema_field(tmp_path):
 
 
 def test_add_document_preserves_duplicate_documents(tmp_path):
+    """Seam: state consistency when duplicate documents are indexed."""
     _, ix = make_index(tmp_path)
     with ix.writer() as writer:
         writer.add_document(path="a", body="alpha")
@@ -159,6 +150,7 @@ def test_add_document_preserves_duplicate_documents(tmp_path):
 
 
 def test_stored_override_keeps_index_and_stored_values_distinct(tmp_path):
+    """Seam: state consistency between indexed tokens and stored override."""
     _, ix = make_index(tmp_path)
     with ix.writer() as writer:
         writer.add_document(path="a", body="indexed words", _stored_body="stored value")
@@ -168,6 +160,7 @@ def test_stored_override_keeps_index_and_stored_values_distinct(tmp_path):
 
 
 def test_update_document_replaces_matching_unique_document(tmp_path):
+    """Seam: state consistency when update replaces unique document."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.writer() as writer:
@@ -177,6 +170,7 @@ def test_update_document_replaces_matching_unique_document(tmp_path):
 
 
 def test_update_document_adds_when_no_unique_document_matches(tmp_path):
+    """Seam: state consistency when update adds without prior match."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.writer() as writer:
@@ -186,6 +180,7 @@ def test_update_document_adds_when_no_unique_document_matches(tmp_path):
 
 
 def test_cancel_discards_staged_addition(tmp_path):
+    """Seam: lifecycle crossing when cancel discards uncommitted writes."""
     _, ix = make_index(tmp_path)
     writer = ix.writer()
     writer.add_document(path="a", body="alpha")
@@ -194,6 +189,7 @@ def test_cancel_discards_staged_addition(tmp_path):
 
 
 def test_second_writer_raises_lock_error(tmp_path):
+    """Seam: error propagation from concurrent writer to LockError."""
     _, ix = make_index(tmp_path)
     writer = ix.writer()
     with pytest.raises(index.LockError):
@@ -202,6 +198,7 @@ def test_second_writer_raises_lock_error(tmp_path):
 
 
 def test_delete_by_term_removes_committed_document(tmp_path):
+    """Seam: state consistency between delete_by_term and search results."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.writer() as writer:
@@ -210,6 +207,7 @@ def test_delete_by_term_removes_committed_document(tmp_path):
 
 
 def test_delete_by_query_removes_matching_documents(tmp_path):
+    """Seam: state consistency between delete_by_query and search results."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.writer() as writer:
@@ -218,21 +216,24 @@ def test_delete_by_query_removes_matching_documents(tmp_path):
 
 
 def test_invalid_numeric_value_fails_before_commit(tmp_path):
+    """Seam: error propagation from invalid field value before commit."""
     _, ix = make_index(tmp_path)
     writer = ix.writer()
-    with pytest.raises(Exception):
+    with pytest.raises((ValueError, TypeError, OverflowError)):
         writer.add_document(path="a", body="alpha", number="not-a-number")
     writer.cancel()
     assert paths(ix, Term("body", "alpha")) == set()
 
 
 def test_term_query_matches_one_field(tmp_path):
+    """Seam: protocol handoff from Term query to matching document paths."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, Term("body", "gamma")) == {"b"}
 
 
 def test_and_query_requires_every_term(tmp_path):
+    """Seam: protocol handoff from And query composition to results."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, And([Term("body", "alpha"), Term("tags", "red")])) == {"a"}
@@ -240,12 +241,14 @@ def test_and_query_requires_every_term(tmp_path):
 
 
 def test_or_query_matches_either_term(tmp_path):
+    """Seam: protocol handoff from Or query composition to results."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, Or([Term("body", "alpha"), Term("body", "gamma")])) == {"a", "b"}
 
 
 def test_query_parser_assigns_unfielded_terms_to_default_field(tmp_path):
+    """Seam: protocol handoff from QueryParser to default-field search."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     parser = QueryParser("body", ix.schema)
@@ -253,10 +256,12 @@ def test_query_parser_assigns_unfielded_terms_to_default_field(tmp_path):
 
 
 def test_query_parser_without_schema_returns_a_query_object():
+    """Seam: lifecycle crossing for schema-less QueryParser parse."""
     assert QueryParser("body", None).parse("alpha") is not None
 
 
 def test_multifield_parser_searches_configured_fields(tmp_path):
+    """Seam: config interaction between MultifieldParser fields and hits."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     parser = MultifieldParser(["body", "tags"], ix.schema)
@@ -264,18 +269,21 @@ def test_multifield_parser_searches_configured_fields(tmp_path):
 
 
 def test_simple_parser_returns_a_searchable_query(tmp_path):
+    """Seam: protocol handoff from SimpleParser to searchable query."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, SimpleParser("body", ix.schema).parse("alpha")) == {"a"}
 
 
 def test_nonmatching_query_returns_empty_results(tmp_path):
+    """Seam: state consistency when no documents match query."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, Term("body", "missing")) == set()
 
 
 def test_search_limit_retains_only_requested_scored_hits(tmp_path):
+    """Seam: state consistency between search limit and scored_length."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.searcher() as searcher:
@@ -284,6 +292,7 @@ def test_search_limit_retains_only_requested_scored_hits(tmp_path):
 
 
 def test_search_limit_none_returns_all_matches(tmp_path):
+    """Seam: state consistency when limit=None returns all matches."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.searcher() as searcher:
@@ -291,18 +300,21 @@ def test_search_limit_none_returns_all_matches(tmp_path):
 
 
 def test_search_filter_keeps_only_permitted_matches(tmp_path):
+    """Seam: config interaction between query and filter constraints."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, Term("body", "beta"), filter=Term("path", "a")) == {"a"}
 
 
 def test_search_mask_omits_excluded_matches(tmp_path):
+    """Seam: config interaction between query and mask exclusions."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, Term("body", "beta"), mask=Term("path", "a")) == {"b"}
 
 
 def test_results_are_a_sequence_of_dictionary_like_hits(tmp_path):
+    """Seam: protocol handoff from search results to dictionary-like hits."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.searcher() as searcher:
@@ -311,6 +323,7 @@ def test_results_are_a_sequence_of_dictionary_like_hits(tmp_path):
 
 
 def test_accessing_hit_outside_scored_range_raises_index_error(tmp_path):
+    """Seam: error propagation when accessing out-of-range result index."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.searcher() as searcher:
@@ -320,6 +333,7 @@ def test_accessing_hit_outside_scored_range_raises_index_error(tmp_path):
 
 
 def test_terms_true_exposes_matched_terms(tmp_path):
+    """Seam: state consistency when terms=True exposes matched terms."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.searcher() as searcher:
@@ -329,6 +343,7 @@ def test_terms_true_exposes_matched_terms(tmp_path):
 
 
 def test_matched_terms_without_terms_flag_raises_no_terms_exception(tmp_path):
+    """Seam: error propagation from matched_terms without terms flag."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.searcher() as searcher:
@@ -338,15 +353,17 @@ def test_matched_terms_without_terms_flag_raises_no_terms_exception(tmp_path):
 
 
 def test_error_invalid_field_value_does_not_publish(tmp_path):
+    """Seam: error propagation prevents invalid document from publishing."""
     _, ix = make_index(tmp_path)
     writer = ix.writer()
-    with pytest.raises(Exception):
+    with pytest.raises((ValueError, TypeError, OverflowError)):
         writer.add_document(path="a", body="alpha", number="invalid")
     writer.cancel()
     assert paths(ix, Term("body", "alpha")) == set()
 
 
 def test_invariant_commit_is_visible_after_open_dir(tmp_path):
+    """CVI-2: commit visible after reopening index directory."""
     directory, ix = make_index(tmp_path)
     with ix.writer() as writer:
         writer.add_document(path="a", body="alpha")
@@ -354,6 +371,7 @@ def test_invariant_commit_is_visible_after_open_dir(tmp_path):
 
 
 def test_invariant_exists_in_tracks_committed_index(tmp_path):
+    """CVI-3: exists_in remains true across committed writes."""
     directory, ix = make_index(tmp_path)
     assert index.exists_in(str(directory)) is True
     with ix.writer() as writer:
@@ -362,6 +380,7 @@ def test_invariant_exists_in_tracks_committed_index(tmp_path):
 
 
 def test_invariant_stored_text_is_searchable_and_returned(tmp_path):
+    """CVI-4: stored text searchable and returned in hit projection."""
     _, ix = make_index(tmp_path)
     with ix.writer() as writer:
         writer.add_document(path="a", body="alpha")
@@ -370,6 +389,7 @@ def test_invariant_stored_text_is_searchable_and_returned(tmp_path):
 
 
 def test_invariant_unique_update_removes_prior_match(tmp_path):
+    """CVI-5: unique update removes prior term from search projection."""
     _, ix = make_index(tmp_path)
     with ix.writer() as writer:
         writer.add_document(path="a", body="old")
@@ -380,6 +400,7 @@ def test_invariant_unique_update_removes_prior_match(tmp_path):
 
 
 def test_invariant_cancel_restores_previous_document_set(tmp_path):
+    """CVI-6: cancel restores previously committed document set."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     writer = ix.writer()
@@ -389,6 +410,7 @@ def test_invariant_cancel_restores_previous_document_set(tmp_path):
 
 
 def test_invariant_committed_deletion_changes_doc_count(tmp_path):
+    """CVI-7: committed deletion reduces doc_count consistently."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     with ix.writer() as writer:
@@ -397,18 +419,21 @@ def test_invariant_committed_deletion_changes_doc_count(tmp_path):
 
 
 def test_workflow_creates_writes_and_searches_two_documents(tmp_path):
+    """Seam: lifecycle crossing from create through write to search."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, QueryParser("body", ix.schema).parse("beta")) == {"a", "b"}
 
 
 def test_workflow_absent_term_returns_no_hit(tmp_path):
+    """Seam: lifecycle crossing when absent term yields empty workflow."""
     _, ix = make_index(tmp_path)
     add_two(ix)
     assert paths(ix, QueryParser("body", ix.schema).parse("absent")) == set()
 
 
 def test_workflow_reopened_index_preserves_result_data(tmp_path):
+    """Seam: state consistency when reopened index preserves hit data."""
     directory, ix = make_index(tmp_path)
     add_two(ix)
     reopened = index.open_dir(str(directory))

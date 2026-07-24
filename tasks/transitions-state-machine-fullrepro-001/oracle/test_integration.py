@@ -1,280 +1,495 @@
-"""Integration and end-to-end public behavioral checks for transitions."""
-
+"""Integration tests – each crosses ≥2 public API boundaries."""
 from __future__ import annotations
-
-import asyncio
 
 import pytest
 
-from transitions import EventData, Machine, MachineError
-from transitions.extensions import AsyncMachine, HierarchicalMachine, LockedMachine, MachineFactory
+from transitions import EventData, Machine, MachineError, State
+from transitions.extensions import (
+    AsyncMachine,
+    HierarchicalMachine,
+    LockedMachine,
+    MachineFactory,
+)
+from transitions.extensions.states import (
+    Error,
+    Volatile,
+    add_state_features,
+)
+from transitions.experimental.utils import (
+    event,
+    transition,
+    with_model_definitions,
+)
+
+from conftest import HAS_GRAPH_BACKEND, make_model, run_async
 
 
-def test_machine_creates_the_default_initial_state_for_a_later_model():
-    model = type("Model", (), {})()
-    machine = Machine(model=None)
-    machine.add_model(model)
-
-    assert model.state == "initial"
-    assert machine.get_model_state(model).name == "initial"
+# ===================================================================
+# Cross-View Invariants (CVI 1–10)
+# ===================================================================
 
 
-def test_add_model_requires_an_initial_state_when_machine_initial_is_none():
-    model = type("Model", (), {})()
-    machine = Machine(model=None, states=["A", "B"], initial=None)
-
-    with pytest.raises(ValueError):
-        machine.add_model(model)
-
-
-def test_machine_custom_model_attribute_changes_state_helpers():
-    model = type("Model", (), {})()
-    machine = Machine(model, states=["cold", "warm"], initial="cold", model_attribute="phase")
-
-    assert model.phase == "cold"
-    assert model.is_phase_cold() is True
-    assert model.to_phase_warm() is True
-    assert model.phase == "warm"
-    assert model.is_phase_warm() is True
+@pytest.mark.depends_on("test_trigger_helper_fires_and_returns_true")
+def test_cvi1_trigger_sets_model_state_to_destination():
+    """CVI-1: model.state == dest after successful trigger."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo"], initial="alpha")
+    m.add_transition("go", "alpha", "bravo")
+    obj.go()
+    assert obj.state == "bravo"
 
 
-def test_overview_projects_machine_state_to_a_separate_application_object():
-    model = type("ApplicationModel", (), {})()
-    machine = Machine(model, states=["new", "ready"], initial="new")
-    machine.add_transition("prepare", "new", "ready")
-
-    assert model.prepare() is True
-    assert model.state == "ready"
-    assert machine.get_model_state(model).name == "ready"
-
-
-def test_overview_keeps_multiple_registered_model_projections_independent():
-    first, second = type("Model", (), {})(), type("Model", (), {})()
-    machine = Machine([first, second], states=["A", "B"], initial="A")
-    machine.add_transition("advance", "A", "B")
-
-    assert first.advance() is True
-    assert first.state == "B"
-    assert second.state == "A"
-    assert machine.get_model_state(second).name == "A"
+@pytest.mark.depends_on(
+    "test_trigger_helper_fires_and_returns_true",
+    "test_get_state_returns_registered_object",
+)
+def test_cvi2_get_model_state_agrees_with_state_attr():
+    """CVI-2: get_model_state(model).name == model.state."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo"], initial="alpha")
+    m.add_transition("go", "alpha", "bravo")
+    obj.go()
+    assert m.get_model_state(obj).name == obj.state
 
 
-@pytest.mark.parametrize("source,dest", [("A", "B"), ("B", "C"), ("C", "D"), ("cold", "warm"), ("warm", "hot"), ("idle", "active")])
-def test_trigger_updates_all_public_state_projections(source, dest):
-    model = type("Model", (), {})()
-    machine = Machine(model, states=[source, dest], initial=source)
-    machine.add_transition("advance", source, dest)
-
-    assert model.advance() is True
-    assert model.state == dest
-    assert machine.get_model_state(model).name == dest
-    assert getattr(model, "is_" + dest)() is True
-    assert getattr(model, "is_" + source)() is False
+@pytest.mark.depends_on("test_is_state_helper_matches_current")
+def test_cvi3_trigger_flips_is_state_helpers():
+    """CVI-3: is_dest() True, is_source() False after trigger."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo"], initial="alpha")
+    m.add_transition("go", "alpha", "bravo")
+    obj.go()
+    assert obj.is_bravo() is True
+    assert obj.is_alpha() is False
 
 
-@pytest.mark.parametrize("target", ["B", "C", "D", "E"])
-def test_automatic_transition_helper_changes_state(target):
-    machine = Machine(states=["A", "B", "C", "D", "E"], initial="A")
-    assert getattr(machine, "to_" + target)() is True
-    assert machine.state == target
+@pytest.mark.depends_on("test_set_state_updates_model")
+def test_cvi4_set_state_agrees_with_get_state():
+    """CVI-4: after set_state, model.state == target and get_state works."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo", "charlie"], initial="alpha")
+    m.set_state("charlie", obj)
+    assert obj.state == "charlie"
+    assert m.get_state("charlie").name == "charlie"
 
 
-@pytest.mark.parametrize("allowed", [True, False])
-def test_conditions_control_result_without_wrong_state_change(allowed):
-    model = type("Model", (), {"allowed": staticmethod(lambda: allowed)})()
-    machine = Machine(model, states=["A", "B"], initial="A")
-    machine.add_transition("advance", "A", "B", conditions="allowed")
+@pytest.mark.depends_on("test_get_triggers_includes_added_trigger")
+def test_cvi5_add_transition_shows_in_triggers_and_fires():
+    """CVI-5: after add_transition, trigger in get_triggers and helper works."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo"], initial="alpha")
+    m.add_transition("advance", "alpha", "bravo")
+    assert "advance" in m.get_triggers("alpha")
+    obj.advance()
+    assert obj.state == "bravo"
 
-    assert model.advance() is allowed
-    assert model.state == ("B" if allowed else "A")
+
+@pytest.mark.depends_on("test_condition_false_blocks_and_returns_false")
+def test_cvi6_failed_condition_preserves_all_state_views():
+    """CVI-6: on failed condition, state/get_model_state/is_state all report source."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo"], initial="alpha")
+    m.add_transition("go", "alpha", "bravo", conditions=lambda: False)
+    obj.go()
+    assert obj.state == "alpha"
+    assert m.get_model_state(obj).name == "alpha"
+    assert obj.is_alpha() is True
 
 
-def test_representative_workflow_advances_hot_matter():
-    class Matter:
-        def is_hot(self):
+@pytest.mark.depends_on("test_machine_uses_self_when_no_model_given")
+def test_cvi7_custom_model_attribute_helpers():
+    """CVI-7: is_<attr>_<state> and to_<attr>_<state> for custom model_attribute."""
+    obj = make_model()
+    m = Machine(
+        obj,
+        states=["cold", "warm"],
+        initial="cold",
+        model_attribute="phase",
+    )
+    assert obj.phase == "cold"
+    assert obj.is_phase_cold() is True
+    assert obj.to_phase_warm() is True
+    assert obj.phase == "warm"
+    assert obj.is_phase_warm() is True
+
+
+@pytest.mark.depends_on("test_add_model_registers_and_sets_initial")
+def test_cvi8_multiple_models_independent_state():
+    """CVI-8: each model's state independent; trigger on one doesn't affect the other."""
+    first, second = make_model(), make_model()
+    m = Machine([first, second], states=["alpha", "bravo"], initial="alpha")
+    m.add_transition("go", "alpha", "bravo")
+    first.go()
+    assert first.state == "bravo"
+    assert second.state == "alpha"
+    assert m.get_model_state(second).name == "alpha"
+
+
+@pytest.mark.depends_on("test_dispatch_fires_trigger_on_self_model")
+def test_cvi9_dispatch_conjunction_per_model():
+    """CVI-9: dispatch returns conjunction; each model reflects individual outcome."""
+
+    class Ready:
+        def is_ready(self):
             return True
 
-    sample = Matter()
-    machine = Machine(sample, states=["solid", "liquid", "gas"], initial="solid")
-    machine.add_transition("melt", "solid", "liquid", conditions="is_hot")
-
-    assert sample.is_solid() is True
-    assert sample.may_melt() is True
-    assert sample.melt() is True
-    assert sample.state == "liquid"
-
-
-def test_representative_workflow_keeps_cold_matter_solid():
-    class Matter:
-        def is_hot(self):
+    class NotReady:
+        def is_ready(self):
             return False
 
-    sample = Matter()
-    machine = Machine(sample, states=["solid", "liquid", "gas"], initial="solid")
-    machine.add_transition("melt", "solid", "liquid", conditions="is_hot")
+    m1, m2 = Ready(), NotReady()
+    machine = Machine(
+        [m1, m2], states=["alpha", "bravo"], initial="alpha"
+    )
+    machine.add_transition("go", "alpha", "bravo", conditions="is_ready")
+    result = machine.dispatch("go")
+    assert result is False
+    assert m1.state == "bravo"
+    assert m2.state == "alpha"
 
-    assert sample.melt() is False
-    assert sample.state == "solid"
+
+@pytest.mark.depends_on("test_hierarchical_machine_enters_initial_child")
+def test_cvi10_hierarchical_substates_exact_vs_allow():
+    """CVI-10: is_parent(allow_substates=True) True for child; False with default."""
+    m = HierarchicalMachine(
+        states=[
+            {
+                "name": "working",
+                "children": ["coding", "reviewing"],
+                "initial": "coding",
+            }
+        ],
+        initial="working",
+    )
+    assert m.is_working() is False
+    assert m.is_working(allow_substates=True) is True
 
 
-def test_representative_workflow_rejects_melting_from_an_unrelated_state():
-    class Matter:
-        def is_hot(self):
-            return True
+# ===================================================================
+# Cross-boundary seam tests
+# ===================================================================
 
-    sample = Matter()
-    machine = Machine(sample, states=["solid", "liquid", "gas"], initial="gas")
-    machine.add_transition("melt", "solid", "liquid", conditions="is_hot")
 
+def test_add_model_with_custom_initial_then_trigger():
+    """Seam: add_model(initial=) → trigger → state progression."""
+    obj = make_model()
+    m = Machine(model=None, states=["alpha", "bravo", "charlie"], initial="alpha")
+    m.add_transition("advance", "alpha", "bravo")
+    m.add_transition("advance", "bravo", "charlie")
+    m.add_model(obj, initial="bravo")
+    obj.advance()
+    assert obj.state == "charlie"
+
+
+def test_ordered_transitions_cycle_with_trigger():
+    """Seam: add_ordered_transitions + trigger + loop wrap."""
+    m = Machine(states=["alpha", "bravo", "charlie"], initial="alpha")
+    m.add_ordered_transitions(loop=True)
+    m.next_state()
+    m.next_state()
+    assert m.state == "charlie"
+    m.next_state()
+    assert m.state == "alpha"
+
+
+def test_ordered_no_loop_raises_at_end():
+    """Seam: ordered(loop=False) → last trigger → MachineError."""
+    m = Machine(states=["alpha", "bravo", "charlie"], initial="alpha")
+    m.add_ordered_transitions(loop=False)
+    m.next_state()
+    m.next_state()
+    assert m.state == "charlie"
     with pytest.raises(MachineError):
-        sample.melt()
+        m.next_state()
 
 
-@pytest.mark.parametrize("initial,expected", [("A", "B"), ("B", "C"), ("C", "D")])
-def test_add_model_honors_requested_initial_state(initial, expected):
-    model = type("Model", (), {})()
-    machine = Machine(model=None, states=["A", "B", "C", "D"], initial="A")
-    machine.add_transition("advance", "A", "B")
-    machine.add_transition("advance", "B", "C")
-    machine.add_transition("advance", "C", "D")
-    machine.add_model(model, initial=initial)
-    model.advance()
-    assert model.state == expected
+def test_send_event_callback_chain():
+    """Seam: send_event + before + on_enter all receive EventData."""
+    log = []
+
+    def before_cb(ed):
+        log.append(("before", ed.event.name))
+
+    def enter_cb(ed):
+        log.append(("enter", ed.event.name))
+
+    m = Machine(
+        states=["alpha", State("bravo", on_enter=enter_cb)],
+        initial="alpha",
+        send_event=True,
+    )
+    m.add_transition("go", "alpha", "bravo", before=before_cb)
+    m.go()
+    assert ("before", "go") in log
+    assert ("enter", "go") in log
 
 
-@pytest.mark.parametrize("target", ["A", "B", "C"])
-def test_set_state_and_get_state_agree(target):
-    model = type("Model", (), {})()
-    machine = Machine(model, states=["A", "B", "C"], initial="A")
-    machine.set_state(target, model)
-    assert model.state == target
-    assert machine.get_state(target).name == target
+def test_reflexive_preserves_state_and_runs_callbacks():
+    """Seam: dest='=' → exit + enter fire, state unchanged."""
+    log = []
+    m = Machine(
+        states=[
+            {
+                "name": "alpha",
+                "on_enter": lambda: log.append("enter"),
+                "on_exit": lambda: log.append("exit"),
+            },
+            "bravo",
+        ],
+        initial="alpha",
+    )
+    m.add_transition("bounce", "alpha", "=")
+    m.bounce()
+    assert m.state == "alpha"
+    assert "exit" in log and "enter" in log
 
 
-@pytest.mark.parametrize("dest", ["=", None])
-def test_reflexive_and_internal_transitions_preserve_state(dest):
-    events = []
-    machine = Machine(states=[{"name": "A", "on_enter": lambda: events.append("enter"), "on_exit": lambda: events.append("exit")}], initial="A")
-    machine.add_transition("ping", "A", dest)
-    assert machine.ping() is True
-    assert machine.state == "A"
-    if dest == "=":
-        assert events == ["exit", "enter"]
-    else:
-        assert events == []
+def test_exception_before_preserves_across_all_views():
+    """Seam: exception in before → state, get_model_state, is_state all keep source."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo"], initial="alpha")
+
+    def bad():
+        raise RuntimeError("fail")
+
+    m.add_transition("go", "alpha", "bravo", before=bad)
+    with pytest.raises(RuntimeError):
+        obj.go()
+    assert obj.state == "alpha"
+    assert m.get_model_state(obj).name == "alpha"
+    assert obj.is_alpha() is True
 
 
-@pytest.mark.parametrize("loop", [True, False, True])
-def test_ordered_transitions_follow_configured_cycle(loop):
-    machine = Machine(states=["A", "B", "C"], initial="A")
-    machine.add_ordered_transitions(loop=loop)
-    machine.next_state()
-    assert machine.state == "B"
-    machine.next_state()
-    assert machine.state == "C"
-    if loop:
-        assert machine.next_state() is True
-        assert machine.state == "A"
-    else:
-        with pytest.raises(MachineError):
-            machine.next_state()
+def test_queued_processes_full_chain():
+    """Seam: queued=True → nested trigger deferred, final state reached."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo", "charlie"], initial="alpha", queued=True)
+
+    def chain():
+        obj.next_step()
+
+    m.add_transition("step", "alpha", "bravo", after=chain)
+    m.add_transition("next_step", "bravo", "charlie")
+    obj.step()
+    assert obj.state == "charlie"
+    assert m.get_model_state(obj).name == "charlie"
 
 
-@pytest.mark.parametrize("source", ["A", "B"])
-def test_remove_transition_removes_a_trigger_when_no_matches_remain(source):
-    machine = Machine(states=["A", "B"], initial="A")
-    machine.add_transition("advance", source, "B")
-    machine.remove_transition("advance", source, "B")
-    assert "advance" not in machine.get_triggers(source)
+def test_hierarchical_child_transition():
+    """Seam: enter parent → initial child, then transition within children."""
+    m = HierarchicalMachine(
+        states=[
+            "idle",
+            {
+                "name": "working",
+                "children": ["coding", "reviewing"],
+                "initial": "coding",
+            },
+        ],
+        initial="idle",
+    )
+    m.add_transition("start", "idle", "working")
+    m.add_transition("review", "working_coding", "working_reviewing")
+    m.start()
+    assert m.state == "working_coding"
+    m.review()
+    assert m.state == "working_reviewing"
+    assert m.is_working(allow_substates=True) is True
 
 
-@pytest.mark.parametrize("states", [(["A", "A"], ["B", "B"]), (["A", "B"], ["B", "B"]), (["B", "B"], ["B", "B"])])
-def test_dispatch_combines_results_for_every_registered_model(states):
-    initial, expected = states
-    first, second = type("Model", (), {})(), type("Model", (), {})()
-    machine = Machine([first, second], states=["A", "B"], initial=initial[0], ignore_invalid_triggers=True)
-    machine.set_state(initial[0], first)
-    machine.set_state(initial[1], second)
-    machine.add_transition("advance", "A", "B")
-    result = machine.dispatch("advance")
-    assert result is (initial == ["A", "A"])
-    assert [first.state, second.state] == expected
+def test_locked_machine_sequential_transitions():
+    """Seam: LockedMachine serialises transition access."""
+    m = LockedMachine(states=["alpha", "bravo", "charlie"], initial="alpha")
+    m.add_transition("go", "alpha", "bravo")
+    m.add_transition("go", "bravo", "charlie")
+    m.go()
+    assert m.state == "bravo"
+    m.go()
+    assert m.state == "charlie"
 
 
-@pytest.mark.parametrize("send_event", [False, True])
-def test_callbacks_receive_direct_arguments_or_event_data(send_event):
-    received = []
+def test_async_machine_queued_model():
+    """Seam: AsyncMachine queued='model' keeps per-model queues."""
 
-    def callback(*args, **kwargs):
-        received.append((args, kwargs))
-
-    machine = Machine(states=["A", "B"], initial="A", send_event=send_event)
-    machine.add_transition("advance", "A", "B", before=callback)
-    machine.advance("value", flag=True)
-    args, kwargs = received[0]
-    if send_event:
-        assert isinstance(args[0], EventData)
-        assert args[0].kwargs["flag"] is True
-    else:
-        assert args == ("value",)
-        assert kwargs == {"flag": True}
-
-
-def test_locked_machine_public_import_supports_a_basic_transition():
-    machine = LockedMachine(states=["A", "B"], initial="A")
-    machine.add_transition("advance", "A", "B")
-
-    assert machine.advance() is True
-    assert machine.state == "B"
-
-
-def test_async_machine_public_import_exposes_awaitable_event_helpers():
     async def exercise():
-        machine = AsyncMachine(states=["A", "B"], initial="A")
-        machine.add_transition("advance", "A", "B")
+        m1, m2 = make_model(), make_model()
+        machine = AsyncMachine(
+            model=[m1, m2],
+            states=["alpha", "bravo"],
+            initial="alpha",
+            queued="model",
+        )
+        machine.add_transition("go", "alpha", "bravo")
+        await m1.go()
+        assert m1.state == "bravo"
+        assert m2.state == "alpha"
 
-        assert await machine.advance() is True
-        assert machine.state == "B"
-
-    asyncio.run(exercise())
-
-
-def test_factory_public_import_selects_a_machine_that_can_transition():
-    machine_class = MachineFactory.get_predefined(locked=True)
-    machine = machine_class(states=["A", "B"], initial="A")
-    machine.add_transition("advance", "A", "B")
-
-    assert machine.advance() is True
-    assert machine.state == "B"
+    run_async(exercise())
 
 
-@pytest.mark.parametrize("child", ["one", "two", "three"])
-def test_hierarchical_machine_enters_configured_initial_child(child):
-    machine = HierarchicalMachine(states=[{"name": "parent", "children": [child], "initial": child}], initial="parent")
-    assert machine.is_parent(allow_substates=True) is True
+def test_error_accepted_vs_unaccepted():
+    """Seam: Error mixin accepted=True enters OK; unaccepted dead-end raises."""
 
-
-def test_hierarchical_exact_state_check_rejects_only_descendant_match():
-    machine = HierarchicalMachine(states=[{"name": "parent", "children": ["child"], "initial": "child"}], initial="parent")
-    assert machine.is_parent() is False
-    assert machine.is_parent(allow_substates=True) is True
-
-
-def test_add_model_honors_each_requested_initial_state():
-    class Model:
+    @add_state_features(Error)
+    class EM(Machine):
         pass
 
-    first, second, third = Model(), Model(), Model()
-    machine = Machine(model=None, states=["A", "B", "C", "D"], initial="A")
-    machine.add_transition("advance", "A", "B")
-    machine.add_transition("advance", "B", "C")
-    machine.add_transition("advance", "C", "D")
+    m_ok = EM(
+        states=["running", {"name": "done", "accepted": True}],
+        initial="running",
+        auto_transitions=False,
+    )
+    m_ok.add_transition("finish", "running", "done")
+    m_ok.finish()
+    assert m_ok.state == "done"
 
-    machine.add_model(first)
-    machine.add_model(second, initial="B")
-    machine.add_model(third, initial="C")
-    first.advance()
-    second.advance()
-    third.advance()
+    m_bad = EM(
+        states=["running", "problem"],
+        initial="running",
+        auto_transitions=False,
+    )
+    m_bad.add_transition("crash", "running", "problem")
+    with pytest.raises(MachineError):
+        m_bad.crash()
 
-    assert (first.state, second.state, third.state) == ("B", "C", "D")
+
+def test_volatile_lifecycle_enter_and_exit():
+    """Seam: Volatile assigns scope on enter, removes on exit."""
+
+    @add_state_features(Volatile)
+    class VM(Machine):
+        pass
+
+    class Hook:
+        pass
+
+    m = VM(
+        states=["idle", {"name": "active", "volatile": Hook}],
+        initial="idle",
+        auto_transitions=False,
+    )
+    m.add_transition("start", "idle", "active")
+    m.add_transition("stop", "active", "idle")
+    m.start()
+    assert isinstance(m.scope, Hook)
+    m.stop()
+    assert not hasattr(m, "scope")
+
+
+def test_remove_model_and_dispatch():
+    """Seam: remove_model excludes model from subsequent dispatch."""
+    m1, m2 = make_model(), make_model()
+    machine = Machine([m1, m2], states=["alpha", "bravo"], initial="alpha")
+    machine.add_transition("go", "alpha", "bravo")
+    machine.remove_model(m2)
+    machine.dispatch("go")
+    assert m1.state == "bravo"
+    assert m2.state == "alpha"
+
+
+def test_bulk_add_transitions_then_trigger():
+    """Seam: add_transitions bulk → triggers fire correctly."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo", "charlie"], initial="alpha")
+    m.add_transitions(
+        [
+            {"trigger": "step", "source": "alpha", "dest": "bravo"},
+            ["leap", "bravo", "charlie"],
+        ]
+    )
+    obj.step()
+    assert obj.state == "bravo"
+    obj.leap()
+    assert obj.state == "charlie"
+
+
+def test_model_definitions_event_and_transition():
+    """Seam: with_model_definitions + event + transition utilities."""
+
+    @with_model_definitions
+    class DefMachine(Machine):
+        pass
+
+    class MyModel:
+        advance = event(
+            transition("alpha", "bravo"),
+            transition("bravo", "charlie"),
+        )
+
+    obj = MyModel()
+    m = DefMachine(
+        model=obj, states=["alpha", "bravo", "charlie"], initial="alpha"
+    )
+    obj.advance()
+    assert obj.state == "bravo"
+    obj.advance()
+    assert obj.state == "charlie"
+
+
+def test_finalize_runs_on_success_and_failure():
+    """Seam: finalize_event fires after both successful and failed transitions."""
+    log = []
+    m = Machine(
+        states=["alpha", "bravo"],
+        initial="alpha",
+        finalize_event=lambda: log.append("fin"),
+    )
+    m.add_transition("go", "alpha", "bravo")
+    m.go()
+    assert log == ["fin"]
+
+    def bad():
+        raise RuntimeError("fail")
+
+    m.add_transition("fail", "bravo", "alpha", before=bad)
+    with pytest.raises(RuntimeError):
+        m.fail()
+    assert log == ["fin", "fin"]
+
+
+def test_factory_produces_usable_machine_class():
+    """Seam: MachineFactory → get class → construct → trigger → state."""
+    cls = MachineFactory.get_predefined(locked=True)
+    obj = make_model()
+    m = cls(obj, states=["alpha", "bravo"], initial="alpha")
+    m.add_transition("go", "alpha", "bravo")
+    obj.go()
+    assert obj.state == "bravo"
+    assert m.get_model_state(obj).name == "bravo"
+
+
+def test_add_model_three_models_different_initials():
+    """Seam: add_model with per-model initial → each starts at requested state."""
+    m1, m2, m3 = make_model(), make_model(), make_model()
+    machine = Machine(
+        model=None,
+        states=["alpha", "bravo", "charlie", "delta"],
+        initial="alpha",
+    )
+    machine.add_transition("advance", "alpha", "bravo")
+    machine.add_transition("advance", "bravo", "charlie")
+    machine.add_transition("advance", "charlie", "delta")
+    machine.add_model(m1)
+    machine.add_model(m2, initial="bravo")
+    machine.add_model(m3, initial="charlie")
+    m1.advance()
+    m2.advance()
+    m3.advance()
+    assert (m1.state, m2.state, m3.state) == ("bravo", "charlie", "delta")
+
+
+def test_wildcard_and_trigger_from_multiple_origins():
+    """Seam: wildcard source → trigger from different states all reach dest."""
+    obj = make_model()
+    m = Machine(obj, states=["alpha", "bravo", "charlie"], initial="alpha")
+    m.add_transition("reset", "*", "alpha")
+
+    obj.to_charlie()
+    assert obj.state == "charlie"
+    obj.reset()
+    assert obj.state == "alpha"
+
+    obj.to_bravo()
+    assert obj.state == "bravo"
+    obj.reset()
+    assert obj.state == "alpha"

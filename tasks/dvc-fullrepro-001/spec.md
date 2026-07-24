@@ -1,4 +1,4 @@
-﻿# DVC Specification
+# DVC Specification
 
 ## Product Overview
 
@@ -17,45 +17,17 @@ The covered feature areas are:
 - Run cache behavior that is visible through `dvc repro`, `--no-run-cache`, `--pull`, and `--run-cache`.
 - Local filesystem and Git-backed project workflows when they use documented CLI options and do not require a cloud service.
 
+The product state model has three public projections. The declarative projection is the stage and data metadata stored in `dvc.yaml` and `.dvc` files. The resolved projection is the command, dependency, parameter, and output state recorded in `dvc.lock` together with cache objects that DVC has committed. The materialized projection is the files and directories visible in the workspace.
+
+These projections obey the same lifecycle. A successfully executed stage must leave its materialized outputs consistent with the resolved lockfile state. A dependency or parameter change in the declarative or materialized projection must make the affected stage report changed against the resolved projection. A pull or run-cache restoration must materialize the resolved output state without rewriting the declarative stage definition. A dry run must leave all three projections unchanged. A no-commit run must update the materialized and lockfile projections while leaving the corresponding output object absent from the local cache, which keeps the stage changed until that cache state is reconciled.
+
 ## Installable Surface
 
-Installing DVC provides a `dvc` console command. The command-line interface is the primary surface for this slice.
+Installing DVC provides the `dvc` console command, which is the primary command-line surface for this slice. Importing the top-level package as `dvc` provides the public version/build metadata names `dvc.__version__`, `dvc.version_tuple`, and `dvc.PKG`.
 
-The top-level `dvc` package exposes version/build metadata:
+The `dvc.api` namespace publicly provides `DVCFileSystem`, `all_branches`, `all_commits`, `all_tags`, `artifacts_show`, `exp_save`, `exp_show`, `get_dataset`, `get_url`, `metrics_show`, `open`, `params_show`, and `read`. These names remain installable public API, while their data, experiment, artifact, and metric behaviors are outside the pipeline slice unless a behavior is specified below.
 
-```python
-import dvc
-
-dvc.__version__
-dvc.version_tuple
-dvc.PKG
-```
-
-The public Python API module exports:
-
-```python
-from dvc.api import (
-    DVCFileSystem,
-    all_branches,
-    all_commits,
-    all_tags,
-    artifacts_show,
-    exp_save,
-    exp_show,
-    get_dataset,
-    get_url,
-    metrics_show,
-    open,
-    params_show,
-    read,
-)
-```
-
-Those API functions are installable public names, but this document only specifies their interaction with pipeline files where relevant. The reproduction workflow can also be driven through a repository object:
-
-```python
-from dvc.repo import Repo
-```
+The same reproduction workflow is available programmatically by importing `Repo` from `dvc.repo`. Repository methods and the installed console command must observe the same project files, workspace state, cache state, and reproduction decisions.
 
 ## Public API
 
@@ -98,7 +70,7 @@ dvc repro [-f] [-i] [-s] [-p] [-P] [-R] [--downstream]
           [-k|--keep-going] [--ignore-errors] [targets...]
 ```
 
-Targets may be stage names from the current `dvc.yaml`, generated stage names, paths to `dvc.yaml` or `.dvc` files, `path/to/dvc.yaml:stage` references, tracked output paths, or directories when recursive mode is used. With `--glob`, wildcard matching applies to stage names within the selected stage file, not to arbitrary path segments.
+Valid targets are stage names from the current `dvc.yaml`, generated stage names, paths to `dvc.yaml` or `.dvc` files, `path/to/dvc.yaml:stage` references, tracked output paths, or directories when recursive mode is used. With `--glob`, wildcard matching applies to stage names within the selected stage file, not to arbitrary path segments. An argument outside these target forms must produce a target-not-found failure.
 
 The repository object exposes the same workflow programmatically:
 
@@ -109,12 +81,18 @@ Repo.reproduce(targets=None, recursive=False, pipeline=False, all_pipelines=Fals
                downstream=False, single_item=False, glob=False,
                on_error="fail", **repro_options)
 Repo.run(no_exec=False, no_commit=False, run_cache=True, force=True, **stage_options)
+```
+
+```python
 Repo.status(targets=None, jobs=None, cloud=False, remote=None,
             all_branches=False, with_deps=False, all_tags=False,
             all_commits=False, recursive=False, check_updates=True)
 Repo.pull(targets=None, jobs=None, remote=None, all_branches=False,
-          with_deps=False, all_tags=False, force=False, recursive=False,
-          all_commits=False, run_cache=False, glob=False, allow_missing=False)
+           with_deps=False, all_tags=False, force=False, recursive=False,
+           all_commits=False, run_cache=False, glob=False, allow_missing=False)
+```
+
+```python
 Repo.freeze(target)
 Repo.unfreeze(target)
 ```
@@ -172,7 +150,7 @@ stages:
         md5: <hash>
 ```
 
-Directory outputs may be represented by a directory hash and, when DVC writes expanded file metadata, a list of child file entries. Callers should treat `dvc.lock` as the public record of the workspace state that DVC will compare on future reproductions.
+Directory outputs are represented by a directory hash and include child file entries when DVC writes expanded file metadata. Callers must treat `dvc.lock` as the public record of the workspace state that DVC compares on future reproductions.
 
 `.dvc` files are supported as data placeholders for standalone tracked files or directories. For this pipeline slice, they matter as targets accepted by `repro`, `status`, and `pull`, and as files whose `outs`, `deps`, `wdir`, and output metadata describe tracked data outside a multi-stage `dvc.yaml` pipeline.
 
@@ -210,11 +188,13 @@ Target selection options change the reproduction set:
 - `--force-downstream` forces descendants of a changed or forced stage to reproduce even if their direct dependencies appear unchanged.
 - `--dry` prints the commands that would run and does not execute them or update workspace outputs.
 
-`--pull` lets reproduction download missing data as needed before deciding whether stages can run or be restored. `--allow-missing` skips stages whose only issue is missing data. Without `--pull`, DVC does not automatically download missing data during `repro`.
+`--pull` lets reproduction download missing data as needed before deciding whether stages are runnable or restorable. `--allow-missing` skips stages whose only issue is missing data. Without `--pull`, DVC does not automatically download missing data during `repro`.
 
 ## Status, Freeze, And Pull
 
 `dvc status` reports changed stages and tracked data state. With no changes it reports that data and pipelines are up to date. With `--quiet`, it suppresses output and exits with success only when there are no reported changes. With `--json`, it emits the status mapping as JSON.
+
+For cacheable outputs, status compares the workspace and lockfile state with the availability of the corresponding local cache objects. When a no-commit run updates the workspace output and lockfile checksum without storing the cache object, local status must report the stage as changed. JSON status must include the changed stage, text status must describe the same state, and quiet status must return nonzero.
 
 Local status does not accept branch/tag/commit expansion or job-count options; those options only make sense for cache-vs-remote status. `--with-deps` includes dependency stages for the selected targets. `--recursive` reports stages inside selected directories. `--no-updates` disables update checks for imported data.
 
@@ -222,11 +202,7 @@ Local status does not accept branch/tag/commit expansion or job-count options; t
 
 `dvc pull` downloads tracked files or directories from DVC remote storage into the local cache and checks them out into the workspace. For local filesystem remotes, this behavior is fully local and service-free. Pulling data does not update Git-tracked code, `dvc.yaml`, or `.dvc` files; those remain Git concerns.
 
-Remote selection for `pull` is resolved in this order:
-
-1. A `remote` field on the relevant output entry.
-2. The `--remote` or `-r` CLI option.
-3. The configured default remote.
+Pull identifies remote storage through an output-specific `remote` field, the `--remote` or `-r` CLI option, or the configured default remote. If the selected storage does not contain a required object and `--allow-missing` is absent, the command must report a transfer or checkout failure.
 
 Without targets, `pull` considers all files and directories referenced by the current workspace metadata. Targets limit the pull to tracked files or directories, paths inside tracked directories, `.dvc` files, and stage names. `--all-branches`, `--all-tags`, and `--all-commits` expand the Git revisions whose DVC metadata is considered. `--run-cache` fetches run history as well as data objects. `--allow-missing` ignores errors for files or directories that remain unavailable.
 
@@ -234,15 +210,17 @@ Without targets, `pull` considers all files and directories referenced by the cu
 
 DVC stores data and model files outside Git in a cache while keeping lightweight metadata in the repository. Reproduction and pull make data visible in the workspace by linking or copying from cache according to the configured cache type.
 
-The run cache records successful stage runs by their command, dependencies, outputs, and related stage state. It is enabled by default for reproducible stages and lets DVC skip command execution when a previous matching run can restore the outputs. `--no-run-cache` disables this shortcut for `dvc repro` and forces command execution whenever the stage otherwise needs reproduction.
+A clean local cacheable output requires the workspace file, its lockfile checksum, and its corresponding local cache object to agree. A no-commit reproduction executes the command and records the resulting workspace and lockfile state without storing that object. The stage remains eligible for reproduction while the object is unavailable. When run-cache restoration is disabled, repeating `repro --no-commit --no-run-cache` must execute the command again even when the workspace output checksum matches `dvc.lock`.
 
-Run cache is not used for every possible stage. It is not available for stages that lack a command, dependencies, or outputs, for stages marked always changed, and for output configurations that make cached restoration unsupported. If a stage can be restored from run cache, DVC reports that the stage is cached, skips the command, and checks out the recorded outputs.
+The run cache records successful stage runs by their command, dependencies, outputs, and related stage state. It is enabled by default for reproducible stages. When a previous matching run contains restorable outputs, DVC restores those outputs and skips command execution. `--no-run-cache` disables this shortcut for `dvc repro` and forces command execution whenever the stage otherwise needs reproduction.
 
-When `dvc repro --pull` is used with run cache enabled, DVC attempts to pull run cache metadata before reproduction and may pull data objects needed by a cached run. When `dvc pull --run-cache` is used, DVC fetches run history in addition to ordinary tracked data objects.
+Run cache is not used for every possible stage. It is not available for stages that lack a command, dependencies, or outputs, for stages marked always changed, and for output configurations that make cached restoration unsupported. If a matching run-cache entry contains the required output objects, DVC reports that the stage is cached, skips the command, and checks out the recorded outputs.
+
+When `dvc repro --pull` is used with run cache enabled, DVC attempts to pull run cache metadata before reproduction and must pull available data objects when a selected cached run needs them. When `dvc pull --run-cache` is used, DVC fetches run history in addition to ordinary tracked data objects.
 
 ## Error Semantics
 
-CLI commands return `0` on success and nonzero when a DVC operation fails. Most user-visible failures are reported as `DvcException` or subclasses.
+CLI commands return `0` on success and nonzero when argument validation or a DVC operation fails. Public repository operation failures raise `DvcException` or an applicable public subclass; CLI argument validation reports an argument error without entering the repository operation.
 
 Important public error conditions are:
 
@@ -255,22 +233,22 @@ Important public error conditions are:
 - Two stages claim the same output or overlapping outputs: DVC rejects the new or changed stage.
 - A dependency/output relationship creates a cycle: DVC rejects the graph.
 - Local status is requested with branch/tag/commit/job options that only apply to remote status: DVC reports invalid arguments.
-- Pull or checkout cannot materialize requested files from cache or remote storage: DVC reports checkout or transfer failure and preserves the successful operation counts it can report.
+- Pull or checkout fails to materialize requested files from cache or remote storage: DVC reports checkout or transfer failure and preserves operation counts for transfers and checkouts that completed successfully.
 
 ## Cross-View Invariants
 
-- A stage recorded by `dvc stage add` is visible in `dvc.yaml`, appears in `dvc stage list`, and can be selected by name in `dvc repro`.
-- If a stage output is also another stage dependency, `dvc repro` treats that relationship as a pipeline edge and runs the upstream stage before the downstream stage when both need reproduction.
-- Successful reproduction updates workspace outputs and `dvc.lock` together, unless the command is a dry run or an error stops the stage before state can be committed.
-- If no dependency, parameter, command, or output state changed, `dvc status` reports no local pipeline changes and `dvc repro` skips the stage.
-- If a dependency file changes, the stage that depends on it is reported as changed and is eligible to run; downstream stages are considered according to the selected reproduction mode.
-- A no-cache output can affect status and reproduction state even though DVC does not store that output in the object cache.
-- A persistent output is not removed before its stage command runs; a non-persistent output is removed before command execution.
-- A frozen stage's dependency changes do not cause reproduction to pass through that stage until it is unfrozen.
-- `dvc pull` can restore tracked data to the workspace from cache/remote metadata, but it does not modify Git-tracked source files or pipeline definition files.
-- `--dry` and `--no-commit` are distinct: dry reproduction does not execute commands, while no-commit reproduction executes commands but avoids storing produced outputs in the cache.
-- Run-cache restoration changes the workspace outputs without running the stage command, and disabling run cache prevents that command skip.
-- JSON status and text status describe the same underlying project state, only with different output formatting.
+- A stage recorded by `dvc stage add` must be visible in `dvc.yaml`, must appear in `dvc stage list`, and must be selectable by name in `dvc repro`.
+- If a stage output is also another stage dependency, `dvc repro` must treat that relationship as a pipeline edge and must run the upstream stage before the downstream stage when both need reproduction.
+- Successful reproduction must update workspace outputs and `dvc.lock` together, unless the command is a dry run or an error stops the stage before DVC commits state.
+- If no dependency, parameter, command, or output state changed, `dvc status` must report no local pipeline changes and `dvc repro` must skip the stage.
+- If a dependency file changes, the stage that depends on it must be reported as changed and must be eligible to run; downstream stages must be considered according to the selected reproduction mode.
+- A changed or missing no-cache output must affect status and reproduction state even though DVC does not store that output in the object cache.
+- A persistent output must remain in the workspace before its stage command runs; a non-persistent output must be removed before command execution.
+- A frozen stage's dependency changes must not cause reproduction to pass through that stage until it is unfrozen.
+- `dvc pull` must restore requested tracked data to the workspace when the corresponding cache or remote objects are available, and it must not modify Git-tracked source files or pipeline definition files.
+- `--dry` and `--no-commit` must remain distinct: dry reproduction must not execute commands, while no-commit reproduction must execute commands but must not store produced outputs in the cache.
+- Run-cache restoration must change the workspace outputs without running the stage command, and disabling run cache must prevent that command skip.
+- JSON status and text status must describe the same underlying project state, differing only in output formatting.
 
 ## Representative Workflows
 
@@ -289,7 +267,7 @@ Run the pipeline:
 dvc repro
 ```
 
-DVC executes `prepare` before `train`, creates or updates workspace outputs, stores cacheable outputs in the DVC cache, and writes `dvc.lock`. A later `dvc repro` with no relevant changes skips both stages. If `train.py` changes, the `train` stage becomes changed while `prepare` can remain up to date.
+DVC executes `prepare` before `train`, creates or updates workspace outputs, stores cacheable outputs in the DVC cache, and writes `dvc.lock`. A later `dvc repro` with no relevant changes skips both stages. If `train.py` changes while the `prepare` inputs remain unchanged, the `train` stage becomes changed and `prepare` remains up to date.
 
 Use targeted reproduction:
 
@@ -326,11 +304,14 @@ This specification does not cover:
 - Shell-specific behavior outside the documented effect that stage commands run in the stage working directory with DVC environment variables.
 - Compatibility with old DVC metadata formats except where current public commands explicitly document migration-related behavior.
 
+## Invocation Protocol
+
+The supported command-line entry point is the installed `dvc` console command. `python -m dvc` is not part of this specification. Successful commands return exit code `0`; rejected arguments, invalid targets, graph conflicts, command failures, and unavailable requested data return a nonzero exit code.
+
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
 ## Implementation Guidance
 
-The expected implementation focuses on public behavior that a DVC user can observe through commands, repository methods, YAML files, lockfiles, workspace files, cache effects, exit codes, and exceptions.
-
-Tests may exercise stage creation, target resolution, pipeline ordering, incremental reproduction, forced and dry reproduction, missing data handling, run-cache skips, status output modes, freeze/unfreeze state, local pull/fetch/checkout behavior, and consistency between CLI calls and repository methods.
-
-Scoring should reward implementations that preserve the documented cross-view invariants across command output, serialized project state, workspace files, and programmatic return values. Tests should not require private object identities, undocumented attributes, private module paths, cloud services, or implementation-specific helper functions.
-
+The implementation must preserve the documented cross-view invariants across command output, serialized project state, workspace files, cache effects, exit codes, exceptions, and programmatic return values. Private object identities, undocumented attributes, private module paths, cloud services, and implementation-specific helper functions are outside this contract.

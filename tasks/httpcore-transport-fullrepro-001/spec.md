@@ -137,6 +137,10 @@ There is no console script in scope. `python -m httpcore` is not supported for t
 
 Exit codes are not part of the covered API.
 
-## Implementation Guidance
+## Environment
 
-Validation exercises public imports, local custom network backends, mock streams, request serialization, response parsing, streaming lifecycle, connection reuse, TLS and UDS dispatch, retry behavior, trace callbacks, and documented error classes. The checks use local byte streams and do not require external network access.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment. External network access is not required because the documented transport workflows accept local custom backends and mock streams.
+
+## Evaluation Notes
+
+Assessment exercises the documented imports, request and response models, byte serialization, streaming lifecycle, connection reuse, backend dispatch, TLS and UDS selection, retries, tracing, and public exception classes. Observable return values, backend calls, stream bytes, and lifecycle state are checked; private organization, exact representations, and exact error prose are not.

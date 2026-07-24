@@ -22,88 +22,19 @@ This specification covers the converter core:
 
 The package import name is `cattrs`.
 
-The following names must be importable from `cattrs`:
+The package root must export the converter types `BaseConverter`, `Converter`, and `GenConverter`; the strategy and hook types `UnstructureStrategy` and `SimpleStructureHook`; and the validation types `AttributeValidationNote`, `IterableValidationNote`, `BaseValidationError`, `ClassValidationError`, `IterableValidationError`, `ForbiddenExtraKeysError`, and `StructureHandlerNotFoundError`.
 
-```python
-AttributeValidationNote
-BaseConverter
-BaseValidationError
-ClassValidationError
-Converter
-ForbiddenExtraKeysError
-GenConverter
-IterableValidationError
-IterableValidationNote
-SimpleStructureHook
-StructureHandlerNotFoundError
-UnstructureStrategy
-get_structure_hook
-get_unstructure_hook
-global_converter
-override
-register_structure_hook
-register_structure_hook_func
-register_unstructure_hook
-register_unstructure_hook_func
-structure
-structure_attrs_fromdict
-structure_attrs_fromtuple
-transform_error
-unstructure
-```
+The package root must also export `global_converter`, `structure`, `unstructure`, `structure_attrs_fromdict`, `structure_attrs_fromtuple`, `override`, `transform_error`, `get_structure_hook`, `get_unstructure_hook`, `register_structure_hook`, `register_structure_hook_func`, `register_unstructure_hook`, and `register_unstructure_hook_func`.
 
 `cattrs.gen.override` must refer to the same public override factory as `cattrs.override`. The public generated-hook factories in `cattrs.gen` are only required where needed to honor override behavior exposed through `Converter` and `override()`.
 
 ## Public API
 
-`Converter` and `GenConverter` must be constructible with:
+`Converter` and `GenConverter` must accept `dict_factory`, `unstruct_strat`, `omit_if_default`, `forbid_extra_keys`, `type_overrides`, `unstruct_collection_overrides`, `prefer_attrib_converters`, `detailed_validation`, `unstructure_fallback_factory`, `structure_fallback_factory`, and `use_alias`. Their ordinary defaults are `dict`, `UnstructureStrategy.AS_DICT`, false for the boolean options except `detailed_validation`, and the documented fallback factories.
 
-```python
-Converter(
-    dict_factory=dict,
-    unstruct_strat=UnstructureStrategy.AS_DICT,
-    omit_if_default=False,
-    forbid_extra_keys=False,
-    type_overrides={},
-    unstruct_collection_overrides={},
-    prefer_attrib_converters=False,
-    detailed_validation=True,
-    unstructure_fallback_factory=...,
-    structure_fallback_factory=...,
-    use_alias=False,
-)
-```
+`BaseConverter` must accept the shared subset `dict_factory`, `unstruct_strat`, `prefer_attrib_converters`, `detailed_validation`, `unstructure_fallback_factory`, and `structure_fallback_factory` with the same defaults.
 
-`BaseConverter` must accept the shared subset:
-
-```python
-BaseConverter(
-    dict_factory=dict,
-    unstruct_strat=UnstructureStrategy.AS_DICT,
-    prefer_attrib_converters=False,
-    detailed_validation=True,
-    unstructure_fallback_factory=...,
-    structure_fallback_factory=...,
-)
-```
-
-Converters must expose these public methods:
-
-```python
-converter.structure(obj, cl)
-converter.unstructure(obj, unstructure_as=None)
-converter.structure_attrs_fromdict(obj, cl)
-converter.structure_attrs_fromtuple(obj, cl)
-converter.get_structure_hook(type, cache_result=True)
-converter.get_unstructure_hook(type, cache_result=True)
-converter.register_structure_hook(cl, func=None)
-converter.register_unstructure_hook(cls=None, func=None)
-converter.register_structure_hook_func(check_func, func)
-converter.register_unstructure_hook_func(check_func, func)
-converter.register_structure_hook_factory(predicate, factory)
-converter.register_unstructure_hook_factory(predicate, factory)
-converter.copy(**overrides)
-```
+Converters must expose `structure(obj, cl)`, `unstructure(obj, unstructure_as=None)`, `structure_attrs_fromdict(obj, cl)`, and `structure_attrs_fromtuple(obj, cl)` as their conversion entry points. Hook lookup is exposed through `get_structure_hook(type, cache_result=True)` and `get_unstructure_hook(type, cache_result=True)`. Hook registration is exposed through the type, predicate, and factory variants of `register_structure_hook*` and `register_unstructure_hook*`. `copy(**overrides)` must create an independently customizable converter with the current public rules preserved.
 
 The top-level functions `structure`, `unstructure`, `structure_attrs_fromdict`, `structure_attrs_fromtuple`, `register_structure_hook`, `register_structure_hook_func`, `register_unstructure_hook`, `register_unstructure_hook_func`, `get_structure_hook`, and `get_unstructure_hook` must delegate to `global_converter`.
 
@@ -211,7 +142,7 @@ The class-level `_cattrs_omit_if_default=True` setting must apply to all fields 
 
 `Converter(prefer_attrib_converters=False)` must prefer a registered structure hook for a field type over an attrs field converter. `Converter(prefer_attrib_converters=True)` must run the attrs field converter in preference to the registered type hook for that field.
 
-## Validation and Error Semantics
+## Error Semantics
 
 `detailed_validation=True` must be the default. In detailed mode, structuring failures inside attrs/dataclasses, sequences, mappings, and typed containers must be collected into public validation exception groups instead of stopping at the first nested failure.
 
@@ -293,8 +224,10 @@ cattrs is a Python library. It has no required console script for the covered fu
 
 Exit codes are not part of the covered public API because there is no covered command-line interface.
 
-## Implementation Guidance
+## Environment
 
-The tests exercise public converter behavior only. They call `cattrs` and `cattrs.gen` public imports, create attrs classes and dataclasses in test code, register hooks through public methods, and assert on returned objects, plain dictionaries/lists/tuples, public exception classes, and transformed error paths.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-Tests do not require private module imports, private converter attributes, generated function source text, exact traceback text, exact exception message wording, or optional serialization backends.
+## Evaluation Notes
+
+Assessment exercises structuring, unstructuring, hook registration and lookup, overrides, validation groups, transformed error paths, cross-view consistency, and round-trip workflows. It observes the documented `cattrs` and `cattrs.gen` imports, attrs classes, dataclasses, plain collection projections, and public exception classes. Private converter attributes, generated source text, tracebacks, exact exception wording, and optional serialization backends are not assessed.

@@ -445,8 +445,10 @@ Exit status:
 | A `RequestError` is raised | 1 |
 | `--help` is used | 0 |
 
-## Implementation Guidance
+## Environment
 
-Checks exercise public behavior only. They create clients with `MockTransport`, `WSGITransport`, `ASGITransport`, and small custom transports; construct and inspect `Request`, `Response`, `URL`, `Headers`, `Cookies`, and `QueryParams`; verify sync and async client lifecycle; verify redirect and history behavior; verify stream state transitions; verify event hooks and auth flows; and invoke the selected CLI surface without requiring external network access.
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment. The documented workflows may use local mock, WSGI, ASGI, or compatible custom transports and do not require external network access.
 
-Scoring is based on observable API behavior: return values, raised public exception classes, model state, request/response projections, and process exit status. Exact wording of error messages, exact object representation strings, private attributes, private modules, and live-network side effects are not part of the checks.
+## Evaluation Notes
+
+Assessment covers the documented imports, client and model state, request and response projections, transport interactions, streaming lifecycles, and command exit status. Exact error wording, exact representation strings, private attributes, private modules, and live-network side effects are outside the contract.

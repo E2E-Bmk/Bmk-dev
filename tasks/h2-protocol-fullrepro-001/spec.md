@@ -318,6 +318,10 @@ assert ack.changed_settings[SettingCodes.MAX_CONCURRENT_STREAMS].new_value == 7
 - No public contract is provided for undocumented modules or internal helpers.
 - No scheduling policy is required for server priority trees; h2 exposes priority information but does not enforce response scheduling.
 
+## Environment
+
+The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+
 ## Invocation Protocol
 
 There is no console script. `python -m h2` is not supported. Importing the package and using the documented Python API is the invocation protocol.
@@ -329,4 +333,4 @@ There is no console script. `python -m h2` is not supported. Importing the packa
 
 ## Implementation Guidance
 
-The test suite exercises public Python behavior only. It checks that independent `H2Connection` objects interoperate through bytes returned by `data_to_send()`, that inbound bytes produce documented event classes and attributes, that settings and flow-control projections agree with events, and that documented exception classes are raised for invalid public operations. Tests avoid exact `repr()` text, private attributes, private modules, and exact exception message wording.
+Independent `H2Connection` objects must interoperate through bytes returned by `data_to_send()`. Inbound bytes must produce the documented event classes and attributes, settings and flow-control projections must agree with events, and invalid public operations must raise the documented exception classes. Exact `repr()` text, private attributes, private modules, and exact exception wording are outside this contract.

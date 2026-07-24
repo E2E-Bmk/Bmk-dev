@@ -1,824 +1,813 @@
-# Spec2Repo oracle - integration tests for dvc-fullrepro-001
+"""Integration tests for dvc-fullrepro-001.
+
+Every test exercises ≥2 distinct public-API boundaries and targets a specific
+composition seam (state consistency, protocol handoff, config interaction, …).
+"""
+
 import json
 import os
-import subprocess
+import shutil
 import sys
 from pathlib import Path
 
 import pytest
-import yaml
 
-from dvc.repo import Repo
+from conftest import (
+    add_counting_stage,
+    add_single_stage,
+    add_two_stage_pipeline,
+    init_repo,
+    load_yaml,
+    make_script,
+    repo_reproduce,
+    run_dvc,
+    write_yaml,
+)
 
 
-DVC_CLI_MAIN = "import sys; from dvc.cli import main; raise SystemExit(main(sys.argv[1:]))"
+# ===================================================================
+# CVI-1  stage add → visible in yaml + list + selectable by repro
+# ===================================================================
 
-
-def run_dvc(cwd, *args, check=True):
-    env = os.environ.copy()
-    env["DVC_TEST"] = "true"
-    env["DVC_NO_ANALYTICS"] = "1"
-    result = subprocess.run(
-        [sys.executable, "-c", DVC_CLI_MAIN, *args],
-        cwd=cwd,
-        text=True,
-        capture_output=True,
-        env=env,
-        timeout=90,
+@pytest.mark.depends_on(
+    "test_cli_stage_add_writes_stage_to_yaml",
+    "test_cli_stage_list_reports_stages_from_existing_yaml",
+)
+def test_cvi1_stage_add_visible_in_yaml_and_stage_list(tmp_path):
+    """CVI-1: stage add visible in yaml and stage list."""
+    root = init_repo(tmp_path / "repo")
+    (root / "source.txt").write_text("x", encoding="utf-8")
+    run_dvc(
+        root, "stage", "add", "-n", "ingest",
+        "-d", "source.txt", "-o", "ingested.txt",
+        sys.executable, "-c",
+        "from pathlib import Path; "
+        "Path('ingested.txt').write_text("
+        "Path('source.txt').read_text(encoding='utf-8'), encoding='utf-8')",
     )
-    if check and result.returncode != 0:
-        raise AssertionError(
-            {
-                "args": args,
-                "returncode": result.returncode,
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-            }
-        )
-    return result
+    assert "ingest" in load_yaml(root / "dvc.yaml")["stages"]
+    listing = run_dvc(root, "stage", "list", "--name-only")
+    assert "ingest" in listing.stdout.strip().splitlines()
 
 
-def load_yaml(path):
-    return yaml.safe_load(path.read_text(encoding="utf-8"))
-
-
-def init_repo(path):
-    path.mkdir(parents=True, exist_ok=True)
-    Repo.init(root_dir=str(path), no_scm=True)
-    return path
-
-
-@pytest.fixture(scope="module")
-def basic_repro(tmp_path_factory):
-    root = init_repo(tmp_path_factory.mktemp("basic_repro"))
-    (root / "raw.txt").write_text("alpha\n", encoding="utf-8")
-    (root / "copy_upper.py").write_text(
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_cvi1_repo_run_stage_selectable_by_cli_repro(tmp_path):
+    """CVI-1: repo run stage selectable by cli repro."""
+    root = init_repo(tmp_path / "repo")
+    (root / "source.txt").write_text("x", encoding="utf-8")
+    make_script(
+        root, "proc.py",
         "from pathlib import Path\n"
-        "import sys\n"
-        "Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\n",
-        encoding="utf-8",
-    )
-
-    add = run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "prepare",
-        "-d",
-        "raw.txt",
-        "-d",
-        "copy_upper.py",
-        "-o",
-        "prepared.txt",
-        sys.executable,
-        "copy_upper.py",
-        "raw.txt",
-        "prepared.txt",
-    )
-    yaml_after_add = load_yaml(root / "dvc.yaml")
-    lock_exists_after_add = (root / "dvc.lock").exists()
-    listed_names = run_dvc(root, "stage", "list", "--name-only").stdout.split()
-
-    first_repro = run_dvc(root, "repro", "--no-commit", "--no-run-cache")
-    output_after_first_repro = (root / "prepared.txt").read_text(encoding="utf-8")
-    lock_after_first_repro = load_yaml(root / "dvc.lock")
-    status_after_no_commit = json.loads(run_dvc(root, "status", "--json").stdout)
-    quiet_after_no_commit = run_dvc(root, "status", "--quiet", check=False).returncode
-
-    (root / "raw.txt").write_text("beta\n", encoding="utf-8")
-    dirty_status_after_dep_change = json.loads(run_dvc(root, "status", "--json").stdout)
-    dry = run_dvc(root, "repro", "--dry", "--no-run-cache", "prepare")
-    output_after_dry = (root / "prepared.txt").read_text(encoding="utf-8")
-    forced = run_dvc(root, "repro", "--force", "--no-commit", "--no-run-cache", "prepare")
-    output_after_force = (root / "prepared.txt").read_text(encoding="utf-8")
-    invalid_target = run_dvc(
-        root, "repro", "--no-commit", "--no-run-cache", "missing-stage", check=False
-    )
-
-    return {
-        "add": add,
-        "yaml_after_add": yaml_after_add,
-        "lock_exists_after_add": lock_exists_after_add,
-        "listed_names": listed_names,
-        "first_repro": first_repro,
-        "output_after_first_repro": output_after_first_repro,
-        "lock_after_first_repro": lock_after_first_repro,
-        "status_after_no_commit": status_after_no_commit,
-        "quiet_after_no_commit": quiet_after_no_commit,
-        "dirty_status_after_dep_change": dirty_status_after_dep_change,
-        "dry": dry,
-        "output_after_dry": output_after_dry,
-        "forced": forced,
-        "output_after_force": output_after_force,
-        "invalid_target": invalid_target,
-    }
-
-
-@pytest.fixture(scope="module")
-def no_commit_runs(tmp_path_factory):
-    root = init_repo(tmp_path_factory.mktemp("no_commit_runs"))
-    (root / "raw.txt").write_text("one\n", encoding="utf-8")
-    (root / "counting.py").write_text(
-        "from pathlib import Path\n"
-        "import sys\n"
-        "count = Path('run_count.txt')\n"
-        "n = int(count.read_text() or '0') if count.exists() else 0\n"
-        "count.write_text(str(n + 1), encoding='utf-8')\n"
-        "Path(sys.argv[2]).write_text(Path(sys.argv[1]).read_text(encoding='utf-8').upper(), encoding='utf-8')\n",
-        encoding="utf-8",
+        "Path('product.txt').write_text("
+        "Path('source.txt').read_text(encoding='utf-8').upper(), encoding='utf-8')\n",
     )
     run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "prepare",
-        "-d",
-        "raw.txt",
-        "-d",
-        "counting.py",
-        "-o",
-        "prepared.txt",
-        sys.executable,
-        "counting.py",
-        "raw.txt",
-        "prepared.txt",
+        root, "stage", "add", "-n", "process",
+        "-d", "source.txt", "-d", "proc.py",
+        "-o", "product.txt",
+        sys.executable, "proc.py",
     )
-
-    counts = []
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
-    counts.append((root / "run_count.txt").read_text(encoding="utf-8"))
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
-    counts.append((root / "run_count.txt").read_text(encoding="utf-8"))
-    (root / "raw.txt").write_text("two\n", encoding="utf-8")
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
-    counts.append((root / "run_count.txt").read_text(encoding="utf-8"))
-    (root / "prepared.txt").unlink()
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
-    counts.append((root / "run_count.txt").read_text(encoding="utf-8"))
-    return {
-        "counts": counts,
-        "output": (root / "prepared.txt").read_text(encoding="utf-8"),
-    }
+    result = run_dvc(root, "repro", "--no-commit", "--no-run-cache", "process")
+    assert result.returncode == 0
+    assert (root / "product.txt").read_text(encoding="utf-8") == "X"
 
 
-@pytest.fixture(scope="module")
-def output_modes(tmp_path_factory):
-    root = init_repo(tmp_path_factory.mktemp("output_modes"))
-    (root / "writer.py").write_text(
+# ===================================================================
+# CVI-2  output→dependency = pipeline edge, upstream first
+# ===================================================================
+
+@pytest.mark.depends_on(
+    "test_run_no_exec_records_command_in_yaml",
+    "test_run_no_exec_records_dependency_list",
+)
+def test_cvi2_upstream_runs_before_downstream(tmp_path):
+    """CVI-2: upstream runs before downstream."""
+    root = init_repo(tmp_path / "repo")
+    add_two_stage_pipeline(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "intermediate.txt").read_text(encoding="utf-8") == "GAMMA"
+    assert (root / "artifact.txt").read_text(encoding="utf-8") == "GAMMA:done"
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_cvi2_targeted_repro_includes_upstream_dependency(tmp_path):
+    """CVI-2: targeted repro includes upstream dependency."""
+    root = init_repo(tmp_path / "repo")
+    add_two_stage_pipeline(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "assemble")
+    assert (root / "intermediate.txt").exists()
+    assert (root / "artifact.txt").read_text(encoding="utf-8") == "GAMMA:done"
+
+
+# ===================================================================
+# CVI-3  successful repro updates workspace + dvc.lock together
+# ===================================================================
+
+@pytest.mark.depends_on(
+    "test_run_no_exec_records_command_in_yaml",
+    "test_run_no_exec_records_output_list",
+)
+def test_cvi3_repro_creates_output_and_lockfile(tmp_path):
+    """CVI-3: repro creates output and lockfile."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "artifact.txt").exists()
+    lock = load_yaml(root / "dvc.lock")
+    assert "transform" in lock["stages"]
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_cvi3_lock_records_command_matching_yaml(tmp_path):
+    """CVI-3: lock records command matching yaml."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    yaml_cmd = load_yaml(root / "dvc.yaml")["stages"]["transform"]["cmd"]
+    lock_cmd = load_yaml(root / "dvc.lock")["stages"]["transform"]["cmd"]
+    assert lock_cmd == yaml_cmd
+
+
+# ===================================================================
+# CVI-4  clean state → status empty + repro skips
+# ===================================================================
+
+@pytest.mark.depends_on("test_status_returns_dict_on_initialized_repo")
+def test_cvi4_status_json_empty_after_committed_repro(tmp_path):
+    """CVI-4: status json empty after committed repro."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro")
+    status = json.loads(run_dvc(root, "status", "--json").stdout)
+    assert status == {}
+
+
+@pytest.mark.depends_on("test_status_returns_dict_on_initialized_repo")
+def test_cvi4_status_quiet_zero_when_clean(tmp_path):
+    """CVI-4: status quiet zero when clean."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro")
+    result = run_dvc(root, "status", "--quiet", check=False)
+    assert result.returncode == 0
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_cvi4_repro_skips_unchanged_stage(tmp_path):
+    """CVI-4: repro skips unchanged stage."""
+    root = init_repo(tmp_path / "repo")
+    add_counting_stage(root)
+    run_dvc(root, "repro")
+    run_dvc(root, "repro")
+    assert (root / "run_tally.txt").read_text(encoding="utf-8") == "1"
+
+
+# ===================================================================
+# CVI-5  dependency change → status reports + repro runs
+# ===================================================================
+
+@pytest.mark.depends_on(
+    "test_status_returns_dict_on_initialized_repo",
+    "test_run_no_exec_records_dependency_list",
+)
+def test_cvi5_dependency_change_appears_in_status_json(tmp_path):
+    """CVI-5: dependency change appears in status json."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro")
+    (root / "source.txt").write_text("epsilon\n", encoding="utf-8")
+    status = json.loads(run_dvc(root, "status", "--json").stdout)
+    assert "transform" in status
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_dependency_list")
+def test_cvi5_dependency_change_triggers_repro(tmp_path):
+    """CVI-5: dependency change triggers repro."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    (root / "source.txt").write_text("epsilon\n", encoding="utf-8")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "artifact.txt").read_text(encoding="utf-8") == "EPSILON\n"
+
+
+# ===================================================================
+# CVI-6  no-cache output missing → affects status/repro
+# ===================================================================
+
+@pytest.mark.depends_on("test_run_no_exec_records_output_list")
+def test_cvi6_no_cache_output_serialized_and_affects_status(tmp_path):
+    """CVI-6: no cache output serialized and affects status."""
+    root = init_repo(tmp_path / "repo")
+    run_dvc(
+        root, "stage", "add", "-n", "nocache",
+        "-O", "tracked.txt",
+        sys.executable, "-c",
+        "open('tracked.txt','w').write('tracked')",
+    )
+    outs = load_yaml(root / "dvc.yaml")["stages"]["nocache"]["outs"]
+    assert outs == [{"tracked.txt": {"cache": False}}]
+
+    run_dvc(root, "repro", "--no-run-cache", "nocache")
+    (root / "tracked.txt").unlink()
+    status = json.loads(run_dvc(root, "status", "--json").stdout)
+    assert len(status) > 0
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_output_list")
+def test_cvi6_missing_no_cache_output_triggers_repro(tmp_path):
+    """CVI-6: missing no cache output triggers repro."""
+    root = init_repo(tmp_path / "repo")
+    run_dvc(
+        root, "stage", "add", "-n", "nocache",
+        "-O", "tracked.txt",
+        sys.executable, "-c",
+        "open('tracked.txt','w').write('tracked')",
+    )
+    run_dvc(root, "repro", "--no-run-cache", "nocache")
+    (root / "tracked.txt").unlink()
+    run_dvc(root, "repro", "--no-run-cache", "nocache")
+    assert (root / "tracked.txt").read_text(encoding="utf-8") == "tracked"
+
+
+# ===================================================================
+# CVI-7  persistent vs non-persistent output handling
+# ===================================================================
+
+@pytest.mark.depends_on("test_run_no_exec_records_output_list")
+def test_cvi7_nonpersistent_output_removed_before_rerun(tmp_path):
+    """CVI-7: nonpersistent output removed before rerun."""
+    root = init_repo(tmp_path / "repo")
+    make_script(
+        root, "writer.py",
         "from pathlib import Path\n"
-        "import sys\n"
-        "mode = sys.argv[1]\n"
-        "if mode == 'nonpersist':\n"
-        "    Path('saw_existing.txt').write_text(str(Path('result.txt').exists()), encoding='utf-8')\n"
-        "    Path('result.txt').write_text('fresh', encoding='utf-8')\n"
-        "elif mode == 'persist':\n"
-        "    p = Path('persist.txt')\n"
-        "    p.write_text((p.read_text(encoding='utf-8') if p.exists() else '') + 'x', encoding='utf-8')\n"
-        "elif mode == 'nocache':\n"
-        "    Path('nocache.txt').write_text('tracked', encoding='utf-8')\n"
-        "elif mode == 'metric':\n"
-        "    Path('metrics.json').write_text('{\"score\": 7}', encoding='utf-8')\n"
-        "elif mode == 'plot':\n"
-        "    Path('plot.csv').write_text('x,y\\n1,2\\n', encoding='utf-8')\n",
-        encoding="utf-8",
+        "Path('saw.txt').write_text(str(Path('result.txt').exists()), encoding='utf-8')\n"
+        "Path('result.txt').write_text('fresh', encoding='utf-8')\n",
     )
     run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "nonpersist",
-        "-d",
-        "writer.py",
-        "-o",
-        "result.txt",
-        "-o",
-        "saw_existing.txt",
-        sys.executable,
-        "writer.py",
-        "nonpersist",
+        root, "stage", "add", "-n", "nonpersist",
+        "-d", "writer.py",
+        "-o", "result.txt", "-o", "saw.txt",
+        sys.executable, "writer.py",
     )
     run_dvc(root, "repro", "--no-commit", "--no-run-cache", "nonpersist")
     run_dvc(root, "repro", "--force", "--no-commit", "--no-run-cache", "nonpersist")
-    nonpersistent_saw_existing = (root / "saw_existing.txt").read_text(encoding="utf-8")
+    assert (root / "saw.txt").read_text(encoding="utf-8") == "False"
 
+
+@pytest.mark.depends_on("test_run_no_exec_records_output_list")
+def test_cvi7_persistent_output_remains_before_rerun(tmp_path):
+    """CVI-7: persistent output remains before rerun."""
+    root = init_repo(tmp_path / "repo")
+    make_script(
+        root, "appender.py",
+        "from pathlib import Path\n"
+        "p = Path('persist.txt')\n"
+        "p.write_text("
+        "(p.read_text(encoding='utf-8') if p.exists() else '') + 'x', encoding='utf-8')\n",
+    )
     run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "persist",
-        "-d",
-        "writer.py",
-        "--outs-persist",
-        "persist.txt",
-        sys.executable,
-        "writer.py",
-        "persist",
+        root, "stage", "add", "-n", "persist",
+        "-d", "appender.py",
+        "--outs-persist", "persist.txt",
+        sys.executable, "appender.py",
     )
     run_dvc(root, "repro", "--no-commit", "--no-run-cache", "persist")
     run_dvc(root, "repro", "--force", "--no-commit", "--no-run-cache", "persist")
-    persistent_text = (root / "persist.txt").read_text(encoding="utf-8")
+    assert (root / "persist.txt").read_text(encoding="utf-8") == "xx"
 
-    run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "nocache",
-        "-d",
-        "writer.py",
-        "-O",
-        "nocache.txt",
-        sys.executable,
-        "writer.py",
-        "nocache",
+
+# ===================================================================
+# CVI-8  frozen stage blocks dependency propagation
+# ===================================================================
+
+@pytest.mark.depends_on("test_freeze_writes_frozen_true_to_target_stage")
+def test_cvi8_frozen_stage_blocks_repro_on_changed_dep(tmp_path):
+    """CVI-8: frozen stage blocks repro on changed dep."""
+    root = init_repo(tmp_path / "repo")
+    (root / "params.yaml").write_text("gamma: violet\n", encoding="utf-8")
+    make_script(
+        root, "param_writer.py",
+        "from pathlib import Path\nimport yaml\n"
+        "data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\n"
+        "Path('param_out.txt').write_text(data['gamma'], encoding='utf-8')\n",
     )
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "nocache")
-    yaml_after_nocache = load_yaml(root / "dvc.yaml")
-    (root / "nocache.txt").unlink()
-    nocache_status = json.loads(run_dvc(root, "status", "--json").stdout)
-
     run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "metric",
-        "-d",
-        "writer.py",
-        "-M",
-        "metrics.json",
-        sys.executable,
-        "writer.py",
-        "metric",
+        root, "stage", "add", "-n", "paramstage",
+        "-p", "gamma", "-o", "param_out.txt",
+        sys.executable, "param_writer.py",
     )
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "metric")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "paramstage")
+
+    (root / "params.yaml").write_text("gamma: indigo\n", encoding="utf-8")
+    run_dvc(root, "freeze", "paramstage")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "paramstage")
+    assert (root / "param_out.txt").read_text(encoding="utf-8") == "violet"
+
+
+@pytest.mark.depends_on("test_unfreeze_removes_frozen_flag_from_target")
+def test_cvi8_unfreeze_then_repro_updates_output(tmp_path):
+    """CVI-8: unfreeze then repro updates output."""
+    root = init_repo(tmp_path / "repo")
+    (root / "params.yaml").write_text("gamma: violet\n", encoding="utf-8")
+    make_script(
+        root, "param_writer.py",
+        "from pathlib import Path\nimport yaml\n"
+        "data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\n"
+        "Path('param_out.txt').write_text(data['gamma'], encoding='utf-8')\n",
+    )
     run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "plot",
-        "-d",
-        "writer.py",
-        "--plots",
-        "plot.csv",
-        sys.executable,
-        "writer.py",
-        "plot",
+        root, "stage", "add", "-n", "paramstage",
+        "-p", "gamma", "-o", "param_out.txt",
+        sys.executable, "param_writer.py",
     )
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "plot")
-    lock_after_metric_plot = load_yaml(root / "dvc.lock")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "paramstage")
 
-    return {
-        "nonpersistent_saw_existing": nonpersistent_saw_existing,
-        "persistent_text": persistent_text,
-        "yaml_after_nocache": yaml_after_nocache,
-        "nocache_status": nocache_status,
-        "lock_after_metric_plot": lock_after_metric_plot,
-    }
+    (root / "params.yaml").write_text("gamma: indigo\n", encoding="utf-8")
+    run_dvc(root, "freeze", "paramstage")
+    run_dvc(root, "unfreeze", "paramstage")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "paramstage")
+    assert (root / "param_out.txt").read_text(encoding="utf-8") == "indigo"
 
 
-@pytest.fixture(scope="module")
-def wdir_and_commands(tmp_path_factory):
-    root = init_repo(tmp_path_factory.mktemp("wdir_and_commands"))
-    (root / "sub").mkdir()
-    (root / "sub" / "input.txt").write_text("hi", encoding="utf-8")
-    (root / "sub" / "env_stage.py").write_text(
+# ===================================================================
+# CVI-9  pull restores tracked data without modifying dvc.yaml
+# ===================================================================
+
+@pytest.mark.depends_on("test_run_no_exec_records_output_list")
+def test_cvi9_pull_restores_data_from_local_remote(tmp_path):
+    """CVI-9: pull restores data from local remote."""
+    root = init_repo(tmp_path / "repo")
+    remote_dir = tmp_path / "localremote"
+    remote_dir.mkdir()
+    run_dvc(root, "remote", "add", "localremote", str(remote_dir))
+
+    (root / "input.txt").write_text("delta", encoding="utf-8")
+    make_script(
+        root, "copier.py",
         "from pathlib import Path\n"
-        "import os\n"
-        "Path('env.txt').write_text(os.environ.get('DVC_ROOT', '') + '\\n' + os.environ.get('DVC_STAGE', ''), encoding='utf-8')\n"
-        "Path('output.txt').write_text(Path('input.txt').read_text(encoding='utf-8') + '!', encoding='utf-8')\n",
-        encoding="utf-8",
+        "Path('output.txt').write_text("
+        "Path('input.txt').read_text(encoding='utf-8'), encoding='utf-8')\n",
     )
     run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "envstage",
-        "-w",
-        "sub",
-        "-d",
-        "input.txt",
-        "-o",
-        "output.txt",
-        sys.executable,
-        "env_stage.py",
+        root, "stage", "add", "-n", "copystage",
+        "-d", "input.txt", "-d", "copier.py",
+        "-o", "output.txt",
+        sys.executable, "copier.py",
     )
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "envstage")
-    env_lines = (root / "sub" / "env.txt").read_text(encoding="utf-8").splitlines()
+    run_dvc(root, "repro")
 
-    (root / "first.py").write_text(
-        "from pathlib import Path\nPath('first.txt').write_text('1', encoding='utf-8')\n",
-        encoding="utf-8",
+    original = (root / "output.txt").read_text(encoding="utf-8")
+    yaml_before = (root / "dvc.yaml").read_text(encoding="utf-8")
+
+    run_dvc(root, "push", "-r", "localremote")
+
+    (root / "output.txt").unlink()
+    cache_dir = root / ".dvc" / "cache"
+    if cache_dir.exists():
+        shutil.rmtree(cache_dir)
+        cache_dir.mkdir(parents=True)
+
+    run_dvc(root, "pull", "-r", "localremote")
+
+    assert (root / "output.txt").read_text(encoding="utf-8") == original
+    assert (root / "dvc.yaml").read_text(encoding="utf-8") == yaml_before
+
+
+# ===================================================================
+# CVI-10  dry vs no-commit distinction
+# ===================================================================
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_cvi10_dry_repro_does_not_execute_command(tmp_path):
+    """CVI-10: dry repro does not execute command."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro", "--dry", "--no-run-cache", "transform")
+    assert not (root / "artifact.txt").exists()
+    assert not (root / "dvc.lock").exists()
+
+
+@pytest.mark.depends_on("test_status_returns_dict_on_initialized_repo")
+def test_cvi10_no_commit_executes_but_status_remains_dirty(tmp_path):
+    """CVI-10: no commit executes but status remains dirty."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "artifact.txt").exists()
+    status = json.loads(run_dvc(root, "status", "--json").stdout)
+    assert len(status) > 0
+
+
+# ===================================================================
+# CVI-11  run-cache restore vs disable
+# ===================================================================
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_cvi11_run_cache_restores_without_rerunning(tmp_path):
+    """CVI-11: run cache restores without rerunning."""
+    root = init_repo(tmp_path / "repo")
+    add_counting_stage(root)
+    run_dvc(root, "repro")
+
+    original_tally = (root / "run_tally.txt").read_text(encoding="utf-8")
+    original_output = (root / "artifact.txt").read_text(encoding="utf-8")
+
+    (root / "artifact.txt").unlink()
+    run_dvc(root, "repro")
+
+    assert (root / "run_tally.txt").read_text(encoding="utf-8") == original_tally
+    assert (root / "artifact.txt").read_text(encoding="utf-8") == original_output
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_cvi11_no_run_cache_forces_reexecution(tmp_path):
+    """CVI-11: no run cache forces reexecution."""
+    root = init_repo(tmp_path / "repo")
+    add_counting_stage(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "run_tally.txt").read_text(encoding="utf-8") == "2"
+
+
+# ===================================================================
+# CVI-12  JSON and text status describe the same state
+# ===================================================================
+
+@pytest.mark.depends_on("test_status_returns_dict_on_initialized_repo")
+def test_cvi12_json_and_quiet_agree_on_clean_state(tmp_path):
+    """CVI-12: json and quiet agree on clean state."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro")
+
+    json_status = json.loads(run_dvc(root, "status", "--json").stdout)
+    quiet_rc = run_dvc(root, "status", "--quiet", check=False).returncode
+
+    assert json_status == {}
+    assert quiet_rc == 0
+
+
+@pytest.mark.depends_on("test_status_returns_dict_on_initialized_repo")
+def test_cvi12_json_and_quiet_agree_on_changed_state(tmp_path):
+    """CVI-12: json and quiet agree on changed state."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro")
+    (root / "source.txt").write_text("changed\n", encoding="utf-8")
+
+    json_status = json.loads(run_dvc(root, "status", "--json").stdout)
+    quiet_rc = run_dvc(root, "status", "--quiet", check=False).returncode
+
+    assert len(json_status) > 0
+    assert quiet_rc != 0
+
+
+# ===================================================================
+# Additional seams — keep-going, downstream, force-downstream
+# ===================================================================
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_keep_going_runs_independent_skips_dependent(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    make_script(
+        root, "fail.py",
+        "from pathlib import Path\nimport sys\n"
+        "Path('fail_marker.txt').write_text('started', encoding='utf-8')\n"
+        "sys.exit(5)\n",
     )
-    (root / "second.py").write_text(
-        "from pathlib import Path\nPath('second.txt').write_text(Path('first.txt').read_text(encoding='utf-8') + '2', encoding='utf-8')\n",
-        encoding="utf-8",
+    make_script(
+        root, "dep.py",
+        "from pathlib import Path\n"
+        "Path('dependent.txt').write_text('dependent', encoding='utf-8')\n",
     )
-    dvc_yaml = {
+    make_script(
+        root, "indep.py",
+        "from pathlib import Path\n"
+        "Path('independent.txt').write_text('independent', encoding='utf-8')\n",
+    )
+    pipeline = {
+        "stages": {
+            "fail": {
+                "cmd": f'"{sys.executable}" fail.py',
+                "deps": ["fail.py"],
+                "outs": ["failed.txt"],
+            },
+            "dependent": {
+                "cmd": f'"{sys.executable}" dep.py',
+                "deps": ["failed.txt", "dep.py"],
+                "outs": ["dependent.txt"],
+            },
+            "indep": {
+                "cmd": f'"{sys.executable}" indep.py',
+                "deps": ["indep.py"],
+                "outs": ["independent.txt"],
+            },
+        },
+    }
+    write_yaml(root / "dvc.yaml", pipeline)
+    result = run_dvc(
+        root, "repro", "--keep-going",
+        "--no-commit", "--no-run-cache",
+        check=False,
+    )
+    assert result.returncode != 0
+    assert (root / "fail_marker.txt").read_text(encoding="utf-8") == "started"
+    assert not (root / "dependent.txt").exists()
+    assert (root / "independent.txt").read_text(encoding="utf-8") == "independent"
+
+
+@pytest.mark.depends_on(
+    "test_run_no_exec_records_command_in_yaml",
+    "test_run_no_exec_records_dependency_list",
+)
+def test_downstream_repro_updates_descendant_output(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    add_two_stage_pipeline(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+
+    (root / "source.txt").write_text("theta", encoding="utf-8")
+    run_dvc(
+        root, "repro", "--downstream",
+        "--no-commit", "--no-run-cache", "transform",
+    )
+    assert (root / "artifact.txt").read_text(encoding="utf-8") == "THETA:done"
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_force_downstream_reruns_descendant(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    make_script(
+        root, "const_gen.py",
+        "from pathlib import Path\n"
+        "Path('mid.txt').write_text('constant', encoding='utf-8')\n",
+    )
+    make_script(
+        root, "cnt.py",
+        "from pathlib import Path\n"
+        "c = Path('cnt.txt')\n"
+        "n = int(c.read_text(encoding='utf-8')) if c.exists() else 0\n"
+        "c.write_text(str(n + 1), encoding='utf-8')\n"
+        "Path('final.txt').write_text(str(n + 1), encoding='utf-8')\n",
+    )
+    (root / "seed.txt").write_text("v1", encoding="utf-8")
+    run_dvc(
+        root, "stage", "add", "-n", "constgen",
+        "-d", "seed.txt", "-d", "const_gen.py",
+        "-o", "mid.txt",
+        sys.executable, "const_gen.py",
+    )
+    run_dvc(
+        root, "stage", "add", "-n", "counter",
+        "-d", "mid.txt", "-d", "cnt.py",
+        "-o", "final.txt",
+        sys.executable, "cnt.py",
+    )
+    run_dvc(root, "repro")
+    assert (root / "cnt.txt").read_text(encoding="utf-8") == "1"
+
+    (root / "seed.txt").write_text("v2", encoding="utf-8")
+    run_dvc(
+        root, "repro", "--force-downstream",
+        "--no-commit", "--no-run-cache",
+    )
+    assert int((root / "cnt.txt").read_text(encoding="utf-8")) > 1
+
+
+# ===================================================================
+# Additional seams — command list, wdir + env vars, params, always_changed
+# ===================================================================
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_list")
+def test_command_list_executes_in_declared_order(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    make_script(
+        root, "first.py",
+        "from pathlib import Path\n"
+        "Path('first.txt').write_text('1', encoding='utf-8')\n",
+    )
+    make_script(
+        root, "second.py",
+        "from pathlib import Path\n"
+        "Path('second.txt').write_text("
+        "(Path('first.txt').read_text(encoding='utf-8') "
+        "if Path('first.txt').exists() else '') + '2', encoding='utf-8')\n",
+    )
+    pipeline = {
         "stages": {
             "chain": {
-                "cmd": [f'"{sys.executable}" first.py', f'"{sys.executable}" second.py'],
+                "cmd": [
+                    f'"{sys.executable}" first.py',
+                    f'"{sys.executable}" second.py',
+                ],
                 "deps": ["first.py", "second.py"],
                 "outs": ["second.txt"],
-            }
-        }
+            },
+        },
     }
-    (root / "dvc.yaml").write_text(yaml.safe_dump(dvc_yaml, sort_keys=False), encoding="utf-8")
+    write_yaml(root / "dvc.yaml", pipeline)
     run_dvc(root, "repro", "--no-commit", "--no-run-cache", "chain")
+    assert (root / "second.txt").read_text(encoding="utf-8") == "12"
 
-    (root / "fail.py").write_text("import sys\nsys.exit(3)\n", encoding="utf-8")
-    (root / "after_fail.py").write_text(
-        "from pathlib import Path\nPath('after_fail.txt').write_text('ran', encoding='utf-8')\n",
-        encoding="utf-8",
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_list")
+def test_command_list_failure_stops_subsequent_commands(tmp_path):
+    """Seam: error propagation — inner failure surfaces correctly to the caller."""
+    root = init_repo(tmp_path / "repo")
+    cmds = [
+        (
+            f'"{sys.executable}" -c '
+            '"from pathlib import Path; '
+            "Path('started.txt').write_text('ok', encoding='utf-8')\""
+        ),
+        f'"{sys.executable}" -c "import sys; sys.exit(7)"',
+        (
+            f'"{sys.executable}" -c '
+            '"from pathlib import Path; '
+            "Path('later.txt').write_text('late', encoding='utf-8')\""
+        ),
+    ]
+    write_yaml(root / "dvc.yaml", {"stages": {"chain": {"cmd": cmds}}})
+    result = run_dvc(
+        root, "repro", "--no-commit", "--no-run-cache", "chain",
+        check=False,
     )
-    dvc_yaml["stages"]["fails"] = {
-        "cmd": [f'"{sys.executable}" fail.py', f'"{sys.executable}" after_fail.py'],
-        "deps": ["fail.py", "after_fail.py"],
-        "outs": ["after_fail.txt"],
-    }
-    (root / "dvc.yaml").write_text(yaml.safe_dump(dvc_yaml, sort_keys=False), encoding="utf-8")
-    failing = run_dvc(root, "repro", "--no-commit", "--no-run-cache", "fails", check=False)
-
-    return {
-        "root": root,
-        "wdir_output": (root / "sub" / "output.txt").read_text(encoding="utf-8"),
-        "dvc_root": Path(env_lines[0]),
-        "dvc_stage": env_lines[1],
-        "command_list_output": (root / "second.txt").read_text(encoding="utf-8"),
-        "failing": failing,
-        "after_failed_command_exists": (root / "after_fail.txt").exists(),
-    }
+    assert result.returncode != 0
+    assert (root / "started.txt").read_text(encoding="utf-8") == "ok"
+    assert not (root / "later.txt").exists()
 
 
-@pytest.fixture(scope="module")
-def params_freeze_errors(tmp_path_factory):
-    root = init_repo(tmp_path_factory.mktemp("params_freeze_errors"))
-    (root / "params.yaml").write_text("alpha: red\n", encoding="utf-8")
-    (root / "param_writer.py").write_text(
-        "from pathlib import Path\n"
-        "import yaml\n"
+@pytest.mark.depends_on("test_run_no_exec_records_working_directory")
+def test_wdir_stage_receives_dvc_root_and_dvc_stage_env(tmp_path):
+    """Seam: config interaction — configuration sources combine with expected precedence."""
+    root = init_repo(tmp_path / "repo")
+    (root / "sub").mkdir()
+    (root / "sub" / "input.txt").write_text("hi", encoding="utf-8")
+    make_script(
+        root / "sub", "env_check.py",
+        "from pathlib import Path\nimport os\n"
+        "Path('env.txt').write_text("
+        "os.environ.get('DVC_ROOT', '') + '\\n' "
+        "+ os.environ.get('DVC_STAGE', ''), encoding='utf-8')\n"
+        "Path('output.txt').write_text("
+        "Path('input.txt').read_text(encoding='utf-8') + '!', encoding='utf-8')\n",
+    )
+    run_dvc(
+        root, "stage", "add", "-n", "envstage", "-w", "sub",
+        "-d", "input.txt", "-o", "output.txt",
+        sys.executable, "env_check.py",
+    )
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "envstage")
+
+    lines = (root / "sub" / "env.txt").read_text(encoding="utf-8").splitlines()
+    assert Path(lines[0]) == root
+    assert lines[1] == "envstage"
+    assert (root / "sub" / "output.txt").read_text(encoding="utf-8") == "hi!"
+
+
+@pytest.mark.depends_on(
+    "test_run_no_exec_records_params_key",
+    "test_status_returns_dict_on_initialized_repo",
+)
+def test_param_change_detected_by_status_and_repro(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    (root / "params.yaml").write_text("gamma: violet\n", encoding="utf-8")
+    make_script(
+        root, "param_reader.py",
+        "from pathlib import Path\nimport yaml\n"
         "data = yaml.safe_load(Path('params.yaml').read_text(encoding='utf-8'))\n"
-        "Path('param_out.txt').write_text(data['alpha'], encoding='utf-8')\n",
-        encoding="utf-8",
+        "Path('param_result.txt').write_text(data['gamma'], encoding='utf-8')\n",
     )
     run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "paramstage",
-        "-p",
-        "alpha",
-        "-o",
-        "param_out.txt",
-        sys.executable,
-        "param_writer.py",
+        root, "stage", "add", "-n", "paramread",
+        "-p", "gamma", "-o", "param_result.txt",
+        sys.executable, "param_reader.py",
     )
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "paramstage")
-    first_output = (root / "param_out.txt").read_text(encoding="utf-8")
-    (root / "params.yaml").write_text("alpha: blue\n", encoding="utf-8")
-    dirty_after_param_change = json.loads(run_dvc(root, "status", "--json").stdout)
-    run_dvc(root, "freeze", "paramstage")
-    yaml_after_freeze = load_yaml(root / "dvc.yaml")
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "paramstage")
-    frozen_output = (root / "param_out.txt").read_text(encoding="utf-8")
-    run_dvc(root, "unfreeze", "paramstage")
-    yaml_after_unfreeze = load_yaml(root / "dvc.yaml")
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "paramstage")
-    unfrozen_output = (root / "param_out.txt").read_text(encoding="utf-8")
+    run_dvc(root, "repro")
 
-    bad_status_option = run_dvc(root, "status", "--all-branches", check=False)
-    run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "dup",
-        "-o",
-        "dup.txt",
-        sys.executable,
-        "-c",
-        "open('dup.txt','w').write('a')",
-    )
-    duplicate_stage = run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "dup",
-        "-o",
-        "dup2.txt",
-        sys.executable,
-        "-c",
-        "open('dup2.txt','w').write('b')",
-        check=False,
-    )
-    forced_duplicate_stage = run_dvc(
-        root,
-        "stage",
-        "add",
-        "--force",
-        "-n",
-        "dup",
-        "-o",
-        "dup2.txt",
-        sys.executable,
-        "-c",
-        "open('dup2.txt','w').write('b')",
-    )
-    run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "out_a",
-        "-o",
-        "shared.txt",
-        sys.executable,
-        "-c",
-        "open('shared.txt','w').write('a')",
-    )
-    overlapping_output = run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "out_b",
-        "-o",
-        "shared.txt",
-        sys.executable,
-        "-c",
-        "open('shared.txt','w').write('b')",
-        check=False,
-    )
-    return {
-        "first_output": first_output,
-        "dirty_after_param_change": dirty_after_param_change,
-        "yaml_after_freeze": yaml_after_freeze,
-        "frozen_output": frozen_output,
-        "yaml_after_unfreeze": yaml_after_unfreeze,
-        "unfrozen_output": unfrozen_output,
-        "bad_status_option": bad_status_option,
-        "duplicate_stage": duplicate_stage,
-        "forced_duplicate_stage": forced_duplicate_stage,
-        "overlapping_output": overlapping_output,
-    }
+    (root / "params.yaml").write_text("gamma: teal\n", encoding="utf-8")
+    status = json.loads(run_dvc(root, "status", "--json").stdout)
+    assert len(status) > 0
+
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "param_result.txt").read_text(encoding="utf-8") == "teal"
 
 
-@pytest.fixture(scope="module")
-def pipeline_and_repo_api(tmp_path_factory):
-    root = init_repo(tmp_path_factory.mktemp("pipeline_and_repo_api"))
-    (root / "raw.txt").write_text("a", encoding="utf-8")
-    (root / "prepare.py").write_text(
+@pytest.mark.depends_on("test_run_no_exec_records_always_changed_flag")
+def test_always_changed_stage_reruns_without_input_change(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    make_script(
+        root, "ticker.py",
         "from pathlib import Path\n"
-        "Path('prepared.txt').write_text(Path('raw.txt').read_text(encoding='utf-8').upper(), encoding='utf-8')\n",
-        encoding="utf-8",
-    )
-    (root / "train.py").write_text(
-        "from pathlib import Path\n"
-        "p = Path('train_count.txt')\n"
-        "n = int(p.read_text() or '0') if p.exists() else 0\n"
-        "p.write_text(str(n + 1), encoding='utf-8')\n"
-        "Path('model.txt').write_text(Path('prepared.txt').read_text(encoding='utf-8') + ':model', encoding='utf-8')\n",
-        encoding="utf-8",
+        "c = Path('tick.txt')\n"
+        "n = int(c.read_text(encoding='utf-8')) if c.exists() else 0\n"
+        "c.write_text(str(n + 1), encoding='utf-8')\n"
+        "Path('tick_out.txt').write_text(str(n + 1), encoding='utf-8')\n",
     )
     run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "prepare",
-        "-d",
-        "raw.txt",
-        "-d",
-        "prepare.py",
-        "-o",
-        "prepared.txt",
-        sys.executable,
-        "prepare.py",
+        root, "stage", "add", "-n", "ticker", "--always-changed",
+        "-d", "ticker.py", "-o", "tick_out.txt",
+        sys.executable, "ticker.py",
     )
-    run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "train",
-        "-d",
-        "prepared.txt",
-        "-d",
-        "train.py",
-        "-o",
-        "model.txt",
-        sys.executable,
-        "train.py",
-    )
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "train")
-    model_after_target = (root / "model.txt").read_text(encoding="utf-8")
-    (root / "raw.txt").write_text("b", encoding="utf-8")
-    run_dvc(root, "repro", "--downstream", "--no-commit", "--no-run-cache", "prepare")
-    model_after_downstream = (root / "model.txt").read_text(encoding="utf-8")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "tick.txt").read_text(encoding="utf-8") == "2"
 
-    old_cwd = Path.cwd()
+
+# ===================================================================
+# Additional seams — API ↔ CLI consistency, no-commit cache behavior
+# ===================================================================
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_repo_reproduce_api_returns_reproduced_stages(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    add_two_stage_pipeline(root)
+    result = repo_reproduce(
+        root, force=True, no_commit=True, run_cache=False,
+    )
+    assert isinstance(result, list)
+    assert len(result) > 0
+
+
+@pytest.mark.depends_on(
+    "test_cli_version_exits_zero_with_output",
+    "test_version_attribute_is_nonempty_string",
+)
+def test_cli_version_output_matches_api_version(tmp_path):
+    """Seam: protocol handoff — CLI and programmatic API share the same behavior."""
+    import dvc
+    result = run_dvc(tmp_path, "--version", check=False)
+    assert dvc.__version__ in result.stdout
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_no_commit_repeated_reruns_stage(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    add_counting_stage(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "run_tally.txt").read_text(encoding="utf-8") == "2"
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_command_in_yaml")
+def test_no_commit_then_delete_output_reruns(tmp_path):
+    """Seam: protocol handoff — command output matches artifact or API state."""
+    root = init_repo(tmp_path / "repo")
+    add_counting_stage(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    (root / "artifact.txt").unlink()
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+    assert (root / "run_tally.txt").read_text(encoding="utf-8") == "2"
+    assert (root / "artifact.txt").read_text(encoding="utf-8") == "DELTA\n"
+
+
+@pytest.mark.depends_on("test_run_no_exec_records_metric_output")
+def test_metric_output_recorded_in_lockfile(tmp_path):
+    """Seam: state consistency — integrated workflow preserves expected invariants."""
+    root = init_repo(tmp_path / "repo")
+    make_script(
+        root, "metric_gen.py",
+        "from pathlib import Path\nimport json\n"
+        "Path('scores.json').write_text(json.dumps({'acc': 0.95}), encoding='utf-8')\n",
+    )
+    run_dvc(
+        root, "stage", "add", "-n", "eval",
+        "-d", "metric_gen.py", "-M", "scores.json",
+        sys.executable, "metric_gen.py",
+    )
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "eval")
+    outs = load_yaml(root / "dvc.lock")["stages"]["eval"]["outs"]
+    paths = [o["path"] for o in outs]
+    assert "scores.json" in paths
+
+
+@pytest.mark.depends_on(
+    "test_freeze_writes_frozen_true_to_target_stage",
+    "test_run_no_exec_records_command_in_yaml",
+)
+def test_freeze_api_blocks_cli_repro(tmp_path):
+    """Seam: protocol handoff — CLI and programmatic API share the same behavior."""
+    root = init_repo(tmp_path / "repo")
+    add_single_stage(root)
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
+
+    old = Path.cwd()
     os.chdir(root)
     try:
-        repo = Repo(str(root))
-        reproduced = repo.reproduce(targets=["train"], force=True, no_commit=True, run_cache=False)
-        repo.freeze("prepare")
-        yaml_after_repo_freeze = load_yaml(root / "dvc.yaml")
-        repo.unfreeze("prepare")
-        yaml_after_repo_unfreeze = load_yaml(root / "dvc.yaml")
-        repo.run(name="noexec", cmd=f'"{sys.executable}" prepare.py', outs=["noexec.txt"], no_exec=True)
-        yaml_after_noexec = load_yaml(root / "dvc.yaml")
+        from dvc.repo import Repo
+        Repo(str(root)).freeze("transform")
     finally:
-        os.chdir(old_cwd)
-
-    return {
-        "root": root,
-        "model_after_target": model_after_target,
-        "model_after_downstream": model_after_downstream,
-        "repo_reproduce_count": len(reproduced),
-        "yaml_after_repo_freeze": yaml_after_repo_freeze,
-        "yaml_after_repo_unfreeze": yaml_after_repo_unfreeze,
-        "yaml_after_noexec": yaml_after_noexec,
-        "noexec_output_exists": (root / "noexec.txt").exists(),
-    }
-
-
-def test_stage_add_success_exit_code(basic_repro):
-    assert basic_repro["add"].returncode == 0
-
-
-def test_stage_add_writes_named_stage_to_dvc_yaml(basic_repro):
-    assert sorted(basic_repro["yaml_after_add"]["stages"]) == ["prepare"]
-
-
-def test_stage_add_records_deps_outs_and_command(basic_repro):
-    stage = basic_repro["yaml_after_add"]["stages"]["prepare"]
-    assert stage["deps"] == ["raw.txt", "copy_upper.py"]
-    assert stage["outs"] == ["prepared.txt"]
-    assert "copy_upper.py" in stage["cmd"]
-
-
-def test_stage_add_without_run_does_not_create_lockfile(basic_repro):
-    assert basic_repro["lock_exists_after_add"] is False
-
-
-def test_stage_list_name_only_reports_created_stage(basic_repro):
-    assert basic_repro["listed_names"] == ["prepare"]
-
-
-def test_repro_no_commit_executes_command_and_writes_output(basic_repro):
-    assert basic_repro["first_repro"].returncode == 0
-    assert basic_repro["output_after_first_repro"] == "ALPHA\n"
-
-
-def test_repro_no_commit_writes_public_lock_stage(basic_repro):
-    assert sorted(basic_repro["lock_after_first_repro"]["stages"]) == ["prepare"]
-
-
-def test_status_json_reports_no_commit_output_not_in_cache(basic_repro):
-    assert "prepare" in basic_repro["status_after_no_commit"]
-    assert basic_repro["status_after_no_commit"]["prepare"]
-
-
-def test_status_quiet_is_nonzero_when_pipeline_has_reported_changes(basic_repro):
-    assert basic_repro["quiet_after_no_commit"] != 0
-
-
-def test_status_json_changes_after_dependency_file_changes(basic_repro):
-    assert basic_repro["dirty_status_after_dep_change"]
-
-
-def test_dry_repro_does_not_modify_workspace_output(basic_repro):
-    assert basic_repro["dry"].returncode == 0
-    assert basic_repro["output_after_dry"] == "ALPHA\n"
-
-
-def test_force_repro_updates_workspace_output(basic_repro):
-    assert basic_repro["forced"].returncode == 0
-    assert basic_repro["output_after_force"] == "BETA\n"
-
-
-def test_no_commit_repro_runs_stage_each_time_when_output_is_uncached(no_commit_runs):
-    assert no_commit_runs["counts"][:2] == ["1", "2"]
-
-
-def test_no_commit_repro_runs_after_dependency_change(no_commit_runs):
-    assert no_commit_runs["counts"][2] == "3"
-
-
-def test_no_commit_repro_runs_after_output_deletion(no_commit_runs):
-    assert no_commit_runs["counts"][3] == "4"
-
-
-def test_no_commit_repro_recreates_deleted_output(no_commit_runs):
-    assert no_commit_runs["output"] == "TWO\n"
-
-
-def test_nonpersistent_outputs_are_removed_before_forced_rerun(output_modes):
-    assert output_modes["nonpersistent_saw_existing"] == "False"
-
-
-def test_persistent_outputs_remain_before_forced_rerun(output_modes):
-    assert output_modes["persistent_text"] == "xx"
-
-
-def test_missing_no_cache_output_reports_status_change(output_modes):
-    assert output_modes["nocache_status"]
-
-
-def test_stage_wdir_runs_command_from_declared_directory(wdir_and_commands):
-    assert wdir_and_commands["wdir_output"] == "hi!"
-
-
-def test_command_list_runs_commands_in_order(wdir_and_commands):
-    assert wdir_and_commands["command_list_output"] == "12"
-
-
-def test_failing_command_list_does_not_run_later_commands(wdir_and_commands):
-    assert wdir_and_commands["after_failed_command_exists"] is False
-
-
-def test_params_dependency_initial_repro_uses_param_value(params_freeze_errors):
-    assert params_freeze_errors["first_output"] == "red"
-
-
-def test_params_change_reports_status_change(params_freeze_errors):
-    assert params_freeze_errors["dirty_after_param_change"]
-
-
-def test_frozen_stage_does_not_reproduce_changed_params(params_freeze_errors):
-    assert params_freeze_errors["frozen_output"] == "red"
-
-
-def test_unfreeze_removes_frozen_flag_and_repro_updates_output(params_freeze_errors):
-    stage = params_freeze_errors["yaml_after_unfreeze"]["stages"]["paramstage"]
-    assert stage.get("frozen") is None
-    assert params_freeze_errors["unfrozen_output"] == "blue"
-
-
-def test_targeted_repro_runs_upstream_dependency_for_target(pipeline_and_repo_api):
-    assert pipeline_and_repo_api["model_after_target"] == "A:model"
-
-
-def test_downstream_repro_updates_descendant_stage_output(pipeline_and_repo_api):
-    assert pipeline_and_repo_api["model_after_downstream"] == "B:model"
-
-
-def test_repo_reproduce_force_returns_reproduced_stages(pipeline_and_repo_api):
-    assert pipeline_and_repo_api["repo_reproduce_count"] == 2
-
-
-def test_repo_freeze_writes_same_frozen_state_as_cli(pipeline_and_repo_api):
-    stage = pipeline_and_repo_api["yaml_after_repo_freeze"]["stages"]["prepare"]
-    assert stage["frozen"] is True
-
-
-def test_repo_unfreeze_removes_frozen_state(pipeline_and_repo_api):
-    stage = pipeline_and_repo_api["yaml_after_repo_unfreeze"]["stages"]["prepare"]
-    assert stage.get("frozen") is None
-
-
-def test_repo_run_no_exec_writes_stage_but_does_not_create_output(pipeline_and_repo_api):
-    assert "noexec" in pipeline_and_repo_api["yaml_after_noexec"]["stages"]
-    assert pipeline_and_repo_api["noexec_output_exists"] is False
-
-
-@pytest.fixture(scope="module")
-def run_cache_and_pull(tmp_path_factory):
-    root = init_repo(tmp_path_factory.mktemp("run_cache_and_pull"))
-    (root / "seed.txt").write_text("seed", encoding="utf-8")
-    (root / "producer.py").write_text(
-        "from pathlib import Path\n"
-        "counter = Path('counter.txt')\n"
-        "n = int(counter.read_text() or '0') if counter.exists() else 0\n"
-        "counter.write_text(str(n + 1), encoding='utf-8')\n"
-        "Path('data.txt').write_text(Path('seed.txt').read_text(encoding='utf-8') + ':' + str(n + 1), encoding='utf-8')\n",
-        encoding="utf-8",
-    )
-    run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "produce",
-        "-d",
-        "seed.txt",
-        "-d",
-        "producer.py",
-        "-o",
-        "data.txt",
-        sys.executable,
-        "producer.py",
-    )
-    run_dvc(root, "repro")
-    first_counter = (root / "counter.txt").read_text(encoding="utf-8")
-    first_data = (root / "data.txt").read_text(encoding="utf-8")
-    clean_status = run_dvc(root, "status").stdout
-    clean_quiet = run_dvc(root, "status", "--quiet", check=False).returncode
-
-    (root / "data.txt").unlink()
-    run_dvc(root, "repro")
-    restored_counter = (root / "counter.txt").read_text(encoding="utf-8")
-    restored_data = (root / "data.txt").read_text(encoding="utf-8")
-
-    remote = root.parent / "local-remote"
-    run_dvc(root, "remote", "add", "-d", "localstore", str(remote))
-    run_dvc(root, "push")
-    (root / "data.txt").unlink()
-    run_dvc(root, "pull", "produce")
-    pulled_data = (root / "data.txt").read_text(encoding="utf-8")
-
-    return {
-        "first_counter": first_counter,
-        "first_data": first_data,
-        "clean_status": clean_status,
-        "clean_quiet": clean_quiet,
-        "restored_counter": restored_counter,
-        "restored_data": restored_data,
-        "pulled_data": pulled_data,
-    }
-
-
-@pytest.fixture(scope="module")
-def always_changed_stage(tmp_path_factory):
-    root = init_repo(tmp_path_factory.mktemp("always_changed_stage"))
-    (root / "always.py").write_text(
-        "from pathlib import Path\n"
-        "counter = Path('always_count.txt')\n"
-        "n = int(counter.read_text() or '0') if counter.exists() else 0\n"
-        "counter.write_text(str(n + 1), encoding='utf-8')\n"
-        "Path('always.txt').write_text(str(n + 1), encoding='utf-8')\n",
-        encoding="utf-8",
-    )
-    run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "always",
-        "--always-changed",
-        "-d",
-        "always.py",
-        "-o",
-        "always.txt",
-        sys.executable,
-        "always.py",
-    )
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
-    return {
-        "yaml": load_yaml(root / "dvc.yaml"),
-        "count": (root / "always_count.txt").read_text(encoding="utf-8"),
-        "output": (root / "always.txt").read_text(encoding="utf-8"),
-    }
-
-
-def test_clean_status_reports_up_to_date_after_committed_repro(run_cache_and_pull):
-    assert "up to date" in run_cache_and_pull["clean_status"].lower()
-
-
-def test_run_cache_restores_deleted_output_without_rerunning_command(run_cache_and_pull):
-    assert run_cache_and_pull["first_counter"] == "1"
-    assert run_cache_and_pull["restored_counter"] == "1"
-    assert run_cache_and_pull["restored_data"] == run_cache_and_pull["first_data"]
-
-
-def test_pull_restores_stage_output_from_local_remote(run_cache_and_pull):
-    assert run_cache_and_pull["pulled_data"] == run_cache_and_pull["first_data"]
-
-
-def test_always_changed_stage_runs_even_without_input_changes(always_changed_stage):
-    assert always_changed_stage["count"] == "2"
-    assert always_changed_stage["output"] == "2"
-
-
-def test_status_json_returns_mapping_for_changed_stage(tmp_path):
-    root = init_repo(tmp_path / "repo_status")
-    (root / "raw.txt").write_text("one", encoding="utf-8")
-    run_dvc(
-        root,
-        "stage",
-        "add",
-        "-n",
-        "copy",
-        "-d",
-        "raw.txt",
-        "-o",
-        "out.txt",
-        sys.executable,
-        "-c",
-        "from pathlib import Path; Path('out.txt').write_text(Path('raw.txt').read_text(), encoding='utf-8')",
-    )
-    run_dvc(root, "repro", "--no-commit", "--no-run-cache")
-    (root / "raw.txt").write_text("two", encoding="utf-8")
-
-    status = json.loads(run_dvc(root, "status", "--json").stdout)
-
-    assert "copy" in status
+        os.chdir(old)
+
+    assert load_yaml(root / "dvc.yaml")["stages"]["transform"]["frozen"] is True
+    (root / "source.txt").write_text("changed\n", encoding="utf-8")
+    run_dvc(root, "repro", "--no-commit", "--no-run-cache", "transform")
+    assert (root / "artifact.txt").read_text(encoding="utf-8") == "GAMMA\n"

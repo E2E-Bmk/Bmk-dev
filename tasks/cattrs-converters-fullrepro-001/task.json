@@ -1,6 +1,6 @@
 {
   "instance_id": "cattrs-converters-fullrepro-001",
-  "status": "QUALIFIED",
+  "status": "REVALIDATION-REQUIRED",
   "repo": "python-attrs/cattrs",
   "repo_commit": "d7de3c2786a05a8dcef4616b2657c1ef0a856fff",
   "spec_version": "v1",
@@ -9,81 +9,263 @@
       "oracle/test_atomic.py",
       "oracle/test_integration.py"
     ],
-    "count": 62,
+    "count": 60,
     "scorer_isolation": [
       "--remove-path cattrs"
     ]
   },
   "taxonomy": {
-    "generated_tests::test_public_surface_exports_converter_core_names": "atomic",
-    "generated_tests::test_top_level_structure_and_unstructure_use_global_converter": "integration",
-    "generated_tests::test_converter_constructs_with_documented_defaults": "atomic",
-    "generated_tests::test_primitive_structure_coerces_with_target_type": "atomic",
-    "generated_tests::test_primitive_structure_propagates_conversion_failure": "atomic",
-    "generated_tests::test_any_structure_returns_original_object": "atomic",
-    "generated_tests::test_optional_accepts_none_and_structures_present_value": "atomic",
-    "generated_tests::test_literal_accepts_member_and_rejects_non_member": "atomic",
-    "generated_tests::test_list_structure_accepts_any_iterable_and_converts_elements": "atomic",
-    "generated_tests::test_homogeneous_tuple_structure_converts_each_element": "atomic",
-    "generated_tests::test_heterogeneous_tuple_structure_uses_position_types": "atomic",
-    "generated_tests::test_heterogeneous_tuple_length_mismatch_fails": "atomic",
-    "generated_tests::test_sets_and_frozensets_structure_to_expected_collection_type": "atomic",
-    "generated_tests::test_mapping_structure_converts_keys_and_values": "atomic",
-    "generated_tests::test_enum_structures_from_and_unstructures_to_value": "integration",
-    "generated_tests::test_attrs_class_structures_from_mapping_with_field_types": "integration",
-    "generated_tests::test_dataclass_structures_from_mapping_with_field_types": "integration",
-    "generated_tests::test_missing_required_attrs_field_raises_class_validation_error": "atomic",
-    "generated_tests::test_unknown_keys_are_ignored_by_default_for_attrs_classes": "atomic",
-    "generated_tests::test_forbid_extra_keys_groups_public_error": "atomic",
-    "generated_tests::test_structure_attrs_fromtuple_uses_field_order": "atomic",
-    "generated_tests::test_as_tuple_strategy_structures_sequence_into_attrs_class": "integration",
-    "generated_tests::test_attrs_unstructure_defaults_to_dictionary": "atomic",
-    "generated_tests::test_dataclass_unstructure_defaults_to_dictionary": "atomic",
-    "generated_tests::test_as_tuple_strategy_unstructures_attrs_class_to_tuple": "atomic",
-    "generated_tests::test_deque_unstructures_to_list_with_converter": "atomic",
-    "generated_tests::test_unstructure_as_uses_target_type_hooks_for_nested_values": "integration",
-    "generated_tests::test_explicit_structure_hook_overrides_default_for_type": "atomic",
-    "generated_tests::test_explicit_unstructure_hook_overrides_default_for_type": "atomic",
-    "generated_tests::test_structure_hook_decorator_infers_return_type": "atomic",
-    "generated_tests::test_unstructure_hook_decorator_infers_first_argument_type": "atomic",
-    "generated_tests::test_structure_hook_func_applies_predicate_rule": "atomic",
-    "generated_tests::test_unstructure_hook_func_applies_predicate_rule": "atomic",
-    "generated_tests::test_structure_hook_factory_builds_hook_for_matching_type": "integration",
-    "generated_tests::test_unstructure_hook_factory_builds_hook_for_matching_type": "integration",
-    "generated_tests::test_get_structure_hook_matches_structure_call": "integration",
-    "generated_tests::test_get_unstructure_hook_matches_unstructure_call": "integration",
-    "generated_tests::test_converter_hook_state_is_instance_local": "integration",
-    "generated_tests::test_converter_copy_preserves_then_isolates_hook_state": "integration",
-    "generated_tests::test_override_rename_maps_field_for_both_directions": "integration",
-    "generated_tests::test_override_omit_skips_field_when_unstructuring": "atomic",
-    "generated_tests::test_override_omit_skips_input_field_when_default_exists": "atomic",
-    "generated_tests::test_omit_if_default_skips_default_factory_value": "atomic",
-    "generated_tests::test_class_level_omit_if_default_can_be_disabled_per_field": "atomic",
-    "generated_tests::test_converter_omit_if_default_sets_generated_default_behavior": "atomic",
-    "generated_tests::test_override_struct_hook_controls_single_field": "atomic",
-    "generated_tests::test_override_unstruct_hook_controls_single_field": "atomic",
-    "generated_tests::test_use_alias_true_uses_attrs_field_alias": "integration",
-    "generated_tests::test_annotated_override_rename_is_honored_by_default_converter": "integration",
-    "generated_tests::test_registered_type_hook_precedes_attrs_converter_by_default": "integration",
-    "generated_tests::test_prefer_attrib_converters_inverts_type_hook_priority": "integration",
-    "generated_tests::test_detailed_validation_groups_class_field_errors_and_paths": "system_e2e",
-    "generated_tests::test_non_detailed_validation_raises_first_underlying_error": "atomic",
-    "generated_tests::test_iterable_validation_error_is_public_error_group": "atomic",
-    "generated_tests::test_mapping_validation_error_transform_path_contains_key": "atomic",
-    "generated_tests::test_forbidden_extra_key_error_exposes_class_and_extra_fields": "atomic",
-    "generated_tests::test_transform_error_accepts_custom_leaf_formatter": "integration",
-    "generated_tests::test_missing_structure_handler_raises_public_exception": "atomic",
-    "generated_tests::test_nested_custom_type_hook_applies_through_attrs_list_and_mapping": "system_e2e",
-    "generated_tests::test_global_registration_affects_global_conversion_and_lookup": "system_e2e",
-    "generated_tests::test_structure_then_unstructure_preserves_supported_public_shape": "system_e2e",
-    "generated_tests::test_unstructure_then_structure_reconstructs_equivalent_dataclass": "system_e2e"
+    "atomic": 37,
+    "entries": [
+      {
+        "taxonomy_key": "test_atomic::test_converter_constructs_with_documented_defaults",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_primitive_structure_coerces_with_target_type",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_primitive_structure_propagates_conversion_failure",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_any_structure_returns_original_object",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_optional_accepts_none_and_structures_present_value",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_literal_accepts_member_and_rejects_non_member",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_list_structure_accepts_any_iterable_and_converts_elements",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_homogeneous_tuple_structure_converts_each_element",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_heterogeneous_tuple_structure_uses_position_types",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_heterogeneous_tuple_length_mismatch_fails",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_sets_and_frozensets_structure_to_expected_collection_type",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_mapping_structure_converts_keys_and_values",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_missing_required_attrs_field_raises_class_validation_error",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_unknown_keys_are_ignored_by_default_for_attrs_classes",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_forbid_extra_keys_groups_public_error",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_structure_attrs_fromtuple_uses_field_order",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_attrs_unstructure_defaults_to_dictionary",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_dataclass_unstructure_defaults_to_dictionary",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_as_tuple_strategy_unstructures_attrs_class_to_tuple",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_deque_unstructures_to_list_with_converter",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_explicit_structure_hook_overrides_default_for_type",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_explicit_unstructure_hook_overrides_default_for_type",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_structure_hook_decorator_infers_return_type",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_unstructure_hook_decorator_infers_first_argument_type",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_structure_hook_func_applies_predicate_rule",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_unstructure_hook_func_applies_predicate_rule",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_override_omit_skips_field_when_unstructuring",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_override_omit_skips_input_field_when_default_exists",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_omit_if_default_skips_default_factory_value",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_class_level_omit_if_default_can_be_disabled_per_field",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_converter_omit_if_default_sets_generated_default_behavior",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_override_struct_hook_controls_single_field",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_override_unstruct_hook_controls_single_field",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_non_detailed_validation_raises_first_underlying_error",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_iterable_validation_error_is_public_error_group",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_forbidden_extra_key_error_exposes_class_and_extra_fields",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_atomic::test_missing_structure_handler_raises_public_exception",
+        "layer": "atomic"
+      },
+      {
+        "taxonomy_key": "test_integration::test_top_level_structure_and_unstructure_use_global_converter",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_enum_structures_from_and_unstructures_to_value",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_attrs_class_structures_from_mapping_with_field_types",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_dataclass_structures_from_mapping_with_field_types",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_as_tuple_strategy_structures_sequence_into_attrs_class",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_unstructure_as_uses_target_type_hooks_for_nested_values",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_structure_hook_factory_builds_hook_for_matching_type",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_unstructure_hook_factory_builds_hook_for_matching_type",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_get_structure_hook_matches_structure_call",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_get_unstructure_hook_matches_unstructure_call",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_converter_hook_state_is_instance_local",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_converter_copy_preserves_then_isolates_hook_state",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_override_rename_maps_field_for_both_directions",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_use_alias_true_uses_attrs_field_alias",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_annotated_override_rename_is_honored_by_default_converter",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_registered_type_hook_precedes_attrs_converter_by_default",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_prefer_attrib_converters_inverts_type_hook_priority",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_detailed_validation_groups_class_field_errors_and_paths",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_transform_error_accepts_custom_leaf_formatter",
+        "layer": "integration"
+      },
+      {
+        "taxonomy_key": "test_integration::test_nested_custom_type_hook_applies_through_attrs_list_and_mapping",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_global_registration_affects_global_conversion_and_lookup",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_structure_then_unstructure_preserves_supported_public_shape",
+        "layer": "system_e2e"
+      },
+      {
+        "taxonomy_key": "test_integration::test_unstructure_then_structure_reconstructs_equivalent_dataclass",
+        "layer": "system_e2e"
+      }
+    ],
+    "integration_system_e2e": 23
   },
   "stats": {
-    "atomic": 39,
+    "atomic": 37,
     "integration": 18,
     "system_e2e": 5
   },
-  "reference_pass_rate": 1.0,
+  "reference_pass_rate": null,
   "candidate_score": null,
   "spec_style_note": "spec_style: MIXED, Public API section has signature block stacking"
 }

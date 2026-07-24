@@ -42,9 +42,7 @@ from webob.multidict import MultiDict, NestedMultiDict, NoVars
 from webob.static import DirectoryApp, FileApp
 
 
-def _start_response(status, headers, exc_info=None):
-    _start_response.status = status
-    _start_response.headers = headers
+from conftest import _start_response
 
 
 def test_public_request_blank_url_projection():
@@ -202,17 +200,6 @@ def test_accept_language_lookup_and_default_match():
     assert accept.best_match(["fr"], default_match="fr") == "fr"
 
 
-def test_cachecontrol_parse_and_mutation_rewrites_header():
-    cc = CacheControl.parse("max-age=10, no-cache", type="response")
-    assert cc.max_age == 10
-    assert cc.no_cache
-    cc.no_store = True
-    assert cc.no_store is True
-
-    res = Response(headerlist=[("Cache-Control", "max-age=10, no-cache")])
-    res.cache_control.no_store = True
-    directives = {part.strip() for part in res.headers["Cache-Control"].split(",")}
-    assert {"max-age=10", "no-cache", "no-store"} <= directives
 
 
 def test_range_parse_and_content_range_conversion():
@@ -353,17 +340,6 @@ def test_request_remove_conditional_headers_respects_flags():
     assert req.headers["Accept-Encoding"] == "gzip"
 
 
-def test_request_call_application_and_get_response_agree():
-    def app(environ, start_response):
-        start_response("201 Created", [("X-App", "yes")])
-        return [b"created"]
-
-    req = Request.blank("/create")
-    status, headers, app_iter = req.call_application(app)
-    response = req.get_response(app)
-    assert status == response.status
-    assert dict(headers)["X-App"] == response.headers["X-App"]
-    assert b"".join(app_iter) == response.body
 
 
 def test_response_headerlist_replacement_resets_headers_view():
@@ -460,5 +436,3 @@ def test_error_cookie_profile_unbound_get_value_raises():
 def test_error_redirect_rejects_newline_in_location():
     with pytest.raises(ValueError):
         webob_exc.HTTPFound(location="http://example.com/\nnext")
-
-

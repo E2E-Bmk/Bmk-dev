@@ -1,6 +1,6 @@
 # Repo Status
 
-> 最后更新：2026-07-19
+> 最后更新：2026-07-24
 > 用途：组员认领 task 前查阅，避免重复工作
 
 ---
@@ -94,7 +94,8 @@
 | towncrier-changelog-fullrepro-001 | twisted/towncrier | 已退休 |
 | asynq-fullrepro-001 | — | 已退休 |
 | authlib-jose-fullrepro-001 | lepture/authlib | S1 已选中 (JOSE scoped) |
-| typer-cli-fullrepro-001 | fastapi/typer | S1 新候选 |
+| typer-fullrepro-001 | fastapi/typer | 已退休 |
+| peewee-fullrepro-001 | coleifer/peewee | S1 已选中 |
 
 ---
 

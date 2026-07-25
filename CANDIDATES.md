@@ -1,5 +1,18 @@
 ﻿# Candidates
 
+> 最后更新：2026-07-26
+> 当前状态：55 个 task QUALIFIED 并发布，0 个 WIP，以下为完整选拔审计日志
+
+---
+
+## 当前发布 Task（55 个）
+
+详见 `REPO_STATUS.md`。
+
+---
+
+## 选拔与淘汰审计日志
+
 | repo | status | metric | detail |
 |------|--------|--------|--------|
 | rq/rq | QUALIFIED | superseded by task=rq-001 | Early Stage 1 row retained for history; final qualified record below contains the authoritative spec_v1/oracle/score details. |

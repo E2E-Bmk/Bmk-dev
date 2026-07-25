@@ -1,106 +1,82 @@
 ﻿# Repo Status
 
-> 最后更新：2026-07-19
+> 最后更新：2026-07-26
 > 用途：组员认领 task 前查阅，避免重复工作
 
 ---
 
-## 已完成（tasks/ 中，37 个）
+## 已完成（tasks/ 中，55 个）
 
-| # | Task ID | 上游 Repo | 测试数 |
-|---|---------|-----------|--------|
-| 1 | attrs-classes-fullrepro-001 | python-attrs/attrs | 81 |
-| 2 | bandit-securityscan-fullrepro-001 | PyCQA/bandit | 61 |
-| 3 | beancount-ledger-fullrepro-002 | beancount/beancount | 51 |
-| 4 | boltons-coreutils-fullrepro-001 | mahmoud/boltons | 85 |
-| 5 | cattrs-converters-fullrepro-001 | python-attrs/cattrs | 62 |
-| 6 | cookiecutter-fullrepro-001 | cookiecutter/cookiecutter | 215 |
-| 7 | copier-template-fullrepro-001 | copier-org/copier | 51 |
-| 8 | coveragepy-fullrepro-001 | nedbat/coveragepy | 51 |
-| 9 | dateparser-dates-fullrepro-001 | scrapinghub/dateparser | 72 |
-| 10 | dbt-core-fullrepro-001 | dbt-labs/dbt-core | 54 |
-| 11 | diskcache-cache-fullrepro-001 | grantjenks/python-diskcache | 66 |
-| 12 | doit-taskrunner-fullrepro-002 | pydoit/doit | 51 |
-| 13 | dvc-fullrepro-001 | iterative/dvc | 50 |
-| 14 | dynaconf-settings-fullrepro-001 | rochacbruno/dynaconf | 49 |
-| 15 | fsspec-filesystem-fullrepro-001 | fsspec/filesystem_spec | 58 |
-| 16 | h2-protocol-fullrepro-001 | python-hyper/h2 | 55 |
-| 17 | httpcore-transport-fullrepro-001 | encode/httpcore | 64 |
-| 18 | httpx-client-fullrepro-001 | encode/httpx | 78 |
-| 19 | invoke-taskrunner-fullrepro-001 | pyinvoke/invoke | 67 |
-| 20 | jrnl-journal-fullrepro-002 | jrnl-org/jrnl | 481 |
-| 21 | kedro-pipeline-fullrepro-001 | kedro-org/kedro | 71 |
-| 22 | luigi-workflow-fullrepro-001 | spotify/luigi | 60 |
-| 23 | marshmallow-schema-fullrepro-001 | marshmallow-code/marshmallow | 69 |
-| 24 | mkdocs-sitebuild-fullrepro-002 | mkdocs/mkdocs | 50 |
-| 25 | nbformat-notebook-fullrepro-001 | jupyter/nbformat | 67 |
-| 26 | packaging-core-fullrepro-001 | pypa/packaging | 133 |
-| 27 | pelican-sitegen-fullrepro-001 | getpelican/pelican | 56 |
-| 28 | pgqueuer-fullrepro-001 | janbjorge/pgqueuer | 57 |
-| 29 | pre-commit-hooks-fullrepro-002 | pre-commit/pre-commit | 52 |
-| 30 | requests-cache-fullrepro-001 | requests-cache/requests-cache | 58 |
-| 31 | sqlalchemy-fullrepro-001 | sqlalchemy/sqlalchemy | 48 |
-| 32 | starlette-asgi-fullrepro-001 | encode/starlette | 64 |
-| 33 | tox-envrunner-fullrepro-001 | tox-dev/tox | 46 |
-| 34 | vcrpy-fullrepro-001 | kevin1024/vcrpy | 41 |
-| 35 | rq-fullrepro-001 | rq/rq | 56 |
-| 36 | nikola-fullrepro-001 | getnikola/nikola | 84 |
-| 37 | loguru-fullrepro-001 | Delgan/loguru | 133 |
+| # | Task ID | 上游 Repo | Atomic | Integ | Total |
+|---|---------|-----------|--------|-------|-------|
+| 1 | anyio-async-runtime-fullrepro-001 | agronholm/anyio | 56 | 28 | 84 |
+| 2 | apscheduler-jobs-fullrepro-001 | agronholm/apscheduler | 41 | 42 | 83 |
+| 3 | astroid-ast-inference-fullrepro-001 | pylint-dev/astroid | 51 | 29 | 80 |
+| 4 | attrs-classes-fullrepro-001 | python-attrs/attrs | 50 | 35 | 85 |
+| 5 | authlib-fullrepro-001 | lepture/authlib | 39 | 29 | 68 |
+| 6 | bandit-securityscan-fullrepro-001 | PyCQA/bandit | 30 | 37 | 67 |
+| 7 | beancount-ledger-fullrepro-002 | beancount/beancount | 30 | 31 | 61 |
+| 8 | boltons-coreutils-fullrepro-001 | mahmoud/boltons | 137 | 31 | 168 |
+| 9 | cattrs-converters-fullrepro-001 | python-attrs/cattrs | 46 | 26 | 72 |
+| 10 | cookiecutter-fullrepro-001 | cookiecutter/cookiecutter | 36 | 65 | 101 |
+| 11 | copier-template-fullrepro-001 | copier-org/copier | 31 | 29 | 60 |
+| 12 | coveragepy-fullrepro-001 | nedbat/coveragepy | 30 | 30 | 60 |
+| 13 | curio-task-coordination-fullrepro-001 | dabeaz/curio | 35 | 36 | 71 |
+| 14 | dateparser-dates-fullrepro-001 | scrapinghub/dateparser | 60 | 29 | 89 |
+| 15 | dbt-core-fullrepro-001 | dbt-labs/dbt-core | 36 | 26 | 62 |
+| 16 | deal-runtime-contracts-fullrepro-001 | life4/deal | 31 | 32 | 63 |
+| 17 | diskcache-cache-fullrepro-001 | grantjenks/python-diskcache | 48 | 34 | 82 |
+| 18 | doit-taskrunner-fullrepro-002 | pydoit/doit | 36 | 35 | 71 |
+| 19 | dvc-fullrepro-001 | iterative/dvc | 33 | 38 | 71 |
+| 20 | dynaconf-settings-fullrepro-001 | rochacbruno/dynaconf | 30 | 43 | 73 |
+| 21 | fsspec-filesystem-fullrepro-001 | fsspec/filesystem_spec | 36 | 35 | 71 |
+| 22 | griffe-apimodel-fullrepro-001 | mkdocstrings/griffe | 30 | 30 | 60 |
+| 23 | h2-protocol-fullrepro-001 | python-hyper/h2 | 39 | 39 | 78 |
+| 24 | httpcore-transport-fullrepro-001 | encode/httpcore | 38 | 47 | 85 |
+| 25 | httpx-client-fullrepro-001 | encode/httpx | 40 | 31 | 71 |
+| 26 | invoke-taskrunner-fullrepro-001 | pyinvoke/invoke | 47 | 37 | 84 |
+| 27 | jrnl-journal-fullrepro-002 | jrnl-org/jrnl | 64 | 58 | 122 |
+| 28 | jupyter-client-kernel-protocol-fullrepro-001 | jupyter/jupyter_client | 30 | 30 | 60 |
+| 29 | kedro-pipeline-fullrepro-001 | kedro-org/kedro | 62 | 33 | 95 |
+| 30 | loguru-fullrepro-001 | Delgan/loguru | 66 | 58 | 124 |
+| 31 | luigi-workflow-fullrepro-001 | spotify/luigi | 40 | 25 | 65 |
+| 32 | marshmallow-schema-fullrepro-001 | marshmallow-code/marshmallow | 49 | 39 | 88 |
+| 33 | mkdocs-sitebuild-fullrepro-002 | mkdocs/mkdocs | 69 | 27 | 96 |
+| 34 | nbformat-notebook-fullrepro-001 | jupyter/nbformat | 42 | 26 | 68 |
+| 35 | networkx-graph-state-fullrepro-001 | networkx/networkx | 55 | 32 | 87 |
+| 36 | nikola-fullrepro-001 | getnikola/nikola | 40 | 26 | 66 |
+| 37 | packaging-core-fullrepro-001 | pypa/packaging | 55 | 39 | 94 |
+| 38 | pelican-sitegen-fullrepro-001 | getpelican/pelican | 41 | 28 | 69 |
+| 39 | pgqueuer-fullrepro-001 | janbjorge/pgqueuer | 30 | 35 | 65 |
+| 40 | pre-commit-hooks-fullrepro-002 | pre-commit/pre-commit | 59 | 44 | 103 |
+| 41 | prompt_toolkit-terminal-ui-fullrepro-001 | prompt-toolkit/python-prompt-toolkit | 79 | 25 | 104 |
+| 42 | quart-async-web-fullrepro-001 | pallets/quart | 30 | 34 | 64 |
+| 43 | requests-cache-fullrepro-001 | requests-cache/requests-cache | 31 | 31 | 62 |
+| 44 | rq-fullrepro-001 | rq/rq | 31 | 36 | 67 |
+| 45 | schematics-model-validation-fullrepro-001 | schematics/schematics | 40 | 28 | 68 |
+| 46 | sqlalchemy-fullrepro-001 | sqlalchemy/sqlalchemy | 30 | 39 | 69 |
+| 47 | starlette-asgi-fullrepro-001 | encode/starlette | 30 | 33 | 63 |
+| 48 | structlog-event-context-fullrepro-001 | hynek/structlog | 30 | 30 | 60 |
+| 49 | tox-envrunner-fullrepro-001 | tox-dev/tox | 34 | 26 | 60 |
+| 50 | traitlets-core-fullrepro-001 | ipython/traitlets | 31 | 41 | 72 |
+| 51 | transitions-state-machine-fullrepro-001 | pytransitions/transitions | 68 | 29 | 97 |
+| 52 | vcrpy-fullrepro-001 | kevin1024/vcrpy | 41 | 31 | 72 |
+| 53 | webob-request-response-fullrepro-001 | Pylons/webob | 49 | 25 | 74 |
+| 54 | whoosh-index-search-fullrepro-001 | mchaput/whoosh | 35 | 49 | 84 |
+| 55 | wtforms-form-lifecycle-fullrepro-001 | pallets-eco/wtforms | 32 | 28 | 60 |
 
----
-
-## 进行中（wip/ 中，勿重复认领）
-
-| Task ID | 上游 Repo | 阶段 |
-|---------|-----------|------|
-| alembic-migrations-fullrepro-002 | sqlalchemy/alembic | S2 写 spec |
-| hatch-envbuild-fullrepro-002 | pypa/hatch | S2 写 spec |
-| tomlkit-fullrepro-002 | sdispater/tomlkit | S3A import 审计 |
-| griffe-apimodel-fullrepro-001 | mkdocstrings/griffe | S1 刚选上 |
-| pyfilesystem-fs-fullrepro-001 | PyFilesystem/pyfilesystem2 | S1 刚选上 |
-| watchdog-fsevents-fullrepro-001 | gorakhargosh/watchdog | S1 刚选上 |
-| werkzeug-fullrepro-001 | pallets/werkzeug | S1 已退休 |
-| structlog-fullrepro-001 | hynek/structlog | S1 已退休 |
-| pygments-fullrepro-001 | pygments/pygments | S1 已退休 |
-| scrapy-fullrepro-001 | scrapy/scrapy | 已退休 |
-| sphinx-docbuild-fullrepro-001 | sphinx-doc/sphinx | 已退休 |
-| pdm-fullrepro-001 | pdm-project/pdm | 已退休 |
-| joblib-cache-fullrepro-001 | joblib/joblib | 已退休 |
-| datasette-explorer-fullrepro-001 | simonw/datasette | 已退休 |
-| sqlite-utils-fullrepro-001 | simonw/sqlite-utils | 已退休 |
-| xitkit-taskfile-fullrepro-001 | — | 已退休 |
-| zarr-arraystore-fullrepro-001 | zarr-developers/zarr-python | 已退休 |
-| ansible-playbook-fullrepro-001 | ansible/ansible | 已退休 |
-| pytest-runner-fullrepro-001 | pytest-dev/pytest | 已退休 |
-| pip-installer-fullrepro-001 | pypa/pip | 已退休 |
-| snakemake-workflow-fullrepro-001 | snakemake/snakemake | 已退休 |
-| deepdiff-objectdelta-fullrepro-001 | seperman/deepdiff | 已退休 |
-| dulwich-git-fullrepro-001 | dulwich/dulwich | 已退休 |
-| mistune-markdown-fullrepro-001 | lepture/mistune | 已退休 |
-| nox-sessionrunner-fullrepro-001 | wntrblm/nox | 已退休 |
-| tenacity-retry-fullrepro-001 | jd/tenacity | 已退休 |
-| tinydb-fullrepro-001 | msiemens/TinyDB | 已退休 |
-| todoman-fullrepro-001 | pimutils/todoman | 已退休 |
-| pipx-appinstaller-fullrepro-001 | pypa/pipx | 已退休 |
-| virtualenv-envbuilder-fullrepro-001 | pypa/virtualenv | 已退休 |
-| python-dotenv-fullrepro-001 | theskumar/python-dotenv | 已退休 |
-| cachetools-cache-fullrepro-001 | tkem/cachetools | 已退休 |
-| cachecontrol-httpcache-fullrepro-001 | — | 已退休 |
-| commitizen-release-fullrepro-001 | commitizen-tools/commitizen | 已退休 |
-| bump-my-version-fullrepro-001 | callowayproject/bump-my-version | 已退休 |
-| import-linter-architecture-fullrepro-001 | — | 已退休 |
-| keyring-credentialstore-fullrepro-001 | jaraco/keyring | 已退休 |
-| gatewayconfig-fullrepro-001 | — | 已退休 |
-| towncrier-changelog-fullrepro-001 | twisted/towncrier | 已退休 |
-| asynq-fullrepro-001 | — | 已退休 |
-| authlib-jose-fullrepro-001 | lepture/authlib | S1 已选中 (JOSE scoped) |
-| typer-cli-fullrepro-001 | fastapi/typer | S1 新候选 |
+**统计**：Atomic 总计 2363，Integration 总计 1868，总测试 4231。全部达标 A≥30, I≥25, T≥60。
 
 ---
 
-## 认领新 task
+## 进行中（wip/ 中）
 
-1. 先查本表确认 repo 没有出现在上面任何位置
-2. 在 wip/ 下创建 `{repo}-fullrepro-001/`
-3. 按 `skills/task-synthesizer/SKILL.md` 走流水线
-4. 完成后更新本文件
+当前无 active WIP task。所有 55 个 task 均已毕业到 `tasks/`。
+
+---
+
+## 质量标准
+
+- Spec 标准：`docs/SPEC_STANDARD.md`
+- Oracle 标准：`docs/ORACLE_STANDARD.md`（要求 A≥30, I≥25, T≥60, depends_on≥50%）
+- 验收清单：`docs/ACCEPTANCE_CHECKLIST.md`

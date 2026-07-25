@@ -160,7 +160,7 @@ Total: N | kept (covered): N | spec_gap: N | source-only: N | excluded: N | fina
 
 **Preserved rate is not sufficient alone.** A high preserved rate can be misleading if failures cluster around a few broken primitives or if import provenance was not fully audited. Audit by failure surface and cascade root count, not just the percentage of retained tests.
 
-**Per-layer minimum count:** The final oracle must contain at least 15 atomic tests AND at least 15 integration+system_e2e tests. If either layer falls below 15 after filtering, return to Track B generation targeting the deficient layer until the minimum is met. This ensures Integration Gap computation has statistical significance (each layer needs enough samples to avoid >10% random fluctuation from a single test).
+**Per-layer minimum count:** The final oracle must contain at least **30 atomic** tests AND at least **25 integration+system_e2e** tests, with a total of at least **60** (per `ORACLE_STANDARD.md`). If either layer falls below its floor after filtering, return to Track B generation targeting the deficient layer until the minimum is met. This ensures Integration Gap (and adjusted_gap) computation has statistical significance — each layer needs enough samples that a single test flip changes the rate by ≤4pp.
 
 **Per-layer composition floor:** After the per-layer minimum, check assertion-kind composition: atomic `positive` share >= 60% and zero `no_check` in both layers (see Assertion Kind section). A deficient atomic layer is fixed by generating positive-behavior tests for the same primitives (call the reference, observe the produced value, assert it), not by deleting failure_path tests.
 
@@ -363,12 +363,15 @@ Task: exercise the missing branches by calling the reference with varied inputs,
 
 | Section type | Minimum tests |
 |---|---|
-| `Cross-View Invariants` | ≥ 5 |
-| `Error Semantics` | ≥ 3 |
-| Main workflow / Representative Workflows | ≥ 3 |
+| `Cross-View Invariants` | ≥ 5 (each CVI at least 2 integration tests) |
+| `Error Semantics` | ≥ 4 |
+| Main workflow / Representative Workflows | ≥ 4 |
+| Behavior sections (each) | ≥ 4 (正常×2 + 边界 + 错误) |
 | All other sections | ≥ 3 |
 
-**Global floor:** the combined oracle (Track A + Track B) must contain at least **50 scoreable tests** before proceeding to Stage 4. If the merged oracle is below 50 after Track B, return to generation and expand coverage until the floor is met or all mandatory targets are saturated. A sub-50 oracle may still proceed only if every spec section is at or above its per-section minimum and no further test generation is possible without introducing circular assertions — record the shortfall as a caveat in `spec_test_map.md` header.
+**Atomic difficulty distribution:** Generated atomic tests MUST cover three difficulty levels (see `ORACLE_STANDARD.md` §原则 1.5): 基础 30–40%, 中等 40–50%, 困难 15–25%. A batch of all-basic tests will not pass the judge's quality gate.
+
+**Global floor:** the combined oracle (Track A + Track B) must contain at least **60 scoreable tests** (30 atomic + 25 integration minimum; target 80–100) before proceeding to Stage 4. If the merged oracle is below 60 after Track B, return to generation and expand coverage until the floor is met or all mandatory targets are saturated. A sub-60 oracle may still proceed only if every spec section is at or above its per-section minimum and no further test generation is possible without introducing circular assertions — record the shortfall as a caveat in `spec_test_map.md` header.
 
 A flat target of 12–30 total tests is insufficient for any library with more than 5 spec sections — the quota is per-section and subject to the global floor.
 
@@ -415,6 +418,8 @@ Write `filter/spec_test_map.md` listing all oracle tests with:
 
 If oracle is Track-B-only (no upstream tests survived), mark `filter/oracle_source: generated_only` in spec_test_map.md header. task-judge will apply an additional spot-check gate. Prefer lifecycle combinations that bind multiple public projections over single-behavior checklist rows.
 
-**State update (required before leaving oracle merge):** Count all `covered` rows in `spec_test_map.md` → write to `PIPELINE_STATE.md` as `oracle_count`. If `oracle_count < 50`, do not proceed to S4_SETUP — return to Track B generation to expand coverage.
+**State update (required before leaving oracle merge):** Count all `covered` rows in `spec_test_map.md` → write to `PIPELINE_STATE.md` as `oracle_count`. If `oracle_count < 60`, do not proceed to S4_SETUP — return to Track B generation to expand coverage. Verify per-layer counts: atomic ≥ 30, integration+system_e2e ≥ 25.
+
+**depends_on annotation:** During oracle merge, annotate each integration test with `@pytest.mark.depends_on(...)` listing the atomic test functions it logically depends on. This enables the harness to compute `adjusted_gap` (cascade-filtered integration gap). Target ≥ 50% annotation coverage; 100% is ideal.
 
 ---

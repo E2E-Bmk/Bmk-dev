@@ -29,29 +29,22 @@ oracle/{task_id}/
 - 这不是代码风格偏好，而是维护性要求——重复代码在修改 spec 时会产生
   不一致的更新风险
 
-### 测试数量底线
+### 测试数量要求
 
-基于现有 51 个 task 的实际分布（atomic 中位数 27、integration 中位数 35、总数中位数 68），
-底线设定需保证 gap 指标的统计稳定性。
+| 层级 | 最低数量 | 目标数量 | 依据 |
+|------|---------|---------|------|
+| Atomic | ≥ 30 | 40–60 | 单个测试对 atomic_rate 的影响 ≤ 3pp；覆盖正常路径 + 边界 + 错误路径 |
+| Integration | ≥ 25 | 30–50 | 单个测试对 integ_rate 的影响 ≤ 4pp；覆盖所有 CVI + 全部 5 类 seam |
+| **总计** | **≥ 60** | **80–100** | 单个测试对总通过率影响 ≤ 1.7pp，统计噪声可忽略 |
 
-| 层级 | 最低数量 | 依据 |
-|------|---------|------|
-| Atomic | ≥ 20 | 单个测试对 atomic_rate 的影响 ≤ 5pp |
-| Integration | ≥ 20 | 单个测试对 integ_rate 的影响 ≤ 5pp |
-| **总计** | **≥ 50** | 单个测试对总通过率影响 ≤ 2pp |
+**统计依据**：gap = atomic_rate − integration_rate。
+当 N_atomic = 30、N_integration = 25 时，单测试分辨率 ≤ 4pp——
+优于观测到的跨模型 gap 量级（多数在 5–25pp），确保信噪比充分。
 
-**统计依据**：gap = atomic_rate − integration_rate，涉及两个独立维度。
-单个 atomic 测试翻转对 gap 的最大影响 = 1/N_atomic，
-单个 integration 测试翻转对 gap 的最大影响 = 1/N_integration。
-当 N_atomic = N_integration = 20 时，gap 的单测试分辨率 = 5pp——
-恰好匹配观测到的跨模型 gap 量级（多数在 3–12pp）。
-低于此值，单个偶然通过/失败即可制造 "虚假 gap"。
-
-总数 ≥50 的约束确保即使两层分配不均（如 25/25 或 30/20），
-整体通过率仍有 ≤2pp 的分辨率，不受单测试偶然性左右。
-
-**现有 task 达标情况**：51 个 task 中 8 个 atomic <20（需补测试），
-1 个 integration <20（需补测试），总数全部 ≥50（已达标）。
+**数量 + 难度的协同**：单纯增加数量（"凑数"）无区分力；
+单纯增加难度（压低通过率）会引发级联掩盖效应。
+正确做法是：**每一个测试都有独立的、非冗余的行为验证目标**。
+如果一个新测试能被已有测试的逻辑蕴含（implied），它就是冗余的，不应计入。
 
 ---
 
@@ -75,6 +68,41 @@ Oracle 不是通用测试套件。它的唯一目的是支撑 Spec2Repo 的核�
 **检验方法**：对每个 atomic 测试问——"如果只有这一个函数是真实实现，
 其余全部 raise NotImplementedError，这个测试能过吗？"
 答案为"不能"→ 该测试属于 integration。
+
+### 原则 1.5：Atomic 难度梯度（Difficulty Spectrum）— 指导 Atomic 的选题
+
+Atomic 测试"难"不等于"跨模块"。以下维度定义了 atomic 层**合法的难度方向**：
+
+| 难度维度 | 描述 | 示例 | 独立可解性 |
+|---------|------|------|:---:|
+| **边界行为** | 极端输入下的正确行为 | `cache.set(key, value, expire=0)` 是立即过期还是永不过期？ | ✅ |
+| **类型精确性** | 返回值类型、深浅拷贝、可变性 | `schema.dump(obj)` 返回的 dict 是否独立于原对象？ | ✅ |
+| **状态转换完整性** | 单个 API 的内部状态机覆盖 | Machine 的 `trigger()` 在不合法转换时的行为 | ✅ |
+| **参数组合** | 多个参数同时使用时的交互 | `Field(required=True, allow_none=True)` 收到 None 时的行为 | ✅ |
+| **幂等性/重入** | 同一操作执行多次的结果 | `cache.set(key, v1); cache.set(key, v2)` → 值是否被覆盖 | ✅ |
+| **错误精确性** | 不同错误输入触发不同的具体异常 | `URL("://bad")` → InvalidURL vs `URL("")` → ValueError | ✅ |
+| **契约严格性** | API 文档承诺的精确语义 | `iter_bytes(chunk_size=1)` 是否严格每次返回 1 字节 | ✅ |
+| **默认值行为** | 参数省略时的精确行为 | `Cache()` 不传 directory → 使用临时目录 vs 当前目录 vs 抛异常 | ✅ |
+
+**合法难度的共同特征**：只需要一个 API 被正确实现就可以验证。
+
+| 禁止的"难度"（违反独立可解性） | 原因 |
+|------------------------------|------|
+| 通过 API-A 设置，通过 API-B 验证 | 跨边界 → 属于 integration |
+| 需要完成初始化流程后才能测某个方法 | 隐式依赖初始化 API |
+| 依赖另一个类实例作为参数且该类必须真实 | 跨类依赖 |
+
+**Atomic 难度分布目标**（每个 Behavior 章节）：
+
+| 难度级别 | 占比目标 | 描述 |
+|---------|---------|------|
+| 基础（正常路径） | 30–40% | 最典型用法，验证基础正确性 |
+| 中等（边界 + 参数组合） | 40–50% | 非典型输入、多参数交互 |
+| 困难（精确契约 + 错误精确性） | 15–25% | 刁钻的边界条件，精确到位的语义 |
+
+**这个分布确保**：即使模型能"大致"理解 spec，也无法轻易拿满分。
+"大致正确"的实现通常能通过基础级测试，但会在中等和困难级失败——
+这正是甲方期望的"atomic 也有区分力"效果。
 
 ### 原则 2：组合依赖性（Composition Dependency）— 约束 Integration
 
@@ -121,14 +149,45 @@ Integration 测试应该精准瞄准组件之间的"接缝"（composition seams�
 **注意**：Anti-memorization 不是"故意制造陷阱"。测试的行为和 spec 描述完全一致，
 只是具体参数值不同。模型如果真正理解了 spec 描述的行为，使用什么参数值都应该能通过。
 
-### 核心推论：条件通过率
+### 核心推论：Adjusted Gap 与条件通过率
 
-四条原则共同指向一个最能支撑 claim 的衍生指标：
+四条原则共同指向两个最能支撑 claim 的衍生指标：
+
+#### 指标 1：Adjusted Gap（消除级联的修正 gap）
+
+> **adjusted_gap** = atomic_rate(条件集) − integration_rate(条件集)
+>
+> 其中，条件集 = { 所有 `depends_on` 标注的 atomic 全部 pass 的 integration 测试 }
+
+**为什么需要这个指标？** 当 atomic 通过率较低时（如 <70%），大量 integration 测试
+会因为底层功能缺失而"级联失败"——它们不是因为"组装错误"而挂，而是因为"零件都没有"。
+这种级联会让 raw gap 趋近于零，掩盖真实的组装能力差异。
+
+**级联掩盖效应的实证**：transitions-state-machine（atomic=59%, gap=0pp），
+在 12 个 integration 失败中有 9 个（75%）直接源于 atomic 功能缺失。
+如果排除级联，真实 seam 失败约 3 个，adjusted_gap ≈ +15pp。
+
+**Adjusted Gap 的前提**：integration 测试标注了 `depends_on`（见§三）。
+未标注时，harness 使用 fallback 策略：如果 atomic_rate < 70%，
+结果中标注 `"gap_confidence": "low (cascade risk)"`。
+
+#### 指标 2：条件通过率
 
 > **条件通过率** = P(integration_pass | 所有 depends_on 的 atomic 均 pass)
 
-这是纯粹的"会写零件但不会拼"的度量。计算前提是 integration 测试标注了
-`depends_on`（见§三），这也是为什么 depends_on 不仅是"推荐"而是应当尽力标注。
+这是纯粹的"会写零件但不会拼"的度量。它比 adjusted_gap 更精确，
+但要求每个 integration 测试都标注了 `depends_on`。
+
+#### 两个指标的关系
+
+```
+raw_gap          = 粗信号，受级联影响，atomic < 70% 时不可信
+adjusted_gap     = 去级联信号，只看有资格发挥区分力的测试子集
+条件通过率        = 最精确信号，完全消除级联，度量纯组装能力
+```
+
+**发布论文时应报告所有三个指标。**
+**depends_on 标注从"推荐"升级为"应当尽力标注"**——它是 adjusted_gap 的计算基础。
 
 ---
 
@@ -267,8 +326,8 @@ def test_query_parameter_order_does_not_affect_cache_key():
 
 | 方向 | 要求 | 验证方法 |
 |------|------|---------|
-| Spec → Oracle | Spec 每个 Behavior 章节至少 2 个 atomic 测试 | 按章节计数 |
-| Spec → Oracle | Spec 每条 CVI 至少 1 个 integration 测试 | 按 CVI 编号计数 |
+| Spec → Oracle | Spec 每个 Behavior 章节至少 **4** 个 atomic 测试（正常×2 + 边界 + 错误） | 按章节计数 |
+| Spec → Oracle | Spec 每条 CVI 至少 **2** 个 integration 测试（正向 + 反向/边界） | 按 CVI 编号计数 |
 | Spec → Oracle | Error Semantics 每行至少 1 个测试 | 按行计数 |
 | Oracle → Spec | 每个测试函数可追溯到 spec 的具体条款 | 人工标注或 naming convention |
 
@@ -556,27 +615,32 @@ Public Interface ───────────────→ 间接验证�
 ### 硬性门（自动化可检查）
 
 1. ✅ 文件结构完整（conftest.py + test_atomic.py + test_integration.py + requirements.txt）
-2. ✅ Atomic ≥ 20 个测试函数
-3. ✅ Integration ≥ 20 个测试函数
-4. ✅ 总测试数 ≥ 50
+2. ✅ Atomic ≥ 30 个测试函数
+3. ✅ Integration ≥ 25 个测试函数
+4. ✅ 总测试数 ≥ 60
 5. ✅ Reference Gate 通过（参考实现 100%）
 6. ✅ Dummy Gate 通过（空壳实现 0%）
 7. ✅ 无 `pytest.raises(Exception)` — 异常类型必须具体
 8. ✅ conftest.py 存在且非空
+9. ✅ ≥ 50% 的 integration 测试标注了 `depends_on`
 
 ### 软性门（人工审查）
 
-9. ✅ 每个 Behavior 章节有 ≥3 个 atomic 测试（正常 + 边界 + 错误）
-10. ✅ 每条 CVI 有 ≥2 个 integration 测试（正向 + 边界/反向）
-11. ✅ Error Semantics 覆盖率 ≥ 80%
-12. ✅ Positive + Relational 断言占比 ≥ 90%
-13. ✅ 零个 No-check / Tautology 断言
-14. ✅ 每个 integration 测试真正跨越 ≥2 个 API 边界
-15. ✅ 每个 atomic 测试只涉及 1 个 API 入口的 1 个行为点
-16. ✅ 共享代码提取到 conftest.py，两文件间无重复 helper
+10. ✅ 每个 Behavior 章节有 ≥4 个 atomic 测试（正常×2 + 边界 + 错误）
+11. ✅ 每条 CVI 有 ≥2 个 integration 测试（正向 + 边界/反向）
+12. ✅ Error Semantics 覆盖率 ≥ 80%
+13. ✅ Positive + Relational 断言占比 ≥ 90%
+14. ✅ 零个 No-check / Tautology 断言
+15. ✅ 每个 integration 测试真正跨越 ≥2 个 API 边界
+16. ✅ 每个 atomic 测试只涉及 1 个 API 入口的 1 个行为点
+17. ✅ 共享代码提取到 conftest.py，两文件间无重复 helper
+18. ✅ Atomic 难度分布覆盖基础 / 中等 / 困难三个级别（不能全是基础级）
+19. ✅ Integration 测试 seam 分布覆盖 ≥3 种不同接缝类型
 
 ### 校准门（需要轨迹数据，发布前检查）
 
-17. ✅ 跨模型平均 gap > -5pp（否则触发负 gap 审查）
-18. ✅ Top-3 模型未全部满分（否则触发天花板审查）
-19. ✅ Dummy Gate 零通过（否则触发水测试审查）
+20. ✅ 跨模型平均 raw_gap > -5pp（否则触发负 gap 审查）
+21. ✅ 跨模型平均 adjusted_gap > +5pp（否则 integration 区分力不足）
+22. ✅ Top-3 模型 atomic_rate ≤ 90%（否则 atomic 难度不足，触发天花板审查）
+23. ✅ Top-3 模型未全部 integration 满分（否则触发天花板审查）
+24. ✅ Dummy Gate 零通过（否则触发水测试审查）

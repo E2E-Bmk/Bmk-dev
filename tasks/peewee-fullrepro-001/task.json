@@ -1,0 +1,263 @@
+{
+  "instance_id": "peewee-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "coleifer/peewee",
+  "repo_commit": "41bd907bb02e445be2b6493c60cc15cebd6d9e0e",
+  "spec_version": "v1",
+  "source_meta": {
+    "source_path": "repo-pool/peewee-fullrepro-001",
+    "src_loc": "14563 nonblank noncomment Python LOC in peewee.py plus playhouse/*.py",
+    "test_functions": 1957,
+    "test_files": 39,
+    "public_docs": [
+      "README.rst",
+      "docs/peewee/quickstart.rst",
+      "docs/peewee/models.rst",
+      "docs/peewee/querying.rst",
+      "docs/peewee/query_builder.rst",
+      "docs/peewee/query_operators.rst",
+      "docs/peewee/database.rst",
+      "docs/peewee/schema.rst",
+      "docs/peewee/transactions.rst",
+      "docs/peewee/sqlite.rst",
+      "docs/peewee/db_tools.rst",
+      "docs/peewee/orm_utils.rst",
+      "docs/peewee/api.rst"
+    ],
+    "core_fact_source": "relational database state plus model metadata/query AST facts: tables, rows, fields, indexes, joins, transactions, migrations, compiled SQL, introspected schema, and generated model definitions",
+    "contamination_note": "peewee@4.2.6 plus commit 41bd907, tag 4.2.6 released 2026-07-17 and HEAD committed 2026-07-23; relative to training cutoff: after"
+  },
+  "oracle": {
+    "source": "mixed",
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 65,
+    "scorer_isolation": [
+      "--remove-path",
+      "peewee.py",
+      "--remove-path",
+      "playhouse",
+      "--remove-path",
+      "pwiz.py"
+    ],
+    "oracle_version": "2026-07-26-filteriter1-v2",
+    "upstream_rewritten_retained": 30,
+    "generated_retained": 35,
+    "nodeid_file": "kept_nodeids.txt",
+    "taxonomy_file": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md"
+  },
+  "taxonomy": {
+    "test_atomic::test_atomic_auto_field_added_to_model_without_primary_key": "atomic",
+    "test_atomic::test_atomic_field_descriptor_stores_declared_values_on_instance": "atomic",
+    "test_atomic::test_atomic_callable_default_runs_for_each_instance": "atomic",
+    "test_atomic::test_atomic_literal_default_is_assigned_to_new_instance": "atomic",
+    "test_atomic::test_atomic_choices_are_metadata_and_do_not_validate_assignment": "atomic",
+    "test_atomic::test_atomic_column_name_is_kept_in_field_metadata": "atomic",
+    "test_atomic::test_atomic_explicit_table_name_overrides_default": "atomic",
+    "test_atomic::test_atomic_table_function_derives_table_name": "atomic",
+    "test_atomic::test_atomic_legacy_and_modern_table_name_rules_differ": "atomic",
+    "test_atomic::test_atomic_inherited_model_fields_and_meta_options_are_available": "atomic",
+    "test_atomic::test_atomic_composite_key_records_primary_key_fields": "atomic",
+    "test_atomic::test_atomic_foreign_key_default_column_name_appends_id": "atomic",
+    "test_atomic::test_atomic_self_referential_foreign_key_resolves_model_class": "atomic",
+    "test_atomic::test_atomic_deferred_foreign_key_resolves_after_target_defined": "atomic",
+    "test_atomic::test_atomic_db_url_parse_converts_query_parameter_types": "atomic",
+    "test_atomic::test_atomic_db_url_connect_merges_explicit_parameters": "atomic",
+    "test_atomic::test_atomic_db_url_unknown_scheme_raises_runtime_error": "atomic",
+    "test_atomic::test_atomic_deferred_database_requires_init_before_use": "atomic",
+    "test_atomic::test_atomic_database_proxy_rejects_use_before_initialize": "atomic",
+    "test_atomic::test_atomic_connection_lifecycle_return_values": "atomic",
+    "test_atomic::test_atomic_connect_reuse_reports_existing_connection": "atomic",
+    "test_atomic::test_atomic_database_context_manager_closes_after_success": "atomic",
+    "test_atomic::test_atomic_connection_context_does_not_start_transaction": "atomic",
+    "test_atomic::test_atomic_many_to_many_rejects_unsaved_source_mutation": "atomic",
+    "test_atomic::test_atomic_model_to_dict_serializes_plain_fields": "atomic",
+    "test_atomic::test_atomic_dict_to_model_constructs_unsaved_instance": "atomic",
+    "test_atomic::test_atomic_update_model_from_dict_changes_existing_instance": "atomic",
+    "test_atomic::test_atomic_unknown_shortcut_key_raises_when_not_ignored": "atomic",
+    "test_atomic::test_atomic_chunked_splits_iterable_into_fixed_size_batches": "atomic",
+    "test_atomic::test_atomic_query_without_bound_database_raises_interface_error": "atomic",
+    "test_integration::test_integration_create_tables_orders_foreign_keys_and_backref_reads_rows": "integration",
+    "test_integration::test_integration_join_reconstructs_selected_related_model_graph": "integration",
+    "test_integration::test_integration_prefetch_associates_children_with_parent_instances": "integration",
+    "test_integration::test_integration_row_adapters_return_consistent_inserted_values": "integration",
+    "test_integration::test_integration_single_row_retrieval_variants_share_primary_key_lookup": "integration",
+    "test_integration::test_integration_filtering_sorting_paginating_and_counting_rows": "integration",
+    "test_integration::test_integration_aggregate_group_having_and_scalar_results": "integration",
+    "test_integration::test_integration_insert_many_update_delete_return_affected_counts": "integration",
+    "test_integration::test_integration_sqlite_conflict_update_uses_excluded_values": "integration",
+    "test_integration::test_integration_table_query_builder_writes_reads_and_deletes_rows": "integration",
+    "test_integration::test_integration_case_cast_sql_and_value_expressions_execute_together": "integration",
+    "test_integration::test_integration_database_context_rolls_back_exception_and_closes": "integration",
+    "test_integration::test_integration_nested_atomic_uses_savepoint_for_inner_rollback": "integration",
+    "test_integration::test_integration_manual_atomic_commit_starts_new_transaction_segment": "integration",
+    "test_integration::test_integration_pragmas_and_shortcut_properties_share_sqlite_state": "integration",
+    "test_integration::test_integration_sqlite_registered_function_and_collation_affect_queries": "integration",
+    "test_integration::test_integration_schema_safe_create_and_drop_semantics_are_observable": "integration",
+    "test_integration::test_integration_introspection_reports_columns_indexes_and_foreign_keys": "integration",
+    "test_integration::test_integration_reflection_generates_model_classes_for_selected_tables": "integration",
+    "test_integration::test_integration_reflection_can_include_sqlite_views": "integration",
+    "test_integration::test_integration_migration_add_column_is_visible_to_introspection_reflection_and_queries": "integration",
+    "test_integration::test_integration_migration_rename_column_updates_schema_and_sql_access": "integration",
+    "test_integration::test_integration_bind_ctx_switches_schema_queries_reflection_and_restores_binding": "integration",
+    "test_integration::test_system_db_url_file_reflection_and_migration_share_database_state": "system_e2e",
+    "test_integration::test_system_pwiz_generates_models_for_selected_sqlite_tables": "system_e2e",
+    "test_integration::test_system_pwiz_include_views_emits_model_for_sqlite_view": "system_e2e",
+    "test_integration::test_system_pwiz_invalid_engine_exits_nonzero": "system_e2e",
+    "test_integration::test_integration_jsonfield_round_trips_rows_paths_and_selected_aliases": "integration",
+    "test_integration::test_integration_jsonfield_mutation_expressions_update_visible_document_state": "integration",
+    "test_integration::test_integration_serialization_helpers_recurse_foreign_keys_and_backrefs": "integration",
+    "test_integration::test_integration_many_to_many_descriptor_adds_removes_clears_and_queries_related_rows": "integration",
+    "test_integration::test_integration_table_name_projection_matches_sql_introspection_and_reflection": "integration",
+    "test_integration::test_integration_replace_query_overwrites_existing_unique_row_state": "integration",
+    "test_integration::test_integration_join_without_foreign_key_or_on_expression_raises_error": "integration",
+    "test_integration::test_integration_window_function_partitions_rows_by_group": "integration"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 31,
+    "system_e2e": 4
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 65,
+    "total": 65,
+    "pass_rate": 1.0
+  },
+  "candidate_score": {
+    "run_dir": "candidate-runs/gpt5.4-peewee-fullrepro-001-specv1-20260726-001",
+    "score_result": "candidate-runs/gpt5.4-peewee-fullrepro-001-specv1-20260726-001/score_result.json",
+    "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python_version": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "preflight_output": "/mnt/g/aaai2026/bmk-dev/candidate-runs/gpt5.4-peewee-fullrepro-001-specv1-20260726-001/solution/peewee.py",
+    "passed": 30,
+    "failed": 35,
+    "total": 65,
+    "pass_rate": 0.46153846153846156,
+    "by_layer": {
+      "atomic": {
+        "passed": 16,
+        "failed": 14,
+        "total": 30
+      },
+      "integration": {
+        "passed": 12,
+        "failed": 19,
+        "total": 31
+      },
+      "system_e2e": {
+        "passed": 2,
+        "failed": 2,
+        "total": 4
+      }
+    }
+  },
+  "integration_gap": {
+    "atomic_rate": 0.5333333333333333,
+    "integration_e2e_rate": 0.4,
+    "rate_gap": 0.1333333333333333
+  },
+  "true_gap_events": [
+    {
+      "failed_test": "filter/test_integration.py::test_integration_filtering_sorting_paginating_and_counting_rows",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "test_atomic::test_atomic_chunked_splits_iterable_into_fixed_size_batches"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "atomic-behavior"
+    },
+    {
+      "failed_test": "filter/test_integration.py::test_integration_aggregate_group_having_and_scalar_results",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "test_atomic::test_atomic_connection_lifecycle_return_values"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "api-surface"
+    },
+    {
+      "failed_test": "filter/test_integration.py::test_integration_sqlite_conflict_update_uses_excluded_values",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "test_atomic::test_atomic_connection_lifecycle_return_values"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "api-surface"
+    },
+    {
+      "failed_test": "filter/test_integration.py::test_integration_table_query_builder_writes_reads_and_deletes_rows",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "test_atomic::test_atomic_connection_lifecycle_return_values"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "api-surface"
+    },
+    {
+      "failed_test": "filter/test_integration.py::test_integration_pragmas_and_shortcut_properties_share_sqlite_state",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "test_atomic::test_atomic_connection_lifecycle_return_values"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "api-surface"
+    }
+  ],
+  "labels": [
+    "mixed-oracle",
+    "discriminating",
+    "non-saturated-candidate-score",
+    "cascade-dominated",
+    "orm-sqlite-workflow",
+    "moderate-integration-gap"
+  ],
+  "weaknesses": [
+    {
+      "dimension": "api-surface",
+      "description": "Several documented public APIs are missing or have incompatible call signatures, including transaction_depth, ManyToManyField.get_through_model, Model.get_id, Select.group_by, Insert.on_conflict, Table construction, SQLite pragma properties, function/collation registration, replace, and bind_ctx bind_refs handling.",
+      "affected_tests": 10,
+      "layer": "atomic/integration"
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "Single-behavior contracts for callable defaults, modern and table-function naming, foreign-key column naming, SQLite URL parsing/parameter precedence, filtering, row adapters, grouping, and expression casting diverge from the spec.",
+      "affected_tests": 9,
+      "layer": "atomic/integration"
+    },
+    {
+      "dimension": "state-management",
+      "description": "Relationship and database state lifecycle is incomplete: self/deferred foreign keys do not resolve to model classes, DatabaseProxy use recurses before initialization, migrations are not consistently visible through SQL/reflection, and JSON mutation expressions do not preserve document state.",
+      "affected_tests": 6,
+      "layer": "atomic/integration"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "The same schema facts disagree across model metadata, SQL columns, introspection, reflection, serialization helpers, and pwiz output, especially foreign-key and table-name projections.",
+      "affected_tests": 6,
+      "layer": "integration/system_e2e"
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "End-to-end pwiz table/view generation, many-to-many relationship mutation/querying, and recursive serialization workflows are only partially implemented.",
+      "affected_tests": 4,
+      "layer": "integration/system_e2e"
+    }
+  ],
+  "judge": {
+    "date": "2026-07-26",
+    "verdict": "QUALIFIED",
+    "diagnosis_report": "wip/peewee-fullrepro-001/judge/diagnosis_report.md",
+    "fairness_gates": {
+      "A_spec_mapping_spot_check": "passed",
+      "B_failure_pattern_audit": "passed_after_filter_iter_1_correction",
+      "C_generated_only_spot_check": "not_applicable_mixed_oracle",
+      "D_coverage_gap_audit": "PARTIAL_acceptable",
+      "E_static_quality_gate": "verify_task_passed; validate_ledger_blocked_by_global_ledger_errors_192",
+      "F_spec_phrasing_quality": "passed"
+    }
+  }
+}

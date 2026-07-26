@@ -71,7 +71,11 @@
 
 ## 进行中（wip/ 中）
 
-当前无 active WIP task。所有 55 个 task 均已毕业到 `tasks/`。
+| Task ID | 上游 Repo | 阶段 |
+|---------|-----------|------|
+| peewee-fullrepro-001 | coleifer/peewee | S1 已选中 |
+| typer-fullrepro-001 | fastapi/typer | 已退休 |
+
 
 ---
 

@@ -1,4 +1,4 @@
-﻿# Candidates
+# Candidates
 
 > 最后更新：2026-07-26
 > 当前状态：55 个 task QUALIFIED 并发布，0 个 WIP，以下为完整选拔审计日志
@@ -282,3 +282,4 @@
 | gaphas | RETIRED | Stage 5 / spec_iter 2 | Fresh Linux reference passed 85/85 and candidate scored 73/85, but Gates A/B found six substantive spec gaps dominating 11/12 failures: writable Position/MatrixProjection coordinates, positional-constraint tuple shapes and factory order, Variable divmod, and Connections.remove_constraint signature. A required spec_v4 exceeds the top-level loop cap, so no task migration or weakness attribution is valid. |
 | fastapi/typer | RETIRED | Stage 1 / 0 iterations | Hard gate failed: Typer is a high-saturation CLI parser/framework in the argparse/Click family, and upstream tests require undocumented/vendored internals or exact help/error/completion output snapshots beyond a fair public reconstruction packet. |
 | coleifer/peewee | SELECTED | 14563 LOC / 1957 tests | Durable relational database/model/query/schema facts with public ORM APIs, SQL compiler output, SQLite state, introspection/reflection, migrations, pwiz CLI, and playhouse extension projections; private import audit clean at 1/44 files (2.3%), with Stage 3 scoped to SQLite-local public workflows and filtering optional backend/native-driver/exact-SQL risks. |
+| coleifer/peewee | QUALIFIED | spec_v1 / 65 tests / reference 65-65 | `peewee-fullrepro-001` graduated after filter_iter=1 correction replaced the private timeout assertion with public SQLite busy_timeout behavior; candidate gpt5.4-peewee-fullrepro-001-specv1-20260726-001 scored 30/65 on Linux/WSL with provenance preflight resolving to candidate solution. |

@@ -1,0 +1,142 @@
+{
+  "instance_id": "pypdf-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "py-pdf/pypdf",
+  "repo_commit": "baa62ed5b08fbe04a040f6890f15383c65f322ca",
+  "spec_version": "v1",
+  "source_meta": {
+    "source_path": "repo-pool/pypdf-fullrepro-001",
+    "src_loc": "47172 Python source lines under pypdf/",
+    "test_functions": 939,
+    "test_files": 35,
+    "public_docs": [
+      "README.md",
+      "docs/index.rst",
+      "docs/user/merging-pdfs.md",
+      "docs/user/cropping-and-transforming.md",
+      "docs/user/extract-text.md",
+      "docs/user/extract-images.md",
+      "docs/user/metadata.md",
+      "docs/user/forms.md",
+      "docs/user/encryption-decryption.md",
+      "docs/user/handling-outlines.md",
+      "docs/user/handle-attachments.md",
+      "docs/user/add-javascript.md",
+      "docs/user/adding-pdf-annotations.md",
+      "docs/user/reading-pdf-annotations.md",
+      "docs/user/viewer-preferences.md",
+      "docs/user/robustness.md",
+      "docs/user/streaming-data.md",
+      "docs/modules/PdfReader.rst",
+      "docs/modules/PdfWriter.rst",
+      "docs/modules/PageObject.rst",
+      "docs/modules/DocumentInformation.rst",
+      "docs/modules/PageRange.rst",
+      "docs/modules/RectangleObject.rst",
+      "docs/modules/Transformation.rst",
+      "docs/modules/XmpInformation.rst",
+      "docs/modules/actions.rst",
+      "docs/modules/annotations.rst",
+      "docs/modules/generic.rst"
+    ],
+    "core_fact_source": "Local PDF document bytes and in-memory PDF object graphs, including pages, page boxes, transformations, metadata, outlines, annotations, form fields, attachments, images, text streams, encryption state, and writer-produced serialized documents.",
+    "contamination_note": "pypdf@6.14.2, commit date 2026-07-30; relative to training cutoff: after"
+  },
+  "oracle": {
+    "source": "mixed",
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 68,
+    "scorer_isolation": [
+      "--remove-path",
+      "pypdf",
+      "--pytest-arg",
+      "--rootdir=."
+    ],
+    "oracle_version": "2026-08-03-stage3-mixed-v5-specgap-derivability",
+    "upstream_rewritten_retained": 29,
+    "generated_retained": 39,
+    "nodeid_file": "kept_nodeids.txt",
+    "taxonomy_file": "taxonomy.jsonl",
+    "spec_test_map": "spec_test_map.md",
+    "runtime_dependencies": [
+      "pytest",
+      "Pillow",
+      "cryptography",
+      "pycryptodome",
+      "fonttools"
+    ]
+  },
+  "stats": {
+    "atomic": 36,
+    "integration": 7,
+    "system_e2e": 25
+  },
+  "reference_score": {
+    "passed": 68,
+    "total": 68,
+    "pass_rate": 1.0
+  },
+  "candidate_score": {
+    "run_dir": "candidate-runs/gpt5-pypdf-fullrepro-001-specv1-20260803-002",
+    "score_result": "candidate-runs/gpt5-pypdf-fullrepro-001-specv1-20260803-002/score_result.json",
+    "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python_version": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "preflight_output": "ModuleNotFoundError: No module named 'PyPDF2' from candidate solution/pypdf/__init__.py",
+    "passed": 0,
+    "failed": 68,
+    "total": 68,
+    "pass_rate": 0.0,
+    "by_layer": {
+      "atomic": {
+        "collection_error": 36,
+        "passed": 0,
+        "total": 36
+      },
+      "integration": {
+        "collection_error": 7,
+        "passed": 0,
+        "total": 7
+      },
+      "system_e2e": {
+        "collection_error": 25,
+        "passed": 0,
+        "total": 25
+      }
+    }
+  },
+  "integration_gap": {
+    "atomic_rate": 0.0,
+    "integration_e2e_rate": 0.0,
+    "rate_gap": 0.0
+  },
+  "true_gap_events": [],
+  "judge": {
+    "date": "2026-08-03",
+    "diagnosis_report": "wip/pypdf-fullrepro-001/judge/diagnosis_report.md",
+    "fairness_gates": {
+      "A_spec_mapping_spot_check": "passed",
+      "B_failure_pattern_audit": "passed",
+      "C_generated_only_spot_check": "not_applicable_mixed_oracle",
+      "D_coverage_gap_audit": "FULL"
+    },
+    "labels": [
+      "mixed-oracle",
+      "floor-score-via-public-import-failure",
+      "cascade-dominated",
+      "api-surface",
+      "dependency-assumption"
+    ],
+    "verdict": "QUALIFIED"
+  },
+  "weaknesses": [
+    {
+      "dimension": "api-surface",
+      "description": "Candidate implementation depends on unavailable PyPDF2 instead of providing the documented pypdf public surface.",
+      "affected_tests": 68,
+      "layer": "all"
+    }
+  ]
+}

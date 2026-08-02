@@ -1,11 +1,11 @@
 # Candidates
 
-> 最后更新：2026-07-26
-> 当前状态：55 个 task QUALIFIED 并发布，0 个 WIP，以下为完整选拔审计日志
+> 最后更新：2026-08-03
+> 当前状态：56 个 task QUALIFIED 并发布，0 个 WIP，以下为完整选拔审计日志
 
 ---
 
-## 当前发布 Task（55 个）
+## 当前发布 Task（56 个）
 
 详见 `REPO_STATUS.md`。
 
@@ -291,3 +291,5 @@
 | rthalley/dnspython | QUALIFIED | spec_v1 / 82 tests / reference 82-82 | `dnspython-fullrepro-001` graduated with mixed oracle: 52 rewritten upstream tests plus 30 generated tests; candidate gpt5-dnspython-fullrepro-001-specv1-20260729-001 scored 39/82 on Linux/WSL with provenance preflight resolving to candidate solution. |
 | python-babel/babel | SELECTED | 13442 LOC / 661 test functions | Scoped to the documented message-catalog lifecycle: Catalog/Message state, extraction mapping, PO/MO serialization, pybabel local file commands, and setup integration project shared catalog facts across public APIs and file/CLI outputs; private import audit is clean at 1/65 files outside scope, with Stage 3 capped at 95 tests. |
 | python-babel/babel | QUALIFIED | spec_v1 / 92 tests / reference 92-92 | `babel-fullrepro-001` graduated with mixed oracle: 20 rewritten upstream tests plus 72 generated tests; candidate gpt5-babel-fullrepro-001-specv1-20260731-004 scored 61/92 on Linux/WSL with provenance preflight resolving to candidate solution. |
+| pypdf-fullrepro-001 | SELECTED | repo=py-pdf/pypdf / 47172 LOC / 939 test functions | Scoped to documented local PDF document workflows: reader/writer/page state projects through public APIs, BytesIO/file serialization round trips, extraction, metadata, forms, outlines, attachments, annotations, encryption, and transformed page outputs; private import audit is HIGH_RISK at 14/35 test modules (40.0%), so Stage 3 must enforce public-surface filtering and cap the oracle at 120 tests. |
+| pypdf-fullrepro-001 | QUALIFIED | repo=py-pdf/pypdf / spec_v1 iter1 / 68 tests / reference 68-68 | Mixed oracle passed Stage 5 after spec_iter=1 derivability repair: 29 rewritten upstream tests plus 39 generated tests, reference 68/68, dummy 0/68, candidate gpt5-pypdf-fullrepro-001-specv1-20260803-002 scored 0/68 on Linux/WSL due a single candidate import-time dependency assumption on unavailable `PyPDF2`; judge labels include floor-score-via-public-import-failure and cascade-dominated api-surface failure. |

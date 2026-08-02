@@ -15,3 +15,4 @@
 | gpt5.4-authlib-fullrepro-001-specv2-20260721-001 | authlib-fullrepro-001 | atomic-behavior | JWK option preservation, RSA private-key import/export, RSA key-size validation, and audience-list claim validation are incomplete. | 4 |
 | gpt5.4-authlib-fullrepro-001-specv2-20260721-001 | authlib-fullrepro-001 | error-semantics | Invalid A128GCMKW key material is accepted instead of raising the documented public error path at the JWE projection boundary. | 1 |
 | gpt5.4-authlib-fullrepro-001-specv2-20260721-001 | authlib-fullrepro-001 | state-management | JWS JSON serialization/deserialization does not preserve general JSON header-list and callable-key context through signing and verification. | 3 |
+| gpt5-pypdf-fullrepro-001-specv1-20260803-002 | pypdf-fullrepro-001 | api-surface | Candidate implementation depends on unavailable PyPDF2 instead of providing the documented pypdf public surface, causing import-time collection errors across the full oracle. | 68 |

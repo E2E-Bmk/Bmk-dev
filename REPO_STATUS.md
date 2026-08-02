@@ -1,11 +1,11 @@
 ﻿# Repo Status
 
-> 最后更新：2026-07-26
+> 最后更新：2026-08-03
 > 用途：组员认领 task 前查阅，避免重复工作
 
 ---
 
-## 已完成（tasks/ 中，55 个）
+## 已完成（tasks/ 中，56 个）
 
 | # | Task ID | 上游 Repo | Atomic | Integ | Total |
 |---|---------|-----------|--------|-------|-------|
@@ -64,8 +64,9 @@
 | 53 | webob-request-response-fullrepro-001 | Pylons/webob | 49 | 25 | 74 |
 | 54 | whoosh-index-search-fullrepro-001 | mchaput/whoosh | 35 | 49 | 84 |
 | 55 | wtforms-form-lifecycle-fullrepro-001 | pallets-eco/wtforms | 32 | 28 | 60 |
+| 56 | pypdf-fullrepro-001 | py-pdf/pypdf | 36 | 32 | 68 |
 
-**统计**：Atomic 总计 2363，Integration 总计 1868，总测试 4231。全部达标 A≥30, I≥25, T≥60。
+**统计**：Atomic 总计 2399，Integration 总计 1900，总测试 4299。全部达标 A≥30, I≥25, T≥60。
 
 ---
 

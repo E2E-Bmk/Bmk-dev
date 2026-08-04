@@ -88,6 +88,30 @@ If reference pass rate is significantly below the scoring set size:
 
 ### 3. Fairness
 
+**Gate A0 — Symbol declaration check (automated, full coverage)**
+
+```bash
+python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md
+```
+
+Must print `LINT_PASS`. A task that fails cannot be QUALIFIED regardless of score.
+
+This gate precedes Gate A because sampling cannot catch what it does. `httpcore`
+passed judging with eight atomic tests asserting an upstream exception tree
+(`NetworkError`, `TimeoutException`, `ProtocolError`, four `*Timeout` subclasses)
+that the spec never declares. Three properties let them through:
+
+- the tests map to a real spec section — "Error Semantics" does discuss
+  exceptions — so a section-level mapping looked correct while the individual
+  symbols were undeclared;
+- they were eight tests out of thirty-eight, so a sampled subset was unlikely
+  to include them;
+- they were a minority of that task's failures, so Gate B's "majority of
+  failures" threshold never fired.
+
+The defect is symbol level and locally concentrated; the checks were
+section level and sampled. Run the lint over every test, every task.
+
 **Gate A — Spec mapping spot-check**
 
 Sample a subset of `covered` rows from `spec_test_map.md`. For each sampled test, record a four-column table:
@@ -106,6 +130,14 @@ After scoring, sample failing tests and check whether failures are consistent wi
 - Do failures represent observable behavioral gaps, or internal structure mismatches (exact field names, repr format, exception message wording)?
 
 If the majority of failures cluster around undocumented atomic internal shapes, return a `filter_correction_request.md` to test-filter — this is a BROKEN/fairness verdict, not a model capability signal.
+
+A "majority" threshold is not sufficient on its own. Undocumented-shape failures
+are typically a concentrated minority within one behaviour family, and a minority
+never trips the threshold. Report **any** failure traceable to an undeclared
+symbol or an undocumented internal shape, with its nodeid, whether or not the
+share is a majority; Gate A0 catches the symbol-level cases automatically, and
+this gate covers the shapes a symbol check cannot see (field ordering, container
+identity, callable formatting).
 
 **Gate C — Generated-only oracle spot-check**
 
@@ -144,6 +176,21 @@ Before issuing QUALIFIED, run `python harness/validate_ledger.py` from the Spec2
 - Fixture completeness (all referenced files exist)
 
 A task that fails `validate_ledger.py` cannot be QUALIFIED regardless of score.
+
+Two further checks are non-negotiable at this gate:
+
+- `python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md` prints
+  `LINT_PASS` (same command as Gate A0; re-run it here because oracle edits made
+  during judging can reintroduce an undeclared symbol);
+- the reference implementation, installed from `repo_commit`, passes the complete
+  oracle with zero failures.
+
+The reference run is the only hard evidence that separates a difficult task from
+a defective oracle. `griffe`'s reference passes 86/86 while models reach only
+26.7–56.7% integration, so that task measures capability. `httpcore`'s reference
+passed while a spec-following delivery could not, so that task measured recall of
+upstream internals. Without the reference run, the two are indistinguishable from
+the score alone.
 
 **Gate F — Spec Phrasing Quality**
 

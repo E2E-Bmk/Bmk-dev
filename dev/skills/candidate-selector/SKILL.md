@@ -1,6 +1,6 @@
 ---
 name: candidate-selector
-description: "Select a Python repository as a SWE-E2E benchmark task candidate. Use when evaluating whether a repo qualifies as a reconstruction task: checking hard/soft gates, recording the evidence brief in filter_notes.md, and logging retired candidates in CANDIDATES.md."
+description: "Select a repository as a SWE-E2E benchmark task candidate, in any supported language (python, go, typescript, rust, java). Use when evaluating whether a repo qualifies as a reconstruction task: checking hard/soft gates, recording the evidence brief in filter_notes.md, and logging retired candidates in CANDIDATES.md."
 ---
 
 # Candidate Selector
@@ -19,27 +19,62 @@ description: "Select a Python repository as a SWE-E2E benchmark task candidate. 
 
 Reject if any of the following:
 
-- Pure Python package source LOC < 3,000
-- Implementable as a single Python file without violating the public packet
+- Package source LOC < 3,000 (excluding tests, generated code and vendored dependencies)
+- Implementable as a single source file without violating the public packet
 - No shared fact source with >= 2 independent public projections (e.g. CLI + API + file state)
 - Test suite absent, network-bound, or > 70% snapshot/exact-output checks
 - Core behavior is a closed standard or high-saturation pattern (Jinja2, Redis, argparse) where strong models can pattern-match the implementation
 - Evaluator requires private implementation details to score correctly
-- Docs-test projection mismatch: public docs cover only CLI/syntax behavior while the test suite exercises Python API internals — a correct spec cannot be derived from docs alone, and the test suite cannot be fairly retained without benchmark-owned verifier tests
+- Docs-test projection mismatch: public docs cover only CLI/syntax behavior while the test suite exercises library API internals — a correct spec cannot be derived from docs alone, and the test suite cannot be fairly retained without benchmark-owned verifier tests
 
 ## Soft Gates (positive signals)
 
 Prefer repos with:
 
 - Durable state: file trees, databases, event logs, templates, indexes, caches
-- Multiple public surfaces over the same facts: CLI, Python API, file output, search, schema introspection
+- Multiple public surfaces over the same facts: CLI, library API, file output, search, schema introspection
 - Official docs with enough behavioral coverage to write a traceable spec
 - No mandatory external services; network calls removable or mockable
-- Test files that import only public API symbols at module level (no `from pkg._xxx import` at top level)
+- Test files that reference only public API symbols at module level (no private-symbol imports at top level)
 
 ## Selection Preferences
 
 **Multi-component collaboration preference:** Prioritize frameworks, engines, pipelines, protocol stacks, and multi-layer architectures. Avoid utility function collections, single-class libraries, and pure algorithm packages. Quick test: does the library's typical usage involve ≥3 cooperating objects to complete one user scenario? If it can be fully demonstrated in one line of code, it's not suitable.
+
+**Language.** Supported values for the `language` field of `task.json` are
+`python`, `go`, `typescript`, `rust` and `java`. Record the choice in
+`filter_notes.md` at selection time: the scoring sandbox dispatches on it to pick
+a test runner and a dependency-install command, and a task without it cannot be
+scheduled by a non-Python runner. Prefer languages whose test tooling emits
+machine-readable per-test results (`go test -json`, `vitest --reporter=json`,
+`cargo nextest --message-format json`, JUnit XML), because per-test outcomes are
+what the scorer records.
+
+**Difficulty direction (heuristic, not a gate).** Candidates whose core behaviour
+is a rule engine tend to resist pattern-matching. Four recurring shapes, observed
+on the one task in the current set that holds the strongest model below 70%
+(`griffe`, strongest model 68.3% overall and 56.7% integration, with 8 of 8
+models failing the same nine tests):
+
+- **a lazily resolved reference graph** — an object whose observable behaviour
+  differs before and after resolution, which keeps its own identity while
+  forwarding a target's metadata, follows chains, detects cycles, and must leave
+  no prefix of a failed chain marked resolved;
+- **reimplementation of a language or format rule** rather than a call into it —
+  deriving the constructor signature a `@dataclass` decorator would generate from
+  `field(kw_only=True)`, `ClassVar` and `init=False`, or expanding a
+  configuration factor product;
+- **an equivalence judgement** rather than a correctness judgement — deciding
+  whether two graphs, versions or normalised forms mean the same thing, where a
+  false alarm is as wrong as a miss;
+- **integration tests spanning ≥3 public projections** of one state, so that
+  correct single points still leave the chain broken.
+
+Record which shapes a candidate exhibits in `filter_notes.md` as the selection
+rationale. Do not treat this as a checklist to satisfy, and do not reject a
+candidate for exhibiting none: difficulty is achieved through selection direction
+and post-hoc tiering, not by engineering the oracle until a score target is met.
+These four shapes are generalised from a single task and may not transfer.
 
 ---
 

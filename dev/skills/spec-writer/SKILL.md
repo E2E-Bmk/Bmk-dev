@@ -179,17 +179,36 @@ source_boundary: {list of sources consulted: docs pages, source files}
 
 ═══ Reference Layer ═══
 ## Public Interface             <- speed-lookup index, NOT a first-read section
-  ### Import Surface            <- importable names
+  ### Import Surface            <- publicly reachable names (see language note)
   ### API Catalog               <- Name | Kind | Role table (NO signatures)
   ### CLI Entry Points          <- only if package has CLI
 
 ═══ Meta Layer ═══
-## Appendix A: Environment      <- Python version, preinstalled packages, network policy
+## Appendix A: Environment      <- language/runtime version, preinstalled packages, network policy
 ## Appendix B: Assessment Notes <- evaluation dimensions (no fixture shapes)
 ```
 
 **Specification Authority disclaimer (required in all specs):**
 Place the blockquote immediately after the `# {Library} Specification` title. This prevents models from relying on memorized knowledge of similarly-named packages.
+
+**Language note for Import Surface.** The section names what a caller can reach
+publicly; the notation follows the task's `language` field in `task.json`
+(`python`, `go`, `typescript`, `rust`, `java`):
+
+| language | what the section enumerates |
+|---|---|
+| `python` | importable module paths and the names each exports |
+| `go` | package import paths and exported identifiers (capitalised) |
+| `typescript` | module entry points and named exports |
+| `rust` | crate paths and `pub` items re-exported at each level |
+| `java` | packages and `public` types with their `public` members |
+
+Two rules hold in every language. A name the spec lists must be reachable by a
+delivery that read only the spec — so do not list a name whose behaviour the
+document never describes, because the oracle's symbol-declaration check treats an
+undeclared symbol assertion as a fairness defect, and the reverse (a listed name
+with no behaviour clause) lets a stub satisfy the listing. And the section stays a
+lookup index: behaviour belongs in the behaviour sections, not here.
 
 **Product Overview desensitization rules:**
 - No project brand names, author/maintainer names, GitHub org/repo names, version history

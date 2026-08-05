@@ -262,7 +262,7 @@ def test_mo_includes_fuzzy_messages_when_requested():
     buf.seek(0)
     assert read_mo(buf)["Hello"].string == "Bonjour"
 
-@pytest.mark.depends_on('test_mo_round_trip_preserves_singular_message', 'test_public_constants_have_expected_roles')
+@pytest.mark.depends_on('test_public_constants_have_expected_roles')
 def test_mo_invalid_bytes_raise_parsing_exception():
     """Verifies: BABEL-FILE-008."""
     with pytest.raises(Exception):
@@ -313,7 +313,7 @@ def test_cli_help_lists_core_commands(capsys):
     out = capsys.readouterr().out
     assert "compile" in out and "extract" in out and "init" in out and "update" in out
 
-@pytest.mark.depends_on('test_extract_from_file_uses_named_method', 'test_extract_unknown_method_raises_value_error')
+@pytest.mark.depends_on('test_extract_python_finds_gettext_call', 'test_extract_unknown_method_raises_value_error')
 def test_cli_extract_requires_output_file(tmp_path):
     """Verifies: BABEL-CMD-003, BABEL-CMD-004."""
     src = tmp_path / "app.py"
@@ -322,7 +322,7 @@ def test_cli_extract_requires_output_file(tmp_path):
         CommandLineInterface().run(["pybabel", "extract", str(src)])
     assert exc.value.code != 0
 
-@pytest.mark.depends_on('test_extract_from_file_uses_named_method', 'test_write_po_omits_header_when_requested')
+@pytest.mark.depends_on('test_extract_python_finds_gettext_call', 'test_extract_unknown_method_raises_value_error')
 def test_cli_extract_writes_pot_file(tmp_path):
     """Verifies: BABEL-CMD-003."""
     src = tmp_path / "app.py"
@@ -383,7 +383,7 @@ n = ngettext('foo')
     messages = list(extract.extract("python", buf, extract.DEFAULT_KEYWORDS, [], {}))
     assert messages == [(2, "foo", [], None), (3, ("hello", "there"), [], None)]
 
-@pytest.mark.depends_on('test_catalog_assignment_merges_message_metadata_without_duplicates', 'test_write_po_omits_header_when_requested')
+@pytest.mark.depends_on('test_catalog_assignment_merges_message_metadata_without_duplicates')
 def test_upstream_pofile_join_locations():
     """Verifies: BABEL-FILE-004."""
     cat = Catalog()
@@ -395,7 +395,7 @@ def test_upstream_pofile_join_locations():
     assert "#: main.py:1 utils.py:3" in text
     assert 'msgid "foo"' in text
 
-@pytest.mark.depends_on('test_catalog_assignment_merges_message_metadata_without_duplicates', 'test_write_po_omits_header_when_requested')
+@pytest.mark.depends_on('test_catalog_assignment_merges_message_metadata_without_duplicates')
 def test_upstream_pofile_duplicate_auto_comments_written_once():
     """Verifies: BABEL-FILE-004."""
     cat = Catalog()
@@ -406,7 +406,7 @@ def test_upstream_pofile_duplicate_auto_comments_written_once():
     text = buf.getvalue().decode("utf-8")
     assert text.count("#. A comment") == 1
 
-@pytest.mark.depends_on('test_catalog_add_returns_and_stores_message', 'test_write_po_omits_header_when_requested')
+@pytest.mark.depends_on('test_catalog_add_returns_and_stores_message')
 def test_upstream_pofile_obsolete_message_can_be_ignored():
     """Verifies: BABEL-FILE-004."""
     cat = Catalog()
@@ -418,7 +418,7 @@ def test_upstream_pofile_obsolete_message_can_be_ignored():
     assert 'msgid "foo"' in text
     assert "bar" not in text
 
-@pytest.mark.depends_on('test_catalog_add_returns_and_stores_message', 'test_write_po_includes_previous_ids_when_requested')
+@pytest.mark.depends_on('test_catalog_add_returns_and_stores_message')
 def test_upstream_pofile_previous_msgid_is_included_when_requested():
     """Verifies: BABEL-FILE-004."""
     cat = Catalog()

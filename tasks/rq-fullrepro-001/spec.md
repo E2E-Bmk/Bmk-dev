@@ -244,6 +244,12 @@ from rq.command import (
 )
 from rq.worker import RoundRobinWorker, RandomWorker, WorkerStatus
 from rq.decorators import job
+from rq.exceptions import (
+    NoSuchJobError,
+    NoSuchGroupError,
+    InvalidJobOperation,
+    DuplicateJobError,
+)
 ```
 
 Compatibility console entry points: `rq`, `rqinfo`, `rqworker`. Supported module invocation: `python -m rq.cli`.
@@ -283,6 +289,10 @@ Compatibility console entry points: `rq`, `rqinfo`, `rqworker`. Supported module
 | send_kill_horse_command | function | Terminate a worker's active work-horse |
 | send_stop_job_command | function | Stop a currently executing job |
 | job | decorator | Declare a function as an RQ job |
+| NoSuchJobError | exception | Referenced job id is not persisted |
+| NoSuchGroupError | exception | Referenced group name is not persisted |
+| InvalidJobOperation | exception | Operation rejected for the job's current state |
+| DuplicateJobError | exception | Reserved live job id already exists |
 
 There is no supported `python -m rq` entry point.
 

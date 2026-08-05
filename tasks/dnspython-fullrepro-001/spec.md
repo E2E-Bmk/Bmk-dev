@@ -76,9 +76,11 @@ DNS names and code identifiers are the foundational keys used by messages, recor
 
 **Text, Unicode, And Wire Projection.** `Name.to_text` must return DNS text with escaped special characters and a final dot for absolute names. `Name.to_unicode` must return the Unicode text projection using the selected IDNA codec. `Name.to_wire` must return DNS wire-format labels and must require either an absolute name or an origin that makes the name absolute. If a relative name is converted to wire without an origin, then `to_wire` must raise `NeedAbsoluteNameOrOrigin`.
 
-**Name Relations.** `Name.fullcompare` must return the relation, ordering, and common-label count for two names. `is_subdomain`, `is_superdomain`, `relativize`, `derelativize`, and `choose_relativity` must derive their result from the same label relationship. If an operation attempts to append a non-empty suffix to an absolute name, then `concatenate` must raise `AbsoluteConcatenation`. If `parent` is requested for the root or empty name, then it must raise `NoParent`.
+**Name Relations.** `Name.fullcompare` must return the relation, ordering, and common-label count for two names. The relation must be a member of the `dns.name.NameRelation` enumeration, whose members name the possible outcomes: `NONE`, `SUPERDOMAIN`, `SUBDOMAIN`, `EQUAL`, and `COMMONANCESTOR`. `is_subdomain`, `is_superdomain`, `relativize`, `derelativize`, and `choose_relativity` must derive their result from the same label relationship. If an operation attempts to append a non-empty suffix to an absolute name, then `concatenate` must raise `AbsoluteConcatenation`. If `parent` is requested for the root or empty name, then it must raise `NoParent`. If name text contains an invalid backslash escape, then construction must raise `dns.name.BadEscape`.
 
 **Identifier Enums And Helpers.** `dns.rdatatype`, `dns.rdataclass`, `dns.rcode`, `dns.opcode`, and `dns.flags` conversion helpers must accept documented numeric and textual identifiers and return the corresponding enum or integer values. Their `to_text` helpers must return canonical DNS token text for known values and a generic token form for unknown numeric values where that module defines one. If a textual identifier is unknown or malformed, then the relevant `UnknownRdatatype`, `UnknownRdataclass`, `UnknownRcode`, or `UnknownOpcode` exception must be raised. Reverse-name helpers must convert IPv4 and IPv6 address text to the matching reverse DNS name and must convert valid reverse DNS names back to address text.
+
+Each identifier module must expose its protocol-defined members as named constants, so that a caller can name a value instead of writing its number. `dns.flags` must expose the header flag bits, including `QR`, `AA`, and `RD`, and `dns.flags.from_text` must combine a space-separated flag token string into their bitwise union. `dns.opcode` must expose the operation codes, including `QUERY` and `UPDATE`; `dns.rcode` must expose the response codes, including `NOERROR` and `NXDOMAIN`; and `dns.rdatatype` must expose the record types together with the wildcard-match sentinel `NONE`. `dns.opcode.to_flags` and `dns.rcode.to_flags` must encode a code into the header flag value that carries it, and `dns.opcode.from_flags` and `dns.rcode.from_flags` must recover the code from such a flag value, so that a code survives an encode-then-decode round trip. `dns.rcode.to_flags` must return both the header portion and the EDNS extended portion of a response code.
 
 ## Resource Data And Record Set Behavior
 
@@ -114,6 +116,8 @@ Zones and resolvers provide higher-level state views over names, rdatasets, mess
 
 **Resolver Configuration And Answers.** A `Resolver` must maintain nameservers, search list, domain, timeout, lifetime, port, nameserver port overrides, rotation, EDNS settings, TSIG keyring, and cache configuration as public resolver state. `resolve` must query for a name, class, and type and return an `Answer`; `query` must behave as a compatibility alias for `resolve`. `resolve_address` must perform a reverse PTR lookup, and `resolve_name` must request address records for a host name. If the response has no answer, an NXDOMAIN result, disallowed metaquery, all nameservers fail, or the lifetime expires, then the resolver must raise `NoAnswer`, `NXDOMAIN`, `NoMetaqueries`, `NoNameservers`, or `LifetimeTimeout` respectively.
 
+**Default Resolver.** The module must hold one process-wide default `Resolver` that the module-level query helpers use. `dns.resolver.get_default_resolver` must return that resolver, creating it on first call, and must return the same object on subsequent calls until it is reset. `dns.resolver.reset_default_resolver` must discard the current default so that the next `get_default_resolver` call builds a fresh one from local configuration.
+
 **Resolver Cache Behavior.** `Cache` and `LRUCache` must map resolver cache keys to answers and must respect DNS TTL expiration. `Cache.get` must return `None` for missing or expired entries; `put` must associate a key with an answer; `flush` must remove all entries or a selected key when supplied. `LRUCache` must evict least-recently-used entries when the configured maximum size is exceeded and must expose hit counts for keys it retains. Cache statistics must count hits and misses through the public statistics object.
 
 ## Local Query, Address, And Metadata Behavior
@@ -122,9 +126,9 @@ Local helpers and metadata conversions make DNS object state usable without requ
 
 **Local Query Message I/O.** `dns.query.send_udp`, `receive_udp`, `send_tcp`, and `receive_tcp` must write and read `Message` wire data through caller-supplied sockets. The higher-level UDP and TCP query functions must return response messages that answer the requested question and must validate source address and question relationship. If a response comes from an unexpected source or does not answer the requested question, then `UnexpectedSource` or `BadResponse` must be raised. If a UDP response is truncated and fallback is enabled, then `udp_with_fallback` must return the TCP response together with a flag indicating TCP was used.
 
-**EDNS Option Objects.** EDNS option classes must preserve option type and option data across object construction, wire parsing, `to_wire`, and text projection. `GenericOption` must preserve unknown option payload bytes. ECS, EDE, NSID, Cookie, ReportChannel, and filtering-related option classes must expose their documented public fields through object attributes and text output. If option wire data is malformed for the option type, then parsing must raise `dns.exception.FormError`.
+**EDNS Option Objects.** EDNS option classes must preserve option type and option data across object construction, wire parsing, `to_wire`, and text projection. `GenericOption` must preserve unknown option payload bytes. ECS, EDE, NSID, Cookie, ReportChannel, and filtering-related option classes must expose their documented public fields through object attributes and text output: `ECSOption`, `EDEOption`, `NSIDOption`, `CookieOption`, and `ReportChannelOption`. A `CookieOption` must carry the client cookie and the optional server cookie as separate public byte fields. An `EDEOption` must carry an extended DNS error code and an optional text reason; the error codes are named members of the `dns.edns.EDECode` enumeration, including `DNSSEC_BOGUS`. `dns.edns.option_from_wire` must return the option object for a given option type and wire payload, selecting the registered class for known types and `GenericOption` otherwise, so that an option survives a `to_wire` then `option_from_wire` round trip. If option wire data is malformed for the option type, then parsing must raise `dns.exception.FormError`.
 
-**TTL, Serial, TSIG Keyring, And Address Helpers.** `dns.ttl.from_text` must parse plain seconds and unit-suffixed TTL text into integer seconds and must raise `BadTTL` for malformed TTL text. `dns.serial.Serial` must compare and add serial values using DNS serial arithmetic. `dns.tsigkeyring.from_text` and `to_text` must convert between textual key dictionaries and keyring objects while preserving key names, algorithms, and secrets. `dns.e164` helpers must convert telephone-number text to and from ENUM owner names using the supplied origin.
+**TTL, Serial, TSIG Keyring, And Address Helpers.** `dns.ttl.from_text` must parse plain seconds and unit-suffixed TTL text into integer seconds and must raise `BadTTL` for malformed TTL text. `dns.serial.Serial` must compare and add serial values using DNS serial arithmetic. `dns.tsigkeyring.from_text` and `to_text` must convert between textual key dictionaries and keyring objects while preserving key names, algorithms, and secrets. `dns.e164.from_e164` must convert E.164 telephone-number text to an ENUM owner name beneath the supplied origin, and `dns.e164.to_e164` must recover the leading-plus telephone text from such a name, so that a number survives a `from_e164` then `to_e164` round trip.
 
 ## State Model
 
@@ -236,6 +240,8 @@ import dns.exception
 | `dns.resolver.LRUCache` | class | Provides a bounded TTL-aware least-recently-used cache. |
 | `dns.resolver.resolve` | function | Resolves a name through the default resolver. |
 | `dns.resolver.resolve_address` | function | Resolves reverse PTR data for an address. |
+| `dns.resolver.get_default_resolver` | function | Returns the process-wide default resolver. |
+| `dns.resolver.reset_default_resolver` | function | Discards the current default resolver. |
 | `dns.query.udp` | function | Sends a DNS message over UDP and returns the response. |
 | `dns.query.tcp` | function | Sends a DNS message over TCP and returns the response. |
 | `dns.query.udp_with_fallback` | function | Performs UDP query behavior with TCP fallback for truncation. |
@@ -243,15 +249,24 @@ import dns.exception
 | `dns.edns.GenericOption` | class | Preserves unknown EDNS option payload bytes. |
 | `dns.edns.ECSOption` | class | Represents EDNS Client Subnet option state. |
 | `dns.edns.EDEOption` | class | Represents Extended DNS Error option state. |
+| `dns.edns.NSIDOption` | class | Represents EDNS name-server identifier option state. |
+| `dns.edns.CookieOption` | class | Represents client and server DNS cookie state. |
+| `dns.edns.EDECode` | enum | Names the extended DNS error codes. |
+| `dns.edns.option_from_wire` | function | Builds the option object for an option type and wire payload. |
 | `dns.flags.from_text` | function | Converts DNS flag text to an integer flag value. |
 | `dns.flags.to_text` | function | Converts DNS flag values to text. |
 | `dns.opcode.from_text` | function | Converts opcode text to an opcode value. |
+| `dns.opcode.to_flags` | function | Encodes an opcode into a header flag value. |
+| `dns.opcode.from_flags` | function | Recovers an opcode from a header flag value. |
 | `dns.rcode.from_text` | function | Converts rcode text to an rcode value. |
+| `dns.rcode.to_flags` | function | Encodes an rcode into header and EDNS flag portions. |
+| `dns.rcode.from_flags` | function | Recovers an rcode from header and EDNS flag portions. |
 | `dns.rdataclass.from_text` | function | Converts DNS class text to a class value. |
 | `dns.rdatatype.from_text` | function | Converts DNS type text to a type value. |
 | `dns.reversename.from_address` | function | Converts address text to a reverse DNS name. |
 | `dns.reversename.to_address` | function | Converts reverse DNS name text to address text. |
 | `dns.e164.from_e164` | function | Converts E.164 telephone text to an ENUM DNS name. |
+| `dns.e164.to_e164` | function | Converts an ENUM DNS name back to E.164 telephone text. |
 | `dns.ttl.from_text` | function | Converts TTL text to integer seconds. |
 | `dns.serial.Serial` | class | Represents DNS serial arithmetic values. |
 | `dns.tsigkeyring.from_text` | function | Builds a TSIG keyring from textual key data. |

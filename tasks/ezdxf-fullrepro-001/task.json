@@ -1,0 +1,245 @@
+{
+  "instance_id": "ezdxf-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/mozman/ezdxf",
+  "source_url": "https://github.com/mozman/ezdxf",
+  "repo_commit": "b3eb37b942acb4c7e2d2487706e614aa29b7f9b2",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 82,
+    "scorer_isolation": [
+      "--remove-path",
+      "ezdxf"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_new_document_uses_requested_version_and_units": "atomic",
+    "test_atomic::test_new_document_sets_metric_measurement_header": "atomic",
+    "test_atomic::test_new_document_exposes_modelspace": "atomic",
+    "test_atomic::test_new_document_setup_populates_requested_standard_tables": "atomic",
+    "test_atomic::test_header_user_integer_and_float_values_are_mutable": "atomic",
+    "test_atomic::test_layer_table_adds_colored_layer_and_supports_case_insensitive_lookup": "atomic",
+    "test_atomic::test_layer_dxf_attributes_can_be_mutated": "atomic",
+    "test_atomic::test_linetype_table_exposes_continuous_linetype": "atomic",
+    "test_atomic::test_appid_table_registers_custom_application": "atomic",
+    "test_atomic::test_default_paperspace_is_available": "atomic",
+    "test_atomic::test_layout_manager_creates_named_paperspace": "atomic",
+    "test_atomic::test_block_table_creates_named_block_and_entity_space": "atomic",
+    "test_atomic::test_line_factory_stores_start_end_and_layer": "atomic",
+    "test_atomic::test_circle_factory_stores_center_radius_and_color": "atomic",
+    "test_atomic::test_arc_factory_stores_angles": "atomic",
+    "test_atomic::test_point_factory_stores_three_dimensional_location": "atomic",
+    "test_atomic::test_text_factory_and_public_placement_enum": "atomic",
+    "test_atomic::test_mtext_factory_stores_content_and_height": "atomic",
+    "test_atomic::test_lwpolyline_factory_stores_vertices_and_closed_flag": "atomic",
+    "test_atomic::test_polyline3d_factory_stores_vertices": "atomic",
+    "test_atomic::test_ellipse_factory_stores_center_axis_and_ratio": "atomic",
+    "test_atomic::test_spline_factory_stores_fit_points": "atomic",
+    "test_atomic::test_ray_and_xline_factories_store_direction_vectors": "atomic",
+    "test_atomic::test_solid_trace_and_face_factories_create_expected_types": "atomic",
+    "test_atomic::test_entity_dxf_namespace_supports_assignment_and_set": "atomic",
+    "test_atomic::test_modelspace_query_selects_by_entity_type": "atomic",
+    "test_atomic::test_query_attribute_filter_selects_layer": "atomic",
+    "test_atomic::test_query_attribute_filter_can_ignore_case": "atomic",
+    "test_atomic::test_entity_query_assignment_updates_supported_entities": "atomic",
+    "test_atomic::test_entity_query_slice_and_attribute_selection_are_sequence_views": "atomic",
+    "test_atomic::test_layout_groupby_groups_entities_by_layer": "atomic",
+    "test_atomic::test_layout_groupby_accepts_a_public_key_function": "atomic",
+    "test_atomic::test_rgb_integer_helpers_round_trip": "atomic",
+    "test_atomic::test_rgb_and_rgba_public_classes_round_trip_hex_and_floats": "atomic",
+    "test_atomic::test_transparency_helpers_preserve_endpoints": "atomic",
+    "test_atomic::test_vec3_arithmetic_and_distance_are_public": "atomic",
+    "test_atomic::test_ucs_converts_points_to_and_from_wcs": "atomic",
+    "test_atomic::test_ocs_converts_points_to_and_from_wcs": "atomic",
+    "test_atomic::test_matrix44_translation_transforms_a_point": "atomic",
+    "test_atomic::test_appdata_high_level_methods_store_and_discard_tags": "atomic",
+    "test_atomic::test_xdata_high_level_methods_store_and_replace_tags": "atomic",
+    "test_atomic::test_user_xdata_list_commits_supported_values": "atomic",
+    "test_atomic::test_user_xdata_dict_commits_mapping_values": "atomic",
+    "test_atomic::test_extension_dictionary_xrecord_exposes_public_tag_storage": "atomic",
+    "test_atomic::test_destroyed_entity_is_removed_by_layout_purge": "atomic",
+    "test_atomic::test_viewport_factory_is_available_in_paperspace": "atomic",
+    "test_atomic::test_block_reference_factory_stores_insert_transform": "atomic",
+    "test_atomic::test_block_reference_attribute_can_be_added_and_placed": "atomic",
+    "test_atomic::test_paperspace_viewport_and_layout_entities_have_distinct_storage": "atomic",
+    "test_atomic::test_document_write_produces_readable_ascii_stream": "atomic",
+    "test_atomic::test_document_ascii_projection_contains_selected_public_entity_facts": "atomic",
+    "test_integration::test_new_document_entities_survive_text_stream_round_trip": "integration",
+    "test_integration::test_modelspace_and_named_paperspace_survive_file_round_trip": "integration",
+    "test_integration::test_block_definition_and_reference_survive_file_round_trip": "integration",
+    "test_integration::test_block_attribute_template_and_value_survive_round_trip": "integration",
+    "test_integration::test_layer_assignment_query_and_groupby_agree_after_round_trip": "integration",
+    "test_integration::test_query_mutation_is_reflected_in_serialized_entities": "integration",
+    "test_integration::test_case_insensitive_query_and_color_grouping_share_entity_selection": "integration",
+    "test_integration::test_appdata_and_xdata_survive_stream_round_trip": "integration",
+    "test_integration::test_user_xdata_list_and_dict_survive_file_round_trip": "integration",
+    "test_integration::test_extension_dictionary_xrecord_survives_file_round_trip": "integration",
+    "test_integration::test_color_projections_survive_entity_and_layer_round_trip": "integration",
+    "test_integration::test_line_geometry_mutation_survives_stream_round_trip": "integration",
+    "test_integration::test_common_entity_factory_set_preserves_types_and_attributes": "integration",
+    "test_integration::test_polyline_and_spline_geometry_survives_round_trip": "integration",
+    "test_integration::test_text_and_mtext_public_content_and_placement_survive_round_trip": "integration",
+    "test_integration::test_ocs_circle_projection_agrees_before_and_after_round_trip": "integration",
+    "test_integration::test_ucs_converted_point_can_be_stored_and_reloaded": "integration",
+    "test_integration::test_matrix_transform_mutates_line_geometry_and_round_trips": "integration",
+    "test_integration::test_destroy_and_purge_changes_query_and_round_trip_state": "integration",
+    "test_integration::test_multiple_block_references_keep_independent_transforms_and_attributes": "integration",
+    "test_integration::test_owner_queries_include_modelspace_paperspace_and_block_entities": "integration",
+    "test_integration::test_document_groupby_combines_entities_from_all_public_layouts": "integration",
+    "test_integration::test_read_stream_can_be_reused_for_equivalent_public_projections": "integration",
+    "test_integration::test_unicode_text_survives_readfile_without_snapshot_comparison": "integration",
+    "test_integration::test_setup_tables_and_entity_linetype_assignment_survive_round_trip": "integration",
+    "test_integration::test_header_user_values_survive_file_round_trip": "integration",
+    "test_integration::test_layer_mutation_and_entity_reassignment_survive_round_trip": "integration",
+    "test_integration::test_insert_query_and_block_definition_remain_connected_after_round_trip": "integration",
+    "test_integration::test_query_selection_can_be_grouped_and_serialized_as_one_workflow": "integration",
+    "test_integration::test_r2000_line_round_trip_preserves_version_and_basic_geometry": "integration",
+    "test_integration::test_full_public_workflow_connects_entities_blocks_layouts_and_custom_data": "integration"
+  },
+  "stats": {
+    "atomic": 51,
+    "integration": 31,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "ezdxf",
+    "ezdxf.colors",
+    "ezdxf.entities.xdata",
+    "ezdxf.enums",
+    "ezdxf.math"
+  ],
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_metrics": {
+    "package_python_files": 341,
+    "source_loc_nonblank_noncomment": 115037,
+    "upstream_test_functions": 5696
+  },
+  "scope_notes": [
+    "Public documented APIs only; no private low-level implementation imports or source-test imports.",
+    "Generated local drawings cover document creation, tables, layouts, blocks, entities, colors, coordinates, custom data, queries, and grouping.",
+    "ODA/DWG conversion, GUI/rendering backends, large fixtures, exact snapshots/messages, network, sleeps, timing, and host resources are excluded.",
+    "Local replay evidence remains ARTIFACT_ONLY and does not establish trusted Stage 4 isolation or qualification."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "previous_status": "ARTIFACT_ONLY",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 82,
+      "total": 82,
+      "log": "logs/reference_py311.json",
+      "sha256": "eb46ef603b1d95f679fc1ae1c44d309333b62ae7ec7d3883e9684f71047b83e9"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 82,
+      "total": 82,
+      "log": "logs/reference_py310.json",
+      "sha256": "dc7364b29118138d2e0910d33dcc210e41cef4e56a36421cfc2f5f7f9eb7b058"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 82,
+      "log": "logs/dummy_py310.json",
+      "sha256": "95017a810f930b6bb2d2c3d1dfbebd4305df5a4f8bd42260dcc2da3d70f0c8bc"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 82,
+      "log": "logs/dummy_py311.json",
+      "sha256": "22618dc653300bba098afc298cac5f440af427310771a09ff31aeffaf4b38dae"
+    }
+  },
+  "task_id": "ezdxf-fullrepro-001",
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 82,
+      "total": 82
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 51,
+        "failed": 0,
+        "total": 51
+      },
+      "integration": {
+        "passed": 31,
+        "failed": 0,
+        "total": 31
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 14,
+      "errors": 68,
+      "total": 82
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 12,
+        "total": 51,
+        "errors": 39
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 2,
+        "total": 31,
+        "errors": 29
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "ezdxf",
+  "language": "python"
+}

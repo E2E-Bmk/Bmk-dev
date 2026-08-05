@@ -1,0 +1,223 @@
+{
+  "instance_id": "deepdiff-object-delta-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "seperman/deepdiff",
+  "repo_commit": "79e4379278b1cfdd8e9e3dccac364956908e8989",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 69,
+    "scorer_isolation": [
+      "--remove-path",
+      "deepdiff"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "oracle_version": "2026-08-05-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_import_surface_exposes_diff_search_hash_delta_and_paths": "atomic",
+    "test_atomic::test_equal_nested_objects_have_empty_diff": "atomic",
+    "test_atomic::test_nested_dictionary_value_change_reports_old_new_values_and_path": "atomic",
+    "test_atomic::test_dictionary_addition_and_removal_use_distinct_categories": "atomic",
+    "test_atomic::test_list_addition_and_removal_report_index_paths": "atomic",
+    "test_atomic::test_tuple_value_change_and_append_are_structural": "atomic",
+    "test_atomic::test_set_membership_changes_are_reported_at_the_set_path": "atomic",
+    "test_atomic::test_custom_object_attributes_are_compared": "atomic",
+    "test_atomic::test_type_changes_include_type_objects_and_values": "atomic",
+    "test_atomic::test_ignore_numeric_type_changes_suppresses_int_float_only_change": "atomic",
+    "test_atomic::test_ignore_string_case_suppresses_case_only_change": "atomic",
+    "test_atomic::test_significant_digits_suppresses_small_decimal_difference": "atomic",
+    "test_atomic::test_significant_digits_reports_difference_beyond_precision": "atomic",
+    "test_atomic::test_math_epsilon_suppresses_flat_numeric_difference": "atomic",
+    "test_atomic::test_include_paths_limits_comparison_to_selected_branch": "atomic",
+    "test_atomic::test_exclude_paths_removes_selected_branch_from_comparison": "atomic",
+    "test_atomic::test_exclude_regex_paths_removes_matching_nested_path": "atomic",
+    "test_atomic::test_ignore_order_suppresses_reordering_of_scalar_list": "atomic",
+    "test_atomic::test_ignore_order_matches_nested_dictionaries_by_content": "atomic",
+    "test_atomic::test_ignore_order_can_report_repetition_changes": "atomic",
+    "test_atomic::test_ignore_order_without_repetition_reporting_ignores_duplicate_positions": "atomic",
+    "test_atomic::test_tree_view_exposes_path_objects_and_text_view_has_same_path": "atomic",
+    "test_atomic::test_affected_paths_projects_changed_paths": "atomic",
+    "test_atomic::test_affected_root_keys_projects_top_level_keys": "atomic",
+    "test_atomic::test_verbose_level_zero_keeps_change_paths_without_values": "atomic",
+    "test_atomic::test_custom_base_operator_can_accept_small_numeric_variation": "atomic",
+    "test_atomic::test_custom_base_operator_reports_large_numeric_variation": "atomic",
+    "test_atomic::test_prefix_or_suffix_operator_accepts_prefix_relationship": "atomic",
+    "test_atomic::test_deepsearch_finds_case_insensitive_string_paths": "atomic",
+    "test_atomic::test_deepsearch_can_match_values_and_dictionary_keys": "atomic",
+    "test_atomic::test_deepsearch_regexp_mode_matches_selected_strings": "atomic",
+    "test_atomic::test_grep_operator_searches_an_object_with_pipe_syntax": "atomic",
+    "test_atomic::test_parse_path_and_extract_round_trip_nested_value": "atomic",
+    "test_atomic::test_deephash_is_stable_for_equal_nested_values": "atomic",
+    "test_atomic::test_delta_applies_value_addition_and_set_changes": "atomic",
+    "test_atomic::test_delta_mutate_false_preserves_input_identity": "atomic",
+    "test_atomic::test_delta_dumps_are_deterministic_for_same_diff": "atomic",
+    "test_atomic::test_delta_bytes_restore_and_apply_to_original": "atomic",
+    "test_atomic::test_deepdiff_json_is_parseable_and_contains_semantic_change_fields": "atomic",
+    "test_integration::test_diff_then_extract_changed_nested_value": "integration",
+    "test_integration::test_diff_delta_pipeline_reconstructs_nested_mapping": "integration",
+    "test_integration::test_json_projection_round_trips_diff_categories": "integration",
+    "test_integration::test_tree_and_text_views_preserve_affected_path_projection": "integration",
+    "test_integration::test_include_then_exclude_workflow_selects_only_allowed_branch": "integration",
+    "test_integration::test_ignore_order_workflow_distinguishes_reordering_from_repetition": "integration",
+    "test_integration::test_custom_object_diff_and_delta_preserve_object_type": "integration",
+    "test_integration::test_custom_operator_workflow_combines_numeric_and_string_rules": "integration",
+    "test_integration::test_search_workflow_finds_literal_then_regexp_matches": "integration",
+    "test_integration::test_grep_search_paths_can_be_extracted_from_source_object": "integration",
+    "test_integration::test_tuple_list_set_workflow_reports_and_applies_container_changes": "integration",
+    "test_integration::test_type_policy_workflow_can_strictly_report_or_ignore_numeric_types": "integration",
+    "test_integration::test_precision_workflow_changes_diff_visibility_and_json_projection": "integration",
+    "test_integration::test_case_and_order_policies_apply_together_to_nested_lists": "integration",
+    "test_integration::test_delta_serialization_workflow_is_repeatable_and_reversible": "integration",
+    "test_integration::test_hash_and_diff_workflow_agree_on_equal_nested_content": "integration",
+    "test_integration::test_affected_path_workflow_groups_changes_by_top_level_key": "integration",
+    "test_integration::test_regex_exclusion_workflow_leaves_json_public_branch_only": "integration",
+    "test_integration::test_custom_object_workflow_uses_mapping_for_json_serialization": "integration",
+    "test_integration::test_branch_selection_workflow_is_consistent_for_nested_changes": "integration",
+    "test_integration::test_numeric_policy_workflow_combines_epsilon_and_precision": "integration",
+    "test_integration::test_delta_workflow_replays_same_serialized_patch_twice": "integration",
+    "test_integration::test_repetition_report_can_be_serialized_as_a_semantic_delta": "integration",
+    "test_integration::test_search_workflow_cross_checks_literal_and_key_matches": "integration",
+    "test_integration::test_path_extract_and_delta_workflow_targets_same_nested_location": "integration",
+    "test_integration::test_ordered_tuple_and_unordered_set_hash_diff_workflow": "integration",
+    "test_integration::test_verbose_projection_workflow_preserves_paths_at_two_detail_levels": "integration",
+    "test_integration::test_custom_operator_then_delta_workflow_changes_only_unaccepted_value": "integration",
+    "test_integration::test_prefix_operator_then_delta_workflow_preserves_accepted_text": "integration",
+    "test_integration::test_json_diff_and_binary_delta_serve_distinct_restore_projections": "integration"
+  },
+  "stats": {
+    "atomic": 39,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 69,
+      "total": 69,
+      "log": "logs/reference_py310.json",
+      "sha256": "d932908b4178c66924ca88968a4053d694671b91f81410ebcf9ce1b4669c0855"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 1,
+      "total": 69,
+      "log": "logs/dummy_py310.json",
+      "sha256": "f94a955162e41930fe4c2a3276c65210c6e6b8d9097b6d87852a5f083831a172"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 69,
+      "total": 69,
+      "log": "logs/reference_py311.json",
+      "sha256": "f6e17f2bfb3cdb40dfc8008b4d99e5fed7fc65040f2a0f5a6172fc1e3d497e5a"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 1,
+      "total": 69,
+      "log": "logs/dummy_py311.json",
+      "sha256": "35df5a55dd613ddbe91e4d565e631b868e14c1cb074719eba5886186431072c6"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "qualification_claim": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "task_id": "deepdiff-object-delta-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 69,
+      "total": 69
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 39,
+        "failed": 0,
+        "total": 39
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 1,
+      "failed": 68,
+      "errors": 0,
+      "total": 69
+    },
+    "pass_rate_excluding_skips": 0.014492753623188406,
+    "by_layer": {
+      "atomic": {
+        "passed": 1,
+        "failed": 38,
+        "total": 39
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "source_url": "https://github.com/seperman/deepdiff",
+  "target_imports": [
+    "deepdiff"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "package_python_files": 18,
+    "pure_python_loc_nonblank_noncomment": 7789,
+    "upstream_test_functions_rough": 888
+  },
+  "scope_notes": [
+    "Public DeepDiff, DeepSearch, DeepHash, Delta, path extraction, and custom operator behavior only.",
+    "Nested dict, list, tuple, set, and simple custom-object comparisons are covered with semantic result checks.",
+    "Network, CLI, multiprocessing, private modules, source tests, and incidental exception text are excluded.",
+    "Local replay evidence is artifact-only and does not prove trusted isolation, signature, qualification, candidate score, Docker replay, provenance, or delivery."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310.json"
+  },
+  "package_import": "deepdiff",
+  "language": "python"
+}

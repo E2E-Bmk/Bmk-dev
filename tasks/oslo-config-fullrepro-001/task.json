@@ -1,0 +1,221 @@
+{
+  "instance_id": "oslo-config-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "openstack/oslo.config",
+  "repo_commit": "37b787699a6c2138fb2a38e3699c26a8adf892d0",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 62,
+    "scorer_isolation": [
+      "--remove-path",
+      "oslo_config"
+    ],
+    "oracle_version": "2026-08-05-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_opt_exposes_public_metadata": "atomic",
+    "test_atomic::test_opt_group_exposes_public_metadata": "atomic",
+    "test_atomic::test_default_group_registration_projects_default_value": "atomic",
+    "test_atomic::test_group_registration_projects_attribute_mapping": "atomic",
+    "test_atomic::test_cli_bool_option_sets_true": "atomic",
+    "test_atomic::test_cli_bool_inverse_sets_false": "atomic",
+    "test_atomic::test_grouped_cli_option_uses_group_prefix": "atomic",
+    "test_atomic::test_default_ini_values_are_typed": "atomic",
+    "test_atomic::test_group_ini_values_are_typed": "atomic",
+    "test_atomic::test_command_line_value_precedes_config_file": "atomic",
+    "test_atomic::test_set_default_changes_application_default": "atomic",
+    "test_atomic::test_config_file_precedes_set_default": "atomic",
+    "test_atomic::test_set_override_precedes_config_file": "atomic",
+    "test_atomic::test_clear_override_restores_config_file_value": "atomic",
+    "test_atomic::test_list_option_parses_comma_separated_ini_value": "atomic",
+    "test_atomic::test_dict_option_parses_key_value_ini_value": "atomic",
+    "test_atomic::test_multistr_option_preserves_repeated_ini_values": "atomic",
+    "test_atomic::test_quoted_string_option_strips_config_quotes": "atomic",
+    "test_atomic::test_ini_substitution_uses_previously_defined_values": "atomic",
+    "test_atomic::test_required_option_missing_raises_required_opt_error": "atomic",
+    "test_atomic::test_port_type_rejects_value_outside_bounds": "atomic",
+    "test_atomic::test_uri_type_enforces_allowed_schemes": "atomic",
+    "test_atomic::test_host_address_option_accepts_hostnames_and_ip_addresses": "atomic",
+    "test_atomic::test_choice_option_rejects_unlisted_value": "atomic",
+    "test_atomic::test_default_location_is_application_default": "atomic",
+    "test_atomic::test_set_default_location_is_application_managed": "atomic",
+    "test_atomic::test_set_override_location_is_application_managed": "atomic",
+    "test_atomic::test_config_file_location_is_user_controlled": "atomic",
+    "test_atomic::test_command_line_location_is_user_controlled": "atomic",
+    "test_atomic::test_export_import_state_preserves_values_and_groups": "atomic",
+    "test_atomic::test_pickled_configopts_uses_exported_state": "atomic",
+    "test_atomic::test_list_all_sections_reports_parsed_sections": "atomic",
+    "test_atomic::test_generator_cli_writes_machine_readable_json": "atomic",
+    "test_atomic::test_generator_json_contains_option_metadata": "atomic",
+    "test_atomic::test_generator_cli_writes_machine_readable_yaml": "atomic",
+    "test_atomic::test_generator_cli_writes_ini_sample": "atomic",
+    "test_atomic::test_validator_cli_accepts_config_matching_opt_data": "atomic",
+    "test_integration::test_quickstart_grouped_config_uses_file_and_default": "integration",
+    "test_integration::test_precedence_chain_default_file_then_cli": "integration",
+    "test_integration::test_override_survives_state_export_and_import": "integration",
+    "test_integration::test_clearing_override_restores_user_location": "integration",
+    "test_integration::test_grouped_cli_value_projects_location_and_value": "integration",
+    "test_integration::test_collection_options_round_trip_through_state": "integration",
+    "test_integration::test_config_dir_files_override_config_file_in_sorted_order": "integration",
+    "test_integration::test_substitution_feeds_typed_list_projection": "integration",
+    "test_integration::test_location_projection_changes_with_source_precedence": "integration",
+    "test_integration::test_pickled_grouped_config_can_be_accessed_after_restore": "integration",
+    "test_integration::test_generator_json_and_yaml_share_option_names": "integration",
+    "test_integration::test_generated_yaml_opt_data_validates_matching_config": "integration",
+    "test_integration::test_validator_rejects_unknown_local_option": "integration",
+    "test_integration::test_validator_exclude_group_ignores_dynamic_group": "integration",
+    "test_integration::test_generator_ini_and_json_agree_on_sample_default": "integration",
+    "test_integration::test_generator_records_choices_and_typed_bounds": "integration",
+    "test_integration::test_generator_records_secret_and_advanced_flags": "integration",
+    "test_integration::test_generator_records_deprecated_replacement_projection": "integration",
+    "test_integration::test_validator_accepts_dest_name_for_hyphenated_option": "integration",
+    "test_integration::test_validator_check_defaults_accepts_matching_defaults": "integration",
+    "test_integration::test_generated_defaults_can_seed_configopts_registration": "integration",
+    "test_integration::test_generated_group_metadata_matches_registered_group_access": "integration",
+    "test_integration::test_configopts_sections_and_validator_exclusion_agree_for_dynamic_group": "integration",
+    "test_integration::test_state_and_generator_views_share_registered_group_names": "integration",
+    "test_integration::test_machine_readable_outputs_are_stable_for_same_generated_namespace": "integration"
+  },
+  "stats": {
+    "atomic": 37,
+    "integration": 25,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_url": "https://opendev.org/openstack/oslo.config",
+  "target_imports": [
+    "oslo_config.cfg",
+    "oslo_config.generator",
+    "oslo_config.validator"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "verified_source_loc_no_vendor": 6430,
+    "verified_source_py_files_no_vendor": 15,
+    "test_files": 18,
+    "upstream_test_functions_rough": 802
+  },
+  "scope_notes": [
+    "Public documented oslo.config configuration behavior only; no private target modules or source tests.",
+    "Covers ConfigOpts, option/group registration, argv, local INI files, typed validation, locations, state, generator output, and validator return codes.",
+    "Remote drivers, network sources, Sphinx builds, services, sleeps, timing, host configuration, and exact diagnostic text are excluded.",
+    "This is local artifact evidence only and does not establish trusted isolation, network isolation, a trusted signature, candidate qualification, or delivery readiness."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "oslo-config-fullrepro-001",
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 62,
+      "total": 62,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "145a84945cd26c28faa985009f343aa2c34cb27be267c42a25a2c79f06467be5"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 62,
+      "total": 62,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "65d658723dd7cc32f0043883a8301ba775a7b0ff61dd352b71526c22960439d0"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 62,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "299ea99aadcd1187ae4d50ab81969d2447d221253bfdedb354d21539a03bb5f2"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 62,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "75c198f06ba1b3bca8693536bc423e068d279c761de69f2ee1b7254511862f2f"
+    }
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 62,
+      "total": 62
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 37,
+        "failed": 0,
+        "total": 37
+      },
+      "integration": {
+        "passed": 25,
+        "failed": 0,
+        "total": 25
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 62,
+      "errors": 0,
+      "total": 62
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 37,
+        "total": 37
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 25,
+        "total": 25
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "oslo_config",
+  "language": "python"
+}

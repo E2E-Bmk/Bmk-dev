@@ -1,0 +1,254 @@
+{
+  "instance_id": "agate-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "wireservice/agate",
+  "repo_commit": "7aa490cbc3d965e0a950dd904ea1f9cf5ced013c",
+  "spec_version": "v1-public-api-artifact",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 85,
+    "source": "85 generated public-behavior tests over typed tables and local projections",
+    "nodeid_file": "kept_nodeids.txt",
+    "taxonomy_file": "taxonomy.jsonl",
+    "mapping_file": "spec_test_map.md",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "scorer_isolation": [
+      "PYTHONPATH=<solution_dir>",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "LC_ALL=C",
+      "LANG=C",
+      "TZ=UTC",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "oracle_version": "2026-08-04-public-api-artifact-v1"
+  },
+  "stats": {
+    "atomic": 51,
+    "integration": 34,
+    "system_e2e": 0
+  },
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_meta": {
+    "language": "Python",
+    "source_commit": "7aa490cbc3d965e0a950dd904ea1f9cf5ced013c"
+  },
+  "target_imports": [
+    "agate"
+  ],
+  "scope_notes": [
+    "Documented public Table, TableSet, TypeTester, data types, transforms, metadata, local I/O, and text projections only.",
+    "Locale-sensitive cases use explicit en_US settings or explicit date and datetime formats.",
+    "Network, source tests, private modules, sleeps, timing, host state, and brittle whole-output snapshots are excluded.",
+    "Stage 4 remains artifact-only; no trusted runner, black-box, network, signature, qualification, candidate result, or delivery claim is present."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "reference_result_source": "logs/reference_py310.json",
+    "python311_result_source": "logs/reference_py311.json",
+    "dummy_result_source": "logs/dummy_py310.json",
+    "dummy_python311_result_source": "logs/dummy_py311.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 85,
+      "total": 85,
+      "log": "logs/reference_py311.json",
+      "sha256": "84d59122f716947f5e71ec3b4ba3a66de5093418c0d22fe5e1a2f248798f73c0"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 85,
+      "total": 85,
+      "log": "logs/reference_py310.json",
+      "sha256": "1d0f5aa3ad79c188fae91a129efc00a500f3ef6a45e574151c15714a9f3160e1"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 85,
+      "log": "logs/dummy_py310.json",
+      "sha256": "d85f500ac6833a9ab1796e9e0befa0ad9c9282e37983b955af6fea14b56c9c2b"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 85,
+      "log": "logs/dummy_py311.json",
+      "sha256": "42f61a2570ae7578646e1e25ec90d358b155450f418566ef1deab346ecbf469c"
+    }
+  },
+  "task_id": "agate-fullrepro-001",
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 85,
+      "total": 85
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 51,
+        "failed": 0,
+        "total": 51
+      },
+      "integration": {
+        "passed": 34,
+        "failed": 0,
+        "total": 34
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 22,
+      "errors": 63,
+      "total": 85
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 18,
+        "total": 51,
+        "errors": 33
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 4,
+        "total": 34,
+        "errors": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "agate",
+  "taxonomy": {
+    "test_atomic::test_table_constructor_casts_rows_and_types": "atomic",
+    "test_atomic::test_table_short_row_is_padded_with_null": "atomic",
+    "test_atomic::test_table_row_names_can_come_from_column": "atomic",
+    "test_atomic::test_table_row_names_can_come_from_function": "atomic",
+    "test_atomic::test_table_columns_expose_public_metadata": "atomic",
+    "test_atomic::test_rows_support_keyed_and_indexed_access": "atomic",
+    "test_atomic::test_columns_expose_distinct_and_sorted_values": "atomic",
+    "test_atomic::test_mapped_sequences_are_immutable_and_named": "atomic",
+    "test_atomic::test_table_length_and_iteration_follow_rows": "atomic",
+    "test_atomic::test_type_tester_infers_controlled_public_types": "atomic",
+    "test_atomic::test_type_tester_force_overrides_inference": "atomic",
+    "test_atomic::test_type_tester_limit_changes_inference_sample": "atomic",
+    "test_atomic::test_type_tester_custom_types_and_null_values": "atomic",
+    "test_atomic::test_text_cast_respects_null_policy": "atomic",
+    "test_atomic::test_boolean_cast_respects_custom_literals": "atomic",
+    "test_atomic::test_number_cast_uses_explicit_locale": "atomic",
+    "test_atomic::test_date_cast_uses_explicit_format": "atomic",
+    "test_atomic::test_datetime_cast_uses_explicit_format": "atomic",
+    "test_atomic::test_timedelta_casts_duration_without_locale": "atomic",
+    "test_atomic::test_select_preserves_requested_column_order": "atomic",
+    "test_atomic::test_exclude_removes_named_columns": "atomic",
+    "test_atomic::test_where_preserves_matching_rows_and_metadata": "atomic",
+    "test_atomic::test_order_by_places_nulls_last": "atomic",
+    "test_atomic::test_limit_accepts_start_stop_step": "atomic",
+    "test_atomic::test_distinct_keeps_first_keyed_row": "atomic",
+    "test_atomic::test_find_returns_first_matching_row": "atomic",
+    "test_atomic::test_left_join_adds_right_projection": "atomic",
+    "test_atomic::test_inner_join_drops_unmatched_rows": "atomic",
+    "test_atomic::test_full_outer_join_retains_dangling_rows": "atomic",
+    "test_atomic::test_join_columns_limits_right_projection": "atomic",
+    "test_atomic::test_group_by_builds_public_tableset": "atomic",
+    "test_atomic::test_tableset_proxy_select_preserves_group_keys": "atomic",
+    "test_atomic::test_table_aggregate_returns_named_values": "atomic",
+    "test_atomic::test_numeric_aggregations_return_typed_values": "atomic",
+    "test_atomic::test_compute_formula_adds_typed_column": "atomic",
+    "test_atomic::test_compute_replace_replaces_existing_column": "atomic",
+    "test_atomic::test_percent_and_percent_change_add_columns": "atomic",
+    "test_atomic::test_rank_and_slug_add_stable_projections": "atomic",
+    "test_atomic::test_pivot_count_uses_key_and_pivot_columns": "atomic",
+    "test_atomic::test_pivot_sum_uses_numeric_aggregation": "atomic",
+    "test_atomic::test_normalize_emits_key_property_value_rows": "atomic",
+    "test_atomic::test_denormalize_restores_sparse_properties": "atomic",
+    "test_atomic::test_table_from_object_flattens_public_rows": "atomic",
+    "test_atomic::test_table_csv_round_trip_reads_local_file": "atomic",
+    "test_atomic::test_table_json_round_trip_reads_local_file": "atomic",
+    "test_atomic::test_table_newline_json_round_trip_reads_local_file": "atomic",
+    "test_atomic::test_tableset_csv_round_trip_reads_local_directory": "atomic",
+    "test_atomic::test_tableset_nested_json_round_trip_reads_local_file": "atomic",
+    "test_atomic::test_print_structure_reports_columns_and_types": "atomic",
+    "test_atomic::test_print_table_reports_headers_and_values": "atomic",
+    "test_atomic::test_print_bars_reports_labels_and_counts": "atomic",
+    "test_integration::test_select_where_compute_pipeline_preserves_fact_projection": "integration",
+    "test_integration::test_order_limit_distinct_pipeline_reduces_rows_consistently": "integration",
+    "test_integration::test_join_group_aggregate_pipeline_matches_manual_totals": "integration",
+    "test_integration::test_group_aggregate_and_pivot_agree_on_counts": "integration",
+    "test_integration::test_group_by_select_merge_round_trip_recreates_group_column": "integration",
+    "test_integration::test_having_filters_aggregated_groups_before_merge": "integration",
+    "test_integration::test_nested_grouping_aggregate_preserves_two_keys": "integration",
+    "test_integration::test_tableset_proxy_compute_then_aggregate_projects_new_column": "integration",
+    "test_integration::test_join_then_compute_taxed_revenue": "integration",
+    "test_integration::test_inner_join_then_group_by_category": "integration",
+    "test_integration::test_full_outer_join_then_where_identifies_missing_side": "integration",
+    "test_integration::test_normalize_then_denormalize_round_trip_preserves_profiles": "integration",
+    "test_integration::test_normalize_custom_column_names_round_trip": "integration",
+    "test_integration::test_pivot_then_denormalize_matches_grouped_counts": "integration",
+    "test_integration::test_pivot_percent_computation_sums_each_group": "integration",
+    "test_integration::test_table_csv_round_trip_then_select_projection": "integration",
+    "test_integration::test_table_json_round_trip_then_compute_projection": "integration",
+    "test_integration::test_newline_json_round_trip_then_order_projection": "integration",
+    "test_integration::test_print_csv_can_feed_from_csv": "integration",
+    "test_integration::test_print_json_can_feed_from_json": "integration",
+    "test_integration::test_tableset_csv_round_trip_then_aggregate": "integration",
+    "test_integration::test_tableset_nested_json_round_trip_then_proxy": "integration",
+    "test_integration::test_temporal_table_json_round_trip_preserves_public_types": "integration",
+    "test_integration::test_type_tester_csv_route_agrees_with_explicit_types": "integration",
+    "test_integration::test_join_csv_sources_then_aggregate": "integration",
+    "test_integration::test_text_projections_follow_transformed_metadata": "integration",
+    "test_integration::test_print_bars_follows_pivot_counts": "integration",
+    "test_integration::test_aggregate_summary_matches_column_projection": "integration",
+    "test_integration::test_table_merge_preserves_group_order_after_select": "integration",
+    "test_integration::test_required_match_reports_unmatched_join": "integration",
+    "test_integration::test_invalid_join_mode_reports_public_value_error": "integration",
+    "test_integration::test_compute_then_csv_round_trip_preserves_formula": "integration",
+    "test_integration::test_local_json_round_trip_with_row_names_projection": "integration",
+    "test_integration::test_table_set_workflow_group_compute_having_merge": "integration"
+  },
+  "language": "python"
+}

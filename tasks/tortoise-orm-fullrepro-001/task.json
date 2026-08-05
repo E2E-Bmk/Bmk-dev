@@ -1,0 +1,211 @@
+{
+  "instance_id": "tortoise-orm-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/tortoise/tortoise-orm",
+  "repo_commit": "8c12adc46c534a16cd9abf589b94e77d52ecf919",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "tortoise"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_model_classes_expose_public_field_metadata": "atomic",
+    "test_atomic::test_describe_models_is_json_serializable": "atomic",
+    "test_atomic::test_generate_schemas_allows_create": "atomic",
+    "test_atomic::test_create_assigns_explicit_primary_key_and_reads_pk": "atomic",
+    "test_atomic::test_save_inserts_and_updates_single_row": "atomic",
+    "test_atomic::test_filter_equality_selects_matching_rows": "atomic",
+    "test_atomic::test_filter_comparison_and_string_lookups": "atomic",
+    "test_atomic::test_exclude_removes_matching_rows": "atomic",
+    "test_atomic::test_order_by_supports_ascending_and_descending": "atomic",
+    "test_atomic::test_values_returns_selected_dict_fields": "atomic",
+    "test_atomic::test_values_supports_alias_for_related_field": "atomic",
+    "test_atomic::test_values_list_returns_tuples_and_flat_values": "atomic",
+    "test_atomic::test_count_and_exists_reflect_rows": "atomic",
+    "test_atomic::test_first_and_get_or_none_return_expected_rows": "atomic",
+    "test_atomic::test_get_or_create_reports_created_flag": "atomic",
+    "test_atomic::test_update_or_create_updates_existing_row": "atomic",
+    "test_atomic::test_queryset_update_returns_affected_count": "atomic",
+    "test_atomic::test_queryset_delete_removes_rows": "atomic",
+    "test_atomic::test_bulk_create_inserts_multiple_rows": "atomic",
+    "test_atomic::test_bulk_update_changes_selected_fields": "atomic",
+    "test_atomic::test_nullable_and_boolean_values_round_trip": "atomic",
+    "test_atomic::test_json_values_round_trip": "atomic",
+    "test_atomic::test_foreign_key_filter_uses_related_field": "atomic",
+    "test_atomic::test_prefetch_related_populates_forward_relation": "atomic",
+    "test_atomic::test_reverse_relation_prefetch_returns_children": "atomic",
+    "test_atomic::test_many_to_many_add_and_prefetch": "atomic",
+    "test_atomic::test_many_to_many_remove_and_clear": "atomic",
+    "test_atomic::test_model_describe_names_fields_and_table": "atomic",
+    "test_atomic::test_tortoise_describe_models_names_registered_models": "atomic",
+    "test_atomic::test_file_database_creates_persistent_sqlite_path": "atomic",
+    "test_integration::test_create_save_filter_and_values_share_row_projection": "integration",
+    "test_integration::test_ordering_and_values_list_preserve_projection_order": "integration",
+    "test_integration::test_exclude_and_isnull_partition_nullable_rows": "integration",
+    "test_integration::test_get_or_create_then_update_or_create_preserve_identity": "integration",
+    "test_integration::test_bulk_create_filter_and_bulk_update_workflow": "integration",
+    "test_integration::test_delete_workflow_updates_count_and_exists": "integration",
+    "test_integration::test_forward_prefetch_and_values_related_name_agree": "integration",
+    "test_integration::test_reverse_prefetch_and_related_filter_agree": "integration",
+    "test_integration::test_many_to_many_prefetch_and_values_list_agree": "integration",
+    "test_integration::test_relation_mutations_change_prefetched_projection": "integration",
+    "test_integration::test_nested_relation_filter_and_order_projection": "integration",
+    "test_integration::test_model_metadata_matches_relation_projection": "integration",
+    "test_integration::test_schema_generation_supports_repeated_safe_initialization": "integration",
+    "test_integration::test_file_database_round_trip_from_insert_to_read": "integration",
+    "test_integration::test_first_last_and_limit_offset_share_ordered_rows": "integration",
+    "test_integration::test_range_in_and_case_insensitive_filters_compose": "integration",
+    "test_integration::test_boolean_and_numeric_filters_compose": "integration",
+    "test_integration::test_save_update_refreshes_filtered_values": "integration",
+    "test_integration::test_instance_delete_removes_from_relation_projection": "integration",
+    "test_integration::test_get_or_none_returns_none_for_missing_row": "integration",
+    "test_integration::test_values_default_projection_contains_database_fields": "integration",
+    "test_integration::test_values_list_default_projection_contains_database_fields": "integration",
+    "test_integration::test_prefetch_then_instance_fetch_related_keeps_relations": "integration",
+    "test_integration::test_many_to_many_duplicate_add_is_idempotent": "integration",
+    "test_integration::test_related_creation_sets_foreign_key": "integration",
+    "test_integration::test_model_describe_and_tortoise_describe_models_agree": "integration",
+    "test_integration::test_file_database_schema_and_query_are_independent_views": "integration",
+    "test_integration::test_chained_queryset_is_lazy_until_awaited": "integration",
+    "test_integration::test_queryset_reuse_produces_same_values": "integration",
+    "test_integration::test_end_to_end_library_projection": "integration"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_url": "https://github.com/tortoise/tortoise-orm",
+  "target_imports": [
+    "tortoise",
+    "tortoise.models",
+    "tortoise.fields"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "package_python_files": 134,
+    "pure_python_loc_nonblank_noncomment": 23279,
+    "upstream_test_functions": 1858
+  },
+  "scope_notes": [
+    "Public Model, fields, Tortoise, and QuerySet APIs only.",
+    "Deterministic SQLite memory and temporary file databases only.",
+    "No private target modules or attributes, source-test imports, live services, network backends, migration implementation internals, timing, or exact SQL/error text.",
+    "Local replay evidence is reproducibility evidence only and does not establish trusted execution, isolation, qualification, a candidate score, or delivery readiness."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "tortoise-orm-fullrepro-001",
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "c26f4eb8554450ad09c3204605fd2d6272efdcd3df28485959dbec5df1c46eea"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "a2ac5c72eb52b51f35e2ff3d46c8273943cc14aadce529e4bb0b14d359739b69"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "113a26d2163594c2166ab8004718e2d06dc109fbc265ae3c0969b652a8fdab53"
+    }
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 60,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "tortoise",
+  "language": "python"
+}

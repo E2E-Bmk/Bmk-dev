@@ -1,0 +1,230 @@
+{
+  "instance_id": "isort-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/PyCQA/isort",
+  "source_url": "https://github.com/PyCQA/isort",
+  "repo_commit": "fd8bd075176d074af69aa6acae7ed89a6a89bb05",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "conftest": "oracle/conftest.py",
+    "requirements": "oracle/requirements.txt",
+    "spec_test_map": "spec_test_map.md",
+    "nodeid_file": "kept_nodeids.txt",
+    "taxonomy_file": "taxonomy.jsonl",
+    "count": 66,
+    "atomic": 32,
+    "integration": 34,
+    "system_e2e": 0,
+    "source": "generated_public_contract",
+    "reference_gate": "66/66 passed in local Python 3.10 replay",
+    "dummy_gate": "5/66 passed in local empty-dummy replay (7.6%, below 10%)",
+    "scorer_isolation": [
+      "--remove-path",
+      "isort"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_exports_are_available": "atomic",
+    "test_atomic::test_code_sorts_stdlib_and_third_party_sections": "atomic",
+    "test_atomic::test_code_sorts_from_import_members": "atomic",
+    "test_atomic::test_check_code_reports_sortedness": "atomic",
+    "test_atomic::test_stream_writes_sorted_code_and_reports_change": "atomic",
+    "test_atomic::test_check_stream_reports_sortedness": "atomic",
+    "test_atomic::test_file_rewrites_and_returns_changed": "atomic",
+    "test_atomic::test_check_file_reports_sortedness": "atomic",
+    "test_atomic::test_place_module_identifies_standard_library": "atomic",
+    "test_atomic::test_place_module_identifies_relative_import": "atomic",
+    "test_atomic::test_place_module_with_reason_exposes_category_and_reason": "atomic",
+    "test_atomic::test_config_profile_black_controls_documented_values": "atomic",
+    "test_atomic::test_config_custom_section_places_known_module": "atomic",
+    "test_atomic::test_config_add_and_remove_imports_transform_code": "atomic",
+    "test_atomic::test_force_to_top_moves_named_import": "atomic",
+    "test_atomic::test_no_sections_merges_import_groups": "atomic",
+    "test_atomic::test_from_first_orders_from_import_before_straight_import": "atomic",
+    "test_atomic::test_force_single_line_splits_from_import": "atomic",
+    "test_atomic::test_length_sort_orders_shorter_modules_first": "atomic",
+    "test_atomic::test_import_heading_is_added_to_its_section": "atomic",
+    "test_atomic::test_vertical_hanging_output_mode_wraps_long_import": "atomic",
+    "test_atomic::test_inline_skip_comment_preserves_the_marked_import": "atomic",
+    "test_atomic::test_off_and_on_comments_preserve_only_the_disabled_block": "atomic",
+    "test_atomic::test_split_comment_starts_a_new_import_group": "atomic",
+    "test_atomic::test_no_inline_sort_preserves_member_order": "atomic",
+    "test_atomic::test_find_imports_in_code_returns_all_imports": "atomic",
+    "test_atomic::test_find_imports_unique_by_module_removes_duplicate_module_entries": "atomic",
+    "test_atomic::test_find_imports_top_only_excludes_nested_imports": "atomic",
+    "test_atomic::test_find_imports_in_stream_reads_the_given_stream": "atomic",
+    "test_atomic::test_find_imports_in_file_reads_a_source_file": "atomic",
+    "test_atomic::test_find_imports_in_paths_walks_python_files": "atomic",
+    "test_atomic::test_file_output_stream_returns_sorted_content_without_rewriting": "atomic",
+    "test_integration::test_api_code_and_check_round_trip": "integration",
+    "test_integration::test_api_stream_output_is_checkable": "integration",
+    "test_integration::test_api_file_rewrite_then_check": "integration",
+    "test_integration::test_api_output_stream_preserves_source": "integration",
+    "test_integration::test_api_diff_exposes_unified_changes": "integration",
+    "test_integration::test_api_profile_wraps_and_check_code_accepts": "integration",
+    "test_integration::test_custom_section_sort_and_place_agree": "integration",
+    "test_integration::test_api_add_remove_and_check_round_trip": "integration",
+    "test_integration::test_action_comment_blocks_override_add_imports": "integration",
+    "test_integration::test_cli_sorts_single_file_in_place": "integration",
+    "test_integration::test_cli_check_clean_file_returns_zero": "integration",
+    "test_integration::test_cli_check_dirty_file_returns_one_without_write": "integration",
+    "test_integration::test_cli_check_diff_reports_changes_without_write": "integration",
+    "test_integration::test_cli_stdin_stdout_sorts_code": "integration",
+    "test_integration::test_cli_stdin_check_reports_dirty_input": "integration",
+    "test_integration::test_cli_stdout_leaves_file_unchanged": "integration",
+    "test_integration::test_cli_black_profile_formats_long_from_import": "integration",
+    "test_integration::test_cli_isort_cfg_changes_sectioning": "integration",
+    "test_integration::test_cli_pyproject_changes_sectioning": "integration",
+    "test_integration::test_cli_setup_cfg_changes_sectioning": "integration",
+    "test_integration::test_cli_tox_ini_changes_sectioning": "integration",
+    "test_integration::test_cli_editorconfig_changes_sectioning": "integration",
+    "test_integration::test_cli_settings_path_uses_custom_file": "integration",
+    "test_integration::test_cli_nearest_config_wins_for_nested_file": "integration",
+    "test_integration::test_cli_custom_sections_create_named_group": "integration",
+    "test_integration::test_cli_action_comments_preserve_off_block_and_sort_rest": "integration",
+    "test_integration::test_cli_skip_file_comment_accepts_unsorted_file": "integration",
+    "test_integration::test_cli_explicit_skip_requires_filter_files": "integration",
+    "test_integration::test_cli_skip_glob_skips_matching_file": "integration",
+    "test_integration::test_cli_add_and_remove_imports_update_file": "integration",
+    "test_integration::test_cli_append_only_and_force_adds_have_distinct_effects": "integration",
+    "test_integration::test_cli_source_path_places_project_module": "integration",
+    "test_integration::test_cli_multiline_mode_matches_api_projection": "integration",
+    "test_integration::test_cli_force_single_line_matches_documented_mode": "integration"
+  },
+  "stats": {
+    "atomic": 32,
+    "integration": 34,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4_evidence": {
+    "status": "ARTIFACT_ONLY",
+    "evidence_report": "logs/evidence_report.md"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_replay.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_metrics": {
+    "package_python_files": 44,
+    "pure_python_loc_nonblank_noncomment": 9821,
+    "upstream_test_files": 38,
+    "upstream_test_functions_rough": 523
+  },
+  "target_imports": [
+    "isort"
+  ],
+  "scope_notes": [
+    "Generated public contract tests only; no private target modules or attributes and no upstream test imports.",
+    "The retained behavior uses temporary local files and excludes cloned projects, randomized generation, performance timing, private version carriers, unstable whole configuration snapshots, service access, and exact diagnostics.",
+    "Stage 4 remains artifact-only; no trusted runner result, strict black-box result, network isolation proof, trusted signature, candidate score, qualification claim, or delivery readiness is present."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "reference_result_source": "logs/reference_py310_replay.json",
+    "python311_result_source": "logs/reference_py311_replay.json",
+    "dummy_result_source": "logs/dummy_py310_replay.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "isort-fullrepro-001",
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py311_replay.json",
+      "sha256": "2df29dc3c6a12438d13b0c9e0b119d226268d3fe0f279a8ed15edd7c70ea72dc"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py310_replay.json",
+      "sha256": "2bba782a09f14f51ad46304eefc06fbaddd78f574a32fd9beff1f02b8d38bc56"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 5,
+      "total": 66,
+      "log": "logs/dummy_py310_replay.json",
+      "sha256": "2f680c092a4355610eadbfc2044c89b75dffe8588804b1d3712077f82cc922e5"
+    }
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 32,
+        "failed": 0,
+        "total": 32
+      },
+      "integration": {
+        "passed": 34,
+        "failed": 0,
+        "total": 34
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 5,
+      "failed": 61,
+      "errors": 0,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 0.07575757575757576,
+    "by_layer": {
+      "atomic": {
+        "passed": 1,
+        "failed": 31,
+        "total": 32
+      },
+      "integration": {
+        "passed": 4,
+        "failed": 30,
+        "total": 34
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "isort",
+  "language": "python"
+}

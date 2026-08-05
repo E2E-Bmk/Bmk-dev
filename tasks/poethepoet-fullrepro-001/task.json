@@ -1,0 +1,218 @@
+{
+  "instance_id": "poethepoet-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "nat-n/poethepoet",
+  "source_url": "https://github.com/nat-n/poethepoet",
+  "repo_commit": "e4d032ce63f6a80cef9b7fc9a956c5f4de04c9b2",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 65,
+    "scorer_isolation": [
+      "--remove-path",
+      "poethepoet"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_package_exposes_version_and_main": "atomic",
+    "test_atomic::test_iter_tasks_returns_public_task_names": "atomic",
+    "test_atomic::test_builtin_list_tasks_excludes_hidden_tasks": "atomic",
+    "test_atomic::test_string_task_runs_as_command_and_appends_free_args": "atomic",
+    "test_atomic::test_command_quotes_keep_whitespace_inside_one_argument": "atomic",
+    "test_atomic::test_command_environment_default_operator_supplies_fallback": "atomic",
+    "test_atomic::test_command_environment_alternate_operator_uses_presence": "atomic",
+    "test_atomic::test_single_quoted_dollar_is_not_expanded_by_command_parser": "atomic",
+    "test_atomic::test_glob_expansion_matches_project_files": "atomic",
+    "test_atomic::test_empty_glob_null_removes_unmatched_argument": "atomic",
+    "test_atomic::test_cwd_option_runs_task_from_requested_directory": "atomic",
+    "test_atomic::test_capture_stdout_writes_task_output_to_project_file": "atomic",
+    "test_atomic::test_task_env_values_are_visible_to_subprocess": "atomic",
+    "test_atomic::test_private_env_can_interpolate_without_leaking_to_process": "atomic",
+    "test_atomic::test_expected_envfile_loads_variables_for_task": "atomic",
+    "test_atomic::test_optional_envfile_can_be_missing": "atomic",
+    "test_atomic::test_named_argument_default_is_exposed_to_command": "atomic",
+    "test_atomic::test_positional_argument_is_available_by_name": "atomic",
+    "test_atomic::test_boolean_argument_toggles_environment_presence": "atomic",
+    "test_atomic::test_integer_and_float_arguments_reach_expression_as_typed_values": "atomic",
+    "test_atomic::test_choices_reject_unsupported_argument_value": "atomic",
+    "test_atomic::test_multiple_option_values_are_joined_for_command_environment": "atomic",
+    "test_atomic::test_expr_task_prints_expression_result": "atomic",
+    "test_atomic::test_expr_assert_false_returns_nonzero": "atomic",
+    "test_atomic::test_script_task_receives_typed_arguments": "atomic",
+    "test_atomic::test_script_print_result_outputs_return_value": "atomic",
+    "test_atomic::test_hidden_task_cannot_be_executed_directly": "atomic",
+    "test_atomic::test_unknown_task_returns_nonzero_without_running_payload": "atomic",
+    "test_atomic::test_command_ignore_fail_turns_failure_into_success": "atomic",
+    "test_atomic::test_help_lists_public_task_with_help_text": "atomic",
+    "test_atomic::test_poe_tasks_toml_can_define_tasks_without_tool_namespace": "atomic",
+    "test_atomic::test_library_app_runs_temp_project_with_explicit_output_stream": "atomic",
+    "test_atomic::test_describe_task_args_reports_choices_and_boolean_type": "atomic",
+    "test_integration::test_sequence_runs_referenced_tasks_in_declared_order": "integration",
+    "test_integration::test_sequence_combines_inline_command_script_and_expression": "integration",
+    "test_integration::test_sequence_default_item_type_can_treat_strings_as_commands": "integration",
+    "test_integration::test_parallel_runs_each_local_subtask": "integration",
+    "test_integration::test_sequence_waits_for_nested_parallel_group": "integration",
+    "test_integration::test_ref_task_passes_arguments_declared_in_reference": "integration",
+    "test_integration::test_ref_task_can_run_hidden_task_through_public_alias": "integration",
+    "test_integration::test_switch_selects_matching_case_from_control_output": "integration",
+    "test_integration::test_switch_uses_default_case_when_no_case_matches": "integration",
+    "test_integration::test_switch_default_pass_allows_no_matching_case": "integration",
+    "test_integration::test_switch_without_match_fails_without_running_a_case": "integration",
+    "test_integration::test_deps_run_before_task_body": "integration",
+    "test_integration::test_uses_captures_upstream_output_as_command_variable": "integration",
+    "test_integration::test_uses_env_parses_upstream_output_into_environment": "integration",
+    "test_integration::test_envfile_args_cwd_and_capture_project_same_projection": "integration",
+    "test_integration::test_task_env_overrides_task_envfile_value": "integration",
+    "test_integration::test_included_toml_file_contributes_tasks": "integration",
+    "test_integration::test_include_cwd_changes_conf_dir_for_included_task": "integration",
+    "test_integration::test_poe_tasks_json_can_define_tasks_without_tool_namespace": "integration",
+    "test_integration::test_poe_tasks_yaml_can_define_tasks_without_tool_namespace": "integration",
+    "test_integration::test_recursive_includes_preserve_existing_root_task_definition": "integration",
+    "test_integration::test_global_default_array_item_type_changes_sequence_strings": "integration",
+    "test_integration::test_global_default_task_type_can_make_string_task_a_script": "integration",
+    "test_integration::test_dry_run_reports_without_creating_task_side_effect": "integration",
+    "test_integration::test_quiet_global_option_suppresses_poe_banner_not_task_output": "integration",
+    "test_integration::test_script_task_receives_extra_args_projection": "integration",
+    "test_integration::test_command_extra_args_can_be_placed_with_poe_extra_args": "integration",
+    "test_integration::test_boolean_args_propagate_through_ref_without_host_env": "integration",
+    "test_integration::test_multiple_args_propagate_from_ref_definition": "integration",
+    "test_integration::test_switch_named_argument_selects_case_and_forwards_extra_args": "integration",
+    "test_integration::test_python_interpreter_shell_task_is_deterministic_public_shell_projection": "integration",
+    "test_integration::test_library_app_run_and_iter_tasks_share_config_projection": "integration"
+  },
+  "stats": {
+    "atomic": 33,
+    "integration": 32,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "poethepoet"
+  ],
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 65,
+      "total": 65
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 33,
+        "failed": 0,
+        "total": 33
+      },
+      "integration": {
+        "passed": 32,
+        "failed": 0,
+        "total": 32
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "known_reference_skip": [],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "scope_notes": [
+    "Public task configuration and local execution behavior only.",
+    "Temporary projects use local Python helpers and deterministic file or JSON projections.",
+    "Network, package installation, shell-specific behavior, Poetry, uv, and host-specific executors are excluded.",
+    "Local evidence does not prove trusted isolation, signatures, qualification, Docker replay, or delivery."
+  ],
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 65,
+      "total": 65,
+      "log": "logs/reference_py310.json",
+      "sha256": "3ee8ab27926f893fe221ccedcd9c59d67790a6b0ae7824f2fc2d5fe9d3451c21"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 65,
+      "total": 65,
+      "log": "logs/reference_py311.json",
+      "sha256": "d43717685fba7bf2b569c0f86401806681f2386a6963f1d46dbe02a355889924"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 5,
+      "total": 65,
+      "log": "logs/dummy_py310.json",
+      "sha256": "b7ad4c978d711dd912a88e5d536145fa388e6b212ef4d119ad359340c8ee9c63"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 5,
+      "total": 65,
+      "log": "logs/dummy_py311.json",
+      "sha256": "d6529d6d2a82225b283dbf0b6903c9c2a1d127db294e67648af9d64da196df7e"
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 5,
+      "failed": 60,
+      "errors": 0,
+      "total": 65
+    },
+    "pass_rate_excluding_skips": 0.07692307692307693,
+    "by_layer": {
+      "atomic": {
+        "passed": 4,
+        "failed": 29,
+        "total": 33
+      },
+      "integration": {
+        "passed": 1,
+        "failed": 31,
+        "total": 32
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "task_id": "poethepoet-fullrepro-001",
+  "package_import": "poethepoet",
+  "language": "python"
+}

@@ -1,0 +1,242 @@
+{
+  "instance_id": "jupytext-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "jupytext/jupytext",
+  "source_url": "https://github.com/jupytext/jupytext",
+  "repo_commit": "a84c8826228dd99fc4478741736746e7e577a610",
+  "source_path": "<LOCAL_BUILD_ROOT>/repos/jupytext__jupytext",
+  "spec_version": "v1",
+  "oracle_version": "2026-08-04-artifact-only-v1",
+  "stage4_evidence": {
+    "status": "ARTIFACT_ONLY",
+    "evidence_report": "logs/evidence_report.md"
+  },
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "conftest": "oracle/conftest.py",
+    "spec_test_map": "spec_test_map.md",
+    "nodeid_file": "kept_nodeids.txt",
+    "taxonomy_file": "taxonomy.jsonl",
+    "count": 69,
+    "atomic": 35,
+    "integration": 34,
+    "system_e2e": 0,
+    "source": "generated_public_api",
+    "reference_gate": "69/69 passed in local venv",
+    "dummy_gate": "0 passed; collection failed before executing the 69-test suite",
+    "scorer_isolation": [
+      "--remove-path",
+      "jupytext"
+    ]
+  },
+  "stats": {
+    "atomic": 35,
+    "integration": 34,
+    "system_e2e": 0
+  },
+  "taxonomy": {
+    "test_atomic::test_public_version_is_string": "atomic",
+    "test_atomic::test_notebook_extensions_include_core_text_and_ipynb_formats": "atomic",
+    "test_atomic::test_guess_format_detects_percent_script_marker": "atomic",
+    "test_atomic::test_guess_format_uses_light_for_plain_python_script": "atomic",
+    "test_atomic::test_guess_format_detects_myst_code_cell_directive": "atomic",
+    "test_atomic::test_get_format_implementation_resolves_extension_and_name": "atomic",
+    "test_atomic::test_get_format_implementation_rejects_unknown_extension": "atomic",
+    "test_atomic::test_reads_percent_script_preserves_markdown_and_code_cells": "atomic",
+    "test_atomic::test_reads_percent_script_parses_title_type_and_metadata": "atomic",
+    "test_atomic::test_reads_percent_script_restores_raw_cell_source": "atomic",
+    "test_atomic::test_reads_percent_script_uncomments_python_magic_lines": "atomic",
+    "test_atomic::test_reads_light_script_splits_markdown_and_code_paragraphs": "atomic",
+    "test_atomic::test_reads_light_script_parses_explicit_cell_metadata": "atomic",
+    "test_atomic::test_reads_markdown_code_fence_with_cell_metadata": "atomic",
+    "test_atomic::test_reads_markdown_raw_cell_markers": "atomic",
+    "test_atomic::test_reads_markdown_noeval_fence_as_markdown": "atomic",
+    "test_atomic::test_reads_markdown_active_md_fence_as_raw_cell": "atomic",
+    "test_atomic::test_reads_myst_code_cell_with_short_metadata": "atomic",
+    "test_atomic::test_reads_myst_raw_cell_with_metadata_option": "atomic",
+    "test_atomic::test_reads_rmarkdown_code_chunk_metadata": "atomic",
+    "test_atomic::test_writes_percent_script_includes_cell_markers": "atomic",
+    "test_atomic::test_writes_percent_script_comments_markdown_and_raw_sources": "atomic",
+    "test_atomic::test_writes_percent_script_comments_magic_by_default": "atomic",
+    "test_atomic::test_writes_light_script_uses_plus_cell_markers": "atomic",
+    "test_atomic::test_writes_markdown_includes_yaml_header_and_python_fence": "atomic",
+    "test_atomic::test_writes_markdown_uses_raw_cell_comment_markers": "atomic",
+    "test_atomic::test_writes_myst_uses_code_cell_directive": "atomic",
+    "test_atomic::test_writes_rmarkdown_uses_chunk_options": "atomic",
+    "test_atomic::test_writes_ipynb_returns_json_notebook_text": "atomic",
+    "test_atomic::test_reads_with_as_version_returns_requested_notebook_version": "atomic",
+    "test_atomic::test_reads_rejects_unknown_text_format": "atomic",
+    "test_atomic::test_read_uses_path_extension_to_select_script_format": "atomic",
+    "test_atomic::test_read_rejects_missing_file": "atomic",
+    "test_atomic::test_write_uses_output_extension_when_format_is_absent": "atomic",
+    "test_atomic::test_write_with_explicit_format_creates_text_file": "atomic",
+    "test_integration::test_percent_string_round_trip_preserves_cell_types_sources_and_tags": "integration",
+    "test_integration::test_light_string_round_trip_preserves_cell_types_sources_and_tags": "integration",
+    "test_integration::test_markdown_string_round_trip_preserves_cell_types_sources_and_tags": "integration",
+    "test_integration::test_myst_string_round_trip_preserves_cell_types_sources_and_tags": "integration",
+    "test_integration::test_rmarkdown_string_round_trip_preserves_code_cell_metadata": "integration",
+    "test_integration::test_file_write_then_read_percent_script_uses_same_notebook_inputs": "integration",
+    "test_integration::test_ipynb_file_write_then_read_preserves_outputs": "integration",
+    "test_integration::test_guess_format_result_can_drive_reads_for_percent_text": "integration",
+    "test_integration::test_format_implementation_metadata_matches_written_text_representation": "integration",
+    "test_integration::test_markdown_metadata_filter_round_trip_keeps_kernelspec_but_omits_custom_top_level": "integration",
+    "test_integration::test_magic_line_round_trip_restores_original_code_source": "integration",
+    "test_integration::test_raw_markdown_cell_round_trip_preserves_source_and_metadata": "integration",
+    "test_integration::test_cli_version_reports_installed_package_version": "integration",
+    "test_integration::test_cli_converts_ipynb_file_to_percent_script": "integration",
+    "test_integration::test_cli_converts_percent_script_to_ipynb_file": "integration",
+    "test_integration::test_cli_output_dash_writes_converted_text_to_stdout": "integration",
+    "test_integration::test_cli_reads_ipynb_from_stdin_and_writes_percent_to_stdout": "integration",
+    "test_integration::test_cli_set_formats_updates_notebook_pairing_metadata": "integration",
+    "test_integration::test_cli_sync_creates_missing_text_pair_from_ipynb": "integration",
+    "test_integration::test_cli_sync_uses_newer_text_pair_to_update_ipynb_inputs": "integration",
+    "test_integration::test_cli_update_to_ipynb_preserves_existing_outputs_while_replacing_inputs": "integration",
+    "test_integration::test_cli_test_round_trip_percent_conversion_exits_success": "integration",
+    "test_integration::test_cli_option_notebook_metadata_filter_controls_markdown_header": "integration",
+    "test_integration::test_jupytext_toml_global_formats_drive_sync_pair_creation": "integration",
+    "test_integration::test_pyproject_tool_jupytext_formats_drive_sync_pair_creation": "integration",
+    "test_integration::test_configured_markdown_pair_sync_uses_requested_format": "integration",
+    "test_integration::test_cli_converts_myst_markdown_to_ipynb": "integration",
+    "test_integration::test_cli_converts_rmarkdown_to_ipynb": "integration",
+    "test_integration::test_cli_stdout_markdown_can_be_read_by_python_api": "integration",
+    "test_integration::test_cli_chained_conversion_py_to_ipynb_to_markdown_preserves_inputs": "integration",
+    "test_integration::test_cli_test_strict_reports_success_for_stable_percent_conversion": "integration",
+    "test_integration::test_cli_invalid_requested_format_exits_nonzero_without_output_file": "integration",
+    "test_integration::test_cli_set_formats_to_single_ipynb_disables_text_pair_metadata": "integration",
+    "test_integration::test_paired_sync_keeps_ipynb_outputs_when_text_inputs_are_newer": "integration"
+  },
+  "reference": {
+    "pass_rate": 1.0,
+    "passed": 69,
+    "total": 69,
+    "python_version": "3.10.8 (main, Nov 24 2022, 14:13:03) [GCC 11.2.0]",
+    "jupytext_version": "1.19.5",
+    "source_checkout_commit": "a84c8826228dd99fc4478741736746e7e577a610"
+  },
+  "source_meta": {
+    "package_root": "jupytext",
+    "stage1_screening_evidence": "<LOCAL_BUILD_ROOT>/stage1-gpt55/lanes/lane06/jupytext__jupytext.json",
+    "pure_python_loc_nonblank_noncomment": 8101
+  },
+  "labels": [
+    "artifact-only",
+    "service-free",
+    "notebook-conversion",
+    "cli",
+    "metadata",
+    "paired-files"
+  ],
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_interpreter": "Python 3.11.15 local replay",
+    "python311_evidence": "logs/reference_py311_flatdeps_v3.json"
+  },
+  "reference_pass_rate": 1.0,
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310_after_patch.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 69,
+      "total": 69,
+      "log": "logs/reference_py311_flatdeps_v3.json",
+      "sha256": "f08dcab18f9bf6227a0c203fff67bca94dd34b0dcd0a1d6ec539dbf1ea66bb36"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 69,
+      "total": 69,
+      "log": "logs/reference_py310_after_patch.json",
+      "sha256": "3ff36db003fd0dcace6d283b4d82966f789dd590f498b4560d94a9c78e93b86c"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 3,
+      "total": 69,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "565ad11918841901a0a549b780ba4851ef9f9810d38d163a5c535e4598d83de4"
+    }
+  },
+  "task_id": "jupytext-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 69,
+      "total": 69
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 35,
+        "failed": 0,
+        "total": 35
+      },
+      "integration": {
+        "passed": 34,
+        "failed": 0,
+        "total": 34
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 3,
+      "failed": 66,
+      "errors": 0,
+      "total": 69
+    },
+    "pass_rate_excluding_skips": 0.043478260869565216,
+    "by_layer": {
+      "atomic": {
+        "passed": 2,
+        "failed": 33,
+        "total": 35
+      },
+      "integration": {
+        "passed": 1,
+        "failed": 33,
+        "total": 34
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "jupytext",
+  "target_imports": [
+    "jupytext"
+  ],
+  "language": "python"
+}

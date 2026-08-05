@@ -1,0 +1,207 @@
+{
+  "instance_id": "tornado-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "tornadoweb/tornado",
+  "repo_commit": "e530031405e2154654dedc4c84d5656b557ea310",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 66,
+    "scorer_isolation": [
+      "--remove-path",
+      "tornado"
+    ]
+  },
+  "taxonomy": {
+    "test_atomic::test_application_preserves_custom_settings": "atomic",
+    "test_atomic::test_application_reverse_url_uses_named_urlspec": "atomic",
+    "test_atomic::test_application_reverse_url_escapes_string_arguments": "atomic",
+    "test_atomic::test_path_matches_returns_positional_groups": "atomic",
+    "test_atomic::test_path_matches_returns_named_groups": "atomic",
+    "test_atomic::test_path_matches_reverse_escapes_arguments": "atomic",
+    "test_atomic::test_host_matches_accepts_matching_host": "atomic",
+    "test_atomic::test_reversible_rule_router_reverses_named_rule": "atomic",
+    "test_atomic::test_rule_router_add_rules_accepts_string_path_matcher": "atomic",
+    "test_atomic::test_template_generate_substitutes_values": "atomic",
+    "test_atomic::test_template_autoescape_escapes_html": "atomic",
+    "test_atomic::test_template_comment_is_omitted_from_output": "atomic",
+    "test_atomic::test_dict_loader_include_uses_named_template": "atomic",
+    "test_atomic::test_dict_loader_extends_base_template_block": "atomic",
+    "test_atomic::test_template_apply_block_uses_callable": "atomic",
+    "test_atomic::test_template_parse_error_is_public_exception": "atomic",
+    "test_atomic::test_option_parser_command_line_updates_defined_values": "atomic",
+    "test_atomic::test_option_parser_returns_remainder_when_final_false": "atomic",
+    "test_atomic::test_option_parser_config_file_updates_defined_values": "atomic",
+    "test_atomic::test_option_parser_multiple_int_range_expands_values": "atomic",
+    "test_atomic::test_option_parser_groups_and_group_dict_expose_named_group": "atomic",
+    "test_atomic::test_option_parser_as_dict_and_items_reflect_current_values": "atomic",
+    "test_atomic::test_option_parser_parse_callback_runs_on_final_parse": "atomic",
+    "test_atomic::test_option_parser_rejects_unknown_option": "atomic",
+    "test_atomic::test_request_handler_set_status_and_get_status": "atomic",
+    "test_atomic::test_request_handler_set_header_overwrites_value": "atomic",
+    "test_atomic::test_request_handler_add_header_preserves_multiple_values": "atomic",
+    "test_atomic::test_request_handler_clear_header_removes_value": "atomic",
+    "test_atomic::test_request_handler_get_query_arguments_return_strings": "atomic",
+    "test_atomic::test_request_handler_body_arguments_parse_form_values": "atomic",
+    "test_atomic::test_request_handler_missing_required_argument_raises_public_error": "atomic",
+    "test_atomic::test_request_handler_get_cookie_reads_request_cookie": "atomic",
+    "test_atomic::test_request_handler_signed_cookie_round_trips_value": "atomic",
+    "test_atomic::test_request_handler_signed_cookie_key_version_is_visible": "atomic",
+    "test_atomic::test_request_handler_reverse_url_uses_application_routes": "atomic",
+    "test_atomic::test_request_handler_static_url_includes_version_parameter": "atomic",
+    "test_atomic::test_request_handler_static_url_can_omit_version_parameter": "atomic",
+    "test_atomic::test_request_handler_static_url_can_include_host": "atomic",
+    "test_atomic::test_request_handler_render_string_uses_template_loader": "atomic",
+    "test_atomic::test_request_handler_template_namespace_contains_public_helpers": "atomic",
+    "test_atomic::test_request_handler_header_datetime_value_is_http_date": "atomic",
+    "test_integration::test_http_query_and_body_arguments_are_projected_as_json": "integration",
+    "test_integration::test_http_cookie_set_then_read_round_trip": "integration",
+    "test_integration::test_http_signed_cookie_set_then_read_round_trip": "integration",
+    "test_integration::test_http_signed_cookie_key_version_survives_second_request": "integration",
+    "test_integration::test_http_header_workflow_projects_overwrite_add_and_clear": "integration",
+    "test_integration::test_http_named_route_reversed_inside_handler_can_be_fetched": "integration",
+    "test_integration::test_http_static_url_from_handler_fetches_versioned_asset": "integration",
+    "test_integration::test_http_static_url_without_version_fetches_asset": "integration",
+    "test_integration::test_http_template_render_uses_loader_arguments_and_reverse_url": "integration",
+    "test_integration::test_http_asset_template_uses_static_url_and_static_handler": "integration",
+    "test_integration::test_http_prepare_get_finish_lifecycle_records_public_order": "integration",
+    "test_integration::test_http_initialize_kwargs_are_visible_to_handler_method": "integration",
+    "test_integration::test_http_default_handler_class_handles_missing_route": "integration",
+    "test_integration::test_http_redirect_handler_preserves_query_on_location": "integration",
+    "test_integration::test_http_named_path_argument_is_decoded_before_handler_get": "integration",
+    "test_integration::test_http_positional_path_argument_is_decoded_before_handler_get": "integration",
+    "test_integration::test_http_option_parser_values_can_drive_application_settings": "integration",
+    "test_integration::test_http_current_user_from_cookie_reaches_template_namespace": "integration",
+    "test_integration::test_http_write_dict_sets_json_response_projection": "integration",
+    "test_integration::test_http_static_file_get_and_head_share_content_headers": "integration",
+    "test_integration::test_http_clear_cookie_sets_empty_cookie_response": "integration",
+    "test_integration::test_http_template_include_and_extends_share_loader_context": "integration",
+    "test_integration::test_http_config_file_option_reaches_application_setting": "integration",
+    "test_integration::test_http_tampered_signed_cookie_is_rejected": "integration",
+    "test_integration::test_http_set_clear_and_read_cookie_workflow": "integration"
+  },
+  "stats": {
+    "atomic": 41,
+    "integration": 25,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay (current)",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "11274e10cc395329ed12a710bc4d59bdf4b5c653ce0155bd9791a528e8534dfe"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 dummy replay (current)",
+      "passed": 0,
+      "total": 66,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "fb85af2f40de6aa4ae93be78f6908af2761ba6a1e643698abf0132f3bde2df50"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay (current)",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "93c8243621bb50c3cc29c51a50c8ae7b90818ef5d68a7b84efe6cf86fcadf434"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 dummy replay (current)",
+      "passed": 0,
+      "total": 66,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "297cf3e78f19dd756705cce30144cfb13f349cf0c376975e246509d825169ab3"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "qualification_claim": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay (current)"
+  },
+  "task_id": "tornado-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 41,
+        "failed": 0,
+        "total": 41
+      },
+      "integration": {
+        "passed": 25,
+        "failed": 0,
+        "total": 25
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 66,
+      "errors": 0,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 41,
+        "total": 41
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 25,
+        "total": 25
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "tornado",
+  "target_imports": [
+    "tornado"
+  ],
+  "metadata_normalization": {
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true,
+    "date": "2026-08-05",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json"
+  },
+  "language": "python"
+}

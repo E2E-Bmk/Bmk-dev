@@ -1,0 +1,217 @@
+{
+  "instance_id": "textx-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/textX/textX",
+  "repo_commit": "e74a40ac69b106408f01e0383e80c16bdea38921",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "textx"
+    ],
+    "oracle_version": "2026-08-05-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_metamodel_from_str_parses_minimal_project": "atomic",
+    "test_atomic::test_model_from_str_projects_single_value_fields": "atomic",
+    "test_atomic::test_repeated_state_order_is_preserved": "atomic",
+    "test_atomic::test_boolean_assignment_sets_true_and_false": "atomic",
+    "test_atomic::test_integer_terminal_converts_event_codes": "atomic",
+    "test_atomic::test_string_terminal_unquotes_message": "atomic",
+    "test_atomic::test_abstract_action_instantiates_send_variant": "atomic",
+    "test_atomic::test_abstract_action_instantiates_log_variant": "atomic",
+    "test_atomic::test_state_references_resolve_to_named_objects": "atomic",
+    "test_atomic::test_event_reference_resolves_to_named_object": "atomic",
+    "test_atomic::test_get_children_of_type_returns_contained_states": "atomic",
+    "test_atomic::test_get_children_predicate_can_select_events": "atomic",
+    "test_atomic::test_children_first_traversal_places_root_after_children": "atomic",
+    "test_atomic::test_get_parent_of_type_finds_workflow_for_transition": "atomic",
+    "test_atomic::test_get_model_returns_root_for_nested_action": "atomic",
+    "test_atomic::test_get_metamodel_returns_originating_metamodel": "atomic",
+    "test_atomic::test_get_location_exposes_public_position_keys": "atomic",
+    "test_atomic::test_textx_isinstance_accepts_dynamic_rule_class": "atomic",
+    "test_atomic::test_invalid_syntax_raises_public_syntax_error": "atomic",
+    "test_atomic::test_unresolved_reference_raises_public_semantic_error": "atomic",
+    "test_atomic::test_object_processor_receives_completed_object": "atomic",
+    "test_atomic::test_object_processor_can_add_public_derived_attribute": "atomic",
+    "test_atomic::test_model_processor_receives_completed_model_and_metamodel": "atomic",
+    "test_atomic::test_object_processor_return_replaces_public_object_value": "atomic",
+    "test_atomic::test_custom_scope_provider_can_resolve_case_insensitive_reference": "atomic",
+    "test_atomic::test_metamodel_from_file_uses_local_grammar_file": "atomic",
+    "test_atomic::test_registration_error_is_public_exception": "atomic",
+    "test_atomic::test_metamodel_rule_lookup_exposes_dynamic_rule_class": "atomic",
+    "test_atomic::test_ignore_case_accepts_keyword_case_without_changing_identifier": "atomic",
+    "test_atomic::test_custom_user_class_receives_parent_and_typed_values": "atomic",
+    "test_atomic::test_model_from_str_file_name_projects_public_location_filename": "atomic",
+    "test_integration::test_file_based_model_preserves_values_and_filename": "integration",
+    "test_integration::test_model_from_file_and_str_share_object_graph_projection": "integration",
+    "test_integration::test_metamodel_dot_export_contains_model_classes": "integration",
+    "test_integration::test_metamodel_plantuml_export_contains_action_variants": "integration",
+    "test_integration::test_model_dot_export_contains_runtime_values": "integration",
+    "test_integration::test_language_registration_finds_pattern_and_parses_file": "integration",
+    "test_integration::test_languages_for_file_returns_all_matching_public_descriptors": "integration",
+    "test_integration::test_metamodel_for_file_uses_registered_language": "integration",
+    "test_integration::test_processors_and_children_projection_share_event_order": "integration",
+    "test_integration::test_processor_derived_event_values_are_visible_through_references": "integration",
+    "test_integration::test_custom_scope_provider_combines_with_default_target_resolution": "integration",
+    "test_integration::test_invalid_model_does_not_prevent_independent_metamodel_export": "integration",
+    "test_integration::test_state_parent_links_and_child_collection_agree": "integration",
+    "test_integration::test_nested_action_projects_root_and_metamodel": "integration",
+    "test_integration::test_should_follow_limits_containment_traversal": "integration",
+    "test_integration::test_plantuml_export_and_runtime_model_share_rule_names": "integration",
+    "test_integration::test_file_model_export_keeps_same_public_transition_names": "integration",
+    "test_integration::test_generator_registration_uses_parsed_model_projection": "integration",
+    "test_integration::test_any_generator_fallback_uses_public_generator_lookup": "integration",
+    "test_integration::test_duplicate_language_registration_raises_without_altering_first_entry": "integration",
+    "test_integration::test_duplicate_generator_registration_keeps_first_generator": "integration",
+    "test_integration::test_cross_references_are_not_duplicated_by_containment_traversal": "integration",
+    "test_integration::test_action_variants_share_transition_projection": "integration",
+    "test_integration::test_state_flags_and_order_survive_file_round_trip": "integration",
+    "test_integration::test_locations_align_with_project_and_transition_lines": "integration",
+    "test_integration::test_processor_can_raise_public_semantic_error_for_model_policy": "integration",
+    "test_integration::test_cli_check_accepts_grammar_and_valid_model": "integration",
+    "test_integration::test_cli_check_rejects_invalid_model": "integration",
+    "test_integration::test_cli_check_validates_a_grammar_file": "integration"
+  },
+  "stats": {
+    "atomic": 31,
+    "integration": 29,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay (current)",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "dcb2b346f58864dd2735c2456575229e504d06cfebe11615dd7cc58f9a1fc9c7"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay (current)",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "a3377eadb37daf061cc6c1487c5012890b3724635342eb427e3ea974da85fffd"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 dummy replay (current)",
+      "passed": 1,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "e5f8f6f47c313da3a5a9c7b0b1232be7d99abe8ae534a2305fb501dd65f7da5e"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 dummy replay (current)",
+      "passed": 1,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "13bafc8fa070a4e8312e0b7af4b14bf380ad7c774ce175b15773206092a8333f"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay (current)"
+  },
+  "source_url": "https://github.com/textX/textX",
+  "target_imports": [
+    "textx"
+  ],
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 31,
+        "failed": 0,
+        "total": 31
+      },
+      "integration": {
+        "passed": 29,
+        "failed": 0,
+        "total": 29
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 1,
+      "failed": 59,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.016666666666666666,
+    "by_layer": {
+      "atomic": {
+        "passed": 1,
+        "failed": 30,
+        "total": 31
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 29,
+        "total": 29
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "package_python_files": 19,
+    "pure_python_loc_nonblank_noncomment": 5435,
+    "upstream_test_functions": 336
+  },
+  "scope_notes": [
+    "Public API tests only; no private target or source-test imports.",
+    "GraphViz image rendering, live services, network behavior, Docker, and private implementation details are excluded.",
+    "Stage 4 remains artifact-only; no trusted runner result, network isolation proof, strict black-box result, trusted signature, Docker result, candidate score, or qualification claim is present."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "reference_result_source": "logs/reference_py310_current.json",
+    "python311_result_source": "logs/reference_py311.json",
+    "dummy_result_source": "logs/dummy_py310.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true
+  },
+  "task_id": "textx-fullrepro-001",
+  "package_import": "textx",
+  "language": "python"
+}

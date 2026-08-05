@@ -1,0 +1,219 @@
+{
+  "instance_id": "anytree-tree-structure-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/c0fec0de/anytree",
+  "repo_commit": "2e0a1b956172654d75aff93277ce3d883355e0bf",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 62,
+    "scorer_isolation": [
+      "--remove-path",
+      "anytree"
+    ],
+    "oracle_version": "2026-08-05-artifact-only-v1"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 32,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 62,
+      "total": 62,
+      "log": "logs/reference_py311.json",
+      "sha256": "1497ecc48d7e7e16fc93eb165093bdb58274881c035e3cfa480f1b3afe100eb6"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 62,
+      "total": 62,
+      "log": "logs/reference_py310.json",
+      "sha256": "dfd9ea51ff7c63f6bb7806b3a6a65b9dd2da77e315ed2e421b9f211e1f80bd29"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 62,
+      "log": "logs/dummy_py310.json",
+      "sha256": "60f6d604b0cd2def01edfd7ed997f9fba65591e417421da6143cbc506b5b9013"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 62,
+      "log": "logs/dummy_py311.json",
+      "sha256": "d77d83bf5d06fdd9647b8c013afd1257b2f4cf52f3f58c4413246d52b0543370"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_url": "https://github.com/c0fec0de/anytree",
+  "target_imports": [
+    "anytree"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "package_python_files": 35,
+    "pure_python_loc_nonblank_noncomment": 2200,
+    "upstream_test_functions": 250
+  },
+  "scope_notes": [
+    "Public API tests only; no private target or source-test imports.",
+    "Rendering is checked through row structure and semantic attributes rather than platform-dependent whole-output snapshots.",
+    "Network, sockets, sleeps, timing, ambient host state, external executables, and filesystem fixtures are excluded.",
+    "Current evidence is same-process local replay and does not establish a trusted black-box Stage 4 runner, external signature, or final QUALIFIED status.",
+    "No candidate score, review, signature, provenance, or qualification claim is present."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "reference_result_source": "logs/reference_py310.json",
+    "python311_result_source": null,
+    "dummy_result_source": null,
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true
+  },
+  "task_id": "anytree-tree-structure-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 62,
+      "total": 62
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 32,
+        "failed": 0,
+        "total": 32
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 62,
+      "errors": 0,
+      "total": 62
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 32,
+        "total": 32
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "anytree",
+  "taxonomy": {
+    "test_atomic::test_public_imports_expose_requested_surface": "atomic",
+    "test_atomic::test_node_stores_name_and_extra_attributes": "atomic",
+    "test_atomic::test_anynode_stores_arbitrary_attributes": "atomic",
+    "test_atomic::test_nodemixin_adds_tree_behavior_to_user_class": "atomic",
+    "test_atomic::test_lightnodemixin_supports_slots_and_tree_behavior": "atomic",
+    "test_atomic::test_parent_assignment_reattaches_and_preserves_identity": "atomic",
+    "test_atomic::test_parent_none_detaches_node": "atomic",
+    "test_atomic::test_children_assignment_reorders_and_detaches_old_children": "atomic",
+    "test_atomic::test_children_deleter_detaches_all_children": "atomic",
+    "test_atomic::test_path_and_reverse_path_have_opposite_order": "atomic",
+    "test_atomic::test_relationship_properties_report_tree_membership": "atomic",
+    "test_atomic::test_leaf_root_height_depth_and_size_properties": "atomic",
+    "test_atomic::test_self_parent_is_rejected_with_loop_error": "atomic",
+    "test_atomic::test_descendant_parent_is_rejected_with_loop_error": "atomic",
+    "test_atomic::test_non_node_parent_is_rejected_with_tree_error": "atomic",
+    "test_atomic::test_duplicate_children_are_rejected_with_tree_error": "atomic",
+    "test_atomic::test_children_assignment_rolls_back_after_attach_failure": "atomic",
+    "test_atomic::test_preorder_iterator_is_depth_first": "atomic",
+    "test_atomic::test_postorder_iterator_visits_children_before_parent": "atomic",
+    "test_atomic::test_levelorder_iterator_is_breadth_first": "atomic",
+    "test_atomic::test_levelorder_group_iterator_groups_by_depth": "atomic",
+    "test_atomic::test_zigzag_group_iterator_reverses_alternating_levels": "atomic",
+    "test_atomic::test_iterator_filter_stop_and_maxlevel_are_composable": "atomic",
+    "test_atomic::test_findall_returns_matching_nodes_in_preorder": "atomic",
+    "test_atomic::test_find_by_attr_and_findall_by_attr_use_named_attributes": "atomic",
+    "test_atomic::test_search_count_constraints_raise_count_error": "atomic",
+    "test_atomic::test_resolver_get_handles_relative_and_absolute_paths": "atomic",
+    "test_atomic::test_resolver_glob_matches_single_level_wildcards": "atomic",
+    "test_atomic::test_render_tree_rows_expose_prefix_fill_and_nodes": "atomic",
+    "test_atomic::test_render_by_attr_uses_semantic_node_values": "atomic",
+    "test_integration::test_mutation_workflow_recomputes_paths_and_sizes": "integration",
+    "test_integration::test_anynode_dict_export_preserves_attributes_and_shape": "integration",
+    "test_integration::test_json_export_roundtrip_is_verified_from_parsed_data": "integration",
+    "test_integration::test_dict_importer_builds_custom_node_class_and_parent_links": "integration",
+    "test_integration::test_json_file_like_write_and_read_preserve_tree_values": "integration",
+    "test_integration::test_dict_exporter_can_filter_attributes_and_children": "integration",
+    "test_integration::test_exporter_maxlevel_limits_nested_children": "integration",
+    "test_integration::test_resolver_custom_path_attribute_survives_tree_navigation": "integration",
+    "test_integration::test_resolver_ignorecase_and_relax_change_lookup_policy": "integration",
+    "test_integration::test_resolver_recursive_glob_finds_nested_matches_once": "integration",
+    "test_integration::test_render_child_order_can_be_reversed_without_mutating_tree": "integration",
+    "test_integration::test_render_multiline_attribute_uses_fill_for_continuation_lines": "integration",
+    "test_integration::test_render_maxlevel_keeps_requested_depth_only": "integration",
+    "test_integration::test_node_mixin_hooks_observe_attach_and_detach_workflow": "integration",
+    "test_integration::test_light_node_mixin_tree_can_be_exported_with_public_attributes": "integration",
+    "test_integration::test_search_and_resolver_follow_a_reparented_subtree": "integration",
+    "test_integration::test_detach_mutate_reattach_and_export_is_consistent": "integration",
+    "test_integration::test_children_reordering_updates_paths_without_recreating_nodes": "integration",
+    "test_integration::test_custom_mixin_nodes_and_anynodes_can_share_one_tree": "integration",
+    "test_integration::test_filtered_iteration_and_filtered_export_agree_on_selected_children": "integration",
+    "test_integration::test_sorted_child_workflow_has_matching_render_and_breadth_order": "integration",
+    "test_integration::test_json_sort_keys_is_a_serialization_option_not_a_tree_order_change": "integration",
+    "test_integration::test_custom_dict_class_receives_exported_attribute_pairs": "integration",
+    "test_integration::test_imported_tree_can_be_mutated_then_reexported": "integration",
+    "test_integration::test_resolver_glob_reflects_order_after_children_replacement": "integration",
+    "test_integration::test_leaf_properties_and_postorder_agree_after_growth": "integration",
+    "test_integration::test_grouped_iterator_views_share_the_same_level_membership": "integration",
+    "test_integration::test_custom_attribute_tree_roundtrips_through_json_and_resolver": "integration",
+    "test_integration::test_render_workflow_keeps_row_nodes_and_attribute_projection_aligned": "integration",
+    "test_integration::test_custom_mixin_workflow_reparents_and_searches_by_domain_field": "integration",
+    "test_integration::test_search_cardinality_and_export_state_remain_consistent_after_mutation": "integration",
+    "test_integration::test_full_public_workflow_mutates_exports_resolves_and_renders": "integration"
+  },
+  "language": "python"
+}

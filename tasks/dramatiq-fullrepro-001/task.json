@@ -1,0 +1,226 @@
+{
+  "instance_id": "dramatiq-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/Bogdanp/dramatiq",
+  "source_url": "https://github.com/Bogdanp/dramatiq",
+  "repo_commit": "288dc2651e3e32da3769b69c285143da8466e4ab",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 75,
+    "scorer_isolation": [
+      "--remove-path",
+      "dramatiq"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_actor_decorator_returns_actor_and_registers_name": "atomic",
+    "test_atomic::test_actor_direct_call_returns_underlying_result": "atomic",
+    "test_atomic::test_actor_metadata_options_are_public": "atomic",
+    "test_atomic::test_actor_custom_actor_class_is_used": "atomic",
+    "test_atomic::test_invalid_queue_name_raises_value_error": "atomic",
+    "test_atomic::test_unsupported_actor_option_raises_value_error": "atomic",
+    "test_atomic::test_actor_message_contains_positional_and_keyword_arguments": "atomic",
+    "test_atomic::test_message_with_options_converts_callback_actor_to_name": "atomic",
+    "test_atomic::test_message_with_options_rejects_non_actor_callback": "atomic",
+    "test_atomic::test_message_args_are_normalized_to_tuple": "atomic",
+    "test_atomic::test_message_asdict_exposes_serializable_public_fields": "atomic",
+    "test_atomic::test_message_copy_replaces_fields_and_merges_options": "atomic",
+    "test_atomic::test_message_encode_decode_roundtrip": "atomic",
+    "test_atomic::test_invalid_message_bytes_raise_decode_error": "atomic",
+    "test_atomic::test_message_datetime_uses_utc_and_millisecond_timestamp": "atomic",
+    "test_atomic::test_json_encoder_roundtrips_message_data": "atomic",
+    "test_atomic::test_pickle_encoder_roundtrips_non_json_value": "atomic",
+    "test_atomic::test_global_encoder_can_be_replaced_and_restored": "atomic",
+    "test_atomic::test_stub_broker_declares_normal_and_delay_queues": "atomic",
+    "test_atomic::test_broker_declares_actor_and_can_lookup_it": "atomic",
+    "test_atomic::test_broker_unknown_actor_raises_actor_not_found": "atomic",
+    "test_atomic::test_stub_broker_consume_unknown_queue_raises_queue_not_found": "atomic",
+    "test_atomic::test_stub_broker_enqueue_unknown_queue_raises_queue_not_found": "atomic",
+    "test_atomic::test_stub_broker_join_unknown_queue_raises_queue_not_found": "atomic",
+    "test_atomic::test_message_proxy_forwards_fields_and_can_be_marked_failed": "atomic",
+    "test_atomic::test_message_proxy_exception_state_can_be_stuffed_and_cleared": "atomic",
+    "test_atomic::test_broker_add_middleware_exposes_actor_options": "atomic",
+    "test_atomic::test_broker_middleware_missing_anchor_raises_value_error": "atomic",
+    "test_atomic::test_base_middleware_has_empty_public_defaults": "atomic",
+    "test_atomic::test_stub_result_backend_builds_readable_namespace_key": "atomic",
+    "test_atomic::test_stub_result_backend_builds_legacy_hash_key": "atomic",
+    "test_atomic::test_missing_result_marker_is_distinct_from_none": "atomic",
+    "test_atomic::test_result_backend_missing_result_raises_result_missing": "atomic",
+    "test_atomic::test_result_backend_stores_and_retrieves_result": "atomic",
+    "test_atomic::test_result_backend_stored_exception_raises_result_failure": "atomic",
+    "test_atomic::test_retry_exposes_requested_delay": "atomic",
+    "test_atomic::test_barrier_requires_positive_party_count": "atomic",
+    "test_atomic::test_generic_actor_subclass_is_callable": "atomic",
+    "test_atomic::test_generic_actor_meta_options_are_forwarded": "atomic",
+    "test_atomic::test_generic_actor_abstract_base_is_not_registered_as_actor": "atomic",
+    "test_atomic::test_generic_actor_missing_perform_raises_not_implemented": "atomic",
+    "test_atomic::test_skip_message_is_a_middleware_error": "atomic",
+    "test_atomic::test_retry_default_delay_can_be_none": "atomic",
+    "test_integration::test_stub_broker_send_consume_and_ack_preserves_message_fields": "integration",
+    "test_integration::test_stub_broker_nack_moves_message_to_dead_letters": "integration",
+    "test_integration::test_worker_processes_positional_and_keyword_actor_messages": "integration",
+    "test_integration::test_worker_processes_actor_on_custom_queue": "integration",
+    "test_integration::test_stub_broker_flush_removes_queued_messages_and_dead_letters": "integration",
+    "test_integration::test_success_callback_receives_original_message_and_result": "integration",
+    "test_integration::test_failure_callback_receives_exception_metadata": "integration",
+    "test_integration::test_results_middleware_stores_actor_result_for_message": "integration",
+    "test_integration::test_results_middleware_projects_actor_failure_as_result_failure": "integration",
+    "test_integration::test_actor_without_results_option_has_no_retrievable_result": "integration",
+    "test_integration::test_message_get_result_can_infer_backend_from_global_broker": "integration",
+    "test_integration::test_pipeline_runs_messages_in_order_and_exposes_each_result": "integration",
+    "test_integration::test_pipeline_flattens_nested_pipeline_before_running": "integration",
+    "test_integration::test_pipeline_pipe_ignore_uses_receiving_message_arguments": "integration",
+    "test_integration::test_incomplete_pipeline_reports_missing_completion_without_worker": "integration",
+    "test_integration::test_group_runs_children_and_returns_results": "integration",
+    "test_integration::test_nested_group_returns_nested_result_lists": "integration",
+    "test_integration::test_group_wait_completes_after_worker_finishes": "integration",
+    "test_integration::test_group_completion_callback_runs_after_all_children": "integration",
+    "test_integration::test_group_callback_requires_group_callbacks_middleware": "integration",
+    "test_integration::test_group_of_pipelines_returns_pipeline_results": "integration",
+    "test_integration::test_custom_middleware_receives_declaration_and_processing_hooks": "integration",
+    "test_integration::test_skip_message_hook_acknowledges_without_running_actor": "integration",
+    "test_integration::test_retry_middleware_requeues_retry_exception_until_success": "integration",
+    "test_integration::test_max_retries_zero_moves_failed_actor_to_dead_letters": "integration",
+    "test_integration::test_pickle_encoder_integrates_with_broker_message_processing": "integration",
+    "test_integration::test_result_backend_uses_message_identity_across_store_and_get": "integration",
+    "test_integration::test_barrier_completes_after_all_parties_signal": "integration",
+    "test_integration::test_concurrent_rate_limiter_releases_slot_after_context": "integration",
+    "test_integration::test_global_broker_setter_connects_actor_and_composition": "integration",
+    "test_integration::test_stub_broker_consumer_rejects_missing_message_queue_consistently": "integration",
+    "test_integration::test_actor_send_with_timedelta_delay_encodes_delay_metadata": "integration"
+  },
+  "stats": {
+    "atomic": 43,
+    "integration": 32,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "dramatiq"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 75,
+      "total": 75,
+      "log": "logs/reference_py310_clean.json",
+      "sha256": "9662506ed9f5f9eb19323a1f7db9e81d4ece507bba7ee38f07c70de85b22a20f"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 2,
+      "total": 75,
+      "log": "logs/dummy_py310_clean.json",
+      "sha256": "350200be3cc412f63d000e2b8a5d9d9c2a610519d4509d47c95e536d0b9ff427"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 75,
+      "total": 75,
+      "log": "logs/reference_py311.json",
+      "sha256": "fdc55aa7d20941d1436cc3be93b76ecf19c7b051666446d3b56e321ade90cc3f"
+    }
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 75,
+      "total": 75
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 43,
+        "failed": 0,
+        "total": 43
+      },
+      "integration": {
+        "passed": 32,
+        "failed": 0,
+        "total": 32
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_metrics": {
+    "package_python_files": 55,
+    "pure_python_loc_nonblank_noncomment": 5330,
+    "upstream_test_functions": 234
+  },
+  "scope_notes": [
+    "Public API tests only; no private target or source-test imports.",
+    "RabbitMQ, Redis, network, CLI process supervision, and live-service behavior excluded.",
+    "Stage 4 evidence is artifact-only; no Docker validation, network isolation, trusted signature, or strict black-box result is claimed."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310_clean.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "dramatiq-fullrepro-001",
+  "dummy_score": {
+    "summary": {
+      "passed": 2,
+      "failed": 27,
+      "errors": 46,
+      "total": 75
+    },
+    "pass_rate_excluding_skips": 0.02666666666666667,
+    "by_layer": {
+      "atomic": {
+        "passed": 2,
+        "failed": 24,
+        "total": 43,
+        "errors": 17
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 3,
+        "total": 32,
+        "errors": 29
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "dramatiq",
+  "language": "python"
+}

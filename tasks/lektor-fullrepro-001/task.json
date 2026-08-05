@@ -1,0 +1,212 @@
+{
+  "instance_id": "lektor-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/lektor/lektor",
+  "repo_commit": "bc901235709eab8990a2558e719518e2f92ed44f",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 79,
+    "scorer_isolation": [
+      "--remove-path",
+      "lektor"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_project_from_file_reads_name_tree_and_themes": "atomic",
+    "test_atomic::test_project_from_path_finds_the_only_project_file": "atomic",
+    "test_atomic::test_project_discover_walks_up_from_a_nested_content_directory": "atomic",
+    "test_atomic::test_project_content_path_from_filename_maps_content_records": "atomic",
+    "test_atomic::test_project_output_path_uses_the_configured_relative_directory": "atomic",
+    "test_atomic::test_environment_config_exposes_project_url_and_alternatives": "atomic",
+    "test_atomic::test_metaformat_tokenize_reads_scalar_and_multiline_fields": "atomic",
+    "test_atomic::test_metaformat_serialize_round_trips_multiline_values": "atomic",
+    "test_atomic::test_pad_root_loads_system_fields_and_typed_values": "atomic",
+    "test_atomic::test_pad_get_normalizes_equivalent_record_paths": "atomic",
+    "test_atomic::test_pad_get_returns_none_for_a_missing_record": "atomic",
+    "test_atomic::test_record_mapping_access_exposes_field_values": "atomic",
+    "test_atomic::test_record_url_path_uses_alternative_prefixes": "atomic",
+    "test_atomic::test_record_parent_and_child_relationships": "atomic",
+    "test_atomic::test_record_visibility_flags_reflect_explicit_system_fields": "atomic",
+    "test_atomic::test_pad_resolve_url_path_skips_invisible_records_by_default": "atomic",
+    "test_atomic::test_pad_resolve_url_path_can_include_hidden_records": "atomic",
+    "test_atomic::test_query_visibility_options_are_independent": "atomic",
+    "test_atomic::test_query_filter_uses_public_record_expression_proxy": "atomic",
+    "test_atomic::test_query_order_limit_offset_and_count_are_composable": "atomic",
+    "test_atomic::test_query_get_and_first_find_records_by_local_id": "atomic",
+    "test_atomic::test_query_distinct_collects_scalar_values_and_multiline_tags": "atomic",
+    "test_atomic::test_alternative_fallback_preserves_requested_language": "atomic",
+    "test_atomic::test_get_alts_reports_existing_translations_and_fallbacks": "atomic",
+    "test_atomic::test_record_url_to_builds_a_relative_child_link": "atomic",
+    "test_atomic::test_pad_make_url_uses_the_configured_base_url": "atomic",
+    "test_atomic::test_datamodel_exposes_custom_fields_and_child_policy": "atomic",
+    "test_atomic::test_string_field_trims_whitespace_and_uses_the_first_line": "atomic",
+    "test_atomic::test_integer_and_boolean_fields_convert_raw_values": "atomic",
+    "test_atomic::test_date_and_datetime_fields_convert_raw_values": "atomic",
+    "test_atomic::test_markdown_field_renders_as_markup_for_a_record": "atomic",
+    "test_atomic::test_datamodel_to_json_describes_field_types_and_names": "atomic",
+    "test_atomic::test_asset_root_exposes_static_files_and_artifact_paths": "atomic",
+    "test_atomic::test_attachment_record_exposes_type_url_and_source_file": "atomic",
+    "test_atomic::test_environment_selects_html_autoescape_by_filename": "atomic",
+    "test_atomic::test_environment_render_template_exposes_this_and_site": "atomic",
+    "test_atomic::test_builder_declares_a_page_artifact": "atomic",
+    "test_atomic::test_builder_marks_a_built_artifact_current": "atomic",
+    "test_atomic::test_build_program_primary_artifact_is_the_built_page": "atomic",
+    "test_atomic::test_cli_project_info_json_matches_project_projection": "atomic",
+    "test_atomic::test_cli_content_file_info_json_maps_a_record_path": "atomic",
+    "test_integration::test_query_and_template_render_share_the_same_record_values": "integration",
+    "test_integration::test_alternative_record_and_template_use_the_requested_language": "integration",
+    "test_integration::test_filtered_and_ordered_query_drives_a_stable_result_projection": "integration",
+    "test_integration::test_visibility_options_and_url_resolution_agree_for_hidden_content": "integration",
+    "test_integration::test_pagination_records_expose_page_numbers_and_sliced_items": "integration",
+    "test_integration::test_attachment_query_and_attachment_record_share_tree_metadata": "integration",
+    "test_integration::test_model_fields_reach_records_and_model_json_together": "integration",
+    "test_integration::test_markdown_field_and_page_template_produce_html": "integration",
+    "test_integration::test_environment_rendering_and_record_url_to_use_one_pad_context": "integration",
+    "test_integration::test_builder_builds_root_template_into_index_artifact": "integration",
+    "test_integration::test_builder_builds_child_pages_and_attachments_to_expected_artifacts": "integration",
+    "test_integration::test_builder_build_all_produces_pages_attachments_and_assets": "integration",
+    "test_integration::test_builder_reuses_a_current_artifact_on_the_second_build": "integration",
+    "test_integration::test_builder_rebuilds_an_artifact_when_its_template_changes": "integration",
+    "test_integration::test_builder_rebuilds_an_artifact_when_a_record_changes": "integration",
+    "test_integration::test_builder_prune_removes_an_artifact_after_a_page_becomes_hidden": "integration",
+    "test_integration::test_cli_build_matches_the_direct_builder_render": "integration",
+    "test_integration::test_cli_build_reuses_output_without_an_existing_files_prompt": "integration",
+    "test_integration::test_cli_project_info_text_and_json_agree": "integration",
+    "test_integration::test_cli_content_file_info_text_and_json_agree": "integration",
+    "test_integration::test_cli_project_info_short_alias_resolves_to_the_same_command": "integration",
+    "test_integration::test_query_distinct_values_and_template_tags_share_the_same_source_data": "integration",
+    "test_integration::test_nested_record_urls_resolve_back_to_the_same_records": "integration",
+    "test_integration::test_alternative_build_produces_a_language_prefixed_artifact": "integration",
+    "test_integration::test_cli_source_info_only_indexes_without_rendering": "integration",
+    "test_integration::test_cli_relative_output_path_is_resolved_from_the_working_directory": "integration",
+    "test_integration::test_asset_inclusion_and_exclusion_rules_reach_the_asset_build_queue": "integration",
+    "test_integration::test_model_child_order_reaches_pagination_and_template_output": "integration",
+    "test_integration::test_sibling_navigation_uses_the_parent_model_order": "integration",
+    "test_integration::test_model_file_dependency_rebuilds_a_page_artifact": "integration",
+    "test_integration::test_query_transformations_leave_the_original_query_unchanged": "integration",
+    "test_integration::test_build_output_preserves_autoescaped_markup_and_markdown_markup": "integration",
+    "test_integration::test_direct_environment_and_cli_project_use_the_same_project_tree": "integration",
+    "test_integration::test_build_state_records_template_and_model_dependencies": "integration",
+    "test_integration::test_cli_content_file_info_rejects_a_file_outside_the_project": "integration",
+    "test_integration::test_pad_url_modes_are_shared_by_record_url_to_and_explicit_modes": "integration",
+    "test_integration::test_build_all_and_source_database_preserve_content_paths": "integration",
+    "test_integration::test_environment_template_globals_can_query_the_same_pad": "integration"
+  },
+  "stats": {
+    "atomic": 41,
+    "integration": 38,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_url": "https://github.com/lektor/lektor",
+  "target_imports": [
+    "lektor"
+  ],
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 79,
+      "total": 79,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "d38af7132481c865dee933a03db670120e7095d656e3fdd8fc2a18d8f5feaf6d"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 79,
+      "total": 79,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "4e2bbd35c63455aee7839b8db426ac12b7350741c58d6438765b8e54f62c214b"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 1,
+      "total": 79,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "bfc27978a5109d36fe2a3940dfc29762d66672a427e4dfab41a30876378e982a"
+    }
+  },
+  "task_id": "lektor-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 79,
+      "total": 79
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 41,
+        "failed": 0,
+        "total": 41
+      },
+      "integration": {
+        "passed": 38,
+        "failed": 0,
+        "total": 38
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 1,
+      "failed": 78,
+      "errors": 0,
+      "total": 79
+    },
+    "pass_rate_excluding_skips": 0.012658227848101266,
+    "by_layer": {
+      "atomic": {
+        "passed": 1,
+        "failed": 40,
+        "total": 41
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 38,
+        "total": 38
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "lektor",
+  "metadata_normalization": {
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "language": "python"
+}

@@ -1,0 +1,220 @@
+{
+  "instance_id": "flit-pyproject-build-projections-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/pypa/flit",
+  "repo_commit": "8faf7341c038567851be8210fa1b54915792ba07",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "flit",
+      "flit_core"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_static_build_hooks_report_no_extra_requirements": "atomic",
+    "test_atomic::test_prepare_metadata_returns_dist_info_directory": "atomic",
+    "test_atomic::test_prepared_metadata_exposes_project_identity": "atomic",
+    "test_atomic::test_prepared_metadata_contains_readme_description": "atomic",
+    "test_atomic::test_prepared_metadata_contains_authors_and_dependencies": "atomic",
+    "test_atomic::test_prepared_metadata_contains_urls_and_license": "atomic",
+    "test_atomic::test_prepared_metadata_writes_scripts_and_entry_points": "atomic",
+    "test_atomic::test_wheel_filename_normalizes_distribution_name": "atomic",
+    "test_atomic::test_wheel_contains_package_files": "atomic",
+    "test_atomic::test_wheel_contains_external_data_mapping": "atomic",
+    "test_atomic::test_wheel_contains_license_file": "atomic",
+    "test_atomic::test_wheel_metadata_declares_pure_python_tag": "atomic",
+    "test_atomic::test_wheel_record_lists_every_archive_member": "atomic",
+    "test_atomic::test_wheel_record_hashes_match_archive_bytes": "atomic",
+    "test_atomic::test_editable_wheel_uses_source_path_file": "atomic",
+    "test_atomic::test_editable_wheel_omits_copied_package_files": "atomic",
+    "test_atomic::test_sdist_has_normalized_filename_and_single_root": "atomic",
+    "test_atomic::test_sdist_contains_build_inputs_and_package_files": "atomic",
+    "test_atomic::test_sdist_excludes_bytecode_cache": "atomic",
+    "test_atomic::test_editable_metadata_hook_creates_metadata": "atomic",
+    "test_atomic::test_src_layout_wheel_uses_configured_module": "atomic",
+    "test_atomic::test_namespace_layout_wheel_preserves_package_path": "atomic",
+    "test_atomic::test_dynamic_metadata_reads_module_docstring_and_version": "atomic",
+    "test_atomic::test_dynamic_build_hooks_need_no_extra_requirements": "atomic",
+    "test_atomic::test_inline_readme_and_license_file_are_serialized": "atomic",
+    "test_atomic::test_sdist_include_and_exclude_patterns": "atomic",
+    "test_atomic::test_wheel_normalizes_non_executable_permissions": "atomic",
+    "test_atomic::test_wheel_normalizes_executable_permissions": "atomic",
+    "test_atomic::test_buildapi_wheel_is_a_valid_zip_archive": "atomic",
+    "test_atomic::test_buildapi_sdist_is_a_valid_tar_archive": "atomic",
+    "test_integration::test_wheel_metadata_matches_prepared_metadata": "integration",
+    "test_integration::test_wheel_metadata_matches_sdist_pkg_info": "integration",
+    "test_integration::test_wheel_record_covers_license_and_external_data": "integration",
+    "test_integration::test_wheel_record_reconstructs_package_file_projection": "integration",
+    "test_integration::test_regular_and_editable_wheels_project_two_install_modes": "integration",
+    "test_integration::test_sdist_can_feed_a_second_backend_wheel": "integration",
+    "test_integration::test_sdist_roundtrip_preserves_package_file_bytes": "integration",
+    "test_integration::test_build_wheel_accepts_prepared_metadata_directory": "integration",
+    "test_integration::test_editable_prepared_metadata_matches_built_editable_wheel": "integration",
+    "test_integration::test_cli_wheel_only_matches_backend_projection": "integration",
+    "test_integration::test_cli_sdist_only_matches_backend_projection": "integration",
+    "test_integration::test_cli_default_build_produces_both_projections": "integration",
+    "test_integration::test_cli_help_exposes_build_and_publish_commands": "integration",
+    "test_integration::test_cli_version_reports_public_version": "integration",
+    "test_integration::test_src_layout_sdist_and_wheel_share_distribution_identity": "integration",
+    "test_integration::test_namespace_metadata_and_archive_path_agree": "integration",
+    "test_integration::test_dynamic_metadata_agrees_across_wheel_and_sdist": "integration",
+    "test_integration::test_dynamic_project_wheel_is_reproducible": "integration",
+    "test_integration::test_static_project_wheel_is_reproducible": "integration",
+    "test_integration::test_static_project_sdist_is_reproducible": "integration",
+    "test_integration::test_license_file_projection_agrees_across_wheel_and_sdist": "integration",
+    "test_integration::test_inline_readme_projection_agrees_in_metadata_and_pkg_info": "integration",
+    "test_integration::test_external_data_projection_agrees_in_wheel_and_sdist": "integration",
+    "test_integration::test_sdist_rules_keep_only_configured_documentation": "integration",
+    "test_integration::test_entry_points_match_prepared_and_built_metadata": "integration",
+    "test_integration::test_record_digest_cross_view_matches_license_content": "integration",
+    "test_integration::test_all_backend_outputs_share_normalized_distribution_name": "integration",
+    "test_integration::test_both_archive_projections_exclude_bytecode_cache": "integration",
+    "test_integration::test_cli_wheel_only_leaves_no_sdist": "integration",
+    "test_integration::test_cli_sdist_only_leaves_no_wheel": "integration"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_url": "https://github.com/pypa/flit",
+  "target_imports": [
+    "flit",
+    "flit_core.buildapi"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "verified_source_loc_no_vendor": 3934,
+    "verified_source_py_files_no_vendor": 27,
+    "test_files": 86,
+    "upstream_test_functions_ast": 168
+  },
+  "scope_notes": [
+    "Public documented Flit entry points only; no private target modules or attributes.",
+    "The package covers PEP 517 metadata, wheel, editable-wheel, sdist, and local CLI projections.",
+    "Upload execution, credentials, live services, network behavior, VCS discovery, and exact archive timestamps are excluded.",
+    "This is local artifact evidence only and does not establish strict isolation, network isolation, a trusted signature, candidate qualification, or delivery readiness."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true,
+    "high_standard_expansion": "2026-08-05"
+  },
+  "task_id": "flit-pyproject-build-projections-fullrepro-001",
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "bf0dead5931293931f7e7589d51f4634b15871270fc806df6fe34d6a76edab27"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "f16c377ae751e6a9a98673e06ab32a099bbf5c42c3ca864a4bcd81a2eabb52c9"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 2,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "133c47891b26e699cbf76bd0011ddcb6c9414380fe2de07eee25a34ba21e3546"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 2,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "2426e1dd632b3867a27c74e76f921cd642053b6b1b57b6ffaa32816fa5fe97ba"
+    }
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 2,
+      "failed": 58,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.03333333333333333,
+    "by_layer": {
+      "atomic": {
+        "passed": 2,
+        "failed": 28,
+        "total": 30
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "flit",
+  "language": "python"
+}

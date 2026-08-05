@@ -1,0 +1,204 @@
+{
+  "instance_id": "xlsxwriter-workbook-projections-fullrepro-001",
+  "task_id": "xlsxwriter-workbook-projections-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "jmcnamara/XlsxWriter",
+  "source_url": "https://github.com/jmcnamara/XlsxWriter",
+  "repo_commit": "cf3fe78d3eab5e4c7d825d4451af3a60e2a04011",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 66,
+    "scorer_isolation": [
+      "--remove-path",
+      "xlsxwriter"
+    ],
+    "oracle_version": "artifact-only-v1"
+  },
+  "stats": {
+    "atomic": 31,
+    "integration": 35,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310.json"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py311.json",
+      "sha256": "744bdf50db74ea168e177f3e2501e8edded6e290f447a890a940a07d172596a0"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py310.json",
+      "sha256": "f5a78f58aa6fccdc444bec555b8b3c198eaf68d055384366ea0c0f3d68e3e50a"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 weak dummy replay",
+      "passed": 1,
+      "total": 66,
+      "log": "logs/dummy_py310.json",
+      "sha256": "bc07ccf6572b2dbf2373fc90fe3aa215f9ff7436c0867fa7a63494012afd18f0"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 weak dummy replay",
+      "passed": 1,
+      "total": 66,
+      "log": "logs/dummy_py311.json",
+      "sha256": "a0607716ee200eab4c69b9b392412e741d9e5aae0d7ebe0673c3ce5ca7207000"
+    }
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 31,
+        "failed": 0,
+        "total": 31
+      },
+      "integration": {
+        "passed": 35,
+        "failed": 0,
+        "total": 35
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 1,
+      "failed": 65,
+      "errors": 0,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 0.015151515151515152,
+    "by_layer": {
+      "atomic": {
+        "passed": 1,
+        "failed": 30,
+        "total": 31
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 35,
+        "total": 35
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "xlsxwriter",
+  "taxonomy": {
+    "test_atomic::test_public_import_exposes_workbook_and_version": "atomic",
+    "test_atomic::test_workbook_closes_to_a_zip_stream": "atomic",
+    "test_atomic::test_add_worksheet_projects_names_in_workbook_xml": "atomic",
+    "test_atomic::test_get_worksheet_by_name_returns_the_public_sheet_object": "atomic",
+    "test_atomic::test_add_format_bold_and_number_format_reach_styles_xml": "atomic",
+    "test_atomic::test_write_string_projects_shared_string_cell": "atomic",
+    "test_atomic::test_write_number_projects_numeric_value": "atomic",
+    "test_atomic::test_write_boolean_projects_boolean_cell_type": "atomic",
+    "test_atomic::test_write_datetime_projects_excel_serial_and_format": "atomic",
+    "test_atomic::test_write_formula_projects_formula_and_cached_value": "atomic",
+    "test_atomic::test_write_array_formula_projects_range_reference": "atomic",
+    "test_atomic::test_write_dynamic_array_formula_projects_dynamic_marker": "atomic",
+    "test_atomic::test_write_rich_string_projects_multiple_runs": "atomic",
+    "test_atomic::test_write_row_projects_mixed_values_across_columns": "atomic",
+    "test_atomic::test_write_column_projects_values_down_rows": "atomic",
+    "test_atomic::test_write_blank_with_format_projects_style_only_cell": "atomic",
+    "test_atomic::test_set_column_projects_width_and_custom_width": "atomic",
+    "test_atomic::test_set_row_projects_height_and_hidden_state": "atomic",
+    "test_atomic::test_freeze_panes_projects_frozen_view": "atomic",
+    "test_atomic::test_merge_range_projects_merge_cell_ref": "atomic",
+    "test_atomic::test_autofilter_projects_filter_range": "atomic",
+    "test_atomic::test_define_name_projects_global_and_local_names": "atomic",
+    "test_atomic::test_add_table_projects_table_part_and_reference": "atomic",
+    "test_atomic::test_write_external_url_projects_hyperlink_relationship": "atomic",
+    "test_atomic::test_write_internal_url_projects_location_without_external_target": "atomic",
+    "test_atomic::test_write_comment_projects_comment_author_and_cell_ref": "atomic",
+    "test_atomic::test_insert_chart_projects_chart_xml_and_drawing_relationship": "atomic",
+    "test_atomic::test_set_properties_projects_title_without_asserting_timestamps": "atomic",
+    "test_atomic::test_set_calc_mode_projects_calculation_policy": "atomic",
+    "test_atomic::test_write_fraction_projects_as_numeric_value": "atomic",
+    "test_atomic::test_workbook_projection_has_stable_required_parts": "atomic",
+    "test_integration::test_named_sheets_and_strings_form_a_workbook_workflow": "integration",
+    "test_integration::test_scalar_cells_and_formula_project_together": "integration",
+    "test_integration::test_formatted_datetime_and_numeric_cells_share_style_projection": "integration",
+    "test_integration::test_column_data_and_boolean_flag_form_rows": "integration",
+    "test_integration::test_rich_and_plain_strings_keep_distinct_shared_string_entries": "integration",
+    "test_integration::test_array_and_scalar_formula_ranges_remain_separate": "integration",
+    "test_integration::test_dynamic_formula_and_source_number_form_spill_projection": "integration",
+    "test_integration::test_row_and_column_writes_build_a_rectangular_data_block": "integration",
+    "test_integration::test_blank_format_and_column_width_preserve_layout_metadata": "integration",
+    "test_integration::test_hidden_rows_and_frozen_header_form_view_state": "integration",
+    "test_integration::test_merged_label_and_cell_projection_form_one_section": "integration",
+    "test_integration::test_header_row_and_autofilter_form_filterable_data": "integration",
+    "test_integration::test_global_and_local_names_track_two_sheet_workflow": "integration",
+    "test_integration::test_table_data_and_table_part_reference_same_range": "integration",
+    "test_integration::test_table_and_comment_parts_have_distinct_relationship_types": "integration",
+    "test_integration::test_external_and_internal_hyperlinks_use_different_projections": "integration",
+    "test_integration::test_comment_author_and_core_author_are_independent_metadata": "integration",
+    "test_integration::test_chart_series_cache_projects_written_numeric_source": "integration",
+    "test_integration::test_chart_and_defined_name_parts_coexist_in_package": "integration",
+    "test_integration::test_manual_calc_mode_and_formula_cache_form_recalculation_workflow": "integration",
+    "test_integration::test_two_identical_sheet_builds_have_same_structural_member_set": "integration",
+    "test_integration::test_date_cell_and_properties_keep_timestamp_sensitive_fields_out_of_projection": "integration",
+    "test_integration::test_numeric_fraction_and_formula_values_share_numeric_cell_contract": "integration",
+    "test_integration::test_row_and_column_layout_settings_survive_with_written_cells": "integration",
+    "test_integration::test_merged_title_and_table_form_non_overlapping_structural_parts": "integration",
+    "test_integration::test_linked_and_annotated_cell_has_both_sheet_and_relationship_projections": "integration",
+    "test_integration::test_chart_anchor_and_column_layout_form_dashboard_structure": "integration",
+    "test_integration::test_table_and_name_refer_to_different_public_workbook_ranges": "integration",
+    "test_integration::test_sheet_lookup_and_written_content_form_named_sheet_workflow": "integration",
+    "test_integration::test_internal_navigation_and_merged_heading_form_local_workflow": "integration",
+    "test_integration::test_public_workbook_import_and_close_support_repeated_local_runs": "integration",
+    "test_integration::test_workbook_policy_and_properties_are_present_together": "integration",
+    "test_integration::test_formula_summary_and_table_detail_are_separate_parts": "integration",
+    "test_integration::test_filterable_frozen_data_sheet_forms_a_multi_view_workflow": "integration",
+    "test_integration::test_rich_caption_and_chart_form_visual_report_parts": "integration"
+  },
+  "language": "python"
+}

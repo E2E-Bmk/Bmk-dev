@@ -1,0 +1,226 @@
+{
+  "instance_id": "asciimatics-screen-widget-fullrepro-001",
+  "task_id": "asciimatics-screen-widget-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "peterbrittain/asciimatics",
+  "source_url": "https://github.com/peterbrittain/asciimatics",
+  "repo_commit": "bf0cea87b50439e40a5c7b708d64da4195314a60",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 68,
+    "scorer_isolation": [],
+    "oracle_version": "artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_import_surface_exposes_core_modules": "atomic",
+    "test_atomic::test_keyboard_event_projects_code_and_text": "atomic",
+    "test_atomic::test_mouse_event_projects_coordinates_and_flags": "atomic",
+    "test_atomic::test_scene_projects_name_duration_clear_and_effects": "atomic",
+    "test_atomic::test_scene_add_and_remove_effect_updates_registration": "atomic",
+    "test_atomic::test_scene_sends_events_in_reverse_effect_order": "atomic",
+    "test_atomic::test_effect_updates_only_inside_configured_frame_window": "atomic",
+    "test_atomic::test_effect_reset_delete_count_and_default_properties": "atomic",
+    "test_atomic::test_path_jump_and_wait_replays_positions": "atomic",
+    "test_atomic::test_path_straight_motion_reaches_endpoint": "atomic",
+    "test_atomic::test_path_round_motion_is_repeatable_after_reset": "atomic",
+    "test_atomic::test_dynamic_path_starts_at_configured_position_and_moves_on_event": "atomic",
+    "test_atomic::test_static_renderer_projects_dimensions_and_images": "atomic",
+    "test_atomic::test_static_renderer_animation_and_reset_are_public": "atomic",
+    "test_atomic::test_static_renderer_projects_colour_sequences_without_ansi_snapshot": "atomic",
+    "test_atomic::test_print_effect_uses_renderer_projection_and_screen_paint": "atomic",
+    "test_atomic::test_print_effect_speed_gates_repaints": "atomic",
+    "test_atomic::test_wipe_effect_advances_on_even_frames": "atomic",
+    "test_atomic::test_scroll_effect_uses_configured_rate": "atomic",
+    "test_atomic::test_sprite_follows_path_and_records_last_position": "atomic",
+    "test_atomic::test_sprite_overlap_uses_last_positions": "atomic",
+    "test_atomic::test_sprite_forwards_events_to_dynamic_paths": "atomic",
+    "test_atomic::test_widget_constants_and_label_value_contract": "atomic",
+    "test_atomic::test_button_keyboard_event_invokes_callback": "atomic",
+    "test_atomic::test_checkbox_toggle_and_callback": "atomic",
+    "test_atomic::test_radio_buttons_navigation_and_value_selection": "atomic",
+    "test_atomic::test_text_editing_and_validator_state": "atomic",
+    "test_atomic::test_textbox_multiline_value_and_enter_transition": "atomic",
+    "test_atomic::test_dropdown_value_and_options_projection": "atomic",
+    "test_atomic::test_listbox_selection_and_start_line_projection": "atomic",
+    "test_atomic::test_layout_focus_and_find_widget": "atomic",
+    "test_atomic::test_frame_data_round_trip_with_named_widgets": "atomic",
+    "test_atomic::test_frame_theme_and_title_are_public": "atomic",
+    "test_atomic::test_frame_update_flushes_canvas_to_recording_screen": "atomic",
+    "test_atomic::test_canvas_location_and_visibility_are_stable": "atomic",
+    "test_atomic::test_screen_control_and_key_constants_are_deterministic": "atomic",
+    "test_integration::test_scene_event_workflow_preserves_unhandled_event": "integration",
+    "test_integration::test_path_and_sprite_workflow_draws_each_position": "integration",
+    "test_integration::test_print_and_wipe_compose_over_one_recording_screen": "integration",
+    "test_integration::test_scene_update_workflow_runs_background_and_scroll_effects": "integration",
+    "test_integration::test_renderer_reset_and_effect_speed_form_a_repeatable_workflow": "integration",
+    "test_integration::test_dynamic_sprite_event_then_render_workflow": "integration",
+    "test_integration::test_button_and_checkbox_form_workflow_records_actions": "integration",
+    "test_integration::test_radio_and_text_workflow_combines_selection_and_validation": "integration",
+    "test_integration::test_textbox_frame_save_workflow_persists_multiline_content": "integration",
+    "test_integration::test_listbox_and_label_workflow_tracks_selected_record": "integration",
+    "test_integration::test_dropdown_options_and_layout_lookup_workflow": "integration",
+    "test_integration::test_layout_focus_then_frame_render_workflow": "integration",
+    "test_integration::test_frame_initial_data_updates_text_and_checkbox_widgets": "integration",
+    "test_integration::test_frame_theme_title_and_render_workflow": "integration",
+    "test_integration::test_frame_child_effect_and_frame_render_workflow": "integration",
+    "test_integration::test_print_clear_delete_workflow_replaces_previous_projection": "integration",
+    "test_integration::test_two_sprite_motion_workflow_rechecks_overlap_after_updates": "integration",
+    "test_integration::test_path_reset_workflow_replays_same_route": "integration",
+    "test_integration::test_scene_exit_workflow_saves_effect_state": "integration",
+    "test_integration::test_scene_topmost_button_like_effect_swallow_workflow": "integration",
+    "test_integration::test_animated_renderer_print_workflow_cycles_images": "integration",
+    "test_integration::test_canvas_and_renderer_dimensions_drive_a_print_position": "integration",
+    "test_integration::test_coloured_renderer_print_workflow_keeps_colour_map_shape": "integration",
+    "test_integration::test_checkbox_radio_callback_workflow_tracks_form_state": "integration",
+    "test_integration::test_text_validation_and_render_workflow_exposes_current_value": "integration",
+    "test_integration::test_textbox_edit_and_render_workflow": "integration",
+    "test_integration::test_listbox_keyboard_and_render_workflow": "integration",
+    "test_integration::test_complete_form_workflow_edits_saves_and_renders": "integration",
+    "test_integration::test_selection_form_workflow_updates_dropdown_and_renders": "integration",
+    "test_integration::test_scene_composes_effect_and_widget_frame_workflow": "integration",
+    "test_integration::test_control_key_and_text_edit_workflow_uses_public_constants": "integration",
+    "test_integration::test_background_scene_lifecycle_workflow_is_local_and_repeatable": "integration"
+  },
+  "stats": {
+    "atomic": 36,
+    "integration": 32,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "asciimatics",
+    "asciimatics.event",
+    "asciimatics.scene",
+    "asciimatics.paths",
+    "asciimatics.effects",
+    "asciimatics.renderers",
+    "asciimatics.screen",
+    "asciimatics.widgets"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay (current)",
+      "passed": 68,
+      "total": 68,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "f41b2032acb336267cab0a00db9f657424d26823b69fb7e1c48e08b33b4914d9"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 isolated replay",
+      "passed": 68,
+      "total": 68,
+      "log": "logs/reference_py310.json",
+      "sha256": "6ff4719a02732d4aa2f2669e3a966fdda856c2d82bbeca9bb6129ee23f5d1aad"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 isolated minimal dummy replay",
+      "passed": 2,
+      "total": 68,
+      "log": "logs/dummy_py310.json",
+      "sha256": "9fd53e00b2fde1084620336f00c6b714ef140e838ac0d6040b80c5271fd59db9"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 isolated minimal dummy replay (current)",
+      "passed": 2,
+      "total": 68,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "c9e459b2357b4156fa41a95bbc01fd676807edde427e4674a7501ce95fb17559"
+    }
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay (current)"
+  },
+  "scope_notes": [
+    "Public event and key objects, Scenes, Effects, Paths, StaticRenderer projections, Sprite, Print, Wipe, Scroll, Background, Canvas, and deterministic widget workflows.",
+    "Screen behavior is supplied by a local recorder; values and events are runner-created.",
+    "Curses, TTY access, Screen.open, Screen.wrapper, Screen.play, terminal timing, sleeps, random visual effects, samples, exact ANSI output, filesystem or network widgets, host state, private imports, source tests, and incidental exception strings are excluded.",
+    "Current evidence is same-process local replay only and does not establish a trusted black-box Stage 4 runner, external signature, trusted provenance, final qualification status, or candidate score."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "status": "ARTIFACT_ONLY",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310.json",
+    "python311_result_source": "logs/reference_py311_current.json",
+    "dummy_python311_result_source": "logs/dummy_py311_current.json",
+    "python311_environment_note": "Python 3.11.15 reference and dummy replays completed in the current local environment."
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 68,
+      "total": 68
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 36,
+        "failed": 0,
+        "total": 36
+      },
+      "integration": {
+        "passed": 32,
+        "failed": 0,
+        "total": 32
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 2,
+      "failed": 62,
+      "errors": 4,
+      "total": 68
+    },
+    "pass_rate_excluding_skips": 0.029411764705882353,
+    "by_layer": {
+      "atomic": {
+        "passed": 2,
+        "failed": 30,
+        "total": 36,
+        "errors": 4
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 32,
+        "total": 32
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "asciimatics",
+  "language": "python"
+}

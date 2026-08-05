@@ -1,0 +1,223 @@
+{
+  "instance_id": "pony-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/ponyorm/pony",
+  "repo_commit": "2c861b55a717d680bc31e07d10790d6e879cebf1",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 66,
+    "scorer_isolation": [
+      "--remove-path",
+      "pony"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "stats": {
+    "atomic": 35,
+    "integration": 31,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay (envs/psr-py311)"
+  },
+  "source_url": "https://github.com/ponyorm/pony",
+  "target_imports": [
+    "pony",
+    "pony.orm"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "package_python_files": 31,
+    "pure_python_loc_nonblank_noncomment": 21730,
+    "upstream_test_functions": 1072
+  },
+  "scope_notes": [
+    "Public pony.orm declarations, mapping, SQLite memory state, CRUD, queries, aggregates, relationships, serialization, validation, and session/cache behavior only.",
+    "Deterministic SQLite in-memory databases only; no external database providers or live services.",
+    "No Flask integration, private modules or attributes, source-test imports, exact SQL text, sleeps, timing, network, or host-state assumptions.",
+    "Local replay evidence is reproducibility evidence only and does not establish trusted execution, isolation, qualification, a candidate score, or delivery readiness."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay (envs/psr-py311)",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py311.json",
+      "sha256": "f8293ee9cc9d6a28b959f9e5a5f54a39a9eb99bfd7a33beb2a5ce586b3718dea"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay (envs/psr-py310)",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py310.json",
+      "sha256": "729f56107ec3f7964e318ff70e587d22e217ebd39be57794d6f7e81aaac4a90e"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay (envs/psr-py310)",
+      "passed": 0,
+      "total": 66,
+      "log": "logs/dummy_py310.json",
+      "sha256": "e1fc54490da7afcf8c98f4ff24f58c4f4c66602d61a43f63b53f22b384978acb"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay (envs/psr-py311)",
+      "passed": 0,
+      "total": 66,
+      "log": "logs/dummy_py311.json",
+      "sha256": "dc05ed6a0ac35c856fc26ed6a98cf23b577c39601b0434cf0c00a7244b73c683"
+    }
+  },
+  "task_id": "pony-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 35,
+        "failed": 0,
+        "total": 35
+      },
+      "integration": {
+        "passed": 31,
+        "failed": 0,
+        "total": 31
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 66,
+      "errors": 0,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 35,
+        "total": 35
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 31,
+        "total": 31
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "pony",
+  "taxonomy": {
+    "test_atomic::test_database_mapping_creates_declared_entities": "atomic",
+    "test_atomic::test_required_optional_and_default_values_round_trip": "atomic",
+    "test_atomic::test_primary_key_lookup_and_identity": "atomic",
+    "test_atomic::test_auto_primary_key_assigns_value": "atomic",
+    "test_atomic::test_entity_get_and_exists_report_rows": "atomic",
+    "test_atomic::test_select_returns_entities_in_requested_order": "atomic",
+    "test_atomic::test_select_scalar_projection_returns_values": "atomic",
+    "test_atomic::test_filter_lambda_restricts_query": "atomic",
+    "test_atomic::test_filter_kwargs_restricts_query": "atomic",
+    "test_atomic::test_order_by_ascending_and_descending": "atomic",
+    "test_atomic::test_query_slice_and_first_return_positioned_rows": "atomic",
+    "test_atomic::test_count_aggregate_counts_entities": "atomic",
+    "test_atomic::test_sum_and_avg_aggregates": "atomic",
+    "test_atomic::test_min_max_and_empty_aggregates": "atomic",
+    "test_atomic::test_related_filter_joins_forward_relationship": "atomic",
+    "test_atomic::test_reverse_set_iteration_and_count": "atomic",
+    "test_atomic::test_many_to_many_add_is_idempotent": "atomic",
+    "test_atomic::test_many_to_many_remove_and_clear": "atomic",
+    "test_atomic::test_optional_relationship_can_be_null": "atomic",
+    "test_atomic::test_to_dict_contains_scalar_and_foreign_key_values": "atomic",
+    "test_atomic::test_to_dict_includes_collections_when_requested": "atomic",
+    "test_atomic::test_to_dict_can_emit_related_objects": "atomic",
+    "test_atomic::test_to_dict_only_and_exclude_are_respected": "atomic",
+    "test_atomic::test_json_field_round_trips_and_tracks_mutation": "atomic",
+    "test_atomic::test_entity_set_updates_persisted_fields": "atomic",
+    "test_atomic::test_entity_delete_removes_row": "atomic",
+    "test_atomic::test_query_delete_removes_matching_rows": "atomic",
+    "test_atomic::test_set_collection_create_links_child": "atomic",
+    "test_atomic::test_required_validation_raises_value_error": "atomic",
+    "test_atomic::test_invalid_value_and_unknown_attribute_raise_public_errors": "atomic",
+    "test_atomic::test_duplicate_primary_key_raises_public_error": "atomic",
+    "test_atomic::test_db_session_success_commits": "atomic",
+    "test_atomic::test_db_session_exception_rolls_back": "atomic",
+    "test_atomic::test_allowed_exception_commits": "atomic",
+    "test_atomic::test_strict_session_expires_objects": "atomic",
+    "test_integration::test_seed_projection_agrees_across_entity_and_scalar_queries": "integration",
+    "test_integration::test_ordering_projection_and_aggregate_share_the_same_rows": "integration",
+    "test_integration::test_create_update_delete_sequence_updates_counts_and_lookup": "integration",
+    "test_integration::test_filter_order_and_slice_preserve_the_same_projection": "integration",
+    "test_integration::test_failed_transaction_preserves_the_committed_projection": "integration",
+    "test_integration::test_allowed_transaction_exception_keeps_public_state": "integration",
+    "test_integration::test_session_identity_cache_tracks_entity_mutations": "integration",
+    "test_integration::test_forward_relation_and_serialization_agree": "integration",
+    "test_integration::test_reverse_relation_and_forward_filter_agree": "integration",
+    "test_integration::test_many_to_many_relation_and_collection_serialization_agree": "integration",
+    "test_integration::test_many_to_many_mutations_change_both_relation_views": "integration",
+    "test_integration::test_optional_editor_relation_updates_reverse_collection": "integration",
+    "test_integration::test_grouped_count_aggregate_matches_author_collections": "integration",
+    "test_integration::test_grouped_sum_aggregate_matches_filtered_pages": "integration",
+    "test_integration::test_get_exists_and_identity_form_one_lookup_contract": "integration",
+    "test_integration::test_query_built_before_insert_evaluates_current_database_state": "integration",
+    "test_integration::test_chained_filters_and_descending_order_compose": "integration",
+    "test_integration::test_select_kwargs_and_scalar_projection_agree": "integration",
+    "test_integration::test_collection_create_is_visible_from_entity_and_reverse_queries": "integration",
+    "test_integration::test_to_dict_scalar_and_related_modes_preserve_row_identity": "integration",
+    "test_integration::test_json_and_optional_values_survive_a_new_session": "integration",
+    "test_integration::test_validation_failure_does_not_create_a_partial_entity": "integration",
+    "test_integration::test_duplicate_primary_key_failure_preserves_original_row": "integration",
+    "test_integration::test_auto_primary_key_and_to_dict_share_the_inserted_identity": "integration",
+    "test_integration::test_explicit_commit_preserves_later_entity_updates": "integration",
+    "test_integration::test_rollback_on_exception_restores_json_and_scalar_values": "integration",
+    "test_integration::test_nested_db_sessions_share_the_outer_cache": "integration",
+    "test_integration::test_collection_query_and_global_query_return_the_same_children": "integration",
+    "test_integration::test_optional_relation_query_matches_reverse_editor_collection": "integration",
+    "test_integration::test_end_to_end_library_projection_remains_consistent_after_mutations": "integration",
+    "test_integration::test_prefetched_relation_is_readable_inside_strict_session_only": "integration"
+  },
+  "language": "python"
+}

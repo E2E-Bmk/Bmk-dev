@@ -1,0 +1,218 @@
+{
+  "instance_id": "rocketry-fullrepro-001",
+  "task_id": "rocketry-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "Miksus/rocketry",
+  "source_url": "https://github.com/Miksus/rocketry",
+  "repo_commit": "8da223c743003166f5567a017b4ba3dfb34454ef",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "rocketry"
+    ],
+    "oracle_version": "artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_import_surface_exposes_application_session_task_condition_and_args": "atomic",
+    "test_atomic::test_rocketry_constructs_session_with_fixed_main_execution": "atomic",
+    "test_atomic::test_task_decorator_returns_function_and_registers_lookup_by_name_and_function": "atomic",
+    "test_atomic::test_task_declaration_stores_public_metadata": "atomic",
+    "test_atomic::test_functask_constructor_registers_on_supplied_session": "atomic",
+    "test_atomic::test_boolean_conditions_observe_without_context": "atomic",
+    "test_atomic::test_condition_or_algebra_observes_any_true_branch": "atomic",
+    "test_atomic::test_condition_and_algebra_requires_all_true_branches": "atomic",
+    "test_atomic::test_condition_inversion_flips_public_state": "atomic",
+    "test_atomic::test_nested_condition_algebra_preserves_parenthesized_meaning": "atomic",
+    "test_atomic::test_custom_condition_observes_wrapped_function_result": "atomic",
+    "test_atomic::test_custom_condition_accepts_positional_arguments": "atomic",
+    "test_atomic::test_custom_condition_can_receive_current_task_argument": "atomic",
+    "test_atomic::test_daily_condition_is_true_for_never_run_task_at_fixed_time": "atomic",
+    "test_atomic::test_daily_condition_becomes_false_after_success_in_same_fixed_day": "atomic",
+    "test_atomic::test_time_of_day_between_uses_session_time_function": "atomic",
+    "test_atomic::test_weekly_condition_matches_fixed_weekday": "atomic",
+    "test_atomic::test_hourly_after_matches_minute_second_inside_hour": "atomic",
+    "test_atomic::test_session_level_arg_is_injected_during_direct_run": "atomic",
+    "test_atomic::test_function_parameter_arg_is_materialized_during_run": "atomic",
+    "test_atomic::test_simplearg_and_funcarg_are_task_level_values": "atomic",
+    "test_atomic::test_meta_arguments_expose_session_task_and_config": "atomic",
+    "test_atomic::test_direct_run_records_return_value_for_string_and_function_return_args": "atomic",
+    "test_atomic::test_successful_direct_run_updates_status_and_last_success_projection": "atomic",
+    "test_atomic::test_successful_direct_run_writes_run_and_success_log_actions": "atomic",
+    "test_atomic::test_task_logger_filter_counts_are_projected_by_action": "atomic",
+    "test_atomic::test_log_records_share_run_id_between_run_and_success": "atomic",
+    "test_atomic::test_obey_cond_true_leaves_false_condition_task_unrun": "atomic",
+    "test_atomic::test_after_success_condition_is_false_before_source_task_succeeds": "atomic",
+    "test_atomic::test_after_success_condition_becomes_true_for_unrun_downstream_after_source_success": "atomic",
+    "test_atomic::test_succeeded_status_condition_observes_success_log_in_fixed_period": "atomic",
+    "test_atomic::test_one_cycle_scheduler_start_uses_public_shutdown_condition": "atomic",
+    "test_atomic::test_memory_repository_task_records_contain_stable_task_action_and_time_fields": "atomic",
+    "test_integration::test_priority_pipeline_passes_return_between_two_tasks_in_one_scheduler_cycle": "integration",
+    "test_integration::test_session_parameter_and_return_pipeline_produce_joined_payload": "integration",
+    "test_integration::test_custom_condition_combines_with_fixed_time_window_to_gate_task": "integration",
+    "test_integration::test_task_meta_arguments_and_task_sensitive_condition_agree_on_current_task": "integration",
+    "test_integration::test_daily_task_runs_once_and_same_day_observation_prevents_second_due_state": "integration",
+    "test_integration::test_two_successful_tasks_keep_separate_log_run_ids_and_action_counts": "integration",
+    "test_integration::test_downstream_condition_is_consumed_after_pipeline_task_runs": "integration",
+    "test_integration::test_funcarg_simplearg_and_return_can_build_multistep_payload": "integration",
+    "test_integration::test_one_cycle_scheduler_skips_false_condition_and_runs_true_condition": "integration",
+    "test_integration::test_status_condition_and_log_projection_share_same_success_fact": "integration",
+    "test_integration::test_decorated_function_lookup_status_and_return_are_consistent": "integration",
+    "test_integration::test_weekly_condition_and_session_parameter_drive_task_payload": "integration",
+    "test_integration::test_hourly_window_task_runs_and_projects_log_counts": "integration",
+    "test_integration::test_condition_algebra_selects_one_of_two_workflow_branches": "integration",
+    "test_integration::test_condition_closes_over_session_parameter_mutation_before_run": "integration",
+    "test_integration::test_after_success_and_succeeded_conditions_observe_same_upstream_run": "integration",
+    "test_integration::test_functask_and_decorator_tasks_share_session_parameters_and_returns": "integration",
+    "test_integration::test_explicit_scheduler_start_runs_declared_tasks_with_fixed_time": "integration",
+    "test_integration::test_daily_and_time_of_day_combination_runs_then_becomes_not_due": "integration",
+    "test_integration::test_three_task_success_chain_projects_status_return_and_logs": "integration",
+    "test_integration::test_task_can_return_current_log_count_from_meta_task_argument": "integration",
+    "test_integration::test_app_param_function_feeds_two_downstream_consumers": "integration",
+    "test_integration::test_unlisted_downstream_task_remains_unrun_when_manual_run_targets_source_only": "integration",
+    "test_integration::test_custom_condition_arguments_can_block_scheduler_without_logs": "integration",
+    "test_integration::test_return_value_log_time_and_status_survive_same_workflow_projection": "integration",
+    "test_integration::test_pipeline_condition_can_be_combined_with_negated_false_condition": "integration",
+    "test_integration::test_after_finish_pipeline_passes_return_and_source_log_projection": "integration"
+  },
+  "stats": {
+    "atomic": 33,
+    "integration": 27,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "rocketry"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay (current)",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "ac0f81c9605e66bcea5cd034720ad7160d2f3b7455bf6fa5dac482263a03f87e"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay (current)",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "932fb829ca19845467d4c8cbdf1d093aab8f98a4fbe1dc9bd5b4dce9410954d1"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 dummy replay (current)",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "0a2eff397d61d53b4ef345e82e77011aa58fe3c09c6bf022cfd1e13155d2b7ce"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 dummy replay (current)",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "af3d5a06045d3638080e540220b81734db13858ad8e5fac0660de7e14859ebab"
+    }
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay (current)"
+  },
+  "source_metrics": {
+    "source_py_files": 93,
+    "source_loc_nonblank_noncomment": 7250,
+    "upstream_test_files": 131,
+    "upstream_test_functions_rough": 396
+  },
+  "scope_notes": [
+    "Public Rocketry app/session, task declaration, condition, parameter, return, status, log, and one-cycle scheduler behavior only.",
+    "All condition observations use explicit task/session context and a fixed time function.",
+    "Wall-clock loops, sleeps, process pools, network services, private modules, source tests, host state, and incidental log text are excluded.",
+    "Local replay evidence remains ARTIFACT_ONLY and does not claim trusted isolation, qualification, score provenance, or delivery."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "status": "ARTIFACT_ONLY",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 33,
+        "failed": 0,
+        "total": 33
+      },
+      "integration": {
+        "passed": 27,
+        "failed": 0,
+        "total": 27
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 60,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 33,
+        "total": 33
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 27,
+        "total": 27
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "rocketry",
+  "language": "python"
+}

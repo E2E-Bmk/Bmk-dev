@@ -1,0 +1,209 @@
+{
+  "instance_id": "sqlalchemy-utils-public-utilities-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/kvesteri/sqlalchemy-utils",
+  "repo_commit": "6a964e801033f132849f6587bc97efc1f4068507",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "sqlalchemy_utils"
+    ],
+    "oracle_version": "2026-08-05-artifact-only-v1"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "b876ac863c43d2fea6beed051700aea3a21158e9521941de18f2d43ee90a18d7"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "6d766b68f82955a2d7be2a70b5371569bed8b8a9daba5904ff4e095526735dea"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 dummy replay",
+      "passed": 5,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "4dd3848bab1fa078540e29b3690dbb2ac24ea0262339f2f7e2360b4022f8a7a0"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 dummy replay",
+      "passed": 5,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "214c4d35412077b4fca7e586479a47663b44a501a0fb9fd0728858e3f8d07ffd"
+    }
+  },
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_url": "https://github.com/kvesteri/sqlalchemy-utils",
+  "target_imports": [
+    "sqlalchemy_utils"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "scope_notes": [
+    "Public generic types and utilities only, with SQLAlchemy 2.x and SQLite.",
+    "Covers UUID, URL, password, choice, scalar-list, JSON, coercion, inspection, index, and database helper behavior.",
+    "Excludes PostgreSQL and MySQL drivers, external services, network access, private imports, source-test imports, exact messages, and incidental representations.",
+    "Current evidence is same-process local replay only and does not establish a trusted black-box runner, external signature, or final QUALIFIED status."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json"
+  },
+  "task_id": "sqlalchemy-utils-public-utilities-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 5,
+      "failed": 55,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.08333333333333333,
+    "by_layer": {
+      "atomic": {
+        "passed": 3,
+        "failed": 27,
+        "total": 30
+      },
+      "integration": {
+        "passed": 2,
+        "failed": 28,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "sqlalchemy_utils",
+  "taxonomy": {
+    "test_atomic::test_uuid_type_coerces_string_to_uuid": "atomic",
+    "test_atomic::test_uuid_type_round_trips_through_sqlite": "atomic",
+    "test_atomic::test_uuid_type_exposes_binary_storage_option": "atomic",
+    "test_atomic::test_url_type_coerces_string_to_furl": "atomic",
+    "test_atomic::test_url_type_round_trips_as_furl": "atomic",
+    "test_atomic::test_password_type_coerces_secret_to_password": "atomic",
+    "test_atomic::test_password_type_round_trips_and_verifies_secret": "atomic",
+    "test_atomic::test_choice_type_coerces_code_to_choice": "atomic",
+    "test_atomic::test_choice_type_round_trips_code_and_label": "atomic",
+    "test_atomic::test_scalar_list_type_coerces_text_items_on_load": "atomic",
+    "test_atomic::test_scalar_list_type_coerces_integer_items_on_load": "atomic",
+    "test_atomic::test_json_type_round_trips_nested_data": "atomic",
+    "test_atomic::test_nullable_custom_values_round_trip_as_none": "atomic",
+    "test_atomic::test_choice_type_rejects_unknown_code": "atomic",
+    "test_atomic::test_scalar_list_type_rejects_separator_in_item": "atomic",
+    "test_atomic::test_model_table_exposes_public_columns": "atomic",
+    "test_atomic::test_get_columns_returns_mapped_columns": "atomic",
+    "test_atomic::test_get_primary_keys_returns_ordered_primary_key": "atomic",
+    "test_atomic::test_get_type_handles_column_and_relationship": "atomic",
+    "test_atomic::test_get_mapper_handles_class_instance_and_table": "atomic",
+    "test_atomic::test_get_tables_handles_model_and_attribute": "atomic",
+    "test_atomic::test_table_name_handles_model_and_attribute": "atomic",
+    "test_atomic::test_get_column_key_resolves_database_column_alias": "atomic",
+    "test_atomic::test_get_declarative_base_returns_registry_base": "atomic",
+    "test_atomic::test_get_bind_returns_connection_bind": "atomic",
+    "test_atomic::test_index_helpers_distinguish_indexed_and_unique_columns": "atomic",
+    "test_atomic::test_database_exists_accepts_sqlite_memory_urls": "atomic",
+    "test_atomic::test_escape_like_escapes_wildcards_and_escape_character": "atomic",
+    "test_atomic::test_identity_and_naturally_equivalent_use_persisted_values": "atomic",
+    "test_atomic::test_get_class_by_table_finds_declarative_model": "atomic",
+    "test_integration::test_coercion_types_survive_flush_expire_and_reload": "integration",
+    "test_integration::test_uuid_identity_and_primary_key_projection_agree": "integration",
+    "test_integration::test_url_query_mutation_persists_as_public_url_object": "integration",
+    "test_integration::test_password_update_rehashes_and_keeps_row_identity": "integration",
+    "test_integration::test_choice_filter_and_projection_agree_after_round_trip": "integration",
+    "test_integration::test_scalar_lists_update_as_typed_python_collections": "integration",
+    "test_integration::test_json_payload_update_is_visible_in_query_and_instance_views": "integration",
+    "test_integration::test_nullable_values_can_be_cleared_without_losing_required_values": "integration",
+    "test_integration::test_model_and_column_inspection_agree_on_schema": "integration",
+    "test_integration::test_inspection_reports_scalar_and_relationship_types_together": "integration",
+    "test_integration::test_mapper_and_class_lookup_round_trip_through_table": "integration",
+    "test_integration::test_bind_helper_matches_engine_used_for_sqlite_queries": "integration",
+    "test_integration::test_index_helpers_match_declared_schema_constraints": "integration",
+    "test_integration::test_sqlite_file_lifecycle_reports_exists_then_missing": "integration",
+    "test_integration::test_sqlite_database_helper_creates_a_usable_file": "integration",
+    "test_integration::test_escaped_like_pattern_selects_literal_wildcards": "integration",
+    "test_integration::test_natural_equivalence_compares_two_loaded_value_objects": "integration",
+    "test_integration::test_deterministic_projection_orders_choice_and_list_values": "integration",
+    "test_integration::test_new_model_values_are_coerced_before_session_add": "integration",
+    "test_integration::test_engine_and_session_bind_support_same_round_trip": "integration",
+    "test_integration::test_primary_key_and_columns_remain_stable_after_flush": "integration",
+    "test_integration::test_file_database_round_trip_preserves_custom_values": "integration",
+    "test_integration::test_invalid_choice_does_not_insert_a_partial_row": "integration",
+    "test_integration::test_scalar_list_validation_keeps_existing_rows_intact": "integration",
+    "test_integration::test_default_active_value_is_persisted_alongside_custom_types": "integration",
+    "test_integration::test_update_and_reload_preserve_uuid_and_json_contract": "integration",
+    "test_integration::test_category_relationship_uses_public_class_and_table_helpers": "integration",
+    "test_integration::test_schema_helpers_agree_after_metadata_creation": "integration",
+    "test_integration::test_end_to_end_public_utility_workflow": "integration",
+    "test_integration::test_connection_bind_and_schema_inspection_share_sqlite_state": "integration"
+  },
+  "language": "python"
+}

@@ -208,10 +208,54 @@ def classify_helpers(tree: ast.Module) -> dict[str, set]:
     return {k: v for k, v in signals.items() if v}
 
 
+def _sibling_module_path(path: Path, module: str) -> Path | None:
+    """Resolve a plain sibling import used by an oracle test module."""
+    if not module or "." in module:
+        return None
+    candidate = path.parent / f"{module}.py"
+    if candidate.is_file():
+        return candidate
+    package_init = path.parent / module / "__init__.py"
+    return package_init if package_init.is_file() else None
+
+
+def imported_helper_signals(path: Path, tree: ast.Module) -> dict[str, set]:
+    """Resolve assertion helpers imported from a task-local sibling module.
+
+    Oracle tests commonly keep fixtures and shared projections in
+    ``conftest.py``. Treating those calls as opaque makes real assertions look
+    like no-check tests, so only explicitly imported helper names are added to
+    the caller's signal map.
+    """
+    signals: dict[str, set] = {}
+    for node in tree.body:
+        if not isinstance(node, ast.ImportFrom) or node.level:
+            continue
+        module_path = _sibling_module_path(path, node.module or "")
+        if module_path is None:
+            continue
+        try:
+            imported_tree = ast.parse(
+                module_path.read_text(encoding="utf-8-sig", errors="replace"),
+                filename=str(module_path),
+            )
+        except (OSError, SyntaxError):
+            continue
+        available = classify_helpers(imported_tree)
+        for alias in node.names:
+            if alias.name == "*":
+                continue
+            helper = available.get(alias.name)
+            if helper:
+                signals[alias.asname or alias.name] = set(helper)
+    return signals
+
+
 def annotate_file(path: Path) -> dict[str, dict]:
     src = path.read_text(encoding="utf-8-sig", errors="replace")
     tree = ast.parse(src, filename=str(path))
     helper_signals = classify_helpers(tree)
+    helper_signals.update(imported_helper_signals(path, tree))
     stem = path.stem
     out: dict[str, dict] = {}
 

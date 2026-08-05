@@ -1,0 +1,239 @@
+{
+  "instance_id": "celery-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "celery/celery",
+  "source_url": "https://github.com/celery/celery",
+  "repo_commit": "7c5d9a62d90c685bd0e1ae002d66ae40980b2847",
+  "spec_version": "v1-public-api-artifact",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 66,
+    "source": "66 generated public-behavior tests over application, task, result, canvas, routing, schedule, and deterministic CLI projections",
+    "nodeid_file": "kept_nodeids.txt",
+    "taxonomy_file": "taxonomy.jsonl",
+    "mapping_file": "spec_test_map.md",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "scorer_isolation": [
+      "PYTHONPATH=<solution_dir>",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "LC_ALL=C",
+      "LANG=C",
+      "TZ=UTC",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "oracle_version": "2026-08-05-public-api-artifact-v1"
+  },
+  "stats": {
+    "atomic": 41,
+    "integration": 25,
+    "system_e2e": 0
+  },
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_meta": {
+    "language": "Python",
+    "source_commit": "7c5d9a62d90c685bd0e1ae002d66ae40980b2847",
+    "package_python_files": 161,
+    "pure_python_loc_nonblank_noncomment": 33034,
+    "upstream_test_files": 209,
+    "upstream_test_functions_rough": 3325
+  },
+  "target_imports": [
+    "celery"
+  ],
+  "scope_notes": [
+    "Public application, task declaration, eager execution, memory-backed result, signatures, canvas, state, routing, schedule, and service-free CLI/control projections only.",
+    "Live brokers, live backends, workers, network access, source tests, private imports, sleeps, timing, host configuration, generated identifiers, exact log text, and brittle full command snapshots are excluded.",
+    "Reference and dummy replays are local reproducibility artifacts only; this package does not claim trusted Stage 4, strict black-box evaluation, network isolation, a trusted signature, candidate score, qualification, provenance, Docker replay, or delivery."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "reference_result_source": "logs/reference_py310.json",
+    "python311_result_source": "logs/reference_py311.json",
+    "dummy_result_source": null,
+    "dummy_python311_result_source": null,
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py311.json",
+      "sha256": "8d732742c51781685e984a73dfca2f8dbd62fbfab7a6de655c2a84097923d76f"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 66,
+      "total": 66,
+      "log": "logs/reference_py310.json",
+      "sha256": "16a0d9ba51c1a390bfdfb4756653e7fa6e97065c0662b7a0d7a9d0e4e39426dd"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 66,
+      "log": "logs/dummy_py310.json",
+      "sha256": "1411d228d090a237879b42b8e45215f0bff03cd63645ec5fa16f78996bdc0f50"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 66,
+      "log": "logs/dummy_py311.json",
+      "sha256": "5a86d664f6f07a94865ff73e4723ac4a555677fe44d765010fec745eb848ceea"
+    }
+  },
+  "task_id": "celery-fullrepro-001",
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 66,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 41,
+        "failed": 0,
+        "total": 41
+      },
+      "integration": {
+        "passed": 25,
+        "failed": 0,
+        "total": 25
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 8,
+      "errors": 58,
+      "total": 66
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 3,
+        "total": 41,
+        "errors": 38
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 5,
+        "total": 25,
+        "errors": 20
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "celery",
+  "taxonomy": {
+    "test_atomic::test_app_exposes_main_name_and_default_conf": "atomic",
+    "test_atomic::test_app_constructor_applies_broker_and_backend_configuration": "atomic",
+    "test_atomic::test_conf_update_preserves_and_overrides_public_settings": "atomic",
+    "test_atomic::test_add_defaults_accepts_a_mapping": "atomic",
+    "test_atomic::test_add_defaults_accepts_a_callable": "atomic",
+    "test_atomic::test_config_from_cmdline_parses_typed_values": "atomic",
+    "test_atomic::test_task_decorator_registers_a_named_task": "atomic",
+    "test_atomic::test_task_decorator_preserves_callable_metadata": "atomic",
+    "test_atomic::test_task_decorator_accepts_execution_options": "atomic",
+    "test_atomic::test_task_registry_contains_only_registered_public_task_names": "atomic",
+    "test_atomic::test_direct_task_call_executes_inline": "atomic",
+    "test_atomic::test_delay_returns_successful_eager_result": "atomic",
+    "test_atomic::test_apply_returns_eager_result_with_success_state": "atomic",
+    "test_atomic::test_apply_async_uses_explicit_task_id": "atomic",
+    "test_atomic::test_bound_task_sees_eager_request_context": "atomic",
+    "test_atomic::test_task_signature_contains_task_args_kwargs_and_options": "atomic",
+    "test_atomic::test_signature_shortcut_creates_public_signature": "atomic",
+    "test_atomic::test_signature_merge_prepends_args_and_overlays_kwargs": "atomic",
+    "test_atomic::test_signature_set_returns_self_with_updated_options": "atomic",
+    "test_atomic::test_immutable_signature_rejects_new_arguments": "atomic",
+    "test_atomic::test_signature_clone_does_not_mutate_original_options": "atomic",
+    "test_atomic::test_signature_round_trip_from_mapping": "atomic",
+    "test_atomic::test_signature_serializes_as_a_plain_mapping": "atomic",
+    "test_atomic::test_task_apply_async_preserves_routing_metadata_in_signature": "atomic",
+    "test_atomic::test_eager_success_result_exposes_metadata": "atomic",
+    "test_atomic::test_eager_failure_result_records_failure_state": "atomic",
+    "test_atomic::test_failed_result_get_can_suppress_propagation": "atomic",
+    "test_atomic::test_failed_result_get_propagates_by_default": "atomic",
+    "test_atomic::test_eager_result_revoke_changes_state": "atomic",
+    "test_atomic::test_async_result_reads_stored_eager_metadata": "atomic",
+    "test_atomic::test_ignore_result_avoids_a_stored_backend_value": "atomic",
+    "test_atomic::test_state_sets_classify_ready_and_exception_states": "atomic",
+    "test_atomic::test_state_precedence_orders_success_above_started": "atomic",
+    "test_atomic::test_group_signature_exposes_member_signatures": "atomic",
+    "test_atomic::test_chain_signature_exposes_ordered_tasks": "atomic",
+    "test_atomic::test_chord_signature_exposes_header_and_body": "atomic",
+    "test_atomic::test_group_apply_returns_group_result": "atomic",
+    "test_atomic::test_chain_apply_returns_final_eager_result": "atomic",
+    "test_atomic::test_chord_length_hint_counts_header_tasks": "atomic",
+    "test_atomic::test_periodic_task_projection_records_signature_and_schedule": "atomic",
+    "test_atomic::test_task_request_execution_options_are_publicly_projected": "atomic",
+    "test_integration::test_configured_app_registers_and_executes_a_task": "integration",
+    "test_integration::test_task_options_flow_into_eager_invocation": "integration",
+    "test_integration::test_bound_task_workflow_returns_context_and_stored_result": "integration",
+    "test_integration::test_direct_and_delay_views_agree_on_task_value": "integration",
+    "test_integration::test_signature_workflow_sets_options_then_executes": "integration",
+    "test_integration::test_cloned_signature_workflow_keeps_original_and_runs_clone": "integration",
+    "test_integration::test_serialized_signature_round_trip_executes": "integration",
+    "test_integration::test_failure_workflow_exposes_state_and_nonpropagating_value": "integration",
+    "test_integration::test_failure_workflow_can_propagate_then_revoke_separate_result": "integration",
+    "test_integration::test_group_workflow_executes_distinct_member_tasks": "integration",
+    "test_integration::test_chain_workflow_passes_previous_value_to_next_task": "integration",
+    "test_integration::test_chord_workflow_collects_header_values": "integration",
+    "test_integration::test_group_then_aggregate_workflow_uses_group_result_values": "integration",
+    "test_integration::test_nested_canvas_workflow_preserves_task_order": "integration",
+    "test_integration::test_backend_workflow_distinguishes_stored_and_ignored_results": "integration",
+    "test_integration::test_result_metadata_workflow_links_task_name_and_state": "integration",
+    "test_integration::test_state_workflow_classifies_success_failure_and_pending": "integration",
+    "test_integration::test_periodic_configuration_workflow_registers_named_schedule": "integration",
+    "test_integration::test_cli_version_projection_is_deterministic": "integration",
+    "test_integration::test_cli_help_projection_lists_public_command_groups": "integration",
+    "test_integration::test_cli_control_list_projection_is_service_free": "integration",
+    "test_integration::test_cli_inspect_list_projection_is_service_free": "integration",
+    "test_integration::test_bound_task_workflow_accepts_custom_headers_without_changing_value": "integration",
+    "test_integration::test_routing_workflow_keeps_queue_key_and_executes_payload": "integration",
+    "test_integration::test_default_routing_workflow_feeds_signature_and_eager_execution": "integration"
+  },
+  "language": "python"
+}

@@ -1,0 +1,216 @@
+{
+  "instance_id": "python-fire-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/google/python-fire",
+  "source_url": "https://github.com/google/python-fire",
+  "repo_commit": "716bbc23d7eca949fdb682172283c8d18f742cb6",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "fire"
+    ],
+    "oracle_version": "2026-08-05-artifact-only-v2"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_import_exposes_fire_callable": "atomic",
+    "test_atomic::test_function_positional_integer_returns_numeric_result": "atomic",
+    "test_atomic::test_function_named_argument_returns_numeric_result": "atomic",
+    "test_atomic::test_command_string_is_split_into_tokens": "atomic",
+    "test_atomic::test_boolean_true_argument_uses_python_value": "atomic",
+    "test_atomic::test_boolean_false_argument_uses_python_value": "atomic",
+    "test_atomic::test_none_argument_uses_python_none": "atomic",
+    "test_atomic::test_float_argument_is_converted": "atomic",
+    "test_atomic::test_list_literal_argument_is_converted": "atomic",
+    "test_atomic::test_dict_literal_argument_is_converted": "atomic",
+    "test_atomic::test_tuple_return_uses_json_list_stdout": "atomic",
+    "test_atomic::test_dict_key_traversal_reaches_nested_value": "atomic",
+    "test_atomic::test_single_token_dict_key_with_space_is_supported": "atomic",
+    "test_atomic::test_sequence_index_traversal_reaches_tuple_item": "atomic",
+    "test_atomic::test_hyphenated_member_access_maps_to_underscore_property": "atomic",
+    "test_atomic::test_bound_method_uses_default_argument": "atomic",
+    "test_atomic::test_bound_method_uses_named_argument": "atomic",
+    "test_atomic::test_class_instantiation_uses_constructor_flags": "atomic",
+    "test_atomic::test_class_instantiation_can_continue_to_method": "atomic",
+    "test_atomic::test_callable_object_accepts_named_call_argument": "atomic",
+    "test_atomic::test_default_separator_forces_then_traverses_string_result": "atomic",
+    "test_atomic::test_custom_separator_allows_default_separator_as_value": "atomic",
+    "test_atomic::test_varargs_function_consumes_all_unseparated_tokens": "atomic",
+    "test_atomic::test_function_returned_object_can_be_traversed_after_separator": "atomic",
+    "test_atomic::test_custom_serializer_controls_mapping_stdout": "atomic",
+    "test_atomic::test_help_flag_exits_and_lists_public_members": "atomic",
+    "test_atomic::test_trace_flag_exits_and_reports_command_steps": "atomic",
+    "test_atomic::test_bash_completion_contains_top_level_public_commands": "atomic",
+    "test_atomic::test_missing_key_reports_public_error_exit": "atomic",
+    "test_atomic::test_out_of_range_index_reports_public_error_exit": "atomic",
+    "test_integration::test_positional_and_named_numeric_dispatch_share_stdout_projection": "integration",
+    "test_integration::test_typed_arguments_project_to_return_dict_and_serialized_lines": "integration",
+    "test_integration::test_function_returned_list_can_be_indexed_then_mapped": "integration",
+    "test_integration::test_constructed_object_dict_property_can_be_traversed_to_scalar": "integration",
+    "test_integration::test_class_constructor_flags_and_method_arguments_form_one_command": "integration",
+    "test_integration::test_help_for_object_mentions_values_and_commands_from_same_state": "integration",
+    "test_integration::test_completion_and_help_expose_the_same_top_level_commands": "integration",
+    "test_integration::test_trace_for_bound_method_reports_traversal_without_stdout_value": "integration",
+    "test_integration::test_separator_result_can_use_public_string_method_after_invocation": "integration",
+    "test_integration::test_custom_separator_changes_only_fire_boundary_not_function_result": "integration",
+    "test_integration::test_parsed_list_result_can_be_traversed_after_separator": "integration",
+    "test_integration::test_parsed_dict_result_can_be_traversed_after_separator": "integration",
+    "test_integration::test_custom_serializer_sees_converted_mapping_return": "integration",
+    "test_integration::test_custom_serializer_can_project_public_object_return": "integration",
+    "test_integration::test_varargs_result_can_be_forced_before_string_method_traversal": "integration",
+    "test_integration::test_bound_method_and_callable_object_use_same_instance_state": "integration",
+    "test_integration::test_missing_member_error_includes_help_path_for_same_component": "integration",
+    "test_integration::test_index_error_on_nested_collection_reports_public_help_path": "integration",
+    "test_integration::test_scalar_projection_can_continue_to_public_builtin_method": "integration",
+    "test_integration::test_object_dict_property_serializes_and_traverses_consistently": "integration",
+    "test_integration::test_command_string_supports_named_flags_and_tuple_serialization": "integration",
+    "test_integration::test_public_name_argument_is_reflected_in_help_and_error_guidance": "integration",
+    "test_integration::test_fish_completion_contains_commands_and_hyphenated_members": "integration",
+    "test_integration::test_root_component_without_command_returns_mapping_and_prints_grouped_help": "integration",
+    "test_integration::test_table_function_projects_list_stdout_and_supports_nested_selection": "integration",
+    "test_integration::test_file_path_invocation_exposes_module_commands": "integration",
+    "test_integration::test_module_name_invocation_exposes_module_commands": "integration",
+    "test_integration::test_command_string_preserves_quoted_arguments_before_tuple_projection": "integration",
+    "test_integration::test_class_result_can_cross_separator_to_mapping_value_and_string_method": "integration",
+    "test_integration::test_direct_file_and_module_invocation_share_tuple_projection": "integration"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "fire"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "5d76c617ee34b32bbe049bf1924111badb0938ec39d699f4cacc237c6426b418"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 1,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "0038c8725e23fee94cf9b9ab5194d79b55617c8b86dd29232a5398cba1d871e8"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "6428b7c2db78b4dc888cd04b3f8b6736a64fb9c40a46b232cf8a8f05a40cb0c0"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 1,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "6633b8657532bcab3093d50716c4faa3158c423a0d5b6419575acb35eb251ad2"
+    }
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_metrics": {
+    "package_python_files": 19,
+    "pure_python_loc_nonblank_noncomment": 5504,
+    "upstream_test_files": 22
+  },
+  "scope_notes": [
+    "Public API and CLI behavior tests only; no private target or source-test imports.",
+    "Interactive REPL embedding, full completion snapshots, terminal color rendering details, network behavior, Docker behavior, and performance are excluded.",
+    "Stage 4 evidence is artifact-only; no Docker validation, network isolation, trusted signature, strict black-box result, candidate score, or release qualification is claimed."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310_current.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true
+  },
+  "task_id": "python-fire-fullrepro-001",
+  "dummy_score": {
+    "summary": {
+      "passed": 1,
+      "failed": 59,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.016666666666666666,
+    "by_layer": {
+      "atomic": {
+        "passed": 1,
+        "failed": 29,
+        "total": 30
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "fire",
+  "language": "python"
+}

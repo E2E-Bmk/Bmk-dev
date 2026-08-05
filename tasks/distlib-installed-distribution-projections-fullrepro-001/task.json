@@ -1,0 +1,205 @@
+{
+  "instance_id": "distlib-installed-distribution-projections-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "pypa/distlib",
+  "repo_commit": "454a87c64f0b545138dc4798aa833a4ff8ac2377",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "distlib"
+    ]
+  },
+  "taxonomy": {
+    "test_atomic::test_distinfo_dirname_normalizes_project_dash": "atomic",
+    "test_atomic::test_distribution_path_discovers_installed_distribution": "atomic",
+    "test_atomic::test_get_distribution_is_case_insensitive": "atomic",
+    "test_atomic::test_installed_distribution_string_uses_name_and_version": "atomic",
+    "test_atomic::test_requested_file_sets_requested_flag": "atomic",
+    "test_atomic::test_list_installed_files_reads_record_rows": "atomic",
+    "test_atomic::test_check_installed_files_accepts_matching_hashes_and_sizes": "atomic",
+    "test_atomic::test_list_distinfo_files_filters_record_to_metadata_directory": "atomic",
+    "test_atomic::test_get_distinfo_file_returns_file_under_distribution_metadata": "atomic",
+    "test_atomic::test_get_distinfo_resource_reads_metadata_bytes": "atomic",
+    "test_atomic::test_get_resource_path_resolves_resources_csv_entry": "atomic",
+    "test_atomic::test_exports_json_returns_named_export_entries": "atomic",
+    "test_atomic::test_distribution_provides_includes_self_and_metadata_alias": "atomic",
+    "test_atomic::test_distribution_matches_requirement_with_version_constraints": "atomic",
+    "test_atomic::test_distribution_path_provides_distribution_finds_alias": "atomic",
+    "test_atomic::test_metadata_mapping_exposes_common_fields": "atomic",
+    "test_atomic::test_metadata_keywords_string_becomes_list": "atomic",
+    "test_atomic::test_metadata_get_requirements_filters_extras": "atomic",
+    "test_atomic::test_metadata_write_json_round_trips_mapping": "atomic",
+    "test_atomic::test_manifest_findall_discovers_local_files": "atomic",
+    "test_atomic::test_manifest_include_adds_matching_top_level_file": "atomic",
+    "test_atomic::test_manifest_recursive_include_and_exclude_filter_tree": "atomic",
+    "test_atomic::test_manifest_graft_and_prune_control_subtrees": "atomic",
+    "test_atomic::test_manifest_add_many_and_sorted_can_include_directories": "atomic",
+    "test_atomic::test_manifest_clear_removes_file_sets": "atomic",
+    "test_atomic::test_resource_finder_identifies_container_and_file": "atomic",
+    "test_atomic::test_resource_finder_iterator_walks_nested_resources": "atomic",
+    "test_atomic::test_wheel_filename_and_tags_parse_from_filename": "atomic",
+    "test_atomic::test_wheel_process_shebang_normalizes_existing_interpreter": "atomic",
+    "test_atomic::test_wheel_get_hash_returns_named_digest": "atomic",
+    "test_integration::test_distribution_metadata_agrees_with_serialized_metadata_file": "integration",
+    "test_integration::test_record_rows_distinfo_files_and_integrity_check_share_same_distribution": "integration",
+    "test_integration::test_resource_csv_path_and_resource_finder_read_same_bytes": "integration",
+    "test_integration::test_distribution_exports_match_environment_export_lookup": "integration",
+    "test_integration::test_provides_distribution_and_requirement_matching_project_same_alias": "integration",
+    "test_integration::test_distribution_cache_clear_keeps_public_lookup_consistent": "integration",
+    "test_integration::test_write_installed_files_rebuilds_record_and_check_uses_new_rows": "integration",
+    "test_integration::test_shared_locations_write_and_property_project_same_paths": "integration",
+    "test_integration::test_json_metadata_can_construct_installed_distribution_projection": "integration",
+    "test_integration::test_legacy_metadata_write_round_trips_to_public_dictionary": "integration",
+    "test_integration::test_manifest_file_selection_matches_filesystem_projection": "integration",
+    "test_integration::test_manifest_sorted_with_dirs_preserves_parent_paths_for_selected_files": "integration",
+    "test_integration::test_package_resource_finder_matches_imported_filesystem_package": "integration",
+    "test_integration::test_zip_package_resource_finder_projects_archive_members": "integration",
+    "test_integration::test_wheel_info_metadata_and_verify_agree_with_archive_record": "integration",
+    "test_integration::test_wheel_mount_exposes_package_resource_and_unmount_removes_path": "integration",
+    "test_integration::test_wheel_shebang_and_hash_match_recordable_script_content": "integration",
+    "test_integration::test_file_path_resource_and_metadata_resource_share_distribution_context": "integration",
+    "test_integration::test_named_and_category_export_lookups_return_same_public_entries": "integration",
+    "test_integration::test_distinfo_resource_stream_can_feed_metadata_reader": "integration",
+    "test_integration::test_installed_file_integrity_detects_changed_file_through_record_projection": "integration",
+    "test_integration::test_manifest_over_installed_tree_contains_distribution_record_files": "integration",
+    "test_integration::test_distribution_run_requires_projects_legacy_metadata_requirements": "integration",
+    "test_integration::test_wheel_metadata_can_be_used_as_installed_distribution_metadata": "integration",
+    "test_integration::test_manifest_selected_files_can_be_read_through_resource_finder": "integration",
+    "test_integration::test_metadata_json_written_into_wheel_archive_round_trips_with_wheel_reader": "integration",
+    "test_integration::test_distribution_path_get_distribution_and_provides_distribution_share_object": "integration",
+    "test_integration::test_shared_locations_file_resource_and_property_agree_after_write": "integration",
+    "test_integration::test_zip_package_resource_stream_size_and_iterator_agree": "integration",
+    "test_integration::test_json_wheel_metadata_can_seed_installed_distribution_requirements": "integration"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "5efa6bd5b77b9e39dfedef5d0590752e92245c443c69e1221108c6f407e6cc75"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "da36ebb69c41764cd47fcc66724fbfa5d064d2eba3879881a55ff96c1d9fed5c"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "4f9b85725a4911793df7fe3d66a25e4686269beb97447765c9e88663f8f72c0d"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "eb9ac2097cce43203190dab3750ece80b62d9578277898673c89c464f4d34920"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay",
+    "python311_note": "Python 3.11.15 replay passed with a runner-supplied target root"
+  },
+  "metadata_normalization": {
+    "date": "2026-08-06",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310_current.json",
+    "dummy_result_source": "logs/dummy_py310_current.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true,
+    "portability_fix": "removed the host-specific default target root; reference and dummy replays now pass the implementation root explicitly"
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 60,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "task_id": "distlib-installed-distribution-projections-fullrepro-001",
+  "package_import": "distlib",
+  "target_imports": [
+    "distlib"
+  ],
+  "language": "python"
+}

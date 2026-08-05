@@ -1,0 +1,235 @@
+{
+  "instance_id": "cement-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "datafolklabs/cement",
+  "source_url": "https://github.com/datafolklabs/cement",
+  "repo_commit": "b5af20431d4c50f0c1bfb7ed5544b620edbe4c73",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 78,
+    "scorer_isolation": [
+      "--remove-path",
+      "cement"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "stats": {
+    "atomic": 42,
+    "integration": 36,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 78,
+      "total": 78,
+      "log": "logs/reference_py311.json",
+      "sha256": "9cab9ff13307d9f1ee26ba79566fbcc80915db8f16f188efaf256430cedfddc5"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 78,
+      "total": 78,
+      "log": "logs/reference_py310.json",
+      "sha256": "613878b7b30e07e4ff7f2acd8d995b970236b09b2917ff7c49a03d9488f486ca"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 78,
+      "log": "logs/dummy_py310.json",
+      "sha256": "af2fac6bc6945c81349295c037d239cd163cb8a743c686043466117cd5ed0070"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 78,
+      "log": "logs/dummy_py311.json",
+      "sha256": "9c3069637f7adf0d3ec074c8ae238b844a272f19a01e7d10189ee0fab62a9a6c"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_metrics": {
+    "package_python_files": 79,
+    "pure_python_loc_nonblank_noncomment": 7768,
+    "upstream_test_functions": 387
+  },
+  "scope_notes": [
+    "Public application behavior only; no private Cement module imports or upstream source-test imports.",
+    "Local deterministic coverage includes App/TestApp lifecycle, config and argv merge, controllers, handlers, interfaces, hooks, output, extensions, plugins, bootstrap modules, and template copying.",
+    "Redis, Memcached, SMTP/Mailpit, Docker, devbox, network, sleeps, timing, host state, and the optional YAML interactive generation route are excluded.",
+    "Stage 4 evidence remains artifact-only and does not claim trusted isolation, strict black-box evaluation, network isolation, signatures, candidate score, qualification, provenance, or delivery."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310.json",
+    "dummy_result_source": null,
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "cement-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 78,
+      "total": 78
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 42,
+        "failed": 0,
+        "total": 42
+      },
+      "integration": {
+        "passed": 36,
+        "failed": 0,
+        "total": 36
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 78,
+      "errors": 0,
+      "total": 78
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 42,
+        "total": 42
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 36,
+        "total": 36
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "cement",
+  "taxonomy": {
+    "test_atomic::test_testapp_accepts_explicit_label": "atomic",
+    "test_atomic::test_testapp_preserves_explicit_argv": "atomic",
+    "test_atomic::test_debug_property_follows_debug_argument": "atomic",
+    "test_atomic::test_quiet_property_follows_quiet_argument": "atomic",
+    "test_atomic::test_add_arg_populates_parsed_arguments": "atomic",
+    "test_atomic::test_context_setup_exposes_core_interfaces": "atomic",
+    "test_atomic::test_context_setup_instantiates_default_handlers": "atomic",
+    "test_atomic::test_config_defaults_are_available_through_config_interface": "atomic",
+    "test_atomic::test_config_merge_without_override_keeps_existing_value": "atomic",
+    "test_atomic::test_config_merge_with_override_replaces_value": "atomic",
+    "test_atomic::test_config_manager_exposes_sections_and_dict": "atomic",
+    "test_atomic::test_config_parse_file_returns_false_for_missing_path": "atomic",
+    "test_atomic::test_config_parse_file_loads_local_ini": "atomic",
+    "test_atomic::test_interface_manager_reports_defined_and_fallback": "atomic",
+    "test_atomic::test_interface_manager_lists_core_interfaces": "atomic",
+    "test_atomic::test_custom_interface_can_be_defined_at_runtime": "atomic",
+    "test_atomic::test_handler_registered_in_app_metadata_is_visible": "atomic",
+    "test_atomic::test_handler_get_returns_registered_class": "atomic",
+    "test_atomic::test_handler_list_returns_classes_for_interface": "atomic",
+    "test_atomic::test_handler_resolve_label_creates_instance": "atomic",
+    "test_atomic::test_handler_resolve_class_registers_and_creates_instance": "atomic",
+    "test_atomic::test_handler_get_uses_fallback_for_unknown_label": "atomic",
+    "test_atomic::test_handler_manager_rejects_unknown_interface": "atomic",
+    "test_atomic::test_handler_force_replaces_same_label": "atomic",
+    "test_atomic::test_hook_manager_orders_registered_callbacks_by_weight": "atomic",
+    "test_atomic::test_hook_manager_flattens_generator_results": "atomic",
+    "test_atomic::test_hook_registration_for_unknown_name_returns_false": "atomic",
+    "test_atomic::test_framework_hook_names_are_defined": "atomic",
+    "test_atomic::test_extension_loader_expands_short_names": "atomic",
+    "test_atomic::test_extension_loader_skips_duplicate_full_names": "atomic",
+    "test_atomic::test_json_extension_registers_json_output_handler": "atomic",
+    "test_atomic::test_json_output_handler_returns_parseable_object": "atomic",
+    "test_atomic::test_print_extension_renders_only_out_field": "atomic",
+    "test_atomic::test_render_without_output_handler_returns_empty_string": "atomic",
+    "test_atomic::test_last_rendered_records_data_and_text": "atomic",
+    "test_atomic::test_app_extend_adds_a_public_callable": "atomic",
+    "test_atomic::test_template_handler_renders_scalar_placeholders": "atomic",
+    "test_atomic::test_template_handler_loads_file_from_template_directory": "atomic",
+    "test_atomic::test_template_handler_copy_creates_local_project_file": "atomic",
+    "test_atomic::test_template_handler_rejects_missing_template": "atomic",
+    "test_atomic::test_local_plugin_loads_and_reports_name": "atomic",
+    "test_atomic::test_missing_local_plugin_raises_framework_error": "atomic",
+    "test_integration::test_lifecycle_hooks_span_setup_run_and_close": "integration",
+    "test_integration::test_config_defaults_and_argv_are_merged_into_run_state": "integration",
+    "test_integration::test_config_file_can_select_json_extension_and_output": "integration",
+    "test_integration::test_config_files_apply_deterministic_sorted_directory_precedence": "integration",
+    "test_integration::test_custom_interface_handler_round_trip_through_manager": "integration",
+    "test_integration::test_handler_resolution_forms_share_handler_behavior": "integration",
+    "test_integration::test_handler_override_option_selects_overridable_output": "integration",
+    "test_integration::test_weighted_hook_pipeline_changes_rendered_data": "integration",
+    "test_integration::test_hook_generator_and_post_render_form_one_pipeline": "integration",
+    "test_integration::test_base_controller_dispatches_command_arguments": "integration",
+    "test_integration::test_controller_command_alias_dispatches_same_function": "integration",
+    "test_integration::test_nested_controller_dispatches_subcommand": "integration",
+    "test_integration::test_embedded_controller_shares_base_namespace": "integration",
+    "test_integration::test_controller_and_command_arguments_reach_command": "integration",
+    "test_integration::test_controller_result_can_be_rendered_as_json": "integration",
+    "test_integration::test_print_extension_adds_app_print_after_argument_parse": "integration",
+    "test_integration::test_multiple_extensions_share_one_app_handler_graph": "integration",
+    "test_integration::test_extension_loaded_from_config_section_uses_custom_section": "integration",
+    "test_integration::test_template_copy_renders_directory_and_file_names": "integration",
+    "test_integration::test_template_copy_honors_exclude_and_ignore_rules": "integration",
+    "test_integration::test_template_copy_requires_force_for_existing_files": "integration",
+    "test_integration::test_template_load_prefers_added_local_directory": "integration",
+    "test_integration::test_plugin_directory_load_extends_application": "integration",
+    "test_integration::test_enabled_plugin_from_config_is_loaded": "integration",
+    "test_integration::test_plugin_can_register_controller_before_dispatch": "integration",
+    "test_integration::test_bootstrap_module_can_extend_application": "integration",
+    "test_integration::test_reload_rebuilds_core_managers_and_drops_runtime_extensions": "integration",
+    "test_integration::test_close_runs_pre_and_post_close_hooks_and_sets_code": "integration",
+    "test_integration::test_context_manager_closes_application_after_run": "integration",
+    "test_integration::test_config_section_override_drives_extensions_and_output": "integration",
+    "test_integration::test_render_handler_argument_can_bypass_default_output": "integration",
+    "test_integration::test_json_render_to_file_round_trips_structured_data": "integration",
+    "test_integration::test_app_add_config_file_then_parse_updates_config": "integration",
+    "test_integration::test_template_handler_copy_and_load_round_trip": "integration",
+    "test_integration::test_plugin_load_and_controller_dispatch_share_app_state": "integration",
+    "test_integration::test_full_local_app_workflow_connects_config_controller_hook_output": "integration"
+  },
+  "target_imports": [
+    "cement"
+  ],
+  "language": "python"
+}

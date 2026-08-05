@@ -1,0 +1,216 @@
+{
+  "instance_id": "omegaconf-fullrepro-001",
+  "task_id": "omegaconf-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/omry/omegaconf",
+  "repo_commit": "d36501708883371bebc93b2fe7b923d2fb89a17c",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 64,
+    "scorer_isolation": [
+      "--remove-path",
+      "omegaconf"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_create_empty_dict_config": "atomic",
+    "test_atomic::test_create_list_config_preserves_nested_values": "atomic",
+    "test_atomic::test_create_yaml_string_parses_scalars": "atomic",
+    "test_atomic::test_attribute_and_item_access_agree": "atomic",
+    "test_atomic::test_default_get_returns_fallback": "atomic",
+    "test_atomic::test_missing_sentinel_is_reported_publicly": "atomic",
+    "test_atomic::test_interpolation_resolves_lazily": "atomic",
+    "test_atomic::test_is_interpolation_and_is_config_views": "atomic",
+    "test_atomic::test_from_dotlist_builds_nested_paths": "atomic",
+    "test_atomic::test_from_dotlist_escapes_literal_key_delimiters": "atomic",
+    "test_atomic::test_from_cli_accepts_explicit_arguments": "atomic",
+    "test_atomic::test_select_supports_dot_and_bracket_paths": "atomic",
+    "test_atomic::test_select_returns_default_for_absent_path": "atomic",
+    "test_atomic::test_can_select_distinguishes_missing_and_none": "atomic",
+    "test_atomic::test_update_changes_scalar_path": "atomic",
+    "test_atomic::test_update_merges_or_replaces_mapping": "atomic",
+    "test_atomic::test_merge_replaces_lists_by_default": "atomic",
+    "test_atomic::test_merge_extends_lists_with_public_mode": "atomic",
+    "test_atomic::test_merge_extends_unique_lists": "atomic",
+    "test_atomic::test_structured_creates_dictconfig_and_type": "atomic",
+    "test_atomic::test_structured_coerces_assignable_scalar": "atomic",
+    "test_atomic::test_structured_rejects_invalid_scalar_type": "atomic",
+    "test_atomic::test_structured_optional_accepts_none": "atomic",
+    "test_atomic::test_structured_missing_field_requires_assignment": "atomic",
+    "test_atomic::test_set_struct_reports_state_and_blocks_new_key": "atomic",
+    "test_atomic::test_open_dict_temporarily_allows_new_keys": "atomic",
+    "test_atomic::test_set_readonly_blocks_mutation": "atomic",
+    "test_atomic::test_read_write_temporarily_allows_mutation": "atomic",
+    "test_atomic::test_to_container_preserves_unresolved_and_resolves_option": "atomic",
+    "test_atomic::test_to_object_instantiates_structured_dataclass": "atomic",
+    "test_atomic::test_to_yaml_emits_sorted_yaml_projection": "atomic",
+    "test_atomic::test_register_resolver_evaluates_and_has_resolver": "atomic",
+    "test_atomic::test_save_and_load_path_round_trip": "atomic",
+    "test_atomic::test_save_accepts_file_object": "atomic",
+    "test_integration::test_dotlist_to_merge_to_select_pipeline": "integration",
+    "test_integration::test_cli_override_merges_with_base_config": "integration",
+    "test_integration::test_yaml_string_round_trip_preserves_interpolation_projection": "integration",
+    "test_integration::test_save_load_file_object_and_path_agree": "integration",
+    "test_integration::test_yaml_flow_style_and_sorted_keys_are_public_options": "integration",
+    "test_integration::test_yaml_load_list_root_round_trips_as_list_config": "integration",
+    "test_integration::test_merge_structured_schema_validates_plain_yaml": "integration",
+    "test_integration::test_merge_structured_schema_rejects_wrong_type": "integration",
+    "test_integration::test_structured_nested_to_container_modes_agree": "integration",
+    "test_integration::test_to_object_resolves_structured_interpolation": "integration",
+    "test_integration::test_structured_list_and_dict_types_validate_updates": "integration",
+    "test_integration::test_structured_literal_and_enum_values_round_trip": "integration",
+    "test_integration::test_readonly_and_struct_flags_interact_with_contexts": "integration",
+    "test_integration::test_update_force_add_respects_struct_context": "integration",
+    "test_integration::test_select_and_update_share_escaped_key_paths": "integration",
+    "test_integration::test_missing_keys_matches_nested_plain_and_list_values": "integration",
+    "test_integration::test_missing_keys_follows_node_interpolations": "integration",
+    "test_integration::test_resolve_and_to_container_views_agree": "integration",
+    "test_integration::test_relative_interpolations_follow_nested_scope": "integration",
+    "test_integration::test_nested_interpolation_reselects_after_source_change": "integration",
+    "test_integration::test_custom_resolver_variadic_and_nested_arguments": "integration",
+    "test_integration::test_custom_resolver_cache_reuses_literal_arguments": "integration",
+    "test_integration::test_custom_resolver_replace_and_clear_lifecycle": "integration",
+    "test_integration::test_custom_resolver_parent_context_reads_sibling": "integration",
+    "test_integration::test_builtin_select_resolver_supplies_default": "integration",
+    "test_integration::test_builtin_decode_resolver_parses_scalar_and_list": "integration",
+    "test_integration::test_builtin_create_resolver_returns_config_container": "integration",
+    "test_integration::test_builtin_dict_resolvers_project_keys_and_values": "integration",
+    "test_integration::test_escaped_interpolation_literal_is_not_resolved": "integration",
+    "test_integration::test_merged_config_serialization_matches_public_views": "integration"
+  },
+  "stats": {
+    "atomic": 34,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_url": "https://github.com/omry/omegaconf",
+  "target_imports": [
+    "omegaconf"
+  ],
+  "source_metrics": {
+    "package_python_files": 79,
+    "pure_python_loc_nonblank_noncomment": 13239,
+    "pure_python_loc_nonvendor_nonblank_noncomment": 7060,
+    "nonvendor_python_files": 20,
+    "upstream_test_functions": 949
+  },
+  "scope_notes": [
+    "Generated public-doc tests only; no private target or source-test imports.",
+    "Private utilities, metadata and node internals, vendored ANTLR behavior, environment leakage, exact error wording, network, and live services are excluded.",
+    "The pinned checkout does not track generated parser files; local replay generated them in a task-local source copy without modifying the source checkout.",
+    "Stage 4 remains artifact-only; no trusted runner result, strict black-box result, network isolation proof, trusted signature, Docker result, candidate score, or qualification claim is present."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 64,
+      "total": 64,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "14ec623806268ae846f69e4d410c48ec48a8aefb768de129260c434465967486"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 64,
+      "total": 64,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "31c71056bec092d8c77f21b3f3911602bfd4f5d243cc3d0c09359adaa45b102c"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 64,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "f73cfd49d0452a35a1400cca83c3737cad0914f7931a13bc525116e1f1b644e5"
+    }
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 64,
+      "total": 64
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 34,
+        "failed": 0,
+        "total": 34
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 55,
+      "errors": 9,
+      "total": 64
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 25,
+        "total": 34,
+        "errors": 9
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "omegaconf",
+  "language": "python"
+}

@@ -1,0 +1,212 @@
+{
+  "instance_id": "mashumaro-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "Fatal1ty/mashumaro",
+  "repo_commit": "da199032223da4fa31709a23553204c47b49bd85",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 78,
+    "scorer_isolation": [
+      "--remove-path mashumaro"
+    ]
+  },
+  "taxonomy": {
+    "test_atomic::test_field_options_preserves_standard_and_extra_metadata": "atomic",
+    "test_atomic::test_pass_through_strategy_returns_original_objects": "atomic",
+    "test_atomic::test_rounded_decimal_quantizes_and_deserializes_strings": "atomic",
+    "test_atomic::test_discriminator_requires_at_least_one_inclusion_direction": "atomic",
+    "test_atomic::test_alias_compares_by_name_and_hashes_by_name": "atomic",
+    "test_atomic::test_to_dict_serializes_primitive_dataclass_fields": "atomic",
+    "test_atomic::test_from_dict_deserializes_primitive_dataclass_fields": "atomic",
+    "test_atomic::test_from_dict_missing_required_field_raises_missing_field": "atomic",
+    "test_atomic::test_from_dict_invalid_integer_value_raises_invalid_field_value": "atomic",
+    "test_atomic::test_nested_dataclass_to_dict_serializes_nested_public_shape": "atomic",
+    "test_atomic::test_nested_dataclass_from_dict_builds_nested_objects": "atomic",
+    "test_atomic::test_list_of_dataclasses_rounds_through_basic_form": "atomic",
+    "test_atomic::test_datetime_and_date_values_use_iso_basic_form": "atomic",
+    "test_atomic::test_datetime_and_date_values_deserialize_from_iso_strings": "atomic",
+    "test_atomic::test_enum_fields_serialize_and_deserialize_by_value": "atomic",
+    "test_atomic::test_tuple_and_set_fields_use_basic_collection_forms": "atomic",
+    "test_atomic::test_namedtuple_defaults_to_list_representation": "atomic",
+    "test_atomic::test_namedtuple_as_dict_config_uses_keyed_representation": "atomic",
+    "test_atomic::test_field_option_alias_controls_input_key": "atomic",
+    "test_atomic::test_field_option_serialize_callable_controls_output_value": "atomic",
+    "test_atomic::test_field_option_deserialize_callable_controls_input_value": "atomic",
+    "test_atomic::test_config_aliases_and_serialize_by_alias_control_output_keys": "atomic",
+    "test_atomic::test_allow_deserialization_not_by_alias_accepts_field_names": "atomic",
+    "test_atomic::test_omit_none_config_removes_none_fields_from_output": "atomic",
+    "test_atomic::test_omit_default_config_removes_default_equal_fields": "atomic",
+    "test_atomic::test_sort_keys_config_orders_serialized_mapping_keys": "atomic",
+    "test_atomic::test_forbid_extra_keys_config_raises_extra_keys_error": "atomic",
+    "test_atomic::test_config_serialization_strategy_applies_to_registered_type": "atomic",
+    "test_atomic::test_serialization_strategy_match_subclasses_handles_enum_subclass": "atomic",
+    "test_atomic::test_serializable_type_uses_custom_serialize_deserialize_methods": "atomic",
+    "test_atomic::test_serializable_type_with_annotations_transforms_nested_values": "atomic",
+    "test_atomic::test_basic_encoder_serializes_typed_shape_to_basic_form": "atomic",
+    "test_atomic::test_basic_decoder_deserializes_typed_shape_from_basic_form": "atomic",
+    "test_atomic::test_json_encoder_and_decoder_handle_dataclass_lists": "atomic",
+    "test_atomic::test_json_convenience_functions_encode_and_decode_typed_values": "atomic",
+    "test_atomic::test_json_schema_for_primitive_types_uses_expected_type_names": "atomic",
+    "test_atomic::test_json_schema_for_dataclass_includes_properties_and_required_fields": "atomic",
+    "test_atomic::test_json_schema_annotations_apply_validation_keywords": "atomic",
+    "test_atomic::test_json_schema_field_metadata_adds_descriptions_and_constraints": "atomic",
+    "test_integration::test_dict_round_trip_preserves_nested_dataclass_values": "integration",
+    "test_integration::test_alias_config_round_trip_uses_external_key_projection": "integration",
+    "test_integration::test_omit_none_and_default_config_compose_in_single_projection": "integration",
+    "test_integration::test_namedtuple_as_dict_round_trip_inside_nested_collection": "integration",
+    "test_integration::test_config_strategy_applies_through_basic_codec_encoder_and_decoder": "integration",
+    "test_integration::test_json_codec_round_trip_respects_dataclass_field_aliases": "integration",
+    "test_integration::test_json_mixin_round_trip_uses_to_dict_and_from_dict_rules": "integration",
+    "test_integration::test_json_mixin_custom_encoder_decoder_still_wraps_dict_conversion": "integration",
+    "test_integration::test_yaml_mixin_round_trip_preserves_date_conversion": "integration",
+    "test_integration::test_toml_mixin_omits_none_and_round_trips_date_values": "integration",
+    "test_integration::test_messagepack_mixin_round_trip_preserves_binary_fields": "integration",
+    "test_integration::test_field_alias_takes_precedence_over_config_alias": "integration",
+    "test_integration::test_alias_input_mode_accepts_alias_and_field_name_but_still_requires_one": "integration",
+    "test_integration::test_forbid_extra_keys_checks_alias_aware_input_projection": "integration",
+    "test_integration::test_strategy_annotations_convert_before_custom_deserialize_and_after_serialize": "integration",
+    "test_integration::test_more_specific_strategy_overrides_matching_base_strategy": "integration",
+    "test_integration::test_dialect_argument_overrides_config_when_code_generation_option_enabled": "integration",
+    "test_integration::test_by_alias_keyword_overrides_config_when_option_enabled": "integration",
+    "test_integration::test_omit_none_keyword_overrides_config_when_option_enabled": "integration",
+    "test_integration::test_serialization_context_reaches_pre_and_post_hooks_when_enabled": "integration",
+    "test_integration::test_deserialization_and_serialization_hooks_wrap_nested_conversion": "integration",
+    "test_integration::test_schema_builder_builds_refs_and_later_definitions_from_same_context": "integration",
+    "test_integration::test_schema_generation_combines_dataclass_fields_and_annotated_constraints": "integration",
+    "test_integration::test_schema_overlay_keeps_regular_type_and_adds_content_keywords": "integration",
+    "test_integration::test_schema_and_json_codec_project_same_dataclass_field_names": "integration",
+    "test_integration::test_custom_strategy_changes_dict_and_json_but_schema_keeps_declared_type": "integration",
+    "test_integration::test_basic_codec_and_dict_mixin_agree_on_nested_basic_form": "integration",
+    "test_integration::test_json_mixin_and_dict_mixin_agree_on_alias_projection": "integration",
+    "test_integration::test_dialect_merge_combines_strategy_and_omit_policy": "integration",
+    "test_integration::test_codec_default_dialect_applies_without_per_call_dialect": "integration",
+    "test_integration::test_json_decoder_propagates_field_conversion_errors": "integration",
+    "test_integration::test_schema_generation_uses_alias_metadata_for_property_names": "integration",
+    "test_integration::test_json_mixin_propagates_forbid_extra_keys_errors_from_dict_layer": "integration",
+    "test_integration::test_sort_keys_config_is_reflected_in_json_output_order": "integration",
+    "test_integration::test_serializable_type_projection_is_shared_by_dict_and_basic_codec": "integration",
+    "test_integration::test_schema_builder_definitions_keep_annotation_constraints": "integration",
+    "test_integration::test_schema_with_dialect_uri_and_ref_prefix_controls_public_reference_view": "integration",
+    "test_integration::test_schema_required_list_tracks_alias_names_for_required_fields": "integration",
+    "test_integration::test_binary_model_uses_format_specific_wire_types_consistently": "integration"
+  },
+  "stats": {
+    "atomic": 39,
+    "integration": 39,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 78,
+      "total": 78,
+      "log": "logs/reference_py310_postutc_v2.json",
+      "sha256": "587774fb783b88581d54cf9fecaf1a1876dd770260457f5b0413e986e6e308de"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 78,
+      "log": "logs/dummy_py310_postutc_v2.json",
+      "sha256": "ccfa48c63400783ba1993e2314316305c7825889e55cd9680fd50a8008dc8939"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 78,
+      "total": 78,
+      "log": "logs/reference_py311.json",
+      "sha256": "bbccf0b7888499bad09d3369c29cd42d3e9e6ca9a6af02b5f9efb9c7a57b92c8"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310_postutc_v2.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "mashumaro-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 78,
+      "total": 78
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 39,
+        "failed": 0,
+        "total": 39
+      },
+      "integration": {
+        "passed": 39,
+        "failed": 0,
+        "total": 39
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 78,
+      "errors": 0,
+      "total": 78
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 39,
+        "total": 39
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 39,
+        "total": 39
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "mashumaro",
+  "target_imports": [
+    "mashumaro"
+  ],
+  "language": "python"
+}

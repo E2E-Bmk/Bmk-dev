@@ -1,0 +1,217 @@
+{
+  "instance_id": "toolz-functional-utils-fullrepro-001",
+  "task_id": "toolz-functional-utils-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "pytoolz/toolz",
+  "source_url": "https://github.com/pytoolz/toolz",
+  "repo_commit": "568c2b8393973cd172a466546c9d95779c452438",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 68,
+    "scorer_isolation": [],
+    "oracle_version": "artifact-only-v1"
+  },
+  "stats": {
+    "atomic": 38,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "toolz",
+    "toolz.curried"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 68,
+      "total": 68,
+      "log": "logs/reference_py311.json",
+      "sha256": "3fa2c225c931147dfad321b67a9a82ad21e36ad5b59fb7dfc813d817bca6fba3"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 68,
+      "total": 68,
+      "log": "logs/reference_py310.json",
+      "sha256": "2001d5fb4f6ede294f0e6746d2e2df9b11f0e4668d296f44990e57c5d6649f89"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 weak dummy replay",
+      "passed": 0,
+      "total": 68,
+      "log": "logs/dummy_py310.json",
+      "sha256": "6c0dc805d6d091fe608dc41cc674c1becf0ab6181385e08fd9dde911f8b1f4d7"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 weak dummy replay",
+      "passed": 0,
+      "total": 68,
+      "log": "logs/dummy_py311.json",
+      "sha256": "bb314b7677895f1d67c6c13515ab01c3564599429f5b6791e7fe7839a3283499"
+    }
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "scope_notes": [
+    "Public iterable, dictionary, function, curry, memoize, composition, juxt, and curried APIs only.",
+    "All values are deterministic and created within each test process.",
+    "Memoize checks semantic output and pure-function call counts, not wall-clock behavior or cache internals.",
+    "Private implementation modules, source tests, network, sockets, sleeps, timing races, ambient host state, and brittle whole-output snapshots are excluded.",
+    "Current evidence is same-process local replay and does not establish a trusted black-box Stage 4 runner, external signature, final QUALIFIED status, isolation, or candidate score."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "status": "ARTIFACT_ONLY",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310.json"
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 68,
+      "total": 68
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 38,
+        "failed": 0,
+        "total": 38
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 68,
+      "errors": 0,
+      "total": 68
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 38,
+        "total": 38
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "toolz",
+  "taxonomy": {
+    "test_atomic::test_public_import_surface_exposes_functional_names": "atomic",
+    "test_atomic::test_identity_apply_and_basic_aliases": "atomic",
+    "test_atomic::test_accumulate_supports_default_and_initial": "atomic",
+    "test_atomic::test_groupby_accepts_callable_and_member_key": "atomic",
+    "test_atomic::test_iterable_slicing_helpers_materialize_expected_values": "atomic",
+    "test_atomic::test_get_supports_scalar_multiple_and_default": "atomic",
+    "test_atomic::test_first_second_nth_last_access_sequences": "atomic",
+    "test_atomic::test_concat_concatv_and_mapcat_flatten_sequences": "atomic",
+    "test_atomic::test_cons_and_interpose_preserve_order": "atomic",
+    "test_atomic::test_frequencies_counts_hashable_values": "atomic",
+    "test_atomic::test_reduceby_groups_and_reduces_with_init": "atomic",
+    "test_atomic::test_partition_and_partition_all_handle_remainders": "atomic",
+    "test_atomic::test_pluck_and_sliding_window_project_data": "atomic",
+    "test_atomic::test_unique_and_isdistinct_preserve_first_occurrences": "atomic",
+    "test_atomic::test_merge_sorted_and_topk_order_values": "atomic",
+    "test_atomic::test_diff_and_peek_helpers_preserve_stream_views": "atomic",
+    "test_atomic::test_count_works_for_materialized_and_generator": "atomic",
+    "test_atomic::test_merge_and_merge_with_precedence": "atomic",
+    "test_atomic::test_mapping_transforms_preserve_key_value_relationships": "atomic",
+    "test_atomic::test_mapping_filters_select_by_predicate": "atomic",
+    "test_atomic::test_assoc_and_dissoc_return_copies": "atomic",
+    "test_atomic::test_nested_dict_updates_are_immutable": "atomic",
+    "test_atomic::test_get_in_reads_nested_sequences_with_default": "atomic",
+    "test_atomic::test_compose_compose_left_and_pipe_order": "atomic",
+    "test_atomic::test_juxt_returns_parallel_results": "atomic",
+    "test_atomic::test_curry_supports_partial_positional_and_keyword_application": "atomic",
+    "test_atomic::test_curry_exposes_public_bound_arguments": "atomic",
+    "test_atomic::test_memoize_reuses_result_without_timing": "atomic",
+    "test_atomic::test_do_and_complement_compose_side_effect_and_predicate": "atomic",
+    "test_atomic::test_thread_first_and_thread_last_place_values": "atomic",
+    "test_atomic::test_flip_and_excepts_adapt_callables": "atomic",
+    "test_atomic::test_curried_iterable_functions_accept_partial_arguments": "atomic",
+    "test_atomic::test_curried_dict_functions_accept_partial_arguments": "atomic",
+    "test_atomic::test_curried_compose_and_pipe_workflow": "atomic",
+    "test_atomic::test_custom_factories_are_used_for_mapping_results": "atomic",
+    "test_atomic::test_update_in_applies_function_to_default_for_missing_path": "atomic",
+    "test_atomic::test_random_sample_is_repeatable_with_explicit_seed": "atomic",
+    "test_atomic::test_join_matches_records_by_public_key_functions": "atomic",
+    "test_integration::test_text_analytics_pipeline_combines_flatten_count_and_ranking": "integration",
+    "test_integration::test_grouped_scores_workflow_uses_grouping_then_reduction": "integration",
+    "test_integration::test_chunk_transform_workflow_reassembles_normalized_values": "integration",
+    "test_integration::test_lazy_window_selection_workflow_preserves_source_count": "integration",
+    "test_integration::test_sorted_stream_comparison_workflow_reports_ranked_differences": "integration",
+    "test_integration::test_peek_and_index_workflow_reads_a_replayable_record_stream": "integration",
+    "test_integration::test_nested_profile_workflow_updates_then_reads_without_mutation": "integration",
+    "test_integration::test_dictionary_cleaning_workflow_merges_filters_and_maps_values": "integration",
+    "test_integration::test_composed_curry_workflow_builds_parameterized_formatter": "integration",
+    "test_integration::test_memoized_composition_workflow_counts_only_distinct_inputs": "integration",
+    "test_integration::test_parallel_projection_workflow_logs_and_classifies_values": "integration",
+    "test_integration::test_threaded_chunk_workflow_transforms_values_before_partitioning": "integration",
+    "test_integration::test_curried_record_workflow_filters_then_plucks_fields": "integration",
+    "test_integration::test_curried_nested_update_workflow_reuses_public_partial_forms": "integration",
+    "test_integration::test_curried_reduction_workflow_accumulates_each_group": "integration",
+    "test_integration::test_curried_pipeline_workflow_normalizes_and_selects_values": "integration",
+    "test_integration::test_merge_with_frequency_workflow_combines_partition_counts": "integration",
+    "test_integration::test_multi_level_update_workflow_creates_missing_branch_and_reads_it": "integration",
+    "test_integration::test_member_group_workflow_renames_groups_and_projects_rows": "integration",
+    "test_integration::test_token_stream_workflow_adds_prefixes_and_delimiters": "integration",
+    "test_integration::test_windowed_batch_workflow_computes_adjacent_pair_sums": "integration",
+    "test_integration::test_join_workflow_enriches_matching_records_then_groups_by_category": "integration",
+    "test_integration::test_seeded_sampling_workflow_can_be_ranked_deterministically": "integration",
+    "test_integration::test_generator_count_and_replay_workflow_preserves_observed_prefix": "integration",
+    "test_integration::test_ranked_record_workflow_plucks_values_and_selects_largest": "integration",
+    "test_integration::test_adapted_predicate_workflow_filters_and_recovers_invalid_items": "integration",
+    "test_integration::test_ordered_mapping_workflow_keeps_projection_order_across_updates": "integration",
+    "test_integration::test_curried_end_to_end_workflow_projects_clean_nested_records": "integration",
+    "test_integration::test_function_adapter_workflow_binds_then_threads_arguments": "integration",
+    "test_integration::test_summary_workflow_reduces_rows_into_nested_report": "integration"
+  },
+  "language": "python"
+}

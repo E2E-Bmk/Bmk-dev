@@ -1,0 +1,214 @@
+{
+  "instance_id": "pyserial-loop-url-listports-public-projections",
+  "task_id": "pyserial-loop-url-listports-public-projections",
+  "status": "ARTIFACT_ONLY",
+  "repo": "pyserial/pyserial",
+  "source_url": "https://github.com/pyserial/pyserial",
+  "repo_commit": "a5c48d445fbc1943d4fabf8d9090a50fda3172fd",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 61,
+    "scorer_isolation": [],
+    "oracle_version": "artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_import_surface_exposes_version_and_protocol_packages": "atomic",
+    "test_atomic::test_serial_constants_describe_supported_configuration_values": "atomic",
+    "test_atomic::test_serial_without_port_is_closed_and_named_none": "atomic",
+    "test_atomic::test_serial_constructor_projects_configuration_properties": "atomic",
+    "test_atomic::test_port_property_accepts_string_and_none": "atomic",
+    "test_atomic::test_baudrate_property_accepts_integer_configuration": "atomic",
+    "test_atomic::test_bytesize_property_accepts_documented_value": "atomic",
+    "test_atomic::test_parity_property_accepts_documented_values": "atomic",
+    "test_atomic::test_stopbits_property_accepts_documented_values": "atomic",
+    "test_atomic::test_timeout_property_accepts_none_zero_and_float": "atomic",
+    "test_atomic::test_write_timeout_property_accepts_none_zero_and_float": "atomic",
+    "test_atomic::test_inter_byte_timeout_property_accepts_none_zero_and_float": "atomic",
+    "test_atomic::test_flow_control_properties_project_boolean_values": "atomic",
+    "test_atomic::test_dsrdtr_none_follows_rtscts_publicly": "atomic",
+    "test_atomic::test_invalid_configuration_values_raise_value_error": "atomic",
+    "test_atomic::test_get_settings_exposes_documented_serial_settings": "atomic",
+    "test_atomic::test_apply_settings_updates_public_serial_settings": "atomic",
+    "test_atomic::test_serial_context_manager_closes_loop_url": "atomic",
+    "test_atomic::test_serial_for_url_selects_loop_handler": "atomic",
+    "test_atomic::test_serial_for_url_can_defer_opening": "atomic",
+    "test_atomic::test_unknown_url_protocol_raises_value_error": "atomic",
+    "test_atomic::test_loop_url_accepts_documented_logging_option": "atomic",
+    "test_atomic::test_loop_url_starts_open_and_reports_public_name": "atomic",
+    "test_atomic::test_loop_write_returns_byte_count": "atomic",
+    "test_atomic::test_loop_in_waiting_counts_written_bytes": "atomic",
+    "test_atomic::test_loop_read_returns_written_bytes": "atomic",
+    "test_atomic::test_loop_read_all_drains_available_bytes": "atomic",
+    "test_atomic::test_loop_read_until_includes_expected_terminator": "atomic",
+    "test_atomic::test_loop_reset_input_buffer_discards_available_bytes": "atomic",
+    "test_atomic::test_closed_loop_operations_raise_port_not_open_error": "atomic",
+    "test_atomic::test_list_port_info_initializes_public_metadata_defaults": "atomic",
+    "test_atomic::test_list_port_info_projects_runner_created_metadata": "atomic",
+    "test_atomic::test_list_port_info_usb_description_uses_product_and_interface": "atomic",
+    "test_atomic::test_list_port_info_usb_info_projects_identifiers": "atomic",
+    "test_atomic::test_list_port_info_supports_legacy_index_projection": "atomic",
+    "test_atomic::test_list_port_info_natural_order_and_equality_are_public": "atomic",
+    "test_integration::test_settings_round_trip_updates_a_closed_serial": "integration",
+    "test_integration::test_url_configuration_and_loop_transfer_form_one_workflow": "integration",
+    "test_integration::test_deferred_url_open_then_write_and_read": "integration",
+    "test_integration::test_context_workflow_writes_reads_and_closes": "integration",
+    "test_integration::test_buffer_projection_progresses_from_write_to_read": "integration",
+    "test_integration::test_partial_reads_preserve_the_unread_loop_suffix": "integration",
+    "test_integration::test_delimited_read_then_drain_completes_a_framed_workflow": "integration",
+    "test_integration::test_reset_discards_one_frame_before_a_new_frame": "integration",
+    "test_integration::test_zero_timeout_reads_available_data_without_waiting": "integration",
+    "test_integration::test_close_reopen_preserves_public_url_configuration": "integration",
+    "test_integration::test_loop_control_configuration_projects_status_lines": "integration",
+    "test_integration::test_loop_control_line_changes_are_visible_through_public_properties": "integration",
+    "test_integration::test_settings_apply_before_open_then_support_loop_io": "integration",
+    "test_integration::test_loop_accepts_a_bytearray_and_returns_bytes": "integration",
+    "test_integration::test_read_all_and_reset_keep_buffer_state_explicit": "integration",
+    "test_integration::test_metadata_and_legacy_tuple_projection_agree": "integration",
+    "test_integration::test_metadata_updates_drive_both_usb_public_projections": "integration",
+    "test_integration::test_synthetic_metadata_records_sort_and_deduplicate_by_device": "integration",
+    "test_integration::test_configuration_constants_and_url_stream_work_together": "integration",
+    "test_integration::test_valid_loop_url_remains_selectable_after_invalid_url_attempt": "integration",
+    "test_integration::test_deferred_open_applies_all_settings_before_first_loop_frame": "integration",
+    "test_integration::test_multiple_delimiters_and_partial_reads_preserve_frame_boundaries": "integration",
+    "test_integration::test_control_line_state_survives_configuration_and_loop_transfer": "integration",
+    "test_integration::test_metadata_sorting_keeps_usb_projection_fields_attached_to_each_device": "integration",
+    "test_integration::test_settings_round_trip_and_buffer_reset_are_independent_public_steps": "integration"
+  },
+  "stats": {
+    "atomic": 36,
+    "integration": 25,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "serial",
+    "serial.tools.list_ports",
+    "serial.tools.list_ports_common.ListPortInfo"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 61,
+      "total": 61,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "d886430069564efdd36d47981148b824484e7a0cc1357e0b880db81f0974c56f"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 61,
+      "total": 61,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "7f3c3ba835d7d225a54b954353fd931bb2cbd0e233d8e1c3b365233714ae260a"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 1,
+      "total": 61,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "107af84726ee6e02ddc64c90a116b58f4694ac315bcc37697568cc4f257195b5"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 1,
+      "total": 61,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "e549134ac25c84fd2acd9980e203d6801f6706a4fa43550e12f21f12da9254c6"
+    }
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "scope_notes": [
+    "Public serial configuration, URL selection, loopback byte streams, buffer projections, timeout configuration, documented exceptions, and synthetic ListPortInfo metadata only.",
+    "All stream and metadata values are local and runner-created.",
+    "Physical enumeration, PTYs, RFC2217/socket URLs, subprocesses, network, sleeps, timing races, host state, platform backends, private fields, source tests, exact diagnostics, and exact upstream byte/timing matrices are excluded.",
+    "Local replay evidence remains ARTIFACT_ONLY and does not establish trusted Stage 4 isolation, qualification, score provenance, or delivery."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "status": "ARTIFACT_ONLY",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 61,
+      "total": 61
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 36,
+        "failed": 0,
+        "total": 36
+      },
+      "integration": {
+        "passed": 25,
+        "failed": 0,
+        "total": 25
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 1,
+      "failed": 38,
+      "errors": 22,
+      "total": 61
+    },
+    "pass_rate_excluding_skips": 0.01639344262295082,
+    "by_layer": {
+      "atomic": {
+        "passed": 1,
+        "failed": 28,
+        "total": 36,
+        "errors": 7
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 10,
+        "total": 25,
+        "errors": 15
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "serial",
+  "language": "python"
+}

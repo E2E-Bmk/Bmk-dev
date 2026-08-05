@@ -1,0 +1,223 @@
+{
+  "instance_id": "dogpile-cache-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/sqlalchemy/dogpile.cache",
+  "source_url": "https://github.com/sqlalchemy/dogpile.cache",
+  "repo_commit": "39e3c57180ce9b4f27a256ffdf31f063d54fb685",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 72,
+    "scorer_isolation": [
+      "--remove-path",
+      "dogpile"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_no_value_is_false_and_distinct_from_none": "atomic",
+    "test_atomic::test_cached_value_exposes_payload_metadata_and_dynamic_age": "atomic",
+    "test_atomic::test_make_region_preserves_public_name": "atomic",
+    "test_atomic::test_unconfigured_region_reports_state_and_rejects_backend_access": "atomic",
+    "test_atomic::test_configure_memory_returns_same_region_and_enables_use": "atomic",
+    "test_atomic::test_configure_unknown_backend_raises_plugin_not_found": "atomic",
+    "test_atomic::test_duplicate_configure_requires_replace_flag": "atomic",
+    "test_atomic::test_replace_existing_backend_allows_reconfiguration": "atomic",
+    "test_atomic::test_invalid_expiration_type_raises_validation_error": "atomic",
+    "test_atomic::test_timedelta_expiration_is_converted_to_seconds": "atomic",
+    "test_atomic::test_region_set_and_get_round_trip_a_value": "atomic",
+    "test_atomic::test_missing_key_returns_no_value_sentinel": "atomic",
+    "test_atomic::test_delete_is_idempotent_and_removes_cached_value": "atomic",
+    "test_atomic::test_set_multi_get_multi_preserves_requested_order": "atomic",
+    "test_atomic::test_get_multi_empty_sequence_returns_empty_list": "atomic",
+    "test_atomic::test_delete_multi_removes_existing_and_ignores_missing": "atomic",
+    "test_atomic::test_get_value_metadata_returns_cached_value_object": "atomic",
+    "test_atomic::test_get_value_metadata_returns_none_for_missing_key": "atomic",
+    "test_atomic::test_get_honors_zero_expiration_time": "atomic",
+    "test_atomic::test_get_ignore_expiration_returns_stale_payload": "atomic",
+    "test_atomic::test_get_or_create_creates_once_then_reuses_cached_value": "atomic",
+    "test_atomic::test_get_or_create_passes_creator_args_when_generation_is_needed": "atomic",
+    "test_atomic::test_get_or_create_should_cache_false_returns_without_storing": "atomic",
+    "test_atomic::test_get_or_create_negative_one_expiration_means_no_expiration": "atomic",
+    "test_atomic::test_get_or_create_multi_returns_values_in_input_order": "atomic",
+    "test_atomic::test_get_or_create_multi_duplicate_keys_reuse_same_generated_value": "atomic",
+    "test_atomic::test_null_backend_never_stores_values": "atomic",
+    "test_atomic::test_memory_backend_basic_mapping_contract": "atomic",
+    "test_atomic::test_function_key_generator_uses_module_function_namespace_and_positional_values": "atomic",
+    "test_atomic::test_function_key_generator_rejects_keyword_arguments": "atomic",
+    "test_atomic::test_kwarg_function_key_generator_sorts_argument_names_and_uses_defaults": "atomic",
+    "test_atomic::test_function_multi_key_generator_returns_one_key_per_argument": "atomic",
+    "test_atomic::test_sha1_mangle_key_accepts_text_and_bytes": "atomic",
+    "test_atomic::test_length_conditional_mangler_only_changes_long_keys": "atomic",
+    "test_atomic::test_cache_backend_from_config_dict_filters_prefix": "atomic",
+    "test_atomic::test_cache_backend_serialized_default_methods_delegate_to_plain_methods": "atomic",
+    "test_atomic::test_lock_uses_creator_when_value_function_reports_regeneration_needed": "atomic",
+    "test_atomic::test_lock_returns_existing_value_when_it_is_not_expired": "atomic",
+    "test_integration::test_configure_from_config_builds_backend_with_prefixed_arguments": "integration",
+    "test_integration::test_user_key_mangler_is_applied_to_set_get_and_delete": "integration",
+    "test_integration::test_backend_key_mangler_is_adopted_when_region_has_no_user_mangler": "integration",
+    "test_integration::test_region_key_mangler_overrides_backend_key_mangler": "integration",
+    "test_integration::test_key_mangler_applies_to_multi_key_operations": "integration",
+    "test_integration::test_hard_invalidation_forces_next_get_or_create_regeneration": "integration",
+    "test_integration::test_ignore_expiration_bypasses_hard_invalidation_for_get": "integration",
+    "test_integration::test_soft_invalidation_regenerates_when_expiration_is_available": "integration",
+    "test_integration::test_soft_invalidation_without_expiration_raises_cache_exception": "integration",
+    "test_integration::test_get_or_create_multi_generates_only_missing_keys_and_preserves_existing": "integration",
+    "test_integration::test_get_or_create_multi_should_cache_fn_filters_each_generated_value": "integration",
+    "test_integration::test_metadata_projection_agrees_with_cached_payload_and_expiration": "integration",
+    "test_integration::test_cache_on_arguments_caches_results_per_argument_tuple": "integration",
+    "test_integration::test_cache_on_arguments_invalidate_targets_one_argument_tuple": "integration",
+    "test_integration::test_cache_on_arguments_helper_methods_share_the_region_key": "integration",
+    "test_integration::test_cache_on_arguments_accepts_equivalent_keyword_calls_for_wrapped_signature": "integration",
+    "test_integration::test_cache_on_arguments_with_kwarg_generator_accepts_equivalent_kwarg_calls": "integration",
+    "test_integration::test_cache_on_arguments_namespaces_isolate_same_callable_arguments": "integration",
+    "test_integration::test_cache_multi_on_arguments_caches_subset_and_invalidates_one_key": "integration",
+    "test_integration::test_cache_multi_on_arguments_asdict_preserves_keyed_result_shape": "integration",
+    "test_integration::test_cache_multi_on_arguments_refresh_updates_selected_cached_keys": "integration",
+    "test_integration::test_custom_function_key_generator_controls_decorator_cache_identity": "integration",
+    "test_integration::test_proxy_backend_can_count_and_delegate_region_operations": "integration",
+    "test_integration::test_proxy_chain_exposes_actual_underlying_backend": "integration",
+    "test_integration::test_proxy_set_multi_must_not_mutate_values_returned_by_get_or_create_multi": "integration",
+    "test_integration::test_registered_public_backend_is_loaded_by_region_configuration": "integration",
+    "test_integration::test_dbm_backend_persists_values_across_regions": "integration",
+    "test_integration::test_dbm_backend_delete_is_visible_to_later_regions": "integration",
+    "test_integration::test_region_serializer_and_deserializer_round_trip_payloads": "integration",
+    "test_integration::test_cant_deserialize_exception_causes_regeneration": "integration",
+    "test_integration::test_async_creation_runner_refreshes_stale_value_and_returns_old_value_first": "integration",
+    "test_integration::test_memory_pickle_backend_returns_independent_payload_copy": "integration",
+    "test_integration::test_decorated_method_ignores_self_for_default_cache_key": "integration",
+    "test_integration::test_cache_multi_on_arguments_should_cache_fn_filters_dict_values": "integration"
+  },
+  "stats": {
+    "atomic": 38,
+    "integration": 34,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "dogpile",
+    "dogpile.cache"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "reference_score": {
+    "summary": {
+      "passed": 72,
+      "total": 72
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 38,
+        "failed": 0,
+        "total": 38
+      },
+      "integration": {
+        "passed": 34,
+        "failed": 0,
+        "total": 34
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "known_reference_skip": [],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "package_python_files": 27,
+    "pure_python_loc_nonblank_noncomment": 5140,
+    "upstream_test_functions": 172
+  },
+  "scope_notes": [
+    "Public API tests only; no private target imports.",
+    "External Redis, Valkey, Memcached, network, and live-service behavior excluded.",
+    "Stage 4 evidence is artifact-only; no Docker validation or signed evidence is claimed."
+  ],
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310_deterministic.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 72,
+      "total": 72,
+      "log": "logs/reference_py311.json",
+      "sha256": "61d0958539011f09758fd6fbc15170d5bbe096fc2b38c209eb243a55709f1e8b"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 72,
+      "total": 72,
+      "log": "logs/reference_py310_deterministic.json",
+      "sha256": "9da4a70ef4b0cf68ac23e2e32b26c93b848e06bfb9e17f9004cd1d673a293a77"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 72,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "902cb146527859dd6e27ba38b669556e6190aef3bd8bf1e7cfad6c03c2955043"
+    }
+  },
+  "task_id": "dogpile-cache-fullrepro-001",
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 72,
+      "errors": 0,
+      "total": 72
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 38,
+        "total": 38
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 34,
+        "total": 34
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "dogpile",
+  "language": "python"
+}

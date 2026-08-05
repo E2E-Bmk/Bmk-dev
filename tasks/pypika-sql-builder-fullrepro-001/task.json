@@ -1,0 +1,237 @@
+{
+  "instance_id": "pypika-sql-builder-fullrepro-001",
+  "task_id": "pypika-sql-builder-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "kayak/pypika",
+  "source_url": "https://github.com/kayak/pypika",
+  "repo_commit": "5e800d83a0f0ae14210410c02fd97e51e2e3f1d5",
+  "spec_version": "v1-public-api-artifact",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 74,
+    "source": "generated public SQL builder behavior tests",
+    "nodeid_file": "kept_nodeids.txt",
+    "taxonomy_file": "taxonomy.jsonl",
+    "mapping_file": "spec_test_map.md",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "scorer_isolation": [
+      "PYTHONPATH=<solution_dir>",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "LC_ALL=C",
+      "LANG=C",
+      "TZ=UTC",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "oracle_version": "2026-08-05-public-api-artifact-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_import_surface_exposes_query_table_field_and_dialects": "atomic",
+    "test_atomic::test_query_select_from_strings_builds_quoted_select": "atomic",
+    "test_atomic::test_table_fields_project_namespaced_columns": "atomic",
+    "test_atomic::test_table_alias_changes_from_projection_namespace": "atomic",
+    "test_atomic::test_field_alias_is_rendered_after_an_expression": "atomic",
+    "test_atomic::test_schema_and_database_namespace_tables": "atomic",
+    "test_atomic::test_string_conversion_and_get_sql_share_stable_semantics": "atomic",
+    "test_atomic::test_arithmetic_expression_preserves_operator_precedence": "atomic",
+    "test_atomic::test_comparison_criteria_render_documented_comparators": "atomic",
+    "test_atomic::test_boolean_criteria_support_and_or_xor_and_not": "atomic",
+    "test_atomic::test_membership_and_between_criteria_render_sql": "atomic",
+    "test_atomic::test_null_and_negated_null_criteria_render_sql": "atomic",
+    "test_atomic::test_string_criteria_render_like_ilike_and_regex": "atomic",
+    "test_atomic::test_bitwise_criteria_use_documented_operators": "atomic",
+    "test_atomic::test_repeated_where_calls_accumulate_with_and": "atomic",
+    "test_atomic::test_join_on_adds_join_type_and_criterion": "atomic",
+    "test_atomic::test_join_using_projects_shared_field": "atomic",
+    "test_atomic::test_join_helpers_render_left_and_cross_joins": "atomic",
+    "test_atomic::test_group_by_and_having_filter_aggregates": "atomic",
+    "test_atomic::test_order_limit_and_offset_are_composed_in_order": "atomic",
+    "test_atomic::test_distinct_removes_duplicate_projection_semantics": "atomic",
+    "test_atomic::test_builtin_functions_render_arguments_and_aliases": "atomic",
+    "test_atomic::test_aggregate_distinct_and_filter_render_sql": "atomic",
+    "test_atomic::test_case_expression_renders_ordered_branches_and_else": "atomic",
+    "test_atomic::test_custom_function_uses_declared_parameters": "atomic",
+    "test_atomic::test_analytic_function_renders_partition_and_order": "atomic",
+    "test_atomic::test_tuple_criteria_render_pairwise_comparisons": "atomic",
+    "test_atomic::test_cte_and_aliased_query_render_a_named_subquery": "atomic",
+    "test_atomic::test_set_operations_render_union_all_intersect_and_except": "atomic",
+    "test_atomic::test_insert_values_and_multiple_rows_render_sql": "atomic",
+    "test_atomic::test_insert_from_select_preserves_target_columns": "atomic",
+    "test_atomic::test_update_query_renders_assignments_filter_and_limit": "atomic",
+    "test_atomic::test_delete_query_renders_filter_and_limit": "atomic",
+    "test_atomic::test_parameter_object_collects_values_with_qmark_placeholders": "atomic",
+    "test_atomic::test_mysql_dialect_uses_backticks_and_duplicate_handlers": "atomic",
+    "test_atomic::test_postgresql_dialect_supports_conflict_and_returning": "atomic",
+    "test_atomic::test_oracle_and_mssql_dialects_render_fetch_pagination": "atomic",
+    "test_atomic::test_clickhouse_dialect_supports_final_sample_and_limit_by": "atomic",
+    "test_integration::test_select_where_order_workflow": "integration",
+    "test_integration::test_alias_arithmetic_filter_workflow": "integration",
+    "test_integration::test_composed_criteria_workflow": "integration",
+    "test_integration::test_join_on_filter_projection_workflow": "integration",
+    "test_integration::test_join_using_aggregate_workflow": "integration",
+    "test_integration::test_left_join_null_preservation_workflow": "integration",
+    "test_integration::test_group_having_order_limit_workflow": "integration",
+    "test_integration::test_distinct_offset_workflow": "integration",
+    "test_integration::test_function_case_workflow": "integration",
+    "test_integration::test_custom_function_cte_workflow": "integration",
+    "test_integration::test_analytic_qualify_workflow": "integration",
+    "test_integration::test_tuple_membership_filter_workflow": "integration",
+    "test_integration::test_cte_join_workflow": "integration",
+    "test_integration::test_union_all_order_limit_workflow": "integration",
+    "test_integration::test_intersect_and_except_composition_workflow": "integration",
+    "test_integration::test_multirow_insert_workflow": "integration",
+    "test_integration::test_insert_select_join_workflow": "integration",
+    "test_integration::test_update_join_filter_limit_workflow": "integration",
+    "test_integration::test_delete_filter_limit_workflow": "integration",
+    "test_integration::test_parameterized_composed_filter_workflow": "integration",
+    "test_integration::test_mysql_duplicate_update_workflow": "integration",
+    "test_integration::test_postgresql_conflict_update_returning_workflow": "integration",
+    "test_integration::test_oracle_and_mssql_pagination_workflow": "integration",
+    "test_integration::test_clickhouse_sampling_and_projection_workflow": "integration",
+    "test_integration::test_namespace_table_filter_workflow": "integration",
+    "test_integration::test_immutable_builder_branching_workflow": "integration",
+    "test_integration::test_correlated_subquery_expression_workflow": "integration",
+    "test_integration::test_composed_summary_workflow": "integration",
+    "test_integration::test_join_window_and_order_workflow": "integration",
+    "test_integration::test_cte_aggregate_and_order_workflow": "integration",
+    "test_integration::test_insert_parameter_workflow": "integration",
+    "test_integration::test_postgresql_distinct_on_and_returning_workflow": "integration",
+    "test_integration::test_cte_union_workflow": "integration",
+    "test_integration::test_delete_parameter_workflow": "integration",
+    "test_integration::test_date_interval_function_workflow": "integration",
+    "test_integration::test_multi_join_filter_workflow": "integration"
+  },
+  "stats": {
+    "atomic": 38,
+    "integration": 36,
+    "system_e2e": 0
+  },
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "target_imports": [
+    "pypika",
+    "pypika.functions",
+    "pypika.analytics",
+    "pypika.terms.Values"
+  ],
+  "scope_notes": [
+    "Public Query, Table, Field, criteria, expressions, joins, functions, aggregates, DML, set operations, subqueries, CTEs, parameters, analytics, and selected dialect builders only.",
+    "Assertions use deterministic in-memory query construction and a stable whitespace normalization helper.",
+    "Database execution, network, sockets, source tests, private modules, host state, timing, and exact incidental diagnostics are excluded.",
+    "Current evidence is same-process local replay and does not establish a trusted black-box Stage 4 runner, external signature, provenance, candidate score, qualification, or final QUALIFIED status."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "status": "ARTIFACT_ONLY",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310.json"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 74,
+      "total": 74,
+      "log": "logs/reference_py311.json",
+      "sha256": "752665a2aa55e3c1a037542f60da2d1198945e95116fcc91e994a737b8130ecc"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 74,
+      "total": 74,
+      "log": "logs/reference_py310.json",
+      "sha256": "7e9a5a5baa040b446984164dfb6305607ba6707d8c595f5c4708f3fc9398b693"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 74,
+      "log": "logs/dummy_py310.json",
+      "sha256": "39a7eae3e4ad38598ed99ab1663629bf240955d94da17beb27233dddc18a4150"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 74,
+      "log": "logs/dummy_py311.json",
+      "sha256": "f3212097b18c9a31efb71ed7b8ce5c0011941be6e72f8656ded30692673a93fc"
+    }
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 74,
+      "total": 74
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 38,
+        "failed": 0,
+        "total": 38
+      },
+      "integration": {
+        "passed": 36,
+        "failed": 0,
+        "total": 36
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 74,
+      "errors": 0,
+      "total": 74
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 38,
+        "total": 38
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 36,
+        "total": 36
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "pypika",
+  "language": "python"
+}

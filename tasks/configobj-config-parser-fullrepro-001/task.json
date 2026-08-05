@@ -1,0 +1,237 @@
+{
+  "instance_id": "configobj-config-parser-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "DiffSK/configobj",
+  "repo_commit": "b7707c94c0317b8f89b704a01525a68eb6c72521",
+  "spec_version": "v1-public-api-artifact",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 72,
+    "source": "72 native public-behavior tests for parsing, writing, nested sections, options, and validation",
+    "nodeid_file": "kept_nodeids.txt",
+    "taxonomy_file": "taxonomy.jsonl",
+    "mapping_file": "spec_test_map.md",
+    "carrier_dependency": false,
+    "subprocess_dependency": false,
+    "scorer_isolation": [
+      "PYTHONPATH=<solution_dir>",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "LC_ALL=C",
+      "LANG=C",
+      "TZ=UTC",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "oracle_version": "2026-08-05-public-api-artifact-v1"
+  },
+  "stats": {
+    "atomic": 41,
+    "integration": 31,
+    "system_e2e": 0
+  },
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_meta": {
+    "language": "Python",
+    "source_commit": "b7707c94c0317b8f89b704a01525a68eb6c72521"
+  },
+  "target_imports": [
+    "configobj",
+    "configobj.validate"
+  ],
+  "scope_notes": [
+    "Public ConfigObj parsing/writing, nested sections, list values, comments, ordering, interpolation, unrepr, UTF-8 encoding, validation, defaults, and local round trips.",
+    "Semantic structures and documented flags are compared; incidental whitespace and exact exception text are not.",
+    "UTF-16 path loading is excluded because the pinned binary line loader does not provide a stable deterministic contract.",
+    "Current evidence is same-process local replay only and does not establish a trusted black-box Stage 4 runner, external signature, or final qualification status."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310.json"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 72,
+      "total": 72,
+      "log": "logs/reference_py311.json",
+      "sha256": "1eab7c8fc7ee50a70b529457060f076c631e7c96d2f14c866d614265a8b9c797"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 72,
+      "total": 72,
+      "log": "logs/reference_py310.json",
+      "sha256": "23e40220bd4d09362155593bc74747cea2701da129a4bf5b3ff674c6558cb786"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 72,
+      "log": "logs/dummy_py310.json",
+      "sha256": "7ef4a457d7f5b5a3587449a673042cdd50ad9b2eefe6afead9646afb36f47091"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 72,
+      "log": "logs/dummy_py311.json",
+      "sha256": "6eed1fce81f69935e361313a0c4738713f58e7c1ed68de6c69ccdb5b710c97ee"
+    }
+  },
+  "task_id": "configobj-config-parser-fullrepro-001",
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "summary": {
+      "passed": 72,
+      "total": 72
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 41,
+        "failed": 0,
+        "total": 41
+      },
+      "integration": {
+        "passed": 31,
+        "failed": 0,
+        "total": 31
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 68,
+      "errors": 4,
+      "total": 72
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 38,
+        "total": 41,
+        "errors": 3
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 31,
+        "errors": 1
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "configobj",
+  "taxonomy": {
+    "test_atomic::test_constructor_parses_scalar_and_list_values": "atomic",
+    "test_atomic::test_constructor_builds_nested_sections": "atomic",
+    "test_atomic::test_constructor_accepts_mapping_and_preserves_member_order": "atomic",
+    "test_atomic::test_constructor_accepts_file_like_text": "atomic",
+    "test_atomic::test_comments_and_order_are_recorded": "atomic",
+    "test_atomic::test_inline_and_member_comments_are_preserved": "atomic",
+    "test_atomic::test_write_returns_ordered_lines_and_keeps_semantics": "atomic",
+    "test_atomic::test_section_dict_returns_detached_plain_mapping": "atomic",
+    "test_atomic::test_section_get_and_items_follow_interpolation": "atomic",
+    "test_atomic::test_interpolation_resolves_parent_and_default_sections": "atomic",
+    "test_atomic::test_interpolation_can_be_disabled": "atomic",
+    "test_atomic::test_template_interpolation_uses_documented_syntax": "atomic",
+    "test_atomic::test_list_interpolation_returns_resolved_copy": "atomic",
+    "test_atomic::test_unrepr_preserves_basic_python_types": "atomic",
+    "test_atomic::test_unrepr_write_round_trip_preserves_types": "atomic",
+    "test_atomic::test_list_values_false_keeps_commas_in_scalar": "atomic",
+    "test_atomic::test_write_empty_values_flag_changes_empty_value_projection": "atomic",
+    "test_atomic::test_indent_type_and_newline_attributes_are_documented": "atomic",
+    "test_atomic::test_utf8_file_encoding_round_trip": "atomic",
+    "test_atomic::test_utf8_bom_is_detected_and_decoded": "atomic",
+    "test_atomic::test_as_bool_as_int_as_float_and_as_list_helpers": "atomic",
+    "test_atomic::test_merge_recursively_updates_existing_sections": "atomic",
+    "test_atomic::test_rename_preserves_position": "atomic",
+    "test_atomic::test_walk_transforms_scalar_values_and_returns_projection": "atomic",
+    "test_atomic::test_walk_can_collect_sections_and_scalars": "atomic",
+    "test_atomic::test_reset_returns_config_to_empty_state": "atomic",
+    "test_atomic::test_reload_reads_updated_local_file": "atomic",
+    "test_atomic::test_reload_without_filename_raises_public_error": "atomic",
+    "test_atomic::test_missing_interpolation_raises_public_error": "atomic",
+    "test_atomic::test_invalid_syntax_raises_parse_error": "atomic",
+    "test_atomic::test_non_string_key_is_rejected": "atomic",
+    "test_atomic::test_stringify_false_rejects_non_string_values": "atomic",
+    "test_atomic::test_validator_check_converts_standard_values": "atomic",
+    "test_atomic::test_validator_check_supports_lists_and_bounds": "atomic",
+    "test_atomic::test_validator_defaults_and_custom_function": "atomic",
+    "test_atomic::test_direct_validation_converts_values_and_records_defaults": "atomic",
+    "test_atomic::test_validation_preserve_errors_and_flatten_errors": "atomic",
+    "test_atomic::test_validation_copy_fills_missing_values_for_writing": "atomic",
+    "test_atomic::test_simpleval_checks_presence_against_spec": "atomic",
+    "test_atomic::test_extra_values_are_reported_after_validation": "atomic",
+    "test_atomic::test_default_restore_methods_restore_nested_values": "atomic",
+    "test_integration::test_parse_nested_list_and_write_round_trip_preserves_structure": "integration",
+    "test_integration::test_comments_order_and_sections_survive_local_file_round_trip": "integration",
+    "test_integration::test_interpolation_modes_project_same_source_differently": "integration",
+    "test_integration::test_template_and_unrepr_workflows_keep_independent_semantics": "integration",
+    "test_integration::test_list_interpolation_and_literal_comma_modes_are_distinct": "integration",
+    "test_integration::test_utf8_and_utf8_bom_local_files_decode_to_same_semantic_value": "integration",
+    "test_integration::test_section_helpers_and_reset_support_reusable_config_lifecycle": "integration",
+    "test_integration::test_merge_then_rename_keeps_recursive_state_and_order": "integration",
+    "test_integration::test_walk_transformation_then_plain_projection_is_consistent": "integration",
+    "test_integration::test_reload_workflow_refreshes_file_and_preserves_filename_contract": "integration",
+    "test_integration::test_public_parse_errors_are_distinguishable_from_interpolation_errors": "integration",
+    "test_integration::test_stringify_policy_and_validator_conversion_define_assignment_boundary": "integration",
+    "test_integration::test_validation_converts_nested_values_and_preserves_default_markers": "integration",
+    "test_integration::test_custom_validator_and_copy_mode_create_a_complete_local_config": "integration",
+    "test_integration::test_validation_error_projection_and_extra_value_projection_are_composable": "integration",
+    "test_integration::test_restore_defaults_after_user_edits_reestablishes_validated_projection": "integration",
+    "test_integration::test_simpleval_presence_and_empty_value_writing_form_a_complete_file": "integration",
+    "test_integration::test_mapping_construction_then_mutation_keeps_section_isolation": "integration",
+    "test_integration::test_file_like_input_and_in_memory_output_round_trip": "integration",
+    "test_integration::test_custom_indent_and_comments_project_without_changing_data": "integration",
+    "test_integration::test_unrepr_and_encoded_file_write_can_be_chained": "integration",
+    "test_integration::test_validator_conversion_happens_only_after_successful_parse": "integration",
+    "test_integration::test_interpolation_composes_across_nested_sections_and_lists": "integration",
+    "test_integration::test_parsed_values_and_section_helpers_agree_on_scalar_projection": "integration",
+    "test_integration::test_merge_then_write_reparse_preserves_recursive_updates": "integration",
+    "test_integration::test_validated_defaults_write_to_an_encoded_local_file": "integration",
+    "test_integration::test_failed_validation_then_default_restore_keeps_nested_sections_auditable": "integration",
+    "test_integration::test_extra_value_inventory_is_cleared_by_reset": "integration",
+    "test_integration::test_local_file_error_flag_rejects_missing_path": "integration",
+    "test_integration::test_reload_after_encoded_write_preserves_unicode_value": "integration",
+    "test_integration::test_validated_list_defaults_are_typed_and_written_as_lists": "integration"
+  },
+  "language": "python"
+}

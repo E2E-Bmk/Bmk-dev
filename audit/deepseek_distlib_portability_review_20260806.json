@@ -1,0 +1,17 @@
+{
+  "verdict": "PASS",
+  "blocking_issues": [],
+  "non_blocking_issues": [
+    "TARGET_ROOT must be supplied explicitly for implementation-root injection",
+    "Removing distlib modules from sys.modules is an intentional isolation side effect",
+    "The artifact set remains ARTIFACT_ONLY with null candidate scores and no trusted isolation/signature"
+  ],
+  "checks": [
+    "Hardcoded /root workspace injection was removed",
+    "Oracle semantics and 30 atomic plus 30 integration counts are unchanged",
+    "Python 3.10 and 3.11.15 reference replays pass 60/60 and dummy replays pass 0/60",
+    "Full package audit and required replay audit both report 50/50 valid",
+    "Four refreshed Distlib replay logs have matching SHA-256 bindings"
+  ],
+  "recommendation": "Accept the portability repair as construction evidence, but keep all tasks ARTIFACT_ONLY; trusted QUALIFIED status still requires the isolated runner, candidate score, and external attestation gates."
+}

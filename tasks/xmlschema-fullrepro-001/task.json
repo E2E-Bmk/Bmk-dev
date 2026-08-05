@@ -1,0 +1,209 @@
+{
+  "instance_id": "xmlschema-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "sissaschool/xmlschema",
+  "repo_commit": "627c179541ec2e79c0b42c1d493074f7450324c1",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 64,
+    "scorer_isolation": [
+      "--remove-path xmlschema"
+    ]
+  },
+  "stats": {
+    "atomic": 32,
+    "integration": 32,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "xmlschema",
+    "xmlschema.cli",
+    "xmlschema.exceptions"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 64,
+      "total": 64,
+      "log": "logs/reference_py311.json",
+      "sha256": "24bd08a4c6335df9cf5e2e91f796474dbd11a02ba72f31fb277f30dda38ea4e3"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 64,
+      "total": 64,
+      "log": "logs/reference_py310.json",
+      "sha256": "599d3304559c4c9024915a291ec80a415f98ffb82c53fb893a48f8a1f1d9cfd8"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 64,
+      "log": "logs/dummy_py310.json",
+      "sha256": "e2178f7af272c3d8d7f2fa13d9cdc57bcea50f4456465f6f310ab497a662a86b"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 0,
+      "total": 64,
+      "log": "logs/dummy_py311.json",
+      "sha256": "19da8f8f8fa4ad2e3e9c707fa8c4ff39350b5d934fdd9e1d580aad31b7a80d7f"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "stage1_evidence": "stage1-gpt55/lanes/lane16/sissaschool__xmlschema.json",
+    "reference_result_source": "logs/reference_py310.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "xmlschema-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 64,
+      "total": 64
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 32,
+        "failed": 0,
+        "total": 32
+      },
+      "integration": {
+        "passed": 32,
+        "failed": 0,
+        "total": 32
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 25,
+      "errors": 39,
+      "total": 64
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 13,
+        "total": 32,
+        "errors": 19
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 12,
+        "total": 32,
+        "errors": 20
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "xmlschema",
+  "taxonomy": {
+    "test_atomic::test_schema_constructs_from_local_xsd": "atomic",
+    "test_atomic::test_schema_constructs_from_text_with_base_url": "atomic",
+    "test_atomic::test_build_switch_controls_public_built_state": "atomic",
+    "test_atomic::test_schema_namespaces_expose_include_and_import_targets": "atomic",
+    "test_atomic::test_schema_maps_expose_root_element_and_named_types": "atomic",
+    "test_atomic::test_schema_component_lookup_returns_public_element": "atomic",
+    "test_atomic::test_schema_get_schema_resolves_loaded_namespace": "atomic",
+    "test_atomic::test_package_is_valid_accepts_valid_fixture": "atomic",
+    "test_atomic::test_package_is_valid_rejects_invalid_fixture": "atomic",
+    "test_atomic::test_package_validate_accepts_valid_fixture": "atomic",
+    "test_atomic::test_package_iter_errors_returns_structured_errors": "atomic",
+    "test_atomic::test_schema_validate_and_is_valid_share_result": "atomic",
+    "test_atomic::test_schema_iter_errors_is_empty_for_valid_fixture": "atomic",
+    "test_atomic::test_to_dict_returns_decoded_mapping": "atomic",
+    "test_atomic::test_to_json_returns_json_text": "atomic",
+    "test_atomic::test_to_json_writes_to_text_stream": "atomic",
+    "test_atomic::test_to_etree_encodes_public_mapping": "atomic",
+    "test_atomic::test_package_to_etree_encodes_using_schema": "atomic",
+    "test_atomic::test_from_json_encodes_json_text": "atomic",
+    "test_atomic::test_default_converter_has_public_converter_contract": "atomic",
+    "test_atomic::test_parker_converter_changes_root_projection": "atomic",
+    "test_atomic::test_badgerfish_converter_projects_attributes": "atomic",
+    "test_atomic::test_jsonml_converter_projects_tagged_sequence": "atomic",
+    "test_atomic::test_columnar_converter_projects_named_columns": "atomic",
+    "test_atomic::test_xml_resource_reports_local_url": "atomic",
+    "test_atomic::test_xml_resource_none_policy_blocks_local_file": "atomic",
+    "test_atomic::test_fetch_resource_normalizes_local_path": "atomic",
+    "test_atomic::test_fetch_schema_returns_local_schema_url": "atomic",
+    "test_atomic::test_fetch_namespaces_reads_local_xml": "atomic",
+    "test_atomic::test_etree_element_is_accepted_as_document_source": "atomic",
+    "test_atomic::test_schema_export_returns_location_mapping": "atomic",
+    "test_atomic::test_schema_component_iteration_exposes_public_components": "atomic",
+    "test_integration::test_decode_and_json_projections_agree_on_business_fields": "integration",
+    "test_integration::test_stream_json_and_json_encoding_round_trip": "integration",
+    "test_integration::test_invalid_document_reports_false_and_nonempty_error_projection": "integration",
+    "test_integration::test_text_schema_base_url_resolves_both_local_dependencies": "integration",
+    "test_integration::test_deferred_build_then_component_iteration_produces_same_root": "integration",
+    "test_integration::test_exported_schema_bundle_reloads_and_validates": "integration",
+    "test_integration::test_add_schema_extends_existing_component_map": "integration",
+    "test_integration::test_import_and_include_state_is_visible_after_build": "integration",
+    "test_integration::test_parker_decode_then_encode_preserves_validity": "integration",
+    "test_integration::test_badgerfish_decode_then_encode_preserves_attribute": "integration",
+    "test_integration::test_jsonml_decode_then_encode_preserves_root_name": "integration",
+    "test_integration::test_columnar_decode_then_encode_preserves_root_name": "integration",
+    "test_integration::test_package_etree_projection_can_be_validated_again": "integration",
+    "test_integration::test_json_file_projection_encodes_and_validates": "integration",
+    "test_integration::test_element_tree_source_decodes_same_customer": "integration",
+    "test_integration::test_local_resource_can_be_validated_and_decoded": "integration",
+    "test_integration::test_resource_policy_allows_local_but_rejects_none": "integration",
+    "test_integration::test_export_location_map_points_to_local_xsd_files": "integration",
+    "test_integration::test_namespace_projection_matches_schema_validation": "integration",
+    "test_integration::test_maps_and_root_elements_agree_on_global_order": "integration",
+    "test_integration::test_component_iteration_contains_imported_public_element": "integration",
+    "test_integration::test_json_options_make_pretty_output_without_changing_data": "integration",
+    "test_integration::test_lax_decode_returns_data_and_error_tuple_for_invalid_input": "integration",
+    "test_integration::test_error_projection_preserves_path_or_reason_without_message_matching": "integration",
+    "test_integration::test_converter_instance_and_converter_class_have_same_default_fields": "integration",
+    "test_integration::test_cli_validate_command_reports_success": "integration",
+    "test_integration::test_cli_validate_command_reports_failure": "integration",
+    "test_integration::test_cli_xml2json_writes_deterministic_local_output": "integration",
+    "test_integration::test_cli_json2xml_rehydrates_output_and_validates": "integration",
+    "test_integration::test_cli_xml2json_skips_existing_output_without_force": "integration",
+    "test_integration::test_cli_converter_option_changes_json_shape": "integration",
+    "test_integration::test_schema_and_package_validation_accept_same_element": "integration"
+  },
+  "language": "python"
+}

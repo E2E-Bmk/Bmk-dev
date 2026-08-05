@@ -1,0 +1,217 @@
+{
+  "instance_id": "python-statemachine-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/fgmacedo/python-statemachine",
+  "repo_commit": "78e2b4c919faa2ac1c5196cb6ad5245fe4de7ee5",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "statemachine"
+    ],
+    "oracle_version": "2026-08-05-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_imports_expose_documented_runtime_classes": "atomic",
+    "test_atomic::test_state_metadata_defaults_and_custom_values": "atomic",
+    "test_atomic::test_declared_transition_becomes_event": "atomic",
+    "test_atomic::test_initial_configuration_contains_initial_state": "atomic",
+    "test_atomic::test_send_advances_to_next_state": "atomic",
+    "test_atomic::test_event_method_call_matches_send": "atomic",
+    "test_atomic::test_allowed_events_are_topology_based": "atomic",
+    "test_atomic::test_enabled_events_evaluate_guards": "atomic",
+    "test_atomic::test_conditional_transition_uses_first_passing_guard": "atomic",
+    "test_atomic::test_conditional_transition_falls_back_when_guard_fails": "atomic",
+    "test_atomic::test_unless_guard_blocks_until_predicate_is_false": "atomic",
+    "test_atomic::test_validator_exception_propagates_and_keeps_state": "atomic",
+    "test_atomic::test_prepare_event_enriches_action_arguments": "atomic",
+    "test_atomic::test_before_and_on_return_values_are_collected": "atomic",
+    "test_atomic::test_single_callback_return_is_unwrapped": "atomic",
+    "test_atomic::test_missing_callback_return_is_none": "atomic",
+    "test_atomic::test_state_machine_rejects_unmatched_event_by_default": "atomic",
+    "test_atomic::test_state_chart_ignores_unmatched_event_by_default": "atomic",
+    "test_atomic::test_final_state_sets_termination_and_final_states": "atomic",
+    "test_atomic::test_explicit_event_name_preserves_programmatic_id": "atomic",
+    "test_atomic::test_from_any_creates_global_transition": "atomic",
+    "test_atomic::test_self_transition_runs_exit_enter_callbacks": "atomic",
+    "test_atomic::test_internal_transition_skips_exit_enter_callbacks": "atomic",
+    "test_atomic::test_model_method_can_supply_transition_action": "atomic",
+    "test_atomic::test_class_listener_factory_creates_fresh_listener": "atomic",
+    "test_atomic::test_two_root_initial_states_are_invalid": "atomic",
+    "test_atomic::test_final_states_cannot_have_outgoing_transitions": "atomic",
+    "test_atomic::test_unreachable_state_definition_is_invalid": "atomic",
+    "test_atomic::test_named_callback_resolution_is_validated_on_instance_creation": "atomic",
+    "test_atomic::test_donedata_requires_final_state": "atomic",
+    "test_atomic::test_invalid_listener_entries_are_rejected": "atomic",
+    "test_integration::test_order_workflow_combines_guards_model_actions_and_listener": "integration",
+    "test_integration::test_compound_state_enters_parent_and_initial_child": "integration",
+    "test_integration::test_compound_child_transition_keeps_parent_active": "integration",
+    "test_integration::test_compound_parent_transition_exits_children": "integration",
+    "test_integration::test_compound_cross_boundary_callbacks_use_documented_order": "integration",
+    "test_integration::test_parallel_state_enters_each_region_initial": "integration",
+    "test_integration::test_parallel_region_transition_preserves_other_region": "integration",
+    "test_integration::test_parallel_done_event_waits_for_all_regions": "integration",
+    "test_integration::test_history_state_restores_previous_child": "integration",
+    "test_integration::test_eventless_transition_fires_after_report_count_changes": "integration",
+    "test_integration::test_done_state_event_advances_compound_parent": "integration",
+    "test_integration::test_donedata_reaches_done_state_handler": "integration",
+    "test_integration::test_error_execution_event_can_recover_from_action_error": "integration",
+    "test_integration::test_raise_internal_event_completes_pipeline_in_one_send": "integration",
+    "test_integration::test_on_callback_receives_previous_and_new_configuration": "integration",
+    "test_integration::test_async_callback_can_be_used_from_synchronous_context": "integration",
+    "test_integration::test_async_initial_state_activation_is_explicit_inside_event_loop": "integration",
+    "test_integration::test_async_first_event_auto_activates_initial_state": "integration",
+    "test_integration::test_enabled_event_projection_matches_guarded_send": "integration",
+    "test_integration::test_runtime_listener_observes_events_after_attachment": "integration",
+    "test_integration::test_listener_inheritance_appends_child_listeners": "integration",
+    "test_integration::test_model_registered_as_listener_supplies_guard_and_action": "integration",
+    "test_integration::test_cross_boundary_transition_enters_sibling_compound_initial": "integration",
+    "test_integration::test_descendant_transition_takes_priority_over_ancestor": "integration",
+    "test_integration::test_transition_decorator_declares_event_with_inline_action": "integration",
+    "test_integration::test_markdown_projection_contains_same_declared_states_and_event": "integration",
+    "test_integration::test_dependency_injection_projects_event_source_target_and_model": "integration",
+    "test_integration::test_validators_run_before_conditions": "integration",
+    "test_integration::test_prepare_event_values_reach_guard_and_action": "integration"
+  },
+  "stats": {
+    "atomic": 31,
+    "integration": 29,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311.json",
+      "sha256": "93ba3fb227dd35c6bed5e9b1771152b0732079ab006cf49fadbfeed5bde1737e"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310.json",
+      "sha256": "ccac66c513cf9f6b6bb009e2f9dda83b80d5d7051e638983d2a02cc10c2ff7a5"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 2,
+      "total": 60,
+      "log": "logs/dummy_py310.json",
+      "sha256": "2347555fe2731583fdfe492313072e683b04ad794b3892985a40f614444939d8"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 2,
+      "total": 60,
+      "log": "logs/dummy_py311.json",
+      "sha256": "ec8f2bb991e22811ba64be446e6ec60bd00a073d703cce641a214279a4ac53ba"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_url": "https://github.com/fgmacedo/python-statemachine",
+  "target_imports": [
+    "statemachine"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "package_python_files": 63,
+    "pure_python_loc_nonblank_noncomment": 9724,
+    "upstream_test_functions": 1100
+  },
+  "scope_notes": [
+    "Public API tests only; no private target or source-test imports.",
+    "External diagram rendering, delayed-event timing, network behavior, Docker, and private implementation details are excluded.",
+    "Stage 4 remains artifact-only; no trusted runner result, network isolation proof, strict black-box result, trusted signature, Docker result, candidate score, or qualification claim is present."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "reference_result_source": "logs/reference_py310.json",
+    "python311_result_source": null,
+    "dummy_result_source": null,
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "python-statemachine-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 31,
+        "failed": 0,
+        "total": 31
+      },
+      "integration": {
+        "passed": 29,
+        "failed": 0,
+        "total": 29
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 2,
+      "failed": 58,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.03333333333333333,
+    "by_layer": {
+      "atomic": {
+        "passed": 2,
+        "failed": 29,
+        "total": 31
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 29,
+        "total": 29
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "statemachine",
+  "language": "python"
+}

@@ -1,0 +1,214 @@
+{
+  "instance_id": "pex-fullrepro-001",
+  "task_id": "pex-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "pex-tool/pex",
+  "source_url": "https://github.com/pex-tool/pex",
+  "repo_commit": "bd3eed057a628d1efab366e4b3d8c45054ab8094",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "oracle_version": "artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_public_import_surface_exposes_layout_and_pex_info": "atomic",
+    "test_atomic::test_layout_for_value_rejects_unknown_layout_name": "atomic",
+    "test_atomic::test_default_pex_info_exposes_empty_runtime_projection": "atomic",
+    "test_atomic::test_default_pex_info_exposes_non_venv_distribution_projection": "atomic",
+    "test_atomic::test_default_pex_info_dump_round_trips_public_build_fields": "atomic",
+    "test_atomic::test_layout_values_have_stable_public_string_projection": "atomic",
+    "test_atomic::test_fixture_support_wheel_has_dist_info_and_console_script": "atomic",
+    "test_atomic::test_fixture_source_tree_contains_main_module": "atomic",
+    "test_atomic::test_zipapp_build_embeds_pex_info_and_main_module": "atomic",
+    "test_atomic::test_zipapp_layout_identifies_as_zipapp": "atomic",
+    "test_atomic::test_packed_layout_identifies_as_packed_directory": "atomic",
+    "test_atomic::test_loose_layout_identifies_as_loose_directory": "atomic",
+    "test_atomic::test_pex_info_from_zipapp_reads_entry_point_and_build_properties": "atomic",
+    "test_atomic::test_pex_info_roundtrip_from_json_preserves_injected_arguments": "atomic",
+    "test_atomic::test_zipapp_pex_info_lists_local_wheel_distribution": "atomic",
+    "test_atomic::test_zipapp_archive_contains_source_package_files": "atomic",
+    "test_atomic::test_zipapp_archive_contains_dependency_wheel_projection": "atomic",
+    "test_atomic::test_entry_point_execution_returns_source_and_wheel_markers": "atomic",
+    "test_atomic::test_console_script_execution_returns_wheel_marker": "atomic",
+    "test_atomic::test_injected_application_args_are_visible_to_entry_point": "atomic",
+    "test_atomic::test_injected_python_args_enable_dev_mode": "atomic",
+    "test_atomic::test_runtime_pex_root_gets_files_after_zipapp_execution": "atomic",
+    "test_atomic::test_venv_mode_records_venv_flag_in_pex_info": "atomic",
+    "test_atomic::test_venv_mode_executes_with_prefix_under_custom_pex_root": "atomic",
+    "test_atomic::test_packed_layout_contains_top_level_main_and_pex_info": "atomic",
+    "test_atomic::test_loose_layout_contains_layout_marker_and_source_files": "atomic",
+    "test_atomic::test_module_entry_point_executes_with_python_m_style": "atomic",
+    "test_atomic::test_build_with_explicit_runtime_pex_root_records_configured_value": "atomic",
+    "test_atomic::test_pex_info_from_pex_matches_raw_pex_info_json": "atomic",
+    "test_atomic::test_console_script_pex_info_records_resolved_entry_point": "atomic",
+    "test_integration::test_zipapp_build_inspect_and_run_entry_point_workflow": "integration",
+    "test_integration::test_packed_layout_build_inspect_and_run_directory_workflow": "integration",
+    "test_integration::test_loose_layout_build_inspect_and_run_directory_workflow": "integration",
+    "test_integration::test_console_script_build_info_and_runtime_workflow": "integration",
+    "test_integration::test_source_and_wheel_markers_survive_archive_and_execution_workflow": "integration",
+    "test_integration::test_injected_app_args_are_stored_in_info_and_observed_at_runtime": "integration",
+    "test_integration::test_injected_python_args_are_stored_and_observed_at_runtime": "integration",
+    "test_integration::test_custom_pex_root_populates_runtime_cache_and_preserves_output": "integration",
+    "test_integration::test_venv_pex_root_populates_venv_and_preserves_output": "integration",
+    "test_integration::test_configured_runtime_pex_root_is_used_for_local_execution": "integration",
+    "test_integration::test_raw_pex_info_api_projection_and_runtime_agree": "integration",
+    "test_integration::test_three_layouts_share_same_entry_point_runtime_projection": "integration",
+    "test_integration::test_distribution_projection_and_console_script_runtime_agree": "integration",
+    "test_integration::test_module_style_entry_point_records_module_and_runs_source_code": "integration",
+    "test_integration::test_runtime_args_are_passed_to_console_script_without_source_tree": "integration",
+    "test_integration::test_runtime_args_are_appended_to_source_entry_point_invocation": "integration",
+    "test_integration::test_venv_execution_combines_app_args_python_args_and_source_imports": "integration",
+    "test_integration::test_packed_layout_runs_with_runner_owned_pex_root_workflow": "integration",
+    "test_integration::test_loose_layout_runs_from_directory_and_keeps_source_projection": "integration",
+    "test_integration::test_archive_distribution_file_and_pex_info_distribution_share_name": "integration",
+    "test_integration::test_venv_console_script_workflow_uses_wheel_entry_point": "integration",
+    "test_integration::test_configured_runtime_root_and_venv_mode_create_runner_owned_venv": "integration",
+    "test_integration::test_console_script_injected_args_are_stored_and_visible": "integration",
+    "test_integration::test_console_script_injected_python_args_are_stored_and_visible": "integration",
+    "test_integration::test_zipapp_public_layout_api_archive_listing_and_runtime_align": "integration",
+    "test_integration::test_module_entry_point_and_runtime_arguments_share_one_projection": "integration",
+    "test_integration::test_configured_runtime_root_is_shared_by_archive_metadata_and_execution": "integration",
+    "test_integration::test_console_script_archive_metadata_and_injected_runtime_arguments_agree": "integration",
+    "test_integration::test_venv_module_entry_point_keeps_metadata_and_runtime_consistent": "integration",
+    "test_integration::test_layout_variants_keep_distribution_metadata_and_runtime_markers_aligned": "integration"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "pex"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "150419f89f3558a7fef3728e7d340da85211822bb3f01be926c105e5552a9d96"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "c0c16bdccb40e8f4c8122e48e6f785134e4b9140dde4e419825934979829b515"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 2,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "22d74b9a3b6f8628d6a030d6a5976a38f293204564dfe65cc8dbbde9e428b8e5"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 empty dummy replay",
+      "passed": 2,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "941c5d1735c64325843d8a6d56cf4e3d159135c5a2861c16ebee019032cb3c64"
+    }
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_metrics": {
+    "source_py_files": 795,
+    "source_loc_nonblank_noncomment": 204491,
+    "upstream_test_files": 348,
+    "upstream_test_functions_rough": 1312
+  },
+  "scope_notes": [
+    "Public PEX command, layout, PEX-INFO, entry point, injected argument, PEX_ROOT, and venv behavior only.",
+    "Fixtures are generated locally from a tiny source tree and pure-Python wheel with no package index access.",
+    "Live downloads, scie fetches, private modules, source tests, host caches, timing, and exact archive-byte snapshots are excluded.",
+    "Local replay evidence remains ARTIFACT_ONLY and does not claim trusted isolation, qualification, score provenance, or delivery."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "status": "ARTIFACT_ONLY",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "reference_result_source": "logs/reference_py310_current.json",
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 2,
+      "failed": 58,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.03333333333333333,
+    "by_layer": {
+      "atomic": {
+        "passed": 2,
+        "failed": 28,
+        "total": 30
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "pex",
+  "language": "python"
+}

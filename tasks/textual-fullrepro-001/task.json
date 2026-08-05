@@ -1,0 +1,219 @@
+{
+  "instance_id": "textual-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/Textualize/textual",
+  "repo_commit": "06dbeef4bb70fb718236aa418ed658ef4667a126",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "textual"
+    ],
+    "oracle_version": "2026-08-05-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_app_key_event_receives_pilot_press_character": "atomic",
+    "test_atomic::test_run_test_exposes_pilot_and_mounts_input": "atomic",
+    "test_atomic::test_input_press_updates_value_and_emits_changed": "atomic",
+    "test_atomic::test_input_cursor_and_selection_follow_arrow_keys": "atomic",
+    "test_atomic::test_input_submit_emits_submitted_message": "atomic",
+    "test_atomic::test_input_blur_emits_blurred_message_when_focus_moves": "atomic",
+    "test_atomic::test_input_restrict_and_max_length_block_invalid_replacement": "atomic",
+    "test_atomic::test_input_selection_and_delete_programmatic_helpers": "atomic",
+    "test_atomic::test_datatable_add_columns_and_rows_preserve_order": "atomic",
+    "test_atomic::test_datatable_row_and_column_keys_round_trip": "atomic",
+    "test_atomic::test_datatable_update_cell_and_coordinate_lookup_round_trip": "atomic",
+    "test_atomic::test_datatable_sort_changes_coordinate_projection": "atomic",
+    "test_atomic::test_datatable_cell_cursor_highlight_and_select_messages": "atomic",
+    "test_atomic::test_datatable_row_cursor_highlight_and_select_messages": "atomic",
+    "test_atomic::test_datatable_column_cursor_highlight_and_select_messages": "atomic",
+    "test_atomic::test_datatable_header_click_emits_header_selected": "atomic",
+    "test_atomic::test_datatable_row_label_click_emits_row_label_selected": "atomic",
+    "test_atomic::test_tree_root_and_added_nodes_have_parent_links": "atomic",
+    "test_atomic::test_tree_expand_and_collapse_messages_are_public": "atomic",
+    "test_atomic::test_tree_keyboard_selection_and_auto_expand_messages": "atomic",
+    "test_atomic::test_tree_clear_resets_root_and_cursor": "atomic",
+    "test_atomic::test_tabs_empty_and_populated_states_are_distinct": "atomic",
+    "test_atomic::test_tabs_clicking_a_tab_changes_active_tab": "atomic",
+    "test_atomic::test_tabs_keyboard_navigation_wraps_across_edges": "atomic",
+    "test_atomic::test_tabs_hide_show_disable_enable_emit_public_messages": "atomic",
+    "test_atomic::test_css_layout_projects_widget_regions": "atomic",
+    "test_atomic::test_css_style_projection_sets_expected_widget_sizes": "atomic",
+    "test_atomic::test_input_home_and_end_actions_update_cursor_position": "atomic",
+    "test_atomic::test_datatable_clear_rows_preserves_public_columns": "atomic",
+    "test_atomic::test_tree_add_leaf_and_remove_preserve_parent_projection": "atomic",
+    "test_integration::test_input_edit_submit_and_blur_workflow": "integration",
+    "test_integration::test_input_click_selection_delete_and_retype_workflow": "integration",
+    "test_integration::test_input_restrict_submit_and_blur_workflow": "integration",
+    "test_integration::test_datatable_add_update_sort_and_coordinate_workflow": "integration",
+    "test_integration::test_datatable_click_then_sort_keeps_row_identity_workflow": "integration",
+    "test_integration::test_datatable_row_and_column_cursor_workflow": "integration",
+    "test_integration::test_datatable_header_and_row_label_workflow": "integration",
+    "test_integration::test_tree_expand_select_collapse_workflow": "integration",
+    "test_integration::test_tree_move_cursor_and_reset_workflow": "integration",
+    "test_integration::test_tree_clear_and_repopulate_workflow": "integration",
+    "test_integration::test_tabs_add_navigate_and_remove_workflow": "integration",
+    "test_integration::test_tabs_hide_show_disable_enable_workflow": "integration",
+    "test_integration::test_tabs_mouse_and_keyboard_navigation_share_active_state": "integration",
+    "test_integration::test_tabs_clear_and_readd_workflow": "integration",
+    "test_integration::test_layout_regions_remain_stable_after_interactions": "integration",
+    "test_integration::test_combined_input_submit_tab_click_and_table_selection_workflow": "integration",
+    "test_integration::test_combined_tree_and_table_selection_messages_share_one_app_log": "integration",
+    "test_integration::test_combined_tab_click_blurs_input_and_keeps_layout_projections": "integration",
+    "test_integration::test_combined_dashboard_rebuilds_table_and_tree_from_input_submission": "integration",
+    "test_integration::test_app_key_event_and_widget_messages_can_coexist_in_one_workflow": "integration",
+    "test_integration::test_pilot_clicking_multiple_widgets_preserves_event_order": "integration",
+    "test_integration::test_datatable_remove_row_and_column_after_selection_workflow": "integration",
+    "test_integration::test_tabs_remove_active_and_clear_message_workflow": "integration",
+    "test_integration::test_tree_show_root_and_keyboard_navigation_workflow": "integration",
+    "test_integration::test_input_home_selection_and_replacement_workflow": "integration",
+    "test_integration::test_datatable_clear_rebuild_and_sort_workflow": "integration",
+    "test_integration::test_tree_nested_add_remove_and_cursor_workflow": "integration",
+    "test_integration::test_tabs_relabel_and_programmatic_activation_workflow": "integration",
+    "test_integration::test_table_and_tree_rebuild_keep_shared_item_identity": "integration",
+    "test_integration::test_dashboard_reset_workflow_keeps_widget_regions_stable": "integration"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay (current)",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "c0b19d1e5ea3e95b5e3bb94a5963bff2698c692ed628ddf20b1d3f23918062ef"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay (current)",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "ff14404196f3959d3fae0daaea5ac293ec2b7d4b281808ad4da8a19c441c6f29"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 dummy replay (current)",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "86751aa028f23345cbaa8b8c634f598edd817b73dd5be61454d34d0975ff34f2"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 dummy replay (current)",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "078a88d849dcd343d46fc56582b0ddef85fb3616f65c194cbdb73a44c9392693"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "docker_evidence": null,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay (current)"
+  },
+  "source_url": "https://github.com/Textualize/textual",
+  "target_imports": [
+    "textual"
+  ],
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "source_metrics": {
+    "package_python_files": 247,
+    "pure_python_loc_nonblank_noncomment": 66797,
+    "upstream_test_functions_rough": 2061
+  },
+  "scope_notes": [
+    "Public API checks only; no private target or source-test imports.",
+    "Terminal snapshots, bulk SVG matching, wall-clock animation, live services, network behavior, host resources, Docker, and private implementation details are excluded.",
+    "Stage 4 remains artifact-only; no trusted runner result, network isolation proof, strict black-box result, trusted signature, Docker result, candidate score, or qualification claim is present."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "reference_result_source": "logs/reference_py310_current.json",
+    "python311_result_source": "logs/reference_py311.json",
+    "dummy_result_source": "logs/dummy_py310.json",
+    "dummy311_result_source": "logs/dummy_py311.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true
+  },
+  "task_id": "textual-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 60,
+      "errors": 0,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 30,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "textual",
+  "language": "python"
+}

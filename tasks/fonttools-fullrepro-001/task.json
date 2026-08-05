@@ -1,0 +1,205 @@
+{
+  "instance_id": "fonttools-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "fonttools/fonttools",
+  "repo_commit": "6b407ba72a81af6f41830c096b777646d635364d",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 60,
+    "scorer_isolation": [
+      "--remove-path",
+      "fontTools"
+    ]
+  },
+  "taxonomy": {
+    "test_atomic::test_new_font_exposes_expected_table_tags": "atomic",
+    "test_atomic::test_glyph_order_preserves_builder_sequence": "atomic",
+    "test_atomic::test_character_map_projects_unicode_to_glyph_names": "atomic",
+    "test_atomic::test_cmap_uses_format_twelve_for_non_bmp_codepoint": "atomic",
+    "test_atomic::test_horizontal_metrics_are_rounded_and_accessible": "atomic",
+    "test_atomic::test_name_table_returns_expected_english_strings": "atomic",
+    "test_atomic::test_head_table_uses_configured_units_per_em": "atomic",
+    "test_atomic::test_hhea_table_keeps_configured_vertical_extents": "atomic",
+    "test_atomic::test_os2_table_keeps_vendor_and_windows_extents": "atomic",
+    "test_atomic::test_glyf_table_contains_simple_and_component_glyphs": "atomic",
+    "test_atomic::test_glyph_bounds_are_calculated_from_contours": "atomic",
+    "test_atomic::test_get_glyph_set_exposes_metrics_and_bounds": "atomic",
+    "test_atomic::test_bounds_pen_calculates_drawn_glyph_bounds": "atomic",
+    "test_atomic::test_recording_pen_captures_public_pen_protocol": "atomic",
+    "test_atomic::test_tt_glyph_pen_builds_quadratic_glyph": "atomic",
+    "test_atomic::test_font_builder_rejects_cubic_glyf_by_default": "atomic",
+    "test_atomic::test_font_bytes_can_reload_with_ttfont": "atomic",
+    "test_atomic::test_save_xml_can_emit_selected_tables": "atomic",
+    "test_atomic::test_new_table_can_create_and_attach_meta_table": "atomic",
+    "test_atomic::test_sorted_tag_list_orders_font_tables": "atomic",
+    "test_atomic::test_xml_tag_conversion_round_trips_public_tag": "atomic",
+    "test_atomic::test_reorder_font_tables_moves_glyph_order_first": "atomic",
+    "test_atomic::test_subset_options_default_to_recommended_glyph_names": "atomic",
+    "test_atomic::test_subsetter_populate_records_unicode_and_glyph_requests": "atomic",
+    "test_atomic::test_ttfont_set_glyph_order_updates_ordered_projection": "atomic",
+    "test_atomic::test_get_best_cmap_prefers_unicode_mapping": "atomic",
+    "test_atomic::test_ttfont_round_trip_stream_keeps_metrics": "atomic",
+    "test_atomic::test_xml_writer_includes_fonttools_root_element": "atomic",
+    "test_atomic::test_ttfont_import_xml_accepts_generated_selected_table": "atomic",
+    "test_atomic::test_font_save_to_bytes_produces_sfnt_header": "atomic",
+    "test_integration::test_saved_font_reloads_same_glyph_order_and_table_set": "integration",
+    "test_integration::test_saved_font_reloads_same_best_cmap": "integration",
+    "test_integration::test_saved_font_reloads_same_horizontal_metrics": "integration",
+    "test_integration::test_saved_font_reloads_name_strings": "integration",
+    "test_integration::test_xml_export_import_preserves_head_units": "integration",
+    "test_integration::test_xml_export_import_preserves_name_table": "integration",
+    "test_integration::test_glyph_set_draw_bounds_match_glyf_bounds": "integration",
+    "test_integration::test_component_glyph_draw_records_component_references": "integration",
+    "test_integration::test_subsetter_reduces_font_to_requested_text_and_components": "integration",
+    "test_integration::test_subsetter_keeps_component_dependencies_for_aacute": "integration",
+    "test_integration::test_subset_font_saves_and_reloads_with_filtered_cmap": "integration",
+    "test_integration::test_added_meta_table_survives_binary_round_trip": "integration",
+    "test_integration::test_sorted_table_projection_contains_same_tags_after_reload": "integration",
+    "test_integration::test_xml_tag_conversion_matches_emitted_table_name": "integration",
+    "test_integration::test_text_subset_only_retains_requested_unicode_mapping": "integration",
+    "test_integration::test_reloaded_glyph_bounds_match_original": "integration",
+    "test_integration::test_imported_xml_table_can_be_saved_with_generated_font": "integration",
+    "test_integration::test_glyph_order_change_preserves_existing_cmap_names": "integration",
+    "test_integration::test_added_pen_glyph_can_be_addressed_through_glyph_set": "integration",
+    "test_integration::test_vertical_metric_tables_remain_consistent_after_reload": "integration",
+    "test_integration::test_binary_to_xml_to_binary_preserves_name_projection": "integration",
+    "test_integration::test_subset_options_can_retain_requested_name_records": "integration",
+    "test_integration::test_subset_component_glyph_draws_after_dependency_closure": "integration",
+    "test_integration::test_meta_table_can_be_exported_after_binary_reload": "integration",
+    "test_integration::test_non_bmp_subset_retains_format_twelve_mapping": "integration",
+    "test_integration::test_reordered_glyph_order_survives_binary_round_trip": "integration",
+    "test_integration::test_component_data_survives_binary_round_trip": "integration",
+    "test_integration::test_glyph_name_subset_keeps_component_closure_after_reload": "integration",
+    "test_integration::test_xml_export_import_preserves_horizontal_metric_tables": "integration",
+    "test_integration::test_subset_glyph_remains_drawable_with_original_metrics": "integration"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay (current)",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py311_current.json",
+      "sha256": "bd7da2f73d29dad91297c69d0db81a0994ec19d590af5612000285425bc63e4c"
+    },
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay (current)",
+      "passed": 60,
+      "total": 60,
+      "log": "logs/reference_py310_current.json",
+      "sha256": "e932f3f3a470841f0702d159e676fac3fa2bd63338602d09caa538cc1c1daeb5"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 dummy replay (current)",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py310_current.json",
+      "sha256": "60520351fddf4b6b4b1428899200fe586b96462d549e62283d8466157e48a8d2"
+    },
+    "dummy_python311": {
+      "interpreter": "Python 3.11.15 dummy replay (current)",
+      "passed": 0,
+      "total": 60,
+      "log": "logs/dummy_py311_current.json",
+      "sha256": "d2ed946634716e824756df99857ac98c489ecdd5b6651500f46d5ecace6b1ca1"
+    }
+  },
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_current.json",
+    "python311_interpreter": "Python 3.11.15 local replay (current)"
+  },
+  "metadata_normalization": {
+    "date": "2026-08-05",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310_current.json",
+    "dummy_result_source": null,
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": true
+  },
+  "task_id": "fonttools-fullrepro-001",
+  "reference_score": {
+    "summary": {
+      "passed": 60,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "integration": {
+        "passed": 30,
+        "failed": 0,
+        "total": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 5,
+      "errors": 55,
+      "total": 60
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 5,
+        "total": 30,
+        "errors": 25
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 0,
+        "total": 30,
+        "errors": 30
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "fontTools",
+  "target_imports": [
+    "fontTools"
+  ],
+  "language": "python"
+}

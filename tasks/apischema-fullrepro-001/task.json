@@ -1,0 +1,230 @@
+{
+  "instance_id": "apischema-fullrepro-001",
+  "status": "ARTIFACT_ONLY",
+  "repo": "https://github.com/wyfo/apischema",
+  "source_url": "https://github.com/wyfo/apischema",
+  "repo_commit": "a35301341c71d354b2553ae3dabc5262be521756",
+  "spec_version": "v1",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "requirements": "oracle/requirements.txt",
+    "count": 71,
+    "scorer_isolation": [
+      "--remove-path",
+      "apischema"
+    ],
+    "oracle_version": "2026-08-04-artifact-only-v1"
+  },
+  "taxonomy": {
+    "test_atomic::test_deserialize_int_accepts_integer_data": "atomic",
+    "test_atomic::test_deserialize_float_coerces_integer_value": "atomic",
+    "test_atomic::test_deserialize_optional_none_returns_none": "atomic",
+    "test_atomic::test_deserialize_list_structures_each_element": "atomic",
+    "test_atomic::test_deserialize_fixed_tuple_uses_position_types": "atomic",
+    "test_atomic::test_deserialize_mapping_structures_keys_and_values": "atomic",
+    "test_atomic::test_deserialize_literal_accepts_declared_value": "atomic",
+    "test_atomic::test_deserialize_enum_uses_member_value": "atomic",
+    "test_atomic::test_deserialize_new_type_uses_base_type": "atomic",
+    "test_atomic::test_deserialize_bytes_uses_base64_text": "atomic",
+    "test_atomic::test_deserialize_date_uses_iso_text": "atomic",
+    "test_atomic::test_deserialize_uuid_uses_string_form": "atomic",
+    "test_atomic::test_deserialize_any_returns_original_object": "atomic",
+    "test_atomic::test_deserialize_with_coerce_converts_string_integer": "atomic",
+    "test_atomic::test_deserialize_additional_properties_accepts_unknown_keys": "atomic",
+    "test_atomic::test_serialize_fixed_tuple_as_json_list": "atomic",
+    "test_atomic::test_serialize_any_recurses_through_runtime_mapping": "atomic",
+    "test_atomic::test_serialize_aliaser_changes_dataclass_keys": "atomic",
+    "test_atomic::test_serialize_exclude_none_removes_none_fields": "atomic",
+    "test_atomic::test_serialize_exclude_defaults_removes_default_fields": "atomic",
+    "test_atomic::test_serialize_no_copy_can_return_original_mapping": "atomic",
+    "test_atomic::test_deserialization_schema_exposes_dataclass_properties": "atomic",
+    "test_atomic::test_serialization_schema_exposes_array_items": "atomic",
+    "test_atomic::test_schema_constraint_appears_in_json_schema": "atomic",
+    "test_atomic::test_field_alias_appears_in_schema_properties": "atomic",
+    "test_atomic::test_json_schema_draft_seven_uses_definitions_keyword": "atomic",
+    "test_atomic::test_type_name_changes_schema_reference_name": "atomic",
+    "test_atomic::test_definitions_schema_returns_referenced_definition": "atomic",
+    "test_atomic::test_undefined_default_is_omitted_from_serialization": "atomic",
+    "test_atomic::test_serialized_property_is_added_to_output": "atomic",
+    "test_atomic::test_order_decorator_controls_serialized_key_order": "atomic",
+    "test_atomic::test_deserialization_method_returns_callable_for_repeated_use": "atomic",
+    "test_atomic::test_serialization_method_returns_callable_for_repeated_use": "atomic",
+    "test_atomic::test_validation_error_exposes_public_error_locations": "atomic",
+    "test_atomic::test_unsupported_class_raises_public_unsupported": "atomic",
+    "test_atomic::test_as_names_uses_enum_names_for_both_projections": "atomic",
+    "test_integration::test_user_round_trip_connects_deserialization_and_serialization": "integration",
+    "test_integration::test_nested_dataclass_round_trip_preserves_both_object_levels": "integration",
+    "test_integration::test_list_of_dataclasses_round_trip_preserves_order": "integration",
+    "test_integration::test_mapping_of_dataclasses_round_trip_preserves_mapping_keys": "integration",
+    "test_integration::test_absent_default_fields_deserialize_and_serialize_consistently": "integration",
+    "test_integration::test_exclude_none_output_deserializes_back_to_default": "integration",
+    "test_integration::test_exclude_defaults_output_deserializes_back_to_defaults": "integration",
+    "test_integration::test_field_alias_is_shared_by_round_trip_and_schema": "integration",
+    "test_integration::test_runtime_aliaser_is_shared_by_deserialization_serialization_and_schema": "integration",
+    "test_integration::test_user_schema_properties_match_serialized_keys": "integration",
+    "test_integration::test_nested_schema_and_serialization_share_child_property_names": "integration",
+    "test_integration::test_nested_validation_error_location_matches_model_path": "integration",
+    "test_integration::test_default_strictness_rejects_unknown_property_and_schema_disallows_it": "integration",
+    "test_integration::test_additional_properties_mode_accepts_input_but_serializes_known_model": "integration",
+    "test_integration::test_coercion_flows_through_dataclass_then_serializes_typed_values": "integration",
+    "test_integration::test_reusable_methods_round_trip_multiple_dataclass_values": "integration",
+    "test_integration::test_named_enum_round_trip_and_schema_use_member_names": "integration",
+    "test_integration::test_value_enum_round_trip_and_schema_use_member_values": "integration",
+    "test_integration::test_named_type_reference_and_definition_describe_round_trip_model": "integration",
+    "test_integration::test_serialized_method_is_present_only_in_output_projection": "integration",
+    "test_integration::test_declared_order_controls_payload_and_output_schema_property_order": "integration",
+    "test_integration::test_constrained_field_accepts_valid_data_and_projects_schema_bounds": "integration",
+    "test_integration::test_constrained_field_rejects_out_of_range_data_at_field_location": "integration",
+    "test_integration::test_standard_wire_types_round_trip_through_one_model": "integration",
+    "test_integration::test_standard_wire_type_schema_matches_string_payload_projection": "integration",
+    "test_integration::test_literal_field_round_trip_and_schema_share_allowed_values": "integration",
+    "test_integration::test_newtype_field_round_trip_and_schema_use_underlying_integer": "integration",
+    "test_integration::test_fixed_tuple_field_round_trip_and_schema_preserve_positions": "integration",
+    "test_integration::test_optional_field_round_trips_none_and_integer_and_schema_allows_null": "integration",
+    "test_integration::test_integer_key_mapping_coerces_input_and_preserves_typed_output_keys": "integration",
+    "test_integration::test_undefined_field_round_trip_preserves_absence": "integration",
+    "test_integration::test_set_field_round_trip_and_schema_require_unique_items": "integration",
+    "test_integration::test_any_field_preserves_json_shape_across_both_projections": "integration",
+    "test_integration::test_fall_back_on_default_recovers_invalid_field_then_serializes_default": "integration",
+    "test_integration::test_input_and_output_schema_share_shape_with_directional_required_fields": "integration"
+  },
+  "stats": {
+    "atomic": 36,
+    "integration": 35,
+    "system_e2e": 0
+  },
+  "target_imports": [
+    "apischema",
+    "apischema.conversions",
+    "apischema.json_schema"
+  ],
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "integration_gap": {
+    "computed": false,
+    "atomic_rate": null,
+    "integration_e2e_rate": null,
+    "rate_gap": null,
+    "reason": "No candidate result from a trusted runner"
+  },
+  "artifact_evidence": {
+    "reference": {
+      "interpreter": "Python 3.10.8 local replay",
+      "passed": 71,
+      "total": 71,
+      "log": "logs/reference_py310_flatdeps.json",
+      "sha256": "aea898c254a1a41d12c66b6d0fe8e822ea78241d7c96b008afbe7de304de52c5"
+    },
+    "dummy": {
+      "interpreter": "Python 3.10.8 empty dummy replay",
+      "passed": 0,
+      "total": 71,
+      "log": "logs/dummy_py310.json",
+      "sha256": "9077ff36c0cba5f5a928886a7acfc355dc518e69e27235d4fb6e092fe5ba0f79"
+    },
+    "python311_install": {
+      "interpreter": "Python 3.11.15",
+      "installation": "local wheel built from the fixed source commit",
+      "passed": 71,
+      "total": 71,
+      "log": "logs/reference_py311_installed.json",
+      "sha256": "71d4d68f25e4e5d28f50a8575e6f624d0e408907cfd2f1de7867e7b9c3d529d0"
+    },
+    "python311": {
+      "interpreter": "Python 3.11.15 local replay",
+      "passed": 71,
+      "total": 71,
+      "log": "logs/reference_py311_installed.json",
+      "sha256": "71d4d68f25e4e5d28f50a8575e6f624d0e408907cfd2f1de7867e7b9c3d529d0"
+    }
+  },
+  "reference_score": {
+    "summary": {
+      "passed": 71,
+      "total": 71
+    },
+    "pass_rate_excluding_skips": 1.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 36,
+        "failed": 0,
+        "total": 36
+      },
+      "integration": {
+        "passed": 35,
+        "failed": 0,
+        "total": 35
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    }
+  },
+  "stage4_evidence": "ARTIFACT_ONLY",
+  "stage4": {
+    "mode": "ARTIFACT_ONLY",
+    "qualification_claim": false,
+    "same_process_private_evaluator": true,
+    "strict_black_box_proven": false,
+    "trusted_signature_present": false,
+    "network_isolation_proven": false,
+    "docker_replayed": false,
+    "python311_replayed": true,
+    "python311_evidence": "logs/reference_py311_installed.json",
+    "python311_interpreter": "Python 3.11.15 local replay"
+  },
+  "source_metrics": {
+    "package_python_files": 62,
+    "pure_python_loc_nonblank_noncomment": 9266,
+    "upstream_test_functions": 107
+  },
+  "scope_notes": [
+    "Public API tests only; no private target or source-test imports.",
+    "GraphQL, optional C extensions, network, databases, frameworks, and service behavior excluded.",
+    "Stage 4 evidence is artifact-only; no Docker validation, network isolation, trusted signature, or strict black-box result is claimed."
+  ],
+  "metadata_normalization": {
+    "date": "2026-08-04",
+    "previous_status": "ARTIFACT_ONLY",
+    "reference_result_source": "logs/reference_py310_flatdeps.json",
+    "physical_counts_rechecked": true,
+    "trust_claims_downgraded_only": true,
+    "high_standard_metadata_backfill": "2026-08-05",
+    "oracle_semantics_changed": false
+  },
+  "task_id": "apischema-fullrepro-001",
+  "dummy_score": {
+    "summary": {
+      "passed": 0,
+      "failed": 71,
+      "errors": 0,
+      "total": 71
+    },
+    "pass_rate_excluding_skips": 0.0,
+    "by_layer": {
+      "atomic": {
+        "passed": 0,
+        "failed": 36,
+        "total": 36
+      },
+      "integration": {
+        "passed": 0,
+        "failed": 35,
+        "total": 35
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "collection_errors": 0
+  },
+  "package_import": "apischema",
+  "language": "python"
+}

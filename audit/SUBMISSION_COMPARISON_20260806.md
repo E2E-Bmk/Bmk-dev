@@ -5,7 +5,8 @@
 This report compares two submissions:
 
 - Previous submission: `origin/LiandZhang` at `5a08f45`, containing 21 tasks.
-- Current submission: `LiandZhang50-artifact-only` at `c253198`, containing 50 tasks.
+- Current submission task payload: `LiandZhang50-artifact-only` at `c253198`,
+  containing 50 tasks; the final audit head is `cf82944`.
 
 Independent comparison refs are `origin/main`, `origin/beta`,
 `origin/repo_status`, `origin/codex/transitions-fullrepro-001`, and

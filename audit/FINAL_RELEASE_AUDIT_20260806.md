@@ -9,7 +9,7 @@ Reviewed task-payload commit: `2cf4e99` (`Prepare 50 artifact-only task packets`
 - Required audit sidecars: `50/50`
 - Referenced replay files: `199/199`
 - Static validator: `50/50`, `0 warnings`
-- Package/path/credential scan: no host-path or credential hit
+- Package scan: no local workspace path or credential hit outside replay traces
 - Task status: `ARTIFACT_ONLY` for all 50 tasks
 
 The task directory names have zero overlap with the cached task trees on

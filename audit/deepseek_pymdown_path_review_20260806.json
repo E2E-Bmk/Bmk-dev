@@ -1,0 +1,45 @@
+{
+  "verdict": "REPAIR_ACCEPTED",
+  "blocking_issues": [],
+  "non_blocking_issues": [
+    "UPLOAD_PREP_MANIFEST.json is not a required task-packet file; task.json serves as the sole packet metadata file."
+  ],
+  "checks": [
+    {
+      "check": "Interpreter path disclosure removed",
+      "result": "PASS",
+      "detail": "`reference.interpreter` changed from an absolute local path to a generic `Python 3.10.8 local replay`."
+    },
+    {
+      "check": "Reference summary synchronized",
+      "result": "PASS",
+      "detail": "`reference` summary now matches `oracle.count`, `reference_score`, and replay logs (73/73)."
+    },
+    {
+      "check": "Replay evidence integrity",
+      "result": "PASS",
+      "detail": "All replay evidence SHA-256 values unchanged; prepared task SHA-256 refreshed accordingly."
+    },
+    {
+      "check": "Manifest replacement count increment consistent",
+      "result": "PASS",
+      "detail": "Global replacement count and record metadata replacement count incremented by one, reflecting the interpreter change."
+    },
+    {
+      "check": "Task status unchanged",
+      "result": "PASS",
+      "detail": "Task remains ARTIFACT_ONLY; no promotion attempted."
+    },
+    {
+      "check": "Oracle behavior and Stage 4 claims unchanged",
+      "result": "PASS",
+      "detail": "Oracle test definitions, scoring, and trust claims identical."
+    },
+    {
+      "check": "MANIFEST.json not required",
+      "result": "INFO",
+      "detail": "Independent branch evidence (task.json) is the packet metadata; UPLOAD_PREP_MANIFEST.json is an upload helper."
+    }
+  ],
+  "recommendation": "Approve the publication repair. The task stays at ARTIFACT_ONLY without any promotion. Ensure the updated prepared_task_json_sha256 is recorded in the upload manifest."
+}

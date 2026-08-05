@@ -35,8 +35,9 @@ package.
 
 ## GitHub Probe
 
-`git ls-remote` and `git push --dry-run` to the GitHub repository were attempted
-for `LiandZhang50-artifact-only`. Both ended with a TLS connection termination
-error before authorization could be evaluated. This is an environment/network
-probe failure, not evidence of either granted or denied write permission. No
-remote push was performed.
+The initial HTTPS probe could not evaluate authorization because its editor
+credential socket was stale. After enabling the AutoDL network accelerator,
+the repository's dedicated SSH identity authenticated as `Xtsaixuexi` and a
+non-forced `git push --dry-run` to the new `LiandZhang50-artifact-only` branch
+succeeded. The remote branch did not exist at the time of the read probe;
+`main` and the existing `LiandZhang` branch are not push targets.

@@ -73,25 +73,33 @@ Bmk-dev/
 |       `-- diagnosis_report.md
 |-- tasks/{task-id}/             <- QUALIFIED tasks (graduated from wip/)
 |   |-- spec.md
-|   |-- oracle/
+|   |-- oracle/                  <- the oracle lives inside the packet; there is no top-level oracle/ tree
 |   |   |-- test_atomic.py       <- atomic layer tests
 |   |   |-- test_integration.py  <- integration + system_e2e tests
 |   |   |-- conftest.py          <- shared fixtures (optional)
 |   |   `-- requirements.txt     <- test dependencies
-|   |-- task.json                <- sole metadata authority (taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap)
-|   |-- kept_nodeids.txt         <- scorer input (one nodeid per line)
-|   |-- taxonomy.jsonl           <- scorer input (layer mapping, matches score_pytest_original.py key format)
-|   `-- spec_test_map.md
+|   `-- task.json                <- sole metadata authority (language, taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap)
 |-- candidate-runs/              <- evaluation runs
 |   `-- {model}-{task}-{spec}-{date}-{run}/
 |       |-- task_prompt.txt
 |       |-- output/
 |       `-- score_report.md
+|-- harness/
+|   |-- verify_task.py           <- per-task static gate; everything derived from the oracle files
+|   |-- validate_ledger.py       <- runs verify_task over all tasks + loose CANDIDATES.md cross-check
+|   |-- sync_task_metadata.py    <- regenerates task.json taxonomy/stats from the oracle files
+|   |-- oracle_import_lint.py    <- symbol-declaration check (Gate A0)
+|   `-- target_imports.py        <- task-id -> target package roots
 |-- skills/                      <- active stage SKILL.md files only
 |-- archive/deprecated-skills/   <- old workflow skills and packaged snapshots
 |-- CANDIDATES.md                <- selection + retirement log
 `-- weakness_table.md            <- DEPRECATED; weaknesses now in task.json per task
 ```
+
+`kept_nodeids.txt`, `taxonomy.jsonl` and `spec_test_map.md` stay in
+`wip/{task-id}/filter/` and are not copied into the graduated packet: the layer
+split is carried by which oracle file a test lives in, and `task.json.taxonomy`
+is generated from those files.
 
 All stages write to `wip/{task-id}/` under their designated subdirectory. Do not write to `tasks/` directly - only the orchestrator moves a task there upon QUALIFIED.
 
@@ -218,11 +226,18 @@ Before accepting any verdict, verify diagnosis report structural validity:
    - `oracle/test_integration.py` (all integration + system_e2e tests)
    - `oracle/requirements.txt` (test runtime dependencies, excluding target package)
    - `oracle/conftest.py` (optional, only if shared fixtures needed)
-   - `task.json` (metadata: taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap)
-   - `kept_nodeids.txt` (one nodeid per line)
-   - `taxonomy.jsonl` (scorer-compatible layer mapping)
-   - `spec_test_map.md` (coverage map with footer totals)
-3. `kept_nodeids.txt` line count matches `oracle_count` in PIPELINE_STATE.md
+   - `task.json` (metadata: language, taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap)
+
+   The graduated packet no longer carries `kept_nodeids.txt`, `taxonomy.jsonl`
+   or `spec_test_map.md`. Those were a second copy of what the oracle files
+   already state, and they drifted: the layer split now comes from which file a
+   test lives in, and `task.json.taxonomy` is generated from the files by
+   `harness/sync_task_metadata.py`. All three remain required in
+   `wip/{task_id}/filter/` as the filtering audit trail — the map is still how
+   filtering is done and how spec coverage is proved.
+3. `task.json.taxonomy` keys match the physical test functions, and `stats` sums
+   to `oracle.count` — run `python harness/sync_task_metadata.py {task_id} --check`,
+   which must report no drift
 4. `spec.md` contains none of: `task_id`, `delta:`, `source_boundary:`, `benchmark`, `oracle`, `judge`, `<!-- INTERNAL`
 4b. `spec.md` follows the 6-layer structure from `Spec2Repo/docs/SPEC_STANDARD.md`: has Specification Authority disclaimer, ≥2 behavior sections, ≥5 Cross-View Invariants, desensitized Product Overview, no stale section names
 4c. `spec.md` passes phrasing hard checks (spec-writer validation #21-#25): Non-Goals use "This specification does not require/define..." (no "outside this design"); Product Overview is descriptive not imperative; pure library CLI uses prose not bullet list; behavior sections have opening sentences + bold subsection headers; behavioral language uses `must`/`returns`/`raises` not `can`/`may`; API Catalog is Name|Kind|Role only
@@ -231,15 +246,24 @@ Before accepting any verdict, verify diagnosis report structural validity:
 7. `task.json` contains valid `integration_gap` object (at minimum `rate_gap`; `true_gap_events` if applicable)
 8. `task.json.source_meta` is populated (github_stars, pypi_monthly_downloads, loc, first_release)
 9. If `filter_notes.md` has `scope_plan != N/A`: verify actual oracle size ≤ `expected_oracle_max` and tests cover stated `target_subdomain`
-10. Run `python harness/validate_ledger.py` from the Spec2Repo repo root — task must appear as PASS (warnings acceptable, failures block graduation). This runs all static gates defined in `docs/QUALITY_GATE.md`.
+10. Run `python harness/validate_ledger.py {task_id}` — task must appear as PASS (warnings acceptable, failures block graduation). This runs all static gates defined in `docs/QUALITY_GATE.md` via `harness/verify_task.py`.
 
 **Graduation procedure** (how to produce `tasks/{task_id}/` from `wip/{task_id}/`):
 1. Copy `spec_vN.md` → `tasks/{id}/spec.md`, stripping the `<!-- INTERNAL ... -->` header block
 2. Split filtered tests by taxonomy into `oracle/test_atomic.py` and `oracle/test_integration.py`
 3. Extract test dependencies from upstream repo → `oracle/requirements.txt`
-4. Generate `task.json` by merging: PIPELINE_STATE metadata + taxonomy.jsonl entries + score_result.json layer data + diagnosis weaknesses + source_meta
-5. Copy `kept_nodeids.txt`, `taxonomy.jsonl`, `spec_test_map.md` as-is
-6. Run `harness/verify_task.py {task_id}` — must output `QUALIFIED_VALID`
+4. Write the judgement-bearing fields of `task.json` by hand: `repo`, `repo_commit`,
+   `language`, `spec_version`, `oracle.scorer_isolation`, `weaknesses`,
+   `source_meta`, `integration_gap`, `labels`
+5. Run `python harness/sync_task_metadata.py {task_id}` to derive `taxonomy`,
+   `stats` and `oracle.count` from the oracle files. Review the `system_e2e`
+   labels it guessed for new tests from their names — that split is a filtering
+   judgement, and only labels already present are carried over
+6. Run `python harness/verify_task.py {task_id}` — must output `STATIC_VALID`
+
+Leave `wip/{task_id}/` in place: `kept_nodeids.txt`, `taxonomy.jsonl` and
+`spec_test_map.md` stay there as the audit trail and are not copied into the
+graduated packet.
 
 If any item fails, do not write QUALIFIED — resolve the item first.
 

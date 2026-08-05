@@ -168,12 +168,14 @@ On a GAP verdict: issue a `filter_correction_request.md` routing back to test-fi
 
 **Gate E — Static Quality Gate**
 
-Before issuing QUALIFIED, run `python harness/validate_ledger.py` from the Spec2Repo repo root. The task must pass all static checks (warnings are acceptable). This gate automates checks for:
-- Spec section completeness and forbidden terms
-- Oracle test layer minimums (≥15 atomic, ≥15 integration, ≥50 total functions)
-- Assertion composition (≥60% positive in atomic layer)
-- Metadata consistency (task.json stats match actual oracle files)
-- Fixture completeness (all referenced files exist)
+Before issuing QUALIFIED, run `python harness/validate_ledger.py {task_id}` from this repo root. The task must print `PASS` (warnings are acceptable; a `FAIL` blocks QUALIFIED). The gate delegates to `harness/verify_task.py`, which derives every check from the physical oracle files, and automates:
+- Spec section completeness (six-layer structure, legacy aliases accepted) and forbidden leakage terms
+- Oracle test layer minimums (≥30 atomic, ≥25 integration, ≥60 total base functions, per `ORACLE_STANDARD.md`)
+- Assertion composition (≥60% positive in the atomic layer; zero `no_check`)
+- Metadata consistency (`task.json` taxonomy keys match the physical test functions; `stats` sums to `oracle.count`)
+- `depends_on` coverage ≥50%, and every referenced atomic test actually exists
+- Symbol declaration: no atomic import of the target package that the spec's public surface does not promise
+- Fixture completeness (all `Path(__file__).parent / ...` references resolve)
 
 A task that fails `validate_ledger.py` cannot be QUALIFIED regardless of score.
 

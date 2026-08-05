@@ -256,7 +256,7 @@ def run_case(case, solution_dir, timeout):
 
 
 def score(rubrics_path, solution_dir, timeout):
-    rubrics_payload = json.loads(rubrics_path.read_text(encoding="utf-8"))
+    rubrics_payload = json.loads(rubrics_path.read_text(encoding="utf-8-sig"))
     rubrics = rubrics_payload.get("items", rubrics_payload) if isinstance(rubrics_payload, dict) else rubrics_payload
     results = []
     for case in rubrics:

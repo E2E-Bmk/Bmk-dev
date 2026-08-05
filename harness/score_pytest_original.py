@@ -22,7 +22,7 @@ from pathlib import Path
 
 
 def read_nodeids(path: Path) -> list[str]:
-    return [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return [line.strip() for line in path.read_text(encoding="utf-8-sig").splitlines() if line.strip()]
 
 
 def taxonomy_keys(pytest_nodeid: str) -> list[str]:
@@ -49,7 +49,7 @@ def load_taxonomy(path: Path | None) -> dict[str, str]:
         return {}
     if path.suffix == ".jsonl":
         mapping: dict[str, str] = {}
-        with path.open(encoding="utf-8") as f:
+        with path.open(encoding="utf-8-sig") as f:
             for line in f:
                 if not line.strip():
                     continue
@@ -141,7 +141,7 @@ def run_group(
         "stderr": proc.stderr,
     }
     if report_path.exists():
-        payload["json_report"] = json.loads(report_path.read_text(encoding="utf-8"))
+        payload["json_report"] = json.loads(report_path.read_text(encoding="utf-8-sig"))
     return proc.returncode, payload
 
 

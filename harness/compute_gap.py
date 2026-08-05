@@ -32,7 +32,7 @@ def load_taxonomy(task_dir: Path) -> dict:
     """
     taxonomy = {}
     path = task_dir / "taxonomy.jsonl"
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8-sig") as f:
         for line in f:
             line = line.strip()
             if not line:
@@ -170,7 +170,7 @@ def compute_gap(task_dir: Path) -> dict:
     # Try by_layer from MANIFEST.json
     manifest_path = task_dir / "MANIFEST.json"
     if manifest_path.exists():
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, "r", encoding="utf-8-sig") as f:
             manifest = json.load(f)
         by_layer = manifest.get("by_layer")
         if by_layer:
@@ -187,7 +187,7 @@ def compute_gap(task_dir: Path) -> dict:
     
     # Try by_layer from score_result.json
     score_path = task_dir / "score_result.json"
-    with open(score_path, "r", encoding="utf-8") as f:
+    with open(score_path, "r", encoding="utf-8-sig") as f:
         score_data = json.load(f)
     
     by_layer = score_data.get("by_layer")

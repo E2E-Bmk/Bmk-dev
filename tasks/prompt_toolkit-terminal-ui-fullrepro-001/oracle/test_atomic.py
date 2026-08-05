@@ -244,10 +244,10 @@ def test_upstream_document_is_cursor_at_the_end():
     assert not Document("hello", 4).is_cursor_at_the_end
 
 def test_upstream_document_get_word_before_cursor_pattern():
-    document = Document(text="foobar ", cursor_position=len("foobar "))
-    pattern = re.compile(r"([a-zA-Z0-9_]+|[^a-zA-Z0-9_\s]+)")
-    assert document.get_word_before_cursor() == ""
-    assert document.get_word_before_cursor(pattern=pattern) == "foobar "
+    document = Document(text="foobar! rest", cursor_position=len("foobar!"))
+    pattern = re.compile(r"([a-zA-Z0-9_!]+)")
+    assert document.get_word_before_cursor() == "!"
+    assert document.get_word_before_cursor(pattern=pattern) == "foobar!"
 
 def test_upstream_formatted_text_basic_html():
     html = HTML("<i><b>hello</b>world<strong>test</strong></i>after")

@@ -472,3 +472,241 @@ def test_list_reports_declared_task_name(tmp_path):
 
     assert proc.returncode == 0
     assert "build" in proc.stdout.split()
+
+
+def test_task_dep_declares_dependency_ordering(tmp_path):
+    write_dodo(
+        tmp_path,
+        common_actions()
+        + """
+        def task_first():
+            return {"actions": [(append_text, ["order.txt", "first;"], {})]}
+
+        def task_second():
+            return {"actions": [(append_text, ["order.txt", "second;"], {})],
+                    "task_dep": ["first"]}
+        """,
+    )
+
+    run_doit(tmp_path, "second")
+
+    assert (tmp_path / "order.txt").read_text(encoding="utf-8") == "first;second;"
+
+
+def test_verbosity_zero_suppresses_action_stdout(tmp_path):
+    write_dodo(
+        tmp_path,
+        """
+        def speak():
+            print("should-not-appear")
+            return None
+
+        def task_quiet():
+            return {"actions": [speak], "verbosity": 0}
+        """,
+    )
+
+    proc = run_doit(tmp_path, "quiet")
+
+    assert "should-not-appear" not in proc.stdout
+
+
+def test_title_callable_replaces_default_execution_title(tmp_path):
+    write_dodo(
+        tmp_path,
+        """
+        def build():
+            return None
+
+        def task_build():
+            return {"actions": [build],
+                    "title": lambda task: "custom-title"}
+        """,
+    )
+
+    proc = run_doit(tmp_path, "build")
+
+    assert "custom-title" in proc.stdout
+
+
+def test_uptodate_true_skips_action_before_first_run(tmp_path):
+    write_dodo(
+        tmp_path,
+        common_actions()
+        + """
+        def task_once():
+            return {"actions": [(count_run, ["count.txt"], {})], "uptodate": [True]}
+        """,
+    )
+    proc = run_doit(tmp_path, "once")
+
+    assert proc.returncode == 0
+    assert not (tmp_path / "count.txt").exists()
+
+
+def test_multi_action_task_runs_all_actions_in_order(tmp_path):
+    write_dodo(
+        tmp_path,
+        common_actions()
+        + """
+        def task_multi():
+            return {"actions": [
+                (write_text, ["step.txt", "first"], {}),
+                (append_text, ["step.txt", ";second"], {}),
+            ]}
+        """,
+    )
+
+    run_doit(tmp_path, "multi")
+
+    assert (tmp_path / "step.txt").read_text(encoding="utf-8") == "first;second"
+
+
+def test_private_task_hidden_by_default_listing(tmp_path):
+    write_dodo(
+        tmp_path,
+        """
+        def task__internal():
+            return {"actions": [None]}
+
+        def task_public():
+            return {"actions": [None]}
+        """,
+    )
+
+    proc = run_doit(tmp_path, "list")
+
+    assert "public" in proc.stdout
+    assert "_internal" not in proc.stdout
+
+
+# --- new atomic tests ---
+
+
+def test_run_once_skips_task_after_first_success(tmp_path):
+    """run_once uptodate callable must skip the task on the second run."""
+    write_dodo(
+        tmp_path,
+        common_actions()
+        + """
+        from doit.tools import run_once
+
+        def task_once():
+            return {"actions": [(count_run, ["tally.txt"], {})], "uptodate": [run_once]}
+        """,
+    )
+    run_doit(tmp_path, "once")
+    run_doit(tmp_path, "once")
+
+    assert (tmp_path / "tally.txt").read_text(encoding="utf-8") == "1"
+
+
+def test_create_folder_existing_directory_succeeds_silently(tmp_path):
+    """create_folder must succeed silently when the directory already exists."""
+    (tmp_path / "already").mkdir()
+    write_dodo(
+        tmp_path,
+        """
+        from doit.tools import create_folder
+
+        def task_dirs():
+            return {"actions": [(create_folder, ["already"], {})],
+                    "targets": ["already"]}
+        """,
+    )
+
+    proc = run_doit(tmp_path, "dirs")
+
+    assert proc.returncode == 0
+    assert (tmp_path / "already").is_dir()
+
+
+def test_title_with_actions_includes_task_name_in_output(tmp_path):
+    """title_with_actions must include the task name in the title string."""
+    write_dodo(
+        tmp_path,
+        """
+        from doit.tools import title_with_actions
+
+        def greet():
+            return None
+
+        def task_greeting():
+            return {"actions": [greet], "title": title_with_actions}
+        """,
+    )
+
+    proc = run_doit(tmp_path, "greeting")
+
+    assert "greeting" in proc.stdout
+
+
+def test_uptodate_none_is_ignored_as_dynamic_placeholder(tmp_path):
+    """An uptodate item of None must be ignored without affecting freshness."""
+    write_dodo(
+        tmp_path,
+        common_actions()
+        + """
+        def task_maybe():
+            return {"actions": [(count_run, ["tally.txt"], {})],
+                    "uptodate": [None]}
+        """,
+    )
+    run_doit(tmp_path, "maybe")
+    run_doit(tmp_path, "maybe")
+
+    assert (tmp_path / "tally.txt").read_text(encoding="utf-8") == "2"
+
+
+def test_python_action_returning_none_succeeds(tmp_path):
+    """A Python action that returns None must be treated as a success."""
+    write_dodo(
+        tmp_path,
+        """
+        def silent():
+            return None
+
+        def task_silent():
+            return {"actions": [silent]}
+        """,
+    )
+
+    proc = run_doit(tmp_path, "silent")
+
+    assert proc.returncode == 0
+
+
+def test_clean_true_removes_declared_target_file(tmp_path):
+    """clean=True must remove the task's target file."""
+    write_dodo(
+        tmp_path,
+        common_actions()
+        + """
+        def task_artifact():
+            return {"actions": [(write_text, ["artifact.txt", "data"], {})],
+                    "targets": ["artifact.txt"], "clean": True}
+        """,
+    )
+    run_doit(tmp_path, "artifact")
+    assert (tmp_path / "artifact.txt").exists()
+
+    run_doit(tmp_path, "clean", "artifact")
+
+    assert not (tmp_path / "artifact.txt").exists()
+
+
+def test_doc_field_overrides_docstring_description(tmp_path):
+    """An explicit doc field must override the task creator's docstring."""
+    write_dodo(
+        tmp_path,
+        '''
+        def task_build():
+            """original docstring"""
+            return {"actions": [None], "doc": "custom description"}
+        ''',
+    )
+
+    proc = run_doit(tmp_path, "list")
+
+    assert "custom description" in proc.stdout
+    assert "original docstring" not in proc.stdout

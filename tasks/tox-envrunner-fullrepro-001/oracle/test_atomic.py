@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from conftest import (
     create_tox_ini,
     create_tox_toml,
@@ -545,3 +547,45 @@ def test_config_json_preserves_boolean_values(tmp_path):
         run_tox(tmp_path, "config", "-e", "check", "-k", "skip_install", "--format", "json")
     )
     assert data["env"]["check"]["skip_install"] is True
+
+
+@pytest.mark.parametrize("subcommand", ["run", "exec", "depends", "devenv"])
+def test_documented_subcommand_help_returns_zero(subcommand):
+    assert run_tox_main([subcommand, "--help"]) == 0
+
+
+# ---------------------------------------------------------------------------
+# additional atomic tests — env_list, description, and run basics
+# ---------------------------------------------------------------------------
+
+
+def test_run_help_documents_skip_pkg_install_flag(tmp_path):
+    result = run_tox(tmp_path, "run", "--help")
+    assert result.returncode == 0
+    assert "--skip-pkg-install" in result.stdout
+
+
+def test_config_shows_commands_list_for_env(tmp_path):
+    create_tox_toml(
+        tmp_path,
+        """
+        env_list = ["check"]
+        [env.check]
+        package = "skip"
+        skip_install = true
+        commands = [["python", "-c", "print('CMD_A')"], ["python", "-c", "print('CMD_B')"]]
+        """,
+    )
+    data = parse_json_output(
+        run_tox(tmp_path, "config", "-e", "check", "-k", "commands", "--format", "json")
+    )
+    cmds = data["env"]["check"]["commands"]
+    assert len(cmds) == 2
+    assert "CMD_A" in cmds[0]
+    assert "CMD_B" in cmds[1]
+
+
+def test_unknown_subcommand_returns_nonzero(tmp_path):
+    result = run_tox(tmp_path, "nonexistent_subcommand_xyz")
+    assert result.returncode != 0
+    assert "unrecognized arguments" in (result.stdout + result.stderr)

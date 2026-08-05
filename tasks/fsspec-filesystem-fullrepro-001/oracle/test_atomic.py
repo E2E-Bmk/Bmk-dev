@@ -262,3 +262,103 @@ def test_memory_ls_returns_sorted_children_and_detail_name_size_type():
     assert entries[f"{root}/a.bin"]["size"] == 5
     assert entries[f"{root}/a.bin"]["type"] == "file"
     assert entries[f"{root}/sub"]["type"] == "directory"
+
+
+# --- new atomic tests ---
+
+
+def test_memory_write_text_and_read_text_round_trip():
+    """write_text and read_text must encode/decode with the requested encoding."""
+    fs = fsspec.filesystem("memory")
+    path = f"/text-rt/{uuid.uuid4().hex}.txt"
+    fs.write_text(path, "héllo wörld", encoding="utf-8")
+    assert fs.read_text(path, encoding="utf-8") == "héllo wörld"
+
+
+def test_memory_rmdir_empty_directory_succeeds():
+    """rmdir must succeed for an empty pseudo-directory."""
+    fs = fsspec.filesystem("memory")
+    root = f"/rmdir-ok/{uuid.uuid4().hex}"
+    fs.mkdir(root)
+    assert fs.isdir(root)
+    fs.rmdir(root)
+    assert not fs.exists(root)
+
+
+def test_memory_rmdir_missing_raises_file_not_found():
+    """rmdir must raise FileNotFoundError for a directory that does not exist."""
+    fs = fsspec.filesystem("memory")
+    with pytest.raises(FileNotFoundError):
+        fs.rmdir(f"/rmdir-absent/{uuid.uuid4().hex}")
+
+
+def test_memory_find_exact_file_returns_single_path():
+    """find on an exact file path must return only that file."""
+    fs = fsspec.filesystem("memory")
+    path = f"/exact/{uuid.uuid4().hex}.dat"
+    fs.pipe_file(path, b"exact")
+    assert fs.find(path) == [path]
+
+
+def test_memory_walk_topdown_false_yields_children_first():
+    """walk(topdown=False) must yield child directories before parents."""
+    fs = fsspec.filesystem("memory")
+    root = f"/walk-btm/{uuid.uuid4().hex}"
+    fs.pipe_file(f"{root}/top.txt", b"t")
+    fs.pipe_file(f"{root}/child/deep.txt", b"d")
+    results = list(fs.walk(root, topdown=False))
+    roots = [r for r, _, _ in results]
+    child_idx = next(i for i, r in enumerate(roots) if r.endswith("child"))
+    parent_idx = next(i for i, r in enumerate(roots) if r == root)
+    assert child_idx < parent_idx
+
+
+def test_dirfs_local_escape_raises_value_error(tmp_path):
+    """DirFileSystem over local fs must raise ValueError for paths escaping root via '..'."""
+    view = fsspec.filesystem("dir", path=str(tmp_path), target_protocol="file")
+    with pytest.raises(ValueError):
+        view.cat("../../etc/passwd")
+
+
+def test_memory_pipe_and_cat_round_trip():
+    fs = fsspec.filesystem("memory")
+    path = f"/pipe-cat/{uuid.uuid4().hex}.bin"
+    fs.pipe_file(path, b"hello")
+    assert fs.cat_file(path) == b"hello"
+
+
+def test_memory_mkdir_creates_directory():
+    fs = fsspec.filesystem("memory")
+    path = f"/mkd/{uuid.uuid4().hex}"
+    fs.mkdir(path)
+    assert fs.isdir(path) is True
+
+
+def test_memory_touch_creates_zero_byte_file():
+    fs = fsspec.filesystem("memory")
+    path = f"/touch/{uuid.uuid4().hex}.bin"
+    fs.touch(path)
+    assert fs.exists(path) is True
+    assert fs.cat_file(path) == b""
+
+
+def test_memory_rm_removes_existing_file():
+    fs = fsspec.filesystem("memory")
+    path = f"/rm/{uuid.uuid4().hex}.bin"
+    fs.pipe_file(path, b"data")
+    fs.rm(path)
+    assert fs.exists(path) is False
+
+
+def test_memory_exists_false_for_absent_path():
+    fs = fsspec.filesystem("memory")
+    assert fs.exists(f"/absent/{uuid.uuid4().hex}") is False
+
+
+def test_memory_info_returns_size_and_type():
+    fs = fsspec.filesystem("memory")
+    path = f"/info/{uuid.uuid4().hex}.bin"
+    fs.pipe_file(path, b"abcde")
+    info = fs.info(path)
+    assert info["size"] == 5
+    assert info["type"] == "file"

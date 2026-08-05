@@ -6,7 +6,6 @@ import sys
 import textwrap
 from pathlib import Path
 
-
 PROJECT_NAME = "sample_lib"
 
 

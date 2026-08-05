@@ -45,6 +45,7 @@ from webob.static import DirectoryApp, FileApp
 from conftest import _start_response
 
 
+@pytest.mark.depends_on("test_public_request_blank_url_projection")
 def test_public_request_get_response_uses_response_class():
     """Seam: protocol handoff from Request through WSGI app to Response."""
     def app(environ, start_response):
@@ -57,6 +58,7 @@ def test_public_request_get_response_uses_response_class():
     assert res.content_type == "text/plain"
 
 
+@pytest.mark.depends_on("test_public_response_defaults_and_body_views")
 def test_public_response_wsgi_call_emits_status_headers_and_body():
     """Seam: protocol handoff from Response WSGI call to status, headers, and body."""
     res = Response(text="hello", content_type="text/plain")
@@ -66,6 +68,7 @@ def test_public_response_wsgi_call_emits_status_headers_and_body():
     assert body == b"hello"
 
 
+@pytest.mark.depends_on("test_public_response_defaults_and_body_views")
 def test_fileapp_serves_file_with_static_response_headers(tmp_path):
     """Seam: lifecycle crossing from filesystem file to HTTP response."""
     target = tmp_path / "hello.txt"
@@ -76,6 +79,7 @@ def test_fileapp_serves_file_with_static_response_headers(tmp_path):
     assert response.headers["Accept-Ranges"] == "bytes"
 
 
+@pytest.mark.depends_on("test_public_request_blank_url_projection")
 def test_wsgify_converts_string_return_to_response_body():
     """Seam: protocol handoff from wsgify decorator return value to response body."""
     @wsgify
@@ -87,6 +91,7 @@ def test_wsgify_converts_string_return_to_response_body():
     assert response.text == "decorated"
 
 
+@pytest.mark.depends_on("test_http_exception_status_map_exposes_public_classes")
 def test_exception_middleware_catches_initial_http_exception():
     """Seam: error propagation from raised HTTP exception to middleware response."""
     def app(environ, start_response):
@@ -97,6 +102,7 @@ def test_exception_middleware_catches_initial_http_exception():
     assert body
 
 
+@pytest.mark.depends_on("test_public_request_blank_url_projection")
 def test_wsgify_preserves_undecorated_and_method_binding():
     """Seam: lifecycle crossing through wsgify decoration and method binding."""
     class Controller:
@@ -109,6 +115,7 @@ def test_wsgify_preserves_undecorated_and_method_binding():
     assert Request.blank("/bound").get_response(controller.app).text == "/bound"
 
 
+@pytest.mark.depends_on("test_public_response_defaults_and_body_views")
 def test_wsgi_head_request_preserves_headers_without_body():
     """Seam: state consistency between HEAD response headers and suppressed body."""
     res = Response(text="has body", content_type="text/plain")
@@ -119,6 +126,7 @@ def test_wsgi_head_request_preserves_headers_without_body():
     assert any(name == "Content-Length" for name, value in _start_response.headers)
 
 
+@pytest.mark.depends_on("test_public_request_headers_and_cookies_views")
 def test_cross_request_header_content_type_environ_sync():
     """Seam: state consistency between request headers and environ CONTENT_TYPE."""
     req = Request.blank("/")
@@ -131,6 +139,7 @@ def test_cross_request_header_content_type_environ_sync():
         req.headers["Content-Type"]
 
 
+@pytest.mark.depends_on("test_request_get_mutation_rewrites_query_string")
 def test_cross_request_get_mutation_precedes_form_values():
     """Seam: state consistency between GET params and POST form values."""
     req = Request.blank("/?name=Query", method="POST")
@@ -142,6 +151,7 @@ def test_cross_request_get_mutation_precedes_form_values():
     assert req.environ["QUERY_STRING"].endswith("extra=Later")
 
 
+@pytest.mark.depends_on("test_request_body_assignment_updates_length_and_seekable_stream")
 def test_cross_request_body_assignment_replaces_raw_stream():
     """Seam: state consistency when body assignment replaces raw stream."""
     req = Request.blank("/")
@@ -152,6 +162,7 @@ def test_cross_request_body_assignment_replaces_raw_stream():
     assert req.body == b"new"
 
 
+@pytest.mark.depends_on("test_response_headerlist_replacement_resets_headers_view")
 def test_cross_response_headers_and_headerlist_are_same_state():
     """Seam: state consistency between response headers dict and headerlist."""
     res = Response()
@@ -161,6 +172,7 @@ def test_cross_response_headers_and_headerlist_are_same_state():
     assert res.headers["X-State"] == "list"
 
 
+@pytest.mark.depends_on("test_response_content_type_charset_and_params_sync")
 def test_cross_response_content_type_views_share_one_header():
     """Seam: state consistency across content_type, charset, and params views."""
     res = Response(content_type="text/plain")
@@ -170,6 +182,7 @@ def test_cross_response_content_type_views_share_one_header():
     assert res.content_type_params["level"] == "1"
 
 
+@pytest.mark.depends_on("test_response_conditional_range_request_returns_partial_content", "test_response_content_type_charset_and_params_sync", "test_range_parse_and_content_range_conversion")
 def test_cross_range_request_assignable_to_response_content_range():
     """Seam: state consistency from Range request to Content-Range response."""
     req = Request.blank("/", headers={"Range": "bytes=2-4"})
@@ -178,6 +191,7 @@ def test_cross_range_request_assignable_to_response_content_range():
     assert str(res.content_range) == "bytes 2-4/6"
 
 
+@pytest.mark.depends_on("test_response_headerlist_replacement_resets_headers_view", "test_response_encode_and_decode_gzip_body", "test_response_content_type_charset_and_params_sync")
 def test_cross_get_response_exposes_call_application_outputs():
     """Seam: protocol handoff from get_response to application start_response output."""
     def app(environ, start_response):

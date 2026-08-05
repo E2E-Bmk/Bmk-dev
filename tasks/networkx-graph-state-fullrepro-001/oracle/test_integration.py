@@ -5,6 +5,7 @@ import networkx as nx
 from networkx.utils.configs import Config
 
 
+@pytest.mark.depends_on("test_graph_classes_constructor_empty_and_graph_attrs", "test_graph_classes_add_node_updates_existing_attrs")
 def test_product_overview_mutable_graph_node_and_edge_attributes():
     """Seam: state consistency — product overview mutable graph node and edge attributes."""
     G = nx.Graph(project="demo")
@@ -24,6 +25,7 @@ def test_product_overview_graph_is_python_container():
     assert list(G) == ["A", "B"]
 
 
+@pytest.mark.depends_on("test_reporting_views_simple_edges_data_and_default")
 def test_product_overview_reporting_views_are_live():
     """Seam: state consistency — product overview reporting views are live."""
     G = nx.Graph()
@@ -35,6 +37,7 @@ def test_product_overview_reporting_views_are_live():
     assert edges["A", "B"]["color"] == "red"
 
 
+@pytest.mark.depends_on("test_graph_classes_add_node_updates_existing_attrs", "test_reporting_views_nodes_data_and_default")
 def test_product_state_model_node_projection_coherence():
     """Seam: state consistency — product state model node projection coherence."""
     G = nx.Graph()
@@ -47,6 +50,7 @@ def test_product_state_model_node_projection_coherence():
     assert G.nodes["A"]["color"] == "red"
 
 
+@pytest.mark.depends_on("test_graph_classes_simple_edge_update_does_not_increase_count", "test_reporting_views_adjacency_projection_matches_getitem")
 def test_product_state_model_edge_projection_coherence():
     """Seam: state consistency — product state model edge projection coherence."""
     G = nx.Graph()
@@ -58,6 +62,7 @@ def test_product_state_model_edge_projection_coherence():
     assert G.degree["A"] == 1
 
 
+@pytest.mark.depends_on("test_reporting_views_node_view_is_read_only_mapping_shell")
 def test_product_state_model_attribute_mutation_through_views():
     """Seam: state consistency — product state model attribute mutation through views."""
     G = nx.Graph()
@@ -68,6 +73,7 @@ def test_product_state_model_attribute_mutation_through_views():
     assert G["A"]["B"]["weight"] == 5
 
 
+@pytest.mark.depends_on("test_graph_classes_simple_edge_update_does_not_increase_count")
 def test_copying_subgraphs_copy_is_independent():
     """Seam: state consistency — copying subgraphs copy is independent."""
     G = nx.Graph()
@@ -114,6 +120,7 @@ def test_copying_subgraphs_edge_subgraph_filters_edges_and_shares_attrs():
     assert G.edges["A", "B"]["weight"] == 9
 
 
+@pytest.mark.depends_on("test_graph_classes_simple_edge_update_does_not_increase_count")
 def test_copying_subgraphs_to_directed_copies_attrs_and_arcs():
     """Seam: state consistency — copying subgraphs to directed copies attrs and arcs."""
     G = nx.Graph()
@@ -123,6 +130,7 @@ def test_copying_subgraphs_to_directed_copies_attrs_and_arcs():
     assert H.edges["A", "B"]["weight"] == 1
 
 
+@pytest.mark.depends_on("test_reporting_views_directed_successor_predecessor_and_degree")
 def test_copying_subgraphs_to_undirected_reciprocal_keeps_mutual_edges():
     """Seam: state consistency — copying subgraphs to undirected reciprocal keeps mutual edges."""
     G = nx.DiGraph()
@@ -155,6 +163,7 @@ def test_conversions_to_networkx_graph_clears_supplied_instance():
     assert "old" not in target
 
 
+@pytest.mark.depends_on("test_graph_classes_multigraph_supplied_key_updates_existing_edge")
 def test_conversions_from_graph_preserves_attrs_and_multikeys():
     """Seam: state consistency — conversions from graph preserves attrs and multikeys."""
     G = nx.MultiDiGraph(name="routes")
@@ -166,6 +175,7 @@ def test_conversions_from_graph_preserves_attrs_and_multikeys():
     assert H.edges["A", "B"]["weight"] == 2
 
 
+@pytest.mark.depends_on("test_installable_surface_root_exports_conversion_functions")
 def test_conversions_dict_of_lists_round_trip_and_nodelist_filter():
     """Seam: state consistency — conversions dict of lists round trip and nodelist filter."""
     G = nx.Graph()
@@ -175,6 +185,7 @@ def test_conversions_dict_of_lists_round_trip_and_nodelist_filter():
     assert H.number_of_edges("A", "B") == 1
 
 
+@pytest.mark.depends_on("test_graph_classes_multigraph_supplied_key_updates_existing_edge")
 def test_conversions_dict_of_dicts_round_trip_simple_and_multigraph():
     """Seam: state consistency — conversions dict of dicts round trip simple and multigraph."""
     G = nx.MultiGraph()
@@ -200,6 +211,7 @@ def test_conversions_edgelist_round_trip_and_invalid_tuple_error():
         nx.from_edgelist([("bad",)])
 
 
+@pytest.mark.depends_on("test_public_api_graphviews_module_is_public", "test_public_helper_functions_freeze_blocks_structure_not_attrs")
 def test_graph_views_generic_view_is_frozen_shared_and_live():
     """Seam: state consistency — graph views generic view is frozen shared and live."""
     G = nx.Graph()
@@ -238,6 +250,7 @@ def test_graph_views_subgraph_view_filter_exceptions_propagate():
         list(view.nodes)
 
 
+@pytest.mark.depends_on("test_graph_classes_multigraph_default_keys_lowest_unused")
 def test_graph_views_multigraph_edge_filter_receives_key():
     """Seam: state consistency — graph views multigraph edge filter receives key."""
     G = nx.MultiGraph()
@@ -257,6 +270,7 @@ def test_graph_views_reverse_view_reverses_directed_edges_and_rejects_undirected
         nx.reverse_view(nx.Graph())
 
 
+@pytest.mark.depends_on("test_graph_classes_add_node_updates_existing_attrs", "test_reporting_views_nodes_data_and_default")
 def test_cross_view_invariant_node_removed_from_all_public_views():
     """CVI-N: node removed from all public views."""
     G = nx.Graph()
@@ -268,6 +282,7 @@ def test_cross_view_invariant_node_removed_from_all_public_views():
     assert list(G.edges) == []
 
 
+@pytest.mark.depends_on("test_graph_classes_simple_edge_update_does_not_increase_count", "test_reporting_views_adjacency_projection_matches_getitem")
 def test_cross_view_invariant_simple_edge_attribute_paths_agree():
     """CVI-N: simple edge attribute paths agree."""
     G = nx.Graph()
@@ -278,6 +293,7 @@ def test_cross_view_invariant_simple_edge_attribute_paths_agree():
     assert nx.to_dict_of_dicts(G)["A"]["B"]["color"] == "red"
 
 
+@pytest.mark.depends_on("test_graph_classes_multigraph_default_keys_lowest_unused", "test_reporting_views_multigraph_edges_keys_and_duplicate_pairs")
 def test_cross_view_invariant_multigraph_edge_attribute_paths_agree():
     """CVI-N: multigraph edge attribute paths agree."""
     G = nx.MultiGraph()
@@ -288,6 +304,7 @@ def test_cross_view_invariant_multigraph_edge_attribute_paths_agree():
     assert nx.to_dict_of_dicts(G)["A"]["B"][key]["route"] == "blue"
 
 
+@pytest.mark.depends_on("test_reporting_views_directed_successor_predecessor_and_degree")
 def test_cross_view_invariant_directed_edge_public_projections_agree():
     """CVI-N: directed edge public projections agree."""
     G = nx.DiGraph()

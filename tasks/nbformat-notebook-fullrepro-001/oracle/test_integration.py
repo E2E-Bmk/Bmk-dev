@@ -69,6 +69,7 @@ def _trust_command(tmp_path):
     return _TRUST_COMMAND
 
 
+@pytest.mark.depends_on("test_v4_constructors_supply_valid_defaults")
 def test_top_level_string_and_bytes_reads_preserve_content():
     """Seam: state consistency — top-level reads agree on notebook content from str and bytes."""
     text = nbformat.writes(make_notebook(), version=NO_CONVERT)
@@ -78,6 +79,7 @@ def test_top_level_string_and_bytes_reads_preserve_content():
     assert from_text.cells[1].source == "print('ready')"
 
 
+@pytest.mark.depends_on("test_isvalid_reports_schema_result_without_mutation")
 def test_top_level_capture_validation_error_on_reads_and_writes():
     """Seam: error propagation — capture_validation_error surfaces ValidationError without aborting I/O."""
     invalid = {"nbformat": 4, "nbformat_minor": 5, "metadata": {}, "cells": [{"id": "bad", "cell_type": "code", "metadata": {}, "source": "x", "outputs": [], "execution_count": "invalid"}]}
@@ -107,6 +109,7 @@ def test_top_level_file_like_errors_propagate():
         nbformat.write(make_notebook(), BadWriter())
 
 
+@pytest.mark.depends_on("test_convert_existing_major_is_same_object")
 def test_convert_v3_notebook_to_v4():
     """Seam: protocol handoff — v3 notebook converts to v4 cell layout."""
     v3 = nbformat.v3
@@ -119,6 +122,7 @@ def test_convert_v3_notebook_to_v4():
     assert converted.cells[0].source == "legacy"
 
 
+@pytest.mark.depends_on("test_v4_constructors_supply_valid_defaults")
 def test_normalize_repairs_ids_on_a_deep_copy():
     """Seam: state consistency — normalize repairs duplicate ids on a deep copy only."""
     notebook = make_notebook()
@@ -130,6 +134,7 @@ def test_normalize_repairs_ids_on_a_deep_copy():
     assert normalized.cells[0].id != normalized.cells[1].id
 
 
+@pytest.mark.depends_on("test_v4_constructors_supply_valid_defaults")
 def test_durable_json_excludes_transient_trust_fields():
     """Seam: state consistency — durable JSON omits transient trust metadata."""
     notebook = make_notebook()
@@ -141,6 +146,7 @@ def test_durable_json_excludes_transient_trust_fields():
     assert disk["cells"][1]["source"] == ["print('ready')"]
 
 
+@pytest.mark.depends_on("test_memory_signature_store_lifecycle", "test_notary_secret_changes_signature")
 def test_trust_state_is_external_to_notebook_json():
     """Seam: lifecycle crossing — notary trust state stays outside serialized notebook JSON."""
     notebook = make_notebook()
@@ -152,6 +158,7 @@ def test_trust_state_is_external_to_notebook_json():
     assert "signature" not in json.loads(nbformat.writes(notebook))["metadata"]
 
 
+@pytest.mark.depends_on("test_v4_code_cell_defaults")
 def test_v4_reader_rejoins_disk_multiline_lists():
     """Seam: protocol handoff — v4 reader joins multiline list fragments into text fields."""
     disk = {"nbformat": 4, "nbformat_minor": 5, "metadata": {}, "cells": [{"id": "cell", "cell_type": "code", "metadata": {}, "execution_count": None, "source": ["a\n", "b"], "outputs": [{"output_type": "stream", "name": "stdout", "text": ["x\n", "y"]}]}]}
@@ -160,6 +167,7 @@ def test_v4_reader_rejoins_disk_multiline_lists():
     assert notebook.cells[0].outputs[0].text == "x\ny"
 
 
+@pytest.mark.depends_on("test_v4_display_data_payload")
 def test_v4_writer_splits_text_but_preserves_json_mime_values():
     """Seam: protocol handoff — v4 writer splits text MIME while preserving JSON values."""
     output = v4.new_output("display_data", data={"text/plain": "a\nb", "application/json": {"line": "a\nb"}, "application/vnd.example+json": ["a\nb"]})
@@ -171,6 +179,7 @@ def test_v4_writer_splits_text_but_preserves_json_mime_values():
     assert disk["cells"][0]["outputs"][0]["data"]["application/vnd.example+json"] == ["a\nb"]
 
 
+@pytest.mark.depends_on("test_memory_signature_store_lifecycle")
 def test_signature_changes_with_content_and_unsign_removes_it():
     """Seam: lifecycle crossing — sign/check/unsign tracks notebook content changes."""
     notebook = make_notebook()
@@ -197,6 +206,7 @@ def test_mark_and_check_cells_consumes_transient_marker():
     assert "trusted" not in notebook.cells[0].metadata
 
 
+@pytest.mark.depends_on("test_v4_constructors_supply_valid_defaults")
 def test_generic_string_round_trip_preserves_notebook_content():
     """Seam: state consistency — writes/reads round-trip preserves notebook equality."""
     notebook = make_notebook("x = 1\nprint(x)", "1\n")
@@ -217,6 +227,7 @@ def test_generic_path_round_trip_adds_newline(tmp_path):
     assert nbformat.read(path, as_version=4) == notebook
 
 
+@pytest.mark.depends_on("test_validation_accepts_nbjson_alias_and_requires_input", "test_memory_signature_store_lifecycle")
 def test_representative_in_memory_lifecycle():
     """Seam: lifecycle crossing — validate, serialize, sign, and trust-check in memory."""
     notebook = make_notebook()
@@ -244,6 +255,7 @@ def test_representative_file_lifecycle(tmp_path):
     assert nbformat.validate(final) is None
 
 
+@pytest.mark.depends_on("test_convert_existing_major_is_same_object", "test_memory_signature_store_lifecycle")
 def test_representative_conversion_and_trust_lifecycle():
     """Seam: protocol handoff — v3 conversion, serialization, and trust signing agree."""
     legacy = nbformat.v3.new_notebook(
@@ -305,6 +317,7 @@ def test_jupyter_trust_stdin_success(tmp_path):
 
 
 
+@pytest.mark.depends_on("test_v4_display_data_payload")
 def test_v4_splitlines_preserve_json_mime_data():
     """Seam: protocol handoff — split_lines preserves JSON MIME while splitting text/plain."""
     output = new_output(
@@ -340,6 +353,7 @@ def test_capture_validation_error_on_write():
     assert "source" not in payload["cells"][0]
 
 
+@pytest.mark.depends_on("test_memory_signature_store_lifecycle")
 def test_notary_sign_and_check():
     """Seam: lifecycle crossing — notary sign/check round-trip for notebook digest."""
     notary = make_notary()

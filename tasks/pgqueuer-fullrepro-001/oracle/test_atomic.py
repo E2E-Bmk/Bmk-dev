@@ -313,3 +313,30 @@ def test_mark_job_as_cancelled_releases_dedupe_key():
         assert ids == [JobId(2)]
 
     run(scenario())
+
+
+def test_enqueue_accepts_none_payload_without_error():
+    async def scenario():
+        queries = await make_queries()
+        ids = await queries.enqueue("alpha", None)
+        assert ids == [JobId(1)]
+
+    run(scenario())
+
+
+def test_queue_log_returns_empty_list_before_any_enqueue():
+    async def scenario():
+        queries = await make_queries()
+        assert await queries.queue_log() == []
+
+    run(scenario())
+
+
+def test_enqueue_default_priority_is_zero():
+    async def scenario():
+        queries = await make_queries()
+        await queries.enqueue("alpha", b"x")
+        log = await queries.queue_log()
+        assert log[0].priority == 0
+
+    run(scenario())

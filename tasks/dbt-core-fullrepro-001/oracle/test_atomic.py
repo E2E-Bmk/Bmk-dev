@@ -311,3 +311,42 @@ def test_module_execution_returns_zero_exit():
     )
     assert proc.returncode == 0
     assert len(proc.stdout.strip()) > 0
+
+
+def test_list_resource_type_model_returns_success(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt(["list", *args, "--resource-type", "model", "--output", "name"])
+    assert outcome.success is True
+    assert MODEL_ALPHA in outcome.result
+
+
+def test_compile_writes_manifest_json(tmp_path):
+    args = _atomic_project(tmp_path)
+    invoke_dbt(["compile", *args, "--select", MODEL_ALPHA])
+    assert (tmp_path / "target" / "manifest.json").is_file()
+
+
+# ===========================================================================
+# Additional atomic tests — resource type filtering and compile output
+# ===========================================================================
+
+
+def test_list_resource_type_model_filters_to_models_only(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt([
+        "list", *args, "--resource-type", "model", "--output", "json",
+    ])
+    assert outcome.success is True
+    rows = [json.loads(r) for r in outcome.result]
+    assert all(r["resource_type"] == "model" for r in rows)
+    assert len(rows) >= 1
+
+
+def test_compile_output_text_returns_compiled_sql(tmp_path):
+    args = _atomic_project(tmp_path)
+    outcome = invoke_dbt([
+        "compile", *args,
+        "--inline", "select {{ 7 * 6 }} as forty_two",
+        "--output", "text",
+    ])
+    assert outcome.success is True

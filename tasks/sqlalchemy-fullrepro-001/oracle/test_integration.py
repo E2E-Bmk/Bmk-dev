@@ -1,4 +1,5 @@
 # Spec2Repo oracle - integration tests for sqlalchemy-fullrepro-001
+import pytest
 import datetime as dt
 from decimal import Decimal
 from typing import List, Optional
@@ -32,6 +33,7 @@ from conftest import (
 )
 
 
+@pytest.mark.depends_on("test_result_rows_support_positions_attributes_and_mappings")
 def test_core_create_insert_select_reflect_join_workflow():
     """Seam: state consistency — DDL create → insert → reflect → join select."""
     engine = sa.create_engine("sqlite://")
@@ -63,6 +65,7 @@ def test_core_create_insert_select_reflect_join_workflow():
     assert reflected.c.user_id.foreign_keys
 
 
+@pytest.mark.depends_on("test_result_rows_support_positions_attributes_and_mappings")
 def test_connect_block_rolls_back_uncommitted_work():
     """Seam: lifecycle crossing — connect context exit rolls back uncommitted work."""
     engine = sa.create_engine("sqlite://")
@@ -83,6 +86,7 @@ def test_connect_block_rolls_back_uncommitted_work():
     assert count == 0
 
 
+@pytest.mark.depends_on("test_result_rows_support_positions_attributes_and_mappings")
 def test_engine_begin_commits_success_and_rolls_back_exception():
     """Seam: lifecycle crossing — engine.begin commits on success, rolls back on exception."""
     engine = sa.create_engine("sqlite://")
@@ -104,6 +108,7 @@ def test_engine_begin_commits_success_and_rolls_back_exception():
     assert names == ["committed"]
 
 
+@pytest.mark.depends_on("test_metadata_sorted_tables_places_referenced_table_first", "test_column_primary_key_implies_non_nullable")
 def test_reflection_inspector_reports_columns_pk_fk_indexes_unique():
     """Seam: state consistency — declared schema ↔ inspector reflection metadata."""
     engine = sa.create_engine("sqlite://")
@@ -136,6 +141,7 @@ def test_reflection_inspector_reports_columns_pk_fk_indexes_unique():
     assert child.c.parent_id.nullable is False
 
 
+@pytest.mark.depends_on("test_boolean_true_false_null_and_between_expressions_execute")
 def test_boolean_expressions_text_and_literal_values_execute_with_parameters():
     """Seam: protocol handoff — boolean/null expressions and bound text() execute correctly."""
     engine = sa.create_engine("sqlite://")
@@ -171,6 +177,7 @@ def test_boolean_expressions_text_and_literal_values_execute_with_parameters():
     assert text_value == 7
 
 
+@pytest.mark.depends_on("test_insert_returning_provides_inserted_primary_key")
 def test_core_dml_update_delete_rowcount_and_inserted_primary_key():
     """Seam: state consistency — insert/update/delete DML ↔ row counts and PK visibility."""
     engine = sa.create_engine("sqlite://")
@@ -197,6 +204,7 @@ def test_core_dml_update_delete_rowcount_and_inserted_primary_key():
     assert remaining == 0
 
 
+@pytest.mark.depends_on("test_sqlite_dialect_date_datetime_time_type_roundtrip")
 def test_sqlite_datetime_date_time_roundtrip_and_raw_storage():
     """Seam: state consistency — Python datetime ↔ SQLite TEXT storage ↔ typed query result."""
     engine = sa.create_engine("sqlite://")
@@ -313,6 +321,7 @@ def test_sqlite_insert_on_conflict_where_clause_controls_update():
     assert quantity == 5
 
 
+@pytest.mark.depends_on("test_declarative_base_function_and_inferred_nullable_types")
 def test_session_add_commit_get_identity_and_object_session():
     """Seam: lifecycle crossing — session add → commit → get/identity map ↔ object_session."""
     engine = make_user_engine()
@@ -330,6 +339,7 @@ def test_session_add_commit_get_identity_and_object_session():
         assert object_session(user) is session
 
 
+@pytest.mark.depends_on("test_declarative_base_function_and_inferred_nullable_types")
 def test_sessionmaker_begin_commits_and_rolls_back_on_exception():
     """Seam: lifecycle crossing — sessionmaker.begin transaction commit/rollback."""
     engine = make_user_engine()
@@ -350,6 +360,7 @@ def test_sessionmaker_begin_commits_and_rolls_back_on_exception():
     assert names == ["committed"]
 
 
+@pytest.mark.depends_on("test_declarative_base_function_and_inferred_nullable_types")
 def test_session_flush_autoflush_no_autoflush_and_rollback():
     """Seam: lifecycle crossing — flush/autoflush/no_autoflush ↔ rollback detaches instance."""
     engine = make_user_engine()
@@ -369,6 +380,7 @@ def test_session_flush_autoflush_no_autoflush_and_rollback():
         assert session.scalar(sa.select(sa.func.count()).select_from(User)) == 0
 
 
+@pytest.mark.depends_on("test_declarative_base_function_and_inferred_nullable_types")
 def test_session_delete_marks_row_for_delete_on_flush():
     """Seam: state consistency — session.delete → flush → commit ↔ durable row removal."""
     engine = make_user_engine()
@@ -388,6 +400,7 @@ def test_session_delete_marks_row_for_delete_on_flush():
     assert names_after_commit == ["sandy"]
 
 
+@pytest.mark.depends_on("test_declarative_base_function_and_inferred_nullable_types")
 def test_relationship_back_populates_and_cascade_persist_children():
     """Seam: state consistency — relationship back_populates ↔ cascade persist to DB."""
     engine = make_user_engine()
@@ -411,6 +424,7 @@ def test_relationship_back_populates_and_cascade_persist_children():
         assert stored.user.name == "sandy"
 
 
+@pytest.mark.depends_on("test_raiseload_option_raises_for_many_to_one_access")
 def test_selectinload_and_joinedload_return_same_primary_objects():
     """Seam: protocol handoff — selectinload vs joinedload yield equivalent loaded graphs."""
     engine = make_user_engine()
@@ -430,6 +444,7 @@ def test_selectinload_and_joinedload_return_same_primary_objects():
     assert [len(user.addresses) for user in joined_users] == [0, 2]
 
 
+@pytest.mark.depends_on("test_raiseload_option_raises_for_many_to_one_access")
 def test_lazyload_raiseload_and_detached_lazy_load_errors():
     """Seam: error propagation — raiseload/detached access raises InvalidRequestError/DetachedInstanceError."""
     engine = make_user_engine()
@@ -482,6 +497,7 @@ def test_core_insert_then_orm_query_over_same_table():
     assert user.fullname == "Sandy Cheeks"
 
 
+@pytest.mark.depends_on("test_result_cardinality_errors_for_scalar_one")
 def test_integrity_error_and_session_recovery_after_rollback():
     """Seam: error propagation — IntegrityError → rollback → session usable for retry."""
     engine = make_user_engine()
@@ -540,6 +556,7 @@ def test_numeric_float_largebinary_and_null_roundtrip():
     assert null_check is True
 
 
+@pytest.mark.depends_on("test_metadata_sorted_tables_places_referenced_table_first")
 def test_metadata_collections_constraints_indexes_and_create_drop():
     """Seam: lifecycle crossing — metadata create_all ↔ inspector ↔ drop_all."""
     engine = sa.create_engine("sqlite://")
@@ -633,6 +650,7 @@ def test_primary_foreign_unique_and_check_constraints_reflect_from_sqlite():
     assert any(cc["name"] == "ck_cv_child_code" for cc in inspector.get_check_constraints("cv_child"))
 
 
+@pytest.mark.depends_on("test_result_mappings_exposes_column_names_and_values")
 def test_insert_executemany_and_select_mappings_preserve_column_names():
     """Seam: state consistency — executemany insert ↔ mappings() column names."""
     engine = sa.create_engine("sqlite://")
@@ -675,6 +693,7 @@ def test_declarative_default_init_table_and_metadata_views_agree():
     assert widget.name == "gear"
 
 
+@pytest.mark.depends_on("test_declarative_base_function_and_inferred_nullable_types")
 def test_session_context_manager_closes_but_engine_data_persists():
     """Seam: lifecycle crossing — session close ↔ engine-persisted data readable in new session."""
     engine = make_user_engine()
@@ -719,6 +738,7 @@ def test_many_to_one_lazy_load_can_use_identity_map():
     assert related is user
 
 
+@pytest.mark.depends_on("test_raiseload_option_raises_for_many_to_one_access")
 def test_joinedload_collection_requires_unique_for_duplicate_primary_rows():
     """Seam: protocol handoff — joinedload duplicate rows require unique() before scalars."""
     engine = make_user_engine()
@@ -775,6 +795,7 @@ def test_full_core_orm_reflection_workflow_with_second_address():
     assert count == 2
 
 
+@pytest.mark.depends_on("test_column_collection_iteration_and_keys_match_declaration_order")
 def test_metadata_table_and_column_collections_expose_declared_schema():
     """Seam: state consistency — metadata.tables/columns ↔ declared Table schema."""
     metadata, users, addresses = user_address_tables()
@@ -785,6 +806,7 @@ def test_metadata_table_and_column_collections_expose_declared_schema():
     assert addresses.c.user_id.foreign_keys
 
 
+@pytest.mark.depends_on("test_foreign_key_exposes_target_fullname")
 def test_reflected_metadata_reconstructs_declared_tables_and_foreign_keys():
     """Seam: state consistency — metadata.reflect ↔ declared tables and FK targets."""
     engine = sa.create_engine("sqlite://")

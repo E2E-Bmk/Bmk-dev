@@ -5,6 +5,7 @@
   "repo_url": "https://github.com/cookiecutter/cookiecutter",
   "repo_commit": "c88fbe921c97c58b65f1883ba90a0ab53cc91b34",
   "spec_version": "v2",
+  "language": "python",
   "oracle_version": "2026-07-14T02:35:00+08:00-cookiecutter-stage3-repair-v2",
   "oracle": {
     "test_files": [
@@ -16,422 +17,117 @@
     "scorer_isolation": [
       "--remove-path",
       "cookiecutter"
-    ]
+    ],
+    "count_unit": "base_test_functions",
+    "base_function_count": 101
   },
   "taxonomy": {
-    "atomic": 36,
-    "entries": [
-      {
-        "taxonomy_key": "test_atomic::test_api_returns_an_absolute_project_path",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_string_default_renders_file_content",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_extra_context_overrides_the_project_directory_name",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_extra_context_overrides_rendered_file_content",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_templated_default_uses_an_earlier_variable",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_choice_variable_uses_its_first_item_without_input",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_true_boolean_is_available_as_a_boolean",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_false_boolean_is_available_as_a_boolean",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_dictionary_values_are_accessible_in_templates",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_single_underscore_variable_is_not_pre_rendered",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_double_underscore_variable_is_rendered_from_prior_context",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_jsonify_filter_serializes_a_dictionary",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_jsonify_filter_accepts_a_custom_indent",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_random_ascii_string_honors_the_requested_length",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_random_ascii_string_without_punctuation_uses_letters",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_random_ascii_string_with_punctuation_uses_documented_corpus",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_slugify_filter_produces_a_lowercase_hyphenated_slug",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_uuid_global_produces_a_uuid4_string",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_time_tag_formats_the_current_utc_year",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_invalid_cookiecutter_json_raises_context_decoding_exception",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_missing_config_file_raises_config_does_not_exist",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_replay_and_no_input_raise_invalid_mode",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_unknown_extension_raises_unknown_extension",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_missing_local_template_raises_repository_not_found",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_template_without_templated_project_dir_raises_public_exception",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_undefined_content_variable_raises_public_exception",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_empty_string_default_renders_as_empty_content",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_nested_dictionary_default_is_available_to_template",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_private_dictionary_value_is_preserved_and_accessible",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_templated_defaults_can_chain_in_key_order",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_jsonify_default_indent_is_four_spaces",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_slugify_filter_accepts_separator_keyword",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_slugify_filter_handles_apostrophes",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_time_tag_formats_current_utc_month",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_time_tag_formats_current_utc_hour",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_multiple_uuid_calls_each_produce_uuid4_strings",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_integration::test_local_extension_can_register_a_filter",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_local_extension_can_register_a_global",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_local_extension_can_register_a_tag",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_human_readable_prompt_label_is_displayed_and_answer_is_used",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_password_argument_opens_a_protected_zip_template",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_password_environment_opens_a_protected_zip_template",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_wrong_password_for_protected_zip_raises_invalid_zip_repository",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_nested_directory_and_file_names_render_with_contents",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_multiple_files_share_the_same_resolved_context",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_utf8_context_round_trips_through_names_and_contents",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_copy_without_render_preserves_matching_file_contents",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_copy_without_render_still_renders_matching_path_names",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_output_dir_contains_the_returned_project",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_existing_output_directory_raises_without_overwrite",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_overwrite_if_exists_replaces_existing_file_contents",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_skip_if_file_exists_preserves_existing_file_contents",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_skip_if_file_exists_still_generates_missing_files",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_binary_file_is_copied_without_template_rendering",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_pre_generation_hook_receives_rendered_context",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_post_generation_hook_can_read_generated_files",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_accept_hooks_false_skips_pre_and_post_hooks",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_failed_hook_removes_partial_project_by_default",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_keep_project_on_failure_preserves_partial_project",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_pre_and_post_hooks_run_in_documented_order",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_directory_option_selects_the_named_template",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_directory_option_preserves_rendering_behavior",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_local_zip_archive_generates_a_project",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_zip_archive_uses_context_for_names_and_contents",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_user_config_default_context_overrides_template_defaults",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_extra_context_has_precedence_over_user_config",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_successful_generation_saves_resolved_context_to_replay",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_replay_true_reuses_the_last_saved_context",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_explicit_replay_file_controls_the_generated_context",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_default_config_ignores_a_user_cookiecutterrc",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_no_input_generates_a_local_template",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_extra_context_overrides_template_values",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_output_dir_places_project_under_requested_path",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_skip_if_file_exists_preserves_user_content",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_overwrite_if_exists_replaces_user_content",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_and_python_api_produce_identical_file_trees",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_context_is_consistent_across_name_content_and_replay",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_verbose_emits_debug_logging_while_generation_succeeds",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_directory_selection_keeps_hook_and_replay_context_consistent",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_legacy_template_key_selects_its_nested_template",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_templates_mapping_selects_the_first_nested_template_without_input",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_directory_option_selects_a_template_inside_a_zip_archive",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_interactive_string_answer_preserves_spaces",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_user_config_matching_choice_becomes_no_input_default",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_interactive_choice_number_selects_corresponding_value",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_interactive_boolean_yes_is_stored_as_true",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_interactive_dictionary_json_replaces_default",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_private_variable_is_omitted_from_interactive_prompts",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_private_rendered_variable_uses_extra_context",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_private_rendered_variable_drives_file_name",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_custom_prompt_label_is_displayed",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_choice_prompt_uses_custom_item_labels",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_templated_default_recomputes_after_override",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_copy_without_render_glob_preserves_all_matching_contents",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_templates_mapping_supports_deep_relative_path",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_interactive_templates_mapping_selects_second_entry",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_legacy_template_list_defaults_to_first_entry",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_interactive_legacy_template_list_selects_second_entry",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_uuid_global_can_render_a_file_name",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_verbose_long_option_emits_debug_logging",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_verbose_short_option_emits_debug_logging",
-        "layer": "system_e2e"
-      }
-    ],
-    "integration_system_e2e": 65
+    "test_atomic::test_api_returns_an_absolute_project_path": "atomic",
+    "test_atomic::test_string_default_renders_file_content": "atomic",
+    "test_atomic::test_extra_context_overrides_the_project_directory_name": "atomic",
+    "test_atomic::test_extra_context_overrides_rendered_file_content": "atomic",
+    "test_atomic::test_templated_default_uses_an_earlier_variable": "atomic",
+    "test_atomic::test_choice_variable_uses_its_first_item_without_input": "atomic",
+    "test_atomic::test_true_boolean_is_available_as_a_boolean": "atomic",
+    "test_atomic::test_false_boolean_is_available_as_a_boolean": "atomic",
+    "test_atomic::test_dictionary_values_are_accessible_in_templates": "atomic",
+    "test_atomic::test_single_underscore_variable_is_not_pre_rendered": "atomic",
+    "test_atomic::test_double_underscore_variable_is_rendered_from_prior_context": "atomic",
+    "test_atomic::test_jsonify_filter_serializes_a_dictionary": "atomic",
+    "test_atomic::test_jsonify_filter_accepts_a_custom_indent": "atomic",
+    "test_atomic::test_random_ascii_string_honors_the_requested_length": "atomic",
+    "test_atomic::test_random_ascii_string_without_punctuation_uses_letters": "atomic",
+    "test_atomic::test_random_ascii_string_with_punctuation_uses_documented_corpus": "atomic",
+    "test_atomic::test_slugify_filter_produces_a_lowercase_hyphenated_slug": "atomic",
+    "test_atomic::test_uuid_global_produces_a_uuid4_string": "atomic",
+    "test_atomic::test_time_tag_formats_the_current_utc_year": "atomic",
+    "test_atomic::test_invalid_cookiecutter_json_raises_context_decoding_exception": "atomic",
+    "test_atomic::test_missing_config_file_raises_config_does_not_exist": "atomic",
+    "test_atomic::test_replay_and_no_input_raise_invalid_mode": "atomic",
+    "test_atomic::test_unknown_extension_raises_unknown_extension": "atomic",
+    "test_atomic::test_missing_local_template_raises_repository_not_found": "atomic",
+    "test_atomic::test_template_without_templated_project_dir_raises_public_exception": "atomic",
+    "test_atomic::test_undefined_content_variable_raises_public_exception": "atomic",
+    "test_atomic::test_empty_string_default_renders_as_empty_content": "atomic",
+    "test_atomic::test_nested_dictionary_default_is_available_to_template": "atomic",
+    "test_atomic::test_private_dictionary_value_is_preserved_and_accessible": "atomic",
+    "test_atomic::test_templated_defaults_can_chain_in_key_order": "atomic",
+    "test_atomic::test_jsonify_default_indent_is_four_spaces": "atomic",
+    "test_atomic::test_slugify_filter_accepts_separator_keyword": "atomic",
+    "test_atomic::test_slugify_filter_handles_apostrophes": "atomic",
+    "test_atomic::test_time_tag_formats_current_utc_month": "atomic",
+    "test_atomic::test_time_tag_formats_current_utc_hour": "atomic",
+    "test_atomic::test_multiple_uuid_calls_each_produce_uuid4_strings": "atomic",
+    "test_integration::test_local_extension_can_register_a_filter": "integration",
+    "test_integration::test_local_extension_can_register_a_global": "integration",
+    "test_integration::test_local_extension_can_register_a_tag": "integration",
+    "test_integration::test_human_readable_prompt_label_is_displayed_and_answer_is_used": "integration",
+    "test_integration::test_password_argument_opens_a_protected_zip_template": "integration",
+    "test_integration::test_cli_password_environment_opens_a_protected_zip_template": "integration",
+    "test_integration::test_wrong_password_for_protected_zip_raises_invalid_zip_repository": "integration",
+    "test_integration::test_nested_directory_and_file_names_render_with_contents": "integration",
+    "test_integration::test_multiple_files_share_the_same_resolved_context": "integration",
+    "test_integration::test_utf8_context_round_trips_through_names_and_contents": "integration",
+    "test_integration::test_copy_without_render_preserves_matching_file_contents": "integration",
+    "test_integration::test_copy_without_render_still_renders_matching_path_names": "integration",
+    "test_integration::test_output_dir_contains_the_returned_project": "integration",
+    "test_integration::test_existing_output_directory_raises_without_overwrite": "integration",
+    "test_integration::test_overwrite_if_exists_replaces_existing_file_contents": "integration",
+    "test_integration::test_skip_if_file_exists_preserves_existing_file_contents": "integration",
+    "test_integration::test_skip_if_file_exists_still_generates_missing_files": "integration",
+    "test_integration::test_binary_file_is_copied_without_template_rendering": "integration",
+    "test_integration::test_pre_generation_hook_receives_rendered_context": "integration",
+    "test_integration::test_post_generation_hook_can_read_generated_files": "integration",
+    "test_integration::test_accept_hooks_false_skips_pre_and_post_hooks": "integration",
+    "test_integration::test_failed_hook_removes_partial_project_by_default": "integration",
+    "test_integration::test_keep_project_on_failure_preserves_partial_project": "integration",
+    "test_integration::test_pre_and_post_hooks_run_in_documented_order": "integration",
+    "test_integration::test_directory_option_selects_the_named_template": "integration",
+    "test_integration::test_directory_option_preserves_rendering_behavior": "integration",
+    "test_integration::test_local_zip_archive_generates_a_project": "integration",
+    "test_integration::test_zip_archive_uses_context_for_names_and_contents": "integration",
+    "test_integration::test_user_config_default_context_overrides_template_defaults": "integration",
+    "test_integration::test_extra_context_has_precedence_over_user_config": "integration",
+    "test_integration::test_successful_generation_saves_resolved_context_to_replay": "integration",
+    "test_integration::test_replay_true_reuses_the_last_saved_context": "integration",
+    "test_integration::test_explicit_replay_file_controls_the_generated_context": "integration",
+    "test_integration::test_default_config_ignores_a_user_cookiecutterrc": "integration",
+    "test_integration::test_cli_no_input_generates_a_local_template": "integration",
+    "test_integration::test_cli_extra_context_overrides_template_values": "integration",
+    "test_integration::test_cli_output_dir_places_project_under_requested_path": "integration",
+    "test_integration::test_cli_skip_if_file_exists_preserves_user_content": "integration",
+    "test_integration::test_cli_overwrite_if_exists_replaces_user_content": "integration",
+    "test_integration::test_cli_and_python_api_produce_identical_file_trees": "integration",
+    "test_integration::test_context_is_consistent_across_name_content_and_replay": "integration",
+    "test_integration::test_cli_verbose_emits_debug_logging_while_generation_succeeds": "integration",
+    "test_integration::test_directory_selection_keeps_hook_and_replay_context_consistent": "integration",
+    "test_integration::test_legacy_template_key_selects_its_nested_template": "integration",
+    "test_integration::test_templates_mapping_selects_the_first_nested_template_without_input": "integration",
+    "test_integration::test_directory_option_selects_a_template_inside_a_zip_archive": "integration",
+    "test_integration::test_interactive_string_answer_preserves_spaces": "integration",
+    "test_integration::test_user_config_matching_choice_becomes_no_input_default": "integration",
+    "test_integration::test_interactive_choice_number_selects_corresponding_value": "integration",
+    "test_integration::test_interactive_boolean_yes_is_stored_as_true": "integration",
+    "test_integration::test_interactive_dictionary_json_replaces_default": "integration",
+    "test_integration::test_private_variable_is_omitted_from_interactive_prompts": "integration",
+    "test_integration::test_private_rendered_variable_uses_extra_context": "integration",
+    "test_integration::test_private_rendered_variable_drives_file_name": "integration",
+    "test_integration::test_custom_prompt_label_is_displayed": "integration",
+    "test_integration::test_choice_prompt_uses_custom_item_labels": "integration",
+    "test_integration::test_templated_default_recomputes_after_override": "integration",
+    "test_integration::test_copy_without_render_glob_preserves_all_matching_contents": "integration",
+    "test_integration::test_templates_mapping_supports_deep_relative_path": "integration",
+    "test_integration::test_interactive_templates_mapping_selects_second_entry": "integration",
+    "test_integration::test_legacy_template_list_defaults_to_first_entry": "integration",
+    "test_integration::test_interactive_legacy_template_list_selects_second_entry": "integration",
+    "test_integration::test_uuid_global_can_render_a_file_name": "integration",
+    "test_integration::test_verbose_long_option_emits_debug_logging": "integration",
+    "test_integration::test_verbose_short_option_emits_debug_logging": "integration"
   },
   "stats": {
     "atomic": 36,
-    "integration": 36,
-    "system_e2e": 29
+    "integration": 65,
+    "system_e2e": 0
   },
   "reference_pass_rate": 1,
   "reference_score": {
@@ -479,5 +175,6 @@
     "date": "2026-07-14",
     "removed_unpromised_import_tests": 7,
     "superseded_oracle_count": 9
-  }
+  },
+  "taxonomy_unit": "base_test_functions"
 }

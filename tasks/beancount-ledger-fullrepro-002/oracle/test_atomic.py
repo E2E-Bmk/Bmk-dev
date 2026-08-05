@@ -238,3 +238,69 @@ def test_tags_and_links_store_without_markers_and_print_with_markers():
     rendered = bn.format_entry(txn)
     assert "#tag" in rendered
     assert "^link" in rendered
+
+# --- supplemental atomic tests (2026-07-23) ---
+
+def test_zero_constant_is_decimal_zero():
+    assert bn.ZERO == Decimal("0")
+    assert isinstance(bn.ZERO, Decimal)
+
+def test_flag_constants_are_distinct_string_values():
+    flags = {
+        bn.FLAG_OKAY,
+        bn.FLAG_WARNING,
+        bn.FLAG_PADDING,
+        bn.FLAG_TRANSFER,
+        bn.FLAG_CONVERSIONS,
+        bn.FLAG_MERGING,
+        bn.FLAG_SUMMARIZE,
+    }
+    assert all(isinstance(flag, str) and len(flag) == 1 for flag in flags)
+    assert len(flags) == 7
+
+def test_cost_object_exposes_per_unit_fields():
+    cost = bn.Cost(bn.D("5"), "USD", dt.date(2021, 3, 15), "lot-label")
+    assert cost.number == bn.D("5")
+    assert cost.currency == "USD"
+    assert cost.date == dt.date(2021, 3, 15)
+    assert cost.label == "lot-label"
+
+def test_cost_spec_construction_for_incomplete_cost():
+    spec = bn.CostSpec(bn.D("10"), None, "EUR", None, None, False)
+    assert spec.number_per == bn.D("10")
+    assert spec.currency == "EUR"
+
+def test_inventory_add_position_inserts_position_object():
+    inv = bn.Inventory()
+    pos = bn.Position.from_string("7 EUR")
+    inv.add_position(pos)
+    assert inv.get_currency_units("EUR") == bn.Amount(bn.D("7"), "EUR")
+    assert not inv.is_empty()
+
+def test_inventory_add_inventory_returns_self_and_accumulates():
+    left = bn.Inventory.from_string("3 USD")
+    right = bn.Inventory.from_string("2 USD, 5 EUR")
+    result = left.add_inventory(right)
+    assert result is left
+    assert left.get_currency_units("USD") == bn.Amount(bn.D("5"), "USD")
+    assert left.get_currency_units("EUR") == bn.Amount(bn.D("5"), "EUR")
+
+def test_inventory_split_returns_unit_currency_keys():
+    inv = bn.Inventory.from_string("2 AAPL {50 USD}, 1 GOOG {100 USD}, 5 USD")
+    keys = sorted(inv.split())
+    assert keys == ["AAPL", "GOOG", "USD"]
+
+def test_inventory_average_collapses_same_currency_lots():
+    inv = bn.Inventory.from_string("2 MSFT {10 USD, 2021-01-01}, 3 MSFT {20 USD, 2021-06-01}")
+    averaged = inv.average()
+    assert list(averaged) == [
+        bn.Position.from_string("5 MSFT {16 USD, 2021-01-01}")
+    ]
+
+def test_inventory_get_only_position_returns_none_for_empty_and_raises_for_many():
+    assert bn.Inventory().get_only_position() is None
+    single = bn.Inventory.from_string("4 GBP")
+    assert single.get_only_position() == bn.Position.from_string("4 GBP")
+    multi = bn.Inventory.from_string("1 USD, 2 EUR")
+    with pytest.raises(AssertionError):
+        multi.get_only_position()

@@ -21,7 +21,7 @@ from transitions.experimental.utils import (
     with_model_definitions,
 )
 
-from conftest import HAS_GRAPH_BACKEND, make_model, run_async
+from conftest import make_model, run_async
 
 
 # ===================================================================
@@ -170,6 +170,7 @@ def test_cvi10_hierarchical_substates_exact_vs_allow():
 # ===================================================================
 
 
+@pytest.mark.depends_on("test_machine_initial_none_requires_explicit_on_add_model", "test_add_model_registers_and_sets_initial", "test_trigger_name_equals_model_attribute_raises")
 def test_add_model_with_custom_initial_then_trigger():
     """Seam: add_model(initial=) → trigger → state progression."""
     obj = make_model()
@@ -181,6 +182,7 @@ def test_add_model_with_custom_initial_then_trigger():
     assert obj.state == "charlie"
 
 
+@pytest.mark.depends_on("test_ordered_transitions_cycle_through_states", "test_get_transitions_returns_empty_for_unknown_trigger", "test_trigger_name_equals_model_attribute_raises")
 def test_ordered_transitions_cycle_with_trigger():
     """Seam: add_ordered_transitions + trigger + loop wrap."""
     m = Machine(states=["alpha", "bravo", "charlie"], initial="alpha")
@@ -192,6 +194,7 @@ def test_ordered_transitions_cycle_with_trigger():
     assert m.state == "alpha"
 
 
+@pytest.mark.depends_on("test_ordered_no_loop_last_state_raises", "test_ordered_fewer_than_two_states_raises", "test_error_unaccepted_dead_end_raises")
 def test_ordered_no_loop_raises_at_end():
     """Seam: ordered(loop=False) → last trigger → MachineError."""
     m = Machine(states=["alpha", "bravo", "charlie"], initial="alpha")
@@ -203,6 +206,7 @@ def test_ordered_no_loop_raises_at_end():
         m.next_state()
 
 
+@pytest.mark.depends_on("test_machine_send_event_delivers_event_data_to_callbacks", "test_transition_add_callback_rejects_invalid_phase", "test_transition_add_callback_accepts_valid_phase")
 def test_send_event_callback_chain():
     """Seam: send_event + before + on_enter all receive EventData."""
     log = []
@@ -224,6 +228,7 @@ def test_send_event_callback_chain():
     assert ("enter", "go") in log
 
 
+@pytest.mark.depends_on("test_state_add_callback_accepts_enter_and_exit", "test_reflexive_transition_fires_exit_and_enter", "test_before_exception_preserves_old_state")
 def test_reflexive_preserves_state_and_runs_callbacks():
     """Seam: dest='=' → exit + enter fire, state unchanged."""
     log = []
@@ -244,6 +249,7 @@ def test_reflexive_preserves_state_and_runs_callbacks():
     assert "exit" in log and "enter" in log
 
 
+@pytest.mark.depends_on("test_before_exception_preserves_old_state", "test_wildcard_source_applies_to_all_current_states", "test_on_exception_handler_receives_event_data")
 def test_exception_before_preserves_across_all_views():
     """Seam: exception in before → state, get_model_state, is_state all keep source."""
     obj = make_model()
@@ -363,17 +369,23 @@ def test_volatile_lifecycle_enter_and_exit():
     class Hook:
         pass
 
+    model = make_model()
     m = VM(
-        states=["idle", {"name": "active", "volatile": Hook}],
+        model=model,
+        states=[
+            {"name": "idle", "hook": "idle_scope"},
+            {"name": "active", "volatile": Hook},
+        ],
         initial="idle",
         auto_transitions=False,
     )
     m.add_transition("start", "idle", "active")
     m.add_transition("stop", "active", "idle")
-    m.start()
-    assert isinstance(m.scope, Hook)
-    m.stop()
-    assert not hasattr(m, "scope")
+    model.start()
+    assert isinstance(model.scope, Hook)
+    model.stop()
+    assert not hasattr(model, "scope")
+    assert hasattr(model, "idle_scope")
 
 
 def test_remove_model_and_dispatch():

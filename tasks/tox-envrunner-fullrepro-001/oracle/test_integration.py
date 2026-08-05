@@ -1,3 +1,5 @@
+import pytest
+
 from conftest import (
     create_tox_ini,
     create_tox_toml,
@@ -14,6 +16,7 @@ from conftest import (
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_list_shows_configured_environments", "test_config_accepts_valid_environment")
 def test_cvi1_list_name_matches_run_config_exec(tmp_path):
     """CVI-1: name visible in list is accepted by run -e, config -e, exec -e."""
     create_tox_toml(
@@ -48,6 +51,7 @@ def test_cvi1_list_name_matches_run_config_exec(tmp_path):
     assert "EXEC_OK" in exec_result.stdout
 
 
+@pytest.mark.depends_on("test_config_json_produces_valid_output")
 def test_cvi2_config_deps_used_during_run(tmp_path):
     """CVI-2: deps shown by config are installed during run."""
     create_tox_toml(
@@ -71,6 +75,7 @@ def test_cvi2_config_deps_used_during_run(tmp_path):
     assert "DEPS_OK" in result.stdout
 
 
+@pytest.mark.depends_on("test_config_json_produces_valid_output", "test_config_toml_format_returns_success")
 def test_cvi3_json_toml_formats_expose_same_values(tmp_path):
     """CVI-3: JSON and TOML config formats show the same resolved value."""
     create_tox_toml(
@@ -98,6 +103,7 @@ def test_cvi3_json_toml_formats_expose_same_values(tmp_path):
     assert desc in toml_result.stdout
 
 
+@pytest.mark.depends_on("test_documented_subcommand_help_returns_zero")
 def test_cvi4_depends_ordering_honored_in_run(tmp_path):
     """CVI-4: depends ordering consistent between depends subcommand and run."""
     create_tox_toml(
@@ -123,6 +129,7 @@ def test_cvi4_depends_ordering_honored_in_run(tmp_path):
     assert result.stdout.index("BUILD_DONE") < result.stdout.index("ANALYZE_DONE")
 
 
+@pytest.mark.depends_on("test_set_env_visible_in_config_json")
 def test_cvi5_env_var_composition_in_execution(tmp_path):
     """CVI-5: pass_env + set_env from config match variables in execution."""
     create_tox_toml(
@@ -200,6 +207,7 @@ def test_cvi6_package_mode_config_reflects_packaging(tmp_path):
     assert found_pkg, "TOX_PACKAGE was not printed"
 
 
+@pytest.mark.depends_on("test_posargs_default_substituted_without_extra_args")
 def test_cvi7_posargs_visible_only_in_commands(tmp_path):
     """CVI-7: positional args change commands but not unrelated keys like description."""
     create_tox_toml(
@@ -226,6 +234,7 @@ def test_cvi7_posargs_visible_only_in_commands(tmp_path):
     assert "fallback_arg" not in command
 
 
+@pytest.mark.depends_on("test_label_m_flag_selects_labeled_environments")
 def test_cvi8_labels_consistent_across_list_and_run_m(tmp_path):
     """CVI-8: list -m and run -m select the same environments."""
     create_tox_toml(
@@ -275,6 +284,7 @@ def test_cvi9_unused_key_visible_in_config(tmp_path):
     assert "stale_setting" in combined
 
 
+@pytest.mark.depends_on("test_documented_subcommand_help_returns_zero")
 def test_cvi10_exit_status_matches_env_outcomes(tmp_path):
     """CVI-10: all-pass → 0, any-fail → nonzero."""
     create_tox_toml(
@@ -316,6 +326,7 @@ def test_cvi10_exit_status_matches_env_outcomes(tmp_path):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_tox_ini_discovered_as_config")
 def test_seam_discovery_tox_ini_over_tox_toml(tmp_path):
     """Seam: config interaction — tox.ini discovery precedence ↔ list and run use ini env."""
     create_tox_ini(
@@ -352,6 +363,7 @@ def test_seam_discovery_tox_ini_over_tox_toml(tmp_path):
     assert "INI_CMD" in result.stdout
 
 
+@pytest.mark.depends_on("test_config_json_produces_valid_output")
 def test_seam_env_run_base_inheritance_in_config_and_run(tmp_path):
     """Seam: config interaction — env_run_base inheritance ↔ config JSON and run output."""
     create_tox_toml(
@@ -383,6 +395,7 @@ def test_seam_env_run_base_inheritance_in_config_and_run(tmp_path):
     assert "BASE_CMD" in result.stdout
 
 
+@pytest.mark.depends_on("test_tox_ini_discovered_as_config")
 def test_seam_dash_prefix_ignores_failure(tmp_path):
     """Seam: error propagation — dash-prefixed command failure ↔ env still passes and next command runs."""
     create_tox_ini(
@@ -404,6 +417,7 @@ def test_seam_dash_prefix_ignores_failure(tmp_path):
     assert "AFTER_IGNORE" in result.stdout
 
 
+@pytest.mark.depends_on("test_tox_ini_discovered_as_config")
 def test_seam_bang_prefix_inverts_success(tmp_path):
     """Seam: error propagation — bang-prefixed nonzero exit ↔ treated as success and next command runs."""
     create_tox_ini(
@@ -425,6 +439,7 @@ def test_seam_bang_prefix_inverts_success(tmp_path):
     assert "AFTER_INVERT" in result.stdout
 
 
+@pytest.mark.depends_on("test_documented_subcommand_help_returns_zero")
 def test_seam_recreate_forces_fresh_env(tmp_path):
     """Seam: lifecycle crossing — --recreate ↔ env directory deletion and recreation."""
     create_tox_toml(
@@ -607,6 +622,7 @@ def test_seam_parallel_failure_nonzero(tmp_path):
     assert result.returncode != 0
 
 
+@pytest.mark.depends_on("test_ini_factor_groups_expand_to_cartesian_product", "test_factor_f_flag_filters_environments")
 def test_seam_generative_envs_factor_filter_and_config(tmp_path):
     """Seam: config interaction — generative env list + factor filter ↔ list and config agreement."""
     create_tox_ini(
@@ -643,6 +659,7 @@ def test_seam_generative_envs_factor_filter_and_config(tmp_path):
     assert data["env"]["py312-unit"]["description"] == "run py312-unit"
 
 
+@pytest.mark.depends_on("test_plugin_name_constant_equals_tox", "test_impl_sets_tox_impl_attribute")
 def test_seam_toxfile_plugin_adds_config_key(tmp_path):
     """Seam: config interaction — toxfile plugin ↔ custom key visible in config JSON."""
     create_tox_toml(
@@ -708,6 +725,7 @@ def test_seam_repeated_run_reuses_recreate_replaces(tmp_path):
     assert not sentinel.exists()
 
 
+@pytest.mark.depends_on("test_pyproject_native_toml_discovery")
 def test_seam_pyproject_native_over_legacy(tmp_path):
     """Seam: config interaction — native [tool.tox] ↔ precedence over legacy_tox_ini."""
     create_pyproject_toml(

@@ -145,7 +145,7 @@ class TestCacheDecoratorFamily:
 class TestCacheKeyWithLRU:
     """Integration: make_cache_key + LRU storage."""
 
-    @pytest.mark.depends_on("test_typed_true_distinguishes_int_from_float", "test_lru_insert_and_retrieve")
+    @pytest.mark.depends_on("test_typed_true_distinguishes_int_from_float", "test_lru_access_updates_recency")
     def test_make_cache_key_as_lru_key(self):
         """Seam: state consistency — integration path for make cache key as lru key across cooperating public APIs."""
         from boltons.cacheutils import LRU, make_cache_key

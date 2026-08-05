@@ -110,6 +110,7 @@ def test_task_result_and_exception_raise_before_deterministic_release():
 
 # ── Cancellation: blocking cancel → terminated + cancelled ────────
 
+@pytest.mark.depends_on("test_task_join_returns_child_value")
 def test_blocking_cancel_terminates_task_and_marks_cancelled():
     """Seam: lifecycle crossing — blocking cancel terminates and marks cancelled."""
     async def main():
@@ -122,6 +123,7 @@ def test_blocking_cancel_terminates_task_and_marks_cancelled():
 
 # ── Cancellation: direct cancellation delivers TaskCancelled ──────
 
+@pytest.mark.depends_on("test_task_join_wraps_child_failure_with_cause")
 def test_direct_cancellation_delivers_taskcancelled():
     """Seam: error propagation — direct cancellation delivers TaskCancelled."""
     async def child(started):
@@ -156,6 +158,7 @@ def test_taskgroup_spawn_exposes_joined_result():
 
 # ── TaskGroup: next_result returns completed value ────────────────
 
+@pytest.mark.depends_on("test_task_join_returns_child_value")
 def test_taskgroup_next_result_returns_completed_value():
     """Seam: lifecycle crossing — TaskGroup next_result returns completed value."""
     async def main():
@@ -168,6 +171,7 @@ def test_taskgroup_next_result_returns_completed_value():
 
 # ── TaskGroup: next_result reraises child failure ─────────────────
 
+@pytest.mark.depends_on("test_task_join_wraps_child_failure_with_cause")
 def test_taskgroup_next_result_reraises_child_failure():
     """Seam: error propagation — TaskGroup next_result reraises child failure."""
     async def main():
@@ -235,7 +239,7 @@ def test_taskgroup_adds_ungrouped_task():
 
 # ── CVI-3: task + group project same outcome ─────────────────────
 
-@pytest.mark.depends_on("test_taskgroup_spawn_exposes_joined_result")
+@pytest.mark.depends_on("test_task_join_returns_child_value")
 def test_cross_view_task_and_group_project_same_successful_outcome():
     """CVI-3: task and TaskGroup project same successful outcome."""
     async def main():
@@ -284,6 +288,7 @@ def test_product_state_coordination_projection_retains_unfinished_work():
 
 # ── Bounded queue: put completes after consumer makes space ──────
 
+@pytest.mark.depends_on("test_queue_public_size_and_capacity_state")
 def test_bounded_queue_put_completes_after_consumer_makes_space():
     """Seam: lifecycle crossing — bounded queue put completes after consumer frees space."""
     async def consumer(queue):
@@ -305,6 +310,7 @@ def test_bounded_queue_put_completes_after_consumer_makes_space():
 
 # ── Semaphore: release makes waiting acquisition proceed ──────────
 
+@pytest.mark.depends_on("test_semaphore_locked_when_value_is_zero")
 def test_semaphore_release_makes_waiting_acquisition_eligible():
     """Seam: lifecycle crossing — semaphore release unblocks waiting acquire."""
     async def waiter(semaphore):
@@ -323,6 +329,7 @@ def test_semaphore_release_makes_waiting_acquisition_eligible():
 
 # ── Nested timeout: outer interrupts inner with distinct error ────
 
+@pytest.mark.depends_on("test_timeout_after_raises_task_timeout_when_expires")
 def test_nested_outer_timeout_interrupts_inner_with_distinct_error():
     """Seam: error propagation — outer timeout interrupts inner with distinct error."""
     async def main():
@@ -353,6 +360,7 @@ def test_timeout_escaping_matching_boundary_raises_uncaught_timeout():
 
 # ── CVI-5: UniversalQueue sync put → curio get ──────────────────
 
+@pytest.mark.depends_on("test_queue_returns_items_in_fifo_order")
 def test_universal_queue_sync_put_is_visible_to_curio_get():
     """CVI-5: UniversalQueue sync put visible to curio get."""
     queue = UniversalQueue()
@@ -401,6 +409,7 @@ def test_universal_queue_without_fd_rejects_fileno():
 
 # ── CVI-6: UniversalEvent sync set → curio waiter ────────────────
 
+@pytest.mark.depends_on("test_universal_event_clear_resets_shared_flag")
 def test_universal_event_sync_set_is_visible_to_curio_waiter():
     """CVI-6: UniversalEvent sync set visible to curio waiter."""
     event = UniversalEvent()
@@ -432,7 +441,7 @@ def test_universal_event_curio_set_is_visible_synchronously():
 
 # ── CVI-6: UniversalEvent thread set → curio waiter ──────────────
 
-@pytest.mark.depends_on("test_universal_event_sync_set_is_visible_to_curio_waiter")
+@pytest.mark.depends_on("test_universal_event_clear_resets_shared_flag")
 def test_cross_view_universal_event_thread_set_releases_curio_waiter():
     """CVI-6: thread set on UniversalEvent releases curio waiter."""
     async def main():
@@ -535,6 +544,7 @@ def test_product_state_universal_projection_shares_result_with_thread():
 
 # ── CVI-8: ignore_after suppresses timeout ────────────────────────
 
+@pytest.mark.depends_on("test_ignore_after_context_reports_own_expiration")
 def test_ignore_after_suppresses_timeout_via_expired_flag():
     """CVI-8: ignore_after suppresses timeout via expired flag."""
     async def main():
@@ -547,6 +557,7 @@ def test_ignore_after_suppresses_timeout_via_expired_flag():
 
 # ── Representative workflow: worker + queue + task group ──────────
 
+@pytest.mark.depends_on("test_queue_returns_items_in_fifo_order")
 def test_representative_worker_queue_taskgroup_workflow():
     """Seam: lifecycle crossing — worker queue TaskGroup workflow completes."""
     async def worker(queue):

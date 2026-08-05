@@ -7,6 +7,8 @@ from __future__ import annotations
 import pytest
 from werkzeug.routing import BuildError
 
+pytestmark = pytest.mark.asyncio
+
 from quart import (
     Quart,
     Response,
@@ -79,7 +81,7 @@ async def test_make_response_none_raises_type_error():
 async def test_jsonify_returns_json_response():
     app = make_app()
     async with app.app_context():
-        resp = await jsonify(key="val")
+        resp = jsonify(key="val")
         assert resp.status_code == 200
         assert resp.content_type == "application/json"
         data = await resp.get_json()
@@ -89,9 +91,16 @@ async def test_jsonify_returns_json_response():
 async def test_jsonify_positional_args_produce_array():
     app = make_app()
     async with app.app_context():
-        resp = await jsonify(1, 2, 3)
+        resp = jsonify(1, 2, 3)
         data = await resp.get_json()
         assert data == [1, 2, 3]
+
+
+async def test_jsonify_rejects_unserializable_value():
+    app = make_app()
+    async with app.app_context():
+        with pytest.raises(TypeError):
+            jsonify(value=object())
 
 
 # =============================================================================
@@ -294,3 +303,53 @@ async def test_after_this_request_outside_context_raises():
     from quart import after_this_request
     with pytest.raises(RuntimeError):
         after_this_request(lambda resp: resp)
+
+
+# --- new atomic tests ---
+
+
+async def test_url_for_with_scheme_overrides_default_scheme():
+    """url_for with _scheme must produce an external URL using that custom scheme."""
+    app = make_app()
+    app.config["SERVER_NAME"] = "myhost.test"
+
+    @app.route("/secure")
+    async def secure():
+        return ""
+
+    async with app.test_request_context("/"):
+        result = url_for("secure", _external=True, _scheme="https")
+        assert result == "https://myhost.test/secure"
+
+
+async def test_response_get_data_returns_bytes_by_default():
+    """Response.get_data must return bytes when as_text is not set."""
+    app = make_app()
+    async with app.app_context():
+        resp = await make_response("payload")
+        data = await resp.get_data()
+        assert isinstance(data, bytes)
+        assert data == b"payload"
+
+
+async def test_response_get_data_as_text_returns_string():
+    """Response.get_data(as_text=True) must return decoded text."""
+    app = make_app()
+    async with app.app_context():
+        resp = await make_response("text-body")
+        text = await resp.get_data(as_text=True)
+        assert isinstance(text, str)
+        assert text == "text-body"
+
+
+async def test_has_websocket_context_false_outside_handler():
+    """has_websocket_context must return False when no websocket context is active."""
+    assert has_websocket_context() is False
+
+
+async def test_copy_current_request_context_outside_raises():
+    """copy_current_request_context must raise RuntimeError when no request context is active."""
+    with pytest.raises(RuntimeError):
+        @copy_current_request_context
+        async def task():
+            pass

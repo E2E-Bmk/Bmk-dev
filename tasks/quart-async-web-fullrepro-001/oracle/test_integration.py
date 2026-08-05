@@ -8,11 +8,14 @@ from __future__ import annotations
 
 import pytest
 
+pytestmark = pytest.mark.asyncio
+
 from quart import (
     Quart,
     Response,
     Blueprint,
     abort,
+    copy_current_websocket_context,
     current_app,
     flash,
     g,
@@ -31,12 +34,16 @@ from quart.testing import WebsocketResponseError
 from conftest import make_app, run_async
 
 
+depends_on = pytest.mark.depends_on
+
+
 # =============================================================================
 # CVI-1: Handler result visible through test client
 # Seam: route → dispatch → response conversion → client
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_response_get_data_as_text_returns_string", "test_response_get_data_returns_bytes_by_default", "test_make_response_from_string")
 async def test_string_handler_returns_text_response():
     """CVI-1: Seam: protocol handoff — string handler return ↔ test client text response."""
     app = make_app()
@@ -51,6 +58,7 @@ async def test_string_handler_returns_text_response():
     assert await resp.get_data(as_text=True) == "hello world"
 
 
+@pytest.mark.depends_on("test_jsonify_returns_json_response", "test_response_get_data_returns_bytes_by_default", "test_response_get_data_as_text_returns_string")
 async def test_dict_handler_returns_json_response():
     """CVI-1: Seam: protocol handoff — dict handler return ↔ test client JSON response."""
     app = make_app()
@@ -65,6 +73,7 @@ async def test_dict_handler_returns_json_response():
     assert await resp.get_json() == {"key": "value"}
 
 
+@pytest.mark.depends_on("test_make_response_from_tuple_with_status", "test_has_websocket_context_false_outside_handler")
 async def test_tuple_handler_applies_status_and_headers():
     """CVI-1: Seam: protocol handoff — tuple handler return ↔ status code and custom headers."""
     app = make_app()
@@ -79,6 +88,8 @@ async def test_tuple_handler_applies_status_and_headers():
     assert resp.headers["X-Custom"] == "yes"
 
 
+@depends_on("test_atomic::test_int_converter_rejects_non_integer")
+@pytest.mark.depends_on("test_response_get_data_returns_bytes_by_default", "test_response_get_data_as_text_returns_string", "test_jsonify_returns_json_response")
 async def test_unmatched_route_returns_404():
     """CVI-1: Seam: error propagation — unmatched route ↔ 404 response."""
     app = make_app()
@@ -92,6 +103,7 @@ async def test_unmatched_route_returns_404():
     assert resp.status_code == 404
 
 
+@pytest.mark.depends_on("test_response_get_data_returns_bytes_by_default", "test_response_get_data_as_text_returns_string", "test_jsonify_returns_json_response")
 async def test_wrong_method_returns_405():
     """CVI-1: Seam: error propagation — disallowed HTTP method ↔ 405 response."""
     app = make_app()
@@ -111,6 +123,8 @@ async def test_wrong_method_returns_405():
 # =============================================================================
 
 
+@depends_on("test_atomic::test_url_for_generates_path")
+@pytest.mark.depends_on("test_after_this_request_outside_context_raises")
 async def test_blueprint_routes_accessible_after_registration():
     """CVI-2: Seam: protocol handoff — blueprint registration ↔ prefixed route dispatch."""
     app = make_app()
@@ -126,6 +140,8 @@ async def test_blueprint_routes_accessible_after_registration():
     assert await resp.get_data(as_text=True) == "items"
 
 
+@depends_on("test_atomic::test_url_for_generates_path")
+@pytest.mark.depends_on("test_url_for_missing_endpoint_raises", "test_url_for_with_scheme_overrides_default_scheme", "test_url_for_with_anchor")
 async def test_blueprint_endpoint_url_for():
     """CVI-2: Seam: state consistency — blueprint endpoint name ↔ url_for path generation."""
     app = make_app()
@@ -147,6 +163,9 @@ async def test_blueprint_endpoint_url_for():
 # =============================================================================
 
 
+@depends_on("test_atomic::test_g_namespace_within_context")
+@depends_on("test_atomic::test_app_context_resolves_current_app")
+@pytest.mark.depends_on("test_make_response_from_string", "test_make_response_from_tuple_with_status")
 async def test_session_persists_across_requests():
     """CVI-3: Seam: state consistency — session write ↔ cookie ↔ subsequent session read."""
     app = make_app()
@@ -166,6 +185,7 @@ async def test_session_persists_across_requests():
     assert await resp.get_data(as_text=True) == "stored"
 
 
+@pytest.mark.depends_on("test_make_response_from_string", "test_make_response_from_tuple_with_status")
 async def test_session_without_secret_key_errors():
     """CVI-3: Seam: error propagation — missing secret key ↔ session write failure."""
     app = Quart(__name__)
@@ -186,6 +206,7 @@ async def test_session_without_secret_key_errors():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_app_context_resolves_current_app")
 async def test_current_app_in_handler():
     """CVI-4: Seam: state consistency — request context ↔ current_app config resolution."""
     app = make_app()
@@ -206,6 +227,7 @@ async def test_current_app_in_handler():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_request_context_resolves_request")
 async def test_template_sees_request_path():
     """CVI-5: Seam: state consistency — request context ↔ template request.path variable."""
     app = make_app()
@@ -219,6 +241,7 @@ async def test_template_sees_request_path():
     assert "path=/tpl" in await resp.get_data(as_text=True)
 
 
+@pytest.mark.depends_on("test_config_from_prefixed_env")
 async def test_template_sees_config():
     """CVI-5: Seam: config interaction — app.config ↔ template config access."""
     app = make_app()
@@ -239,6 +262,7 @@ async def test_template_sees_config():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_has_websocket_context_false_outside_handler")
 async def test_websocket_text_round_trip():
     """CVI-6: Seam: protocol handoff — websocket text send ↔ client receive echo."""
     app = make_app()
@@ -255,6 +279,7 @@ async def test_websocket_text_round_trip():
     assert reply == "echo:hello"
 
 
+@pytest.mark.depends_on("test_response_get_data_returns_bytes_by_default", "test_has_websocket_context_false_outside_handler")
 async def test_websocket_bytes_round_trip():
     """CVI-6: Seam: protocol handoff — websocket bytes send ↔ client receive echo."""
     app = make_app()
@@ -272,6 +297,7 @@ async def test_websocket_bytes_round_trip():
     assert reply == b"binary-reply"
 
 
+@pytest.mark.depends_on("test_jsonify_returns_json_response", "test_has_websocket_context_false_outside_handler")
 async def test_websocket_json_round_trip():
     """CVI-6: Seam: state consistency — websocket JSON send ↔ receive round-trip."""
     app = make_app()
@@ -294,6 +320,9 @@ async def test_websocket_json_round_trip():
 # =============================================================================
 
 
+@depends_on("test_atomic::test_proxy_outside_context_raises")
+@depends_on("test_atomic::test_has_websocket_context_false_outside_handler")
+@pytest.mark.depends_on("test_make_response_none_raises_type_error", "test_url_for_missing_endpoint_raises", "test_response_get_data_returns_bytes_by_default")
 async def test_websocket_abort_raises_response_error():
     """CVI-7: Seam: error propagation — websocket abort(403) ↔ WebsocketResponseError."""
     app = make_app()
@@ -315,6 +344,7 @@ async def test_websocket_abort_raises_response_error():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_request_context_resolves_request")
 async def test_stream_with_context_preserves_request():
     """CVI-8: Seam: lifecycle crossing — stream generator ↔ preserved request context."""
     app = make_app()
@@ -338,6 +368,9 @@ async def test_stream_with_context_preserves_request():
 # =============================================================================
 
 
+@depends_on("test_atomic::test_g_namespace_within_context")
+@depends_on("test_atomic::test_app_context_resolves_current_app")
+@pytest.mark.depends_on("test_make_response_from_string", "test_make_response_from_tuple_with_status")
 async def test_flash_messages_persist_and_consumed():
     """Seam: state consistency — flash write ↔ session ↔ get_flashed_messages consumption."""
     app = make_app()
@@ -372,6 +405,7 @@ async def test_flash_messages_persist_and_consumed():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_response_get_data_returns_bytes_by_default", "test_response_get_data_as_text_returns_string", "test_request_context_resolves_request")
 async def test_request_get_data_returns_body():
     """Seam: protocol handoff — client POST body ↔ request.get_data echo."""
     app = make_app()
@@ -386,6 +420,7 @@ async def test_request_get_data_returns_body():
     assert await resp.get_data() == b"rawbytes"
 
 
+@depends_on("test_atomic::test_jsonify_returns_json_response")
 async def test_request_get_json_parses_json():
     """Seam: state consistency — client JSON POST ↔ request.get_json ↔ jsonify response."""
     app = make_app()
@@ -433,8 +468,9 @@ async def test_request_args_from_query_string():
 
 
 async def test_handler_returning_none_raises_type_error():
-    """Seam: error propagation — None handler return ↔ TypeError at dispatch."""
+    """Seam: error propagation — None handler return raises TypeError at dispatch."""
     app = make_app()
+    app.testing = True
 
     @app.route("/bad")
     async def handler():
@@ -451,6 +487,7 @@ async def test_handler_returning_none_raises_type_error():
 # =============================================================================
 
 
+@depends_on("test_atomic::test_request_context_resolves_request")
 async def test_client_retains_cookies():
     """Seam: state consistency — Set-Cookie response ↔ subsequent request Cookie header."""
     app = make_app()
@@ -544,3 +581,141 @@ async def test_websocket_send_json_rejects_mixed_args():
             await ws.receive()
     except Exception:
         pass
+
+
+# =============================================================================
+# Before/after request hooks
+# =============================================================================
+
+
+@depends_on("test_atomic::test_app_context_resolves_current_app")
+async def test_before_request_runs_before_handler():
+    """Seam: lifecycle crossing — before_request hook runs before route handler."""
+    app = make_app()
+
+    @app.before_request
+    async def hook():
+        g.hooked = True
+
+    @app.route("/check-hook")
+    async def handler():
+        return str(g.hooked)
+
+    client = app.test_client()
+    resp = await client.get("/check-hook")
+    assert await resp.get_data(as_text=True) == "True"
+
+
+@depends_on("test_atomic::test_make_response_from_string")
+async def test_after_request_modifies_response():
+    """Seam: lifecycle crossing — after_request hook modifies response headers."""
+    app = make_app()
+
+    @app.after_request
+    async def hook(resp):
+        resp.headers["X-After"] = "applied"
+        return resp
+
+    @app.route("/after")
+    async def handler():
+        return "ok"
+
+    client = app.test_client()
+    resp = await client.get("/after")
+    assert resp.headers["X-After"] == "applied"
+
+
+@depends_on("test_atomic::test_make_response_from_tuple_with_status")
+async def test_error_handler_catches_abort_code():
+    """Seam: error propagation — custom error handler catches abort status code."""
+    app = make_app()
+
+    @app.errorhandler(418)
+    async def teapot_handler(error):
+        return "I am a teapot", 418
+
+    @app.route("/brew")
+    async def handler():
+        abort(418)
+
+    client = app.test_client()
+    resp = await client.get("/brew")
+    assert resp.status_code == 418
+    assert await resp.get_data(as_text=True) == "I am a teapot"
+
+
+# =============================================================================
+# New integration tests
+# =============================================================================
+
+
+@depends_on("test_atomic::test_request_context_resolves_request", "test_atomic::test_response_get_data_as_text_returns_string")
+async def test_request_get_data_as_text_echoes_body():
+    """Seam: protocol handoff — client POST body ↔ request.get_data(as_text=True) round-trip."""
+    app = make_app()
+
+    @app.route("/text-body", methods=["POST"])
+    async def handler():
+        text = await request.get_data(as_text=True)
+        return text
+
+    client = app.test_client()
+    resp = await client.post("/text-body", data=b"echo-me")
+    assert await resp.get_data(as_text=True) == "echo-me"
+
+
+@depends_on("test_atomic::test_jsonify_returns_json_response", "test_atomic::test_request_context_resolves_request")
+async def test_request_get_json_force_parses_non_json_content_type():
+    """Seam: protocol handoff — get_json(force=True) parses despite non-JSON content type."""
+    app = make_app()
+
+    @app.route("/force-json", methods=["POST"])
+    async def handler():
+        data = await request.get_json(force=True)
+        return jsonify(received=data)
+
+    client = app.test_client()
+    resp = await client.post(
+        "/force-json",
+        data=b'{"key": "val"}',
+        headers={"Content-Type": "text/plain"},
+    )
+    result = await resp.get_json()
+    assert result["received"] == {"key": "val"}
+
+
+@depends_on("test_atomic::test_copy_current_app_context_preserves_g", "test_atomic::test_app_context_resolves_current_app")
+async def test_copy_current_websocket_context_preserves_websocket():
+    """Seam: lifecycle crossing — copy_current_websocket_context preserves websocket headers."""
+    app = make_app()
+    captured = {}
+
+    @app.websocket("/ws-ctx")
+    async def ws_handler():
+        @copy_current_websocket_context
+        async def background():
+            captured["host"] = websocket.headers.get("host", "none")
+
+        await websocket.accept()
+        await background()
+        await websocket.send("done")
+
+    client = app.test_client()
+    async with client.websocket("/ws-ctx") as ws:
+        reply = await ws.receive()
+    assert reply == "done"
+    assert captured == {"host": "localhost"}
+
+
+@pytest.mark.depends_on("test_url_for_generates_path")
+async def test_default_string_converter_rejects_slash_through_routing():
+    """Seam: a default string converter rejects slash-containing route values."""
+    app = make_app()
+
+    @app.route("/item/<name>")
+    async def handler(name):
+        return name
+
+    client = app.test_client()
+    assert (await client.get("/item/a")).status_code == 200
+    assert (await client.get("/item/a/b")).status_code == 404

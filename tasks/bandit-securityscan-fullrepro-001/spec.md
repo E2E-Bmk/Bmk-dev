@@ -1,106 +1,87 @@
 ﻿# Bandit Specification
 
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
+
 ## Product Overview
 
 Bandit is a local security linter for Python source. It parses each selected source file, applies installed security rules to the syntax tree, records issues and scan metrics, and projects that state through a command exit status and one selected report format.
 
 The scanner must report common security patterns rather than prove exploitability. Each issue must identify the rule, severity, confidence, CWE, source location, explanatory text, and documentation link. A file that cannot be parsed must be recorded as skipped instead of terminating an otherwise valid scan.
 
-## Scope
+## Non-Goals
 
-This contract covers:
+- This specification does not require CLI/core carrier modules, private helpers, manager fields, AST context storage, or plugin implementation helpers.
+- This specification does not require Exact report bytes, prose, whitespace, timestamps, ordering, path separator style, terminal color, HTML structure/style, or absolute-path normalization.
+- This specification does not require Full reconstruction of internal AST visitor state or manager mutation APIs.
+- Rules B109 and B111 are intentionally excluded from the active scanning contract.
+- This specification does not require CI services, pre-commit integration, containers, remote repositories, hosted integrations, or network services.
+- This specification does not require Git operations beyond the local two-commit baseline workflow.
+- This specification does not require Security correctness beyond the documented rule patterns; the tool does not promise absence of vulnerabilities.
 
-- local files, directories, recursive discovery, and standard-input source;
-- installed documented B1xx through B7xx rules and their semantic ratings;
-- YAML, TOML, project INI, named-profile, command-line test selection, and plugin settings;
-- path exclusions, severity/confidence thresholds, line-level `nosec`, and JSON baselines;
-- the `bandit`, `bandit-config-generator`, and `bandit-baseline` console scripts;
-- CSV, custom, HTML, JSON, SARIF, screen, text, XML, and YAML reports as semantic projections;
-- the documented `bandit.plugins`, `bandit.blacklists`, and `bandit.formatters` extension entry contracts.
+## Representative Workflows
 
-Invalid arguments, configuration, profiles, templates, or unavailable required files must follow the failures in Error Semantics and Invocation Protocol.
+### Configure, scan, and consume JSON
 
-## Installable Surface
+Create `bandit.yaml`:
 
-Installing `bandit` must provide these package-level names:
+```yaml
+exclude_dirs: [tests]
+tests: [B101, B102, B506]
+skips: [B101]
+```
+
+Because the same ID must not appear in effective include and exclude sets, this example must exit 2 until B101 is removed from one list. A valid profile is:
+
+```yaml
+exclude_dirs: [tests]
+tests: [B102, B506]
+```
+
+Run:
+
+```console
+bandit -r src -c bandit.yaml -f json -o bandit.json
+```
+
+The command must discover Python files below `src`, exclude configured paths, run only B102 and B506, write parsed issues/errors/metrics to `bandit.json`, and return 1 when either rule remains reportable or 0 when neither remains. An unreadable source must appear in `errors` without preventing valid files from being reported.
+
+### Establish and apply a baseline
+
+```console
+bandit -r src -f json -o baseline.json
+bandit -r src -b baseline.json -f json -o current.json
+```
+
+The first command must return 1 when it records existing findings. The second command must suppress semantically matching findings even after line movement, retain new findings, keep current metrics, and return status from only the retained result set. Replacing the second format with YAML must exit 2 because YAML is not baseline-capable.
+
+### Add a rule plugin
 
 ```python
-from bandit import HIGH, LOW, MEDIUM, UNDEFINED
-from bandit import Issue, checks, takes_config, test_id
+import bandit
+
+@bandit.test_id("B900")
+@bandit.checks("Call")
+def prohibit_unsafe_deserialization(context):
+    if "unsafe_load" in context.call_function_name_qual:
+        return bandit.Issue(
+            severity=bandit.HIGH,
+            confidence=bandit.HIGH,
+            text="Unsafe deserialization detected.",
+        )
+    return None
 ```
 
-The rating constants must be the uppercase strings named by each constant. `bandit` must expose its installed `__version__` and distribution author as `__author__`.
-
-Installation must register these console scripts:
-
-```text
-bandit
-bandit-config-generator
-bandit-baseline
-```
-
-Installation must discover third-party entries in `bandit.plugins`, `bandit.blacklists`, and `bandit.formatters`. Direct imports from CLI, core, formatter, blacklist, or plugin implementation carriers are not part of this contract.
-
-## Public API
-
-### Plugin results and decorators
-
-```python
-Issue(
-    severity,
-    cwe=0,
-    confidence=UNDEFINED,
-    text="",
-    ident=None,
-    lineno=None,
-    test_id="",
-    col_offset=-1,
-    end_col_offset=0,
-)
-
-checks(*node_types)
-takes_config(function_or_name)
-test_id(id_value)
-```
-
-An `Issue` returned by a test plugin must carry its supplied rating, CWE number, text, and optional location metadata. The scanner must attach the installed rule ID, rule name, filename, complete line range, and missing location data before exposing the issue in a report. Byte-valued issue text must be decoded as UTF-8. An omitted CWE must project as no CWE object rather than a fabricated identifier.
-
-`checks` must declare one or more valid syntax-node names handled by a plugin. An unknown node name must not match a scanned AST node. `test_id` must declare the rule ID. A plugin without a declared ID must be skipped with a warning. `takes_config` must support both `@takes_config` and `@takes_config("shared_section")`; the scanner must pass the selected configuration dictionary to that plugin.
-
-### Extension entry contracts
-
-A `bandit.plugins` entry must resolve to a decorated callable receiving the scanner-provided context. It must return one `bandit.Issue` when the current syntax node matches or return `None` when it does not. The context object's internal storage and AST-manager state are not public contracts.
-
-A configurable plugin module must expose `gen_config(plugin_name)` returning its built-in settings dictionary. The scanner must use those settings when the selected configuration has no section for that plugin. `bandit-config-generator` must use the same returned settings. When a plugin section is present, that section must supply the plugin settings instead of being merged with omitted built-in list values.
-
-A `bandit.blacklists` entry must return a mapping whose supported keys are `Call` and `Import`. Each mapped list item must contain `name`, unique `id`, `qualnames`, `message`, and `level`; an optional CWE must become the issue CWE. Installed blacklist items must participate in normal `tests` and `skips` filtering by their B3xx or B4xx ID. An entry missing a required item key must be unusable and must not produce a partial security issue.
-
-A `bandit.formatters` entry must resolve to a callable with the documented contract:
-
-```python
-report(manager, fileobj, sev_level, conf_level, lines=-1)
-```
-
-The callable must write its projection to `fileobj` using issues at or above both supplied thresholds. A formatter that cannot serialize the selected state must terminate the invocation nonzero without claiming a successful report. Built-in format names are CLI contracts, not promised direct-import module paths.
-
-## Product State Model
-
-One scan produces a single current state with three public projections:
-
-1. **Issue projection:** selected and detected findings, each with rule identity, ratings, CWE, message, filename, source span, and optional code context.
-2. **Run projection:** per-file and total metrics plus skipped-file errors. Metrics describe the selected scan before report thresholds and baseline suppression; `nosec` suppression is already reflected.
-3. **Delivery projection:** the chosen report, baseline comparison view, and process exit status after severity, confidence, and baseline filtering.
-
-The same current state must satisfy these top-level invariants:
-
-- An issue present in two report formats must return the same rule ID, ratings, CWE, message, filename, and source span in both projections.
-- Run totals must equal the sum of corresponding per-file metrics when all scanned files expose per-file metrics.
-- Exit 1 must mean that the delivery projection contains at least one reportable issue, except when `--exit-zero` explicitly changes the status to 0.
-- A skipped parse error must appear in the run projection and must not become an issue in the issue projection.
+Register the callable under the `bandit.plugins` entry-point group. A matching call must become a B900 issue in every selected report; a nonmatching call must return no issue. Registration without an ID must skip the plugin with a warning.
 
 ## Scanning and Selection
 
-`bandit TARGET...` must scan explicit Python files. `-r/--recursive` must discover Python files below directory targets and must also enable automatic discovery of one project `.bandit` file. A target of `-` must scan Python source from standard input and report its filename as `<stdin>`. No target must print usage and exit 2.
+Scanning discovers Python source files, applies rule selection, and filters results by severity and confidence thresholds.
+
+**Target discovery.** `bandit TARGET...` must scan explicit Python files. When `-r/--recursive` is used, it must discover Python files below directory targets and must also enable automatic discovery of one project `.bandit` file. A target of `-` must scan Python source from standard input and report its filename as `<stdin>`. No target must print usage and exit 2.
 
 Recursive discovery must exclude the default patterns `.svn`, `CVS`, `.bzr`, `.hg`, `.git`, `__pycache__`, `.tox`, `.eggs`, and `*.egg`. YAML/TOML `exclude_dirs` and CLI `-x/--exclude` glob lists must be additive. A file matched by either source must not contribute issues or file metrics. Multiple automatically discovered `.bandit` files must exit 2; `--ini PATH` must select one explicit INI file.
 
@@ -119,7 +100,9 @@ Severity and confidence each use `UNDEFINED < LOW < MEDIUM < HIGH`. Repeated `-l
 
 ## Configuration and Suppression
 
-YAML and TOML configuration must be loaded only through `-c/--configfile`. TOML settings must be read from `[tool.bandit]`; plugin settings must be read from corresponding nested tables. Project INI settings must be read from `[bandit]`. The documented selection keys are `tests` and `skips`; the documented exclusion key is `exclude_dirs` for YAML/TOML and `exclude` for INI. INI must additionally support `targets` and the documented CLI-equivalent options.
+Configuration controls which rules run, how they are parameterized, and how inline suppression comments affect results.
+
+**Configuration sources.** YAML and TOML configuration must be loaded only through `-c/--configfile`. TOML settings must be read from `[tool.bandit]`; plugin settings must be read from corresponding nested tables. Project INI settings must be read from `[bandit]`. The documented selection keys are `tests` and `skips`; the documented exclusion key is `exclude_dirs` for YAML/TOML and `exclude` for INI. INI must additionally support `targets` and the documented CLI-equivalent options.
 
 Malformed configuration, an unreadable explicit config, or a configuration whose required values have invalid types must exit 2. Unsupported config keys must not create new scanner behavior.
 
@@ -137,7 +120,9 @@ A bare `# nosec` on an issue line must suppress every rule result on that line. 
 
 ## Documented Rule Detection
 
-Ratings below use `severity/confidence`. Every reported rule must return the listed CWE. A nonmatching construct must return no issue for that rule. Exact explanatory prose is not part of the contract.
+Each rule detects a specific security-relevant pattern in Python source and reports it with defined severity, confidence, and CWE classification.
+
+**Rating conventions.** Ratings below use `severity/confidence`. Every reported rule must return the listed CWE. A nonmatching construct must return no issue for that rule. Exact explanatory prose is not part of the contract.
 
 ### General and application rules
 
@@ -231,7 +216,9 @@ Blacklist import matches must use HIGH confidence and must match direct imports,
 
 ## Baselines
 
-`-b/--baseline PATH` must read a Bandit JSON report. A current issue with the same filename, rule identity, text, ratings, and CWE as a baseline issue must be suppressed even when its line number moved. A semantically new issue must remain reportable. Current-run metrics must continue to count both baseline-matched and new current findings.
+Baselines suppress previously known findings so that only new issues are reported.
+
+**Baseline comparison.** When `-b/--baseline PATH` is supplied, the scanner must read a Bandit JSON report. A current issue with the same filename, rule identity, text, ratings, and CWE as a baseline issue must be suppressed even when its line number moved. A semantically new issue must remain reportable. Current-run metrics must continue to count both baseline-matched and new current findings.
 
 Baseline output must be accepted only by `custom`, `html`, `json`, `screen`, and `txt`. JSON and human baseline-capable reports must represent candidate locations when a new semantic issue cannot be assigned to one location unambiguously. Selecting another formatter with `-b` must exit 2. A missing baseline must exit 2. Readable malformed JSON must emit a warning, act as an empty baseline, and continue the current scan.
 
@@ -239,7 +226,9 @@ Baseline output must be accepted only by `custom`, `html`, `json`, `screen`, and
 
 ## Reports
 
-All formats must project the same filtered issue facts. Exact bytes, whitespace, prose layout, timestamps, absolute versus relative rendering, path separators, item order, color codes, and styling are not stable contracts.
+Report formatters project the same filtered scan results into different output representations for consumption by humans and tools.
+
+**General contract.** All formats must project the same filtered issue facts. Exact bytes, whitespace, prose layout, timestamps, absolute versus relative rendering, path separators, item order, color codes, and styling are not stable contracts.
 
 ### JSON and YAML
 
@@ -274,6 +263,21 @@ HTML, screen, and text must expose each filtered issue's rule ID/name, message, 
 
 Custom output must accept Python `str.format` field syntax for the documented tags `{abspath}`, `{relpath}`, `{line}`, `{col}`, `{test_id}`, `{severity}`, `{msg}`, `{confidence}`, and `{range}`. It must return one expanded line per filtered issue and must honor width, alignment, and other standard field format specifications. An unknown tag must remain literal and emit a warning. A malformed template or a template containing no fields must exit 2. `--msg-template` used with any non-custom format must exit 2.
 
+## State Model
+
+One scan produces a single current state with three public projections:
+
+1. **Issue projection:** selected and detected findings, each with rule identity, ratings, CWE, message, filename, source span, and optional code context.
+2. **Run projection:** per-file and total metrics plus skipped-file errors. Metrics describe the selected scan before report thresholds and baseline suppression; `nosec` suppression is already reflected.
+3. **Delivery projection:** the chosen report, baseline comparison view, and process exit status after severity, confidence, and baseline filtering.
+
+The same current state must satisfy these top-level invariants:
+
+- An issue present in two report formats must return the same rule ID, ratings, CWE, message, filename, and source span in both projections.
+- Run totals must equal the sum of corresponding per-file metrics when all scanned files expose per-file metrics.
+- Exit 1 must mean that the delivery projection contains at least one reportable issue, except when `--exit-zero` explicitly changes the status to 0.
+- A skipped parse error must appear in the run projection and must not become an issue in the issue projection.
+
 ## Error Semantics
 
 Bandit is a console-first tool. Operational failures must return process status rather than expose internal exception classes.
@@ -302,72 +306,57 @@ Bandit is a console-first tool. Operational failures must return process status 
 9. JSON and YAML metrics must return equal semantic totals, and SARIF run metrics must return those same totals for the same invocation.
 10. Code context length selected by `-n` must affect only context/snippet projections and must not change issue identity, metrics, baseline matching, or exit status.
 
-## Representative Workflows
+## Public Interface
 
-### Configure, scan, and consume JSON
+### Import Surface
 
-Create `bandit.yaml`:
-
-```yaml
-exclude_dirs: [tests]
-tests: [B101, B102, B506]
-skips: [B101]
-```
-
-Because the same ID must not appear in effective include and exclude sets, this example must exit 2 until B101 is removed from one list. A valid profile is:
-
-```yaml
-exclude_dirs: [tests]
-tests: [B102, B506]
-```
-
-Run:
-
-```console
-bandit -r src -c bandit.yaml -f json -o bandit.json
-```
-
-The command must discover Python files below `src`, exclude configured paths, run only B102 and B506, write parsed issues/errors/metrics to `bandit.json`, and return 1 when either rule remains reportable or 0 when neither remains. An unreadable source must appear in `errors` without preventing valid files from being reported.
-
-### Establish and apply a baseline
-
-```console
-bandit -r src -f json -o baseline.json
-bandit -r src -b baseline.json -f json -o current.json
-```
-
-The first command must return 1 when it records existing findings. The second command must suppress semantically matching findings even after line movement, retain new findings, keep current metrics, and return status from only the retained result set. Replacing the second format with YAML must exit 2 because YAML is not baseline-capable.
-
-### Add a rule plugin
+Installing `bandit` must provide these package-level names:
 
 ```python
-import bandit
-
-@bandit.test_id("B900")
-@bandit.checks("Call")
-def prohibit_unsafe_deserialization(context):
-    if "unsafe_load" in context.call_function_name_qual:
-        return bandit.Issue(
-            severity=bandit.HIGH,
-            confidence=bandit.HIGH,
-            text="Unsafe deserialization detected.",
-        )
-    return None
+from bandit import HIGH, LOW, MEDIUM, UNDEFINED
+from bandit import Issue, checks, takes_config, test_id
 ```
 
-Register the callable under the `bandit.plugins` entry-point group. A matching call must become a B900 issue in every selected report; a nonmatching call must return no issue. Registration without an ID must skip the plugin with a warning.
+The rating constants must be the uppercase strings named by each constant. `bandit` must expose its installed `__version__` and distribution author as `__author__`.
 
-## Non-Goals
+Installation must register these console scripts:
 
-- Direct use of CLI/core carrier modules, private helpers, manager fields, AST context storage, or plugin implementation helpers is not supported.
-- Exact report bytes, prose, whitespace, timestamps, ordering, path separator style, terminal color, HTML structure/style, and absolute-path normalization are not specified.
-- Full reconstruction of internal AST visitor state or manager mutation APIs is not required.
-- Removed B109 and B111 rules are not active scanning contracts.
-- CI services, pre-commit behavior, containers, remote repositories, hosted integrations, and network services are excluded.
-- Git operations beyond the local two-commit `bandit-baseline` workflow are excluded.
-- Security correctness beyond the documented rule patterns is excluded; Bandit does not promise absence of vulnerabilities.
+```text
+bandit
+bandit-config-generator
+bandit-baseline
+```
 
-## Invocation Protocol
+Installation must discover third-party entries in `bandit.plugins`, `bandit.blacklists`, and `bandit.formatters`. Direct imports from CLI, core, formatter, blacklist, or plugin implementation carriers are not part of this contract.
+
+### API Catalog
+
+| Name | Kind | Role |
+|------|------|------|
+| `Issue` | class | Security finding carrying severity, confidence, CWE, and text |
+| `checks` | decorator | Declare syntax-node types handled by a plugin |
+| `test_id` | decorator | Declare the rule ID for a plugin |
+| `takes_config` | decorator | Mark a plugin as receiving configuration |
+| `HIGH` | constant | Highest rating level |
+| `MEDIUM` | constant | Middle rating level |
+| `LOW` | constant | Lowest rating level |
+| `UNDEFINED` | constant | Unspecified rating level |
+
+### Plugin and Extension Contracts
+
+An `Issue` returned by a test plugin must carry its supplied rating, CWE number, text, and optional location metadata. The constructed `Issue` must expose `severity`, `confidence`, `text`, `lineno`, `test_id`, `col_offset`, and `end_col_offset` as public attributes matching the values supplied at construction. The scanner must attach the installed rule ID, rule name, filename, complete line range, and missing location data before exposing the issue in a report. Byte-valued issue text must be decoded as UTF-8. An omitted CWE must project as no CWE object rather than a fabricated identifier.
+
+`checks` must declare one or more valid syntax-node names handled by a plugin. An unknown node name must not match a scanned AST node. `test_id` must declare the rule ID. A plugin without a declared ID must be skipped with a warning. `takes_config` must support both `@takes_config` and `@takes_config("shared_section")`; the scanner must pass the selected configuration dictionary to that plugin.
+
+A `bandit.plugins` entry must resolve to a decorated callable receiving the scanner-provided context. It must return one `bandit.Issue` when the current syntax node matches or return `None` when it does not. The context object's internal storage and AST-manager state are not public contracts.
+
+A configurable plugin module must expose `gen_config(plugin_name)` returning its built-in settings dictionary. The scanner must use those settings when the selected configuration has no section for that plugin. `bandit-config-generator` must use the same returned settings. When a plugin section is present, that section must supply the plugin settings instead of being merged with omitted built-in list values.
+
+A `bandit.blacklists` entry must return a mapping whose supported keys are `Call` and `Import`. Each mapped list item must contain `name`, unique `id`, `qualnames`, `message`, and `level`; an optional CWE must become the issue CWE. Installed blacklist items must participate in normal `tests` and `skips` filtering by their B3xx or B4xx ID. An entry missing a required item key must be unusable and must not produce a partial security issue.
+
+A `bandit.formatters` entry must resolve to a callable that writes its projection to the output using issues at or above both supplied severity and confidence thresholds. A formatter that cannot serialize the selected state must terminate the invocation nonzero without claiming a successful report. Built-in format names are CLI contracts, not promised direct-import module paths.
+
+### CLI Entry Points
 
 `python -m bandit` is not supported. Use the installed console scripts.
 
@@ -401,10 +390,10 @@ bandit-baseline [-f {txt,html,json}] targets... [additional bandit options]
 
 The script must return 0 or 1 from the current comparison scan and 2 for baseline setup failure. It must not leave the repository checked out at the parent commit after success or failure.
 
-## Environment
+## Appendix A: Environment
 
 The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-## Evaluation Notes
+## Appendix B: Assessment Notes
 
-Assessment exercises public console scripts, package-level plugin symbols, documented extension entry groups, and parsed report outputs. It compares semantic issue identity, ratings, CWE, locations, metrics, suppression, selection, baseline behavior, skipped-file errors, and exit status across formats. Exact presentation, timestamps, ordering, platform-specific path spelling, terminal color, HTML styling, internal manager classes, and registry layout are not assessed.
+Compatibility covers public console scripts, package-level plugin symbols, documented extension entry groups, and parsed report outputs. It compares semantic issue identity, ratings, CWE, locations, metrics, suppression, selection, baseline behavior, skipped-file errors, and exit status across formats. Exact presentation, timestamps, ordering, platform-specific path spelling, terminal color, HTML styling, internal manager classes, and registry layout are not part of this contract.

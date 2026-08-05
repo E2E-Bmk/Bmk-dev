@@ -29,6 +29,7 @@ from cattrs.gen import make_dict_structure_fn, make_dict_unstructure_fn
 # --- State Consistency: register hook → structure/unstructure/lookup ---
 
 
+@pytest.mark.depends_on("test_register_structure_hook_overrides_default", "test_get_structure_hook_returns_callable")
 def test_registered_hook_affects_structure_and_lookup():
     """Seam: state consistency between register and structure + get_hook."""
     @define
@@ -45,6 +46,7 @@ def test_registered_hook_affects_structure_and_lookup():
     assert hook({"v": "3"}, Token) == Token(13)
 
 
+@pytest.mark.depends_on("test_register_unstructure_hook_overrides_default")
 def test_registered_hook_affects_unstructure_and_lookup():
     """Seam: state consistency between register and unstructure + get_hook."""
     @define
@@ -59,6 +61,7 @@ def test_registered_hook_affects_unstructure_and_lookup():
     assert hook(Token(3)) == {"value": 6}
 
 
+@pytest.mark.depends_on("test_register_structure_hook_overrides_default")
 def test_hook_on_one_converter_does_not_affect_another():
     """Seam: state consistency - converter instances are isolated."""
     first = Converter()
@@ -69,6 +72,7 @@ def test_hook_on_one_converter_does_not_affect_another():
     assert second.structure("1", int) == 1
 
 
+@pytest.mark.depends_on("test_register_structure_hook_overrides_default")
 def test_global_registration_affects_top_level_functions():
     """Seam: state consistency between global registration and cattrs.structure."""
     @define
@@ -88,6 +92,7 @@ def test_global_registration_affects_top_level_functions():
 # --- Protocol Handoff: nested type hooks ---
 
 
+@pytest.mark.depends_on("test_structure_list_from_tuple_input", "test_register_structure_hook_overrides_default")
 def test_custom_int_hook_applies_inside_list_field():
     """Seam: protocol handoff - type hook recurses into containers."""
     @define
@@ -100,6 +105,7 @@ def test_custom_int_hook_applies_inside_list_field():
     assert converter.structure({"nums": ["1", "2"]}, Model) == Model([2, 3])
 
 
+@pytest.mark.depends_on("test_structure_mapping_converts_keys_and_values", "test_register_structure_hook_overrides_default")
 def test_custom_int_hook_applies_inside_mapping_values():
     """Seam: protocol handoff - type hook recurses into mapping values."""
     @define
@@ -112,6 +118,7 @@ def test_custom_int_hook_applies_inside_mapping_values():
     assert converter.structure({"data": {"a": "1"}}, Model) == Model({"a": 11})
 
 
+@pytest.mark.depends_on("test_structure_attrs_class_from_dict", "test_register_structure_hook_overrides_default")
 def test_custom_hook_applies_to_nested_attrs_class():
     """Seam: protocol handoff - hook for child class used in parent structuring."""
     @define
@@ -133,6 +140,7 @@ def test_custom_hook_applies_to_nested_attrs_class():
 # --- Config Interaction: converter options ---
 
 
+@pytest.mark.depends_on("test_override_omit_if_default_skips_default_value")
 def test_converter_omit_if_default_omits_all_defaults():
     """Seam: config interaction between converter default and unstructure."""
     @define
@@ -166,6 +174,7 @@ def test_class_level_omit_if_default_overridden_per_field():
     assert converter.unstructure(Model()) == {"keep": 99}
 
 
+@pytest.mark.depends_on("test_structure_attrs_class_from_dict")
 def test_prefer_attrib_converters_true_uses_field_converter():
     """Seam: config interaction between attrib converter priority and hook."""
     @define
@@ -202,6 +211,7 @@ def test_use_alias_true_uses_attrs_alias():
     assert converter.unstructure(Model(5)) == {"count": 5}
 
 
+@pytest.mark.depends_on("test_unstructure_as_tuple_strategy", "test_structure_attrs_fromtuple")
 def test_as_tuple_strategy_structures_from_sequence():
     """Seam: config interaction between strategy and structure input format."""
     @define
@@ -264,6 +274,7 @@ def test_converter_copy_preserves_and_isolates():
 # --- Error Propagation: validation groups and paths ---
 
 
+@pytest.mark.depends_on("test_structure_missing_required_field_raises_class_validation_error")
 def test_detailed_validation_groups_multiple_field_errors():
     """Seam: error propagation through class field structuring."""
     @define
@@ -312,6 +323,7 @@ def test_forbidden_extra_keys_in_detailed_validation():
 # --- Round-trip consistency ---
 
 
+@pytest.mark.depends_on("test_structure_attrs_class_from_dict", "test_unstructure_attrs_class_to_dict")
 def test_structure_then_unstructure_preserves_shape():
     """Seam: state consistency between structure and unstructure."""
     @define
@@ -334,6 +346,7 @@ def test_structure_then_unstructure_preserves_shape():
     }
 
 
+@pytest.mark.depends_on("test_structure_attrs_class_from_dict", "test_unstructure_attrs_class_to_dict")
 def test_unstructure_then_structure_reconstructs():
     """Seam: state consistency between unstructure and structure."""
     @dataclass

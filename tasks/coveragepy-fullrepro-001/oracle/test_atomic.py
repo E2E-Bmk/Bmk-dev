@@ -223,3 +223,92 @@ def test_coverage_erase_removes_data_file(tmp_path):
     assert data_path.exists()
     cov.erase()
     assert not data_path.exists()
+
+
+# --- new atomic tests ---
+
+
+def test_coverage_alias_is_same_class():
+    """coverage.coverage must be a compatibility alias for coverage.Coverage."""
+    assert coverage.coverage is Coverage
+
+
+def test_measured_contexts_includes_static_context_label(tmp_path):
+    """measured_contexts must include the static context label used during collection."""
+    cov, _ = collect_file(tmp_path, "x = 1\n", context="harvest-ctx")
+    data = CoverageData(basename=str(tmp_path / ".coverage"))
+    data.read()
+    assert "harvest-ctx" in data.measured_contexts()
+
+
+def test_process_startup_without_configuration_does_not_start_measurement(monkeypatch):
+    """process_startup must be inert unless a startup configuration is requested."""
+    from coverage import process_startup
+
+    monkeypatch.delenv("COVERAGE_PROCESS_START", raising=False)
+    monkeypatch.delenv("COVERAGE_PROCESS_CONFIG", raising=False)
+    assert process_startup(force=True) is None
+
+
+def test_set_query_context_narrows_line_results_to_matching_context(tmp_path):
+    """set_query_context must filter lines() to only return data from the named context."""
+    program = write_py(tmp_path / "ctx_narrow.py", "a = 10\nb = 20\n")
+    cov = Coverage(
+        data_file=str(tmp_path / ".coverage"),
+        source=[str(tmp_path)], context="narrow-label",
+    )
+    cov.start()
+    exec(compile(program.read_text(encoding="utf-8"), str(program), "exec"), {})
+    cov.stop()
+    cov.save()
+    data = CoverageData(basename=str(tmp_path / ".coverage"))
+    data.read()
+    filename = measured_file(data, "ctx_narrow.py")
+    data.set_query_context("narrow-label")
+    assert len(data.lines(filename)) >= 2
+    data.set_query_context("absent-ctx")
+    assert data.lines(filename) == []
+
+
+def test_get_and_set_option_roundtrip_configuration_value(tmp_path):
+    """get_option/set_option must read and update a configuration value."""
+    cov = Coverage(data_file=str(tmp_path / ".coverage"))
+    cov.set_option("report:precision", 4)
+    assert cov.get_option("report:precision") == 4
+
+
+def test_contexts_by_lineno_maps_lines_to_context_labels(tmp_path):
+    """contexts_by_lineno must return a mapping from executed lines to context labels."""
+    program = write_py(tmp_path / "linectx.py", "m = 5\nn = 6\n")
+    cov = Coverage(
+        data_file=str(tmp_path / ".coverage"),
+        source=[str(tmp_path)], context="line-ctx",
+    )
+    cov.start()
+    exec(compile(program.read_text(encoding="utf-8"), str(program), "exec"), {})
+    cov.stop()
+    cov.save()
+    data = CoverageData(basename=str(tmp_path / ".coverage"))
+    data.read()
+    filename = measured_file(data, "linectx.py")
+    ctx_map = data.contexts_by_lineno(filename)
+    assert isinstance(ctx_map, dict)
+    assert any("line-ctx" in contexts for contexts in ctx_map.values())
+
+
+def test_touch_files_marks_multiple_files_as_measured(tmp_path):
+    """touch_files must mark multiple files measured without adding line data."""
+    data = CoverageData(no_disk=True)
+    data.add_lines({str(tmp_path / "seed.py"): {1}})
+    data.touch_files([str(tmp_path / "extra_a.txt"), str(tmp_path / "extra_b.txt")])
+    measured = {Path(n).name for n in data.measured_files()}
+    assert {"extra_a.txt", "extra_b.txt"} <= measured
+
+
+def test_no_disk_erase_clears_in_memory_data():
+    """CoverageData.erase on a no_disk object must clear all in-memory measurements."""
+    data = CoverageData(no_disk=True)
+    data.add_lines({"virtual.py": {1, 2, 3}})
+    assert data.measured_files()
+    data.erase()
+    assert not data.measured_files()

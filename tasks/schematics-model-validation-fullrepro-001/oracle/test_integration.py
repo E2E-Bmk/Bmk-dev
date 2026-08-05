@@ -85,6 +85,7 @@ def test_modeltype_turns_mapping_into_nested_model():
     assert parent.to_native()["child"] == {"count": 5}
 
 
+@pytest.mark.depends_on("test_model_instance_exposes_converted_field_values")
 def test_modeltype_accepts_nested_model_instance():
     """CVI-6: Seam: state consistency — nested model instance ↔ ModelType field binding."""
     class Parent(Model):
@@ -105,7 +106,7 @@ def test_modeltype_rejects_non_model_non_mapping_value():
 
 # ── CVI-7: role exclusion removes same field from both exports ────
 
-@pytest.mark.depends_on("test_export_uses_serialized_field_name")
+@pytest.mark.depends_on("test_model_exports_native_and_primitive_mappings")
 def test_whitelist_role_exports_only_named_fields():
     """CVI-7: Seam: config interaction — whitelist role ↔ filtered native and primitive exports."""
     class RoleModel(Record):
@@ -117,6 +118,7 @@ def test_whitelist_role_exports_only_named_fields():
     assert item.to_primitive(role="public") == {"label": "Ada"}
 
 
+@pytest.mark.depends_on("test_model_exports_native_and_primitive_mappings")
 def test_blacklist_role_omits_named_field_in_both_views():
     """CVI-7: Seam: config interaction — blacklist role ↔ omitted field in both exports."""
     class RoleModel(Record):
@@ -128,6 +130,7 @@ def test_blacklist_role_omits_named_field_in_both_views():
     assert "count" not in item.to_primitive(role="public")
 
 
+@pytest.mark.depends_on("test_model_exports_native_and_primitive_mappings")
 def test_default_role_applies_when_no_role_is_requested():
     """CVI-7: Seam: config interaction — default role ↔ export without explicit role."""
     class RoleModel(Record):
@@ -158,6 +161,7 @@ def test_validate_reports_nested_field_errors_structurally():
 
 # ── Validation ────────────────────────────────────────────────────
 
+@pytest.mark.depends_on("test_model_exports_native_and_primitive_mappings")
 def test_model_validate_populates_validated_projection():
     """Seam: state consistency — validate() ↔ to_native validated projection."""
     item = Record({"name": "Ada"})
@@ -187,7 +191,7 @@ def test_unknown_mapping_assignment_raises_documented_error():
 
 # ── Field naming: serialized_name + deserialize_from ──────────────
 
-@pytest.mark.depends_on("test_export_uses_serialized_field_name")
+@pytest.mark.depends_on("test_model_exports_native_and_primitive_mappings")
 def test_declared_input_key_wins_over_alternate_keys():
     """Seam: config interaction — declared field key ↔ deserialize precedence over aliases."""
     class Aliased(Model):
@@ -231,6 +235,7 @@ def test_import_data_updates_and_returns_same_instance():
 
 # ── serialize ─────────────────────────────────────────────────────
 
+@pytest.mark.depends_on("test_model_exports_native_and_primitive_mappings")
 def test_serialize_returns_primitive_mapping():
     """Seam: state consistency — serialize() ↔ to_primitive mapping agreement."""
     item = Record({"name": "Ada", "count": "3"})
@@ -239,7 +244,7 @@ def test_serialize_returns_primitive_mapping():
 
 # ── List of models ───────────────────────────────────────────────
 
-@pytest.mark.depends_on("test_modeltype_turns_mapping_into_nested_model")
+@pytest.mark.depends_on("test_model_instance_exposes_converted_field_values")
 def test_list_of_models_exports_nested_primitive_mapping():
     """Seam: state consistency — ListType(ModelType) ↔ nested primitive export."""
     class Parent(Model):

@@ -90,7 +90,7 @@ def test_manager_ast_from_class_returns_classdef():
 
 # ── Manager: cache_module keeps first ─────────────────────────────
 
-@pytest.mark.depends_on("test_manager_ast_from_string_returns_cached_named_module")
+@pytest.mark.depends_on("test_parse_returns_module_with_name_and_path")
 def test_manager_cache_module_keeps_first_module_for_name():
     """Seam: state consistency — integration path for manager cache module keeps first module for name across cooperating public APIs."""
     MANAGER.clear_cache()
@@ -257,7 +257,7 @@ def test_cross_view_extract_node_parent_chain_and_rendering():
 
 # ── CVI-5: manager cache preserves lookup ─────────────────────────
 
-@pytest.mark.depends_on("test_manager_ast_from_string_returns_cached_named_module")
+@pytest.mark.depends_on("test_lookup_finds_visible_local_assignment")
 def test_cross_view_manager_cache_preserves_lookup_results(tmp_path):
     """CVI-5: manager cache preserves lookup and inference results across reload."""
     path = tmp_path / "cache_view.py"
@@ -270,7 +270,7 @@ def test_cross_view_manager_cache_preserves_lookup_results(tmp_path):
 
 # ── CVI-7: extender public_names + getattr + inference ────────────
 
-@pytest.mark.depends_on("test_register_module_extender_exposes_extension_public_names")
+@pytest.mark.depends_on("test_module_public_names_omits_private_names")
 def test_cross_view_extender_public_names_getattr_inference_agree(tmp_path, monkeypatch):
     """CVI-7: module extender keeps public_names, getattr, and inference consistent."""
     module_name = "generated_extender_cross_view_stage3"
@@ -289,7 +289,7 @@ def test_cross_view_extender_public_names_getattr_inference_agree(tmp_path, monk
 
 # ── CVI-6: failed-import hook cache + inference ──────────────────
 
-@pytest.mark.depends_on("test_failed_import_hook_supplies_module_graph")
+@pytest.mark.depends_on("test_astroid_import_error_is_building_error_subclass")
 def test_cross_view_failed_import_hook_cache_and_inference_agree():
     """CVI-6: failed-import hook cache and inference agree on hooked module state."""
     module_name = "generated_hook_cache_cross_view_stage3"
@@ -309,7 +309,7 @@ def test_cross_view_failed_import_hook_cache_and_inference_agree():
 
 # ── CVI-4: transform changes parse + lookup + inference ──────────
 
-@pytest.mark.depends_on("test_register_transform_applies_to_matching_future_nodes")
+@pytest.mark.depends_on("test_parse_apply_transforms_false_skips_registered_transform")
 def test_cross_view_transform_changes_future_parse_lookup_inference():
     """CVI-4: registered transform changes parse, lookup, and inference together."""
     def transform(node):

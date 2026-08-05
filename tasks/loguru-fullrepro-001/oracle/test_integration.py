@@ -1,4 +1,4 @@
-﻿"""Integration tests for loguru-fullrepro-001.
+"""Integration tests for loguru-fullrepro-001.
 
 Each test crosses ≥2 public API boundaries.
 """
@@ -24,6 +24,7 @@ from conftest import ListHandler, NonTtyStream, TtyStream, make_writer
 # --- Handler lifecycle and state consistency ---
 
 
+@pytest.mark.depends_on("test_remove_without_id_removes_all_handlers", "test_start_and_stop_alias_add_and_remove", "test_remove_unknown_handler_id_raises_value_error")
 def test_remove_all(tmp_path, writer, capsys):
     """Seam: lifecycle crossing — remove() must deactivate every registered sink."""
     file = tmp_path / "test.log"
@@ -41,6 +42,7 @@ def test_remove_all(tmp_path, writer, capsys):
     assert writer.read() == "some message\n"
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_remove_without_id_removes_all_handlers", "test_remove_unknown_handler_id_raises_value_error")
 def test_remove_enqueue(writer):
     """Seam: lifecycle crossing — queued handler removal must flush before deactivation."""
     handler_id = logger.add(writer, format="{message}", enqueue=True)
@@ -51,6 +53,7 @@ def test_remove_enqueue(writer):
     assert writer.read() == "1\n"
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_remove_without_id_removes_all_handlers", "test_remove_unknown_handler_id_raises_value_error")
 def test_remove_enqueue_filesink(tmp_path):
     """Seam: lifecycle crossing — enqueued file sink must flush on remove()."""
     file = tmp_path / "test.log"
@@ -60,6 +63,7 @@ def test_remove_enqueue_filesink(tmp_path):
     assert file.read_text() == "1\n"
 
 
+@pytest.mark.depends_on("test_remove_unknown_handler_id_raises_value_error", "test_remove_invalid_handler_id_type_raises_type_error", "test_start_and_stop_alias_add_and_remove")
 def test_remove_deactivates_one_handler_only():
     """CVI-2: Removing one handler must not affect remaining active handlers."""
     first, first_sink = make_writer()
@@ -72,6 +76,7 @@ def test_remove_deactivates_one_handler_only():
     assert str(second[0]) == "kept\n"
 
 
+@pytest.mark.depends_on("test_catch_exclude_does_not_suppress_excluded_exception", "test_updating_level_no_not_allowed_default", "test_remove_unknown_handler_id_raises_value_error")
 def test_removed_handler_does_not_affect_remaining_state():
     """CVI-2: Handler removal must stop one sink while bind state continues on others."""
     first, first_sink = make_writer()
@@ -89,6 +94,7 @@ def test_removed_handler_does_not_affect_remaining_state():
 # --- bind() × add() × log() ---
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_default_add_level_is_debug_when_environment_unset", "test_add_returns_distinct_integer_handler_ids")
 def test_bind_after_add(writer):
     """Seam: state consistency — bind() extra must reach an already registered handler."""
     logger.add(writer, format="{extra[a]} {message}")
@@ -97,6 +103,7 @@ def test_bind_after_add(writer):
     assert writer.read() == "0 A\n"
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_default_add_level_is_debug_when_environment_unset", "test_add_returns_distinct_integer_handler_ids")
 def test_bind_before_add(writer):
     """Seam: state consistency — bind() view must register handlers with bound extra."""
     logger_bound = logger.bind(a=0)
@@ -105,6 +112,7 @@ def test_bind_before_add(writer):
     assert writer.read() == "0 A\n"
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_default_add_level_is_debug_when_environment_unset", "test_add_returns_distinct_integer_handler_ids")
 def test_add_using_bound(writer):
     """Seam: config interaction — bound add() must combine configure extra and bind extra."""
     logger.configure(extra={"a": -1})
@@ -115,6 +123,7 @@ def test_add_using_bound(writer):
     assert writer.read() == "-1 A\n0 B\n"
 
 
+@pytest.mark.depends_on("test_catch_exclude_does_not_suppress_excluded_exception", "test_updating_level_no_not_allowed_default", "test_record_level_exposes_name_number_and_icon_not_color")
 def test_bound_logger_does_not_override_parent(writer):
     """Seam: state consistency — nested bind() views must preserve independent extra scopes."""
     logger_1 = logger.bind(a="a")
@@ -125,6 +134,7 @@ def test_bound_logger_does_not_override_parent(writer):
     assert writer.read() == "a 1\nA 2\n"
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_override_previous_bound(writer):
     """Seam: state consistency — chained bind() calls must use the latest extra value."""
     logger.add(writer, format="{extra[x]} {message}")
@@ -132,6 +142,7 @@ def test_override_previous_bound(writer):
     assert writer.read() == "2 3\n"
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_record_level_exposes_name_number_and_icon_not_color", "test_existing_level_color_and_icon_can_be_updated")
 def test_bind_and_add_level(writer):
     """Seam: config interaction — bind() view and root logger must share level registry."""
     logger_bound = logger.bind()
@@ -142,6 +153,7 @@ def test_bind_and_add_level(writer):
     assert writer.read() == "bar root\nbar bound\n"
 
 
+@pytest.mark.depends_on("test_type_stub_documents_record_level_without_color", "test_remove_without_id_removes_all_handlers", "test_parse_without_group")
 def test_bind_adds_extra_without_mutating_parent_logger():
     """Seam: state consistency — bind() must isolate extra from the parent logger view."""
     base_messages, base_sink = make_writer()
@@ -157,6 +169,7 @@ def test_bind_adds_extra_without_mutating_parent_logger():
 # --- patch() × configure() × log() ---
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_default_add_level_is_debug_when_environment_unset", "test_add_returns_distinct_integer_handler_ids")
 def test_patch_after_add(writer):
     """Seam: state consistency — patch() must mutate records seen by existing handlers."""
     logger.add(writer, format="{extra[a]} {message}")
@@ -165,6 +178,7 @@ def test_patch_after_add(writer):
     assert writer.read() == "0 A\n"
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_default_add_level_is_debug_when_environment_unset", "test_add_returns_distinct_integer_handler_ids")
 def test_patch_before_add(writer):
     """Seam: state consistency — patch() view must affect handlers added afterward."""
     logger_patched = logger.patch(lambda record: record["extra"].update(a=0))
@@ -173,6 +187,7 @@ def test_patch_before_add(writer):
     assert writer.read() == "0 A\n"
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_default_add_level_is_debug_when_environment_unset", "test_add_returns_distinct_integer_handler_ids")
 def test_add_using_patched(writer):
     """Seam: config interaction — configure patcher and view patcher must compose on add()."""
     logger.configure(patcher=lambda record: record["extra"].update(a=-1))
@@ -183,6 +198,7 @@ def test_add_using_patched(writer):
     assert writer.read() == "-1 A\n0 B\n"
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_multiple_patches(writer):
     """CVI-5: Multiple view patchers must run in registration order before formatting."""
     def patch_1(record):
@@ -199,6 +215,7 @@ def test_multiple_patches(writer):
     assert writer.read() == "12 Test\n"
 
 
+@pytest.mark.depends_on("test_type_stub_documents_record_level_without_color", "test_serialize_outputs_json_text_and_record", "test_record_level_exposes_name_number_and_icon_not_color")
 def test_patch_mutates_record_seen_by_formatter():
     """CVI-5: patch() mutations must be visible to handler format strings."""
     messages, sink = make_writer()
@@ -208,6 +225,7 @@ def test_patch_mutates_record_seen_by_formatter():
     assert str(messages[0]) == "True:ok\n"
 
 
+@pytest.mark.depends_on("test_module_logger_is_same_public_object", "test_importlib_protocol_exposes_logger_object", "test_imported_logger_emits_to_public_sink")
 def test_configured_patcher_runs_before_logger_view_patcher():
     """CVI-5: configure(patcher=...) must run before logger.patch() on the same record."""
     messages, sink = make_writer()
@@ -225,6 +243,7 @@ def test_configured_patcher_runs_before_logger_view_patcher():
 # --- contextualize() × bind() × log() ---
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_contextualize(writer):
     """Seam: state consistency — contextualize() must inject extra for nested log calls."""
     logger.add(writer, format="{message} {extra[foo]} {extra[baz]}")
@@ -233,6 +252,7 @@ def test_contextualize(writer):
     assert writer.read() == "Contextualized bar 123\n"
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_contextualize_as_decorator(writer):
     """Seam: lifecycle crossing — contextualize() decorator must restore extra after return."""
     logger.add(writer, format="{message} {extra[foo]} {extra[baz]}")
@@ -245,6 +265,7 @@ def test_contextualize_as_decorator(writer):
     assert writer.read() == "Contextualized 123 bar\n"
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_contextualize_reset():
     """Seam: lifecycle crossing — contextualize() must restore prior extra after exit."""
     contexts = []
@@ -264,6 +285,7 @@ def test_contextualize_reset():
     assert output == ["INFO A\n", "DEBUG B\n", "WARNING C\n", "INFO D\n"]
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_contextualize_async(writer):
     """CVI-9: contextualize() must stay isolated across concurrent async tasks."""
     logger.add(writer, format="{message} {extra[i]}", catch=False)
@@ -287,6 +309,7 @@ def test_contextualize_async(writer):
     ]
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_contextualize_thread(writer):
     """CVI-9: contextualize() must stay isolated across concurrent threads."""
     logger.add(writer, format="{message} {extra[i]}")
@@ -309,6 +332,7 @@ def test_contextualize_thread(writer):
     assert sorted(writer.read().splitlines()) == [f"Processing {i}" for i in range(5)]
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_contextualize_before_bind(writer):
     """Seam: config interaction — contextualize() must override bind() only inside the context."""
     logger.add(writer, format="{message} {extra[foobar]}")
@@ -320,6 +344,7 @@ def test_contextualize_before_bind(writer):
     assert writer.read() == "A baz_2\nB baz\nC baz\n"
 
 
+@pytest.mark.depends_on("test_unknown_level_query_raises_value_error", "test_remove_unknown_handler_id_raises_value_error", "test_remove_invalid_handler_id_type_raises_type_error")
 def test_context_reset_despite_error(writer):
     """Seam: lifecycle crossing — contextualize() must reset extra even when the block raises."""
     logger.add(writer, format="{message} {extra}")
@@ -332,6 +357,7 @@ def test_context_reset_despite_error(writer):
     assert writer.read() == "Division {'foobar': 456}\nError {}\n"
 
 
+@pytest.mark.depends_on("test_start_and_stop_alias_add_and_remove", "test_serialize_outputs_json_text_and_record", "test_record_level_exposes_name_number_and_icon_not_color")
 def test_contextualize_adds_and_restores_extra():
     """Seam: state consistency — contextualize() must add and remove request-scoped extra."""
     messages, sink = make_writer()
@@ -347,6 +373,7 @@ def test_contextualize_adds_and_restores_extra():
     ]
 
 
+@pytest.mark.depends_on("test_opt_capture_false_excludes_kwargs_from_extra")
 def test_extra_conflict_precedence_call_over_bind_over_context_over_configure():
     """CVI-4: extra merge order must resolve configure, context, bind, and call kwargs."""
     messages, sink = make_writer()
@@ -359,6 +386,7 @@ def test_extra_conflict_precedence_call_over_bind_over_context_over_configure():
     assert [str(message) for message in messages] == ["bound\n", "call\n"]
 
 
+@pytest.mark.depends_on("test_imported_logger_emits_to_public_sink", "test_module_logger_is_same_public_object")
 def test_contextualize_isolated_across_async_tasks():
     """CVI-9: unrelated async tasks must not observe each other's contextualize() values."""
     messages, sink = make_writer()
@@ -379,6 +407,7 @@ def test_contextualize_isolated_across_async_tasks():
 # --- level() × log() × add() ---
 
 
+@pytest.mark.depends_on("test_log_invalid_level_value", "test_log_int_level", "test_unknown_level_query_raises_value_error")
 def test_add_level_then_log_with_int_value(writer):
     """Seam: protocol handoff — numeric log() severity must use handler threshold from level()."""
     logger.level("foo", 16)
@@ -390,6 +419,7 @@ def test_add_level_then_log_with_int_value(writer):
 # --- disable()/enable() × add() × log() ---
 
 
+@pytest.mark.depends_on("test_filter_string_matches_module_namespace", "test_start_and_stop_alias_add_and_remove", "test_serialize_outputs_json_text_and_record")
 def test_disable_and_enable_module_namespace():
     """Seam: config interaction — disable() and enable() must gate records before sinks."""
     messages, sink = make_writer()
@@ -401,6 +431,7 @@ def test_disable_and_enable_module_namespace():
     assert [str(message) for message in messages] == ["visible\n"]
 
 
+@pytest.mark.depends_on("test_handler_level_threshold_rejects_lower_records", "test_filter_string_matches_module_namespace", "test_filter_callable_selects_records")
 def test_disabled_namespace_suppresses_records_added_after_disable():
     """CVI-3: activation rules must suppress records even when handlers are added later."""
     messages, sink = make_writer()
@@ -412,6 +443,7 @@ def test_disabled_namespace_suppresses_records_added_after_disable():
     assert [str(message) for message in messages] == ["shown\n"]
 
 
+@pytest.mark.depends_on("test_handler_level_threshold_rejects_lower_records", "test_filter_callable_selects_records")
 def test_enable_restores_only_subsequent_library_records():
     """Seam: config interaction — enable() must affect only records emitted after re-enable."""
     messages, sink = make_writer()

@@ -181,12 +181,15 @@ def test_rst_compiler_selected_for_post_source_extension(built_project):
 # ===================================================================
 
 
+@pytest.mark.depends_on("test_site_constructor_exposes_config_values")
+@pytest.mark.depends_on("test_version_command_runs_without_project_configuration")
 def test_build_writes_index_page(built_project):
     """Seam: lifecycle crossing — build command writes site index output."""
     assert (built_project / "output" / "index.html").is_file()
     assert POST_TITLE in read_project_output(built_project, "index.html")
 
 
+@pytest.mark.depends_on("test_slugify_lowercases_ascii_words")
 def test_build_writes_page_output(built_project):
     """Seam: lifecycle crossing — new_page source produces page output."""
     assert (built_project / "output" / "pages" / PAGE_SLUG / "index.html").is_file()
@@ -195,6 +198,7 @@ def test_build_writes_page_output(built_project):
     )
 
 
+@pytest.mark.depends_on("test_site_constructor_exposes_config_values")
 def test_build_writes_archive_and_feed_files(built_project):
     """Seam: state consistency — build emits archive, RSS, and sitemap together."""
     assert (built_project / "output" / "archive.html").is_file()
@@ -207,6 +211,7 @@ def test_build_writes_archive_and_feed_files(built_project):
 # ===================================================================
 
 
+@pytest.mark.depends_on("test_relative_link_computes_pretty_url_navigation")
 def test_custom_path_handler_produces_relative_and_link_paths():
     """Seam: config interaction — registered path handler feeds path() resolution.
 
@@ -223,6 +228,7 @@ def test_custom_path_handler_produces_relative_and_link_paths():
 # ===================================================================
 
 
+@pytest.mark.depends_on("test_command_plugin_receives_active_site")
 def test_shortcode_plugin_registers_handler_on_site():
     """Seam: protocol handoff — ShortcodePlugin registers handler on site.shortcodes."""
 
@@ -244,6 +250,7 @@ def test_shortcode_plugin_registers_handler_on_site():
 # ===================================================================
 
 
+@pytest.mark.depends_on("test_help_command_runs_without_project_configuration")
 def test_unknown_command_returns_failure():
     """Seam: error propagation — unknown CLI command returns non-zero status."""
     expect_failure(main(["definitely_unknown_command"]))
@@ -306,3 +313,37 @@ def test_manual_draft_source_remains_excluded_from_public_index(built_project):
     index = read_project_output(built_project, "index.html")
     assert POST_TITLE in index
     assert DRAFT_TITLE not in index
+
+
+@pytest.mark.depends_on("test_slugify_lowercases_ascii_words")
+def test_page_destination_path_matches_generated_output_file(built_project):
+    """CVI-3 (pages): Seam: state consistency — Page.destination_path matches build output."""
+    site = load_site_from_project(built_project)
+    page = next(p for p in site.pages if p.title("en") == PAGE_TITLE)
+    generated = built_project / "output" / page.destination_path("en")
+    assert generated.is_file()
+    assert PAGE_TITLE in generated.read_text(encoding="utf-8")
+
+
+# ===================================================================
+# CVI 11 – translation candidate resolves across scan + output
+# ===================================================================
+
+
+@pytest.mark.depends_on("test_translation_candidate_adds_language_before_extension", "test_site_constructor_exposes_config_values")
+def test_translation_candidate_path_agrees_with_site_language_config(built_project):
+    """CVI-11: Seam: config interaction — translation candidate path uses site DEFAULT_LANG for base.
+
+    Crosses get_translation_candidate (utility) + site configuration projection.
+    """
+    from nikola.utils import get_translation_candidate
+    from conftest import translation_config
+
+    site = load_site_from_project(built_project)
+    default_lang = site.config["DEFAULT_LANG"]
+    cfg = translation_config()
+    source = f"posts/{POST_SLUG}.rst"
+    base_path = get_translation_candidate(cfg, f"posts/{POST_SLUG}.es.rst", default_lang)
+    assert base_path == source
+    es_path = get_translation_candidate(cfg, source, "es")
+    assert ".es." in es_path

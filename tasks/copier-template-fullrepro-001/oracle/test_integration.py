@@ -736,3 +736,26 @@ def test_multi_question_all_rendered_and_recorded(tmp_path: Path):
     assert answers["billing_svc"] == "ingestion"
     assert answers["region_code"] == "eu-west-1"
     assert answers["replica_count"] == 5
+
+
+# ---------------------------------------------------------------------------
+# Seam: _folder_name variable matches destination directory name
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.depends_on("test_run_copy_defaults_generates_destination_files")
+def test_folder_name_variable_matches_destination_dirname(tmp_path: Path):
+    """Seam: state consistency — _folder_name matches actual destination dir name.
+    _folder_name variable in template rendering matches the destination directory name."""
+    from copier import run_copy
+
+    src = build_template(
+        tmp_path,
+        SIMPLE_COPIER_YML,
+        {"dirname.txt.jinja": "{{ _folder_name }}\n"},
+    )
+    dst = tmp_path / "my_project"
+
+    run_copy(str(src), dst, defaults=True)
+
+    assert (dst / "dirname.txt").read_text(encoding="utf-8") == "my_project\n"

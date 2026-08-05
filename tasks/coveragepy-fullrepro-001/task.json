@@ -1,230 +1,90 @@
 {
   "instance_id": "coveragepy-fullrepro-001",
   "status": "REVALIDATION-REQUIRED",
-  "repo": "",
-  "repo_commit": "",
+  "repo": "nedbat/coveragepy",
+  "repo_commit": "787af5ff90e8a73bfd8cba7d5661b4930cc53ce5",
   "spec_version": "v1",
+  "language": "python",
   "oracle": {
     "test_files": [
       "oracle/test_atomic.py",
       "oracle/test_integration.py"
     ],
-    "count": 50,
+    "count": 60,
     "scorer_isolation": [
       "--remove-path"
-    ]
+    ],
+    "count_unit": "base_test_functions",
+    "base_function_count": 60
   },
   "taxonomy": {
-    "atomic": 20,
-    "entries": [
-      {
-        "taxonomy_key": "test_atomic::test_installable_surface_imports_version_and_module_cli",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_coverage_data_update_merges_line_data_objects",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_coverage_data_file_tracer_and_touch_file_roundtrip",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_coverage_data_purge_files_removes_measured_file",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_invalid_rcfile_reports_config_error_via_cli_and_api",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_report_without_data_raises_no_data_error",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_missing_source_file_raises_no_source",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_cli_run_missing_script_fails_nonzero",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_coverage_current_tracks_collecting_instance",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_statement_measurement_records_executed_lines",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_branch_measurement_records_arcs",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_data_file_none_keeps_measurement_in_memory",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_coverage_data_add_lines_round_trips_to_disk",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_coverage_data_add_arcs_round_trips_to_disk",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_coverage_data_dumps_and_loads_preserve_lines",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_no_data_error_for_report_without_measurement",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_invalid_config_file_raises_config_error",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_missing_source_raises_public_no_source",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_cli_help_and_version_exit_successfully",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_atomic::test_cli_erase_removes_configured_data_file",
-        "layer": "atomic"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_branch_context_json_and_total_report_agree",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_xml_report_exposes_branch_totals_and_missing_branch",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_configured_data_file_is_shared_by_cli_and_coveragedata",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_programmatic_branch_contexts_survive_serialization",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_coverage_collect_context_manager_records_lines",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_coverage_analysis_and_analysis2_report_missing_lines",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_exclude_and_clear_exclude_change_missing_line_analysis",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_switch_context_filters_coveragedata_queries",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_include_omit_measurement_controls_measured_files",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_programmatic_json_xml_html_and_lcov_reports_share_total",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_combine_keep_preserves_parallel_input_files",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_erase_removes_coverage_file_and_report_has_no_data",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_run_module_passes_program_arguments",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_debug_data_reports_measured_file",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_coverage_file_environment_is_used_by_report_command",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_coverage_data_update_merges_measured_files",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_coverage_data_query_context_filters_lines",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_exclusion_rules_remove_lines_from_missing_report",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_json_report_contains_totals_and_file_details",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_xml_report_writes_cobertura_style_document",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_html_report_writes_index_and_source_page",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_lcov_report_mentions_source_file_and_lines",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_annotate_report_marks_missing_lines",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_run_report_and_json_share_data_file",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_report_fail_under_returns_status_two",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_cli_combine_merges_parallel_data_files",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_coverage_file_environment_selects_data_file",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_rcfile_config_controls_branch_and_report_output",
-        "layer": "integration"
-      },
-      {
-        "taxonomy_key": "test_integration::test_public_report_methods_return_same_total_for_same_data",
-        "layer": "system_e2e"
-      },
-      {
-        "taxonomy_key": "test_integration::test_include_and_omit_filters_affect_measured_files",
-        "layer": "integration"
-      }
-    ],
-    "integration_system_e2e": 30
+    "test_atomic::test_coverage_data_update_merges_line_data_objects": "atomic",
+    "test_atomic::test_coverage_data_file_tracer_and_touch_file_roundtrip": "atomic",
+    "test_atomic::test_coverage_data_purge_files_removes_measured_file": "atomic",
+    "test_atomic::test_cli_run_missing_script_fails_nonzero": "atomic",
+    "test_atomic::test_coverage_current_tracks_collecting_instance": "atomic",
+    "test_atomic::test_statement_measurement_records_executed_lines": "atomic",
+    "test_atomic::test_branch_measurement_records_arcs": "atomic",
+    "test_atomic::test_data_file_none_keeps_measurement_in_memory": "atomic",
+    "test_atomic::test_coverage_data_add_lines_round_trips_to_disk": "atomic",
+    "test_atomic::test_coverage_data_add_arcs_round_trips_to_disk": "atomic",
+    "test_atomic::test_coverage_data_dumps_and_loads_preserve_lines": "atomic",
+    "test_atomic::test_no_data_error_for_report_without_measurement": "atomic",
+    "test_atomic::test_invalid_config_file_raises_config_error": "atomic",
+    "test_atomic::test_missing_source_raises_public_no_source": "atomic",
+    "test_atomic::test_cli_help_and_version_exit_successfully": "atomic",
+    "test_atomic::test_cli_erase_removes_configured_data_file": "atomic",
+    "test_atomic::test_coverage_data_update_merges_measured_files": "atomic",
+    "test_atomic::test_cli_debug_data_reports_measured_file": "atomic",
+    "test_atomic::test_coverage_file_environment_selects_data_file": "atomic",
+    "test_atomic::test_cli_report_fail_under_returns_status_two": "atomic",
+    "test_atomic::test_coverage_data_has_arcs_false_without_branch": "atomic",
+    "test_atomic::test_coverage_erase_removes_data_file": "atomic",
+    "test_atomic::test_coverage_alias_is_same_class": "atomic",
+    "test_atomic::test_measured_contexts_includes_static_context_label": "atomic",
+    "test_atomic::test_process_startup_without_configuration_does_not_start_measurement": "atomic",
+    "test_atomic::test_set_query_context_narrows_line_results_to_matching_context": "atomic",
+    "test_atomic::test_get_and_set_option_roundtrip_configuration_value": "atomic",
+    "test_atomic::test_contexts_by_lineno_maps_lines_to_context_labels": "atomic",
+    "test_atomic::test_touch_files_marks_multiple_files_as_measured": "atomic",
+    "test_atomic::test_no_disk_erase_clears_in_memory_data": "atomic",
+    "test_integration::test_cli_branch_context_json_and_total_report_agree": "integration",
+    "test_integration::test_cli_xml_report_exposes_branch_totals_and_missing_branch": "integration",
+    "test_integration::test_configured_data_file_is_shared_by_cli_and_coveragedata": "integration",
+    "test_integration::test_programmatic_branch_contexts_survive_serialization": "integration",
+    "test_integration::test_coverage_collect_context_manager_records_lines": "integration",
+    "test_integration::test_coverage_analysis_and_analysis2_report_missing_lines": "integration",
+    "test_integration::test_exclude_and_clear_exclude_change_missing_line_analysis": "integration",
+    "test_integration::test_switch_context_filters_coveragedata_queries": "integration",
+    "test_integration::test_include_omit_measurement_controls_measured_files": "integration",
+    "test_integration::test_programmatic_json_xml_html_and_lcov_reports_share_total": "integration",
+    "test_integration::test_combine_keep_preserves_parallel_input_files": "integration",
+    "test_integration::test_cli_erase_removes_coverage_file_and_report_has_no_data": "integration",
+    "test_integration::test_cli_run_module_passes_program_arguments": "integration",
+    "test_integration::test_coverage_file_environment_is_used_by_report_command": "integration",
+    "test_integration::test_coverage_data_query_context_filters_lines": "integration",
+    "test_integration::test_exclusion_rules_remove_lines_from_missing_report": "integration",
+    "test_integration::test_json_report_contains_totals_and_file_details": "integration",
+    "test_integration::test_xml_report_writes_cobertura_style_document": "integration",
+    "test_integration::test_html_report_writes_index_and_source_page": "integration",
+    "test_integration::test_lcov_report_mentions_source_file_and_lines": "integration",
+    "test_integration::test_annotate_report_marks_missing_lines": "integration",
+    "test_integration::test_cli_run_report_and_json_share_data_file": "integration",
+    "test_integration::test_cli_combine_merges_parallel_data_files": "integration",
+    "test_integration::test_rcfile_config_controls_branch_and_report_output": "integration",
+    "test_integration::test_public_report_methods_return_same_total_for_same_data": "integration",
+    "test_integration::test_include_and_omit_filters_affect_measured_files": "integration",
+    "test_integration::test_installable_surface_imports_version_and_module_cli": "integration",
+    "test_integration::test_invalid_rcfile_reports_config_error_via_cli_and_api": "integration",
+    "test_integration::test_annotate_creates_executed_and_missed_markers": "integration",
+    "test_integration::test_cli_run_branch_with_show_missing_report": "integration"
   },
   "stats": {
-    "atomic": 20,
-    "integration": 17,
-    "system_e2e": 13
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
   },
   "reference_pass_rate": null,
-  "candidate_score": null
+  "candidate_score": null,
+  "taxonomy_unit": "base_test_functions"
 }

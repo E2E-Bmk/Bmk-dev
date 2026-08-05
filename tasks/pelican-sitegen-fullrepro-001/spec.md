@@ -1,248 +1,202 @@
-﻿# Pelican Specification
+# Pelican Specification
+
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
 
 ## Product Overview
 
-Pelican is a static site generator for sites whose source of truth is a directory of content files, settings, templates, static assets, and optional cache data. It reads Markdown, reStructuredText, and HTML content, combines that content with project settings and themes, and writes a static output tree containing HTML pages, index pages, archives, author/category/tag pages, feeds, copied assets, and optional source files.
-
-Pelican can be used from the `pelican` command, from `python -m pelican`, and from Python code. The command-line tools `pelican-quickstart`, `pelican-import`, `pelican-themes`, and `pelican-plugins` are installable public commands.
-
-## Scope
-
-This specification covers:
-
-- Building a site from a content directory, settings file, command-line overrides, and a theme.
-- Reading article and page metadata from reStructuredText, Markdown, HTML, filenames, paths, and default settings.
-- Generating articles, pages, indexes, archives, author/category/tag pages, feeds, static files, attached files, and direct template pages.
-- Public settings loading and normalization through `read_settings`.
-- Public data objects visible to templates and plugins: articles, pages, statics, authors, categories, tags, pagination pages, and writers/readers.
-- Plugin registration through public signal hooks and plugin settings.
-- Project skeleton creation, import conversion, theme management, and plugin listing at their command-level contracts.
-
-## Installable Surface
-
-Public package imports include:
-
-```python
-from pelican import Pelican, main, parse_arguments, get_config, get_instance
-from pelican import __version__, read_settings, signals, log
-from pelican.contents import Article, Page, Static, Content, SkipStub, logger
-from pelican.generators import Generator, PelicanTemplateNotFound
-from pelican.plugins import signals
-from pelican.readers import BaseReader, Readers, RstReader, MarkdownReader, HTMLReader, Markdown, default_metadata
-from pelican.settings import DEFAULT_CONFIG, DEFAULT_THEME, read_settings, configure_settings, get_settings_from_file
-from pelican.writers import Writer, FileOverwriteFailedError
-from pelican.urlwrappers import Author, Category, Tag, URLWrapper
-from pelican.paginator import PaginationRule, Paginator
-from pelican.utils import SafeDatetime, get_date, path_to_url, posixize_path, slugify, truncate_html_words
-from pelican.tools.pelican_import import main as import_main
-from pelican.tools.pelican_import import blogger2fields, wp2fields, dc2fields, tumblr2fields
-from pelican.tools.pelican_import import feed2fields, mediumpost2fields, mediumposts2fields
-from pelican.tools.pelican_import import fields2pelican, decode_wp_content, get_attachments
-from pelican.tools.pelican_import import download_attachments, build_header, build_markdown_header
-from pelican.tools.pelican_import import strip_medium_post_content, medium_slug
-from pelican.tools.pelican_quickstart import main as quickstart_main
-from pelican.tools.pelican_themes import main as themes_main
-```
-
-Installable commands:
-
-```text
-pelican [path] [options]
-python -m pelican [path] [options]
-pelican-quickstart [options]
-pelican-import [options] input
-pelican-themes [options]
-pelican-plugins
-```
-
-The main `pelican` command accepts a content path, `--settings/-s`, `--output/-o`, `--theme-path/-t`, `--delete-output-directory/-d`, verbosity flags, `--version`, `--autoreload/-r`, `--print-settings`, `--relative-urls`, `--cache-path`, `--ignore-cache`, `--fatal errors|warnings`, `--log-handler plain|rich`, `--logs-dedup-min-level`, `--listen/-l`, `--port/-p`, `--bind/-b`, and `--extra-settings/-e` overrides.
-
-## Public API
-
-### Settings
-
-`read_settings(path=None, override=None)` returns a settings dictionary. If `path` is `None`, defaults are used unless the caller or CLI finds a `pelicanconf.py` in the current working directory. Settings from a file are merged with defaults, then explicit overrides win over both. Path-like settings are normalized relative to the settings file where the documented behavior calls for relative resolution.
-
-`--extra-settings` accepts `KEY=VALUE` pairs where `VALUE` is JSON notation. Strings must therefore be JSON strings, booleans use `true` or `false`, and null uses `null`. Invalid pairs or invalid JSON values raise a value error before site generation proceeds.
-
-Important settings include `PATH`, `OUTPUT_PATH`, `THEME`, `SITENAME`, `SITEURL`, `ARTICLE_PATHS`, `PAGE_PATHS`, `STATIC_PATHS`, `DELETE_OUTPUT_DIRECTORY`, `OUTPUT_RETENTION`, `CACHE_CONTENT`, `LOAD_CONTENT_CACHE`, `CACHE_PATH`, `CHECK_MODIFIED_METHOD`, `RELATIVE_URLS`, URL/save-as patterns, feed settings, pagination settings, template settings, plugin settings, and metadata extraction settings. `DEFAULT_THEME` is the absolute path to Pelican's bundled `notmyidea` theme, and `DEFAULT_CONFIG["THEME"]` uses that path unless the user supplies a theme name or path.
-
-`get_config(args)` converts parsed CLI arguments into setting overrides. `get_instance(args)` loads settings, resolves `PELICAN_CLASS` when it is a dotted string, constructs the Pelican object, and returns `(pelican_instance, settings)`.
-
-`parse_arguments(argv=None)` returns an argument namespace whose `overrides` attribute is the dictionary parsed from `-e` / `--extra-settings`. Each override item is a `KEY=VALUE` pair. Whitespace around the equals sign is invalid, missing equals signs are invalid, and values must be valid JSON notation.
-
-### Site Generation
-
-`Pelican(settings).run()` reads content, builds context, runs generators, writes output, and prints a summary of processed articles, drafts, hidden articles, pages, hidden pages, and draft pages. If `DELETE_OUTPUT_DIRECTORY` is enabled, Pelican deletes the output directory before writing unless that directory is a parent of the input content path; `OUTPUT_RETENTION` names files that survive deletion.
-
-Articles are chronological content. Pages are non-chronological content. Static files are copied without content processing when they are selected by `STATIC_PATHS`, linked with `{static}`, or attached with `{attach}`.
-
-Site generation must produce the built-in projections for articles, standalone pages, static files, template-only pages, and optional source-file copies. These outputs share the active settings and template context, and plugins may contribute additional generated content through public signals. The implementation is not required to use a particular generator subclass hierarchy for those projections.
-
-`Generator.get_template(name)` resolves a template by trying the configured template extensions against theme override paths, the active theme, and the bundled simple theme. If no matching template can be found, it raises `PelicanTemplateNotFound`.
-
-### Content Objects
-
-Article and page objects expose template-visible attributes such as title, content, metadata, date, modified date, slug, author, authors, category, tags, status, source path, relative source path, URL, save path, summary, and translations. String conversion of article and page objects represents the source path.
-
-`Author`, `Category`, and `Tag` wrap a display name and a slug. They are comparable and usable in generated collections, and `as_dict()` returns their public data for template and plugin use.
-
-`URLWrapper` is the shared base behavior for author, category, and tag objects. Its public behavior is name-to-slug normalization using the active slug settings, comparison against compatible wrapper objects or strings by normalized slug, stable hashing by slug, string conversion to the display name, and `as_dict()` exposure of name and slug.
-
-`Static` represents a static source file and exposes source, destination, URL, and save path behavior. When attached to an article or page, its output location follows the linking content's output directory.
-
-### Readers
-
-`Readers(settings)` chooses an enabled reader from file extension and reads content through `read_file(...)`. Built-in readers cover reStructuredText, Markdown when the Markdown dependency is available, and HTML. Reader results are content strings plus processed metadata.
-
-`pelican.readers.Markdown` is the compatibility name for the Python-Markdown `Markdown` class when that optional dependency is installed; when it is unavailable, the name is falsey and `MarkdownReader.enabled` is false. Markdown content uses the configured `MARKDOWN` extension list and extension configuration, and metadata is read through Python-Markdown's metadata extension.
-
-`BaseReader.process_metadata(name, value)` converts documented metadata fields into Pelican objects or typed values. Author and tag lists may be comma-separated or semicolon-separated. Metadata embedded in a content file takes precedence over filename or path metadata.
-
-`default_metadata`, `path_metadata`, and `parse_path_metadata` expose the same metadata extraction rules used by site generation. Unknown or disabled reader formats fail as an unsupported content type rather than being silently treated as plain text.
-
-The utility helpers imported from `pelican.utils` are part of the reader/plugin compatibility surface when they describe content-visible values: `get_date` parses Pelican date metadata, `slugify` applies Pelican slug substitutions and Unicode/case settings, `path_to_url` and `posixize_path` normalize generated URL paths with forward slashes, `truncate_html_words` produces HTML-safe summaries, and `SafeDatetime` behaves like a datetime object that can be formatted without platform-specific year limitations.
-
-### Writers and Pagination
-
-`Writer(output_path, settings=None)` writes rendered files and feeds under the output path. If two content items attempt to write incompatible content to the same output file, `FileOverwriteFailedError` is raised.
-
-`Paginator` divides ordered object lists into pages. `PaginationRule` is a three-field rule containing `min_page`, `URL`, and `SAVE_AS` values used by pagination patterns. Public page objects expose whether next/previous pages exist, next and previous page numbers, and one-based start/end indexes for the current page.
-
-## Content and Metadata Behavior
-
-reStructuredText content may use document title syntax and field-list metadata. Markdown content uses `Key: Value` metadata at the top of the file. HTML content reads the `<title>` and `<meta name="...">` entries, with the body as content. HTML `keywords` and Pelican `tags` metadata are interchangeable for tags.
-
-Reserved metadata keys include `title`, `date`, `modified`, `tags`, `keywords`, `category`, `slug`, `author`, `authors`, `summary`, `lang`, `translation`, `status`, `template`, `save_as`, and `url`. Custom metadata keys are preserved and exposed to templates unless they conflict with reserved keys.
-
-The only required content metadata is the title. Dates may come from metadata, filename/path extraction, default settings, or the file mtime when `DEFAULT_DATE` is `fs`. If `modified` is absent it defaults to `date`. If category metadata is absent and `USE_FOLDER_AS_CATEGORY` is enabled, Pelican derives the category from the containing folder. If slug metadata is absent, Pelican derives a slug according to the configured slug source and substitutions.
-
-Status controls publication:
-
-- `published` content is output normally and included in indexes and feeds.
-- `draft` articles and pages are written under draft locations and excluded from normal indexes and feeds.
-- `hidden` content is written to its normal save path but excluded from indexes, menus, and feeds.
-- `skip` content is not output.
-
-## Links, Static Files, and Attachments
-
-Pelican recognizes internal link prefixes in content:
-
-- `{filename}path` links to another source content file and resolves to that file's generated URL.
-- `{static}path` links to a static file and causes that file to be copied if needed.
-- `{attach}path` links to a static file and relocates the static output under the linking article or page's output directory.
-- `{author}name`, `{category}name`, `{tag}name`, and `{index}` link to generated collection pages.
-
-Forward slashes are the path separator for link directives on all platforms. Deprecated vertical-bar forms remain accepted for compatibility. When the same static file is attached by multiple documents, the first processed attachment determines the relocation; later uses behave like static links.
-
-## URL, Output, and Feed Rules
-
-URL and save-as settings use format fields from content metadata and date fields. Common settings include `ARTICLE_URL`, `ARTICLE_SAVE_AS`, language variants, draft variants, `PAGE_URL`, `PAGE_SAVE_AS`, author/category/tag pages, archives, and index pages. `RELATIVE_URLS` makes generated links document-relative for local development.
-
-`PATH_METADATA` and `FILENAME_METADATA` extract named regex groups from a source path or filename. `EXTRA_PATH_METADATA` assigns metadata by relative source path and can override output locations for individual files. Metadata embedded in the content file takes precedence over filename and path extraction.
-
-Feed settings control Atom and RSS output for all posts, categories, authors, tags, and translations. When a feed save path is `None`, that feed is not generated. If a feed URL is not separately configured, the save path is used as the relative URL. Feed item limits, RSS summary behavior, and optional reference query parameters are controlled by settings.
-
-Pagination is controlled by `DEFAULT_PAGINATION`, `PAGINATED_TEMPLATES`, `DEFAULT_ORPHANS`, and `PAGINATION_PATTERNS`. Pagination patterns are triples of minimum page number, page URL pattern, and save-as pattern. Pattern fields include the base save path, extension, page number, and stripped base name.
-
-## Themes and Templates
-
-Themes are directories with templates and static assets. Built-in themes include `simple` and `notmyidea`; settings or `--theme-path` choose a theme. Template variables include settings, articles, pages, authors, categories, tags, feeds, dates, pagination objects, output file name, and the current content object where applicable.
-
-Theme static files are copied under `THEME_STATIC_DIR` from `THEME_STATIC_PATHS`. `THEME_TEMPLATES_OVERRIDES` is searched before the theme's own templates, and templates may extend theme templates with the `!theme` prefix. User metadata fields become attributes on article and page objects for template use.
-
-`pelican-themes` lists, installs, removes, symlinks, and cleans themes. Listing shows installed themes; install copies themes into the theme path; symlink installs by linking; remove deletes an installed theme entry; clean removes broken theme links.
-
-## Plugins and Signals
-
-Plugins are enabled by `PLUGINS` and may be discovered from namespace packages or paths listed in `PLUGIN_PATHS`. A plugin module is expected to register signal handlers when it is loaded. `pelican-plugins` lists discoverable namespace plugins.
-
-Documented signal hooks let plugins observe or modify initialization, reader setup, generator setup, content objects, article/page/static generation, writing, feed generation, and finalization. Plugins may add readers, generators, writers, or injected content using public objects such as `BaseReader`, `Article`, `Writer`, and `signals`.
-
-When plugin behavior changes reader output or metadata, content caching can preserve old results; disabling cache or ignoring cache is the documented way to force fresh reads.
-
-The supported signal namespace is available as `from pelican import signals` and `import pelican.plugins.signals`. The older `pelican.signals` module is a compatibility shim that warns callers to use those supported imports.
-
-## Command-Line Workflows
-
-`pelican content` generates a site from the `content` directory and writes to `output` unless settings or CLI options choose different paths. `-s` selects a settings file, `-o` selects an output directory, `-t` selects a theme, and `-d` deletes output first subject to retention and safety rules.
-
-`--print-settings` prints the effective configuration and exits. With setting names, it prints only those settings and reports unrecognized names. `--relative-urls` is intended for development builds. `--ignore-cache` bypasses loading previous cache data. `--fatal errors` or `--fatal warnings` turns logged errors or warnings into a failing command. `--listen` serves the output directory over HTTP; `--autoreload` watches input files and regenerates the site when they change.
-
-`pelican-quickstart` creates a project skeleton by asking for site settings and writing starter configuration and automation files. The generated settings are a starting point; direct use of `pelican` remains canonical.
-
-`pelican-import` converts WordPress XML, Dotclear, Blogger, Tumblr, feed input, Medium post files, and related supported formats into Pelican content files. Its command contract is conversion into content files with Pelican metadata; network-dependent import modes should fail clearly when required inputs or services are unavailable.
-
-The import module exposes conversion helpers for the same formats accepted by the command. `blogger2fields`, `wp2fields`, `dc2fields`, `tumblr2fields`, `feed2fields`, `mediumpost2fields`, and `mediumposts2fields` return or yield normalized field tuples containing title, body content, output filename or slug, date, author, categories, tags, status, content kind, and source markup. `fields2pelican` writes those fields as Pelican content files in the requested output markup and output directory, applying options for category directories, page directories, author filtering, slug suppression, WordPress custom post types, attachment downloads, and raw HTML stripping.
-
-Importer formatting helpers create Pelican-style metadata headers for reStructuredText and Markdown output. `decode_wp_content` normalizes WordPress HTML content before conversion, `get_attachments` discovers WordPress attachment relationships, `download_attachments` downloads attachment files into the output tree when requested, `strip_medium_post_content` removes Medium wrapper markup that should not be rendered as article content, and `medium_slug` derives a Pelican slug from Medium export filenames or paths.
-
-The installed helper commands are backed by importable entry-point modules: `pelican.tools.pelican_import`, `pelican.tools.pelican_quickstart`, and `pelican.tools.pelican_themes`. Their `main` functions implement the corresponding command-line contracts. `pelican-plugins` exposes plugin discovery as a command; callers should use the command or the documented plugin signal APIs rather than private plugin utility modules.
-
-## Error Semantics
-
-Invalid `--extra-settings` syntax or non-JSON values raise `ValueError`.
-
-If the configured theme cannot be found, settings configuration raises `ValueError`.
-
-If a reader cannot parse a file extension because no enabled reader handles it, reading fails with a type error for an unsupported content type.
-
-If two outputs would overwrite the same target with conflicting content, writing raises `FileOverwriteFailedError`.
-
-If a template requested by the configured theme cannot be found, generation raises `PelicanTemplateNotFound`.
-
-`--fatal errors` and `--fatal warnings` convert logged errors or warnings at the selected level into a nonzero command result. `--port` and `--bind` without `--listen` are accepted but logged as having no effect.
-
-`pelican.log` initializes Pelican's logging behavior. It provides `init(...)` for configuring log level, fatal warning/error behavior, handler style, and duplicate-message filtering, and `log_warnings()` redirects Python warnings through logging. The package-level `log` module and module loggers such as `pelican.contents.logger` expose standard `logging` logger behavior for plugin and application integrations.
-
-## Cross-View Invariants
-
-- A content item's metadata drives both its Python object attributes and the generated template variables for that item.
-- A content item's generated URL and save path must agree with the same URL/save-as settings, whether observed through generated files, template context, feeds, or object attributes.
-- Embedded metadata takes precedence over filename, path, and default metadata in both reader output and final generated pages.
-- Draft and hidden status must be reflected consistently in generated file locations, index membership, menu membership, feed membership, and object collections.
-- Static and attached file links in rendered content must correspond to copied files in the output tree.
-- Feed entries must refer to the same article URLs, titles, dates, authors, summaries, and language choices as the generated article pages.
-- CLI settings, settings-file values, and programmatic overrides must produce the same effective settings when they describe the same site configuration.
-- Cache use may skip re-reading unchanged content, but it must not change the public output for unchanged inputs and settings.
-- Theme template overrides must affect generated pages without changing the source content objects they render.
-- Plugin-injected readers, writers, generators, or content must be observable through the same public generated output and signal behavior as built-in components.
-
-## Representative Workflow
-
-Create a site with a `content` directory and a `pelicanconf.py` settings file. Add a Markdown article:
-
-```text
-Title: Keyboard Review
-Date: 2010-12-03 10:20
-Category: Review
-Tags: hardware, keyboards
-Slug: keyboard-review
-
-Following is a review of my favorite mechanical keyboard.
-```
-
-Run:
-
-```text
-pelican content -s pelicanconf.py -o output
-```
-
-Pelican reads the article, converts metadata into an article object, renders the article with the selected theme, writes the article page according to `ARTICLE_SAVE_AS`, updates index/category/tag/archive pages according to settings, writes configured feeds, copies selected static and theme assets, and prints a processed-content summary.
-
-Changing `ARTICLE_SAVE_AS` and `ARTICLE_URL` changes both the written path and the links in generated pages and feeds. Adding `Status: draft` moves the article to draft output and removes it from normal indexes and feeds. Running again with `--ignore-cache` forces content to be read fresh before writing output.
+This package turns a directory of written content into a static site. A project combines settings, Markdown documents, templates, and static assets; generation produces article and page files, collection pages, feeds, and copied assets that all describe the same content objects.
 
 ## Non-Goals
 
-- Byte-for-byte reproduction of a particular theme's whitespace, formatting, or incidental HTML ordering beyond documented visible behavior.
-- Reimplementing undocumented private helpers or private module layout.
-- Importing or preserving underscored helper functions from settings, plugins, or other implementation modules as public API.
-- Running a long-lived web server, watcher loop, or external network service during ordinary site generation tests.
-- Supporting third-party plugins beyond the documented plugin loading and signal interfaces.
-- Guaranteeing deterministic output when the user relies on ambiguous multi-document `{attach}` ordering.
-- Preserving compatibility with unsupported Python versions or dependency versions.
+- This specification does not require Import conversion, project quickstart, theme installation or removal, or plugin discovery.
+- This specification does not require Live serving, autoreload loops, or cache file compatibility.
+- This specification does not require Private helpers, exact log wording, exact HTML whitespace, or implementation-specific object representations.
 
-## Implementation Guidance
+## Representative Workflows
+
+### Generate a site from settings and content
+
+```python
+from pelican import Pelican
+from pelican.settings import read_settings
+
+settings = read_settings(path="pelicanconf.py", override={
+    "SITENAME": "My Blog",
+    "SITEURL": "https://example.com",
+    "PATH": "content",
+    "OUTPUT_PATH": "output",
+    "FEED_ALL_ATOM": "feeds/all.atom.xml",
+})
+
+pelican = Pelican(settings)
+pelican.run()
+```
+
+`read_settings` loads defaults, file settings, and explicit overrides into one mapping. `Pelican(settings).run()` reads the configured content directory and writes the generated site (articles, pages, taxonomy pages, feeds, and static assets) to `OUTPUT_PATH`. The resulting article files, index entries, and feed entries must expose the same title, URL, and taxonomy values derived from Markdown metadata.
+
+### Parse arguments and generate via CLI
+
+```console
+$ pelican content -s pelicanconf.py -o output --extra-settings SITENAME=\"My Blog\"
+```
+
+```python
+from pelican import parse_arguments, get_config, Pelican
+
+args = parse_arguments(["content", "-s", "pelicanconf.py", "-o", "output"])
+settings = get_config(args)
+assert settings["SITENAME"] is not None
+
+pelican = Pelican(settings)
+pelican.run()
+```
+
+`parse_arguments` parses CLI arguments including `--extra-settings` overrides. `get_config` converts the parsed namespace into generation settings. Changing an article's `Status: hidden` keeps its file but removes it from indexes and feeds; `Status: draft` writes under the draft location and likewise excludes it from normal collections.
+
+## Content and Metadata Behavior
+
+Content items are articles and pages whose metadata drives their placement, classification, and appearance in the generated site.
+
+**Article metadata.** Markdown metadata must supply title, date, category, author, tags, slug, summary, and status values. These values must be available to the article template as `article.title`, `article.url`, `article.save_as`, `article.category`, `article.author`, `article.tags`, `article.summary`, and `article.content`. The template context must also include `SITENAME` and `SITEURL` from the effective settings.
+
+**Publication status.** Published articles must appear in the main index and feeds. When `Status: hidden` is set, the article must retain its output file at the configured article location but must be omitted from the index and all feeds. When `Status: draft` is set, the article must be written under the configured draft location determined by `DRAFT_URL` and `DRAFT_SAVE_AS`, and must be omitted from the main index and all feeds.
+
+**Page metadata.** Pages use the page URL and save-path settings (`PAGE_URL` and `PAGE_SAVE_AS`) independently from article settings. The page template must receive `page.title`, `page.url`, and `page.content`.
+
+**Taxonomy collection pages.** Category, tag, and author collection pages must be generated from the corresponding article metadata. Each unique category must produce a collection page at the location determined by `CATEGORY_SAVE_AS`. Each unique tag must produce a page at `TAG_SAVE_AS`. Each unique author must produce a page at `AUTHOR_SAVE_AS`.
+
+**Static assets.** A static path selected by `STATIC_PATHS` must be copied to the output tree. A `{static}` link in Markdown content must resolve to the copied asset under the configured `SITEURL`, producing an `href` attribute pointing to the full site URL plus the asset path.
+
+## Site Generation and Feeds
+
+`Pelican(settings).run()` reads the configured content directory and produces the complete output site.
+
+**Article output.** Article files must be written to the path determined by `ARTICLE_SAVE_AS`. The rendered output must contain the article's title, URL, save path, category, author, tags, summary, and body as derived from its Markdown metadata.
+
+**Page output.** Page files must be written to the path determined by `PAGE_SAVE_AS`. The rendered output must contain the page body.
+
+**Index output.** The generated index must list published articles by title. Hidden and draft articles must not appear in the index.
+
+**Atom feeds.** When `FEED_ALL_ATOM` is configured, an all-articles Atom feed must be generated at the configured path. Each published article must produce a feed entry whose title matches the article title and whose link `href` matches the full article URL including `SITEURL`. Hidden and draft articles must not appear in the feed. When `CATEGORY_FEED_ATOM` is configured, a category feed must be generated using the category slug in its output path.
+
+**Source exclusion.** Source Markdown files must not be copied into the generated output tree unless they are separately selected as static assets.
+
+**Settings consistency.** The command-line and programmatic settings views must describe the same site name when given equivalent `SITENAME` values through `get_config` and `read_settings` respectively.
+
+## Settings and Configuration
+
+Settings loading merges defaults, file settings, and explicit overrides into one effective mapping.
+
+**Default settings.** `DEFAULT_CONFIG` must contain built-in default values. The `DEFAULT_LANG` default must be `"en"`. All defaults must be present in the effective settings unless explicitly overridden.
+
+**Settings loading.** `read_settings` must return the effective settings mapping. Built-in defaults must always be present, settings loaded from a file (when a `path` is provided) must replace matching defaults, and explicit `override` values must replace both. When `OUTPUT_PATH` is supplied through an override, it must be normalized as a filesystem path.
+
+**CLI argument parsing.** `parse_arguments` must parse command arguments. Each `--extra-settings` (or `-e`) value must use `KEY=JSON_VALUE` format where the value is valid JSON; repeated options must accumulate in the returned `overrides` mapping on the parsed arguments object. A missing equals sign must raise `ValueError`. An invalid JSON value after the equals sign (such as bare `True` instead of `true`) must raise `ValueError`. The `--relative-urls` flag must be accepted.
+
+**CLI-to-settings conversion.** `get_config` must convert the parsed namespace into generation settings, incorporating the overrides and the relative-URL option. When `--relative-urls` is passed, the resulting settings must set `RELATIVE_URLS` to `True`.
+
+## Readers, Utilities, Taxonomy, and Pagination
+
+These components support content processing, URL generation, taxonomy classification, and collection pagination.
+
+**Content readers.** `Readers.read_file` must select a reader by file extension. Markdown input must return rendered content accessible through the result's `content` attribute and normalized metadata accessible through `metadata`, including at least the `title` field. An extension with no enabled reader must raise `TypeError` instead of being treated as plain text.
+
+**Slug generation.** `slugify` must apply configured regular-expression substitution pairs passed as `regex_subs` and return the URL slug. When `preserve_case` is not set or is `False`, the result must be lowercased. When `preserve_case` is `True`, the original casing must be retained.
+
+**Path utilities.** `posixize_path` must normalize paths to forward-slash form on every platform. `path_to_url` must produce forward-slash URL paths.
+
+**Date parsing.** `get_date` must parse Pelican date metadata strings into datetime values. Unparseable date metadata must raise a date-parsing error.
+
+**Taxonomy wrappers.** `Author`, `Category`, and `Tag` must each be created with a display name and a `settings` mapping. Each must expose a `slug`, `url`, and `save_as` derived from the display name and the corresponding URL/save-as setting patterns. The slug must be generated from the display name using standard slug rules. `as_dict()` must return a mapping containing at least the public `name` and `slug`.
+
+**Pagination.** `Paginator` must divide an ordered collection into pages based on a `per_page` count. It must report `count` (total items), `num_pages` (total pages), and `page_range` (list of page numbers starting at 1). `Paginator.page(n)` must return a page object exposing `object_list` for that page's items, `has_next()` returning whether a next page exists, and `has_previous()` returning whether a previous page exists. The first page must have a next page but no previous page; a middle page must have both neighbors. `PaginationRule` must be a public three-field value containing `min_page`, `URL` pattern, and `SAVE_AS` pattern.
+
+**Signals.** Signal objects must be available through both `from pelican import signals` and `from pelican.plugins import signals`. The same signal objects must be shared between both namespaces; `signals.article_generator_finalized` from either import path must be the same object, and `signals.content_object_init` must likewise be the same object.
+
+## State Model
+
+A generated site has three public projections of the same state: the loaded settings mapping, the in-memory content and taxonomy objects, and the output tree containing rendered pages, feeds, and assets. Generation must keep these projections aligned.
+
+A setting used to derive an article URL must produce the same URL in the article object, its rendered template context, and its feed entry. Metadata read from a source document must remain the same when exposed as content attributes and rendered page values. Publication status must control both where a content item is written and whether it appears in indexes and feeds.
+
+## Error Semantics
+
+- When `parse_arguments` encounters a `--extra-settings` value missing an equals sign, it must raise `ValueError`.
+- When `parse_arguments` encounters a `--extra-settings` value with invalid JSON after the equals sign, it must raise `ValueError`.
+- When `Readers.read_file` is called with a file extension that has no enabled reader, it must raise `TypeError` instead of treating the file as plain text.
+- When the content source directory (`PATH`) does not exist, generation must fail rather than report a successful partial site.
+- When required templates are missing, generation must fail rather than report a successful partial site.
+- When the output location (`OUTPUT_PATH`) is unwritable, generation must fail rather than report a successful partial site.
+- When `slugify` receives input with disabled case preservation, the result must be lowercased.
+- When `get_date` receives unparseable date metadata, it must raise a date-parsing error.
+
+## Cross-View Invariants
+
+1. Loaded defaults and explicit overrides must produce the same effective values through `read_settings()` and `get_config()`.
+2. Article metadata must match the values visible in its content object and template context.
+3. Article URL and save-path settings must agree with the written file and all links to it.
+4. Published, hidden, and draft status must agree across output location, index membership, and feed membership.
+5. Category, author, and tag slugs must agree across wrapper objects and generated collection paths.
+6. A feed entry title and URL must match the corresponding generated article page.
+7. A static link must resolve to the same asset copied into the output tree.
+8. Pagination neighbor values must agree with the page count and page range for the same collection.
+
+## Public Interface
+
+### Import Surface
+
+The package is imported as `pelican`.
+
+```python
+from pelican import Pelican, get_config, parse_arguments, signals
+from pelican.plugins import signals as plugin_signals
+from pelican.settings import DEFAULT_CONFIG, read_settings
+from pelican.readers import Readers
+from pelican.urlwrappers import Author, Category, Tag
+from pelican.paginator import PaginationRule, Paginator
+from pelican.utils import get_date, path_to_url, posixize_path, slugify
+```
+
+Signal objects are available through both `from pelican import signals` and `from pelican.plugins import signals`.
+
+The `pelican` command accepts a content directory together with settings and output options. `python -m pelican` follows the same site-generation entry path.
+
+### API Catalog
+
+| Name | Kind | Role |
+|---|---|---|
+| `read_settings` | function | Loads defaults, file settings, and overrides into one mapping |
+| `parse_arguments` | function | Parses CLI arguments and extra-settings overrides |
+| `get_config` | function | Converts parsed CLI arguments into generation settings |
+| `DEFAULT_CONFIG` | constant | Built-in default settings mapping |
+| `Readers` | class | Selects content readers by file extension |
+| `Pelican` | class | Site generator for articles, pages, feeds, and assets |
+| `Author` | class | Author taxonomy wrapper with slug and URL |
+| `Category` | class | Category taxonomy wrapper with slug and URL |
+| `Tag` | class | Tag taxonomy wrapper with slug and URL |
+| `Paginator` | class | Divides ordered collections into pages |
+| `PaginationRule` | class | Minimum page, URL pattern, and save-path pattern |
+| `slugify` | function | Converts display text into URL slugs |
+| `posixize_path` | function | Normalizes paths to forward-slash form |
+| `path_to_url` | function | Converts filesystem paths to URL paths |
+| `get_date` | function | Parses Pelican date metadata into datetime values |
+| `signals` | module | Public signal objects for plugin hooks |
+
+Settings loading, CLI parsing, reader selection, slug and path utilities, taxonomy wrappers, and pagination behavior are defined in the behavior sections above.
+
+### CLI Entry Points
+
+The `pelican CONTENT -s SETTINGS -o OUTPUT` command generates a local site and returns zero on success. Invalid arguments or generation failures return nonzero. `python -m pelican` supports the same behavior. Other Pelican helper commands are outside this scope.
+
+## Appendix A: Environment
+
+The implementation may use third-party packages available on PyPI. Runtime dependencies must be declared in a standard `requirements.txt` or `pyproject.toml` at the project root and are installed before use. Site generation must remain deterministic with local temporary files and must not require network services.
+
+## Appendix B: Assessment Notes
 
 Correctness is evaluated through public behavior: CLI parsing and generation, settings loading and override precedence, content reader metadata, generated file trees, feeds, links, themes, static files, cache-visible behavior, plugin extension points, importer/theme helper command behavior, and the public Python objects used by templates and plugins.
 

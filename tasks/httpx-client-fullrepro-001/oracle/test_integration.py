@@ -21,6 +21,7 @@ from conftest import BASE_URL, redirect_handler, run_async
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_headers_case_insensitive_lookup")
 def test_client_context_returns_self_and_closes():
     """Seam: lifecycle crossing — client context manager closes transport on exit."""
     closed = []
@@ -37,6 +38,7 @@ def test_client_context_returns_self_and_closes():
     assert closed == [True]
 
 
+@pytest.mark.depends_on("test_headers_case_insensitive_lookup")
 def test_close_idempotent_and_blocks_requests():
     """Seam: lifecycle crossing — close is idempotent and blocks subsequent requests."""
     client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200)))
@@ -91,6 +93,7 @@ def test_async_client_lifecycle():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_headers_case_insensitive_lookup", "test_queryparams_lookup_returns_first_value")
 def test_build_request_merges_headers_params_cookies():
     """Seam: state consistency — client and request config merge into prepared request."""
     client = httpx.Client(
@@ -123,6 +126,7 @@ def test_request_auth_none_disables_client_auth():
     assert client.get("https://host.test/", auth=None).json()["auth"] is None
 
 
+@pytest.mark.depends_on("test_url_join_resolves_relative")
 def test_base_url_resolves_relative_paths():
     """Seam: config interaction — client base_url resolves relative request paths."""
     client = httpx.Client(base_url="https://api.test/root/")
@@ -136,6 +140,7 @@ def test_base_url_resolves_relative_paths():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_request_normalizes_method_to_uppercase", "test_response_json_and_text")
 def test_client_request_sends_and_reads_body():
     """Seam: protocol handoff — client dispatches request through transport and reads body."""
     def handler(request):
@@ -148,6 +153,7 @@ def test_client_request_sends_and_reads_body():
     assert resp.request.method == "POST"
 
 
+@pytest.mark.depends_on("test_streamed_response_requires_read")
 def test_client_send_stream_true_leaves_unread():
     """Seam: lifecycle crossing — send(stream=True) leaves response unread until explicit read."""
     resp_obj = httpx.Response(200, stream=httpx.ByteStream(b"stream"))
@@ -174,6 +180,7 @@ def test_client_stream_context_closes_on_exit():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_response_has_redirect_location")
 def test_redirect_not_followed_exposes_next_request():
     """Seam: state consistency — unfollowed redirect exposes next_request without history."""
     client = httpx.Client(base_url="https://host.test", transport=httpx.MockTransport(redirect_handler))
@@ -183,6 +190,7 @@ def test_redirect_not_followed_exposes_next_request():
     assert resp.next_request.url.path == "/end"
 
 
+@pytest.mark.depends_on("test_response_has_redirect_location", "test_response_status_booleans")
 def test_redirect_followed_populates_history():
     """Seam: state consistency — followed redirect populates history with intermediate responses."""
     client = httpx.Client(base_url="https://host.test", transport=httpx.MockTransport(redirect_handler), follow_redirects=True)
@@ -193,6 +201,7 @@ def test_redirect_followed_populates_history():
     assert resp.next_request is None
 
 
+@pytest.mark.depends_on("test_request_normalizes_method_to_uppercase")
 def test_303_rewrites_post_to_get():
     """Seam: protocol handoff — 303 redirect rewrites POST to GET on follow."""
     seen = []
@@ -208,6 +217,7 @@ def test_303_rewrites_post_to_get():
     assert seen == ["POST", "GET"]
 
 
+@pytest.mark.depends_on("test_exception_hierarchy")
 def test_too_many_redirects_raises():
     """Seam: error propagation — redirect loop exceeding max_redirects raises TooManyRedirects."""
     def handler(request):
@@ -240,6 +250,7 @@ def test_request_level_follow_redirects_overrides_client():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_request_normalizes_method_to_uppercase")
 def test_request_hook_mutates_outgoing_request():
     """Seam: protocol handoff — request hook mutation visible in transport handler."""
     def hook(request):
@@ -290,6 +301,7 @@ def test_response_hook_can_read_body():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_cookies_set_get_delete", "test_response_cookies_from_set_cookie")
 def test_cookies_extracted_and_sent_on_next_request():
     """Seam: state consistency — Set-Cookie extracted and sent on subsequent request."""
     paths = []
@@ -323,6 +335,7 @@ def test_extract_cookies_then_set_cookie_header():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_request_sets_host_and_content_length")
 def test_basic_auth_tuple_adds_authorization():
     """Seam: config interaction — basic auth tuple adds Authorization header."""
     def handler(request):
@@ -333,6 +346,7 @@ def test_basic_auth_tuple_adds_authorization():
     assert resp.json()["auth"].startswith("Basic ")
 
 
+@pytest.mark.depends_on("test_request_normalizes_method_to_uppercase")
 def test_callable_auth_mutates_request():
     """Seam: config interaction — callable auth mutates outgoing request headers."""
     def my_auth(request):
@@ -346,6 +360,7 @@ def test_callable_auth_mutates_request():
     assert client.get("https://host.test/", auth=my_auth).text == "Token xyz"
 
 
+@pytest.mark.depends_on("test_request_normalizes_method_to_uppercase")
 def test_custom_auth_flow_retries():
     """Seam: protocol handoff — custom auth flow retries after 401 through transport."""
     class RetryAuth(httpx.Auth):
@@ -386,6 +401,7 @@ def test_mock_transport_handler_exception_propagates():
         client.get("https://host.test/")
 
 
+@pytest.mark.depends_on("test_request_normalizes_method_to_uppercase", "test_response_status_and_reason")
 def test_wsgi_transport_populates_environ():
     """Seam: protocol handoff — WSGITransport maps request to WSGI environ."""
     captured = {}

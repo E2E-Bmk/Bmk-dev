@@ -23,6 +23,10 @@ from whoosh.searching import NoTermsException
 from conftest import add_two, make_index, paths
 
 
+depends_on = pytest.mark.depends_on
+
+
+@pytest.mark.depends_on("test_installable_fields_surface_constructs_a_schema", "test_create_in_returns_index_object", "test_exists_in_false_for_empty_directory")
 def test_installable_index_surface_creates_an_index(tmp_path):
     """Seam: lifecycle crossing from create_in to exists_in recognition."""
     directory = tmp_path / "surface-index"
@@ -31,6 +35,7 @@ def test_installable_index_surface_creates_an_index(tmp_path):
     assert index.exists_in(str(directory)) is True
 
 
+@pytest.mark.depends_on("test_text_field_is_searchable_and_returns_stored_value", "test_query_parser_parses_single_word")
 def test_installable_query_and_parser_surfaces_search_documents(tmp_path):
     """Seam: protocol handoff from QueryParser parse to searcher results."""
     _, ix = make_index(tmp_path)
@@ -39,6 +44,9 @@ def test_installable_query_and_parser_surfaces_search_documents(tmp_path):
     assert paths(ix, Or([Term("body", "alpha"), parsed])) == {"a"}
 
 
+@depends_on("test_atomic::test_doc_count_reflects_committed_document_count")
+@depends_on("test_atomic::test_writer_add_document_succeeds_with_valid_fields")
+@pytest.mark.depends_on("test_installable_fields_surface_constructs_a_schema", "test_text_field_is_searchable_and_returns_stored_value")
 def test_product_state_commit_is_visible_to_a_new_searcher(tmp_path):
     """Seam: state consistency between writer commit and searcher visibility."""
     _, ix = make_index(tmp_path)
@@ -47,6 +55,9 @@ def test_product_state_commit_is_visible_to_a_new_searcher(tmp_path):
     assert paths(ix, Term("body", "alpha")) == {"a"}
 
 
+@depends_on("test_atomic::test_text_field_is_searchable_and_returns_stored_value")
+@depends_on("test_atomic::test_writer_add_document_succeeds_with_valid_fields")
+@pytest.mark.depends_on("test_keyword_commas_split_keeps_multiword_terms_intact", "test_doc_count_reflects_committed_document_count")
 def test_product_state_cancel_keeps_previously_committed_projection(tmp_path):
     """Seam: state consistency when writer cancel preserves prior commit."""
     _, ix = make_index(tmp_path)
@@ -57,6 +68,9 @@ def test_product_state_cancel_keeps_previously_committed_projection(tmp_path):
     assert paths(ix, Term("body", "alpha")) == {"a"}
 
 
+@depends_on("test_atomic::test_doc_count_reflects_committed_document_count")
+@depends_on("test_atomic::test_text_field_is_searchable_and_returns_stored_value")
+@pytest.mark.depends_on("test_open_dir_returns_index_object", "test_keyword_commas_split_keeps_multiword_terms_intact", "test_create_in_clears_documents_of_existing_index")
 def test_product_state_existing_searcher_keeps_its_open_generation(tmp_path):
     """CVI-1: committed writes visible only after old searcher closes."""
     _, ix = make_index(tmp_path)
@@ -68,17 +82,20 @@ def test_product_state_existing_searcher_keeps_its_open_generation(tmp_path):
     assert paths(ix, Term("body", "alpha")) == {"a", "c"}
 
 
+@pytest.mark.depends_on("test_exists_in_false_for_empty_directory", "test_open_dir_returns_index_object")
 def test_exists_in_is_false_for_directory_without_an_index(tmp_path):
     """Seam: lifecycle crossing for empty directory before index creation."""
     assert index.exists_in(str(tmp_path)) is False
 
 
+@pytest.mark.depends_on("test_create_in_returns_index_object", "test_create_in_clears_documents_of_existing_index", "test_open_dir_returns_index_object")
 def test_create_in_makes_a_recognizable_index(tmp_path):
     """Seam: lifecycle crossing from create_in to exists_in."""
     directory, _ = make_index(tmp_path)
     assert index.exists_in(str(directory)) is True
 
 
+@pytest.mark.depends_on("test_open_dir_returns_index_object", "test_doc_count_reflects_committed_document_count")
 def test_open_dir_reopens_committed_documents(tmp_path):
     """Seam: state consistency between in-process index and reopened directory."""
     directory, ix = make_index(tmp_path)
@@ -87,6 +104,8 @@ def test_open_dir_reopens_committed_documents(tmp_path):
     assert paths(reopened, Term("body", "alpha")) == {"a"}
 
 
+@depends_on("test_atomic::test_create_in_returns_index_object", "test_atomic::test_open_dir_returns_index_object")
+@pytest.mark.depends_on("test_text_field_indexes_each_word_of_the_supplied_text", "test_id_field_indexes_value_with_space_as_single_term")
 def test_named_indexes_are_independently_openable(tmp_path):
     """Seam: config interaction between named indexes in one directory."""
     directory = tmp_path / "named"
@@ -102,6 +121,7 @@ def test_named_indexes_are_independently_openable(tmp_path):
     assert paths(index.open_dir(str(directory), indexname="second"), Term("body", "beta")) == {"b"}
 
 
+@pytest.mark.depends_on("test_create_in_clears_documents_of_existing_index", "test_open_dir_returns_index_object", "test_doc_count_reflects_committed_document_count")
 def test_creating_an_existing_named_index_clears_its_documents(tmp_path):
     """Seam: lifecycle crossing when recreate clears committed documents."""
     directory, ix = make_index(tmp_path)
@@ -110,6 +130,7 @@ def test_creating_an_existing_named_index_clears_its_documents(tmp_path):
     assert paths(replacement, Term("body", "alpha")) == set()
 
 
+@pytest.mark.depends_on("test_writer_add_document_succeeds_with_valid_fields")
 def test_writer_context_commits_on_normal_exit(tmp_path):
     """Seam: lifecycle crossing through writer context manager commit."""
     _, ix = make_index(tmp_path)
@@ -118,6 +139,7 @@ def test_writer_context_commits_on_normal_exit(tmp_path):
     assert paths(ix, Term("path", "a")) == {"a"}
 
 
+@pytest.mark.depends_on("test_writer_add_document_succeeds_with_valid_fields")
 def test_writer_context_cancels_on_exception(tmp_path):
     """Seam: error propagation from writer exception to cancel without commit."""
     _, ix = make_index(tmp_path)
@@ -128,6 +150,8 @@ def test_writer_context_cancels_on_exception(tmp_path):
     assert paths(ix, Term("body", "alpha")) == set()
 
 
+@depends_on("test_atomic::test_error_unknown_field_error_is_observable")
+@pytest.mark.depends_on("test_schema_rejects_unsupported_field_definition", "test_schema_rejects_invalid_field_names", "test_writer_add_document_succeeds_with_valid_fields")
 def test_add_document_rejects_unknown_schema_field(tmp_path):
     """Seam: error propagation from UnknownFieldError before commit."""
     _, ix = make_index(tmp_path)
@@ -138,6 +162,7 @@ def test_add_document_rejects_unknown_schema_field(tmp_path):
     assert paths(ix, Term("body", "alpha")) == set()
 
 
+@pytest.mark.depends_on("test_writer_add_document_succeeds_with_valid_fields", "test_numeric_field_preserves_negative_and_zero_stored_values", "test_document_omitting_schema_fields_stores_only_supplied_values")
 def test_add_document_preserves_duplicate_documents(tmp_path):
     """Seam: state consistency when duplicate documents are indexed."""
     _, ix = make_index(tmp_path)
@@ -149,6 +174,7 @@ def test_add_document_preserves_duplicate_documents(tmp_path):
         assert len(results) == 2
 
 
+@pytest.mark.depends_on("test_numeric_field_preserves_negative_and_zero_stored_values", "test_numeric_and_boolean_fields_preserve_stored_values", "test_text_field_is_searchable_and_returns_stored_value")
 def test_stored_override_keeps_index_and_stored_values_distinct(tmp_path):
     """Seam: state consistency between indexed tokens and stored override."""
     _, ix = make_index(tmp_path)
@@ -159,6 +185,7 @@ def test_stored_override_keeps_index_and_stored_values_distinct(tmp_path):
         assert hit["body"] == "stored value"
 
 
+@pytest.mark.depends_on("test_text_field_is_searchable_and_returns_stored_value", "test_id_field_matches_a_complete_term_only")
 def test_update_document_replaces_matching_unique_document(tmp_path):
     """Seam: state consistency when update replaces unique document."""
     _, ix = make_index(tmp_path)
@@ -169,6 +196,7 @@ def test_update_document_replaces_matching_unique_document(tmp_path):
     assert paths(ix, Term("body", "replacement")) == {"a"}
 
 
+@pytest.mark.depends_on("test_writer_add_document_succeeds_with_valid_fields", "test_id_field_matches_a_complete_term_only", "test_document_omitting_schema_fields_stores_only_supplied_values")
 def test_update_document_adds_when_no_unique_document_matches(tmp_path):
     """Seam: state consistency when update adds without prior match."""
     _, ix = make_index(tmp_path)
@@ -179,6 +207,8 @@ def test_update_document_adds_when_no_unique_document_matches(tmp_path):
     assert paths(ix, Term("body", "beta")) == {"a", "b"}
 
 
+@depends_on("test_atomic::test_text_field_is_searchable_and_returns_stored_value")
+@pytest.mark.depends_on("test_delete_by_term_returns_number_of_staged_deletions")
 def test_cancel_discards_staged_addition(tmp_path):
     """Seam: lifecycle crossing when cancel discards uncommitted writes."""
     _, ix = make_index(tmp_path)
@@ -188,6 +218,7 @@ def test_cancel_discards_staged_addition(tmp_path):
     assert paths(ix, Term("body", "alpha")) == set()
 
 
+@pytest.mark.depends_on("test_error_lock_error_is_observable")
 def test_second_writer_raises_lock_error(tmp_path):
     """Seam: error propagation from concurrent writer to LockError."""
     _, ix = make_index(tmp_path)
@@ -197,6 +228,7 @@ def test_second_writer_raises_lock_error(tmp_path):
     writer.cancel()
 
 
+@pytest.mark.depends_on("test_id_field_matches_a_complete_term_only", "test_delete_by_term_returns_number_of_staged_deletions")
 def test_delete_by_term_removes_committed_document(tmp_path):
     """Seam: state consistency between delete_by_term and search results."""
     _, ix = make_index(tmp_path)
@@ -206,6 +238,7 @@ def test_delete_by_term_removes_committed_document(tmp_path):
     assert paths(ix, Term("path", "a")) == set()
 
 
+@pytest.mark.depends_on("test_delete_by_query_returns_zero_for_unmatched_query")
 def test_delete_by_query_removes_matching_documents(tmp_path):
     """Seam: state consistency between delete_by_query and search results."""
     _, ix = make_index(tmp_path)
@@ -215,6 +248,7 @@ def test_delete_by_query_removes_matching_documents(tmp_path):
     assert paths(ix, Term("body", "gamma")) == set()
 
 
+@pytest.mark.depends_on("test_text_field_is_searchable_and_returns_stored_value", "test_schema_rejects_invalid_field_names")
 def test_invalid_numeric_value_fails_before_commit(tmp_path):
     """Seam: error propagation from invalid field value before commit."""
     _, ix = make_index(tmp_path)
@@ -225,6 +259,7 @@ def test_invalid_numeric_value_fails_before_commit(tmp_path):
     assert paths(ix, Term("body", "alpha")) == set()
 
 
+@pytest.mark.depends_on("test_text_field_indexes_each_word_of_the_supplied_text", "test_text_field_is_searchable_and_returns_stored_value")
 def test_term_query_matches_one_field(tmp_path):
     """Seam: protocol handoff from Term query to matching document paths."""
     _, ix = make_index(tmp_path)
@@ -232,6 +267,7 @@ def test_term_query_matches_one_field(tmp_path):
     assert paths(ix, Term("body", "gamma")) == {"b"}
 
 
+@pytest.mark.depends_on("test_and_query_constructor_accepts_subqueries", "test_text_field_is_searchable_and_returns_stored_value", "test_schema_names_lists_every_defined_field")
 def test_and_query_requires_every_term(tmp_path):
     """Seam: protocol handoff from And query composition to results."""
     _, ix = make_index(tmp_path)
@@ -240,6 +276,7 @@ def test_and_query_requires_every_term(tmp_path):
     assert paths(ix, And([Term("body", "alpha"), Term("body", "gamma")])) == set()
 
 
+@pytest.mark.depends_on("test_or_query_constructor_accepts_subqueries", "test_text_field_is_searchable_and_returns_stored_value")
 def test_or_query_matches_either_term(tmp_path):
     """Seam: protocol handoff from Or query composition to results."""
     _, ix = make_index(tmp_path)
@@ -247,6 +284,7 @@ def test_or_query_matches_either_term(tmp_path):
     assert paths(ix, Or([Term("body", "alpha"), Term("body", "gamma")])) == {"a", "b"}
 
 
+@pytest.mark.depends_on("test_query_parser_parses_single_word", "test_keyword_field_default_splits_on_spaces_preserving_case")
 def test_query_parser_assigns_unfielded_terms_to_default_field(tmp_path):
     """Seam: protocol handoff from QueryParser to default-field search."""
     _, ix = make_index(tmp_path)
@@ -255,9 +293,21 @@ def test_query_parser_assigns_unfielded_terms_to_default_field(tmp_path):
     assert paths(ix, parser.parse("alpha")) == {"a"}
 
 
+@pytest.mark.depends_on("test_query_parser_parses_single_word", "test_open_dir_returns_index_object")
 def test_query_parser_without_schema_returns_a_query_object():
     """Seam: lifecycle crossing for schema-less QueryParser parse."""
-    assert QueryParser("body", None).parse("alpha") is not None
+    assert QueryParser("body", None).parse("alpha") == Term("body", "alpha")
+
+
+@pytest.mark.depends_on("test_query_parser_parses_single_word", "test_writer_add_document_succeeds_with_valid_fields")
+def test_invalid_query_syntax_produces_an_empty_search_result(tmp_path):
+    """Seam: invalid parser input produces an error query without mutating the index."""
+    _, ix = make_index(tmp_path)
+    add_two(ix)
+    parsed = QueryParser("body", ix.schema).parse("AND OR NOT")
+    with ix.searcher() as searcher:
+        assert len(searcher.search(parsed, limit=None)) == 0
+    assert ix.doc_count() == 2
 
 
 def test_multifield_parser_searches_configured_fields(tmp_path):
@@ -282,6 +332,7 @@ def test_nonmatching_query_returns_empty_results(tmp_path):
     assert paths(ix, Term("body", "missing")) == set()
 
 
+@depends_on("test_atomic::test_search_scored_length_equals_limit")
 def test_search_limit_retains_only_requested_scored_hits(tmp_path):
     """Seam: state consistency between search limit and scored_length."""
     _, ix = make_index(tmp_path)
@@ -299,6 +350,7 @@ def test_search_limit_none_returns_all_matches(tmp_path):
         assert len(searcher.search(Term("body", "beta"), limit=None)) == 2
 
 
+@depends_on("test_atomic::test_text_field_is_searchable_and_returns_stored_value")
 def test_search_filter_keeps_only_permitted_matches(tmp_path):
     """Seam: config interaction between query and filter constraints."""
     _, ix = make_index(tmp_path)
@@ -306,6 +358,7 @@ def test_search_filter_keeps_only_permitted_matches(tmp_path):
     assert paths(ix, Term("body", "beta"), filter=Term("path", "a")) == {"a"}
 
 
+@depends_on("test_atomic::test_text_field_is_searchable_and_returns_stored_value")
 def test_search_mask_omits_excluded_matches(tmp_path):
     """Seam: config interaction between query and mask exclusions."""
     _, ix = make_index(tmp_path)
@@ -313,6 +366,7 @@ def test_search_mask_omits_excluded_matches(tmp_path):
     assert paths(ix, Term("body", "beta"), mask=Term("path", "a")) == {"b"}
 
 
+@depends_on("test_atomic::test_hit_fields_returns_stored_mapping_with_all_supplied_fields")
 def test_results_are_a_sequence_of_dictionary_like_hits(tmp_path):
     """Seam: protocol handoff from search results to dictionary-like hits."""
     _, ix = make_index(tmp_path)
@@ -332,6 +386,7 @@ def test_accessing_hit_outside_scored_range_raises_index_error(tmp_path):
             result[1]
 
 
+@depends_on("test_atomic::test_error_no_terms_exception_is_observable")
 def test_terms_true_exposes_matched_terms(tmp_path):
     """Seam: state consistency when terms=True exposes matched terms."""
     _, ix = make_index(tmp_path)
@@ -342,6 +397,7 @@ def test_terms_true_exposes_matched_terms(tmp_path):
         assert result.matched_terms() and result[0].matched_terms()
 
 
+@depends_on("test_atomic::test_error_no_terms_exception_is_observable")
 def test_matched_terms_without_terms_flag_raises_no_terms_exception(tmp_path):
     """Seam: error propagation from matched_terms without terms flag."""
     _, ix = make_index(tmp_path)
@@ -362,6 +418,7 @@ def test_error_invalid_field_value_does_not_publish(tmp_path):
     assert paths(ix, Term("body", "alpha")) == set()
 
 
+@depends_on("test_atomic::test_open_dir_returns_index_object", "test_atomic::test_writer_add_document_succeeds_with_valid_fields")
 def test_invariant_commit_is_visible_after_open_dir(tmp_path):
     """CVI-2: commit visible after reopening index directory."""
     directory, ix = make_index(tmp_path)
@@ -409,6 +466,8 @@ def test_invariant_cancel_restores_previous_document_set(tmp_path):
     assert paths(ix, Term("path", "a")) == {"a"}
 
 
+@depends_on("test_atomic::test_doc_count_reflects_committed_document_count")
+@depends_on("test_atomic::test_delete_by_term_returns_number_of_staged_deletions")
 def test_invariant_committed_deletion_changes_doc_count(tmp_path):
     """CVI-7: committed deletion reduces doc_count consistently."""
     _, ix = make_index(tmp_path)

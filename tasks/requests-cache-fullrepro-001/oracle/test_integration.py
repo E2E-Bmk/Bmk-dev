@@ -85,6 +85,7 @@ def test_cache_delete_by_url_makes_next_request_miss(requests_mock):
     assert after_delete.text == "fresh"
 
 
+@pytest.mark.depends_on("test_uninstall_cache_restores_is_installed_to_false", "test_session_first_request_returns_from_cache_false", "test_normalize_url_sorts_query_params_and_redacts_ignored")
 def test_cache_delete_missing_key_is_silently_ignored(requests_mock):
     """Seam: state consistency - delete nonexistent key doesn't corrupt."""
     requests_mock.get(MOCK_URL, text="safe")
@@ -99,6 +100,7 @@ def test_cache_delete_missing_key_is_silently_ignored(requests_mock):
 # --- Protocol Handoff: key generation → cache matching ---
 
 
+@pytest.mark.depends_on("test_normalize_url_sorts_query_params_and_redacts_ignored", "test_normalize_params_sorts_and_redacts_specified_keys", "test_get_url_expiration_regex_pattern_matches")
 def test_ignored_parameters_affect_both_key_and_stored_url(requests_mock):
     """Seam: protocol handoff between key generation and storage redaction."""
     requests_mock.get("https://example.test/items?id=7&token=abc", text="result")
@@ -112,6 +114,7 @@ def test_ignored_parameters_affect_both_key_and_stored_url(requests_mock):
     assert "token=REDACTED" in stored.url
 
 
+@pytest.mark.depends_on("test_normalize_url_sorts_query_params_and_redacts_ignored", "test_create_key_produces_same_key_for_reordered_query_params", "test_uninstall_cache_restores_is_installed_to_false")
 def test_non_ignored_params_create_separate_cache_entries(requests_mock):
     """Seam: protocol handoff - different params → different keys → different entries."""
     requests_mock.get("https://example.test/items?page=1", text="page-one")
@@ -124,6 +127,7 @@ def test_non_ignored_params_create_separate_cache_entries(requests_mock):
     assert len(session.cache.responses) == 2
 
 
+@pytest.mark.depends_on("test_normalize_headers_returns_sorted_normalized_dict", "test_init_backend_unknown_alias_raises_value_error", "test_get_url_expiration_no_match_returns_none_or_sentinel")
 def test_match_headers_list_creates_separate_entries_per_header_value(requests_mock):
     """Seam: protocol handoff between header matching config and key generation."""
     requests_mock.get(MOCK_URL, [{"text": "json-data"}, {"text": "xml-data"}])
@@ -135,6 +139,7 @@ def test_match_headers_list_creates_separate_entries_per_header_value(requests_m
     assert len(session.cache.responses) == 2
 
 
+@pytest.mark.depends_on("test_uninstall_cache_restores_is_installed_to_false", "test_session_first_request_returns_from_cache_false", "test_normalize_headers_returns_sorted_normalized_dict")
 def test_match_headers_false_shares_entry_regardless_of_headers(requests_mock):
     """Seam: protocol handoff - disabled header matching shares key."""
     requests_mock.get(MOCK_URL, [{"text": "first"}, {"text": "second"}])
@@ -147,6 +152,7 @@ def test_match_headers_false_shares_entry_regardless_of_headers(requests_mock):
     assert hit.text == "first"
 
 
+@pytest.mark.depends_on("test_session_first_request_returns_from_cache_false", "test_create_key_produces_same_key_for_reordered_query_params", "test_pickling_cached_session_raises_not_implemented_error")
 def test_contains_request_uses_same_key_settings_as_session(requests_mock):
     """Seam: protocol handoff between session key config and contains() lookup."""
     requests_mock.get("https://example.test/items?id=5&auth=xyz", text="ok")
@@ -163,6 +169,7 @@ def test_contains_request_uses_same_key_settings_as_session(requests_mock):
 # --- Error Propagation ---
 
 
+@pytest.mark.depends_on("test_session_first_request_returns_from_cache_false", "test_only_if_cached_miss_returns_504_without_origin_call", "test_init_backend_memory_returns_base_cache_instance")
 def test_stale_if_error_returns_expired_cache_on_origin_failure(requests_mock):
     """Seam: error propagation from origin failure through stale policy."""
     requests_mock.get(MOCK_URL, text="stale-data")
@@ -180,6 +187,7 @@ def test_stale_if_error_returns_expired_cache_on_origin_failure(requests_mock):
     assert response.text == "stale-data"
 
 
+@pytest.mark.depends_on("test_uninstall_cache_restores_is_installed_to_false", "test_session_first_request_returns_from_cache_false", "test_pickling_cached_session_raises_not_implemented_error")
 def test_stale_if_error_false_propagates_origin_exception(requests_mock):
     """Seam: error propagation - disabled stale policy re-raises."""
     requests_mock.get(MOCK_URL, text="will-expire")
@@ -198,6 +206,7 @@ def test_stale_if_error_false_propagates_origin_exception(requests_mock):
 # --- Config Interaction ---
 
 
+@pytest.mark.depends_on("test_response_hook_fires_for_cached_responses", "test_pickling_cached_session_raises_not_implemented_error", "test_only_if_cached_miss_returns_504_without_origin_call")
 def test_force_refresh_overwrites_existing_cached_entry(requests_mock):
     """Seam: config interaction between force_refresh and cache write."""
     requests_mock.get(MOCK_URL, [{"text": "stale"}, {"text": "fresh"}])
@@ -212,6 +221,7 @@ def test_force_refresh_overwrites_existing_cached_entry(requests_mock):
     assert after_refresh.text == "fresh"
 
 
+@pytest.mark.depends_on("test_pickling_cached_session_raises_not_implemented_error", "test_expire_immediately_does_not_store_response", "test_session_first_request_returns_from_cache_false")
 def test_read_only_session_serves_hits_but_does_not_write_misses(requests_mock):
     """Seam: config interaction between read_only mode and cache write policy."""
     requests_mock.get(MOCK_URL, text="seed")
@@ -228,6 +238,7 @@ def test_read_only_session_serves_hits_but_does_not_write_misses(requests_mock):
     assert not readonly.cache.contains(url=MOCK_URL_ALT)
 
 
+@pytest.mark.depends_on("test_uninstall_cache_restores_is_installed_to_false", "test_session_first_request_returns_from_cache_false", "test_normalize_url_sorts_query_params_and_redacts_ignored")
 def test_cache_disabled_context_bypasses_reads_and_writes(requests_mock):
     """Seam: config interaction between cache_disabled and cache state."""
     requests_mock.get(MOCK_URL, [{"text": "cached"}, {"text": "bypass"}, {"text": "third"}])
@@ -244,6 +255,7 @@ def test_cache_disabled_context_bypasses_reads_and_writes(requests_mock):
     assert still_cached.text == "cached"
 
 
+@pytest.mark.depends_on("test_do_not_cache_prevents_any_storage", "test_uninstall_cache_restores_is_installed_to_false", "test_session_first_request_returns_from_cache_false")
 def test_filter_fn_false_prevents_cache_storage(requests_mock):
     """Seam: config interaction between filter_fn and cache write."""
     requests_mock.get(MOCK_URL, text="rejected")
@@ -255,6 +267,7 @@ def test_filter_fn_false_prevents_cache_storage(requests_mock):
     assert len(session.cache.responses) == 0
 
 
+@pytest.mark.depends_on("test_response_hook_fires_for_cached_responses", "test_pickling_cached_session_raises_not_implemented_error", "test_only_if_cached_miss_returns_504_without_origin_call")
 def test_allowable_methods_controls_which_methods_are_cached(requests_mock):
     """Seam: config interaction between allowable_methods and write policy."""
     requests_mock.post(MOCK_URL, [{"text": "posted"}, {"text": "again"}])
@@ -268,6 +281,7 @@ def test_allowable_methods_controls_which_methods_are_cached(requests_mock):
     assert second.text == "posted"
 
 
+@pytest.mark.depends_on("test_expire_immediately_does_not_store_response", "test_do_not_cache_prevents_any_storage", "test_uninstall_cache_restores_is_installed_to_false")
 def test_default_policy_does_not_cache_post_or_non_200(requests_mock):
     """Seam: config interaction between default methods/codes and cache state."""
     requests_mock.post(MOCK_URL, text="post-response")

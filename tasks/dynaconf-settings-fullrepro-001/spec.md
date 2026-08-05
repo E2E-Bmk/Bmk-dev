@@ -1,75 +1,77 @@
 ﻿# Dynaconf Core Settings Behavior Specification
 
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
+
 ## Product Overview
 
-Implement a Python configuration management library compatible with Dynaconf's documented core behavior. A user creates a settings object, loads configuration from local files and environment variables, optionally separates values by environment, validates the resulting settings, and observes the same final state through Python accessors, validators, inspection/history utilities, and CLI commands.
+`dynaconf` is a configuration-management library with a `dynaconf` CLI entry point. It manages configuration from local files and environment variables, optionally separates values by environment, validates the resulting settings, and exposes the same final state through Python accessors, validators, inspection/history utilities, and CLI commands.
 
-The implementation must be usable without network services. Redis, Vault, Django, and Flask integrations are non-goals unless explicitly exercised through their public optional wrappers. The core scope is the local settings engine.
+The core scope is the local settings engine. Network-backed Redis or Vault behavior, and Django or Flask integrations, are not covered unless explicitly exercised through their public optional wrappers.
 
-## Scope
+## Non-Goals
 
-This specification covers local file loading, environment variables, layered environments, dynamic casting tokens, Python accessors, runtime updates, merge behavior, validators, post-load hooks, inspection/history, and the local `dynaconf` CLI. Network-backed stores and framework integrations are outside the required core.
+- Network-backed Redis or Vault behavior is outside the local core design.
+- This specification does not require Django or Flask extension behaviorunless explicitly selected in a later scope.
+- This specification does not require Upstream test helper packages or repository-local fixtures.
+- This specification does not require Upstream internal implementation modules as required API.
+- This specification does not require Undocumented private helpers or private attributes.
+- This specification does not require Internet access.
 
-## Public Import Surface
+## Representative Workflows
 
-The following names are public and importable:
+### Load settings, validate, and update at runtime
 
 ```python
-from dynaconf import Dynaconf, LazySettings, settings
-from dynaconf import Validator, ValidationError
-from dynaconf import add_converter, post_hook
-from dynaconf import inspect_settings, get_history
+import os
+from dynaconf import Dynaconf, Validator
+
+os.environ["DYNACONF_PORT"] = "@int 9000"
+
+settings = Dynaconf(
+    settings_files=["settings.toml"],
+    environments=True,
+    env="development",
+    validators=[
+        Validator("PORT", is_type_of=int, must_exist=True),
+    ],
+)
+
+assert isinstance(settings.PORT, int)
+assert settings.get("PORT") == 9000
+
+settings.set("database.host", "localhost")
+assert settings.get("database.host") == "localhost"
+assert "database" in settings.as_dict()
 ```
 
-`Dynaconf` and `LazySettings` construct settings objects. `settings` is a global backwards-compatible settings object. `Validator` describes validation rules. `ValidationError` is raised for validation failures and exposes accumulated details when all errors are collected. `add_converter` registers custom casting tokens. `post_hook` marks Python settings-file functions as hooks. `inspect_settings` and `get_history` report how values were loaded.
+Constructing `Dynaconf` with `settings_files` and `environments=True` loads the development section from `settings.toml`. The environment variable `DYNACONF_PORT` with `@int` casting overrides the file value. The validator confirms `PORT` is an integer. Runtime `set` updates a nested key accessible via dotted `get` and `as_dict()`.
 
-The package provides a console command named `dynaconf`.
+### Inspect history and use the CLI
 
-## Product State Model
+```python
+from dynaconf import Dynaconf, get_history, inspect_settings
 
-One settings object holds a canonical value view for its active environment. File loaders, environment variables, hooks, validator defaults/casts, and runtime updates contribute ordered values to that view. Attribute access, item access, dotted lookup, `as_dict()`, validation, inspection/history, and CLI reads are public projections of the same state.
+settings = Dynaconf(settings_files=["settings.toml"], environments=True, env="development")
+history = get_history(settings, key="PORT")
+assert len(history) >= 1
 
-Changing the active environment changes which layered contributions participate without creating contradictory accessor views. Merge markers and casting tokens control how source contributions are interpreted; they are not retained as ordinary user settings after loading.
+report = inspect_settings(settings, key="PORT")
+assert "current" in report or "current_value" in report
+```
+
+`get_history` and `inspect_settings` expose loading provenance for any key. The equivalent CLI commands `dynaconf get PORT` and `dynaconf list` must report the same final values as the Python accessors. Switching environments with `settings.setenv("production")` exposes production-layer values without mutating previous development results.
 
 ## Constructing Settings
 
-`Dynaconf(...)` accepts documented configuration options as keyword arguments. The following options are part of the public contract:
+The settings constructor accepts configuration options that control loading sources, environment separation, casting, merge behavior, validation, and runtime behavior.
 
-```python
-settings = Dynaconf(
-    envvar_prefix="DYNACONF",
-    settings_file=None,
-    settings_files=None,
-    root_path=None,
-    environments=False,
-    env="development",
-    default_env="default",
-    env_switcher="ENV_FOR_DYNACONF",
-    load_dotenv=False,
-    dotenv_path=".",
-    dotenv_override=False,
-    encoding="utf-8",
-    auto_cast=True,
-    dotted_lookup=True,
-    lowercase_read=True,
-    merge_enabled=False,
-    nested_separator="__",
-    preload=[],
-    includes=[],
-    skip_files=None,
-    secrets=None,
-    fresh_vars=[],
-    loaders=["dynaconf.loaders.env_loader"],
-    core_loaders=["YAML", "TOML", "INI", "JSON", "PY"],
-    validators=[],
-    validate_on_update=False,
-    apply_default_on_none=False,
-    ignore_unknown_envvars=False,
-    sysenv_fallback=False,
-    post_hooks=None,
-    filtering_strategy=None,
-)
-```
+**Constructor options.** `Dynaconf(...)` accepts documented configuration options as keyword arguments. Public options include `envvar_prefix` for environment-variable matching, settings file paths, `root_path`, `environments` for environment separation, `env` for active environment name, environment switcher variable, `load_dotenv`, `encoding`, `auto_cast`, `dotted_lookup`, lowercase read, `merge_enabled`, nested separator, `preload` and `includes` lists, skip files, secrets paths, `fresh_vars`, loader lists, core loader formats, `validators`, `validate_on_update` mode, `apply_default_on_none`, `ignore_unknown_envvars`, `sysenv_fallback`, `post_hooks`, and filtering strategy.
+
+**Environment-variable prefix.** When `envvar_prefix` is a string, environment variables with that prefix (followed by `_`) are loaded as settings. When `envvar_prefix` contains commas, each comma-separated prefix is loaded independently. When `envvar_prefix` is `False`, all environment variables are loaded without prefix filtering.
 
 Configuration options may also be supplied through environment variables named as upper-case option names with `_FOR_DYNACONF` suffix, such as `ENVVAR_PREFIX_FOR_DYNACONF`, `SETTINGS_FILES_FOR_DYNACONF`, `ENVIRONMENTS_FOR_DYNACONF`, `LOAD_DOTENV_FOR_DYNACONF`, `ENV_SWITCHER_FOR_DYNACONF`, `AUTO_CAST_FOR_DYNACONF`, and `MERGE_ENABLED_FOR_DYNACONF`. Environment option values are parsed with the same casting rules used for setting values.
 
@@ -77,7 +79,7 @@ Configuration options may also be supplied through environment variables named a
 
 ## Source Loading Order
 
-The final settings state is produced by loading sources in a deterministic order:
+Source loading establishes the final configuration state by layering contributions from files, environment variables, hooks, and runtime updates in a deterministic order.
 
 1. Explicit constructor defaults and Dynaconf defaults.
 2. `preload` files.
@@ -95,7 +97,9 @@ Environment variables have priority over file values. Runtime updates have prior
 
 ## File Loading
 
-Supported local settings file formats are:
+File loading reads configuration values from local files in supported formats, discovering files through path resolution and loading companion local files automatically.
+
+**Supported formats.** Supported local settings file formats are:
 
 - TOML: `.toml`
 - YAML: `.yaml`, `.yml`
@@ -112,46 +116,11 @@ Relative `settings_files` are searched from the entry-point folder upward throug
 
 Inside a settings file, `dynaconf_include` may be a string or list of strings and causes the referenced files/globs to be loaded as includes.
 
-## Layered Environments
-
-When `environments=False`, top-level file keys become settings directly.
-
-When `environments=True`, the first-level sections or top-level mapping keys are environment names. The active environment is controlled by `env`, by the environment variable named by `env_switcher`, or by `ENV_FOR_DYNACONF` by default. Environment names are case-insensitive for selection.
-
-`default_env` names the fallback environment. Values in the active environment override values in the default environment. `[global]` values apply across environments. Custom environment names such as `testing`, `staging`, or `anything` are accepted.
-
-`env` may be a comma-separated list. Multiple active environments are loaded in the order specified; later active environments override earlier ones unless merge rules apply.
-
-The active environment can be changed at runtime with public environment-switching behavior such as `setenv(...)` or by constructing a new settings object with a different `env`. Accessors, validators, CLI output, and history must reflect the active environment.
-
-`from_env(name, keep=False, **options)` returns a new isolated settings object for another environment and leaves the original object unchanged. With `keep=True`, previously loaded values are chained into the new object and later environments override earlier ones. `setenv(name=None)` changes the existing settings object in place; calling it without a name returns to the previous/default working environment. `using_env(name)` is a context manager that temporarily switches the existing object for the context scope and restores it afterwards.
-
-## Environment Variables
-
-Environment variables override settings when their names match the configured prefix. With `envvar_prefix="DYNACONF"`, `DYNACONF_PORT=9900` sets `PORT`. Custom prefixes are accepted. A comma-separated prefix list is accepted, and variables from all listed prefixes are loaded. With `envvar_prefix=False`, unprefixed environment variables are considered setting variables.
-
-Only upper-case prefixed environment variables are loaded. First-level setting access is case-insensitive by default, so `settings.PORT`, `settings.port`, `settings["PORT"]`, and `settings.get("port")` observe the same first-level key when lowercase reads are enabled.
-
-Environment variable values are parsed as TOML-like values:
-
-- `42` becomes an integer.
-- `42.1` becomes a float.
-- `true` and `false` become booleans.
-- `['red', 'green']` becomes a list.
-- `{name='Bruno'}` becomes a dictionary.
-- quoted strings remain strings; double quoting can force strings such as `"'42'"`.
-
-Boolean strings `True` and `False` are normalized to TOML booleans for top-level envvar values unless forced to strings.
-
-Nested keys are expressed with the nested separator, default `__`. For example `DYNACONF_DATABASE__ARGS__timeout=30` produces `DATABASE = {"ARGS": {"timeout": 30}}`. List indexes can be expressed with the documented index separator `___`, such as `WORKERS___0__Address`.
-
-When `ignore_unknown_envvars=True`, prefixed environment variables are loaded only for keys already introduced by files, preload, or includes. When `sysenv_fallback=True`, `settings.get()` may fall back to unprefixed system environment variables for missing keys. A list value for `sysenv_fallback` restricts which names can fall back.
-
-When `load_dotenv=True`, `.env` files are loaded. `dotenv_override` controls whether `.env` values override already exported environment variables.
-
 ## Casting Tokens and Lazy Values
 
-When `auto_cast=True`, string values from files and environment variables can use casting tokens:
+Casting tokens transform string values from files and environment variables into typed Python objects at access time.
+
+**Available tokens.** When `auto_cast` is set to `True`, string values from files and environment variables can use casting tokens:
 
 - `@int value`
 - `@float value`
@@ -177,7 +146,7 @@ String utility tokens transform strings at access time. `@split` returns a list 
 
 `add_converter(name, callable)` registers a custom token. For example `add_converter("path", Path)` makes `@path /tmp/file` return `Path("/tmp/file")`. Converters compose with other lazy tokens, so `@path @format {env[HOME]}/child` first resolves the format expression and then applies the converter.
 
-When `auto_cast=False`, casting tokens are not interpreted except where a public API explicitly requests parsing.
+**Disabled auto-cast.** When `auto_cast` is set to `False`, casting tokens are not interpreted and string values remain as raw strings. However, plain numeric environment-variable values are still parsed into their natural types (integers and floats). Explicit token syntax such as `@int 9900` remains as the literal string `"@int 9900"` when auto-cast is disabled.
 
 ## Accessing Settings
 
@@ -199,7 +168,13 @@ Nested dictionaries are exposed through attribute access and dictionary access. 
 
 Missing attribute access raises the normal missing-key error for settings. `get` returns the provided default.
 
-`as_dict()` returns a dictionary representation of loaded user settings for the active environment. Internal Dynaconf settings are excluded unless the caller asks for all/internal values through the relevant public API or CLI option.
+**Dictionary representation.** `as_dict()` returns a dictionary representation of loaded user settings for the active environment. Internal Dynaconf settings are excluded unless the caller asks for all/internal values through the relevant public API or CLI option.
+
+**Environment switching.** When `environments=True`, multiple environments can be active. The `env` argument accepts a single environment name or a comma-separated list of environment names; when comma-separated, environments are loaded in listed order so later environments override earlier ones. `setenv(env_name)` switches the active environment persistently. `using_env(env_name)` is a context manager that temporarily switches the active environment and restores the previous environment on exit. `from_env(env_name)` returns an isolated settings object for the specified environment without changing the original settings object's active environment. When `keep` is set to true on `from_env`, existing values from the current environment are preserved and the new environment's values overlay them.
+
+**System-environment fallback.** When `sysenv_fallback` is set to `True`, missing keys fall back to reading unprefixed system environment variables. When `sysenv_fallback` is a list of names, only those named environment variables are allowed as fallbacks.
+
+**Unknown environment variables.** When `ignore_unknown_envvars` is set to `True`, only environment variables matching keys already defined in files are loaded; unknown prefixed environment variables are silently ignored.
 
 ## Runtime Updates
 
@@ -350,6 +325,12 @@ Global options include:
 
 `dynaconf inspect` reports loading history and debug information. Options include `--key`, `--env`, `--format yaml|json|json-compact`, `--old-first`, `--limit`, `--all`, `--report-mode inspect|debug`, and `--verbose`.
 
+## State Model
+
+One settings object holds a canonical value view for its active environment. File loaders, environment variables, hooks, validator defaults/casts, and runtime updates contribute ordered values to that view. Attribute access, item access, dotted lookup, `as_dict()`, validation, inspection/history, and CLI reads are public projections of the same state.
+
+Changing the active environment changes which layered contributions participate without creating contradictory accessor views. Merge markers and casting tokens control how source contributions are interpreted; they are not retained as ordinary user settings after loading.
+
 ## Error Semantics
 
 Invalid dynamic token expressions raise the documented Dynaconf format error where public docs specify it, such as malformed `@get`. Invalid file syntax or unsupported formats must fail with a clear parse/format exception rather than silently producing partial settings.
@@ -371,28 +352,45 @@ Unsupported optional integrations such as Redis, Vault, Django, and Flask should
 7. Hooks run after their prerequisite sources are loaded and their returned data participates in the same merge, validation, access, and history behavior as file data.
 8. Inspection history must explain the currently visible value with enough source metadata to distinguish file, envvar, validation default, hook, and runtime update contributions.
 
-## Representative Workflow
+## Public Interface
 
-Create `settings.toml` with a default service name and development port, then set `DYNACONF_PORT` to a different integer. Construct `Dynaconf(settings_files=["settings.toml"], environments=True, env="development")`, validate that `PORT` is an integer, and update a nested runtime key with `set`. Attribute access, dotted `get`, `as_dict()`, `get_history`, `inspect_settings`, and `dynaconf get/list` must report the same final values. Switching to another declared environment must expose that layer without mutating the original development values.
+### Import Surface
 
-## Invocation Protocol
+The following names are public and importable:
+
+```python
+from dynaconf import Dynaconf, LazySettings, settings
+from dynaconf import Validator, ValidationError
+from dynaconf import add_converter, post_hook
+from dynaconf import inspect_settings, get_history
+```
+
+The package provides a console command named `dynaconf`.
+
+### API Catalog
+
+| Name | Kind | Role |
+|------|------|------|
+| `Dynaconf` | class | Primary settings object constructor |
+| `LazySettings` | class | Lazy settings object constructor |
+| `settings` | object | Global backwards-compatible settings object |
+| `Validator` | class | Validation rule descriptor |
+| `ValidationError` | exception | Raised for validation failures |
+| `add_converter` | function | Register a custom casting token |
+| `post_hook` | decorator | Mark a Python settings-file function as a post-load hook |
+| `inspect_settings` | function | Return a loading-history report for a settings object |
+| `get_history` | function | Return source history records for a settings object |
+
+Settings objects support attribute access, item access, dotted `get`, callable access, `as_dict()`, runtime `set` and `update`, `load_file`, `setenv`, `using_env`, `from_env`, environment switching, validator registration, and validation calls as described in the behavior sections above.
+
+### CLI Entry Points
 
 The installed `dynaconf` console command is supported. `python -m dynaconf` is not part of this contract. Successful `get`, `list`, `write`, `init`, `inspect`, and validation operations return status `0`; missing keys without defaults and failed validation return nonzero status as described above.
 
-## Environment
+## Appendix A: Environment
 
 The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-## Non-Goals
-
-- Do not implement network-backed Redis or Vault behavior for the local core scope.
-- Do not implement Django or Flask extension behavior unless explicitly selected in a later scope.
-- Do not recreate upstream test helper packages or repository-local fixtures.
-- Do not expose upstream internal implementation modules as required API.
-- Do not implement undocumented private helpers or private attributes.
-- Do not require internet access.
-
-## Implementation Guidance
+## Appendix B: Assessment Notes
 
 Source loading, environment switching, runtime updates, validation, hooks, history, and CLI output should all derive from the same canonical settings state. File parser choices and internal loader classes may differ as long as the public precedence, casting, merge, error, and cross-view behavior remains consistent.
-

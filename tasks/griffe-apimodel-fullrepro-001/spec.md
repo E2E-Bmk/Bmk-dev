@@ -1,68 +1,93 @@
 # Griffe Specification
 
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
+
 ## Product Overview
 
-Griffe extracts the public structure of Python code into a semantic object graph. A package, module, class, function, attribute, type alias, import alias, parameter, decorator, and docstring becomes a navigable model object rather than remaining only source text. The same graph supports static source analysis, runtime inspection, JSON serialization, API compatibility checks, extensions, and command-line output.
+This package extracts the public structure of Python code into a semantic object graph. A package, module, class, function, attribute, type alias, import alias, parameter, decorator, and docstring becomes a navigable model object rather than remaining only source text. The same graph supports static source analysis, runtime inspection, JSON serialization, API compatibility checks, extensions, and command-line output.
 
-This specification covers local files, local packages, installed modules, and temporary local Git repositories. Network package downloads and remote repository access are outside the supported scope.
+This specification covers local files, local packages, installed modules, and temporary local Git repositories. Remote package indexes and remote repository access are not covered.
 
-## Scope
+## Non-Goals
 
-The covered feature areas are:
+- This specification does not require Remote package download or installation through `load_pypi`.
+- This specification does not require Cloning or contacting remote Git repositories.
+- This specification does not require Exact support for every remote hosting service or remote URL form.
+- This specification does not require Low-level AST node helpers or direct construction of the full expression-node family.
+- This specification does not require Exact source-code rendering, `repr` strings, log messages, ANSI colors, or exception message text.
+- This specification does not require Logger configuration or logger-patching helpers.
+- This specification does not require Tree-rendering or temporary test-construction helpers.
+- This specification does not require Finder, importer, merger, statistics, or agent internals beyond the public workflows described above.
+- This specification does not require Exhaustive support for every docstring element subtype or parser warning.
+- This specification does not require Return-type or attribute-type compatibility inference.
+- This specification does not require Stubs-only package discovery beyond accepting or forwarding the documented option.
+- This specification does not require Live network services, package indexes, or remote credentials.
 
-- loading a local module or package by import name or filesystem path;
-- loading a dotted object path while retaining the graph for its containing package;
-- static analysis, forced runtime inspection, and controlled fallback from static analysis to inspection;
-- modules collections shared by a reusable loader;
-- semantic models for modules, classes, functions, attributes, type aliases, aliases, decorators, parameters, type parameters, and docstrings;
-- graph navigation, object paths, object kinds, visibility, imports, exports, and inherited members;
-- alias target resolution and alias-chain behavior;
-- minimal and full dictionary or JSON serialization with model reconstruction;
-- Google, NumPy, Sphinx, and automatically detected docstring parsing;
-- API breakage detection between two already loaded object graphs;
-- extension loading and graph mutation through documented extension hooks;
-- the `griffe` command with `dump` and `check` subcommands over local inputs.
+## Representative Workflows
 
-## Installable Surface
+### Load, navigate, and serialize
 
-The distribution is installed as `griffe`. The Python library is imported as `griffe`, and its supported API is exposed directly from that top-level module. The CLI support package is importable as `griffecli`; its callable entry points are also re-exported by `griffe` when the CLI package is installed.
+```python
+from griffe import load, Module, Function, Parameters
 
-The primary graph types are `Object`, `Module`, `Class`, `Function`, `Attribute`, `TypeAlias`, `Alias`, `Decorator`, `Parameter`, `Parameters`, `TypeParameter`, and `TypeParameters`. Their public kind values are represented by `Kind`, `ObjectKind`, and `ParameterKind`. Shared graph state is represented by `ModulesCollection` and `LinesCollection`.
+pkg = load("mypkg", search_paths=["src"], docstring_parser="google")
+method = pkg["mypkg.MyClass.my_method"]
+assert isinstance(method, Function)
+assert "param1" in [p.name for p in method.parameters]
 
-The loading surface is `load`, `GriffeLoader`, `visit`, and `inspect`. The serialization surface is `JSONEncoder` and `json_decoder`, together with the model methods `as_dict`, `as_json`, and `from_json`.
+json_str = pkg.as_json()
+reconstructed = Module.from_json(json_str)
+same_method = reconstructed["mypkg.MyClass.my_method"]
+assert same_method.name == method.name
+```
 
-The docstring surface is `Docstring`, `DocstringStyle`, `Parser`, `DocstringOptions`, `parse`, `parse_auto`, `parse_google`, `parse_numpy`, `parse_sphinx`, and `infer_docstring_style`. The retained structured result types are `DocstringElement`, `DocstringNamedElement`, `DocstringParameter`, `DocstringReturn`, `DocstringRaise`, `DocstringYield`, `DocstringAdmonition`, `DocstringAttribute`, `DocstringDeprecated`, `DocstringSection`, `DocstringSectionText`, `DocstringSectionParameters`, `DocstringSectionReturns`, `DocstringSectionRaises`, `DocstringSectionYields`, `DocstringSectionExamples`, `DocstringSectionAttributes`, `DocstringSectionAdmonition`, and `DocstringSectionDeprecated`.
+Loading a local package populates the object graph. Navigating via a dot-separated path returns the `Function` with its parameters and annotations. `as_json()` serializes the graph to JSON, and `from_json` reconstructs a navigable graph preserving the same members.
 
-The API compatibility surface is `find_breaking_changes`, `Breakage`, `BreakageKind`, `ExplanationStyle`, `ParameterMovedBreakage`, `ParameterRemovedBreakage`, `ParameterChangedKindBreakage`, `ParameterChangedDefaultBreakage`, `ParameterChangedRequiredBreakage`, `ParameterAddedRequiredBreakage`, `ObjectRemovedBreakage`, `ObjectChangedKindBreakage`, `AttributeChangedValueBreakage`, and `ClassRemovedBaseBreakage`. `ReturnChangedTypeBreakage`, `AttributeChangedTypeBreakage`, and their corresponding kind values remain importable, but type-compatibility detection is not promised in this scope.
+### Compare two local API versions
 
-The extension surface is `Extension`, `Extensions`, `load_extensions`, `DataclassesExtension`, and `UnpackTypedDictExtension`. The relevant exception hierarchy is `GriffeError`, `LoadingError`, `NameResolutionError`, `AliasResolutionError`, `CyclicAliasError`, `UnimportableModuleError`, `ExtensionError`, and `ExtensionNotLoadedError`.
+```python
+from griffe import load, find_breaking_changes, ObjectRemovedBreakage, ParameterChangedDefaultBreakage, ParameterAddedRequiredBreakage
 
-The command-line entry point is `griffe`. Calling `python -m griffe` is supported and invokes the same command dispatcher. The callable CLI surface is `get_parser`, `dump`, `check`, and `main` from both `griffe` and `griffecli`.
+old_pkg = load("mypkg", search_paths=["old_src"])
+new_pkg = load("mypkg", search_paths=["new_src"])
 
-## Product State Model
+breakages = list(find_breaking_changes(old_pkg, new_pkg))
+breakage_kinds = {type(b) for b in breakages}
+assert ObjectRemovedBreakage in breakage_kinds
+assert ParameterChangedDefaultBreakage in breakage_kinds
+assert ParameterAddedRequiredBreakage in breakage_kinds
+```
 
-Griffe exposes one semantic state through three public projections:
+When the new version removes a public object, changes a parameter default, and adds a required parameter, `find_breaking_changes` yields the corresponding concrete breakage types. The equivalent `griffe check` CLI returns exit code `1` when breakage is found.
 
-1. The input projection is Python source or an importable runtime object.
-2. The graph projection is a tree of model objects connected by parent, member, collection, and alias relationships.
-3. The output projection is JSON or dictionaries, breakage objects, extension-modified graph state, and CLI output derived from that graph.
+### Extend and dump
 
-The graph is the shared fact source. Loading or inspection must establish the graph before serialization, breakage detection, or CLI output derives another view.
+```python
+from griffe import load, Extension, Extensions, load_extensions
 
-The following state invariants apply throughout the package:
+class LabelExtension(Extension):
+    def on_package(self, *, pkg, loader, **kwargs):
+        pkg.labels.add("custom-label")
 
-- An object returned for a dotted request must be the same logical object reachable from the loaded package graph at that dotted path.
-- A member inserted through public graph assignment must report the assigned parent and must be reachable through both `members` and item access.
-- A resolved alias must expose the canonical path and public metadata of its final target while retaining its own import path.
-- A graph reconstructed from minimal JSON must preserve object kinds, names, member relationships, parameters, aliases, and annotations required for navigation and breakage detection.
-- A docstring parsed during loading must expose the same structured sections as parsing that `Docstring` directly with the same parser and options.
-- A breakage reported by the Python API must cause the local `griffe check` workflow over the same two versions to return a nonzero breakage result.
-- An extension mutation completed during loading must be visible through graph navigation and subsequent serialization.
-- A package emitted by `griffe dump` must describe the same top-level name, kinds, members, and public paths as the Python graph loaded with equivalent options.
+extensions = Extensions(LabelExtension())
+pkg = load("mypkg", search_paths=["src"], extensions=extensions)
+assert "custom-label" in pkg.labels
+
+json_str = pkg.as_json()
+assert "custom-label" in json_str
+```
+
+Defining an `Extension` subclass with `on_package` allows graph mutation during loading. The added label is visible through navigation and persists in the serialized JSON output.
 
 ## Loading And Analysis
 
-`load(objspec=None, /, *, submodules=True, try_relative_path=True, extensions=None, search_paths=None, docstring_parser=None, docstring_options=None, lines_collection=None, modules_collection=None, allow_inspection=True, force_inspection=False, store_source=True, find_stubs_package=False, resolve_aliases=False, resolve_external=None, resolve_implicit=False)` loads an import name, dotted object path, module file, or package directory.
+Loading populates the object graph from Python source or runtime inspection, supporting import names, dotted paths, module files, and package directories.
+
+**The load function.** `load` accepts an object specifier that may be an import name, a dotted object path, a module file, or a package directory. When `submodules` is true, loading includes submodules. When `search_paths` is provided, it controls where import names are resolved. When `docstring_parser` is set, parsed docstrings use that parser style. When `extensions` is supplied, extension hooks run during loading. Additional options include `lines_collection`, `modules_collection`, `allow_inspection`, `force_inspection`, `store_source`, `find_stubs_package`, `resolve_aliases`, `resolve_external`, and `resolve_implicit`.
 
 When `objspec` names a nested object, Griffe must load the containing package and return the requested object from that graph. When `objspec` explicitly identifies a relative filesystem path and `try_relative_path` is true, Griffe must accept that path as a load target. When `try_relative_path` is false, Griffe must treat `objspec` as an import-style name resolved through the configured search paths and import environment. An explicit `search_paths` entry governs import-name lookup; this specification does not assign current-directory precedence over that entry.
 
@@ -76,21 +101,21 @@ When source is unavailable and `allow_inspection` is false, loading must raise `
 
 ## Graph Models And Navigation
 
-Every `Object` has a declared `name`, optional `parent`, `members`, optional `docstring`, `labels`, `imports`, optional `exports`, `runtime`, `public`, `deprecated`, `extra`, and `analysis`. A top-level module has no parent. A regular object's `path` and `canonical_path` must be its dotted location from the top-level module.
+The graph model represents Python code as a navigable tree of typed objects with members, parameters, annotations, and relationships.
 
-`Module`, `Class`, `Function`, `Attribute`, and `TypeAlias` must report their corresponding `Kind` and boolean kind predicates. `Function` must expose ordered `parameters`, a return annotation through `returns`, decorators, overloads, and type parameters. `Attribute` must expose its annotation and value. `Class` must expose bases, decorators, type parameters, and constructor parameters when an initializer is present. `TypeAlias` must expose its assigned value and type parameters.
+**Object fundamentals.** Every `Object` has a declared `name`, optional `parent`, `members`, optional `docstring`, `labels`, `imports`, optional `exports`, `runtime`, `public`, `deprecated`, `extra`, and `analysis`. A top-level module has no parent. A regular object's `path` and `canonical_path` must be its dotted location from the top-level module.
 
-An object's `members` mapping contains declared members. Item access must accept a single member name, a dot-separated path, or a tuple of path parts. These forms must reach the same object. Missing member access must raise `KeyError`.
+**Kind hierarchy.** `Module`, `Class`, `Function`, `Attribute`, and `TypeAlias` must report their corresponding `Kind` and boolean kind predicates (`is_module`, `is_class`, `is_function`, `is_attribute`, `is_type_alias`). `Function` must expose ordered `parameters`, a return annotation through `returns`, decorators, overloads, and type parameters. `Attribute` must expose its annotation and value. `Class` must expose bases, decorators, type parameters, and constructor parameters when an initializer is present. `TypeAlias` must expose its assigned value and type parameters.
 
-Assigning a model through item assignment or `set_member` must update the inserted object's parent. Deleting through item deletion or `del_member` must remove the declared member. Direct mutation of the raw `members` dictionary is not required to repair parent or alias bookkeeping.
+**Member access.** An object's `members` mapping contains declared members. Item access must accept a single member name, a dot-separated path, or a tuple of path parts. These forms must reach the same object. Missing member access must raise `KeyError`.
 
-For a class, `inherited_members` must expose inherited members as `Alias` objects whose `inherited` value is true. `all_members` must combine declared and inherited members, with declared members taking the name when a subclass overrides an inherited name. If a base cannot be resolved from loaded packages, it must be omitted from resolved inheritance results rather than replaced with a fabricated class.
+**Member mutation.** Assigning a model through item assignment or `set_member` must update the inserted object's parent. Deleting through item deletion or `del_member` must remove the declared member. Direct mutation of the raw `members` dictionary is not required to repair parent or alias bookkeeping.
 
-Module-level visibility must follow explicit exports when a module defines `__all__`. Without `__all__`, a module-level object must be public when its name is not private and it was not imported from another module. A class-level member must be public when its name is not private and it was not imported. Setting an object's `public` value must override the inferred public result.
+**Inheritance.** For a class, `inherited_members` must expose inherited members as `Alias` objects whose `inherited` value is true. `all_members` must combine declared and inherited members, with declared members taking the name when a subclass overrides an inherited name. If a base cannot be resolved from loaded packages, it must be omitted from resolved inheritance results rather than replaced with a fabricated class.
 
-`Parameters` is an ordered container. It must support iteration, length, membership by parameter name, lookup by integer index, and lookup by name. Name lookup must ignore leading `*` or `**`. Setting an unknown name must append the supplied parameter; setting a known name or index must replace it. Deleting an unknown name must raise `KeyError`. `add` must raise `ValueError` when the same parameter name is already present.
+**Visibility.** Module-level visibility must follow explicit exports when a module defines `__all__`. Without `__all__`, a module-level object must be public when its name is not private and it was not imported from another module. A class-level member must be public when its name is not private and it was not imported. Setting an object's `public` value must override the inferred public result.
 
-`Parameter.required` must be true exactly when the parameter has no default. `ParameterKind` must expose the values `positional-only`, `positional or keyword`, `variadic positional`, `keyword-only`, and `variadic keyword`.
+**Parameters.** `Parameters` is an ordered container. It must support iteration, length, membership by parameter name, lookup by integer index, and lookup by name. Name lookup must ignore leading `*` or `**`. Setting an unknown name must append the supplied parameter; setting a known name or index must replace it. Deleting an unknown name must raise `KeyError`. `add` must raise `ValueError` when the same parameter name is already present. `Parameter.required` must be true exactly when the parameter has no default. `ParameterKind` must expose the values `positional-only`, `positional or keyword`, `variadic positional`, `keyword-only`, and `variadic keyword`.
 
 ## Alias Resolution
 
@@ -102,9 +127,11 @@ When no target is found in the modules collection, target-dependent access must 
 
 ## Docstrings
 
-`Docstring(value, *, lineno=None, endlineno=None, parent=None, parser=None, parser_options=None)` must store `value` after Python-style dedenting and removal of trailing whitespace. Its `lines` projection must equal the cleaned value split on newline boundaries.
+Docstrings capture the documentation text attached to code objects, providing structured parsing, caching, and style detection.
 
-`Docstring.parse(parser=None, **options)` must use the parser passed to the call, otherwise the parser stored on the docstring, otherwise it must return a single `DocstringSectionText`. Explicit call options must be used for that parse; stored `parser_options` must be used when explicit options are absent.
+**Construction and normalization.** A `Docstring` must store its value after Python-style dedenting and removal of trailing whitespace. It accepts the raw docstring text, optional line number information through `lineno` and `endlineno`, an optional `parent` object, an optional `parser` for default parsing, and optional `parser_options`. Its `lines` projection must equal the cleaned value split on newline boundaries.
+
+**Parsing.** `Docstring.parse` must use the parser passed to the call if present, otherwise the parser stored on the docstring, otherwise it must return a single `DocstringSectionText` containing the full text. Explicit call options must be used for that parse; stored `parser_options` must be used when explicit options are absent.
 
 The `parse`, `parse_google`, `parse_numpy`, and `parse_sphinx` functions must return ordered `DocstringSection` instances. Text, parameters, returns, raises, yields, examples, attributes, admonitions, and deprecated blocks must use their corresponding retained section types. Parameter-like section elements must expose their documented name, annotation, description, and default information when present.
 
@@ -157,17 +184,26 @@ Graph mutations made by load hooks must be visible when `load` returns. If an ex
 
 `DataclassesExtension` must identify supported dataclasses during loading and expose their generated constructor parameters through the class model. `UnpackTypedDictExtension` must expand an unpacked typed-dictionary keyword parameter into the represented keyword parameters when sufficient static information is present. Unsupported or unresolved inputs must leave the graph usable rather than fabricating members.
 
-## Command-Line Workflows
+## State Model
 
-`griffe dump PACKAGE...` must load each requested local package and write JSON to standard output by default. `--output` must select a file or a `{package}` file template. `--full`, `--docstyle`, `--docopts`, `--resolve-aliases`, `--resolve-implicit`, `--resolve-external`, `--no-resolve-external`, `--search`, `--sys-path`, `--no-inspection`, `--force-inspection`, and `--find-stubs-packages` must map to the corresponding loading or serialization behavior.
+Griffe exposes one semantic state through three public projections:
 
-The callable `dump(packages, ...)` and the CLI subcommand must return `0` when all requested packages were loaded and emitted. They must return `1` when at least one requested package could not be loaded or an extension configuration failed. Successfully loaded packages must remain serializable even when another requested package fails.
+1. The input projection is Python source or an importable runtime object.
+2. The graph projection is a tree of model objects connected by parent, member, collection, and alias relationships.
+3. The output projection is JSON or dictionaries, breakage objects, extension-modified graph state, and CLI output derived from that graph.
 
-`griffe check PACKAGE --against REF` must compare a local package with the selected older local Git reference. `--base-ref` must select a local Git reference for the new side instead of the working tree. The callable `check` must support an explicit local `against_path`. `--format` and `--verbose` must select the explanation style without changing which breakages are found.
+The graph is the shared fact source. Loading or inspection must establish the graph before serialization, breakage detection, or CLI output derives another view.
 
-The check workflow must return `0` when no breakages are found, `1` when one or more breakages are found, and `2` when the local repository or requested Git reference cannot be resolved. Breakage explanations must be written to standard error. Invalid command syntax must produce a nonzero command result.
+The following state invariants apply throughout the package:
 
-`get_parser()` must return an argument parser with required `dump` and `check` subcommands. `main(args=None)` must dispatch the supplied argument list, or process command-line arguments when `args` is omitted, and return the selected subcommand's exit code.
+- An object returned for a dotted request must be the same logical object reachable from the loaded package graph at that dotted path.
+- A member inserted through public graph assignment must report the assigned parent and must be reachable through both `members` and item access.
+- A resolved alias must expose the canonical path and public metadata of its final target while retaining its own import path.
+- A graph reconstructed from minimal JSON must preserve object kinds, names, member relationships, parameters, aliases, and annotations required for navigation and breakage detection.
+- A docstring parsed during loading must expose the same structured sections as parsing that `Docstring` directly with the same parser and options.
+- A breakage reported by the Python API must cause the local `griffe check` workflow over the same two versions to return a nonzero breakage result.
+- An extension mutation completed during loading must be visible through graph navigation and subsequent serialization.
+- A package emitted by `griffe dump` must describe the same top-level name, kinds, members, and public paths as the Python graph loaded with equivalent options.
 
 ## Error Semantics
 
@@ -196,36 +232,92 @@ Exception message wording is not part of the public contract.
 - A public incompatibility found by `find_breaking_changes` must make the equivalent local check workflow return `1`; no incompatibility must make it return `0`.
 - Dumping a package through the callable API and through the CLI with equivalent options must produce JSON describing the same semantic graph.
 
-## Representative Workflows
+## Public Interface
 
-### Load, navigate, and serialize
+### Import Surface
 
-Create a local package containing a module, a class, a method, an imported alias, annotations, parameters, and docstrings. Load the package with a search path and a docstring parser. Navigate to the method through a dot-separated item path, inspect its parameter and return annotations, resolve the imported alias, serialize the package to minimal JSON, reconstruct it with `from_json`, and navigate to the same method and alias in the reconstructed graph.
+The distribution is installed as `griffe`. The Python library is imported as `griffe`, and its supported API is exposed directly from that top-level module. The CLI support package is importable as `griffecli`; its callable entry points are also re-exported by `griffe` when the CLI package is installed.
 
-### Compare two local API versions
+```python
+import griffe
+import griffecli
+from griffe import (
+    Object, Module, Class, Function, Attribute, TypeAlias, Alias,
+    Decorator, Parameter, Parameters, TypeParameter, TypeParameters,
+    Kind, ObjectKind, ParameterKind,
+    ModulesCollection, LinesCollection,
+    load, GriffeLoader, visit, inspect,
+    JSONEncoder, json_decoder,
+    Docstring, DocstringStyle, Parser, DocstringOptions,
+    parse, parse_auto, parse_google, parse_numpy, parse_sphinx,
+    infer_docstring_style,
+    DocstringElement, DocstringNamedElement, DocstringParameter,
+    DocstringReturn, DocstringRaise, DocstringYield, DocstringAdmonition,
+    DocstringAttribute, DocstringDeprecated, DocstringSection,
+    DocstringSectionText, DocstringSectionParameters, DocstringSectionReturns,
+    DocstringSectionRaises, DocstringSectionYields, DocstringSectionExamples,
+    DocstringSectionAttributes, DocstringSectionAdmonition,
+    DocstringSectionDeprecated,
+    find_breaking_changes, Breakage, BreakageKind, ExplanationStyle,
+    ParameterMovedBreakage, ParameterRemovedBreakage,
+    ParameterChangedKindBreakage, ParameterChangedDefaultBreakage,
+    ParameterChangedRequiredBreakage, ParameterAddedRequiredBreakage,
+    ObjectRemovedBreakage, ObjectChangedKindBreakage,
+    AttributeChangedValueBreakage, ClassRemovedBaseBreakage,
+    ReturnChangedTypeBreakage, AttributeChangedTypeBreakage,
+    Extension, Extensions, load_extensions,
+    DataclassesExtension, UnpackTypedDictExtension,
+    GriffeError, LoadingError, NameResolutionError, AliasResolutionError,
+    CyclicAliasError, UnimportableModuleError, ExtensionError,
+    ExtensionNotLoadedError,
+    get_parser, dump, check, main,
+)
+from griffecli import get_parser, dump, check, main
+```
 
-Create old and new local package trees. Load both graphs. The new version removes one public object, changes one public function parameter default, and adds one required parameter. `find_breaking_changes` must return the corresponding concrete breakage types. A local `griffe check` workflow over equivalent Git versions must return `1`. When the new tree preserves the old public contract, both the iterator and CLI workflow must report no breakage.
+`ReturnChangedTypeBreakage`, `AttributeChangedTypeBreakage`, and their corresponding kind values remain importable, but type-compatibility detection is not promised in this scope.
 
-### Extend and dump
+The command-line entry point is `griffe`. Calling `python -m griffe` is supported and invokes the same command dispatcher.
 
-Define an `Extension` that adds a documented label or member in a load hook. Load a local package with that extension, verify the graph mutation through navigation, and dump the package. The JSON output must contain the extension-modified state.
+### API Catalog
 
-## Non-Goals
+| Name | Kind | Role |
+|---|---|---|
+| `load` | function | Loads an import name, path, or package into the graph |
+| `GriffeLoader` | class | Reusable loader with shared module collections |
+| `visit` | function | Statically analyzes supplied source code |
+| `inspect` | function | Inspects a runtime module into the graph |
+| `Object` | class | Base graph object with members and metadata |
+| `Module` | class | Top-level or nested module object |
+| `Class` | class | Class object with bases and members |
+| `Function` | class | Function or method with parameters and return annotation |
+| `Attribute` | class | Attribute with annotation and value |
+| `TypeAlias` | class | Type alias with assigned value |
+| `Alias` | class | Import alias with target resolution |
+| `Parameter` | class | One callable parameter |
+| `Parameters` | class | Ordered parameter container |
+| `Docstring` | class | Parsed and unparsed docstring state |
+| `find_breaking_changes` | function | Compares two graphs for public API incompatibilities |
+| `Breakage` | class | One reported incompatibility |
+| `Extension` | class | Load hook base class |
+| `Extensions` | class | Configured extension dispatch container |
+| `load_extensions` | function | Loads extension instances or classes by name |
+| `DataclassesExtension` | class | Adds dataclass constructor parameters to classes |
+| `UnpackTypedDictExtension` | class | Expands unpacked typed-dictionary parameters |
+| `JSONEncoder` | class | Encodes graph objects to JSON |
+| `json_decoder` | function | Decodes Griffe JSON into graph objects |
+| `dump` | function | Serializes one or more packages to JSON |
+| `check` | function | CLI helper for local API breakage checks |
+| `get_parser` | function | Builds the CLI argument parser |
+| `main` | function | CLI dispatcher |
+| `GriffeError` | exception | Base Griffe error |
+| `AliasResolutionError` | exception | Missing alias target |
+| `CyclicAliasError` | exception | Cyclic alias chain |
+| `ExtensionError` | exception | Extension loading or dispatch failure |
 
-- downloading or installing packages from PyPI through `load_pypi`;
-- cloning or contacting remote Git repositories;
-- exact support for every Git hosting service or remote URL form;
-- low-level AST node helpers and direct construction of the full expression-node family;
-- exact source-code rendering, `repr` strings, log messages, ANSI colors, or exception message text;
-- logger configuration and logger-patching helpers;
-- tree-rendering and temporary test-construction helpers;
-- finder, importer, merger, statistics, and agent internals beyond the public workflows described above;
-- exhaustive support for every docstring element subtype or parser warning;
-- return-type and attribute-type compatibility inference;
-- stubs-only package discovery beyond accepting and forwarding the documented option;
-- live network services, package indexes, or remote credentials.
+Behavioral details for loading options, alias resolution, docstring parsing, serialization, breakage detection, and extension hooks are defined in the behavior sections above.
 
-## Invocation Protocol
+### CLI Entry Points
 
 The installed console command is `griffe`. `python -m griffe` is supported and must invoke the same dispatcher. The separately installed `griffecli` command is outside the primary invocation contract.
 
@@ -238,10 +330,10 @@ The installed console command is `griffe`. `python -m griffe` is supported and m
 | `check` cannot resolve the local repository or Git reference | 2 |
 | invalid command syntax | nonzero |
 
-## Environment
+## Appendix A: Environment
 
 The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-## Implementation Guidance
+## Appendix B: Assessment Notes
 
 Compatibility covers importability, individual model and container behavior, static and dynamic loading, alias errors, docstring parsing, serialization round-trips, extension mutation, API breakage classification, and complete local CLI workflows. The upstream module layout, private helpers, exact diagnostic wording, exact JSON key order, exact explanation formatting, and a particular parser implementation are not required.

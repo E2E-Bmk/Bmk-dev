@@ -1,347 +1,27 @@
 ﻿# Beancount Specification
 
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
+
 ## Product Overview
 
 Beancount is a command-line double-entry accounting system built around plain text ledger files. A ledger records dated financial directives such as account openings, transactions, balance assertions, prices, notes, documents, and events. Beancount loads those files into Python objects, checks and transforms the resulting directive stream, and exposes the same facts through several public views: directive lists, inventories, realized account trees, price maps, formatted ledger text, and command-line diagnostics.
 
 The library treats dates as day-level accounting dates. It does not model time of day. Decimal arithmetic is used for accounting quantities; callers should construct numbers with `D()` or `decimal.Decimal`, not floating-point arithmetic, when exact accounting behavior matters.
 
-## Scope
-
-This specification covers:
-
-- The root Python API exposed by `import beancount as bn` and by `beancount.api`.
-- The public directive objects, amount/position/inventory objects, account helpers, price and conversion helpers, loader functions, printer functions, and account realization function exported from the root API.
-- The Beancount ledger loading contract: parsing input files or strings, resolving includes, booking incomplete postings, running configured transformations, validating entries, and returning entries, errors, and options.
-- The installed command-line tools declared by the package: `bean-check`, `bean-doctor`, `bean-example`, `bean-format`, and `treeify`.
-- The plugin contract used by ledger `plugin` options.
-- User-observable behavior of the public projections over a ledger: textual syntax, directive objects, account sets, inventories, realized trees, price maps, printed output, and CLI diagnostics.
-
-## Installable Surface
-
-The package is named `beancount`. The root package imports the public symbols from `beancount.api`, so these two styles are equivalent for the public API:
-
-```python
-import beancount as bn
-from beancount import load_file, Amount, Transaction
-from beancount.api import load_file, Amount, Transaction
-```
-
-The public root API includes these import namespaces:
-
-```python
-bn.account
-bn.amount
-bn.dtypes
-```
-
-The package installs these command-line entry points:
-
-```text
-bean-check
-bean-doctor
-bean-example
-bean-format
-treeify
-```
-
-Runtime dependencies are ordinary local Python dependencies. Beancount does not require a network service to parse, check, format, or realize a local ledger.
-
-## Public API
-
-### Numeric Values
-
-`D(strord: Decimal | str | int | float | None = None) -> Decimal` constructs a `Decimal` for Beancount values. `None` and an empty string produce decimal zero. Existing `Decimal` values are returned unchanged. Strings may include commas or spaces used as thousands separators; those separators are removed before conversion. Invalid values raise `ValueError`.
-
-`ZERO` is the Decimal zero constant used by the public API.
-
-`Amount(number: Decimal, currency: str)` is an immutable pair of a number and a currency. The string form is `<number> <currency>` using Beancount display formatting. `Amount.from_string(string)` parses strings such as `"10.50 USD"` and raises `ValueError` for invalid amount text. Amount equality compares both number and currency. Ordering sorts by currency first and number second. Boolean conversion is true when the number is not zero. Negation is supported for decimal numbers. Amount helper functions are available from the `bn.amount` namespace.
-
-`Cost(number: Decimal, currency: str, date: datetime.date, label: str | None)` describes the per-unit cost attached to a booked lot.
-
-`CostSpec(number_per, number_total, currency, date, label, merge)` describes an incomplete cost specification from input syntax before booking has resolved it into a concrete `Cost`. Missing parts are represented by `None` or Beancount's missing-value sentinel, depending on the parse stage.
-
-`Position(units: Amount, cost: Cost | None = None)` is a holding with units and an optional lot cost. `Position.from_string(string)` accepts Beancount-like position text with an optional cost expression and raises `ValueError` for invalid text. Positions render as ledger position syntax, compare by a Beancount-specific currency/cost sort key, support negation, absolute value, and Decimal scalar multiplication, and report their `(unit_currency, cost_currency_or_None)` currency pair.
-
-### Directive Objects
-
-The directive classes are immutable tuple-like objects. All dated directives include:
-
-- `meta`: metadata dictionary.
-- `date`: `datetime.date`.
-
-`new_metadata(filename: str, lineno: int, kvlist: dict | None = None) -> dict` returns a metadata dictionary containing `filename` and `lineno`; any supplied key-values are merged into it.
-
-`Account`, `Currency`, and `Flag` are string aliases. `Meta` is a dictionary alias. `Directive` is the public union of directive classes. `Directives` is a list of directives. `Options` is the options-map dictionary returned by loaders.
-
-The public directive classes and fields are:
-
-```python
-Open(meta, date, account, currencies, booking)
-Close(meta, date, account)
-Commodity(meta, date, currency)
-Pad(meta, date, account, source_account)
-Balance(meta, date, account, amount, tolerance, diff_amount)
-Transaction(meta, date, flag, payee, narration, tags, links, postings)
-Posting(account, units, cost, price, flag, meta)
-TxnPosting(txn, posting)
-Note(meta, date, account, comment, tags, links)
-Event(meta, date, type, description)
-Query(meta, date, name, query_string)
-Price(meta, date, currency, amount)
-Document(meta, date, account, filename, tags, links)
-Custom(meta, date, type, values)
-```
-
-`dtypes` is a namespace containing the directive classes `Open`, `Close`, `Commodity`, `Pad`, `Balance`, `Transaction`, `Note`, `Event`, `Query`, `Price`, `Document`, and `Custom`.
-
-`Booking` is an enum of account booking methods. Its public names are `STRICT`, `STRICT_WITH_SIZE`, `NONE`, `AVERAGE`, `FIFO`, `LIFO`, and `HIFO`. The enum controls how ambiguous inventory lot reductions are resolved: strict methods reject ambiguity, `NONE` permits mixed inventories, average merges lots, and FIFO/LIFO/HIFO select a lot according to the named ordering.
-
-The public transaction flags include `FLAG_OKAY`, `FLAG_WARNING`, `FLAG_PADDING`, `FLAG_TRANSFER`, `FLAG_CONVERSIONS`, `FLAG_MERGING`, and `FLAG_SUMMARIZE`. The generated-entry flags identify entries produced by padding, transfers, conversion balancing, merging, or summarization rather than typed directly by the user.
-
-`filter_txns(entries)` yields only `Transaction` directives from an entry list, preserving their existing order.
-
-### Account Helpers
-
-Account names are colon-separated strings such as `Assets:Bank:Checking`. The account namespace provides:
-
-```python
-bn.account.is_valid_root(name) -> bool
-bn.account.is_valid_leaf(name) -> bool
-bn.account.is_valid(name) -> bool
-bn.account.join(*components) -> str
-bn.account.split(account_name) -> list[str]
-bn.account.parent(account_name) -> str | None
-bn.account.leaf(account_name) -> str | None
-bn.account.sans_root(account_name) -> str | None
-bn.account.root(num_components, account_name) -> str
-bn.account.has_component(account_name, component) -> bool
-bn.account.commonprefix(accounts) -> str
-bn.account.parents(account_name) -> iterator[str]
-bn.account.parent_matcher(account_name) -> callable
-```
-
-`has_component()` matches complete account components only. `parent()` returns `None` for the root/empty case. `parents()` yields the account itself, then its parents upward. `parent_matcher()` returns a predicate that is true for the named account and its children.
-
-`get_account_type(account_name) -> str` returns the root component. `get_account_types(options) -> AccountTypes` extracts the configured root names from an options map. `get_account_sign(account_name, account_types=None) -> int` returns `+1` for assets and expenses, `-1` for liabilities, income, and equity. The classification helpers identify balance-sheet accounts, income-statement accounts, equity accounts, inverted-sign accounts, and accounts belonging to a specific root name. `get_account_sort_key(account_types, account_name)` sorts accounts in the configured root order, then by name.
-
-### Loading Ledgers
-
-`load_file(filename, log_timings=None, log_errors=None, extra_validations=None, encoding=None)` opens a Beancount file, expands user and environment variables in the filename, resolves relative paths against the current working directory, and returns:
-
-```python
-(entries, errors, options_map)
-```
-
-`entries` is a date-sorted list of directives after parsing, booking, configured transformations, and validation. `errors` is a list of error objects with `source`, `message`, and `entry` attributes. `options_map` is a dictionary of parsed and derived options.
-
-When the input file is encrypted, `load_file()` delegates to encrypted-file loading and does not use the normal pickle load cache. `load_encrypted_file(filename, log_timings=None, log_errors=None, extra_validations=None, dedent=False, encoding=None)` decrypts the file content and loads it as Beancount input.
-
-`load_doc(expect_errors=False)` returns a decorator for tests and examples. The decorated function's docstring is parsed as Beancount input, optionally dedented, and the wrapped function is called with `(entries, errors, options_map)`. `expect_errors=False` fails if errors are produced, `True` fails if none are produced, and `None` performs no error expectation check.
-
-### Options Map
-
-The loader returns only the top-level file's user options as the base options map. Options from included files contribute selected aggregate values:
-
-- `include`: the sorted absolute filenames parsed during the load.
-- `operating_currency`: the top-level operating currencies followed by included-file operating currencies, de-duplicated while preserving first occurrence.
-- `dcontext`: display precision context updated with numbers seen in included files.
-- `pythonpath`: directories from option maps that requested Python-path insertion.
-
-Public user-settable options include the ledger title, root account names, equity leaf names for earnings/balances/conversions, unrealized-gains and rounding accounts, conversion currency, display precision, inferred tolerances and tolerance multiplier, tolerance-from-cost behavior, document directories, operating currencies, comma rendering, plugin processing mode, long-string warning limit, booking method, deprecated pipe separator support, deprecated `None` tags/links support, precise interpolation, and top-level Python-path insertion.
-
-`plugin_processing_mode` accepts `"default"` or `"raw"`. In default mode, Beancount runs standard pre/post transformations around user plugins. In raw mode, only explicitly configured user plugins are run.
-
-### Plugins
-
-A ledger enables plugins with `plugin` options. A plugin is a Python module that defines `__plugins__`, listing transformation functions by name or function object. Each transformer receives `(entries, options_map)` and, when configured, an extra plugin-configuration string. It returns `(new_entries, errors)`.
-
-Plugin import failures and plugin application exceptions are converted into load errors and appended to the returned error list. A plugin may intentionally raise `SystemExit`; that exit is not converted into a normal load error. After each plugin module runs, entries are sorted again by Beancount's directive sort key.
-
-### Inventories
-
-`Inventory(positions=None)` is a mutable collection of positions keyed by `(unit_currency, cost)`. Iterating over an inventory yields its `Position` values; no iteration order is guaranteed. `Inventory.from_string(string)` parses comma-separated position text.
-
-Important inventory operations:
-
-```python
-inv.is_empty() -> bool
-inv.is_small(tolerances) -> bool
-inv.is_mixed() -> bool
-inv.is_reduced_by(amount) -> bool
-inv.currencies() -> set[str]
-inv.cost_currencies() -> set[str]
-inv.currency_pairs() -> set[tuple[str, str | None]]
-inv.get_positions() -> list[Position]
-inv.get_only_position() -> Position | None
-inv.get_currency_units(currency) -> Amount
-inv.split() -> dict[str, Inventory]
-inv.reduce(reducer, *args) -> Inventory
-inv.average() -> Inventory
-inv.add_amount(units, cost=None) -> (prior_position_or_None, match_status)
-inv.add_position(position_or_posting) -> (prior_position_or_None, match_status)
-inv.add_inventory(other) -> Inventory
-```
-
-Adding an amount with an existing identical lot augments or reduces that lot. If the resulting unit number is zero, the lot is removed. Adding a zero amount for a missing lot is ignored. `add_amount()` and `add_position()` report the prior matching position, if any, and a status indicating whether a lot was created, reduced, augmented, or ignored. `bool(inv)` is intentionally unsupported; use `is_empty()`.
-
-`reduce()` maps every position through a conversion function and accumulates the resulting amounts into a new inventory. `average()` groups lots by unit currency and cost currency, computes total units, skips groups that net to zero, and uses the minimum lot date from the group when an averaged cost is present.
-
-### Prices and Conversions
-
-`build_price_map(entries) -> PriceMap` builds a dictionary from `Price` directives. Keys are `(base_currency, quote_currency)` pairs; values are sorted lists of `(date, rate)` pairs. For duplicate prices on the same date and pair, the later directive for that date is kept. Inverse pairs are generated automatically. If both directions are present in the input, the direction with fewer price points is inverted into the direction with more price points. `PriceMap.forward_pairs` lists the original forward keys retained before automatic inverses were added.
-
-`get_latest_price(price_map, base_quote)` returns `(date, rate)` for the latest available price, or `(None, None)` if unavailable. `get_price(price_map, base_quote, date=None)` returns the latest price on or before `date`, or the latest price when `date` is omitted. A pair may be passed as `("HOOL", "USD")` or as `"HOOL/USD"`. A currency priced into itself, or a quote currency of `None`, returns `(None, Decimal("1"))`.
-
-Conversion helpers work on `Position` and `Posting` objects:
-
-```python
-get_units(pos) -> Amount
-get_cost(pos) -> Amount
-get_weight(pos) -> Amount
-get_value(pos, price_map, date=None, output_date_prices=None) -> Amount
-convert_position(pos, target_currency, price_map, date=None) -> Amount
-convert_amount(amount, target_currency, price_map, date=None, via=None) -> Amount
-```
-
-`get_cost()` returns total cost when a concrete cost is present and otherwise returns units. `get_weight()` returns the amount used to balance a posting: concrete cost takes precedence, otherwise units are used, except that a posting price without a cost produces a weight in the price currency. `get_value()` infers a value currency from cost or posting price, looks up a price, and returns converted value when available; if no conversion can be made, it returns the original units. `convert_amount()` first tries a direct price; if `via` currencies are provided, it may synthesize a two-step conversion. Failed conversions return the original amount unchanged.
-
-### Realized Accounts
-
-`RealAccount(account_name)` is a dictionary-like account-tree node. It has:
-
-- `account`: full account name for this node.
-- `txn_postings`: postings or account-attached directives associated with this exact account.
-- `balance`: final `Inventory` for this exact account's postings.
-
-Child keys must be non-empty strings, child values must be `RealAccount` instances, and a child node's full account name must end with its dictionary key.
-
-`realize(entries, min_accounts=None, compute_balance=True) -> RealAccount` converts a flat directive list into a tree rooted at an empty account name. Transactions are represented in account nodes as `TxnPosting(txn, posting)` pairs, one per posting. Account-attached directives such as open, close, balance, note, and document are stored in the corresponding account. Pad directives are stored on both the padded account and the source account. When `compute_balance` is true, each node's `balance` is computed from postings directly attached to that account, not from child nodes. `min_accounts` ensures named accounts exist even if no postings refer to them.
-
-### Account and Entry Getters
-
-`get_accounts(entries) -> set[str]` returns all accounts referenced by the directive list. Transaction postings contribute their posting accounts; pad directives contribute both accounts; directives attached to one account contribute that account.
-
-`get_account_open_close(entries)` returns a dictionary mapping account names to `[open_directive_or_None, close_directive_or_None]`. If duplicate open or close directives are present for an account, the earliest one is kept for that slot.
-
-### Printing
-
-`format_entry(entry, dcontext=None, render_weights=False, prefix=None, write_source=False) -> str` renders a directive back into Beancount syntax. Metadata keys `filename`, `lineno`, and keys beginning with `__` are not emitted as normal metadata. Tags and links render in sorted order. When `write_source` is true, a source-location comment is emitted before the directive.
-
-`print_entry(entry, dcontext=None, render_weights=False, file=None, write_source=False)` writes one formatted directive and a trailing blank line to a file-like object or standard output.
-
-`print_entries(entries, dcontext=None, render_weights=False, file=None, prefix=None, write_source=False)` writes a list of directives. It inserts blank lines between transactions and between blocks of different directive types. The function requires `entries` to be a list.
-
-Formatting is meant to produce valid Beancount syntax for public directive objects. It is not a guarantee that user comments and original file layout survive a parse-and-print round trip.
-
-## Product State Model
-
-A ledger has one ordered directive stream, an options map, a load-error stream, derived inventories and price maps, and a realized account tree. These are public projections of the same parsed financial state.
-
-- Directives returned by `load_file()` must be the directives consumed by getters, realization, printing, plugins, and validation.
-- Entries appended or transformed by a plugin must appear in the returned ordered stream and in every derived view built from that stream.
-- Inventory balances, conversion results, and realized account balances must preserve the units, costs, and prices represented by the source directives.
-- Printing and loading a supported directive must preserve its public date, account, currencies, tags, links, metadata, and posting semantics.
-
-## Behavioral Sections
-
-### Ledger Loading and Validation
-
-A load produces a single date-sorted directive stream from a top-level file and its includes. Include paths are resolved relative to the file containing the include directive unless they are absolute. Duplicate included filenames are not parsed again and produce a load error. Include globs that match no files produce a load error.
-
-After parsing, the loader books incomplete transactions, applies plugins and standard transformations according to `plugin_processing_mode`, validates the resulting entries, computes an input hash over parsed files, and returns all accumulated errors instead of raising for normal ledger problems.
-
-Balance assertions apply at the beginning of their date. This means a balance directive on a date is ordered before transactions on the same date. Open directives sort before other same-day directives, document directives sort after transactions, and close directives sort last on the same date.
-
-### Ledger Syntax Objects
-
-Open directives define account lifecycle and optional currency/booking restrictions. Close directives end an account lifecycle. Commodity directives are optional declarations used primarily for commodity metadata. Pad directives request automatic padding transactions so that a later balance assertion can succeed. Balance directives record expected units, tolerance, and a difference amount when checking fails. Transactions carry a flag, optional payee, narration, tags, links, and posting legs. Notes and documents attach dated information to accounts. Events record dated values for arbitrary named variables. Price directives add dated exchange or commodity prices. Custom directives carry plugin-facing dated values.
-
-Transaction postings may omit units during parsing so booking can infer them. A posting may carry a concrete lot cost, an incomplete cost spec before booking, a price, an optional posting flag, and posting-level metadata.
-
-### Account Names and Account Types
-
-Account names use colon-separated components. The default account roots are `Assets`, `Liabilities`, `Equity`, `Income`, and `Expenses`; these roots can be renamed by options near the beginning of the file. The configured roots determine parsing, account classification, normal signs, and account sort order.
-
-Assets and liabilities and equity are balance-sheet accounts. Income and expenses are income-statement accounts. Liabilities, income, and equity are inverted for external-report sign purposes. Assets and expenses have normal sign `+1`; the other roots have normal sign `-1`.
-
-### Inventories and Balances
-
-Inventories preserve lot identity by unit currency and cost. Multiple positions with the same key aggregate into a single lot. Lots with a zero resulting unit quantity are removed rather than retained as zero positions. Mixed inventories are inventories containing both positive and negative lots for the same unit currency.
-
-Realized account balances are expressed as inventories. A child account's postings do not automatically appear in the parent's `txn_postings`; callers that want a subtree balance should combine child balances or traverse the tree.
-
-### Prices and Market Value
-
-Price directives create a date-indexed price database. Lookups are as-of lookups: for a requested date, Beancount returns the latest price whose date is not after the request. A missing price is not an exception for `get_price()`, `get_latest_price()`, or conversion helpers; the public behavior is a `(None, None)` lookup result or an unchanged amount/units result.
-
-Posting weights and market values are distinct. Weight is used to decide whether a transaction balances. Market value is a valuation view computed from a price map.
-
-### Plugins and Transformations
-
-Plugins are part of the public extension model. They transform a directive stream and may add errors. Default loader mode runs standard document, padding, and balance processing around user plugins. Raw mode gives callers explicit control over the plugin list and ordering.
-
-When a user enables the `--auto` flag for `bean-check`, Beancount temporarily enables the standard auto plugin set for that command invocation.
-
-### Command-Line Tools
-
-`bean-check FILENAME` parses, books, transforms, and validates a ledger. It exits with status 0 when no errors are returned and status 1 when errors exist. `--json` writes a JSON object with an `errors` list containing message, filename, and line number. `--verbose` enables timing/logging output. `--no-cache` disables the load cache. `--cache-filename` overrides the cache filename pattern. `--auto` implicitly enables auto plugins while checking.
-
-`bean-doctor` is a diagnostic command group. It provides commands to inspect lexing/parsing, round-trip printed output, validate document/account directory hierarchies, list available options, print parsed options, show context at a file location, find linked or tagged transactions, inspect a file region and balances, print missing open directives, and display inferred display precision. In the command group, subcommand lookup accepts hyphen and underscore variants and documented aliases.
-
-`bean-example` writes a realistic generated ledger. It supports begin date, end date, fictional birth date, random seed, disabling reformatting, output file, and verbose logging. By default it writes to standard output and formats the generated ledger.
-
-`bean-format` reformats Beancount input by aligning numbers and currencies. It uses text matching rather than a parse-and-print cycle, so the intended effect is whitespace-only alignment while preserving comments and file structure. It can write to standard output, a specified output file for a single input, or edit one or more files in place. Alignment may be controlled by prefix width, number width, or fixed currency column.
-
-`treeify` is a standalone text tool for replacing a column of hierarchical names with an ASCII tree. It can read from a file or standard input, write to a file or standard output, choose account-like, loose-account, filename, or custom patterns, and customize delimiters, split regex, and filler text.
-
-## Error Semantics
-
-Normal ledger syntax, booking, transformation, validation, include, and plugin problems are reported as error objects in the loader's returned `errors` list. Public error objects have:
-
-```python
-error.source
-error.message
-error.entry
-```
-
-`source` is metadata, usually containing `filename` and `lineno`. `message` is human-readable. `entry` is the related directive or `None`.
-
-Loader-level include errors include missing files, include globs that match no files, and duplicate filenames. These are returned as load errors rather than raised exceptions.
-
-Plugin import failures and plugin callback exceptions are returned as load errors with traceback text in the message. `SystemExit` from a plugin is allowed to propagate.
-
-Text constructors raise `ValueError` when they cannot parse their input: `Amount.from_string()`, `Position.from_string()`, invalid option converters, and invalid Decimal creation through `D()` all use this style.
-
-Public APIs use `AssertionError` for programmer errors where the documented object type or invariant is violated, such as invalid directive metadata for type sanity checks, attempting to retrieve the only position from an inventory containing more than one position, constructing a `Position` with the wrong object types, or iterating realized postings in invalid date order.
-
-`RealAccount.__setitem__()` raises `KeyError` for invalid child keys and `ValueError` for invalid child values or child names inconsistent with their keys.
-
-`Inventory.__bool__()` raises `NotImplementedError`; callers must use `is_empty()`.
-
-`bean-check` exits with status 1 when the checked ledger has errors and 0 when it has none. Click-based command-line argument errors use the normal command-line usage error behavior for that command.
-
-## Cross-View Invariants
-
-1. Loading and printing describe the same dated directives: `format_entry()` and `print_entries()` render public directive objects in Beancount syntax using the directive fields, while omitting source bookkeeping metadata from normal metadata output.
-
-2. The account set reported by `get_accounts(entries)` matches the accounts that `realize(entries)` can create from account-bearing directives and transaction postings, subject to any extra accounts requested through `min_accounts`.
-
-3. A transaction with multiple postings appears once in the directive stream but appears once per posting in realized account views, wrapped as `TxnPosting` pairs that preserve both the parent transaction and the individual posting.
-
-4. Inventory balances and conversion views preserve lot identity until a caller explicitly reduces or averages them. Calling `reduce(get_units)`, `reduce(get_cost)`, or `reduce(get_value, price_map, date)` changes the valuation view but leaves the original inventory object unchanged.
-
-5. Price maps and conversion helpers agree on missing-price behavior: absent rates are represented by `(None, None)` at lookup time and by returning the original units or amount at conversion time.
-
-6. Same-day ordering is consistent across loader output, balance checking, realization, and printing: opens are first, balance assertions precede transactions, ordinary transaction-day directives follow, documents are after transactions, and closes are last.
-
-7. Tags and links are stored without their leading `#` and `^` markers on directive objects and are rendered with those markers when printed.
-
-8. Options influence all projections consistently: renamed account roots affect parsing, account classification, account signs, account sort keys, and account-type extraction from the returned options map.
-
-9. A concrete cost on a posting determines both lot identity in inventories and cost/weight conversion behavior; a posting price without a cost affects balancing weight and value-currency inference but does not create a cost lot.
-
-10. A successful load returns entries and an options map even when non-fatal errors exist. CLI checking turns those returned errors into user-visible output and process exit status.
+## Non-Goals
+
+- Beancount does not provide a database server, hosted service, or network-backed accounting system in this surface.
+- This specification does not cover web UI behavior, report-rendering projects split out of Beancount v3, ingestion frameworks outside the installed package surface, or deprecated v1/v2 command suites.
+- The public contract does not require preserving comments or exact original layout through `load_file()` followed by `print_entries()`; use `bean-format` for whitespace-only source formatting.
+- The public contract does not expose private parser extension modules, generated grammar internals, private display-context internals, or test-only comparison helpers.
+- Price lookup is date-based, not time-of-day based, and does not synthesize intraday or day-trading semantics.
+- Failed market conversion does not invent prices, raise by default, or silently drop the original units; it returns the unchanged amount or units.
+- Inventory objects are not immutable. Directive objects are immutable tuple-like records, but inventories intentionally mutate when positions are added.
+- Command-line tools are not required to fetch live prices or contact external services for the covered behavior.
 
 ## Representative Workflows
 
@@ -398,25 +78,265 @@ def check_entries(entries, options_map):
 
 When enabled by a ledger `plugin` option, the function receives the current directive stream and options map, returns the stream to continue processing, and reports any plugin-specific errors as error objects.
 
-## Non-Goals
+## Ledger Loading and Validation
 
-- Beancount does not provide a database server, hosted service, or network-backed accounting system in this surface.
-- This specification does not cover web UI behavior, report-rendering projects split out of Beancount v3, ingestion frameworks outside the installed package surface, or deprecated v1/v2 command suites.
-- The public contract does not require preserving comments or exact original layout through `load_file()` followed by `print_entries()`; use `bean-format` for whitespace-only source formatting.
-- The public contract does not expose private parser extension modules, generated grammar internals, private display-context internals, or test-only comparison helpers.
-- Price lookup is date-based, not time-of-day based, and does not synthesize intraday or day-trading semantics.
-- Failed market conversion does not invent prices, raise by default, or silently drop the original units; it returns the unchanged amount or units.
-- Inventory objects are not immutable. Directive objects are immutable tuple-like records, but inventories intentionally mutate when positions are added.
-- Command-line tools are not required to fetch live prices or contact external services for the covered behavior.
+Loading parses ledger files into a date-sorted directive stream, resolves includes, applies plugins, and validates the result.
 
-## Invocation Protocol
+**File loading.** `load_file` must produce a single date-sorted directive stream from a top-level file and its includes. It must return `(entries, errors, options)`. The `options` map must include `title`, `operating_currency` (as a list), `filename`, and `include` (a list of parsed file paths). Include paths must be resolved relative to the file containing the include directive unless they are absolute. Duplicate included filenames must not be parsed again and must produce a load error. Include globs that match no files must produce a load error.
+
+**Processing pipeline.** After parsing, the loader books incomplete transactions, applies plugins and standard transformations according to `plugin_processing_mode`, validates the resulting entries, and returns all accumulated errors instead of raising for normal ledger problems. When `plugin_processing_mode` is set to `"raw"`, standard balance validation must be skipped.
+
+**Same-day ordering.** Balance assertions apply at the beginning of their date, so a balance directive on a date is ordered before transactions on the same date. Open directives sort before other same-day directives, document directives sort after transactions, and close directives sort last on the same date.
+
+**Docstring loading.** `load_doc` must be a decorator that parses the decorated function's docstring as Beancount input and passes `(entries, errors, options)` to the function. The `options["filename"]` must be `"<string>"` for docstring-loaded input. When `expect_errors` is `True`, the decorator must accept ledgers that produce errors without failing.
+
+## Ledger Syntax Objects
+
+Each directive type represents a dated accounting event with specific public fields for programmatic access.
+
+**Account lifecycle directives.** `Open` directives define account lifecycle and optional currency/booking restrictions. `Close` directives end an account lifecycle. `Commodity` directives are optional declarations used primarily for commodity metadata. `Pad` directives request automatic padding transactions so that a later balance assertion can succeed. `Balance` directives record expected units, tolerance, and a difference amount when checking fails.
+
+**Transactions.** `Transaction` directives carry a `flag`, optional `payee`, `narration`, `tags` (as a frozenset without `#` markers), `links` (as a frozenset without `^` markers), and posting legs. Transaction postings may omit units during parsing so booking can infer them. A `Posting` may carry a concrete lot `Cost`, an incomplete `CostSpec` before booking, a `price`, an optional posting flag, and posting-level metadata.
+
+**Information directives.** `Note` directives attach dated information to accounts and expose a `comment` attribute. `Event` directives record dated values for arbitrary named variables through `type` and `description` attributes. `Query` directives store named queries through `name` and `query_string` attributes. `Price` directives add dated exchange or commodity prices through an `amount` attribute. `Document` directives attach files through a `filename` attribute. `Custom` directives carry plugin-facing dated values through `type` and `values` attributes.
+
+## Account Names and Account Types
+
+Account names follow a colon-separated hierarchical structure, and account types classify accounts for financial reporting.
+
+**Account name helpers.** The `account` module must provide `join`, `split`, `parent`, `leaf`, `sans_root`, `root`, `has_component`, `commonprefix`, `parents`, and `parent_matcher` for manipulating colon-separated account name strings. `is_valid`, `is_valid_root`, and `is_valid_leaf` must validate account name components—root components must start with an uppercase letter, and full account names must use properly capitalized colon-separated components.
+
+**Account roots and types.** The default account roots are `Assets`, `Liabilities`, `Equity`, `Income`, and `Expenses`; these roots can be renamed by options such as `name_assets` and `name_income` near the beginning of the file. `get_account_types` must extract the configured root names from the options map. `get_account_type` must return the root component of an account name.
+
+**Account classification and signs.** `is_balance_sheet_account` must identify Assets, Liabilities, and Equity accounts. `is_income_statement_account` must identify Income and Expenses accounts. `is_inverted_account` must identify Liabilities, Income, and Equity. `get_account_sign` must return `+1` for Assets and Expenses and `-1` for the other roots. `get_account_sort_key` must produce sort keys that order accounts by their configured root position.
+
+## Inventories and Balances
+
+Inventories collect positions keyed by currency and cost, providing the balance representation for accounts.
+
+**Inventory construction.** `Inventory` is mutable and may be constructed empty or from a string representation via `Inventory.from_string`. `add_amount` must aggregate into existing lots and return `(prior_position, new_position)` where `prior_position` is `None` for new currencies. `add_position` must add a `Position` to the inventory. `add_inventory` must add all positions from another inventory and must return the modified inventory.
+
+**Lot identity and zero removal.** Inventories preserve lot identity by unit currency and cost. Multiple positions with the same key aggregate into a single lot. Lots with a zero resulting unit quantity are removed rather than retained as zero positions, so `is_empty` returns `True` after opposing amounts cancel.
+
+**Inventory queries.** `currencies` must return the set of unit currencies. `cost_currencies` must return the set of cost currencies. `currency_pairs` must return `(unit_currency, cost_currency)` pairs where cost-free positions use `None` as the cost currency. `get_currency_units` must return the `Amount` for a specific currency. `get_only_position` must return the only position when the inventory holds exactly one, return `None` when empty, and raise `AssertionError` when more than one position exists.
+
+**Reduction and averaging.** `reduce` must apply a function like `get_units`, `get_cost`, or `get_value` to each position and return a new inventory with the results, leaving the original inventory unchanged. `split` must return the currency keys present. `average` must collapse same-currency lots into averaged positions.
+
+**Boolean behavior.** `Inventory.__bool__` must raise `NotImplementedError`; callers must use `is_empty` instead.
+
+**Realized accounts.** `realize` must convert a flat directive list into a tree of `RealAccount` nodes. Each node must expose `account`, `balance`, and `txn_postings`. When `min_accounts` is supplied, those accounts must be created even if no directives reference them. When `compute_balance` is `False`, balances must remain empty while postings are still tracked. Account-attached directives like `Open`, `Pad`, and `Note` must appear in the relevant account's `txn_postings`. A `Pad` must appear in both the source and target account's postings. A transaction with multiple postings must appear once per posting in realized views, wrapped as `TxnPosting` pairs that preserve both the parent `txn` and the individual `posting`.
+
+## Prices and Market Value
+
+Price directives build a date-indexed price database for currency conversion and market valuation.
+
+**Price map construction.** `build_price_map` must construct a price database from `Price` directives. When multiple prices exist for the same pair and date, the later entry in the directive stream must win. The price map must automatically create inverse rates. `forward_pairs` must expose the list of directly declared `(base, quote)` currency pairs. An identity lookup such as `("USD", "USD")` must return `(None, Decimal("1"))`.
+
+**Price lookup.** `get_price` must return the latest price whose date is not after the requested date as a `(date, rate)` pair. A missing price must return `(None, None)`. `get_latest_price` must accept a `"BASE/QUOTE"` string and return the most recent available price.
+
+**Conversion.** `convert_amount` must convert an `Amount` to a target currency using the price map. When a direct rate is unavailable but a `via` chain of intermediate currencies is supplied, the conversion must proceed through the intermediaries. When no rate is available, the original amount must be returned unchanged.
+
+**Weight and value.** `get_weight` must compute the balancing weight of a posting: when a cost is present, weight must be `units × cost` in the cost currency regardless of any posting price; when only a price is present, weight must be `units × price`; otherwise weight must equal the posting units. `get_value` must use the cost currency to look up a market price when a cost is present, and must use the price currency when only a posting price is present.
+
+## Plugins and Transformations
+
+Plugins extend the loading pipeline by transforming the directive stream and reporting custom errors.
+
+**Plugin protocol.** A plugin module must expose a `__plugins__` tuple naming its entry-point functions. Each function must accept `(entries, options_map)` and return `(new_entries, errors)`. Plugin import failures and plugin callback exceptions must be returned as load errors with traceback text in the message. `SystemExit` from a plugin must be allowed to propagate.
+
+**Processing modes.** Default loader mode runs standard document, padding, and balance processing around user plugins. When `plugin_processing_mode` is set to `"raw"`, callers gain explicit control over the plugin list and ordering, and standard balance validation is skipped.
+
+**Auto plugins.** When a user enables the `--auto` flag for `bean-check`, Beancount temporarily enables the standard auto plugin set for that command invocation.
+
+## Getters and Printing
+
+Getters extract account and lifecycle information from directive streams, and printing renders directives as Beancount syntax.
+
+**Account getters.** `get_accounts` must return the set of all accounts referenced by account-bearing directives and transaction postings, including accounts from `Pad`, `Balance`, `Note`, and `Document` directives. `get_account_open_close` must return a mapping from account names to `[open, close]` directive pairs, keeping the first open and first close when duplicates exist.
+
+**Booking enum.** `Booking` must expose the members `STRICT`, `STRICT_WITH_SIZE`, `NONE`, `AVERAGE`, `FIFO`, `LIFO`, and `HIFO`.
+
+**Formatting and printing.** `format_entry` must render a directive as Beancount syntax text using the directive fields. Source bookkeeping metadata such as `filename` and `lineno` must be omitted from normal metadata output. Tags must be rendered with `#` markers and links with `^` markers, both sorted alphabetically. When `write_source` is `True`, a comment indicating the source filename and line number must be included. `print_entry` must write one formatted directive to a file. `print_entries` must write a list of directives with blank-line separators and must raise `AssertionError` when passed a non-list iterable.
+
+## Command-Line Tools
+
+Beancount provides command-line tools for checking, formatting, diagnosing, and generating ledger files.
+
+**bean-check.** `bean-check FILENAME` parses, books, transforms, and validates a ledger. It exits with status 0 when no errors are returned and status 1 when errors exist. `--json` writes a JSON object with an `errors` list containing message, filename, and line number. `--verbose` enables timing/logging output. `--no-cache` disables the load cache. `--cache-filename` overrides the cache filename pattern. `--auto` implicitly enables auto plugins while checking.
+
+`bean-doctor` is a diagnostic command group. It provides commands to inspect lexing/parsing, round-trip printed output, validate document/account directory hierarchies, list available options, print parsed options, show context at a file location, find linked or tagged transactions, inspect a file region and balances, print missing open directives, and display inferred display precision. In the command group, subcommand lookup accepts hyphen and underscore variants and documented aliases.
+
+`bean-example` writes a realistic generated ledger. It supports begin date, end date, fictional birth date, random seed, disabling reformatting, output file, and verbose logging. By default it writes to standard output and formats the generated ledger.
+
+`bean-format` reformats Beancount input by aligning numbers and currencies. It uses text matching rather than a parse-and-print cycle, so the intended effect is whitespace-only alignment while preserving comments and file structure. It can write to standard output, a specified output file for a single input, or edit one or more files in place. Alignment may be controlled by prefix width, number width, or fixed currency column.
+
+`treeify` is a standalone text tool for replacing a column of hierarchical names with an ASCII tree. It can read from a file or standard input, write to a file or standard output, choose account-like, loose-account, filename, or custom patterns, and customize delimiters, split regex, and filler text.
+
+## State Model
+
+A ledger has one ordered directive stream, an options map, a load-error stream, derived inventories and price maps, and a realized account tree. These are public projections of the same parsed financial state.
+
+- Directives returned by `load_file()` must be the directives consumed by getters, realization, printing, plugins, and validation.
+- Entries appended or transformed by a plugin must appear in the returned ordered stream and in every derived view built from that stream.
+- Inventory balances, conversion results, and realized account balances must preserve the units, costs, and prices represented by the source directives.
+- Printing and loading a supported directive must preserve its public date, account, currencies, tags, links, metadata, and posting semantics.
+
+## Error Semantics
+
+Normal ledger syntax, booking, transformation, validation, include, and plugin problems are reported as error objects in the loader's returned `errors` list. Public error objects have:
+
+```python
+error.source
+error.message
+error.entry
+```
+
+`source` is metadata, usually containing `filename` and `lineno`. `message` is human-readable. `entry` is the related directive or `None`.
+
+Loader-level include errors include missing files, include globs that match no files, and duplicate filenames. These are returned as load errors rather than raised exceptions.
+
+Plugin import failures and plugin callback exceptions are returned as load errors with traceback text in the message. `SystemExit` from a plugin is allowed to propagate.
+
+Text constructors raise `ValueError` when they cannot parse their input: `Amount.from_string()`, `Position.from_string()`, invalid option converters, and invalid Decimal creation through `D()` all use this style.
+
+Public APIs use `AssertionError` for programmer errors where the documented object type or invariant is violated, such as invalid directive metadata for type sanity checks, attempting to retrieve the only position from an inventory containing more than one position, constructing a `Position` with the wrong object types, or iterating realized postings in invalid date order.
+
+`RealAccount.__setitem__()` raises `KeyError` for invalid child keys and `ValueError` for invalid child values or child names inconsistent with their keys.
+
+`Inventory.__bool__()` raises `NotImplementedError`; callers must use `is_empty()`.
+
+`bean-check` exits with status 1 when the checked ledger has errors and 0 when it has none. Click-based command-line argument errors use the normal command-line usage error behavior for that command.
+
+## Cross-View Invariants
+
+1. Loading and printing describe the same dated directives: `format_entry()` and `print_entries()` render public directive objects in Beancount syntax using the directive fields, while omitting source bookkeeping metadata from normal metadata output.
+
+2. The account set reported by `get_accounts(entries)` matches the accounts that `realize(entries)` can create from account-bearing directives and transaction postings, subject to any extra accounts requested through `min_accounts`.
+
+3. A transaction with multiple postings appears once in the directive stream but appears once per posting in realized account views, wrapped as `TxnPosting` pairs that preserve both the parent transaction and the individual posting.
+
+4. Inventory balances and conversion views preserve lot identity until a caller explicitly reduces or averages them. Calling `reduce(get_units)`, `reduce(get_cost)`, or `reduce(get_value, price_map, date)` changes the valuation view but leaves the original inventory object unchanged.
+
+5. Price maps and conversion helpers agree on missing-price behavior: absent rates are represented by `(None, None)` at lookup time and by returning the original units or amount at conversion time.
+
+6. Same-day ordering is consistent across loader output, balance checking, realization, and printing: opens are first, balance assertions precede transactions, ordinary transaction-day directives follow, documents are after transactions, and closes are last.
+
+7. Tags and links are stored without their leading `#` and `^` markers on directive objects and are rendered with those markers when printed.
+
+8. Options influence all projections consistently: renamed account roots affect parsing, account classification, account signs, account sort keys, and account-type extraction from the returned options map.
+
+9. A concrete cost on a posting determines both lot identity in inventories and cost/weight conversion behavior; a posting price without a cost affects balancing weight and value-currency inference but does not create a cost lot.
+
+10. A successful load returns entries and an options map even when non-fatal errors exist. CLI checking turns those returned errors into user-visible output and process exit status.
+
+## Public Interface
+
+### Import Surface
+
+The package is named `beancount`. The root package imports the public symbols from `beancount.api`, so these two styles are equivalent for the public API:
+
+```python
+import beancount as bn
+from beancount import load_file, Amount, Transaction
+from beancount.api import load_file, Amount, Transaction
+```
+
+The public root API includes these import namespaces:
+
+```python
+bn.account
+bn.amount
+bn.dtypes
+```
+
+The package installs these command-line entry points:
+
+```text
+bean-check
+bean-doctor
+bean-example
+bean-format
+treeify
+```
+
+Runtime dependencies are ordinary local Python dependencies. Beancount does not require a network service to parse, check, format, or realize a local ledger.
+
+### API Catalog
+
+| Name | Kind | Role |
+|------|------|------|
+| D | function | Construct Decimal values for Beancount arithmetic |
+| ZERO | constant | Decimal zero constant |
+| Amount | class | Immutable number-currency pair |
+| Cost | class | Per-unit cost attached to a booked lot |
+| CostSpec | class | Incomplete cost specification before booking |
+| Position | class | Holding with units and optional lot cost |
+| new_metadata | function | Create metadata dictionary with filename and lineno |
+| Open | class | Account opening directive |
+| Close | class | Account closing directive |
+| Commodity | class | Commodity declaration directive |
+| Pad | class | Automatic padding directive |
+| Balance | class | Balance assertion directive |
+| Transaction | class | Financial transaction directive |
+| Posting | class | Transaction posting leg |
+| TxnPosting | class | Transaction-posting pair for realized accounts |
+| Note | class | Dated note attached to an account |
+| Event | class | Dated named event directive |
+| Query | class | Named query directive |
+| Price | class | Dated exchange price directive |
+| Document | class | Document attachment directive |
+| Custom | class | Plugin-facing custom directive |
+| Account | class | String alias for account names |
+| Currency | class | String alias for currencies |
+| Flag | class | String alias for flags |
+| Meta | class | Dictionary alias for metadata |
+| Directive | class | Union type of all directive classes |
+| Directives | class | List-of-directives type alias |
+| Options | class | Options-map dictionary type alias |
+| dtypes | module | Namespace containing all directive classes |
+| Booking | class | Enum of account booking methods |
+| FLAG_OKAY | constant | Transaction flag for normal entries |
+| FLAG_WARNING | constant | Transaction flag for warnings |
+| FLAG_PADDING | constant | Transaction flag for padding entries |
+| FLAG_TRANSFER | constant | Transaction flag for transfers |
+| FLAG_CONVERSIONS | constant | Transaction flag for conversions |
+| FLAG_MERGING | constant | Transaction flag for merging entries |
+| FLAG_SUMMARIZE | constant | Transaction flag for summarized entries |
+| filter_txns | function | Yield only Transaction directives from an entry list |
+| account | module | Account name manipulation utilities |
+| get_account_type | function | Return root component of an account name |
+| get_account_types | function | Extract configured root names from options map |
+| get_account_sign | function | Return normal sign for an account type |
+| get_account_sort_key | function | Sort key for accounts in configured root order |
+| load_file | function | Load a Beancount ledger and return entries, errors, options |
+| load_encrypted_file | function | Decrypt and load an encrypted Beancount file |
+| load_doc | function | Decorator to parse a docstring as Beancount input |
+| Inventory | class | Mutable collection of positions keyed by currency and cost |
+| build_price_map | function | Build date-indexed price database from Price directives |
+| get_latest_price | function | Return latest available price for a currency pair |
+| get_price | function | Return latest price on or before a date |
+| get_units | function | Extract units amount from a position |
+| get_cost | function | Extract total cost from a position |
+| get_weight | function | Extract balancing weight from a posting |
+| get_value | function | Convert position to market value using price map |
+| convert_position | function | Convert a position to a target currency |
+| convert_amount | function | Convert an amount to a target currency |
+| RealAccount | class | Dictionary-like account-tree node with balance |
+| realize | function | Convert flat directive list into account tree |
+| get_accounts | function | Return all accounts referenced by directives |
+| get_account_open_close | function | Map accounts to open/close directive pairs |
+| format_entry | function | Render a directive as Beancount syntax text |
+| print_entry | function | Write one formatted directive to a file |
+| print_entries | function | Write a list of directives with blank-line separators |
+
+### CLI Entry Points
 
 The covered console commands are `bean-check` and `bean-format`. `bean-check FILE` must parse and validate the ledger, return status 0 when no errors are produced, and return a nonzero status when load or validation errors are produced. `bean-format FILE` must emit formatted ledger text to standard output and return status 0 for valid input. Running `python -m beancount` is not supported by this specification.
 
-## Environment
+## Appendix A: Environment
 
 The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-## Evaluation Notes
+## Appendix B: Assessment Notes
 
-Assessment exercises numeric and directive objects, loading and include behavior, plugins, inventories, prices, realization, getters, printing, and the covered command-line workflows. It compares public values, derived views, files, and exit statuses, including include resolution, same-day ordering, duplicate price dates, missing conversions, configured root names, and plugin failures. Private parser internals, caches, helper types, exact diagnostic wording, and source layout are not assessed.
+Compatibility covers numeric and directive objects, loading and include behavior, plugins, inventories, prices, realization, getters, printing, and the covered command-line workflows. It compares public values, derived views, files, and exit statuses, including include resolution, same-day ordering, duplicate price dates, missing conversions, configured root names, and plugin failures. Private parser internals, caches, helper types, exact diagnostic wording, and source layout are not part of this contract.

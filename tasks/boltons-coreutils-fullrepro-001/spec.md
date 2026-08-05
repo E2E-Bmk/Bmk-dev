@@ -1,33 +1,80 @@
 # Boltons Core Utilities Specification
 
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
+
 ## Product Overview
 
 Boltons is a collection of focused Python utilities that extend the standard library without introducing a shared framework. This contract covers caching, ordered multi-value mappings, iterable transformation, and URL manipulation.
 
-## Scope
+## Non-Goals
 
-The supported feature areas are provided by these independent public modules:
+- This specification does not require Modules outside the four selected functional domains (caching, ordered mappings, iterable transformation, URL manipulation)unless needed for a documented behavior.
+- This specification does not require Private linked-list internals, regular-expression implementation objects, or test helper shapes.
+- This specification does not require Exact wording of exception messagesunless this specification gives exact text.
+- This specification does not require Micro-optimization or thread scheduling details; performance should be reasonable for ordinary inputs.
 
-- `boltons.cacheutils`
-- `boltons.dictutils`
-- `boltons.iterutils`
-- `boltons.urlutils`
+## Representative Workflows
 
-## Installable Surface
-
-The package is imported as `boltons`. Public imports must work from the documented module paths, including:
+### LRU cache with eviction
 
 ```python
-from boltons.cacheutils import LRU, LRI, cached, cachedmethod, cachedproperty
-from boltons.cacheutils import ThresholdCounter, MinIDMap, make_cache_key
-from boltons.dictutils import MultiDict, OMD, OrderedMultiDict, FastIterOrderedMultiDict
-from boltons.dictutils import OneToOne, ManyToMany, FrozenDict, FrozenHashError, subdict
-from boltons.iterutils import remap, get_path, research, chunked, windowed
-from boltons.iterutils import default_visit, default_enter, default_exit, PathAccessError
-from boltons.urlutils import URL, QueryParamDict, URLParseError, parse_url, find_all_links
+from boltons.cacheutils import LRU
+
+cache = LRU(max_size=3)
+cache["a"] = 1
+cache["b"] = 2
+cache["c"] = 3
+# Access "a" to make it most recently used
+_ = cache["a"]
+# Insert a new key; "b" is least recently used and should be evicted
+cache["d"] = 4
+assert "b" not in cache
+assert cache["a"] == 1
+assert cache["d"] == 4
 ```
 
-The four modules are independent utility domains. Callers must not need private helpers or a particular internal package layout to use them.
+Creating an `LRU` with `max_size=3`, inserting three keys, then accessing `"a"` updates its recency. Inserting `"d"` evicts the least-recently-used key `"b"`, while `"a"` and `"c"` remain.
+
+### OrderedMultiDict manipulation
+
+```python
+from boltons.dictutils import OrderedMultiDict
+
+omd = OrderedMultiDict([("x", 1), ("y", 2), ("x", 3)])
+assert omd["x"] == 3  # most recent value for "x"
+assert omd.getlist("x") == [1, 3]
+
+omd.add("y", 99)
+assert omd.getlist("y") == [2, 99]
+
+inv = omd.inverted()
+copy = omd.copy()
+assert copy.items(multi=True) == omd.items(multi=True)
+```
+
+Building an `OrderedMultiDict` from repeated pairs preserves insertion order. `getlist` returns all values, `add` appends without replacing, `inverted` maps values back to keys, and `copy` produces an independent snapshot.
+
+### URL parsing, navigation, and normalization
+
+```python
+from boltons.urlutils import URL
+
+u = URL("https://example.com:443/path?q=1#frag")
+assert u.scheme == "https"
+assert u.query_params["q"] == "1"
+
+u.query_params["lang"] = "en"
+u2 = u.navigate("../other?x=2")
+u2.normalize()
+assert u2.host == "example.com"
+assert "other" in u2.to_text()
+```
+
+Parsing text into `URL` exposes components and an editable `query_params`. Navigating to a relative destination resolves `..` segments per RFC 3986. After `normalize()`, default ports are removed and dot-segments resolved, and `to_text()` serializes the final state.
 
 ## General Conventions
 
@@ -43,16 +90,13 @@ The four modules are independent utility domains. Callers must not need private 
 - Exact exception message wording is not part of the contract unless this spec
   gives exact text.
 
-## Product State Model
-
-Each stateful utility exposes one logical value through more than one public view. Cache mapping operations and cached callables must observe the same cached entries. Ordered multi-value mappings must preserve the same key/value associations through single-value lookup, multi-value lookup, iteration, copying, and inversion. URL attributes, query parameters, serialization, normalization, and navigation must describe the same URL state. Iterable helpers are stateless transformations whose output order must follow their input traversal order.
-
 ## Cache Behavior
+
+Caching utilities provide dictionary-like containers with eviction policies, function result caching, and lazy property evaluation.
 
 ### `LRI`
 
-`LRI(max_size=128, values=None, on_miss=None)` is a mutable dictionary-like
-cache with least-recently-inserted eviction.
+`LRI` is a mutable dictionary-like cache with least-recently-inserted eviction. It accepts `max_size`, initial `values`, and an optional `on_miss` callable.
 
 Behavior:
 
@@ -81,8 +125,7 @@ Behavior:
 
 ### `LRU`
 
-`LRU(max_size=128, values=None, on_miss=None)` is an `LRI`-compatible mutable
-cache with least-recently-used eviction.
+`LRU` is an `LRI`-compatible mutable cache with least-recently-used eviction, accepting the same `max_size`, `values`, and `on_miss` parameters.
 
 Behavior:
 
@@ -97,8 +140,7 @@ Behavior:
 
 ### Cache Key Construction
 
-`make_cache_key(args, kwargs, typed=False, kwarg_mark=(object(),), fasttypes={int, str})`
-returns a hashable key representing positional arguments and keyword arguments.
+`make_cache_key` returns a hashable key representing positional arguments and keyword arguments.
 
 Behavior:
 
@@ -110,7 +152,7 @@ Behavior:
 
 ### `cached`
 
-`cached(cache, scoped=True, typed=False, key=None)` is a decorator for functions.
+`cached` is a decorator for functions that stores return values in a provided cache.
 
 Behavior:
 
@@ -130,8 +172,7 @@ Behavior:
 
 ### `cachedmethod`
 
-`cachedmethod(cache, scoped=True, typed=False, key=None)` decorates instance
-methods.
+`cachedmethod` decorates instance methods, accepting `cache`, `scoped`, `typed`, and `key` parameters.
 
 Behavior:
 
@@ -150,7 +191,7 @@ Behavior:
 
 ### `cachedproperty`
 
-`cachedproperty(func)` is a non-data descriptor for expensive attributes.
+`cachedproperty` is a non-data descriptor for expensive attributes.
 
 Behavior:
 
@@ -162,8 +203,7 @@ Behavior:
 
 ### `ThresholdCounter`
 
-`ThresholdCounter(threshold=0.001)` counts items while separating common and
-uncommon counts using a frequency threshold.
+`ThresholdCounter` counts items while separating common and uncommon counts using a frequency `threshold`.
 
 Behavior:
 
@@ -188,7 +228,7 @@ Behavior:
 
 ### `MinIDMap`
 
-`MinIDMap()` maps live Python objects to compact integer identifiers.
+`MinIDMap` maps live Python objects to compact integer identifiers.
 
 Behavior:
 
@@ -200,6 +240,8 @@ Behavior:
 - Objects should be weak-referenceable where weak references are required.
 
 ## Ordered Mapping Behavior
+
+Ordered mapping utilities provide multi-value dictionaries, bijective mappings, immutable dictionaries, and subset extraction.
 
 ### `OrderedMultiDict`, `OMD`, and `MultiDict`
 
@@ -329,6 +371,8 @@ Behavior:
 
 ## Iterable Transformation Behavior
 
+Iterable utilities provide type checks, splitting, chunking, windowing, numeric sequences, grouping, deduplication, flattening, nested traversal, and identifier generation.
+
 ### Type Checks
 
 - `is_iterable(obj)` is true for objects that can be iterated.
@@ -338,8 +382,8 @@ Behavior:
 
 ### Splitting and Stripping
 
-`split(src, sep=None, maxsplit=None)` returns a list of lists split from `src`.
-`split_iter()` is the generator form.
+`split` returns a list of lists split from `src`.
+`split_iter` is the generator form.
 
 Behavior:
 
@@ -358,8 +402,8 @@ yield lazily.
 
 ### Chunking and Windows
 
-- `chunked(src, size, count=None, **kw)` returns a list of chunks from `src`.
-- `chunked_iter(src, size, **kw)` yields chunks lazily.
+- `chunked` returns a list of chunks from `src`.
+- `chunked_iter` yields chunks lazily.
 - `src` must be iterable; non-iterables raise `TypeError`.
 - Chunks preserve the input container style where documented: strings become
   strings, bytes become bytes, and other iterables become lists.
@@ -368,28 +412,23 @@ yield lazily.
 - If `fill` is supplied as a keyword argument, incomplete final chunks are
   padded with that value. Without `fill`, the final chunk may be shorter.
 - Unknown keyword arguments raise `ValueError`.
-- `chunk_ranges(input_size, chunk_size, input_offset=0, overlap_size=0,
-  align=False)` yields `(start, stop)` integer ranges covering the input. With
+- `chunk_ranges` yields `(start, stop)` integer ranges covering the input. With
   overlap, adjacent ranges overlap by `overlap_size`. With `align=True`, ranges
   align to chunk-size boundaries relative to zero while still covering the
   requested offset and size.
-- `pairwise(src, end=_UNSET)` returns adjacent pairs as a list.
-- `pairwise_iter(src, end=_UNSET)` yields adjacent pairs. If `end` is supplied,
+- `pairwise` returns adjacent pairs as a list.
+- `pairwise_iter` yields adjacent pairs. If `end` is supplied,
   include the final `(last, end)` pair.
-- `windowed(src, size, fill=_UNSET)` returns a list of overlapping tuples.
-- `windowed_iter(src, size, fill=_UNSET)` yields overlapping tuples. If `fill`
+- `windowed` returns a list of overlapping tuples.
+- `windowed_iter` yields overlapping tuples. If `fill`
   is supplied, emit trailing windows padded with that fill value.
 
 ### Numeric Sequences and Backoff
 
-- `xfrange(stop, start=None, step=1.0)` yields floats from `start` up to but not
-  including `stop`; if `start` is omitted, start at `0.0`. A zero step raises
-  `ValueError`.
-- `frange()` returns a list from `xfrange()`.
-- `backoff(start, stop, count=None, factor=2.0, jitter=False)` returns a list of
-  increasing retry delays. It does not accept `count="repeat"`; that value
-  raises `ValueError`.
-- `backoff_iter()` is the generator form and supports `count="repeat"`.
+- `xfrange` yields floats from `start` up to but not including `stop`; when `start` is omitted, it must start at `0.0`. A zero `step` must raise `ValueError`.
+- `frange` returns a list from `xfrange`.
+- `backoff` returns a list of increasing retry delays. It must not accept `count="repeat"`; that value must raise `ValueError`.
+- `backoff_iter` is the generator form and supports `count="repeat"`.
 - Backoff begins at `start`, grows by `factor`, never exceeds `stop`, and honors
   positive `count` when supplied.
 - `start`, `stop`, `factor`, `count`, and numeric `jitter` are validated:
@@ -402,28 +441,20 @@ yield lazily.
 
 ### Grouping, Uniqueness, and Reduction
 
-- `bucketize(src, key=bool, value_transform=None, key_filter=None)` returns a
-  dict mapping derived keys to lists of transformed values. `key` may be a
+- `bucketize` returns a dict mapping derived keys to lists of transformed values. `key` may be a
   callable, attribute name string, or a list of keys aligned with `src`.
   `value_transform` may be callable, attribute name, or item index.
   `key_filter` may reject buckets.
-- `partition(src, key=bool, *keys)` divides input into buckets for false/true or
-  the provided predicates. With multiple predicates, each item is placed in the
+- `partition` divides input into buckets for false/true or the provided predicates. With multiple predicates, each item is placed in the
   first matching bucket, and a final bucket receives items that match none.
-- `unique(src, key=None)` returns a list of first occurrences.
-- `unique_iter(src, key=None)` yields first occurrences lazily.
-- `redundant(src, key=None, groups=False)` returns first duplicate elements, or
-  duplicate groups when `groups=True`.
-- `one(src, default=None, key=None)` returns the only matching element, or
-  `default` if there are zero or multiple matches.
-- `first(iterable, default=None, key=None)` returns the first truthy/matching
-  element, or `default`.
-- `same(iterable, ref=_UNSET)` reports whether all values are equal to each
-  other or to `ref`.
-- `soft_sorted(iterable, first=None, last=None, key=None, reverse=False)` sorts
-  while forcing selected values to the front or back.
-- `untyped_sorted(iterable, key=None, reverse=False)` sorts heterogeneous values
-  deterministically without requiring cross-type comparisons. Explicitly
+- `unique` returns a list of first occurrences.
+- `unique_iter` yields first occurrences lazily.
+- `redundant` returns first duplicate elements, or duplicate groups when `groups` is `True`.
+- `one` returns the only matching element, or `default` if there are zero or multiple matches.
+- `first` returns the first truthy/matching element, or `default`.
+- `same` reports whether all values are equal to each other or to `ref`.
+- `soft_sorted` sorts while forcing selected values to the front or back.
+- `untyped_sorted` sorts heterogeneous values deterministically without requiring cross-type comparisons. Explicitly
   unorderable objects may still raise `TypeError`.
 
 ### Flattening and Nested Traversal
@@ -432,8 +463,7 @@ yield lazily.
   iterable containers.
 - `flatten(iterable)` returns a list from `flatten_iter()`.
 
-`remap(root, visit=default_visit, enter=default_enter, exit=default_exit,
-cache=True, **kwargs)` walks nested data structures and builds a remapped copy.
+`remap` walks nested data structures and builds a remapped copy.
 
 Traversal behavior:
 
@@ -457,8 +487,7 @@ Traversal behavior:
 - `default_visit`, `default_enter`, and `default_exit` are public helpers with
   the default behavior described above.
 
-`get_path(root, path, default=_UNSET)` indexes through nested mappings,
-sequences, and attributes.
+`get_path` indexes through nested mappings and sequences.
 
 Behavior:
 
@@ -470,20 +499,20 @@ Behavior:
   `PathAccessError`, a subclass of `KeyError`, `IndexError`, and `TypeError`.
 - If a default was supplied, return it instead of raising.
 
-`research(root, query=lambda p, k, v: True, reraise=False, enter=default_enter)`
-walks a nested structure and returns a list of `(path, value)` matches where
-`query(path, key, value)` is true. `query` must be callable. Query errors are
+`research` walks a nested structure and returns a list of `(path, value)` matches where the `query` callable returns true for `(path, key, value)`. `query` must be callable. Query errors are
 suppressed unless `reraise=True`.
 
 ### GUID Generators
 
-- `GUIDerator(size=24)` is an iterator yielding random URL-safe text ids of the
-  requested length. `size` must satisfy `20 < size <= 36`; invalid sizes raise
-  `ValueError`. `reseed()` resets its random source.
-- `SequentialGUIDerator(size=24)` yields deterministic sequential ids of the
-  requested length and supports `reseed()`.
+- `GUIDerator` is an iterator yielding random URL-safe text ids of the
+  requested `size`. The `size` must satisfy `20 < size <= 36`; invalid sizes must raise
+  `ValueError`. `reseed` resets its random source.
+- `SequentialGUIDerator` yields deterministic sequential ids of the
+  requested length and supports `reseed`.
 
 ## URL Behavior
+
+URL utilities provide parsing, normalization, navigation, query parameter management, and link extraction for web addresses.
 
 ### Public Constants and Exceptions
 
@@ -541,7 +570,7 @@ round-trip through parse and serialization.
 
 ### `URL`
 
-`URL(url="")` parses a URL string, UTF-8 bytes value, or another `URL`.
+`URL` parses a URL string, UTF-8 bytes value, or another `URL`.
 
 Public attributes:
 
@@ -562,9 +591,7 @@ Public attributes:
 
 Construction and serialization:
 
-- `URL.from_parts(scheme=None, host=None, path_parts=(), query_params=(),
-  fragment=None, port=None, username=None, password=None)` builds a URL from
-  structured parts.
+- `URL.from_parts` builds a URL from structured parts including `scheme`, `host`, `path_parts`, `query_params`, `fragment`, `port`, `username`, and `password`.
 - `to_text(full_quote=False)` serializes the URL. With `full_quote=True`, output
   is network-safe ASCII: IDNA hostnames are encoded and path/query/fragment
   Unicode is percent-encoded. With `full_quote=False`, human-readable Unicode is
@@ -581,21 +608,20 @@ Construction and serialization:
 
 Normalization and navigation:
 
-- `normalize(with_case=True)` mutates the URL in place and returns `None`.
+- `normalize` mutates the URL in place and returns `None`.
   Normalization removes default ports, resolves path dot segments,
   canonicalizes quoting, and normalizes scheme/host case when `with_case=True`.
-- `navigate(dest)` resolves a relative or absolute destination against the URL,
+- `navigate` resolves a relative or absolute destination against the URL,
   following RFC 3986 relative-reference behavior for `.` and `..`, absolute
   paths, query-only changes, fragment-only changes, scheme changes, and full
   absolute destinations. `dest` may be text or `URL`.
-- `get_authority(full_quote=False, with_userinfo=False)` returns the authority
+- `get_authority` returns the authority
   string `[userinfo@]host[:port]`, respecting IDNA/quoting and default-port
   elision.
 
 ### Link Extraction
 
-`find_all_links(text, with_text=False, default_scheme="https", schemes=())`
-extracts URL-like links from arbitrary text.
+`find_all_links` extracts URL-like links from arbitrary text.
 
 Behavior:
 
@@ -610,13 +636,49 @@ Behavior:
 - With `with_text=True`, return a token list that preserves non-link text
   segments and replaces link segments with `URL` objects.
 
+## State Model
+
+Each stateful utility exposes one logical value through more than one public view. Cache mapping operations and cached callables must observe the same cached entries. Ordered multi-value mappings must preserve the same key/value associations through single-value lookup, multi-value lookup, iteration, copying, and inversion. URL attributes, query parameters, serialization, normalization, and navigation must describe the same URL state. Iterable helpers are stateless transformations whose output order must follow their input traversal order.
+
 ## Error Semantics
 
-Mutation attempts on `FrozenDict` must raise `TypeError`. Hashing a `FrozenDict` containing an unhashable value must raise `FrozenHashError`.
+### Cache Errors
 
-Malformed URL input that cannot be parsed as a supported URL must raise `URLParseError`. Nested traversal through `get_path()` must raise `PathAccessError` when a requested component cannot be resolved.
+- When `LRI` or `LRU` is constructed with `max_size` less than or equal to zero, the constructor must raise `ValueError`.
+- When `LRI` or `LRU` is constructed with a non-callable `on_miss`, the constructor must raise `TypeError`.
+- When `LRI.__getitem__` or `LRU.__getitem__` encounters a missing key without `on_miss`, it must raise `KeyError`.
+- When `cached` receives an invalid `cache` argument that is neither a mapping nor a callable, it must raise `TypeError`.
+- When `cachedmethod` receives an invalid `cache` argument that is neither a mapping, callable, nor string attribute name, it must raise `TypeError`.
+- When `ThresholdCounter` is constructed with a `threshold` not between 0 and 1, it must raise `ValueError`.
+- When `ThresholdCounter.__getitem__` is called with an absent or below-threshold key, it must raise `KeyError`.
+- When `GUIDerator` or `SequentialGUIDerator` is constructed with a `size` not satisfying `20 < size <= 36`, it must raise `ValueError`.
 
-`OneToOne` must reject inputs that assign the same value to multiple keys. Cached descriptors and methods must raise `TypeError` when invoked without the instance required by their public descriptor contract.
+### Mapping Errors
+
+- When a mutation method is called on `FrozenDict`, it must raise `TypeError`.
+- When a `FrozenDict` containing unhashable values is hashed, it must raise `FrozenHashError`.
+- When `OneToOne.unique()` receives initial data mapping two keys to the same value, it must raise `ValueError`.
+- When `OrderedMultiDict.poplast` is called with a missing key and no default, it must raise `KeyError`.
+
+### Iterable Errors
+
+- When `split` or `split_iter` receives a non-iterable `src`, it must raise `TypeError`.
+- When `chunked` or `chunked_iter` receives a non-iterable `src`, it must raise `TypeError`.
+- When `chunked` or `chunked_iter` receives a non-positive `size`, it must raise `ValueError`.
+- When `chunked` or `chunked_iter` receives unknown keyword arguments, it must raise `ValueError`.
+- When `xfrange` receives a zero `step`, it must raise `ValueError`.
+- When `backoff` receives `count="repeat"`, it must raise `ValueError`.
+- When `backoff` or `backoff_iter` receives `start` or `stop` that are negative, `stop < start`, `factor < 1.0`, or invalid count, it must raise `ValueError`.
+- When `remap` receives a non-callable `visit`, `enter`, or `exit` argument, it must raise `TypeError`.
+- When `remap` receives unexpected keyword arguments beyond documented options, it must raise `TypeError`.
+- When `get_path` cannot access a path segment and no default is supplied, it must raise `PathAccessError`.
+
+### URL Errors
+
+- When `URL` receives malformed input that cannot be parsed, it must raise `URLParseError`.
+- When `parse_host` receives invalid IPv6 syntax, it must raise `URLParseError`.
+- When `parse_url` encounters a non-integer port, it must raise `URLParseError`.
+- When `register_scheme` receives incompatible `default_port` and `uses_netloc` combinations, it must raise `ValueError`.
 
 ## Cross-View Invariants
 
@@ -628,31 +690,69 @@ Malformed URL input that cannot be parsed as a supported URL must raise `URLPars
 - Navigating or normalizing a `URL` must update its attributes, query parameters, authority, and serialized form consistently.
 - `remap`, `get_path`, and `research` must agree on the paths produced by the same nested mapping and sequence structure.
 
-## Representative Workflows
+## Public Interface
 
-A caller may create an `LRU`, store values by key, read keys to update recency, and insert another value to observe eviction through normal mapping operations. A caller may build an `OrderedMultiDict` from repeated pairs, update individual values or whole value lists, invert or copy it, and then serialize its ordered pairs without consulting internal linked-list state.
+### Import Surface
 
-For URL processing, a caller may parse text into `URL`, inspect and edit `query_params`, navigate to a relative destination, normalize the result, and serialize it with `to_text()`. Every step must operate on the same public URL state.
+The package is imported as `boltons`. Public imports must work from the documented module paths, including:
 
-## Non-Goals
+```python
+from boltons.cacheutils import LRU, LRI, cached, cachedmethod, cachedproperty
+from boltons.cacheutils import ThresholdCounter, MinIDMap, make_cache_key
+from boltons.dictutils import MultiDict, OMD, OrderedMultiDict, FastIterOrderedMultiDict
+from boltons.dictutils import OneToOne, ManyToMany, FrozenDict, FrozenHashError, subdict
+from boltons.iterutils import remap, get_path, research, chunked, windowed
+from boltons.iterutils import default_visit, default_enter, default_exit, PathAccessError
+from boltons.urlutils import URL, QueryParamDict, URLParseError, parse_url, find_all_links
+```
 
-- Do not implement unrelated Boltons modules outside the four selected modules
-  unless needed for a documented public behavior in this spec.
-- Do not expose or depend on private linked-list internals, regular-expression
-  implementation objects, or test helper shapes.
-- Exact wording of exception messages is not part of the contract unless this
-  spec gives exact text.
-- Performance should be reasonable for ordinary inputs, but micro-optimization
-  and thread scheduling details are not part of the contract.
+The four modules are independent utility domains. Callers must not need private helpers or a particular internal package layout to use them.
 
-## Invocation Protocol
+### API Catalog
+
+| Name | Kind | Role |
+|------|------|------|
+| `LRI` | class | Least-recently-inserted eviction cache |
+| `LRU` | class | Least-recently-used eviction cache |
+| `cached` | decorator | Cache function return values in a mapping |
+| `cachedmethod` | decorator | Cache method return values per instance |
+| `cachedproperty` | descriptor | Lazy-computed instance attribute |
+| `make_cache_key` | function | Build a hashable key from call arguments |
+| `ThresholdCounter` | class | Frequency counter with common/uncommon separation |
+| `MinIDMap` | class | Compact integer id mapping for live objects |
+| `OrderedMultiDict` | class | Ordered mapping supporting repeated keys |
+| `OMD` | class | Alias for `OrderedMultiDict` |
+| `MultiDict` | class | Alias for `OrderedMultiDict` |
+| `FastIterOrderedMultiDict` | class | Iteration-optimized ordered multi-dict |
+| `OneToOne` | class | Bijective mapping with inverse view |
+| `ManyToMany` | class | Bidirectional many-to-many relation |
+| `FrozenDict` | class | Immutable hashable dict subclass |
+| `FrozenHashError` | exception | Raised when hashing a `FrozenDict` with unhashable values |
+| `subdict` | function | Extract a subset of keys from a mapping |
+| `remap` | function | Walk and rebuild nested data structures |
+| `get_path` | function | Index through nested mappings and sequences |
+| `research` | function | Search nested structures by predicate |
+| `PathAccessError` | exception | Raised when a nested path segment is inaccessible |
+| `flatten` | function | Recursively flatten nested iterables to a list |
+| `chunked` | function | Split an iterable into fixed-size chunks |
+| `windowed` | function | Produce overlapping sliding windows from an iterable |
+| `unique` | function | Deduplicate an iterable preserving first occurrences |
+| `bucketize` | function | Group iterable elements by a key function |
+| `backoff` | function | Generate increasing retry-delay sequences |
+| `URL` | class | Parsed and editable URL with component access |
+| `QueryParamDict` | class | Ordered multi-dict for URL query parameters |
+| `URLParseError` | exception | Raised for malformed URLs, hosts, or ports |
+| `parse_url` | function | Decompose URL text into a component mapping |
+| `find_all_links` | function | Extract URL-like links from arbitrary text |
+
+### CLI Entry Points
 
 Boltons is a Python library. It provides no covered console script, and `python -m boltons` is not supported for these utilities.
 
-## Environment
+## Appendix A: Environment
 
 The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-## Evaluation Notes
+## Appendix B: Assessment Notes
 
-Assessment calls only the documented module paths and public names. It exercises direct utility behavior, state changes observed through multiple public views, errors by class rather than exact wording, and complete cache, mapping, traversal, and URL workflows. Private nodes, parser expressions, registry shapes, internal cache sentinels, and exact object representations are not assessed.
+Assessment calls only the documented module paths and public names. It exercises direct utility behavior, state changes observed through multiple public views, errors by class rather than exact wording, and complete cache, mapping, traversal, and URL workflows. Private nodes, parser expressions, registry shapes, internal cache sentinels, and exact object representations are not part of this contract.

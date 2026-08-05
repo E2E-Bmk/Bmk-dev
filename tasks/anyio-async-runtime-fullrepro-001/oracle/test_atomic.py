@@ -43,7 +43,7 @@ from anyio import (
 )
 from anyio.abc import TaskStatus
 from anyio.functools import cache, lru_cache, reduce
-from anyio.lowlevel import RunVar, checkpoint, current_token
+from anyio.lowlevel import EventLoopToken, RunVar, checkpoint, current_token
 from anyio.streams.buffered import BufferedByteReceiveStream
 from anyio.streams.text import TextReceiveStream, TextSendStream
 from anyio import Path as AsyncPath
@@ -435,8 +435,8 @@ async def test_lowlevel_checkpoint_allows_progress():
 
 async def test_current_token_available_inside_run():
     token = current_token()
-    assert token is not None
-    assert current_token() is token
+    assert isinstance(token, EventLoopToken)
+    assert current_token() == token
 
 
 def test_current_token_requires_event_loop():

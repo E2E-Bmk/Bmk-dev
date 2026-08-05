@@ -73,6 +73,7 @@ def test_server_preface_accepted_by_client_as_settings_event():
     assert any(isinstance(e, RemoteSettingsChanged) for e in events)
 
 
+@pytest.mark.depends_on("test_initiate_connection_buffers_client_preface", "test_client_next_stream_id_starts_at_one")
 def test_request_headers_reach_server_as_request_received():
     """Seam: protocol handoff — request headers reach peer as RequestReceived."""
     client, server = make_pair()
@@ -82,6 +83,7 @@ def test_request_headers_reach_server_as_request_received():
     assert req.headers == REQ_HEADERS
 
 
+@pytest.mark.depends_on("test_initiate_connection_buffers_client_preface")
 def test_response_headers_reach_client_as_response_received():
     """Seam: protocol handoff — response headers reach peer as ResponseReceived."""
     client, server = make_pair()
@@ -93,6 +95,7 @@ def test_response_headers_reach_client_as_response_received():
     assert resp.headers == RESP_HEADERS
 
 
+@pytest.mark.depends_on("test_send_data_reduces_local_flow_window")
 def test_data_reaches_peer_as_data_received_event():
     """Seam: protocol handoff — DATA frames reach peer as DataReceived."""
     client, server = make_pair()
@@ -110,6 +113,7 @@ def test_data_reaches_peer_as_data_received_event():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_initiate_connection_buffers_client_preface")
 def test_informational_response_event_carries_correct_status():
     """CVI-2: informational response event attributes match sent headers."""
     client, server = make_pair()
@@ -121,6 +125,7 @@ def test_informational_response_event_carries_correct_status():
     assert info.headers == [(":status", "103"), ("link", "</app.css>")]
 
 
+@pytest.mark.depends_on("test_initiate_connection_buffers_client_preface")
 def test_trailers_event_carries_correct_headers():
     """CVI-2: trailers event headers match sent trailer block."""
     client, server = make_pair()
@@ -139,6 +144,7 @@ def test_trailers_event_carries_correct_headers():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_settings_defaults_for_client")
 def test_settings_auto_ack_is_buffered_after_receive_data():
     """CVI-3: settings auto-ack buffered as outbound bytes after receive_data."""
     client, server = make_pair()
@@ -150,6 +156,7 @@ def test_settings_auto_ack_is_buffered_after_receive_data():
     assert any(isinstance(e, SettingsAcknowledged) for e in events)
 
 
+@pytest.mark.depends_on("test_ping_buffers_frame_for_eight_byte_payload")
 def test_ping_auto_ack_is_buffered_after_receive_data():
     """CVI-3: ping auto-ack buffered as outbound bytes after receive_data."""
     client, server = make_pair()
@@ -167,6 +174,7 @@ def test_ping_auto_ack_is_buffered_after_receive_data():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_header_encoding_none_means_bytes_headers")
 def test_bytes_encoding_returns_bytes_headers():
     """CVI-4: bytes header encoding returns bytes header tuples."""
     client, server = make_pair(client_encoding=None, server_encoding=None)
@@ -175,6 +183,7 @@ def test_bytes_encoding_returns_bytes_headers():
     assert req.headers[0] == (b":method", b"GET")
 
 
+@pytest.mark.depends_on("test_header_encoding_accepts_string_encoding")
 def test_utf8_encoding_returns_str_headers():
     """CVI-4: UTF-8 header encoding returns str header tuples."""
     client, server = make_pair()
@@ -204,6 +213,7 @@ def test_stream_counts_follow_full_lifecycle():
     assert server.open_inbound_streams == 0
 
 
+@pytest.mark.depends_on("test_close_connection_buffers_goaway_and_blocks_new_streams")
 def test_sending_on_closed_stream_raises():
     """CVI-5: sending on closed stream raises ProtocolError."""
     client, server = make_pair()
@@ -230,6 +240,7 @@ def test_update_settings_pending_until_peer_ack():
     assert client.local_settings.max_concurrent_streams == 11
 
 
+@pytest.mark.depends_on("test_changed_setting_exposes_fields")
 def test_remote_settings_changed_reports_original_and_new():
     """CVI-6: RemoteSettingsChanged reports original and new values."""
     client, server = make_pair()
@@ -241,6 +252,7 @@ def test_remote_settings_changed_reports_original_and_new():
     assert cs.new_value == 13
 
 
+@pytest.mark.depends_on("test_settings_defaults_for_client", "test_settings_assignment_pending_until_acknowledged")
 def test_peer_advertised_settings_applied_after_handshake():
     """CVI-6: peer-advertised settings applied after handshake."""
     client, server = make_pair()
@@ -266,6 +278,7 @@ def test_send_data_reduces_both_sender_and_connection_windows():
     assert client.local_flow_control_window(sid2) == 64535
 
 
+@pytest.mark.depends_on("test_local_flow_control_window_starts_at_default")
 def test_remote_flow_window_decreases_on_data_receipt():
     """CVI-7: remote flow window decreases on data receipt."""
     client, server = make_pair()
@@ -276,6 +289,7 @@ def test_remote_flow_window_decreases_on_data_receipt():
     assert server.remote_flow_control_window(sid) == 63535
 
 
+@pytest.mark.depends_on("test_acknowledge_received_data_rejects_stream_zero")
 def test_acknowledge_received_data_restores_windows():
     """CVI-7: acknowledge_received_data restores flow windows."""
     client, server = make_pair()
@@ -311,6 +325,7 @@ def test_connection_level_window_update_uses_stream_zero():
     assert wu.delta == 512
 
 
+@pytest.mark.depends_on("test_send_data_larger_than_frame_size_raises")
 def test_send_data_exceeding_flow_window_raises():
     """CVI-7: send_data exceeding flow window raises FlowControlError."""
     client, server = make_pair()
@@ -339,6 +354,7 @@ def test_padding_counted_in_flow_controlled_length():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_send_data_reduces_local_flow_window")
 def test_end_stream_data_links_stream_ended():
     """CVI-8: end-stream DATA links DataReceived to StreamEnded."""
     client, server = make_pair()
@@ -396,6 +412,7 @@ def test_failed_send_data_does_not_leak_bytes():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_close_connection_buffers_goaway_and_blocks_new_streams")
 def test_close_connection_peer_sees_connection_terminated():
     """CVI-10: GOAWAY visible to peer as ConnectionTerminated."""
     client, server = make_pair()
@@ -412,6 +429,7 @@ def test_close_connection_peer_sees_connection_terminated():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_ping_buffers_frame_for_eight_byte_payload")
 def test_ping_round_trip():
     """Seam: protocol handoff — ping round-trip through PingReceived and PingAckReceived."""
     client, server = make_pair()
@@ -429,6 +447,7 @@ def test_ping_round_trip():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_reset_stream_reduces_open_outbound_count")
 def test_reset_stream_peer_sees_stream_reset():
     """Seam: protocol handoff — reset_stream visible as StreamReset."""
     client, server = make_pair()
@@ -446,6 +465,7 @@ def test_reset_stream_peer_sees_stream_reset():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_client_push_stream_raises_protocol_error")
 def test_push_stream_peer_sees_pushed_stream_received():
     """Seam: protocol handoff — push_stream visible as PushedStreamReceived."""
     client, server = make_pair()

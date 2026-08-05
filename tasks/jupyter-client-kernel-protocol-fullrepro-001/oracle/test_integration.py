@@ -22,6 +22,7 @@ from traitlets import TraitError
 
 from conftest import _connection_info, _write_spec
 
+@pytest.mark.depends_on("test_write_connection_file_preserves_explicit_connection_values")
 @pytest.mark.parametrize("seed", range(4))
 def test_client_loaded_from_connection_mapping_reports_same_values(seed):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
@@ -32,6 +33,7 @@ def test_client_loaded_from_connection_mapping_reports_same_values(seed):
     assert all(reported[key] == info[key] for key in ("ip", "transport", "shell_port", "iopub_port", "stdin_port", "control_port", "hb_port"))
     assert reported["key"] == b"stage3-key"
 
+@pytest.mark.depends_on("test_write_connection_file_preserves_explicit_connection_values", "test_find_connection_file_returns_matching_absolute_path")
 @pytest.mark.parametrize("seed", range(3))
 def test_connection_file_can_be_written_then_loaded_by_client(seed):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
@@ -43,6 +45,7 @@ def test_connection_file_can_be_written_then_loaded_by_client(seed):
     assert reported["shell_port"] == _connection_info(seed)["shell_port"]
     assert reported["key"] == b"stage3-key"
 
+@pytest.mark.depends_on("test_session_msg_has_public_message_shape", "test_session_serialize_round_trip_preserves_content_with_signing", "test_session_feed_identities_splits_routing_from_protocol_frames")
 @pytest.mark.parametrize("payload", [{"code": "1"}, {"cursor_pos": 0}, {"detail_level": 1}])
 def test_session_serialization_round_trip_preserves_routing_and_content(payload):
     """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
@@ -54,6 +57,7 @@ def test_session_serialization_round_trip_preserves_routing_and_content(payload)
     assert decoded["msg_id"] == message["msg_id"]
     assert decoded["content"] == payload
 
+@pytest.mark.depends_on("test_kernelspec_from_resource_dir_has_serializable_public_fields", "test_find_kernel_specs_normalizes_names_and_omits_dirs_without_kernel_json")
 @pytest.mark.parametrize("name", ["alpha", "beta", "mixed-name"])
 def test_kernelspec_discovery_and_lookup_share_resource_directory(name):
     """Seam: protocol handoff — adjacent protocol layers exchange connection or message state."""
@@ -65,6 +69,7 @@ def test_kernelspec_discovery_and_lookup_share_resource_directory(name):
     assert discovered[name] == str(resource)
     assert selected.resource_dir == str(resource)
 
+@pytest.mark.depends_on("test_install_kernel_spec_derives_lowercase_name_from_source_directory", "test_remove_kernel_spec_raises_key_error_for_absent_name")
 @pytest.mark.parametrize("name", ["installed", "installed_two", "installed-three"])
 def test_install_discover_and_remove_kernelspec_round_trip(name):
     """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
@@ -104,6 +109,7 @@ def test_allowed_kernelspecs_filters_discovery(allowed):
     else:
         assert {"allowed", "other"} <= names
 
+@pytest.mark.depends_on("test_kernelspec_from_resource_dir_has_serializable_public_fields")
 @pytest.mark.parametrize("name", ["missing", "unknown", "not-installed"])
 def test_missing_kernelspec_raises_public_exception(name):
     """Seam: error propagation — subsystem failures surface consistently at the integration boundary."""
@@ -112,6 +118,7 @@ def test_missing_kernelspec_raises_public_exception(name):
         with pytest.raises(NoSuchKernel):
             manager.get_kernel_spec(name)
 
+@pytest.mark.depends_on("test_write_connection_file_preserves_explicit_connection_values", "test_connection_file_mixin_exposes_documented_public_methods")
 @pytest.mark.parametrize("seed", range(3))
 def test_manager_connection_mapping_flows_to_created_client(seed):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
@@ -124,6 +131,7 @@ def test_manager_connection_mapping_flows_to_created_client(seed):
     assert reported["shell_port"] == info["shell_port"]
     assert reported["key"] == b"stage3-key"
 
+@pytest.mark.depends_on("test_root_kernel_surface_is_importable")
 @pytest.mark.parametrize("operation", ["interrupt_kernel", "signal_kernel"])
 def test_manager_operations_without_kernel_raise_runtime_error(operation):
     """Seam: error propagation — subsystem failures surface consistently at the integration boundary."""
@@ -143,6 +151,7 @@ def test_unknown_transport_encryption_mode_is_rejected():
     with pytest.raises(TraitError):
         KernelManager(transport_encryption="not-a-mode")
 
+@pytest.mark.depends_on("test_write_connection_file_preserves_explicit_connection_values", "test_write_connection_file_stores_byte_key_as_json_string")
 def test_disabled_transport_encryption_writes_no_curve_keys():
     """Seam: config interaction — encryption settings select compatible storage backends."""
     with TemporaryDirectory() as directory:
@@ -171,6 +180,7 @@ def _workflow_connection_info():
     }
 
 
+@pytest.mark.depends_on("test_write_connection_file_preserves_explicit_connection_values", "test_connection_file_mixin_exposes_documented_public_methods")
 def test_manager_client_keeps_loaded_workflow_connection_info():
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     connection_info = _workflow_connection_info()
@@ -180,6 +190,7 @@ def test_manager_client_keeps_loaded_workflow_connection_info():
     assert isinstance(client, jupyter_client.BlockingKernelClient)
     assert client.get_connection_info() == connection_info
 
+@pytest.mark.depends_on("test_root_kernel_surface_is_importable", "test_session_msg_has_public_message_shape")
 def test_blocking_workflow_returns_request_id_before_empty_shell_reply():
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     client = jupyter_client.BlockingKernelClient()
@@ -194,6 +205,7 @@ def test_blocking_workflow_returns_request_id_before_empty_shell_reply():
     finally:
         client.stop_channels()
 
+@pytest.mark.depends_on("test_root_kernel_surface_is_importable", "test_kernelspec_from_resource_dir_has_serializable_public_fields")
 def test_workflow_start_with_unknown_kernel_fails_without_running_one():
     """Seam: error propagation — subsystem failures surface consistently at the integration boundary."""
     manager = KernelManager(kernel_name="definitely-not-an-installed-kernel-7f9c0b77")
@@ -259,6 +271,7 @@ def test_module_level_kernelspec_helpers_expose_manager_behavior(monkeypatch):
         with pytest.raises(NoSuchKernel):
             get_spec("missing-kernel-3f6d2b91")
 
+@pytest.mark.depends_on("test_session_headers_have_independent_message_ids", "test_session_serialize_round_trip_preserves_content_with_signing", "test_session_rejects_invalid_signature")
 def test_cloned_sessions_from_connection_info_share_identity_with_independent_digests():
     """Seam: protocol handoff — adjacent protocol layers exchange connection or message state."""
     client = KernelClient()
@@ -275,6 +288,7 @@ def test_cloned_sessions_from_connection_info_share_identity_with_independent_di
     with pytest.raises(ValueError):
         first.deserialize(wire)
 
+@pytest.mark.depends_on("test_write_connection_file_preserves_explicit_connection_values", "test_write_connection_file_stores_byte_key_as_json_string")
 def test_manager_write_connection_file_then_cleanup_removes_it():
     """Seam: protocol handoff — adjacent protocol layers exchange connection or message state."""
     with TemporaryDirectory() as directory:
@@ -312,6 +326,7 @@ def test_blocking_client_loads_connection_file_from_configured_path():
     assert reported["transport"] == "tcp"
     assert reported["key"] == b"stage3-key"
 
+@pytest.mark.depends_on("test_session_serialize_round_trip_preserves_content_with_signing", "test_session_feed_identities_splits_routing_from_protocol_frames")
 def test_session_round_trip_exposes_trailing_buffers_as_memoryviews():
     """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
     session = Session(key=b"buffer-key")
@@ -338,6 +353,7 @@ def test_install_kernel_spec_replaces_existing_destination():
         assert second_install == first_install
         assert manager.get_kernel_spec("replaced").display_name == "Second Install"
 
+@pytest.mark.depends_on("test_kernelspec_from_resource_dir_has_serializable_public_fields", "test_root_kernel_surface_is_importable")
 def test_provisioner_factory_availability_follows_kernelspec_metadata():
     """Seam: protocol handoff — adjacent protocol layers exchange connection or message state."""
     factory = KernelProvisionerFactory.instance()

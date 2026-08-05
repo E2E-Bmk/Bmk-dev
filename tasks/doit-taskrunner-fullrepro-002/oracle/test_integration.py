@@ -8,10 +8,15 @@ import pytest
 from conftest import common_actions, run_doit, write_dodo
 
 
+depends_on = pytest.mark.depends_on
+
+
 # ---------------------------------------------------------------------------
 # create_after + task graph
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_string_command_action_creates_target_file")
+@pytest.mark.depends_on("test_run_once_skips_task_after_first_success", "test_uptodate_false_forces_task_to_run_unconditionally", "test_title_with_actions_includes_task_name_in_output")
 def test_create_after_materializes_selected_delayed_task(tmp_path):
     """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     write_dodo(
@@ -41,6 +46,7 @@ def test_create_after_materializes_selected_delayed_task(tmp_path):
 # ModuleTaskLoader + DoitMain (programmatic API)
 # ---------------------------------------------------------------------------
 
+@pytest.mark.depends_on("test_title_with_actions_includes_task_name_in_output", "test_multi_action_task_runs_all_actions_in_order", "test_help_task_prints_supported_task_dictionary_fields")
 def test_module_task_loader_runs_dictionary_namespace_with_doitmain(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     cwd = os.getcwd()
@@ -64,6 +70,7 @@ def test_module_task_loader_runs_dictionary_namespace_with_doitmain(tmp_path):
     assert (tmp_path / "module.txt").read_text(encoding="utf-8") == "loaded"
 
 
+@pytest.mark.depends_on("test_uptodate_false_forces_task_to_run_unconditionally", "test_run_once_skips_task_after_first_success", "test_list_reports_declared_task_name")
 def test_module_task_loader_list_and_run_share_task_graph(tmp_path, capsys):
     """Seam: state consistency — projections agree across API boundaries."""
     from doit.cmd_base import ModuleTaskLoader
@@ -99,6 +106,9 @@ def test_module_task_loader_list_and_run_share_task_graph(tmp_path, capsys):
 # Generator subtasks
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_list_reports_declared_task_name", "test_atomic::test_basename_overrides_default_task_name_in_listing")
+@depends_on("test_atomic::test_list_reports_declared_task_name")
+@pytest.mark.depends_on("test_python_action_receives_declared_dependencies_and_targets", "test_doc_from_docstring_used_when_no_explicit_doc_field", "test_config_changed_reruns_when_configuration_changes")
 def test_generator_subtasks_are_runnable_and_visible_when_requested(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     write_dodo(
@@ -125,6 +135,8 @@ def test_generator_subtasks_are_runnable_and_visible_when_requested(tmp_path):
 # getargs + saved values
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_python_action_returning_dict_succeeds")
+@pytest.mark.depends_on("test_python_action_returning_true_succeeds", "test_python_action_returning_string_succeeds", "test_python_action_returning_none_succeeds")
 def test_python_action_dictionary_result_feeds_getargs(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     write_dodo(
@@ -159,6 +171,8 @@ def test_python_action_dictionary_result_feeds_getargs(tmp_path):
 # File dependencies + up-to-date
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_python_action_receives_declared_dependencies_and_targets")
+@pytest.mark.depends_on("test_uptodate_false_forces_task_to_run_unconditionally", "test_task_dep_declares_dependency_ordering", "test_string_command_action_creates_target_file")
 def test_file_dependency_unchanged_second_run_is_reported_up_to_date(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     (tmp_path / "input.txt").write_text("hello", encoding="utf-8")
@@ -178,6 +192,8 @@ def test_file_dependency_unchanged_second_run_is_reported_up_to_date(tmp_path):
     assert (tmp_path / "count.txt").read_text(encoding="utf-8") == "1"
 
 
+@depends_on("test_atomic::test_python_action_receives_declared_dependencies_and_targets")
+@pytest.mark.depends_on("test_task_dep_declares_dependency_ordering", "test_uptodate_false_forces_task_to_run_unconditionally", "test_title_with_actions_includes_task_name_in_output")
 def test_file_dependency_content_change_reruns_task(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     (tmp_path / "input.txt").write_text("hello", encoding="utf-8")
@@ -198,6 +214,7 @@ def test_file_dependency_content_change_reruns_task(tmp_path):
     assert (tmp_path / "output.txt").read_text(encoding="utf-8") == "BYE"
 
 
+@pytest.mark.depends_on("test_uptodate_true_skips_action_before_first_run", "test_string_command_action_creates_target_file", "test_list_command_action_without_shell_accepts_pathlike_arguments")
 def test_modifying_target_without_input_change_does_not_force_rerun(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     (tmp_path / "input.txt").write_text("hello", encoding="utf-8")
@@ -218,6 +235,8 @@ def test_modifying_target_without_input_change_does_not_force_rerun(tmp_path):
     assert (tmp_path / "output.txt").read_text(encoding="utf-8") == "manual"
 
 
+@depends_on("test_atomic::test_python_action_receives_declared_dependencies_and_targets")
+@pytest.mark.depends_on("test_string_command_action_creates_target_file", "test_clean_true_removes_declared_target_file", "test_uptodate_true_skips_action_before_first_run")
 def test_missing_target_forces_rerun_and_restores_file(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     (tmp_path / "input.txt").write_text("hello", encoding="utf-8")
@@ -242,6 +261,7 @@ def test_missing_target_forces_rerun_and_restores_file(tmp_path):
 # setup / task_dep ordering
 # ---------------------------------------------------------------------------
 
+@pytest.mark.depends_on("test_multi_action_task_runs_all_actions_in_order", "test_uptodate_false_forces_task_to_run_unconditionally", "test_title_with_actions_includes_task_name_in_output")
 def test_setup_task_runs_before_each_selected_status_check(tmp_path):
     """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     write_dodo(
@@ -264,6 +284,9 @@ def test_setup_task_runs_before_each_selected_status_check(tmp_path):
     assert (tmp_path / "events.txt").read_text(encoding="utf-8") == "setup;setup;setup;"
 
 
+@depends_on("test_atomic::test_string_command_action_creates_target_file")
+@depends_on("test_atomic::test_task_dep_declares_dependency_ordering")
+@pytest.mark.depends_on("test_task_dep_declares_dependency_ordering", "test_string_command_action_creates_target_file", "test_multi_action_task_runs_all_actions_in_order")
 def test_implicit_target_dependency_runs_producer_before_consumer(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     write_dodo(
@@ -289,6 +312,7 @@ def test_implicit_target_dependency_runs_producer_before_consumer(tmp_path):
 # reset-dep
 # ---------------------------------------------------------------------------
 
+@pytest.mark.depends_on("test_task_dep_declares_dependency_ordering", "test_list_command_action_without_shell_accepts_pathlike_arguments", "test_verbosity_zero_suppresses_action_stdout")
 def test_reset_dep_records_changed_dependency_state_without_action_execution(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     (tmp_path / "input.txt").write_text("one", encoding="utf-8")
@@ -314,6 +338,8 @@ def test_reset_dep_records_changed_dependency_state_without_action_execution(tmp
 # clean
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_clean_callable_receives_dryrun_when_declared")
+@pytest.mark.depends_on("test_clean_true_removes_declared_target_file", "test_uptodate_false_forces_task_to_run_unconditionally", "test_string_command_action_creates_target_file")
 def test_clean_dry_run_reports_without_removing_target(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     write_dodo(
@@ -333,6 +359,9 @@ def test_clean_dry_run_reports_without_removing_target(tmp_path):
     assert (tmp_path / "artifact.txt").exists()
 
 
+@depends_on("test_atomic::test_clean_true_removes_declared_target_file")
+@depends_on("test_atomic::test_clean_callable_receives_dryrun_when_declared")
+@pytest.mark.depends_on("test_clean_true_removes_declared_target_file", "test_string_command_action_creates_target_file", "test_uptodate_true_skips_action_before_first_run")
 def test_clean_true_removes_target_file(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     write_dodo(
@@ -352,6 +381,7 @@ def test_clean_true_removes_target_file(tmp_path):
     assert not (tmp_path / "artifact.txt").exists()
 
 
+@pytest.mark.depends_on("test_run_once_skips_task_after_first_success", "test_multi_action_task_runs_all_actions_in_order", "test_uptodate_false_forces_task_to_run_unconditionally")
 def test_clean_forget_clears_success_state_so_task_runs_again(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     write_dodo(
@@ -374,6 +404,8 @@ def test_clean_forget_clears_success_state_so_task_runs_again(tmp_path):
 # list + status
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_list_reports_declared_task_name")
+@pytest.mark.depends_on("test_uptodate_false_forces_task_to_run_unconditionally", "test_run_once_skips_task_after_first_success", "test_list_reports_declared_task_name")
 def test_list_status_changes_from_run_to_up_to_date(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     (tmp_path / "input.txt").write_text("x", encoding="utf-8")
@@ -394,6 +426,9 @@ def test_list_status_changes_from_run_to_up_to_date(tmp_path):
     assert "U" in after and "build" in after
 
 
+@depends_on("test_atomic::test_list_reports_declared_task_name")
+@depends_on("test_atomic::test_private_task_hidden_by_default_listing")
+@pytest.mark.depends_on("test_private_task_hidden_by_default_listing", "test_list_reports_declared_task_name", "test_list_command_action_without_shell_accepts_pathlike_arguments")
 def test_list_hides_private_tasks_until_requested(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     write_dodo(
@@ -421,6 +456,7 @@ def test_list_hides_private_tasks_until_requested(tmp_path):
 # ignore / forget
 # ---------------------------------------------------------------------------
 
+@pytest.mark.depends_on("test_python_action_receives_declared_dependencies_and_targets")
 def test_ignore_persists_skip_and_forget_clears_it(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     write_dodo(
@@ -442,6 +478,7 @@ def test_ignore_persists_skip_and_forget_clears_it(tmp_path):
     assert (tmp_path / "artifact.txt").read_text(encoding="utf-8") == "x"
 
 
+@pytest.mark.depends_on("test_uptodate_false_forces_task_to_run_unconditionally", "test_run_once_skips_task_after_first_success", "test_title_with_actions_includes_task_name_in_output")
 def test_forget_makes_successful_task_run_again(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     write_dodo(
@@ -465,6 +502,8 @@ def test_forget_makes_successful_task_run_again(tmp_path):
 # default_tasks / selection
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_uptodate_false_forces_task_to_run_unconditionally")
+@pytest.mark.depends_on("test_uptodate_false_forces_task_to_run_unconditionally", "test_task_params_short_boolean_inverse_can_disable_default", "test_run_once_skips_task_after_first_success")
 def test_default_command_and_explicit_run_execute_same_default_task(tmp_path):
     """Seam: state consistency — projections agree across API boundaries."""
     write_dodo(
@@ -573,6 +612,8 @@ def test_pyproject_default_tasks_selects_configured_task(tmp_path):
 # --always-execute / --continue
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_uptodate_false_forces_task_to_run_unconditionally")
+@depends_on("test_atomic::test_uptodate_true_skips_action_before_first_run")
 def test_always_execute_forces_rerun_even_when_up_to_date(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     write_dodo(
@@ -591,6 +632,7 @@ def test_always_execute_forces_rerun_even_when_up_to_date(tmp_path):
     assert (tmp_path / "count.txt").read_text(encoding="utf-8") == "2"
 
 
+@depends_on("test_atomic::test_python_action_returning_false_reports_task_failure")
 def test_continue_runs_independent_task_after_failure(tmp_path):
     """Seam: error propagation — inner failure surfaces correctly to the caller."""
     write_dodo(
@@ -616,6 +658,7 @@ def test_continue_runs_independent_task_after_failure(tmp_path):
 # Reporters
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_python_action_returning_true_succeeds")
 def test_json_reporter_reports_same_task_success_as_console_side_effect(tmp_path):
     """Seam: state consistency — projections agree across API boundaries."""
     write_dodo(
@@ -644,6 +687,8 @@ def test_json_reporter_reports_same_task_success_as_console_side_effect(tmp_path
 # run_once + result_dep
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_run_once_skips_task_after_first_success")
+@depends_on("test_atomic::test_uptodate_true_skips_action_before_first_run")
 def test_run_once_skips_after_success_but_missing_target_still_runs(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     write_dodo(
@@ -666,6 +711,7 @@ def test_run_once_skips_after_success_but_missing_target_still_runs(tmp_path):
     assert (tmp_path / "count.txt").read_text(encoding="utf-8") == "1"
 
 
+@depends_on("test_atomic::test_python_action_returning_string_succeeds")
 def test_result_dep_reruns_consumer_when_producer_result_changes(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     (tmp_path / "source.txt").write_text("one", encoding="utf-8")
@@ -703,6 +749,7 @@ def test_result_dep_reruns_consumer_when_producer_result_changes(tmp_path):
 # verbosity
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_verbosity_zero_suppresses_action_stdout")
 def test_verbosity_two_displays_python_action_stdout(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     write_dodo(
@@ -747,6 +794,7 @@ def test_doit_config_verbosity_changes_action_output_capture(tmp_path):
 # pos_arg
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_task_params_long_option_is_injected_into_task_creator")
 def test_positional_arguments_are_passed_to_declared_action_name(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     write_dodo(
@@ -831,6 +879,8 @@ def test_calc_dep_adds_late_file_dependency(tmp_path):
 # teardown
 # ---------------------------------------------------------------------------
 
+@depends_on("test_atomic::test_python_action_returning_none_succeeds")
+@depends_on("test_atomic::test_multi_action_task_runs_all_actions_in_order")
 def test_teardown_runs_after_selected_task(tmp_path):
     """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     write_dodo(

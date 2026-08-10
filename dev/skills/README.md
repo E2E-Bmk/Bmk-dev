@@ -48,6 +48,9 @@ Packaged snapshots and old workflow skills live under
 - `spec-writer/`: public packet/spec writing rules.
 - `test-filter/`: original-test filtering and preserved-surface audit.
 - `task-judge/`: Gate A/B/C decision rules and cleanroom scoring requirements.
+- `spec-mutator/`: divergence mutation and the memorisation verdict — run after
+  a task passes the reference gate, to establish whether its score reflects
+  spec-following or recall of the upstream library.
 
 ## Skill Lifecycle
 

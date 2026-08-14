@@ -1,0 +1,35 @@
+FROM node:22-bookworm
+
+# Package sources, overridable at build time:
+#   docker build --build-arg APT_MIRROR=mirrors.aliyun.com \
+#                --build-arg NPM_REGISTRY=https://registry.npmmirror.com ...
+#
+# See Dockerfile.go for why the defaults are the canonical hosts rather than the
+# mirrors Dockerfile.base defaults to.
+ARG APT_MIRROR=deb.debian.org
+ARG NPM_REGISTRY=https://registry.npmjs.org/
+
+RUN if [ "${APT_MIRROR}" != "deb.debian.org" ]; then \
+        for f in /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list; do \
+            [ -f "$f" ] && sed -i "s|deb.debian.org|${APT_MIRROR}|g; s|security.debian.org|${APT_MIRROR}|g" "$f"; \
+        done; \
+    fi; true
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN npm config set registry "${NPM_REGISTRY}"
+
+# vitest and its transform chain are installed globally so a task's oracle
+# resolves them without a network fetch: scoring runs with the network
+# disconnected, and an unresolvable test runner fails every batch identically,
+# which reads as a candidate that implemented nothing.
+RUN npm install -g --no-audit --no-fund \
+    vitest@2.1.9 typescript@5.7.2 tsx@4.19.2 && \
+    npm cache clean --force
+
+# `npx vitest` inside a task's oracle finds the global install through this.
+ENV NODE_PATH=/usr/local/lib/node_modules
+
+WORKDIR /workspace

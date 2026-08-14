@@ -1,0 +1,32 @@
+FROM rust:1.83-bookworm
+
+# Package sources, overridable at build time:
+#   docker build --build-arg APT_MIRROR=mirrors.aliyun.com \
+#                --build-arg NEXTEST_URL=<mirror of get.nexte.st> ...
+#
+# See Dockerfile.go for why the defaults are the canonical hosts rather than the
+# mirrors Dockerfile.base defaults to.
+ARG APT_MIRROR=deb.debian.org
+ARG NEXTEST_URL=https://get.nexte.st/latest/linux
+
+RUN if [ "${APT_MIRROR}" != "deb.debian.org" ]; then \
+        for f in /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list; do \
+            [ -f "$f" ] && sed -i "s|deb.debian.org|${APT_MIRROR}|g; s|security.debian.org|${APT_MIRROR}|g" "$f"; \
+        done; \
+    fi; true
+
+# Python reshapes `cargo metadata` output for RustRunner.provenance(); Rust has
+# no interpreter to run a probe in.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl python3 && \
+    rm -rf /var/lib/apt/lists/*
+
+# nextest arrives as a prebuilt binary rather than through `cargo install`.
+# Building it from source ties the install to this image's rustc version, and a
+# version bump in either direction breaks the build; the release tarball does
+# not care. It is needed at all because `cargo test -- --format json` is
+# nightly-only, while nextest emits the same libtest event stream on stable.
+RUN curl -sSL "${NEXTEST_URL}" | tar xzf - -C "${CARGO_HOME}/bin" && \
+    cargo nextest --version
+
+WORKDIR /workspace

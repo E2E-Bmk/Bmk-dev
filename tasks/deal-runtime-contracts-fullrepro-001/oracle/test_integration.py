@@ -73,6 +73,8 @@ def test_get_contracts_has_metadata():
     assert contract.exception_type is deal.MarkerError
 
 
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument", "test_post_rejects_invalid_return_value", "test_ensure_validates_arguments_and_result")
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument", "test_post_rejects_invalid_return_value")
 def test_get_contracts_multiple_kinds_in_order():
     """CVI-1: multiple contract kinds exposed in decoration order."""
     @deal.pre(lambda x: x > 0)
@@ -87,6 +89,7 @@ def test_get_contracts_multiple_kinds_in_order():
     ]
 
 
+@pytest.mark.depends_on("test_example_is_not_triggered_in_runtime")
 def test_get_contracts_example_validate():
     """CVI-1: example contract validate exposed through introspection."""
     @deal.example(lambda: func(3) == 6)
@@ -130,6 +133,8 @@ def test_unwrap_returns_original():
 
 # ── chain composition ────────────────────────────────────────────
 
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument", "test_pre_stacking_same_kind_ordering")
+@pytest.mark.depends_on("test_pre_stacking_same_kind_ordering")
 def test_chained_contract_decorator():
     """Seam: lifecycle crossing — chained pre contracts compose on one function."""
     @deal.chain(deal.pre(lambda x: x != 1), deal.pre(lambda x: x != 2))
@@ -145,6 +150,7 @@ def test_chained_contract_decorator():
 
 # ── pure composition: has() + safe ────────────────────────────────
 
+@pytest.mark.depends_on("test_has_empty_blocks_stdout", "test_safe_rejects_every_exception")
 def test_pure_blocks_stdout_and_exceptions():
     """Seam: error propagation — pure blocks stdout and undeclared exceptions."""
     @deal.pure
@@ -164,6 +170,7 @@ def test_pure_blocks_stdout_and_exceptions():
 
 # ── dispatch ──────────────────────────────────────────────────────
 
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument")
 def test_dispatch_selects_by_precondition():
     """Seam: protocol handoff — dispatch selects branch by precondition."""
     @deal.dispatch
@@ -184,6 +191,8 @@ def test_dispatch_selects_by_precondition():
     assert choose(0) == "nonnegative"
 
 
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument")
+@pytest.mark.depends_on("test_root_exception_hierarchy")
 def test_dispatch_no_match_raises():
     """Seam: error propagation — dispatch with no match raises NoMatchError."""
     @deal.dispatch
@@ -199,6 +208,7 @@ def test_dispatch_no_match_raises():
         choose(1)
 
 
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument")
 def test_dispatch_default_registration():
     """Seam: protocol handoff — dispatch default registration catches unmatched calls."""
     @deal.dispatch
@@ -217,6 +227,7 @@ def test_dispatch_default_registration():
     assert choose(5) == "default"
 
 
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument")
 def test_dispatch_propagates_pre_contract_error_from_body():
     """Seam: error propagation — dispatch propagates pre contract error from body."""
     @deal.pre(lambda x: x > 0)
@@ -236,6 +247,7 @@ def test_dispatch_propagates_pre_contract_error_from_body():
         choose(-1)
 
 
+@pytest.mark.depends_on("test_disable_prevents_sync_contract_enforcement")
 def test_dispatch_works_with_disabled_contracts():
     """Seam: config interaction — dispatch works while contracts disabled."""
     @deal.dispatch
@@ -259,6 +271,7 @@ def test_dispatch_works_with_disabled_contracts():
 
 # ── Recursive contract avoidance ──────────────────────────────────
 
+@pytest.mark.depends_on("test_ensure_validates_arguments_and_result")
 def test_recursive_contracts_do_not_recurse():
     """Seam: error propagation — mutually referencing contracts do not recurse."""
     @deal.ensure(lambda a, b, result: add(result, b) == a)
@@ -275,6 +288,7 @@ def test_recursive_contracts_do_not_recurse():
 
 # ── inherit ──────────────────────────────────────────────────────
 
+@pytest.mark.depends_on("test_pre_on_class_method")
 def test_inherit_one_parent():
     """Seam: lifecycle crossing — inherit applies parent precondition to child method."""
     class Base:
@@ -292,6 +306,7 @@ def test_inherit_one_parent():
         Child().method(4)
 
 
+@pytest.mark.depends_on("test_pre_on_class_method")
 def test_inherit_multiple_parents():
     """Seam: lifecycle crossing — inherit merges multiple parent preconditions."""
     class Base:
@@ -372,6 +387,8 @@ def test_has_inherit_and_merge_markers():
 
 # ── CVI-3: disable/enable preserves metadata ─────────────────────
 
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument")
+@pytest.mark.depends_on("test_disable_prevents_sync_contract_enforcement")
 def test_contract_state_switch_sync():
     """CVI-3: disable and enable toggles sync contract enforcement."""
     @deal.pre(lambda x: x > 0)
@@ -385,6 +402,7 @@ def test_contract_state_switch_sync():
         func(-1)
 
 
+@pytest.mark.depends_on("test_disable_prevents_sync_contract_enforcement")
 def test_contract_state_switch_async():
     """CVI-3: disable and enable toggles async contract enforcement."""
     @deal.pre(lambda x: x > 0)
@@ -398,6 +416,7 @@ def test_contract_state_switch_async():
         asyncio.run(func(-2))
 
 
+@pytest.mark.depends_on("test_post_on_generator_validates_each_yield")
 def test_contract_state_switch_generator():
     """CVI-3: disable and enable toggles generator contract enforcement."""
     @deal.post(lambda x: x > 0)
@@ -530,6 +549,7 @@ def test_custom_exception_class_and_instance_control_violation():
 
 # ── Representative workflow: sync fee lifecycle ──────────────────
 
+@pytest.mark.depends_on("test_pre_rejects_invalid_argument", "test_ensure_validates_arguments_and_result")
 def test_sync_fee_lifecycle_workflow():
     """Seam: lifecycle crossing — sync fee contracts survive disable and re-enable."""
     @deal.pre(lambda amount: amount > 0)
@@ -553,6 +573,7 @@ def test_sync_fee_lifecycle_workflow():
 
 # ── Representative workflow: exception policy lifecycle ──────────
 
+@pytest.mark.depends_on("test_raises_allows_declared_exception", "test_raises_wraps_undeclared_exception")
 def test_exception_policy_lifecycle_workflow():
     """Seam: lifecycle crossing — raises policy survives disable and re-enable."""
     @deal.raises(ValueError)
@@ -582,6 +603,7 @@ def test_exception_policy_lifecycle_workflow():
 
 # ── CVI-4: permanent disable ─────────────────────────────────────
 
+@pytest.mark.depends_on("test_disable_prevents_sync_contract_enforcement")
 def test_permanent_transitions_raise_runtime_error():
     """CVI-4: permanent disable blocks further state transitions."""
     program = """

@@ -33,13 +33,13 @@ def assert_quantity_close(quantity, magnitude, units):
     assert quantity.units == units
 
 
-@pytest.mark.depends_on('test_upstream_get_application_registry_default_unit', 'test_get_application_registry_returns_current_registry_wrapper')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_calling_registry_parses_quantity_expression')
 def test_upstream_get_application_registry_default_unit():
     """Verifies: PINT-APP-002."""
     ureg = get_application_registry()
     assert ureg.Quantity(1, "kg").to("gram").magnitude == pytest.approx(1000)
 
-@pytest.mark.depends_on('test_upstream_get_application_registry_default_unit', 'test_get_application_registry_returns_current_registry_wrapper')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_calling_registry_parses_quantity_expression')
 def test_upstream_pickled_custom_quantity_requires_application_registry_definition():
     """Verifies: PINT-APP-005."""
     ureg = UnitRegistry(None)
@@ -49,7 +49,7 @@ def test_upstream_pickled_custom_quantity_requires_application_registry_definiti
     with pytest.raises(UndefinedUnitError):
         pickle.loads(data)
 
-@pytest.mark.depends_on('test_format_negative_exponent_modifier_moves_denominator', 'test_format_short_modifier_uses_unit_symbols')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_quantity_public_magnitude_and_unit_attributes')
 def test_upstream_register_unit_format_custom_and_rejects_duplicate():
     """Verifies: PINT-FMT-011, PINT-FMT-012."""
 
@@ -69,14 +69,14 @@ def test_upstream_register_unit_format_custom_and_rejects_duplicate():
         def format_custom_redefined(unit, registry, **options):
             return "<overwritten>"
 
-@pytest.mark.depends_on('test_format_negative_exponent_modifier_moves_denominator', 'test_format_short_modifier_uses_unit_symbols')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_quantity_public_magnitude_and_unit_attributes')
 def test_upstream_format_unit_caret_negative_power():
     """Verifies: PINT-FMT-002, PINT-FMT-005."""
     unit = UnitRegistry().Unit("second") ** -1
     assert format(unit, "~^P") == "s⁻¹"
     assert format(unit, "~P") == "1/s"
 
-@pytest.mark.depends_on('test_upstream_get_application_registry_default_unit', 'test_get_application_registry_returns_current_registry_wrapper')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_calling_registry_parses_quantity_expression')
 def test_upstream_application_registry_controls_top_level_quantity():
     """Verifies: PINT-APP-001, PINT-APP-003, PINT-INV-007."""
     original = get_application_registry()
@@ -248,7 +248,7 @@ def test_unknown_default_system_raises_value_error():
     with pytest.raises(ValueError):
         ureg.default_system = "stage3_missing_system"
 
-@pytest.mark.depends_on('test_format_negative_exponent_modifier_moves_denominator', 'test_format_short_modifier_uses_unit_symbols')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_quantity_public_magnitude_and_unit_attributes')
 def test_format_short_modifier_uses_unit_symbols():
     """Verifies: PINT-FMT-002, PINT-FMT-004."""
     ureg = UnitRegistry()
@@ -260,38 +260,38 @@ def test_format_negative_exponent_modifier_moves_denominator():
     ureg = UnitRegistry()
     assert format(ureg.meter / ureg.second, "~^") == "m * s ** -1"
 
-@pytest.mark.depends_on('test_format_negative_exponent_modifier_moves_denominator', 'test_format_short_modifier_uses_unit_symbols')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_quantity_public_magnitude_and_unit_attributes')
 def test_format_compact_modifier_compacts_quantity_before_formatting():
     """Verifies: PINT-FMT-002, PINT-FMT-006."""
     ureg = UnitRegistry()
     assert format(1500 * ureg.meter, "#~") == "1.5 km"
 
-@pytest.mark.depends_on('test_format_negative_exponent_modifier_moves_denominator', 'test_format_short_modifier_uses_unit_symbols')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_quantity_public_magnitude_and_unit_attributes')
 def test_invalid_format_specification_raises_value_error():
     """Verifies: PINT-FMT-007."""
     ureg = UnitRegistry()
     with pytest.raises(ValueError):
         format(1 * ureg.meter, "stage3_bad_format")
 
-@pytest.mark.depends_on('test_format_negative_exponent_modifier_moves_denominator', 'test_format_short_modifier_uses_unit_symbols')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_quantity_public_magnitude_and_unit_attributes')
 def test_registry_default_format_affects_later_string_projection():
     """Verifies: PINT-FMT-001, PINT-FMT-008, PINT-INV-006."""
     ureg = UnitRegistry()
     ureg.formatter.default_format = "~P"
     assert str(1 * ureg.meter / ureg.second) == "1.0 m/s"
 
-@pytest.mark.depends_on('test_format_negative_exponent_modifier_moves_denominator', 'test_format_short_modifier_uses_unit_symbols')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_quantity_public_magnitude_and_unit_attributes')
 def test_top_level_formatter_formats_numerator_and_denominator_terms():
     """Verifies: PINT-FMT-013."""
     assert pint.formatter([("meter", 1)], [("second", 2)], as_ratio=True) == "meter / second ** 2"
 
-@pytest.mark.depends_on('test_format_negative_exponent_modifier_moves_denominator', 'test_format_short_modifier_uses_unit_symbols')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_quantity_public_magnitude_and_unit_attributes')
 def test_register_unit_format_rejects_existing_name():
     """Verifies: PINT-FMT-012, PINT-ERR-009."""
     with pytest.raises(ValueError):
         register_unit_format("D")(lambda unit, registry, **options: "unused")
 
-@pytest.mark.depends_on('test_upstream_get_application_registry_default_unit', 'test_get_application_registry_returns_current_registry_wrapper')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_calling_registry_parses_quantity_expression')
 def test_application_registry_controls_top_level_quantity_constructor():
     """Verifies: PINT-APP-001, PINT-APP-003, PINT-INV-007."""
     previous = get_application_registry()
@@ -303,20 +303,20 @@ def test_application_registry_controls_top_level_quantity_constructor():
     finally:
         set_application_registry(previous)
 
-@pytest.mark.depends_on('test_upstream_get_application_registry_default_unit', 'test_get_application_registry_returns_current_registry_wrapper')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_calling_registry_parses_quantity_expression')
 def test_get_application_registry_returns_current_registry_wrapper():
     """Verifies: PINT-APP-002."""
     registry = get_application_registry()
     assert registry is not None
     assert hasattr(registry, "meter")
 
-@pytest.mark.depends_on('test_upstream_get_application_registry_default_unit', 'test_get_application_registry_returns_current_registry_wrapper')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_calling_registry_parses_quantity_expression')
 def test_set_application_registry_rejects_non_registry_object():
     """Verifies: PINT-APP-004, PINT-ERR-010."""
     with pytest.raises(TypeError):
         set_application_registry(object())
 
-@pytest.mark.depends_on('test_upstream_get_application_registry_default_unit', 'test_get_application_registry_returns_current_registry_wrapper')
+@pytest.mark.depends_on('test_default_registry_loads_bundled_units', 'test_calling_registry_parses_quantity_expression')
 def test_pickled_quantity_uses_application_registry_on_load():
     """Verifies: PINT-APP-005, PINT-INV-007."""
     previous = get_application_registry()

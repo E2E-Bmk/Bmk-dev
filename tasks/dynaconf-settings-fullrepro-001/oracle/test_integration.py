@@ -10,6 +10,7 @@ from dynaconf import add_converter, get_history, inspect_settings, post_hook, se
 from conftest import _write, _run_dynaconf_cli
 
 
+@pytest.mark.depends_on("test_builtin_cast_tokens_from_file", "test_as_dict_excludes_internal_dynaconf_settings")
 def test_envvar_overrides_file_and_casts_to_int(tmp_path, monkeypatch):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
@@ -33,6 +34,7 @@ def test_envvar_overrides_file_and_casts_to_int(tmp_path, monkeypatch):
     assert settings.as_dict()["PORT"] == 9900
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_local_file_overrides_base_file(tmp_path):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     base = _write(tmp_path / "settings.toml", 'COLOR = "blue"\nSIZE = "small"')
@@ -49,6 +51,7 @@ def test_local_file_overrides_base_file(tmp_path):
     assert settings.SIZE == "small"
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_includes_load_after_regular_settings(tmp_path):
     """Seam: config interaction — multiple sources merge with documented precedence."""
     base = _write(
@@ -79,6 +82,7 @@ def test_includes_load_after_regular_settings(tmp_path):
     assert settings.EXTRA == "included"
 
 
+@pytest.mark.depends_on("test_settings_object_call_reads_dotted_value", "test_as_dict_excludes_internal_dynaconf_settings")
 def test_nested_access_as_dict_and_env_dunder_merge(tmp_path, monkeypatch):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
@@ -104,6 +108,7 @@ def test_nested_access_as_dict_and_env_dunder_merge(tmp_path, monkeypatch):
     assert settings.as_dict()["DATABASE"]["ARGS"]["TIMEOUT"] == 30
 
 
+@pytest.mark.depends_on("test_settings_object_call_reads_dotted_value", "test_as_dict_excludes_internal_dynaconf_settings")
 def test_merge_marker_combines_environment_dictionary(tmp_path, monkeypatch):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
@@ -129,6 +134,7 @@ def test_merge_marker_combines_environment_dictionary(tmp_path, monkeypatch):
     assert "dynaconf_merge" not in settings.as_dict()["DATABASE"]
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_environment_default_global_and_active_values(tmp_path):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
@@ -158,6 +164,7 @@ def test_environment_default_global_and_active_values(tmp_path):
     assert settings.REGION == "all"
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_from_env_returns_isolated_settings_without_changing_original(tmp_path):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
@@ -184,6 +191,7 @@ def test_from_env_returns_isolated_settings_without_changing_original(tmp_path):
     assert settings.TOKEN == "dev"
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_setenv_and_using_env_restore_active_environment(tmp_path):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(
@@ -211,6 +219,7 @@ def test_setenv_and_using_env_restore_active_environment(tmp_path):
     assert settings.FLAG == "prod"
 
 
+@pytest.mark.depends_on("test_runtime_update_validate_true_raises_first_error", "test_validator_default_and_cast_mutate_visible_state")
 def test_validate_on_update_rejects_invalid_runtime_value():
     """Seam: protocol handoff — command output matches artifact or API state."""
     settings = Dynaconf(
@@ -226,6 +235,7 @@ def test_validate_on_update_rejects_invalid_runtime_value():
     assert settings.PORT == 1001
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state", "test_builtin_cast_tokens_from_file")
 def test_history_and_inspect_report_file_and_env_sources(tmp_path, monkeypatch):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(tmp_path / "settings.toml", "PORT = 8000")
@@ -245,6 +255,7 @@ def test_history_and_inspect_report_file_and_env_sources(tmp_path, monkeypatch):
     assert any(entry["loader"] == "env_global" for entry in report["history"])
 
 
+@pytest.mark.depends_on("test_cli_get_missing_key_with_default_prints_default", "test_cli_get_missing_key_without_default_returns_nonzero")
 def test_cli_get_list_and_inspect_observe_configured_instance(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     _write(
@@ -306,6 +317,7 @@ def test_cli_get_list_and_inspect_observe_configured_instance(tmp_path):
     assert json.loads(inspected.stdout)["current"] == 8100
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_preload_regular_file_and_include_order(tmp_path):
     """Seam: config interaction — multiple sources merge with documented precedence."""
     preload = _write(tmp_path / "pre.toml", 'VALUE = "pre"\nPRE = true')
@@ -327,6 +339,7 @@ def test_preload_regular_file_and_include_order(tmp_path):
     assert settings.INCLUDED is True
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_file_declared_dynaconf_include_loads_relative_file(tmp_path):
     """Seam: config interaction — multiple sources merge with documented precedence."""
     _write(tmp_path / "child.toml", 'CHILD = "yes"')
@@ -349,6 +362,7 @@ def test_file_declared_dynaconf_include_loads_relative_file(tmp_path):
     assert settings.CHILD == "yes"
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_settings_files_accepts_semicolon_separated_paths(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     first = _write(tmp_path / "first.toml", 'VALUE = "first"\nONLY_FIRST = true')
@@ -365,6 +379,7 @@ def test_settings_files_accepts_semicolon_separated_paths(tmp_path):
     assert settings.ONLY_SECOND is True
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_python_settings_file_loads_only_uppercase_names(tmp_path):
     """Seam: state consistency — persisted and in-memory views stay aligned."""
     settings_file = _write(
@@ -405,6 +420,7 @@ def test_unprefixed_environment_variables_can_be_settings(monkeypatch):
     assert settings.TBUNPREFIXED_VALUE == 42
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_ignore_unknown_envvars_keeps_only_preexisting_keys(tmp_path, monkeypatch):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     settings_file = _write(tmp_path / "settings.toml", "KNOWN = 1")
@@ -531,6 +547,7 @@ def test_auto_cast_false_leaves_envvar_tokens_as_strings(monkeypatch):
     assert settings.MARKED == "@int 9900"
 
 
+@pytest.mark.depends_on("test_builtin_cast_tokens_from_file", "test_public_dynaconf_constructor_supports_runtime_state")
 def test_insert_token_adds_list_item_at_requested_position(tmp_path, monkeypatch):
     """Seam: protocol handoff — command output matches artifact or API state."""
     settings_file = _write(tmp_path / "settings.toml", 'PLUGINS = ["a", "c"]')
@@ -567,6 +584,7 @@ def test_del_token_removes_nested_envvar_value(tmp_path, monkeypatch):
     assert settings.get("database.port") is None
 
 
+@pytest.mark.depends_on("test_settings_object_call_reads_dotted_value", "test_public_dynaconf_constructor_supports_runtime_state")
 def test_global_merge_enabled_merges_later_dictionaries_and_lists(tmp_path, monkeypatch):
     """Seam: config interaction — multiple sources merge with documented precedence."""
     settings_file = _write(
@@ -625,6 +643,7 @@ def test_local_file_top_level_merge_marker_merges_environment_section(tmp_path):
     assert settings.get("database.password") == "secret"
 
 
+@pytest.mark.depends_on("test_settings_object_call_reads_dotted_value", "test_as_dict_excludes_internal_dynaconf_settings")
 def test_runtime_set_creates_nested_value_visible_in_all_views():
     """Seam: protocol handoff — command output matches artifact or API state."""
     settings = Dynaconf(envvar_prefix="TBRUNTIME", environments=False)
@@ -636,6 +655,7 @@ def test_runtime_set_creates_nested_value_visible_in_all_views():
     assert settings.as_dict()["DATABASE"]["PORT"] == 5432
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_load_file_adds_runtime_values_and_history(tmp_path):
     """Seam: config interaction — multiple sources merge with documented precedence."""
     later = _write(tmp_path / "later.toml", "LATER = 42")
@@ -665,6 +685,7 @@ def test_load_file_env_false_loads_top_level_without_environment_sections(tmp_pa
     assert settings.get("top") == "top"
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_fresh_var_reloads_source_on_access(tmp_path):
     """Seam: state consistency — persisted and in-memory views stay aligned."""
     settings_file = _write(tmp_path / "settings.toml", 'VALUE = "one"')
@@ -681,6 +702,7 @@ def test_fresh_var_reloads_source_on_access(tmp_path):
     assert settings.VALUE == "two"
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_constructor_post_hook_merges_returned_data(tmp_path):
     """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     settings_file = _write(tmp_path / "settings.toml", 'BASE = "base"')
@@ -742,6 +764,7 @@ def test_python_settings_post_hook_runs_when_file_loads(tmp_path):
     assert settings.PY_HOOK_VALUE == "base-py"
 
 
+@pytest.mark.depends_on("test_cli_get_missing_key_with_default_prints_default")
 def test_cli_inspect_prints_json_report(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     _write(
@@ -797,6 +820,7 @@ def test_settings_files_accepts_comma_separated_paths(tmp_path):
     assert configured.SECOND is True
 
 
+@pytest.mark.depends_on("test_settings_object_call_reads_dotted_value", "test_public_dynaconf_constructor_supports_runtime_state")
 def test_json_settings_file_loads_nested_values(tmp_path):
     """Seam: state consistency — persisted and in-memory views stay aligned."""
     settings_file = _write(
@@ -828,6 +852,7 @@ def test_constructor_post_hooks_accepts_single_callable(tmp_path):
     assert configured.HOOK_VALUE == "loaded-single"
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_get_history_reports_runtime_set_contribution():
     """Seam: config interaction — multiple sources merge with documented precedence."""
     configured = Dynaconf(envvar_prefix="TBGAPHISTORY", environments=False)
@@ -839,6 +864,7 @@ def test_get_history_reports_runtime_set_contribution():
     )
 
 
+@pytest.mark.depends_on("test_public_dynaconf_constructor_supports_runtime_state")
 def test_inspect_settings_writes_json_report(tmp_path):
     """Seam: config interaction — multiple sources merge with documented precedence."""
     configured = Dynaconf(envvar_prefix="TBGAPREPORT", environments=False)

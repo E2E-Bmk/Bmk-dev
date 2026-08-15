@@ -1,18 +1,21 @@
 {
   "instance_id": "sqlalchemy-fullrepro-001",
   "status": "REVALIDATION-REQUIRED",
-  "repo": "",
-  "repo_commit": "",
+  "repo": "sqlalchemy/sqlalchemy",
+  "repo_commit": "abfe6cc47c12b87164a63739e3718257b452dac6",
   "spec_version": "v1",
+  "language": "python",
   "oracle": {
     "test_files": [
       "oracle/test_atomic.py",
       "oracle/test_integration.py"
     ],
-    "count": 50,
+    "count": 69,
     "scorer_isolation": [
       "--remove-path"
-    ]
+    ],
+    "count_unit": "base_test_functions",
+    "base_function_count": 69
   },
   "taxonomy": {
     "test_atomic::test_result_rows_support_positions_attributes_and_mappings": "atomic",
@@ -24,7 +27,6 @@
     "test_atomic::test_missing_table_and_broken_foreign_key_errors": "atomic",
     "test_atomic::test_join_inference_errors_for_missing_and_ambiguous_foreign_keys": "atomic",
     "test_atomic::test_unmapped_instance_errors": "atomic",
-    "test_atomic::test_top_level_import_surface_exposes_common_core_and_orm_names": "atomic",
     "test_atomic::test_textual_statement_and_bound_parameters_do_not_interpolate_values": "atomic",
     "test_atomic::test_boolean_true_false_null_and_between_expressions_execute": "atomic",
     "test_atomic::test_session_get_accepts_tuple_for_composite_primary_key": "atomic",
@@ -32,6 +34,20 @@
     "test_atomic::test_sqlite_uppercase_type_names_compile_and_roundtrip": "atomic",
     "test_atomic::test_metadata_sorted_tables_places_referenced_table_first": "atomic",
     "test_atomic::test_result_mappings_exposes_column_names_and_values": "atomic",
+    "test_atomic::test_select_where_compiles_to_sql_text_with_named_bound_parameter_state": "atomic",
+    "test_atomic::test_column_primary_key_implies_non_nullable": "atomic",
+    "test_atomic::test_foreign_key_exposes_target_fullname": "atomic",
+    "test_atomic::test_result_first_returns_none_on_empty_table": "atomic",
+    "test_atomic::test_result_scalar_returns_none_on_empty_table": "atomic",
+    "test_atomic::test_select_generative_preserves_earlier_statement": "atomic",
+    "test_atomic::test_column_comparison_produces_sql_expression_not_python_bool": "atomic",
+    "test_atomic::test_column_collection_iteration_and_keys_match_declaration_order": "atomic",
+    "test_atomic::test_insert_returning_provides_inserted_primary_key": "atomic",
+    "test_atomic::test_table_create_checkfirst_skips_existing": "atomic",
+    "test_atomic::test_in_operator_filters_matching_values": "atomic",
+    "test_atomic::test_like_operator_pattern_matches": "atomic",
+    "test_atomic::test_table_name_attribute_matches_declaration": "atomic",
+    "test_atomic::test_session_get_returns_none_for_missing_primary_key": "atomic",
     "test_integration::test_core_create_insert_select_reflect_join_workflow": "system_e2e",
     "test_integration::test_connect_block_rolls_back_uncommitted_work": "integration",
     "test_integration::test_engine_begin_commits_success_and_rolls_back_exception": "integration",
@@ -64,13 +80,20 @@
     "test_integration::test_many_to_one_lazy_load_can_use_identity_map": "integration",
     "test_integration::test_joinedload_collection_requires_unique_for_duplicate_primary_rows": "integration",
     "test_integration::test_core_and_orm_share_transaction_visibility_until_commit": "system_e2e",
-    "test_integration::test_full_core_orm_reflection_workflow_with_second_address": "system_e2e"
+    "test_integration::test_full_core_orm_reflection_workflow_with_second_address": "system_e2e",
+    "test_integration::test_metadata_table_and_column_collections_expose_declared_schema": "integration",
+    "test_integration::test_reflected_metadata_reconstructs_declared_tables_and_foreign_keys": "integration",
+    "test_integration::test_declarative_mapping_projects_table_columns_and_shared_metadata": "integration",
+    "test_integration::test_core_insert_orm_update_and_reflection_observe_same_row": "integration",
+    "test_integration::test_session_rollback_and_core_query_agree_on_durable_state": "integration",
+    "test_integration::test_relationship_update_is_visible_through_core_join_and_orm_loader": "integration"
   },
   "stats": {
-    "atomic": 17,
-    "integration": 27,
+    "atomic": 30,
+    "integration": 33,
     "system_e2e": 6
   },
   "reference_pass_rate": null,
-  "candidate_score": null
+  "candidate_score": null,
+  "taxonomy_unit": "base_test_functions"
 }

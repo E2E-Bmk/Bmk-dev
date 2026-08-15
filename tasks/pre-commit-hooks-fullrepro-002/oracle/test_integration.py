@@ -24,6 +24,7 @@ from conftest import (
 # CVI-1  hook id in config → resolves and runs (local hook)
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_rejects_incomplete_local_hook", "test_validate_config_accepts_multiple_local_repos_and_hooks", "test_validate_config_accepts_local_and_meta_repos_together")
 def test_cvi1_local_hook_resolves_and_runs(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -45,6 +46,7 @@ def test_cvi1_local_hook_resolves_and_runs(tmp_path, monkeypatch):
 # CVI-2  installed hook script dispatches hook-impl
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_rejects_unknown_meta_hook", "test_validate_config_rejects_manual_as_default_install_hook_type", "test_validate_config_rejects_incomplete_local_hook")
 def test_cvi2_installed_hook_dispatches_hook_impl(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -70,6 +72,7 @@ def test_cvi2_installed_hook_dispatches_hook_impl(tmp_path, monkeypatch):
 # CVI-3  default_install_hook_types controls installed scripts
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_accepts_supported_default_install_hook_types", "test_validate_config_rejects_manual_as_default_install_hook_type", "test_validate_manifest_uses_default_filename")
 def test_cvi3_default_install_hook_types_controls_scripts(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -90,6 +93,7 @@ def test_cvi3_default_install_hook_types_controls_scripts(tmp_path, monkeypatch)
 # CVI-4  global exclude prevents file from reaching any hook
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_manifest_fails_when_any_file_invalid", "test_validate_manifest_accepts_multiple_hooks_in_one_file", "test_validate_config_rejects_unknown_meta_hook")
 def test_cvi4_global_exclude_prevents_file_reaching_hook(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -109,6 +113,7 @@ def test_cvi4_global_exclude_prevents_file_reaching_hook(tmp_path, monkeypatch):
 # CVI-5  always_run=true runs even without matching files
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_manifest_accepts_multiple_valid_files", "test_validate_config_rejects_normal_repo_without_rev", "test_validate_config_rejects_invalid_files_regex")
 def test_cvi5_always_run_executes_without_matching_files(tmp_path, monkeypatch):
     _, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -129,6 +134,7 @@ def test_cvi5_always_run_executes_without_matching_files(tmp_path, monkeypatch):
 # CVI-6  Store reuses cached entry for same tuple
 # =====================================================================
 
+@pytest.mark.depends_on("test_store_respects_pre_commit_home_env", "test_gc_returns_zero_and_preserves_store", "test_clean_returns_zero_when_store_absent")
 def test_cvi6_store_reused_across_runs(tmp_path, monkeypatch):
     _, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -154,6 +160,7 @@ def test_cvi6_store_reused_across_runs(tmp_path, monkeypatch):
 # CVI-7  validate-config agrees with run on validity
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_rejects_invalid_files_regex", "test_validate_config_fails_when_any_file_invalid", "test_validate_config_accepts_multiple_local_repos_and_hooks")
 def test_cvi7_validate_and_run_agree_on_invalid_config(tmp_path, monkeypatch):
     repo = tmp_path / "repo"
     repo.mkdir()
@@ -176,6 +183,7 @@ def test_cvi7_validate_and_run_agree_on_invalid_config(tmp_path, monkeypatch):
 # CVI-8  migrate-config output passes validate-config
 # =====================================================================
 
+@pytest.mark.depends_on("test_version_output_starts_with_pre_commit", "test_validate_config_uses_default_filename", "test_validate_config_rejects_unknown_meta_hook")
 def test_cvi8_migrate_config_output_passes_validation(tmp_path, monkeypatch):
     repo = tmp_path / "repo"
     repo.mkdir()
@@ -201,6 +209,7 @@ def test_cvi8_migrate_config_output_passes_validation(tmp_path, monkeypatch):
 # CVI-9  hook failure (nonzero exit) reported in output with hook id
 # =====================================================================
 
+@pytest.mark.depends_on("test_version_output_starts_with_pre_commit", "test_validate_config_rejects_unknown_meta_hook", "test_validate_config_rejects_manual_as_default_install_hook_type")
 def test_cvi9_hook_failure_reported_with_hook_id(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -223,6 +232,7 @@ def test_cvi9_hook_failure_reported_with_hook_id(tmp_path, monkeypatch):
 # CVI-10  SKIP env var skips hook in direct run
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_rejects_unknown_meta_hook", "test_validate_config_rejects_manual_as_default_install_hook_type", "test_validate_config_rejects_incomplete_local_hook")
 def test_cvi10_skip_env_skips_hook(tmp_path, monkeypatch):
     _, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -243,6 +253,7 @@ def test_cvi10_skip_env_skips_hook(tmp_path, monkeypatch):
 # CVI-11  Store created on run, removable by clean
 # =====================================================================
 
+@pytest.mark.depends_on("test_gc_returns_zero_and_preserves_store", "test_clean_returns_zero_when_store_absent", "test_clean_removes_store_directory")
 def test_cvi11_store_created_and_removable_by_clean(tmp_path, monkeypatch):
     _, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -266,6 +277,7 @@ def test_cvi11_store_created_and_removable_by_clean(tmp_path, monkeypatch):
 # Seam: config load → hook resolution → run (full local-hook pipeline)
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_rejects_manual_as_default_install_hook_type", "test_validate_config_accepts_supported_default_install_hook_types", "test_validate_manifest_uses_default_filename")
 def test_seam_validate_install_run_pipeline(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -289,6 +301,7 @@ def test_seam_validate_install_run_pipeline(tmp_path, monkeypatch):
 # Seam: install → uninstall restores legacy hook
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_rejects_unknown_meta_hook", "test_validate_config_rejects_manual_as_default_install_hook_type", "test_validate_config_rejects_incomplete_local_hook")
 def test_seam_uninstall_restores_legacy_hook(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -313,6 +326,7 @@ def test_seam_uninstall_restores_legacy_hook(tmp_path, monkeypatch):
 # Seam: install --overwrite → uninstall removes completely
 # =====================================================================
 
+@pytest.mark.depends_on("test_clean_removes_store_directory")
 def test_seam_overwrite_uninstall_removes_completely(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -338,6 +352,7 @@ def test_seam_overwrite_uninstall_removes_completely(tmp_path, monkeypatch):
 # Seam: pass_filenames=false runs without filenames
 # =====================================================================
 
+@pytest.mark.depends_on("test_version_output_starts_with_pre_commit", "test_help_prints_usage_and_exits_zero")
 def test_seam_pass_filenames_false_omits_filenames(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -361,6 +376,7 @@ def test_seam_pass_filenames_false_omits_filenames(tmp_path, monkeypatch):
 # Seam: pygrep matches pattern in file content
 # =====================================================================
 
+@pytest.mark.depends_on("test_module_invocation_version_matches_cli")
 def test_seam_pygrep_matches_pattern(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -385,6 +401,7 @@ def test_seam_pygrep_matches_pattern(tmp_path, monkeypatch):
 # Seam: pygrep --negate inverts match logic
 # =====================================================================
 
+@pytest.mark.depends_on("test_version_output_starts_with_pre_commit", "test_help_prints_usage_and_exits_zero")
 def test_seam_pygrep_negate_inverts_match(tmp_path, monkeypatch):
     _, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -406,6 +423,7 @@ def test_seam_pygrep_negate_inverts_match(tmp_path, monkeypatch):
 # Seam: pygrep --ignore-case matches regardless of case
 # =====================================================================
 
+@pytest.mark.depends_on("test_version_output_starts_with_pre_commit", "test_help_prints_usage_and_exits_zero")
 def test_seam_pygrep_ignore_case(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -429,6 +447,7 @@ def test_seam_pygrep_ignore_case(tmp_path, monkeypatch):
 # Seam: pygrep --multiline matches across lines
 # =====================================================================
 
+@pytest.mark.depends_on("test_version_output_starts_with_pre_commit", "test_help_prints_usage_and_exits_zero")
 def test_seam_pygrep_multiline(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -452,6 +471,7 @@ def test_seam_pygrep_multiline(tmp_path, monkeypatch):
 # Seam: fail language always fails
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_accepts_fail_language", "test_validate_manifest_fails_when_any_file_invalid", "test_validate_config_fails_when_any_file_invalid")
 def test_seam_fail_language_always_fails(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -474,6 +494,7 @@ def test_seam_fail_language_always_fails(tmp_path, monkeypatch):
 # Seam: fail_fast at config level stops after first failure
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_accepts_global_filters_and_fail_fast", "test_validate_config_accepts_fail_language", "test_validate_config_uses_default_filename")
 def test_seam_fail_fast_config_stops_after_first(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -502,6 +523,7 @@ def test_seam_fail_fast_config_stops_after_first(tmp_path, monkeypatch):
 # Seam: hook-level fail_fast prevents later hooks
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_config_accepts_global_filters_and_fail_fast", "test_validate_config_rejects_unknown_meta_hook", "test_validate_config_rejects_manual_as_default_install_hook_type")
 def test_seam_hook_level_fail_fast(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -530,6 +552,7 @@ def test_seam_hook_level_fail_fast(tmp_path, monkeypatch):
 # Seam: --all-files selects all tracked files
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_manifest_accepts_multiple_valid_files", "test_validate_config_rejects_invalid_files_regex", "test_validate_config_accepts_multiple_valid_files")
 def test_seam_all_files_selects_all_tracked(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -554,6 +577,7 @@ def test_seam_all_files_selects_all_tracked(tmp_path, monkeypatch):
 # Seam: --files limits input to explicit files
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_manifest_accepts_multiple_valid_files", "test_validate_config_rejects_invalid_files_regex", "test_validate_config_accepts_multiple_valid_files")
 def test_seam_files_flag_limits_input(tmp_path, monkeypatch):
     repo, cfg = setup_repo(
         tmp_path, monkeypatch,
@@ -578,6 +602,7 @@ def test_seam_files_flag_limits_input(tmp_path, monkeypatch):
 # Seam: hook-level files/exclude further filters
 # =====================================================================
 
+@pytest.mark.depends_on("test_validate_manifest_accepts_multiple_valid_files", "test_validate_config_rejects_unknown_meta_hook", "test_validate_config_rejects_manual_as_default_install_hook_type")
 def test_seam_hook_files_exclude_filters(tmp_path, monkeypatch):
     repo = tmp_path / "repo"
     repo.mkdir()

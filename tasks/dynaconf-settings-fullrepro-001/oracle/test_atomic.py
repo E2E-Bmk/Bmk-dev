@@ -312,3 +312,86 @@ def test_validator_when_conditional_activates_on_matching_condition():
 
     with pytest.raises(ValidationError):
         configured.validators.validate()
+
+# --- supplemental atomic tests (2026-07-23) ---
+
+def test_missing_attribute_access_raises_error():
+    configured = Dynaconf(envvar_prefix="TBMISSING", environments=False)
+    with pytest.raises(AttributeError):
+        _ = configured.NON_EXISTENT_KEY_42A
+
+def test_as_dict_excludes_internal_dynaconf_settings():
+    configured = Dynaconf(envvar_prefix="TBASDICT", environments=False)
+    configured.set("USER_VALUE", "visible")
+    result = configured.as_dict()
+    assert "USER_VALUE" in result
+    assert "ENVVAR_PREFIX_FOR_DYNACONF" not in result
+
+def test_validator_must_exist_required_alias():
+    configured = Dynaconf(envvar_prefix="TBREQUIRED", environments=False)
+    configured.validators.register(Validator("MANDATORY", required=True))
+    with pytest.raises(ValidationError):
+        configured.validators.validate()
+
+def test_validator_comparison_operators_enforce_bounds():
+    configured = Dynaconf(envvar_prefix="TBCMP", environments=False)
+    configured.set("VALUE", 50)
+    configured.validators.register(Validator("VALUE", gte=10, lte=100))
+    configured.validators.validate()
+    assert configured.VALUE == 50
+    configured2 = Dynaconf(envvar_prefix="TBCMP2", environments=False)
+    configured2.set("VALUE", 5)
+    configured2.validators.register(Validator("VALUE", gt=10))
+    with pytest.raises(ValidationError):
+        configured2.validators.validate()
+
+def test_validator_len_min_and_len_max_check_collection_length():
+    configured = Dynaconf(envvar_prefix="TBLEN", environments=False)
+    configured.set("ITEMS", [1, 2, 3])
+    configured.validators.register(Validator("ITEMS", len_min=2, len_max=5))
+    configured.validators.validate()
+    assert configured.ITEMS == [1, 2, 3]
+    configured2 = Dynaconf(envvar_prefix="TBLEN2", environments=False)
+    configured2.set("ITEMS", [1])
+    configured2.validators.register(Validator("ITEMS", len_min=3))
+    with pytest.raises(ValidationError):
+        configured2.validators.validate()
+
+def test_validator_is_in_rejects_unlisted_value():
+    configured = Dynaconf(envvar_prefix="TBISIN", environments=False)
+    configured.set("MODE", "staging")
+    configured.validators.register(Validator("MODE", is_in=["prod", "dev"]))
+    with pytest.raises(ValidationError):
+        configured.validators.validate()
+
+def test_validator_startswith_checks_string_prefix():
+    configured = Dynaconf(envvar_prefix="TBSTARTS", environments=False)
+    configured.set("URL", "https://example.test")
+    configured.validators.register(Validator("URL", startswith="https://"))
+    configured.validators.validate()
+    assert configured.URL == "https://example.test"
+
+def test_validator_custom_condition_callable():
+    configured = Dynaconf(envvar_prefix="TBCOND", environments=False)
+    configured.set("PORT", 8080)
+    configured.validators.register(
+        Validator("PORT", condition=lambda value: value % 2 == 0)
+    )
+    configured.validators.validate()
+    assert configured.PORT == 8080
+
+def test_float_and_empty_cast_tokens_from_file(tmp_path):
+    settings_file = _write(
+        tmp_path / "settings.toml",
+        """
+        RATE = "@float 3.14"
+        BLANK = "@empty"
+        """,
+    )
+    configured = Dynaconf(
+        envvar_prefix="TBFLOAT",
+        settings_files=[str(settings_file)],
+        environments=False,
+    )
+    assert configured.RATE == 3.14
+    assert isinstance(configured.RATE, float)

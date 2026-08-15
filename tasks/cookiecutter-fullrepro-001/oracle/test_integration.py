@@ -24,6 +24,7 @@ from conftest import (
 # Integration and system workflows: multiple public projections or lifecycle stages.
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_local_extension_can_register_a_filter(tmp_path, monkeypatch):
     """Seam: protocol handoff — repository format crosses into generation pipeline."""
     extension = """from jinja2.ext import Extension
@@ -48,6 +49,7 @@ class ShoutExtension(Extension):
     assert (result / "value.txt").read_text(encoding="utf-8") == "HELLO!"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_local_extension_can_register_a_global(tmp_path, monkeypatch):
     """Seam: protocol handoff — repository format crosses into generation pipeline."""
     extension = """from jinja2.ext import Extension
@@ -72,6 +74,7 @@ class LabelExtension(Extension):
     assert (result / "value.txt").read_text(encoding="utf-8") == "local-global"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_local_extension_can_register_a_tag(tmp_path, monkeypatch):
     """Seam: protocol handoff — repository format crosses into generation pipeline."""
     extension = """from jinja2 import nodes
@@ -103,6 +106,7 @@ class WrapExtension(Extension):
     assert (result / "value.txt").read_text(encoding="utf-8") == "[inside]"
 
 
+@pytest.mark.depends_on("test_string_default_renders_file_content")
 def test_human_readable_prompt_label_is_displayed_and_answer_is_used(tmp_path):
     """Seam: state consistency — persisted and in-memory views stay aligned."""
     template = make_template(
@@ -184,6 +188,7 @@ def test_wrong_password_for_protected_zip_raises_invalid_zip_repository(tmp_path
     assert "password" in str(exc).lower() or "encrypted" in str(exc).lower()
 
 
+@pytest.mark.depends_on("test_extra_context_overrides_the_project_directory_name", "test_string_default_renders_file_content")
 def test_nested_directory_and_file_names_render_with_contents(tmp_path, monkeypatch):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     template = make_template(
@@ -199,6 +204,7 @@ def test_nested_directory_and_file_names_render_with_contents(tmp_path, monkeypa
     assert path.read_text(encoding="utf-8") == "package=core"
 
 
+@pytest.mark.depends_on("test_string_default_renders_file_content")
 def test_multiple_files_share_the_same_resolved_context(tmp_path, monkeypatch):
     """Seam: state consistency — projections agree across API boundaries."""
     template = make_template(
@@ -218,6 +224,7 @@ def test_multiple_files_share_the_same_resolved_context(tmp_path, monkeypatch):
     ] == ["Ada", "Ada", "Ada"]
 
 
+@pytest.mark.depends_on("test_string_default_renders_file_content")
 def test_utf8_context_round_trips_through_names_and_contents(tmp_path, monkeypatch):
     """Seam: state consistency — projections agree across API boundaries."""
     template = make_template(
@@ -229,6 +236,7 @@ def test_utf8_context_round_trips_through_names_and_contents(tmp_path, monkeypat
     assert (result / "浣犲ソ.txt").read_text(encoding="utf-8") == "浣犲ソ"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_copy_without_render_preserves_matching_file_contents(tmp_path, monkeypatch):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     template = make_template(
@@ -244,6 +252,7 @@ def test_copy_without_render_preserves_matching_file_contents(tmp_path, monkeypa
     assert (result / "normal.txt").read_text(encoding="utf-8") == "raw_demo"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_copy_without_render_still_renders_matching_path_names(tmp_path, monkeypatch):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     template = make_template(
@@ -255,6 +264,7 @@ def test_copy_without_render_still_renders_matching_path_names(tmp_path, monkeyp
     assert (result / "raw" / "rendered.txt").read_text(encoding="utf-8") == "{{ cookiecutter.name }}"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_output_dir_contains_the_returned_project(tmp_path, monkeypatch):
     """Seam: lifecycle crossing — generation options control output lifecycle."""
     template = make_template(
@@ -269,6 +279,7 @@ def test_output_dir_contains_the_returned_project(tmp_path, monkeypatch):
     assert (result / "file.txt").is_file()
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_existing_output_directory_raises_without_overwrite(tmp_path, monkeypatch):
     """Seam: error propagation — inner failure surfaces correctly to the caller."""
     template = make_template(
@@ -286,6 +297,7 @@ def test_existing_output_directory_raises_without_overwrite(tmp_path, monkeypatc
     assert isinstance(exc, OutputDirExistsException)
 
 
+@pytest.mark.depends_on("test_string_default_renders_file_content")
 def test_overwrite_if_exists_replaces_existing_file_contents(tmp_path, monkeypatch):
     """Seam: state consistency — persisted and in-memory views stay aligned."""
     template = make_template(
@@ -304,6 +316,7 @@ def test_overwrite_if_exists_replaces_existing_file_contents(tmp_path, monkeypat
     assert (result / "file.txt").read_text(encoding="utf-8") == "template"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_skip_if_file_exists_preserves_existing_file_contents(tmp_path, monkeypatch):
     """Seam: lifecycle crossing — generation options control output lifecycle."""
     template = make_template(
@@ -323,6 +336,7 @@ def test_skip_if_file_exists_preserves_existing_file_contents(tmp_path, monkeypa
     assert (result / "file.txt").read_text(encoding="utf-8") == "user"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_skip_if_file_exists_still_generates_missing_files(tmp_path, monkeypatch):
     """Seam: lifecycle crossing — generation options control output lifecycle."""
     template = make_template(
@@ -347,6 +361,7 @@ def test_skip_if_file_exists_still_generates_missing_files(tmp_path, monkeypatch
     assert (result / "missing.txt").read_text(encoding="utf-8") == "template-missing"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_binary_file_is_copied_without_template_rendering(tmp_path, monkeypatch):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     binary = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00{{ cookiecutter.project_slug }}\xff"
@@ -359,6 +374,7 @@ def test_binary_file_is_copied_without_template_rendering(tmp_path, monkeypatch)
     assert (result / "image.png").read_bytes() == binary
 
 
+@pytest.mark.depends_on("test_extra_context_overrides_rendered_file_content")
 def test_pre_generation_hook_receives_rendered_context(tmp_path, monkeypatch):
     """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     template = make_template(
@@ -371,6 +387,7 @@ def test_pre_generation_hook_receives_rendered_context(tmp_path, monkeypatch):
     assert (result / "pre.txt").read_text(encoding="utf-8") == "pre_hook"
 
 
+@pytest.mark.depends_on("test_string_default_renders_file_content")
 def test_post_generation_hook_can_read_generated_files(tmp_path, monkeypatch):
     """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     template = make_template(
@@ -383,6 +400,7 @@ def test_post_generation_hook_can_read_generated_files(tmp_path, monkeypatch):
     assert (result / "post.txt").read_text(encoding="utf-8") == "body-post"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_accept_hooks_false_skips_pre_and_post_hooks(tmp_path, monkeypatch):
     """Seam: lifecycle crossing — setup, execution, and teardown compose correctly."""
     marker_hook = "from pathlib import Path\nPath('{{ cookiecutter.project_slug }}.marker').write_text('ran', encoding='utf-8')\n"
@@ -397,6 +415,7 @@ def test_accept_hooks_false_skips_pre_and_post_hooks(tmp_path, monkeypatch):
     assert not (result / "hooks_off.marker").exists()
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_failed_hook_removes_partial_project_by_default(tmp_path, monkeypatch):
     """Seam: error propagation — inner failure surfaces correctly to the caller."""
     template = make_template(
@@ -414,6 +433,7 @@ def test_failed_hook_removes_partial_project_by_default(tmp_path, monkeypatch):
     assert not (output / "failed_hook").exists()
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_keep_project_on_failure_preserves_partial_project(tmp_path, monkeypatch):
     """Seam: error propagation — inner failure surfaces correctly to the caller."""
     template = make_template(
@@ -451,6 +471,7 @@ def test_pre_and_post_hooks_run_in_documented_order(tmp_path, monkeypatch):
     assert (result / "order.txt").read_text(encoding="utf-8") == "pre-post-generated"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_directory_option_selects_the_named_template(tmp_path, monkeypatch):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     repo = tmp_path / "repo"
@@ -474,6 +495,7 @@ def test_directory_option_selects_the_named_template(tmp_path, monkeypatch):
     assert (result / "which.txt").read_text(encoding="utf-8") == "second"
 
 
+@pytest.mark.depends_on("test_string_default_renders_file_content")
 def test_directory_option_preserves_rendering_behavior(tmp_path, monkeypatch):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     repo = tmp_path / "repo"
@@ -495,6 +517,7 @@ def test_directory_option_preserves_rendering_behavior(tmp_path, monkeypatch):
     assert (result / "Grace.txt").read_text(encoding="utf-8") == "Grace"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_local_zip_archive_generates_a_project(tmp_path, monkeypatch):
     """Seam: protocol handoff — repository format crosses into generation pipeline."""
     source = make_template(
@@ -508,6 +531,7 @@ def test_local_zip_archive_generates_a_project(tmp_path, monkeypatch):
     assert (result / "file.txt").read_text(encoding="utf-8") == "zip"
 
 
+@pytest.mark.depends_on("test_extra_context_overrides_rendered_file_content")
 def test_zip_archive_uses_context_for_names_and_contents(tmp_path, monkeypatch):
     """Seam: protocol handoff — repository format crosses into generation pipeline."""
     source = make_template(
@@ -529,6 +553,7 @@ def test_zip_archive_uses_context_for_names_and_contents(tmp_path, monkeypatch):
     assert (result / "Grace.txt").read_text(encoding="utf-8") == "Grace"
 
 
+@pytest.mark.depends_on("test_extra_context_overrides_rendered_file_content")
 def test_user_config_default_context_overrides_template_defaults(tmp_path, monkeypatch):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     template = make_template(
@@ -551,6 +576,7 @@ def test_user_config_default_context_overrides_template_defaults(tmp_path, monke
     assert (result / "color.txt").read_text(encoding="utf-8") == "green"
 
 
+@pytest.mark.depends_on("test_extra_context_overrides_rendered_file_content")
 def test_extra_context_has_precedence_over_user_config(tmp_path, monkeypatch):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     template = make_template(
@@ -575,6 +601,7 @@ def test_extra_context_has_precedence_over_user_config(tmp_path, monkeypatch):
     assert (result / "color.txt").read_text(encoding="utf-8") == "red"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_successful_generation_saves_resolved_context_to_replay(tmp_path, monkeypatch):
     """Seam: state consistency — projections agree across API boundaries."""
     template = make_template(
@@ -597,6 +624,7 @@ def test_successful_generation_saves_resolved_context_to_replay(tmp_path, monkey
     assert saved["cookiecutter"]["color"] == "red"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_replay_true_reuses_the_last_saved_context(tmp_path, monkeypatch):
     """Seam: state consistency — projections agree across API boundaries."""
     template = make_template(
@@ -622,6 +650,7 @@ def test_replay_true_reuses_the_last_saved_context(tmp_path, monkeypatch):
     assert (result / "color.txt").read_text(encoding="utf-8") == "red"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_explicit_replay_file_controls_the_generated_context(tmp_path, monkeypatch):
     """Seam: state consistency — projections agree across API boundaries."""
     template = make_template(
@@ -659,6 +688,7 @@ def test_default_config_ignores_a_user_cookiecutterrc(tmp_path, monkeypatch):
     assert result.name == "built_in_default"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_cli_no_input_generates_a_local_template(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     template = make_template(
@@ -672,6 +702,7 @@ def test_cli_no_input_generates_a_local_template(tmp_path):
     assert (output / "cli_demo" / "file.txt").read_text(encoding="utf-8") == "cli"
 
 
+@pytest.mark.depends_on("test_extra_context_overrides_rendered_file_content")
 def test_cli_extra_context_overrides_template_values(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     template = make_template(
@@ -692,6 +723,7 @@ def test_cli_extra_context_overrides_template_values(tmp_path):
     assert (output / "cli_override" / "color.txt").read_text(encoding="utf-8") == "orange"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path")
 def test_cli_output_dir_places_project_under_requested_path(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     template = make_template(
@@ -747,6 +779,7 @@ def test_cli_overwrite_if_exists_replaces_user_content(tmp_path):
     assert target.read_text(encoding="utf-8") == "template"
 
 
+@pytest.mark.depends_on("test_api_returns_an_absolute_project_path", "test_string_default_renders_file_content")
 def test_cli_and_python_api_produce_identical_file_trees(tmp_path, monkeypatch):
     """Seam: protocol handoff — CLI and programmatic API share the same behavior."""
     template = make_template(

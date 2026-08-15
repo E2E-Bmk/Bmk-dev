@@ -237,3 +237,40 @@ def test_time_field_parses_documented_format():
         value = TimeField()
 
     assert F(FormData(value=["13:30"])).value.data == dt.time(13, 30)
+
+
+def test_select_field_coerces_value_with_int_coerce():
+    class F(Form):
+        choice = SelectField(choices=[(1, "One"), (2, "Two")], coerce=int)
+
+    form = F(FormData(choice=["2"]))
+    assert form.choice.data == 2
+    assert form.validate() is True
+
+
+def test_form_iteration_yields_fields_in_declaration_order():
+    class F(Form):
+        alpha = StringField()
+        beta = IntegerField()
+        gamma = BooleanField()
+
+    assert [field.name for field in F()] == ["alpha", "beta", "gamma"]
+
+
+def test_select_multiple_field_coerces_all_values_to_list():
+    class F(Form):
+        choices = SelectMultipleField(choices=[("a", "A"), ("b", "B")])
+
+    form = F(FormData(choices=["a", "b"]))
+    assert form.choices.data == ["a", "b"]
+    assert isinstance(form.choices.data, list)
+
+
+def test_float_field_rejects_invalid_text():
+    class F(Form):
+        value = FloatField()
+
+    form = F(FormData(value=["not-a-float"]))
+    assert form.value.data is None
+    assert form.validate() is False
+    assert form.value.process_errors

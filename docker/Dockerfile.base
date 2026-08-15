@@ -1,0 +1,26 @@
+FROM python:3.11-slim
+
+# Package mirrors, overridable at build time:
+#   docker build --build-arg APT_MIRROR=deb.debian.org \
+#                --build-arg PIP_INDEX=https://pypi.org/simple/ ...
+# The defaults target networks where the upstream hosts are unreachable. An
+# unbuildable base image blocks every scoring run, so reachability is the
+# default and the canonical hosts stay one flag away.
+ARG APT_MIRROR=mirrors.aliyun.com
+ARG PIP_INDEX=https://mirrors.aliyun.com/pypi/simple/
+
+RUN for f in /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list; do \
+        [ -f "$f" ] && sed -i "s|deb.debian.org|${APT_MIRROR}|g; s|security.debian.org|${APT_MIRROR}|g" "$f"; \
+    done; true
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir -i "${PIP_INDEX}" \
+    pytest pytest-timeout pytest-json-report pytest-asyncio
+
+WORKDIR /workspace
+
+ENV PYTHONPATH=/workspace
+ENV PYTHONDONTWRITEBYTECODE=1

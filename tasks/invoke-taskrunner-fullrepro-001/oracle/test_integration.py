@@ -21,6 +21,7 @@ from invoke import (
 # ── Context + Runner configuration ──────────────────────────────────
 
 
+@pytest.mark.depends_on("test_config_dict_and_attribute_access")
 def test_context_run_uses_configured_runner_class(fresh_runner):
     """Seam: config interaction — multiple configuration sources merge into one runtime view."""
     config = Config(overrides={"runners": {"local": fresh_runner}})
@@ -31,6 +32,7 @@ def test_context_run_uses_configured_runner_class(fresh_runner):
     assert fresh_runner.seen[0][2] is ctx
 
 
+@pytest.mark.depends_on("test_result_exited_ok_failed_return_code")
 def test_run_creates_anonymous_context_and_returns_result():
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     result = run(
@@ -45,6 +47,7 @@ def test_run_creates_anonymous_context_and_returns_result():
 # ── Context.cd + Context.run ─────────────────────────────────────────
 
 
+@pytest.mark.depends_on("test_config_dict_and_attribute_access")
 def test_context_cd_changes_cwd_for_command(tmp_path, fresh_runner):
     """Seam: protocol handoff — CLI/collection/context layers route to the same execution pipeline."""
     ctx = Context(config=Config(overrides={"runners": {"local": fresh_runner}}))
@@ -74,6 +77,7 @@ def test_context_prefix_prepends_command():
 # ── Context.run + watcher ────────────────────────────────────────────
 
 
+@pytest.mark.depends_on("test_responder_yields_on_match")
 def test_context_run_watcher_responds_and_preserves_output():
     """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
     code = (
@@ -95,6 +99,7 @@ def test_context_run_watcher_responds_and_preserves_output():
 # ── Context.sudo + runner + watchers ──────────────────────────────
 
 
+@pytest.mark.depends_on("test_result_exited_ok_failed_return_code")
 def test_context_sudo_builds_prompt_responder():
     """Seam: lifecycle crossing — scheduler execution propagates dependency outputs to downstream tasks."""
     class SudoRunner(Runner):
@@ -124,6 +129,7 @@ def test_context_sudo_builds_prompt_responder():
 # ── CLI: --list variants ─────────────────────────────────────────────
 
 
+@pytest.mark.depends_on("test_task_bare_decorator_wraps_with_function_name")
 def test_cli_list_shows_task_names(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -146,6 +152,7 @@ def test_cli_list_shows_task_names(tmp_path):
     assert "package" in proc.stdout
 
 
+@pytest.mark.depends_on("test_task_configured_sets_name_aliases_default", "test_collection_add_task_name_alias_lookup")
 def test_cli_json_list_reports_tasks_aliases_default(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -168,6 +175,7 @@ def test_cli_json_list_reports_tasks_aliases_default(tmp_path):
     assert t["aliases"] == ["pub"]
 
 
+@pytest.mark.depends_on("test_collection_subcollection_dotted_lookup")
 def test_cli_flat_list_dotted_names(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -188,6 +196,7 @@ def test_cli_flat_list_dotted_names(tmp_path):
     assert "db.migrate" in proc.stdout
 
 
+@pytest.mark.depends_on("test_collection_subcollection_dotted_lookup")
 def test_cli_nested_list_shows_nesting(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -228,6 +237,7 @@ def test_cli_list_depth_json_is_error(tmp_path):
 # ── CLI: task invocation ─────────────────────────────────────────────
 
 
+@pytest.mark.depends_on("test_collection_default_via_none_and_empty")
 def test_cli_default_task_invoked_without_name(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -264,6 +274,7 @@ def test_cli_collection_replaces_default(tmp_path):
     assert proc.stdout.strip() == "checked"
 
 
+@pytest.mark.depends_on("test_task_get_arguments_excludes_context")
 def test_cli_dashed_flag_to_underscore_arg(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -281,6 +292,7 @@ def test_cli_dashed_flag_to_underscore_arg(tmp_path):
     assert proc.stdout.strip() == "artifacts"
 
 
+@pytest.mark.depends_on("test_argument_bool_default_sets_kind_bool")
 def test_cli_inverse_boolean_flag(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -298,6 +310,7 @@ def test_cli_inverse_boolean_flag(tmp_path):
     assert proc.stdout.strip() == "False"
 
 
+@pytest.mark.depends_on("test_argument_optional_iterable_incrementable_metadata")
 def test_cli_optional_argument_bare_and_valued(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -318,6 +331,7 @@ def test_cli_optional_argument_bare_and_valued(tmp_path):
     assert valued.stdout.strip() == "csv"
 
 
+@pytest.mark.depends_on("test_argument_optional_iterable_incrementable_metadata")
 def test_cli_iterable_accumulates(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -335,6 +349,7 @@ def test_cli_iterable_accumulates(tmp_path):
     assert proc.stdout.strip() == "v1,v2"
 
 
+@pytest.mark.depends_on("test_argument_optional_iterable_incrementable_metadata")
 def test_cli_incrementable_counts(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -352,6 +367,7 @@ def test_cli_incrementable_counts(tmp_path):
     assert proc.stdout.strip() == "3"
 
 
+@pytest.mark.depends_on("test_task_bare_decorator_wraps_with_function_name")
 def test_cli_pre_and_post_tasks(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -428,6 +444,7 @@ def test_cli_remainder_after_double_dash(tmp_path):
     assert proc.stdout.strip() == "--custom-flag value"
 
 
+@pytest.mark.depends_on("test_task_configured_sets_name_aliases_default")
 def test_cli_task_custom_name_visible_in_list_and_invocation(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(
@@ -451,6 +468,7 @@ def test_cli_task_custom_name_visible_in_list_and_invocation(tmp_path):
 # ── CLI: configuration ──────────────────────────────────────────────
 
 
+@pytest.mark.depends_on("test_config_dict_and_attribute_access")
 def test_cli_project_config_visible_to_task(tmp_path):
     """Seam: config interaction — multiple configuration sources merge into one runtime view."""
     write_file(
@@ -469,6 +487,7 @@ def test_cli_project_config_visible_to_task(tmp_path):
     assert proc.stdout.strip() == "bundle"
 
 
+@pytest.mark.depends_on("test_config_load_shell_env_casts_types")
 def test_cli_env_var_overrides_config(tmp_path):
     """Seam: config interaction — multiple configuration sources merge into one runtime view."""
     write_file(
@@ -528,6 +547,7 @@ def test_cli_run_flag_overrides_config(tmp_path):
 # ── CLI: help & errors ──────────────────────────────────────────────
 
 
+@pytest.mark.depends_on("test_task_bare_decorator_preserves_docstring")
 def test_cli_help_includes_docstring_and_options(tmp_path):
     """Seam: protocol handoff — CLI/module entry points delegate to the same core APIs."""
     write_file(

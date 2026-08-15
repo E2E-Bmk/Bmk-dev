@@ -224,3 +224,39 @@ def test_no_target_exits_two():
 def test_config_generator_no_action_returns_one():
     proc = run_bandit("bandit-config-generator", [])
     assert proc.returncode == 1
+
+
+def test_rule_b103_set_bad_file_permissions(tmp_path):
+    issue = one_issue(tmp_path, "import os\nos.chmod('/etc/shadow', 0o777)\n", "B103", severity="HIGH", confidence="HIGH", cwe=732)
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "set_bad_file_permissions"
+
+
+def test_rule_b106_hardcoded_password_funcarg(tmp_path):
+    issue = one_issue(tmp_path, "connect(password='secret')\n", "B106", severity="LOW", confidence="MEDIUM", cwe=259)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "hardcoded_password_funcarg"
+
+
+def test_rule_b107_hardcoded_password_default(tmp_path):
+    issue = one_issue(tmp_path, "def connect(password='secret'):\n    pass\n", "B107", severity="LOW", confidence="MEDIUM", cwe=259)
+    assert issue["line_number"] == 1
+    assert issue["test_name"] == "hardcoded_password_default"
+
+
+def test_rule_b112_try_except_continue(tmp_path):
+    source = "for x in items:\n    try:\n        work()\n    except:\n        continue\n"
+    issue = one_issue(tmp_path, source, "B112", severity="LOW", confidence="HIGH", cwe=703)
+    assert issue["test_name"] == "try_except_continue"
+
+
+def test_rule_b605_start_process_with_shell(tmp_path):
+    issue = one_issue(tmp_path, "import os\nos.system('ls -la')\n", "B605", severity="LOW", confidence="HIGH", cwe=78)
+    assert issue["line_number"] == 2
+    assert issue["test_name"] == "start_process_with_a_shell"
+
+
+def test_clean_source_yields_zero_exit_and_empty_results(tmp_path):
+    proc, report, _ = json_scan(tmp_path, "x = 1\ny = x + 2\n", "-t", "B101")
+    assert proc.returncode == 0
+    assert report["results"] == []

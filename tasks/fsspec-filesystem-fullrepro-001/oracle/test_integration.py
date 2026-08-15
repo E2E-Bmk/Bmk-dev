@@ -9,6 +9,14 @@ import fsspec
 from fsspec.mapping import FSMap
 
 
+depends_on = pytest.mark.depends_on
+
+
+depends_on = pytest.mark.depends_on
+
+
+@depends_on("test_atomic::test_memory_ls_returns_sorted_children_and_detail_name_size_type", "test_atomic::test_memory_cat_file_uses_python_slice_semantics")
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_info_returns_size_and_type", "test_memory_pipe_and_cat_round_trip")
 def test_memory_write_read_info_and_listing_views_agree():
     """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
     fs = fsspec.filesystem("memory")
@@ -25,6 +33,9 @@ def test_memory_write_read_info_and_listing_views_agree():
     assert fs.ls("/alpha", detail=True)[0]["type"] == "file"
 
 
+@depends_on("test_atomic::test_memory_find_exact_file_returns_single_path")
+@depends_on("test_atomic::test_memory_pipe_and_cat_round_trip")
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_walk_topdown_false_yields_children_first", "test_memory_touch_creates_zero_byte_file")
 def test_memory_global_store_shared_between_instances():
     """Seam: state consistency — listing, metadata, and content APIs agree on filesystem state."""
     one = fsspec.filesystem("memory")
@@ -35,6 +46,8 @@ def test_memory_global_store_shared_between_instances():
     assert sorted(one.find("/shared")) == ["/shared/a.bin", "/shared/b.bin"]
 
 
+@depends_on("test_atomic::test_url_to_fs_plain_path_preserves_local_absolute_path")
+@pytest.mark.depends_on("test_url_to_fs_plain_path_preserves_local_absolute_path", "test_memory_write_text_and_read_text_round_trip", "test_memory_pipe_and_cat_round_trip")
 def test_memory_path_protocol_stripping_and_url_to_fs():
     """Seam: state consistency — cooperating public APIs observe the same underlying state."""
     fs, path = fsspec.core.url_to_fs("memory://bucket/file.txt")
@@ -50,6 +63,9 @@ def test_memory_path_protocol_stripping_and_url_to_fs():
         assert f.read() == b"plain"
 
 
+@depends_on("test_atomic::test_memory_rmdir_empty_directory_succeeds", "test_atomic::test_memory_rmdir_missing_raises_file_not_found")
+@depends_on("test_atomic::test_memory_mkdir_creates_directory")
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_pipe_and_cat_round_trip", "test_memory_mkdir_creates_directory")
 def test_memory_mkdir_parent_and_error_semantics():
     """Seam: error propagation — subsystem failures surface consistently at the integration boundary."""
     fs = fsspec.filesystem("memory")
@@ -68,6 +84,9 @@ def test_memory_mkdir_parent_and_error_semantics():
     assert not fs.exists("/a/b/c")
 
 
+@depends_on("test_atomic::test_memory_find_exact_file_returns_single_path")
+@depends_on("test_atomic::test_memory_touch_creates_zero_byte_file", "test_atomic::test_memory_rm_removes_existing_file")
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_touch_creates_zero_byte_file", "test_memory_pipe_and_cat_round_trip")
 def test_memory_touch_and_rm_update_all_views():
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     fs = fsspec.filesystem("memory")
@@ -81,6 +100,8 @@ def test_memory_touch_and_rm_update_all_views():
         fs.cat("/tmp/empty")
 
 
+@depends_on("test_atomic::test_walk_rejects_zero_maxdepth", "test_atomic::test_find_rejects_zero_maxdepth", "test_atomic::test_du_rejects_zero_maxdepth")
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_walk_topdown_false_yields_children_first", "test_memory_pipe_and_cat_round_trip")
 def test_memory_find_walk_and_du_nested_tree():
     """Seam: state consistency — listing, metadata, and content APIs agree on filesystem state."""
     fs = fsspec.filesystem("memory")
@@ -107,6 +128,9 @@ def test_memory_find_walk_and_du_nested_tree():
         list(fs.walk("/tree", maxdepth=0))
 
 
+@depends_on("test_atomic::test_memory_cat_file_uses_python_slice_semantics")
+@depends_on("test_atomic::test_memory_pipe_and_cat_round_trip", "test_atomic::test_memory_exists_false_for_absent_path")
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_pipe_and_cat_round_trip", "test_memory_ls_returns_sorted_children_and_detail_name_size_type")
 def test_memory_copy_move_and_aliases():
     """CVI-1: cross-view invariants hold across listing, invocation, and runtime APIs."""
     fs = fsspec.filesystem("memory")
@@ -120,6 +144,7 @@ def test_memory_copy_move_and_aliases():
     assert not fs.exists("/moved.txt")
 
 
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_pipe_and_cat_round_trip", "test_memory_walk_topdown_false_yields_children_first")
 def test_memory_recursive_get_put_round_trip(tmp_path):
     """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
     src = tmp_path / "src"
@@ -136,6 +161,7 @@ def test_memory_recursive_get_put_round_trip(tmp_path):
     assert (dst / "sub" / "two.txt").read_bytes() == b"two"
 
 
+@pytest.mark.depends_on("test_url_to_fs_plain_path_preserves_local_absolute_path", "test_registry_registers_class_for_factory_and_lookup", "test_open_files_returns_documented_list_and_entry_types")
 def test_local_auto_mkdir_and_recursive_remove(tmp_path):
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     fs = fsspec.filesystem("file", auto_mkdir=True)
@@ -150,6 +176,7 @@ def test_local_auto_mkdir_and_recursive_remove(tmp_path):
     assert not (tmp_path / "a").exists()
 
 
+@pytest.mark.depends_on("test_url_to_fs_plain_path_preserves_local_absolute_path", "test_registry_registers_class_for_factory_and_lookup", "test_open_files_returns_documented_list_and_entry_types")
 def test_local_copy_move_touch_and_listing(tmp_path):
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     fs = fsspec.filesystem("file", auto_mkdir=True)
@@ -167,6 +194,9 @@ def test_local_copy_move_touch_and_listing(tmp_path):
     assert {"src.txt", "moved.txt", "nested"} <= names
 
 
+@depends_on("test_atomic::test_openfile_is_lazy_context_manager", "test_atomic::test_memory_write_text_and_read_text_round_trip")
+@depends_on("test_atomic::test_openfile_is_lazy_context_manager")
+@pytest.mark.depends_on("test_open_files_returns_documented_list_and_entry_types", "test_memory_write_text_and_read_text_round_trip", "test_registry_registers_class_for_factory_and_lookup")
 def test_open_text_mode_and_compression(tmp_path):
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     path = tmp_path / "data.txt.gz"
@@ -176,6 +206,9 @@ def test_open_text_mode_and_compression(tmp_path):
         assert f.read() == "compressed text"
 
 
+@depends_on("test_atomic::test_open_files_write_rejects_multiple_stars", "test_atomic::test_open_files_returns_documented_list_and_entry_types")
+@depends_on("test_atomic::test_open_files_returns_documented_list_and_entry_types")
+@pytest.mark.depends_on("test_open_files_write_rejects_multiple_stars", "test_open_files_returns_documented_list_and_entry_types", "test_memory_write_text_and_read_text_round_trip")
 def test_open_files_read_glob_and_write_expansion(tmp_path):
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     for name, content in {"a.txt": b"A", "b.txt": b"B"}.items():
@@ -192,6 +225,8 @@ def test_open_files_read_glob_and_write_expansion(tmp_path):
     assert [path.read_bytes() for path in generated] == [b"0", b"1", b"2"]
 
 
+@depends_on("test_atomic::test_fsmap_setitems_and_delitems_update_multiple_keys")
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_walk_topdown_false_yields_children_first", "test_memory_touch_creates_zero_byte_file")
 def test_fsmap_basic_mutation_reflects_underlying_memory_fs():
     """CVI-1: cross-view invariants hold across listing, invocation, and runtime APIs."""
     fs = fsspec.filesystem("memory")
@@ -207,6 +242,8 @@ def test_fsmap_basic_mutation_reflects_underlying_memory_fs():
     assert not fs.exists("/dataset/a")
 
 
+@depends_on("test_atomic::test_openfile_pickle_reopens_read_location")
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_memory_pipe_and_cat_round_trip", "test_memory_ls_returns_sorted_children_and_detail_name_size_type")
 def test_get_mapper_memory_and_pickle_round_trip():
     """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
     mapper = fsspec.get_mapper("memory:///store", create=True)
@@ -217,6 +254,9 @@ def test_get_mapper_memory_and_pickle_round_trip():
     assert mapper["other"] == b"two"
 
 
+@depends_on("test_atomic::test_dirfs_local_escape_raises_value_error")
+@depends_on("test_atomic::test_memory_pipe_and_cat_round_trip")
+@pytest.mark.depends_on("test_registry_registers_class_for_factory_and_lookup", "test_open_files_returns_documented_list_and_entry_types", "test_memory_write_text_and_read_text_round_trip")
 def test_dirfs_relative_view_reads_and_writes_under_root():
     """Seam: protocol handoff — chained filesystem views translate paths and payloads correctly."""
     base = fsspec.filesystem("memory")
@@ -229,6 +269,8 @@ def test_dirfs_relative_view_reads_and_writes_under_root():
     assert view.find("") == ["nested/new.txt", "original.txt"]
 
 
+@depends_on("test_atomic::test_memory_ls_returns_sorted_children_and_detail_name_size_type")
+@pytest.mark.depends_on("test_open_files_returns_documented_list_and_entry_types", "test_memory_pipe_and_cat_round_trip", "test_memory_ls_returns_sorted_children_and_detail_name_size_type")
 def test_dirfs_listing_detail_and_cat_list_are_relative():
     """Seam: protocol handoff — chained filesystem views translate paths and payloads correctly."""
     base = fsspec.filesystem("memory")
@@ -240,6 +282,8 @@ def test_dirfs_listing_detail_and_cat_list_are_relative():
     assert view.cat(["a.txt", "b.txt"]) == {"a.txt": b"A", "b.txt": b"B"}
 
 
+@depends_on("test_atomic::test_memory_walk_topdown_false_yields_children_first")
+@pytest.mark.depends_on("test_walk_rejects_zero_maxdepth", "test_registry_registers_class_for_factory_and_lookup", "test_open_files_returns_documented_list_and_entry_types")
 def test_dirfs_find_walk_glob_and_du_translate_paths():
     """Seam: protocol handoff — chained filesystem views translate paths and payloads correctly."""
     base = fsspec.filesystem("memory")
@@ -252,6 +296,8 @@ def test_dirfs_find_walk_glob_and_du_translate_paths():
     assert view.du("", total=False, withdirs=True) == {"": 0, "one.txt": 1, "sub": 0, "sub/two.txt": 2}
 
 
+@depends_on("test_atomic::test_url_to_fs_plain_path_preserves_local_absolute_path")
+@pytest.mark.depends_on("test_url_to_fs_plain_path_preserves_local_absolute_path", "test_memory_write_text_and_read_text_round_trip", "test_memory_walk_topdown_false_yields_children_first")
 def test_url_to_fs_dir_chain_memory_relative_view():
     """Seam: protocol handoff — chained filesystem views translate paths and payloads correctly."""
     fsspec.filesystem("memory").pipe("/inner/file", b"data")
@@ -262,6 +308,7 @@ def test_url_to_fs_dir_chain_memory_relative_view():
     assert fs.ls("", detail=False) == ["file"]
 
 
+@pytest.mark.depends_on("test_memory_write_text_and_read_text_round_trip", "test_registry_registers_class_for_factory_and_lookup", "test_openfile_pickle_reopens_read_location")
 def test_zip_write_close_and_read_members(tmp_path):
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     archive = tmp_path / "sample.zip"
@@ -281,6 +328,7 @@ def test_zip_write_close_and_read_members(tmp_path):
         readfs.close()
 
 
+@pytest.mark.depends_on("test_memory_find_exact_file_returns_single_path", "test_find_rejects_zero_maxdepth", "test_walk_rejects_zero_maxdepth")
 def test_zip_find_withdirs_maxdepth_and_exact_file(tmp_path):
     """Seam: protocol handoff — chained filesystem views translate paths and payloads correctly."""
     archive = tmp_path / "tree.zip"
@@ -411,6 +459,8 @@ def test_memory_transaction_exception_rolls_back_all_writes():
     assert not fs.exists("/txn/b.txt")
 
 
+@depends_on("test_atomic::test_fsmap_setitems_and_delitems_update_multiple_keys")
+@depends_on("test_atomic::test_memory_rm_removes_existing_file")
 def test_remove_file_updates_mapper_and_listing_views():
     """Seam: protocol handoff — chained filesystem views translate paths and payloads correctly."""
     mapper = fsspec.get_mapper("memory:///remove", create=True)
@@ -424,6 +474,7 @@ def test_remove_file_updates_mapper_and_listing_views():
         mapper["gone.txt"]
 
 
+@depends_on("test_atomic::test_get_fs_token_paths_is_deterministic_for_single_url", "test_atomic::test_open_returns_documented_openfile_type")
 def test_cross_view_url_token_open_and_mapper_agree():
     """Seam: state consistency — write/read or serialize/deserialize projections stay aligned."""
     fs = fsspec.filesystem("memory")
@@ -473,6 +524,7 @@ def test_cache_read_matches_target_and_open_local_path(tmp_path):
     assert Path(local).read_bytes() == target.read_bytes()
 
 
+@depends_on("test_atomic::test_open_files_returns_documented_list_and_entry_types")
 def test_open_files_context_closes_all_files(tmp_path):
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     (tmp_path / "a.txt").write_bytes(b"a")

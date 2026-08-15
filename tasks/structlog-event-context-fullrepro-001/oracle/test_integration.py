@@ -10,7 +10,10 @@ import structlog
 from structlog import contextvars, dev, processors, stdlib
 from structlog.testing import CapturingLogger, capture_logs
 
+from conftest import RecordingReturnLoggerFactory
 
+
+@pytest.mark.depends_on("test_unbind_reports_missing_key")
 def test_bind_is_immutable_and_merges_values():
     """Seam: state consistency — bind creates new logger without mutating original context."""
     original = structlog.get_logger(service="web")
@@ -19,6 +22,7 @@ def test_bind_is_immutable_and_merges_values():
     assert structlog.get_context(changed) == {"service": "web", "request_id": "r1"}
 
 
+@pytest.mark.depends_on("test_unbind_reports_missing_key")
 def test_try_unbind_ignores_missing_key():
     """Seam: protocol handoff — try_unbind silently skips absent keys."""
     logger = structlog.get_logger(a=1).try_unbind("missing")
@@ -39,6 +43,7 @@ def test_get_context_is_live_for_compatible_logger():
     assert structlog.get_context(logger)["b"] == 2
 
 
+@pytest.mark.depends_on("test_add_log_level_adds_normalized_level_key", "test_getlogger_alias_matches_get_logger_behavior")
 @pytest.mark.parametrize("method", ["debug", "info", "warning", "error", "critical"])
 def test_log_call_assembles_context_event_and_normalized_level(method):
     """Seam: protocol handoff — bound context + log call → normalized event dict."""
@@ -47,6 +52,7 @@ def test_log_call_assembles_context_event_and_normalized_level(method):
     assert entries == [{"bound": 1, "call": 2, "event": "event-name", "log_level": method}]
 
 
+@pytest.mark.depends_on("test_filtering_bound_logger_rejects_unknown_level_name")
 @pytest.mark.parametrize("level", [logging.DEBUG, "debug", "INFO", logging.WARNING, "error", "critical", "notset"])
 def test_filtering_bound_logger_accepts_documented_levels(level):
     """Seam: config interaction — filtering wrapper accepts documented level inputs."""
@@ -57,6 +63,7 @@ def test_filtering_bound_logger_accepts_documented_levels(level):
     assert entries[0]["event"] == "kept"
 
 
+@pytest.mark.depends_on("test_filtering_bound_logger_rejects_unknown_level_name")
 def test_filtering_bound_logger_suppresses_lower_level_delivery():
     """Seam: config interaction — INFO threshold suppresses DEBUG delivery."""
     structlog.configure(wrapper_class=structlog.make_filtering_bound_logger(logging.INFO))
@@ -66,6 +73,7 @@ def test_filtering_bound_logger_suppresses_lower_level_delivery():
     assert entries == []
 
 
+@pytest.mark.depends_on("test_capturing_logger_stores_method_args_and_keywords", "test_drop_event_suppresses_delivery")
 def test_processor_chain_passes_result_to_delivery():
     """Seam: protocol handoff — processor chain output reaches wrapped logger delivery."""
     captured = CapturingLogger()
@@ -75,6 +83,7 @@ def test_processor_chain_passes_result_to_delivery():
     assert captured.calls[0].args == ("rendered",)
 
 
+@pytest.mark.depends_on("test_capturing_logger_stores_method_args_and_keywords")
 def test_invalid_final_processor_result_raises_value_error():
     """Seam: error propagation — non-str/non-dict processor result raises ValueError."""
     logger = structlog.wrap_logger(CapturingLogger(), processors=[lambda logger, method, event: 42])
@@ -91,6 +100,7 @@ def test_bind_contextvars_returns_tokens_and_get_returns_copy():
     assert contextvars.get_contextvars() == {"request_id": "r1"}
 
 
+@pytest.mark.depends_on("test_getlogger_alias_matches_get_logger_behavior")
 def test_merge_contextvars_preserves_event_precedence():
     """Seam: config interaction — merge_contextvars prefers event dict over contextvars."""
     contextvars.bind_contextvars(shared="context", only_context="yes")
@@ -105,6 +115,7 @@ def test_get_merged_contextvars_prefers_bound_logger_values():
     assert merged == {"shared": "local", "context_only": 1, "local_only": 2}
 
 
+@pytest.mark.depends_on("test_getlogger_alias_matches_get_logger_behavior")
 def test_bound_contextvars_restores_values_after_normal_exit():
     """Seam: lifecycle crossing — bound_contextvars restores prior context on exit."""
     contextvars.bind_contextvars(existing="before")
@@ -121,6 +132,7 @@ def test_bound_contextvars_restores_values_after_exception():
     assert contextvars.get_contextvars() == {}
 
 
+@pytest.mark.depends_on("test_add_log_level_adds_normalized_level_key", "test_getlogger_alias_matches_get_logger_behavior")
 @pytest.mark.parametrize("method", ["debug", "info", "warning", "error", "critical"])
 def test_capture_logs_records_normalized_method(method):
     """Seam: protocol handoff — capture_logs records normalized method and event field."""
@@ -140,6 +152,7 @@ def test_capture_logs_runs_supplied_processors_before_capture():
     assert entries[0]["marker"] == "info"
 
 
+@pytest.mark.depends_on("test_add_log_level_adds_normalized_level_key", "test_filtering_bound_logger_rejects_unknown_level_name", "test_getlogger_alias_matches_get_logger_behavior")
 @pytest.mark.parametrize("request_id", ["r1", "r2", "r3"])
 def test_representative_context_to_capture_workflow(request_id):
     """Seam: lifecycle crossing — contextvars + filtering + merge + capture end-to-end."""
@@ -150,6 +163,7 @@ def test_representative_context_to_capture_workflow(request_id):
     assert entries[0] == {"service": "billing", "request_id": request_id, "invoice_id": 7, "event": "invoice-created", "log_level": "info"}
 
 
+@pytest.mark.depends_on("test_reset_defaults_restores_unconfigured_state")
 def test_processor_formatter_requires_a_processor_configuration():
     """Seam: error propagation — ProcessorFormatter without processors raises TypeError."""
     with pytest.raises(TypeError):
@@ -191,6 +205,7 @@ def test_rewrite_configured_processor_is_called():
     assert seen == ["info"]
 
 
+@pytest.mark.depends_on("test_getlogger_alias_matches_get_logger_behavior", "test_configure_preserves_unspecified_defaults_and_returns_independent_mapping")
 def test_getLogger_passes_factory_args_and_initial_values_to_the_event():
     """Seam: protocol handoff — configure + getLogger + info assemble factory event."""
     factory = RecordingReturnLoggerFactory()
@@ -282,6 +297,7 @@ def test_recreate_defaults_configures_standard_logging_at_requested_level(capsys
 # --- composition fix additions (2026-07-20) ---
 
 
+@pytest.mark.depends_on("test_add_log_level_adds_normalized_level_key", "test_getlogger_alias_matches_get_logger_behavior")
 def test_logging_call_keyword_overrides_bound_context_value():
     """Seam: config interaction — log-call keyword overrides bound context value."""
     logger = structlog.get_logger().bind(color="blue")
@@ -290,6 +306,7 @@ def test_logging_call_keyword_overrides_bound_context_value():
     assert entries == [{"color": "red", "event": "painted", "log_level": "info"}]
 
 
+@pytest.mark.depends_on("test_add_log_level_adds_normalized_level_key", "test_getlogger_alias_matches_get_logger_behavior")
 def test_clear_contextvars_removes_fields_from_later_merged_events():
     """Seam: lifecycle crossing — clear_contextvars stops fields in later merged events."""
     contextvars.bind_contextvars(request_id="r-1")
@@ -302,6 +319,7 @@ def test_clear_contextvars_removes_fields_from_later_merged_events():
     assert second == [{"event": "later", "log_level": "info"}]
 
 
+@pytest.mark.depends_on("test_json_renderer_renders_event_dict_as_json_text", "test_add_log_level_adds_normalized_level_key", "test_capturing_logger_stores_method_args_and_keywords")
 def test_processor_chain_delivers_rendered_json_string_to_wrapped_logger():
     """Seam: protocol handoff — processor chain renders JSON string to wrapped logger."""
     captured = CapturingLogger()

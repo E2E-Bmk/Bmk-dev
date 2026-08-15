@@ -7,6 +7,7 @@ import pytest
 
 from dbt.cli.main import dbtRunner, dbtRunnerResult
 
+
 # ---------------------------------------------------------------------------
 # Constants (anti-memorization: distinct from upstream test fixtures)
 # ---------------------------------------------------------------------------

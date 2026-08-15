@@ -439,4 +439,4 @@ The project must declare its packaging metadata in a standard `pyproject.toml` o
 
 Assessment exercises public behavior through local files and in-memory streams. Tests cover reader construction, page sequence behavior, writer page insertion and serialization, page range parsing, page transformations, text extraction modes, image access with installed image dependencies, metadata and XMP round trips, forms, outlines, page labels, attachments, annotations, JavaScript actions, encryption/decryption, generic object behavior, and public exception classes.
 
-Scoring uses observable behavior only. Tests do not require private modules, private helper functions, remote downloads, external PDF command-line tools, exact warning text, exact exception text, exact object numbers, or exact `repr()` output.
+Assessment relies on observable behavior only. Tests do not require private modules, private helper functions, remote downloads, external PDF command-line tools, exact warning text, exact exception text, exact object numbers, or exact `repr()` output.

@@ -205,5 +205,59 @@ def test_mock_stream_start_tls_returns_itself():
 
 
 # =============================================================================
-# Exception hierarchy
+# Exception surface
+#
+# The spec declares four public exceptions (see "Error Semantics" and the API
+# catalogue): UnsupportedProtocol, ConnectError, LocalProtocolError and
+# RemoteProtocolError. Assertions about a wider upstream hierarchy
+# (NetworkError, TimeoutException, ProtocolError and the four Timeout
+# subclasses) were removed: those names appear nowhere in the spec, so a
+# delivery written from the spec alone cannot satisfy them, and passing them
+# requires reproducing upstream's internal class tree.
 # =============================================================================
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "UnsupportedProtocol",
+        "ConnectError",
+        "LocalProtocolError",
+        "RemoteProtocolError",
+    ],
+)
+def test_declared_public_exception_is_available(name):
+    exc = getattr(httpcore, name)
+    assert issubclass(exc, Exception)
+
+
+def test_unsupported_protocol_raised_for_missing_scheme():
+    with pytest.raises(httpcore.UnsupportedProtocol):
+        pool = httpcore.ConnectionPool()
+        pool.request("GET", "example.com/no-scheme")
+
+
+def test_request_preserves_duplicate_header_names():
+    req = httpcore.Request(
+        "GET",
+        "http://example.com/",
+        headers=[(b"Set-Cookie", b"a=1"), (b"Set-Cookie", b"b=2")],
+    )
+    cookies = [v for n, v in req.headers if n == b"Set-Cookie"]
+    assert cookies == [b"a=1", b"b=2"]
+
+
+def test_url_explicit_port_preserved_in_bytes_representation():
+    url = httpcore.URL("http://api.test:7070/status")
+    assert b":7070" in bytes(url)
+    assert url.port == 7070
+
+
+def test_response_extensions_stores_custom_metadata():
+    resp = httpcore.Response(200, headers=[], extensions={"custom_key": "value"})
+    assert resp.extensions["custom_key"] == "value"
+
+
+def test_connect_error_preserves_constructor_arguments():
+    err = httpcore.ConnectError("connection refused", 61)
+    assert err.args == ("connection refused", 61)

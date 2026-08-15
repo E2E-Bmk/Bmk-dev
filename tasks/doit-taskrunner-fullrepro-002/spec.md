@@ -1,91 +1,100 @@
 ﻿# doit Specification
 
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
+
 ## Product Overview
 
 `doit` is a Python task runner and automation tool. Users define tasks in Python, usually in a `dodo.py` file, and `doit` executes only the tasks whose inputs, outputs, saved results, or explicit freshness checks say they need work.
 
 The core model is a directed task graph. Tasks may run shell commands, Python callables, cleanup actions, teardown actions, or no actions at all for group tasks. `doit` stores successful run state in a dependency database so later invocations can skip tasks that are already up-to-date.
 
-## Scope
+## Non-Goals
 
-This specification covers:
+- This specification does not require Reproducing private runner, dispatcher, or control class internals.
+- This specification does not require Exact `repr()` strings, memory-address-free callable formatting, traceback formatting, or byte-for-byte console spacingexcept for documented task status markers and command meanings.
+- Platform-specific behavior of external tools such as `strace`, DBM file naming, shell command syntax, and multiprocessing pickling limits is covered only at the documented portability level.
+- The `auto` watch command is plugin-provided and is outside the built-in command contract beyond the documented `watch` task field and plugin description.
+- Undocumented plugin discovery internals are not required beyond the documented local configuration and installed entry-point categories.
+- This specification does not require Preserving internal helper names that are not exported, documented, or shown in public examples.
 
-- Loading task creators from a Python namespace or `dodo.py`.
-- Task dictionaries, generated subtasks, task groups, delayed task creation, and command-line task parameters.
-- Shell actions, Python actions, action return values, captured output, saved values, and task result dependencies.
-- File dependencies, targets, task dependencies, setup tasks, teardown, cleanup, and up-to-date decisions.
-- Public Python entry points, helpers, reporters, dependency access, and extension interfaces documented for users.
-- The command-line behavior of the built-in commands: `run`, `list`, `info`, `clean`, `forget`, `ignore`, `reset-dep`, `dumpdb`, `strace`, `tabcompletion`, and `help`.
-- Configuration through `DOIT_CONFIG`, `pyproject.toml`, `doit.cfg`, command-line options, task parameters, and command-line variables.
+## Representative Workflows
 
-## Installable Surface
-
-The package is imported as `doit` and provides the console entry point `doit`. Running `python -m doit` is equivalent to invoking the command-line program.
-
-Top-level imports:
+Create a `dodo.py` file:
 
 ```python
-from doit import get_var, run, create_after, task_params, Globals
-import doit
+from pathlib import Path
+from doit.tools import run_once
+
+def write_source(targets):
+    Path(targets[0]).write_text("hello\n")
+    return {"line_count": 1}
+
+def shout(dependencies, targets, count):
+    text = Path(dependencies[0]).read_text().upper()
+    Path(targets[0]).write_text(f"{count}:{text}")
+
+def task_source():
+    """create input text"""
+    return {
+        "actions": [write_source],
+        "targets": ["source.txt"],
+        "uptodate": [run_once],
+        "clean": True,
+    }
+
+def task_shout():
+    """write an uppercase output"""
+    return {
+        "actions": [(shout, [], {})],
+        "file_dep": ["source.txt"],
+        "targets": ["shout.txt"],
+        "getargs": {"count": ("source", "line_count")},
+        "clean": True,
+    }
 ```
 
-Documented public imports used by normal task files and integrations:
+Running `doit` creates `source.txt`, saves `line_count`, passes it to `shout`, and creates `shout.txt`. Running `doit` again skips both tasks when the files and saved values are unchanged. Removing `shout.txt` runs only the task that owns that missing target and any needed dependency work. `doit info shout` explains why `shout` would run or be skipped. `doit clean` removes the targets, and `doit forget source` clears the stored success state for `source`.
 
 ```python
-from doit.action import CmdAction
-from doit.task import clean_targets, result_dep
-from doit.tools import (
-    create_folder,
-    title_with_actions,
-    run_once,
-    result_dep,
-    config_changed,
-    timeout,
-    check_timestamp_unchanged,
-    LongRunning,
-    Interactive,
-    PythonInteractiveAction,
-    set_trace,
-    load_ipython_extension,
-)
-from doit.cmd_base import Command, DoitCmdBase, TaskLoader2, ModuleTaskLoader
+from doit.cmd_base import ModuleTaskLoader
 from doit.doit_cmd import DoitMain
-from doit.reporter import ConsoleReporter
-from doit.dependency import FileChangedChecker, Dependency, DbmDB
-from doit.exceptions import TaskFailed, TaskError
+from doit.tools import create_folder
+
+def task_setup():
+    return {
+        "actions": [(create_folder, ["output"])],
+        "targets": ["output"],
+        "uptodate": [True],
+    }
+
+def task_greet():
+    return {
+        "actions": ["echo hello > output/greeting.txt"],
+        "file_dep": [],
+        "targets": ["output/greeting.txt"],
+        "task_dep": ["setup"],
+    }
+
+loader = ModuleTaskLoader({"task_setup": task_setup, "task_greet": task_greet})
+result = DoitMain(task_loader=loader).run(["run"])
+assert result == 0
 ```
 
-## Public API
-
-`doit.run(task_creators)` runs `doit` against a module or dictionary containing task creators instead of loading `dodo.py`. It uses the process command-line arguments after the program name and exits the process with the command result code.
-
-`doit.get_var(name, default=None)` reads variables passed on the command line as bare `name=value` arguments. These variables are consumed before command execution and are not task names. If command-line variables have not been initialized, `get_var` returns `None`; otherwise it returns the provided default when the name is absent.
-
-`doit.get_initial_workdir()` returns the directory from which the command was originally invoked. This remains useful because normal execution changes the working directory to the dodo file directory, or to `--dir` when specified.
-
-`@doit.create_after(executed=None, target_regex=None, creates=None)` marks a task creator for delayed creation. The creator is evaluated only after the named task has executed. `target_regex` declares target names that may be produced by the delayed creator, and `creates` declares task basenames when they cannot be inferred from the creator name.
-
-`@doit.task_params(param_def)` attaches command-line parameter definitions to a task creator. `param_def` must be a list using the same parameter dictionary format as task `params`. A task creator decorated with `task_params` must not also return task dictionaries that define `params`.
-
-`Globals.dep_manager` is set during command invocation before task creation. It gives task creators, actions, and clean activities access to the current dependency manager.
-
-`ModuleTaskLoader(mod_dict)` loads tasks from a module or dictionary using the same task creator conventions as a dodo file. `DoitMain(task_loader=None, config_filenames=("pyproject.toml", "doit.cfg"), extra_config=None).run(args)` runs the command dispatcher and returns `0`, `1`, `2`, or `3` instead of raising for ordinary user-facing command errors.
-
-`CmdAction(action, task=None, save_out=None, shell=True, encoding="utf-8", decode_error="replace", buffering=0, **pkwargs)` creates an explicit shell action. `action` may be a string, a list of strings and `pathlib` paths, or a callable returning a command string. `save_out` stores captured stdout under the given value name. `shell` defaults to `True`, unlike `subprocess.Popen`; `stdout` and `stderr` are reserved and are not accepted as `pkwargs`.
-
-## Product State Model
-
-The task graph is the shared logical state. A loaded task contributes actions, declared dependencies, targets, parameters, and lifecycle hooks. A successful execution adds saved dependency, result, and ignored-state records to the selected dependency backend. Generated target files are the materialized view of that same state.
-
-Command selection, Python `DoitMain` execution, reporter events, the dependency backend, and filesystem outputs must agree about which tasks were selected, which ran, which were skipped, and which failed. A later invocation may skip a task only when its declared freshness inputs and stored success state still justify that decision.
+The programmatic interface loads task creators from a plain dictionary via `ModuleTaskLoader`, then `DoitMain.run` executes the dependency graph without requiring a `dodo.py` file on disk. `create_folder` ensures the output directory exists, and `task_dep` guarantees `setup` completes before `greet` runs. A return value of `0` confirms all selected tasks succeeded.
 
 ## Task Definitions
 
-A task creator is a function or method whose name starts with `task_`, or an object exposed in the dodo namespace with a `create_doit_tasks` callable. The task name is the creator name without the `task_` prefix unless a task dictionary uses `basename`.
+Task definitions describe what work `doit` should perform and how it determines whether that work is needed.
 
-Task creators return either a single dictionary, a generator yielding dictionaries, a task object, or `None`. A returned dictionary creates one task and must not contain `name`; yielded dictionaries create subtasks and must contain `name` unless they contain `basename` for a separately named task. A yielded `name` of `None` creates an empty task group so the group can carry documentation, watch paths, and shared group identity even when no concrete subtasks exist.
+**Task creators.** A task creator is a function or method whose name starts with `task_`, or an object exposed in the dodo namespace with a `create_doit_tasks` callable. The task name is the creator name without the `task_` prefix unless a task dictionary uses `basename`.
 
-Supported task dictionary fields:
+**Return conventions.** Task creators return either a single dictionary, a generator yielding dictionaries, a task object, or `None`. A returned dictionary creates one task and must not contain `name`; yielded dictionaries create subtasks and must contain `name` unless they contain `basename` for a separately named task. A yielded `name` of `None` creates an empty task group so the group can carry documentation, watch paths, and shared group identity even when no concrete subtasks exist.
+
+**Task dictionary fields.** Supported task dictionary fields:
 
 - `actions`: required; a list or tuple of shell actions, Python actions, explicit action objects, or `None` for a group task.
 - `basename`: task name override for a returned task or generated task family.
@@ -108,25 +117,23 @@ Supported task dictionary fields:
 - `meta`: user/plugin metadata not interpreted by core `doit`.
 - `watch`: extra watched paths for the `auto` plugin command.
 
-Unknown task dictionary fields, invalid field types, duplicated task names, a normal task dictionary containing `name`, and a subtask dictionary without `name` or `basename` are task definition errors.
+**Validation.** Unknown task dictionary fields, invalid field types, duplicated task names, a normal task dictionary containing `name`, and a subtask dictionary without `name` or `basename` are task definition errors.
 
 ## Actions and Results
 
-Task creator bodies run while tasks are loaded. Task actions run only when the task is selected and not up-to-date.
+Actions define the executable work of a task and determine its success, failure, or error status.
 
-String actions are shell commands. List actions are command argument lists executed without a shell; elements may be strings or `pathlib` paths. Callable actions are Python actions. Tuples describe Python actions as `(callable, args, kwargs)`, with only the callable required.
+**Action types.** Task creator bodies run while tasks are loaded. Task actions run only when the task is selected and not up-to-date. String actions are shell commands. List actions are command argument lists executed without a shell; elements may be strings or `pathlib` paths. Callable actions are Python actions. Tuples describe Python actions as `(callable, args, kwargs)`, with only the callable required. The actions of one task always execute sequentially. Parallel execution only affects different tasks whose dependencies allow them to run at the same time.
 
-The actions of one task always execute sequentially. Parallel execution only affects different tasks whose dependencies allow them to run at the same time.
+**Python action results.** Python actions succeed when they return `True`, `None`, a string, or a dictionary. Returning a dictionary saves computed task values and makes the dictionary the task result. Returning a string makes the string the task result. Returning `False` fails the task. Raising an exception is a task error. Returning a `TaskFailed` or `TaskError` instance reports that failure or error directly. Other return types are treated as task errors.
 
-Python actions succeed when they return `True`, `None`, a string, or a dictionary. Returning a dictionary saves computed task values and makes the dictionary the task result. Returning a string makes the string the task result. Returning `False` fails the task. Raising an exception is a task error. Returning a `TaskFailed` or `TaskError` instance reports that failure or error directly. Other return types are treated as task errors.
+**Command action results.** Command actions follow shell exit status. Exit code `0` succeeds. A non-zero exit code up to `125` is a task failure. An exit code above `125` is a task error. Captured stdout and stderr together form the command action result; `save_out` saves stdout under a named value.
 
-Command actions follow shell exit status. Exit code `0` succeeds. A non-zero exit code up to `125` is a task failure. An exit code above `125` is a task error. Captured stdout and stderr together form the command action result; `save_out` saves stdout under a named value.
+**Parameter injection.** Python action callables can receive task metadata by declaring keyword parameters named `dependencies`, `changed`, `targets`, or `task`. These values are injected only when the callable declares the parameter and the caller did not already pass the argument. The reserved injected parameters must not define defaults.
 
-Python action callables can receive task metadata by declaring keyword parameters named `dependencies`, `changed`, `targets`, or `task`. These values are injected only when the callable declares the parameter and the caller did not already pass the argument. The reserved injected parameters must not define defaults.
+**String formatting.** Command action strings may use dependency substitution. `dependencies`, `changed`, `targets`, task option names, and positional argument names are available as strings. The formatting mode is controlled by `action_string_formatting` with values `old`, `new`, or `both`; the default is `old`. List-form command actions are not formatted.
 
-Command action strings may use dependency substitution. `dependencies`, `changed`, `targets`, task option names, and positional argument names are available as strings. The formatting mode is controlled by `action_string_formatting` with values `old`, `new`, or `both`; the default is `old`. List-form command actions are not formatted.
-
-Task output verbosity is:
+**Verbosity.** Task output verbosity must follow these levels:
 
 - `0`: capture stdout and stderr without displaying them.
 - `1`: capture stdout and display stderr.
@@ -134,19 +141,21 @@ Task output verbosity is:
 
 ## Dependencies and Up-To-Date Status
 
-`doit` records successful task state in a dependency database. The default backend is `dbm`; `json` and `sqlite3` are built in. The default dependency file base name is `.doit.db`, and `--db-file` or `dep_file` changes it. DBM backends may create multiple files using the configured name as a base name.
+The dependency system determines whether a task needs to run or can be skipped based on stored state and declared freshness inputs.
 
-A task is not up-to-date when any explicit `uptodate` item evaluates to `False`, a file was added to or removed from `file_dep`, a file dependency changed since the last successful run, a target path does not exist, or the task has no file dependencies and no `uptodate` item equal to `True`.
+**Dependency database.** `doit` records successful task state in a dependency database. The default backend is `dbm`; `json` and `sqlite3` are built in. The default dependency file base name is `.doit.db`, and `--db-file` or `dep_file` changes it. DBM backends may create multiple files using the configured name as a base name.
 
-The default file checker uses MD5 content hashes. The `timestamp` checker considers any modification-time change to be a change. A custom checker subclasses `FileChangedChecker` and provides the file state and modification comparison behavior expected by the dependency manager.
+**Up-to-date rules.** A task is not up-to-date when any explicit `uptodate` item evaluates to `False`, a file was added to or removed from `file_dep`, a file dependency changed since the last successful run, a target path does not exist, or the task has no file dependencies and no `uptodate` item equal to `True`.
 
-Targets are checked for existence only. If a target exists and file dependencies have not changed, modifying the target itself does not force the task to run. If a target is removed, the task runs again.
+**File change detection.** The default file checker uses MD5 content hashes. The `timestamp` checker considers any modification-time change to be a change. A custom checker subclasses `FileChangedChecker` and provides the file state and modification comparison behavior expected by the dependency manager.
 
-`file_dep` is file-oriented and does not treat directories as content dependencies. A dodo file is not automatically a dependency of every task; users force reruns after task-definition changes with `forget`, `--always-execute`, or explicit file dependencies.
+**Target checking.** Targets are checked for existence only. If a target exists and file dependencies have not changed, modifying the target itself does not force the task to run. If a target is removed, the task runs again.
 
-`task_dep` controls execution order, not freshness. A task that only has `task_dep` and no own freshness inputs runs whenever selected. `setup` tasks are processed before the selected task's up-to-date decision; a setup task with no own freshness rule may therefore execute even when the selected task is ultimately skipped.
+**File dependency semantics.** `file_dep` is file-oriented and does not treat directories as content dependencies. A dodo file is not automatically a dependency of every task; users force reruns after task-definition changes with `forget`, `--always-execute`, or explicit file dependencies.
 
-`uptodate` accepts:
+**Task and setup dependencies.** `task_dep` controls execution order, not freshness. A task that only has `task_dep` and no own freshness inputs runs whenever selected. `setup` tasks are processed before the selected task's up-to-date decision; a setup task with no own freshness rule may therefore execute even when the selected task is ultimately skipped.
+
+**Uptodate callables.** `uptodate` accepts:
 
 - `False` to force the task out-of-date.
 - `True` as one positive freshness check, without overriding file changes or missing targets.
@@ -157,37 +166,37 @@ Targets are checked for existence only. If a target exists and file dependencies
 
 `doit` may short-circuit freshness checks after it already knows a task is out-of-date.
 
-When a Python action returns a dictionary, the values must be serializable by the configured codec. `getargs` passes saved values from one task into another task's action. A `getargs` entry has the form `{argument_name: (task_name, value_name)}`; using `None` as `value_name` passes the whole saved value dictionary. When the source is a task group, the received value is a dictionary keyed by subtask name. `getargs` creates an implicit setup dependency on the source task.
+**Saved values and getargs.** When a Python action returns a dictionary, the values must be serializable by the configured codec. `getargs` passes saved values from one task into another task's action. A `getargs` entry has the form `{argument_name: (task_name, value_name)}`; using `None` as `value_name` passes the whole saved value dictionary. When the source is a task group, the received value is a dictionary keyed by subtask name. `getargs` creates an implicit setup dependency on the source task.
 
-`result_dep(task_name, setup_dep=False)` is an `uptodate` helper available from `doit.tools` and `doit.task`. It compares the result of another task across runs. It also creates an execution dependency on that task; with `setup_dep=True` it creates a setup dependency. For task groups, it compares the set of subtasks and each subtask result.
+**Result-based freshness.** `result_dep` is an `uptodate` helper available from `doit.tools` and `doit.task`. It compares the result of another task across runs and creates an execution dependency on that task. When `setup_dep` is set to true, it creates a setup dependency instead. For task groups, it compares the set of subtasks and each subtask result.
 
-`calc_dep` names tasks whose computed values add dependency metadata to the current task. A calculating task returns a dictionary containing keys such as `file_dep`, `task_dep`, `uptodate`, or `calc_dep`.
+**Calculated dependencies.** `calc_dep` names tasks whose computed values add dependency metadata to the current task. A calculating task returns a dictionary containing keys such as `file_dep`, `task_dep`, `uptodate`, or `calc_dep`.
 
 ## Built-In Tools
 
-`create_folder(dir_path)` is a Python action helper that creates a directory path if it does not already exist.
+The `doit.tools` module provides reusable action helpers and `uptodate` callables for common task patterns.
 
-`title_with_actions(task)` returns a title string that includes the task name and the string form of its actions, and can be used as the task `title` callable.
+**Directory creation.** `create_folder` is a Python action helper that creates a directory path, including nested parents, if it does not already exist. When the directory already exists, it succeeds silently.
 
-`run_once(task, values)` is an `uptodate` callable that makes a task run once after its first successful execution. Missing targets still make the task run again.
+**Title formatting.** `title_with_actions` returns a title string that includes the task name and the string form of its actions. It can be used as the task `title` callable.
 
-`timeout(timeout_limit)` returns an `uptodate` callable that expires after the given number of seconds or `datetime.timedelta`.
+**Run-once freshness.** `run_once` is an `uptodate` callable that makes a task run once after its first successful execution. After that first success, the task is considered up-to-date unless a target is missing, in which case missing targets still force a rerun.
 
-`config_changed(config, encoder=None)` returns an `uptodate` callable that compares a string or dictionary configuration against the previous successful run. Dictionaries are serialized in key-sorted JSON form; `encoder` is passed to JSON serialization.
+**Time-based freshness.** `timeout` returns an `uptodate` callable that expires after a given number of seconds or `datetime.timedelta` value.
 
-`check_timestamp_unchanged(file_name, time="mtime", cmp_op=operator.eq)` returns an `uptodate` callable that compares a selected timestamp from the named file or directory. `time` may be `mtime`, `atime`, `ctime`, or the aliases `modify`, `access`, and `status`. The comparison callable receives `(previous_time, current_time)` and returns whether the task is up-to-date. If the path cannot be statted, the check raises an error.
+**Configuration freshness.** `config_changed` returns an `uptodate` callable that compares a string or dictionary configuration against the previous successful run. When given a dictionary, the comparison uses key-sorted JSON serialization. When the `encoder` argument is supplied, it is forwarded to JSON serialization. Dictionaries with the same keys and values in different insertion order must compare as equal.
 
-`LongRunning` is a command action for long-lived processes such as servers. It starts the process, waits until interrupted by the user, and then terminates it.
+**File-timestamp freshness.** `check_timestamp_unchanged` returns an `uptodate` callable that compares a selected timestamp from the named file or directory. The `time` argument may be `mtime`, `atime`, `ctime`, or the aliases `modify`, `access`, and `status`. The `cmp_op` argument receives the previous and current timestamps and returns whether the task is up-to-date. If the path cannot be statted, the check raises an error.
 
-`Interactive` is a command action for interactive subprocesses whose output is not captured.
+**Long-running and interactive actions.** `LongRunning` is a command action for long-lived processes such as servers; it starts the process, waits until interrupted by the user, and then terminates it. `Interactive` is a command action for interactive subprocesses whose output is not captured. `PythonInteractiveAction` is a Python action variant whose output is not captured and whose success follows exception behavior.
 
-`PythonInteractiveAction` is a Python action variant whose output is not captured and whose success follows exception behavior.
-
-`set_trace()` starts a debugger in a way that works with `doit` stream redirection. `load_ipython_extension(ip=None)` registers an IPython `%doit` magic that discovers tasks from the interactive namespace.
+**Debugging and IPython integration.** `set_trace` starts a debugger in a way that works with `doit` stream redirection. `load_ipython_extension` registers an IPython `%doit` magic that discovers tasks from the interactive namespace.
 
 ## Command Line
 
-The command form is:
+The CLI controls task execution, inspection, cleaning, and configuration through subcommands and options.
+
+**Invocation.** The command form is:
 
 ```console
 doit [run] [<options>] [<task|target> <task_options>]* [<variables>]
@@ -256,6 +265,12 @@ Custom reporters implement the reporter event methods used by the runner. `Conso
 
 `Dependency.get_values(task_name)`, `get_value(task_name, key_name)`, and `get_result(task_name)` expose stored task values and results through `Globals.dep_manager`. The default `DbmDB` backend exposes `get(task_name, dependency)`, `set(task_name, dependency, value)`, and `remove(task_name)` for experienced users who intentionally manipulate stored state.
 
+## State Model
+
+The task graph is the shared logical state. A loaded task contributes actions, declared dependencies, targets, parameters, and lifecycle hooks. A successful execution adds saved dependency, result, and ignored-state records to the selected dependency backend. Generated target files are the materialized view of that same state.
+
+Command selection, Python `DoitMain` execution, reporter events, the dependency backend, and filesystem outputs must agree about which tasks were selected, which ran, which were skipped, and which failed. A later invocation may skip a task only when its declared freshness inputs and stored success state still justify that decision.
+
 ## Error Semantics
 
 `InvalidDodoFile` reports invalid dodo/configuration loading conditions, such as a missing dodo file, non-dictionary `DOIT_CONFIG`, task names that collide with command names, unsupported `action_string_formatting`, or an unsatisfied `minversion`.
@@ -283,61 +298,79 @@ Custom reporters implement the reporter event methods used by the runner. `Conso
 - The `json` reporter and console reporters observe the same task outcomes even though they format those outcomes differently.
 - The dependency backend choice changes where state is stored, not the public meaning of up-to-date, ignored, saved value, or task result state.
 
-## Representative Workflow
+## Public Interface
 
-Create a `dodo.py` file:
+### Import Surface
+
+The package is imported as `doit` and provides the console entry point `doit`. Running `python -m doit` is equivalent to invoking the command-line program.
+
+Top-level imports:
 
 ```python
-from pathlib import Path
-from doit.tools import run_once
-
-def write_source(targets):
-    Path(targets[0]).write_text("hello\n")
-    return {"line_count": 1}
-
-def shout(dependencies, targets, count):
-    text = Path(dependencies[0]).read_text().upper()
-    Path(targets[0]).write_text(f"{count}:{text}")
-
-def task_source():
-    """create input text"""
-    return {
-        "actions": [write_source],
-        "targets": ["source.txt"],
-        "uptodate": [run_once],
-        "clean": True,
-    }
-
-def task_shout():
-    """write an uppercase output"""
-    return {
-        "actions": [(shout, [], {})],
-        "file_dep": ["source.txt"],
-        "targets": ["shout.txt"],
-        "getargs": {"count": ("source", "line_count")},
-        "clean": True,
-    }
+from doit import get_var, run, create_after, task_params, Globals
+import doit
 ```
 
-Running `doit` creates `source.txt`, saves `line_count`, passes it to `shout`, and creates `shout.txt`. Running `doit` again skips both tasks when the files and saved values are unchanged. Removing `shout.txt` runs only the task that owns that missing target and any needed dependency work. `doit info shout` explains why `shout` would run or be skipped. `doit clean` removes the targets, and `doit forget source` clears the stored success state for `source`.
+Documented public imports used by normal task files and integrations:
 
-## Non-Goals
+```python
+from doit.action import CmdAction
+from doit.task import clean_targets, result_dep
+from doit.tools import (
+    create_folder,
+    title_with_actions,
+    run_once,
+    result_dep,
+    config_changed,
+    timeout,
+    check_timestamp_unchanged,
+    LongRunning,
+    Interactive,
+    PythonInteractiveAction,
+    set_trace,
+    load_ipython_extension,
+)
+from doit.cmd_base import Command, DoitCmdBase, TaskLoader2, ModuleTaskLoader
+from doit.doit_cmd import DoitMain
+from doit.reporter import ConsoleReporter
+from doit.dependency import FileChangedChecker, Dependency, DbmDB
+from doit.exceptions import TaskFailed, TaskError
+```
 
-- This specification does not require reproducing private runner, dispatcher, or control class internals.
-- Exact `repr()` strings, memory-address-free callable formatting, traceback formatting, and byte-for-byte console spacing are not part of the behavioral contract except for documented task status markers and command meanings.
-- Platform-specific behavior of external tools such as `strace`, DBM file naming, shell command syntax, and multiprocessing pickling limits is only covered at the documented portability level.
-- The `auto` watch command is plugin-provided and is not part of the built-in command contract beyond the documented `watch` task field and plugin description.
-- This specification does not require implementing undocumented plugin discovery internals beyond the documented local configuration and installed entry-point categories.
-- This specification does not require preserving internal helper names that are not exported, documented, or shown in public examples.
+### API Catalog
 
-## Invocation Protocol
+| Name | Kind | Role |
+|------|------|------|
+| `doit.run` | function | Execute tasks from an in-memory task creator module or dictionary |
+| `doit.get_var` | function | Read a command-line variable supplied as `name=value` |
+| `doit.get_initial_workdir` | function | Return the directory from which the command was originally invoked |
+| `doit.create_after` | decorator | Delay task creation until named tasks have executed |
+| `doit.task_params` | decorator | Attach command-line parameter definitions to a task creator |
+| `Globals.dep_manager` | attribute | Current dependency manager during command invocation |
+| `ModuleTaskLoader` | class | Load task creators from a module or dictionary |
+| `DoitMain` | class | Command dispatcher with configurable task loader and config files |
+| `DoitMain.run` | method | Run a command and return a numeric result code |
+| `CmdAction` | class | Explicit shell or list-form command action |
+| `Command` | class | Base class for commands that do not need loaded tasks |
+| `DoitCmdBase` | class | Base class for commands that operate on loaded tasks |
+| `TaskLoader2` | class | Base class for custom task loaders |
+| `ConsoleReporter` | class | Default console reporter base class |
+| `FileChangedChecker` | class | Base class for custom file-change checkers |
+| `Dependency` | class | Public dependency manager query surface |
+| `DbmDB` | class | DBM dependency backend with direct key access |
+| `clean_targets` | function | Clean helper for removing task targets |
+| `result_dep` | function | Freshness helper based on another task's saved result |
+| `TaskFailed` | exception | Task completed but reported failure |
+| `TaskError` | exception | Error while executing or evaluating task behavior |
+
+### CLI Entry Points
 
 The installed `doit` console command and `python -m doit` are both supported. A successful command returns exit code `0`; task failures return `1`, task execution errors return `2`, and ordinary command/configuration errors reported through `DoitMain.run` return `3`.
 
-## Environment
+## Appendix A: Environment
 
 The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-## Implementation Guidance
+## Appendix B: Assessment Notes
 
 The implementation must preserve the same public behavior through both Python APIs and command-line workflows. Compatibility covers task loading, action execution, dependency decisions, saved values and results, command semantics, configuration precedence, reporter outcomes, and documented extension APIs. Internal modules, hidden attributes, and exact private class layouts are not part of this contract.

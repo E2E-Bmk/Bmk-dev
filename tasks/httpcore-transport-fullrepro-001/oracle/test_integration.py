@@ -84,6 +84,8 @@ def test_default_http_port_omitted_from_host_header():
     assert_header(backend.streams[0], b"Host", b"node.test")
 
 
+@pytest.mark.depends_on("test_url_explicit_components_round_trips_to_bytes")
+@pytest.mark.depends_on("test_url_explicit_port_preserved_in_bytes_representation")
 def test_non_default_port_included_in_host_header():
     """Seam: protocol handoff — non-default port included in Host header value."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -91,6 +93,7 @@ def test_non_default_port_included_in_host_header():
     assert_header(backend.streams[0], b"Host", b"node.test:9090")
 
 
+@pytest.mark.depends_on("test_request_headers_normalized_to_byte_pairs")
 def test_caller_supplied_host_header_is_preserved():
     """Seam: protocol handoff — caller-supplied Host header preserved over auto-generated value."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -106,6 +109,7 @@ def test_caller_supplied_host_header_is_preserved():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_request_stores_method_as_bytes")
 def test_bytes_content_adds_content_length_and_serializes_body():
     """Seam: protocol handoff — bytes body adds Content-Length and serializes payload."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -115,6 +119,7 @@ def test_bytes_content_adds_content_length_and_serializes_body():
     assert wire.endswith(b"\r\n\r\npayload")
 
 
+@pytest.mark.depends_on("test_request_stores_method_as_bytes")
 def test_empty_bytes_body_adds_zero_content_length():
     """Seam: protocol handoff — empty bytes body framed with Content-Length: 0."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -122,6 +127,7 @@ def test_empty_bytes_body_adds_zero_content_length():
     assert_header(backend.streams[0], b"Content-Length", b"0")
 
 
+@pytest.mark.depends_on("test_request_stores_method_as_bytes")
 def test_iterable_body_uses_chunked_transfer_encoding():
     """Seam: protocol handoff — iterable body uses chunked transfer encoding on wire."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -131,6 +137,7 @@ def test_iterable_body_uses_chunked_transfer_encoding():
     assert b"2\r\nab\r\n3\r\ncde\r\n0\r\n\r\n" in wire
 
 
+@pytest.mark.depends_on("test_request_headers_normalized_to_byte_pairs")
 def test_explicit_content_length_header_is_preserved():
     """Seam: protocol handoff — explicit Content-Length header preserved without duplication."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -141,6 +148,7 @@ def test_explicit_content_length_header_is_preserved():
     assert lines.count(b"Content-Length: 4") == 1
 
 
+@pytest.mark.depends_on("test_request_headers_normalized_to_byte_pairs")
 def test_explicit_transfer_encoding_prevents_auto_content_length():
     """Seam: protocol handoff — explicit Transfer-Encoding prevents auto Content-Length."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -161,6 +169,7 @@ def test_explicit_transfer_encoding_prevents_auto_content_length():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_response_stores_status_and_headers")
 def test_pool_request_returns_status_headers_content_and_extensions():
     """Seam: protocol handoff — wire bytes parsed into Response status, headers, content, and extensions."""
     pool, backend = pool_with(
@@ -174,6 +183,8 @@ def test_pool_request_returns_status_headers_content_and_extensions():
     assert response.extensions["reason_phrase"] == b"Created"
 
 
+@pytest.mark.depends_on("test_response_stores_status_and_headers")
+@pytest.mark.depends_on("test_request_preserves_duplicate_header_names")
 def test_duplicate_response_headers_are_preserved():
     """Seam: state consistency — duplicate response headers preserved across parse boundary."""
     pool, _ = pool_with(
@@ -190,6 +201,8 @@ def test_duplicate_response_headers_are_preserved():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_response_content_before_read_on_streaming_raises")
+@pytest.mark.depends_on("test_response_content_before_read_on_streaming_raises", "test_response_iter_stream_yields_chunks_once")
 def test_stream_response_does_not_preload_body():
     """Seam: lifecycle crossing — stream mode defers body read until iter_stream."""
     pool, _ = pool_with(
@@ -201,6 +214,7 @@ def test_stream_response_does_not_preload_body():
         assert list(response.iter_stream()) == [b"hello"]
 
 
+@pytest.mark.depends_on("test_response_read_caches_content_for_repeated_access")
 def test_stream_read_makes_content_available():
     """Seam: lifecycle crossing — stream read populates content for later access."""
     pool, _ = pool_with(
@@ -217,6 +231,8 @@ def test_stream_read_makes_content_available():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_origin_equality_requires_all_three_fields")
+@pytest.mark.depends_on("test_mock_stream_returns_chunks_then_empty")
 def test_same_origin_reuses_connection_after_body_consumed():
     """Seam: state consistency — pool reuses connection after body consumed for same origin."""
     backend = RecordingBackend(
@@ -228,6 +244,7 @@ def test_same_origin_reuses_connection_after_body_consumed():
     assert len(backend.tcp_calls) == 1
 
 
+@pytest.mark.depends_on("test_origin_equality_requires_all_three_fields")
 def test_different_origins_open_separate_connections():
     """Seam: state consistency — different origins open separate TCP connections."""
     backend = RecordingBackend(
@@ -239,6 +256,8 @@ def test_different_origins_open_separate_connections():
     assert [c["host"] for c in backend.tcp_calls] == ["alpha.test", "beta.test"]
 
 
+@pytest.mark.depends_on("test_response_close_calls_body_close_when_available")
+@pytest.mark.depends_on("test_mock_stream_returns_chunks_then_empty")
 def test_zero_keepalive_closes_connection_after_response():
     """Seam: lifecycle crossing — zero keepalive closes connection after response."""
     pool, backend = pool_with(http11_response(body=b"ok"), max_keepalive_connections=0)
@@ -246,6 +265,8 @@ def test_zero_keepalive_closes_connection_after_response():
     assert backend.streams[0].close_calls == 1
 
 
+@pytest.mark.depends_on("test_response_close_calls_body_close_when_available")
+@pytest.mark.depends_on("test_mock_stream_returns_chunks_then_empty")
 def test_pool_close_closes_idle_connections():
     """Seam: lifecycle crossing — pool.close closes idle underlying streams."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -254,6 +275,7 @@ def test_pool_close_closes_idle_connections():
     assert backend.streams[0].close_calls == 1
 
 
+@pytest.mark.depends_on("test_response_close_calls_body_close_when_available")
 def test_pool_context_manager_closes_on_exit():
     """Seam: lifecycle crossing — pool context manager closes connections on exit."""
     backend = RecordingBackend([http11_response(body=b"ok")])
@@ -262,6 +284,7 @@ def test_pool_context_manager_closes_on_exit():
     assert backend.streams[0].close_calls == 1
 
 
+@pytest.mark.depends_on("test_origin_equality_requires_all_three_fields")
 def test_pool_connections_returns_list_snapshot():
     """Seam: state consistency — pool.connections returns independent list snapshot."""
     pool, _ = pool_with(http11_response(body=b"ok"))
@@ -278,6 +301,7 @@ def test_pool_connections_returns_list_snapshot():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_origin_stores_byte_scheme_and_host_with_int_port")
 def test_http_connection_returns_response_for_configured_origin():
     """Seam: protocol handoff — HTTPConnection serves configured origin requests."""
     backend = RecordingBackend([http11_response(202, b"Accepted", body=b"queued")])
@@ -289,6 +313,7 @@ def test_http_connection_returns_response_for_configured_origin():
     assert response.status == 202
 
 
+@pytest.mark.depends_on("test_origin_equality_requires_all_three_fields")
 def test_http_connection_rejects_different_origin():
     """Seam: error propagation — HTTPConnection rejects requests to different origin."""
     backend = RecordingBackend([http11_response(body=b"unused")])
@@ -315,6 +340,7 @@ def test_http_connection_becomes_idle_after_response_consumed():
     assert len(backend.tcp_calls) == 1
 
 
+@pytest.mark.depends_on("test_response_close_calls_body_close_when_available")
 def test_http_connection_close_closes_underlying_stream():
     """Seam: lifecycle crossing — HTTPConnection.close closes underlying network stream."""
     backend = RecordingBackend([http11_response(body=b"ok")])
@@ -332,6 +358,7 @@ def test_http_connection_close_closes_underlying_stream():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_url_default_https_port_is_443", "test_mock_stream_start_tls_returns_itself")
 def test_https_connects_to_port_443_and_starts_tls():
     """Seam: protocol handoff — HTTPS connects on 443 and upgrades stream with TLS."""
     pool, backend = pool_with(http11_response(body=b"secure"))
@@ -341,6 +368,7 @@ def test_https_connects_to_port_443_and_starts_tls():
     assert backend.streams[0].tls_calls[0][0] == "tls.test"
 
 
+@pytest.mark.depends_on("test_mock_stream_start_tls_returns_itself")
 def test_sni_hostname_extension_overrides_tls_server_name():
     """Seam: config interaction — sni_hostname extension overrides TLS server name."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -348,6 +376,7 @@ def test_sni_hostname_extension_overrides_tls_server_name():
     assert backend.streams[0].tls_calls[0][0] == "alt.test"
 
 
+@pytest.mark.depends_on("test_url_default_https_port_is_443")
 def test_https_non_default_port_for_connect_and_host():
     """Seam: config interaction — HTTPS non-default port used for connect and Host header."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -362,6 +391,7 @@ def test_https_non_default_port_for_connect_and_host():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_url_from_string_parses_scheme_host_target")
 def test_uds_path_uses_connect_unix_socket():
     """Seam: config interaction — UDS path routes pool connect through unix socket backend."""
     pool, backend = pool_with(http11_response(body=b"ok"), uds="/var/run/app.sock")
@@ -377,6 +407,7 @@ def test_local_address_forwarded_to_backend():
     assert backend.tcp_calls[0]["local_address"] == "10.0.0.1"
 
 
+@pytest.mark.depends_on("test_url_from_string_parses_scheme_host_target")
 def test_socket_options_forwarded_to_backend():
     """Seam: config interaction — socket_options forwarded from pool to backend connect."""
     opts = [(6, 1, 1)]
@@ -385,6 +416,7 @@ def test_socket_options_forwarded_to_backend():
     assert backend.tcp_calls[0]["socket_options"] == opts
 
 
+@pytest.mark.depends_on("test_request_stores_method_as_bytes")
 def test_connect_timeout_forwarded_to_backend():
     """Seam: config interaction — connect timeout extension forwarded to backend."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -392,6 +424,7 @@ def test_connect_timeout_forwarded_to_backend():
     assert backend.tcp_calls[0]["timeout"] == 1.5
 
 
+@pytest.mark.depends_on("test_mock_stream_returns_chunks_then_empty")
 def test_read_timeout_forwarded_to_stream():
     """Seam: config interaction — read timeout extension forwarded to network stream."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -399,6 +432,7 @@ def test_read_timeout_forwarded_to_stream():
     assert any(call[1] == 2.5 for call in backend.streams[0].read_calls)
 
 
+@pytest.mark.depends_on("test_mock_stream_returns_chunks_then_empty")
 def test_write_timeout_forwarded_to_stream():
     """Seam: config interaction — write timeout extension forwarded to network stream."""
     pool, backend = pool_with(http11_response(body=b"ok"))
@@ -412,6 +446,7 @@ def test_write_timeout_forwarded_to_stream():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_declared_public_exception_is_available")
 def test_connect_error_retried_once_succeeds():
     """Seam: error propagation — connect error retried once then succeeds through pool."""
     backend = RecordingBackend(
@@ -423,6 +458,7 @@ def test_connect_error_retried_once_succeeds():
     assert backend.sleep_calls == [0]
 
 
+@pytest.mark.depends_on("test_declared_public_exception_is_available")
 def test_connect_error_exhausts_retries_and_raises():
     """Seam: error propagation — exhausted connect retries propagate ConnectError."""
     backend = RecordingBackend([httpcore.ConnectError("boom")])
@@ -431,6 +467,7 @@ def test_connect_error_exhausts_retries_and_raises():
         pool.request("GET", "http://node.test/")
 
 
+@pytest.mark.depends_on("test_declared_public_exception_is_available")
 def test_retry_backoff_uses_exponential_sequence():
     """Seam: error propagation — retry backoff uses exponential sleep sequence."""
     backend = RecordingBackend(
@@ -451,6 +488,7 @@ def test_retry_backoff_uses_exponential_sequence():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_url_from_string_parses_scheme_host_target")
 def test_trace_reports_tcp_connect_started_and_complete():
     """Seam: config interaction — trace callback receives TCP connect lifecycle events."""
     events = []
@@ -460,6 +498,7 @@ def test_trace_reports_tcp_connect_started_and_complete():
     assert "connection.connect_tcp.complete" in events
 
 
+@pytest.mark.depends_on("test_declared_public_exception_is_available")
 def test_trace_reports_tcp_connect_failed_on_error():
     """Seam: error propagation — trace callback reports TCP connect failure on error."""
     events = []
@@ -470,6 +509,7 @@ def test_trace_reports_tcp_connect_failed_on_error():
     assert "connection.connect_tcp.failed" in events
 
 
+@pytest.mark.depends_on("test_url_default_https_port_is_443")
 def test_trace_reports_tls_events_for_https():
     """Seam: protocol handoff — trace callback reports TLS start/complete for HTTPS."""
     events = []
@@ -485,6 +525,7 @@ def test_trace_reports_tls_events_for_https():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_declared_public_exception_is_available")
 def test_premature_disconnect_raises_remote_protocol_error():
     """Seam: error propagation — premature disconnect raises RemoteProtocolError."""
     pool, _ = pool_with([])
@@ -492,6 +533,7 @@ def test_premature_disconnect_raises_remote_protocol_error():
         pool.request("GET", "http://node.test/")
 
 
+@pytest.mark.depends_on("test_declared_public_exception_is_available")
 def test_invalid_method_bytes_raise_local_protocol_error():
     """Seam: error propagation — invalid method bytes raise LocalProtocolError."""
     pool, _ = pool_with(http11_response())
@@ -505,6 +547,7 @@ def test_invalid_method_bytes_raise_local_protocol_error():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_response_stores_status_and_headers")
 def test_connect_response_exposes_network_stream():
     """Seam: protocol handoff — CONNECT response exposes raw network_stream extension."""
     pool, _ = pool_with(http11_response(200, headers=[(b"Content-Length", b"0")], body=b""))
@@ -522,6 +565,7 @@ def test_connect_response_exposes_network_stream():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_mock_stream_returns_chunks_then_empty")
 def test_mock_backend_serves_response_through_pool():
     """Seam: state consistency — MockBackend response served consistently through pool."""
     backend = httpcore.MockBackend(
@@ -533,18 +577,17 @@ def test_mock_backend_serves_response_through_pool():
     assert (b"X-Mock", b"yes") in response.headers
     assert response.content == b"mocked"
 
+@pytest.mark.depends_on("test_declared_public_exception_is_available")
 def test_unsupported_protocol_is_raised_for_ftp_scheme():
     """Seam: error propagation — unsupported URL scheme raises through pool.request."""
-    from conftest import pool_with, http11_response
-
     pool, _ = pool_with(http11_response(body=b"unused"))
     with pytest.raises(httpcore.UnsupportedProtocol):
         pool.request("GET", "ftp://example.com/")
 
+
+@pytest.mark.depends_on("test_declared_public_exception_is_available")
 def test_unsupported_protocol_is_raised_for_missing_scheme():
     """Seam: error propagation — missing URL scheme raises through pool.request."""
-    from conftest import pool_with, http11_response
-
     pool, _ = pool_with(http11_response(body=b"unused"))
     with pytest.raises(httpcore.UnsupportedProtocol):
         pool.request("GET", "example.com/no-scheme")

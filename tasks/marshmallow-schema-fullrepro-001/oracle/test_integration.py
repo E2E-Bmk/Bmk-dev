@@ -42,6 +42,7 @@ class User:
 # --- State Consistency: dump ↔ load ↔ JSON agreement ---
 
 
+@pytest.mark.depends_on("test_dump_reads_from_dict", "test_load_str_field_accepts_string")
 def test_dumps_and_loads_agree_with_dump_and_load():
     """Seam: state consistency between JSON and direct projections."""
     class S(Schema):
@@ -55,6 +56,7 @@ def test_dumps_and_loads_agree_with_dump_and_load():
     assert schema.loads('{"name": "Grace", "age": "85"}') == schema.load({"name": "Grace", "age": "85"})
 
 
+@pytest.mark.depends_on("test_load_email_field_validates")
 def test_data_key_consistent_across_dump_load_error():
     """Seam: state consistency between data_key in dump, load, and errors."""
     class S(Schema):
@@ -69,6 +71,7 @@ def test_data_key_consistent_across_dump_load_error():
     assert "emailAddr" in exc.value.messages
 
 
+@pytest.mark.depends_on("test_validate_returns_errors_without_raising")
 def test_load_validate_and_loads_agree_on_unknown_errors():
     """Seam: state consistency between load, validate, and loads error reporting."""
     class S(Schema):
@@ -86,6 +89,7 @@ def test_load_validate_and_loads_agree_on_unknown_errors():
     assert exc.value.messages == load_errors
 
 
+@pytest.mark.depends_on("test_load_default_applied_when_field_absent")
 def test_json_projection_preserves_data_key_and_defaults():
     """Seam: state consistency between JSON ops and key/default config."""
     class S(Schema):
@@ -101,6 +105,7 @@ def test_json_projection_preserves_data_key_and_defaults():
 # --- Config Interaction: unknown policies ---
 
 
+@pytest.mark.depends_on("test_required_field_missing_raises_validation_error")
 def test_unknown_raise_rejects_extra_keys():
     """Seam: config interaction between RAISE policy and load validation."""
     class S(Schema):
@@ -111,6 +116,7 @@ def test_unknown_raise_rejects_extra_keys():
     assert "extra" in exc.value.messages
 
 
+@pytest.mark.depends_on("test_load_str_field_accepts_string")
 def test_unknown_exclude_drops_extra_keys():
     """Seam: config interaction between EXCLUDE policy and loaded output."""
     class S(Schema):
@@ -129,6 +135,7 @@ def test_unknown_include_preserves_extra_keys():
     }
 
 
+@pytest.mark.depends_on("test_load_str_field_accepts_string")
 def test_load_unknown_arg_overrides_instance_policy():
     """Seam: config interaction between per-call and instance-level policy."""
     class S(Schema):
@@ -149,6 +156,7 @@ def test_instance_unknown_overrides_meta_policy():
     assert S(unknown=EXCLUDE).load({"name": "Ada", "extra": "v"}) == {"name": "Ada"}
 
 
+@pytest.mark.depends_on("test_exclude_removes_fields")
 def test_excluded_field_treated_as_unknown_when_in_input():
     """Seam: config interaction between exclude and unknown policy."""
     class S(Schema):
@@ -164,6 +172,7 @@ def test_excluded_field_treated_as_unknown_when_in_input():
 # --- Config Interaction: partial loading ---
 
 
+@pytest.mark.depends_on("test_required_field_missing_raises_validation_error")
 def test_partial_true_skips_all_required_checks():
     """Seam: config interaction between partial and required."""
     class S(Schema):
@@ -173,6 +182,7 @@ def test_partial_true_skips_all_required_checks():
     assert S().load({"age": 25}, partial=True) == {"age": 25}
 
 
+@pytest.mark.depends_on("test_required_field_missing_raises_validation_error")
 def test_partial_tuple_skips_named_fields_only():
     """Seam: config interaction between partial names and field validation."""
     class S(Schema):
@@ -188,6 +198,7 @@ def test_partial_tuple_skips_named_fields_only():
 # --- Protocol Handoff: pre/post hooks ---
 
 
+@pytest.mark.depends_on("test_load_str_field_accepts_string")
 def test_pre_load_transforms_input_for_field_processing():
     """Seam: protocol handoff between pre_load hook and field deserialization."""
     class S(Schema):
@@ -200,6 +211,7 @@ def test_pre_load_transforms_input_for_field_processing():
     assert S().load({"user": {"name": "Ada"}}) == {"name": "Ada"}
 
 
+@pytest.mark.depends_on("test_load_str_field_accepts_string")
 def test_post_load_transforms_loaded_data():
     """Seam: protocol handoff between field loading and post_load hook."""
     class S(Schema):
@@ -212,6 +224,7 @@ def test_post_load_transforms_loaded_data():
     assert S().load({"name": "Ada"}) == User("Ada", "gen@example.com")
 
 
+@pytest.mark.depends_on("test_dump_reads_from_object_attributes")
 def test_pre_dump_transforms_object_for_field_serialization():
     """Seam: protocol handoff between pre_dump and field serialization."""
     class S(Schema):
@@ -224,6 +237,7 @@ def test_pre_dump_transforms_object_for_field_serialization():
     assert S().dump(User("ada", "a@e.com")) == {"name": "ADA"}
 
 
+@pytest.mark.depends_on("test_dump_reads_from_dict")
 def test_post_dump_transforms_serialized_output():
     """Seam: protocol handoff between field dump and post_dump."""
     class S(Schema):
@@ -287,6 +301,7 @@ def test_pass_collection_hooks_receive_full_list():
 # --- Protocol Handoff: validates / validates_schema ---
 
 
+@pytest.mark.depends_on("test_required_field_missing_raises_validation_error")
 def test_validates_decorator_validates_multiple_fields():
     """Seam: protocol handoff between field load and validator method."""
     class S(Schema):
@@ -303,6 +318,7 @@ def test_validates_decorator_validates_multiple_fields():
     assert set(exc.value.messages) == {"first", "last"}
 
 
+@pytest.mark.depends_on("test_load_int_field_coerces_string_to_int")
 def test_validates_schema_reports_under_schema_key():
     """Seam: protocol handoff between field validation and schema-level validator."""
     class S(Schema):
@@ -385,6 +401,7 @@ def test_validates_receives_external_data_key():
 # --- Nested schemas ---
 
 
+@pytest.mark.depends_on("test_load_str_field_accepts_string", "test_load_email_field_validates")
 def test_nested_schema_dumps_and_loads():
     """Seam: protocol handoff between parent schema and nested schema."""
     class UserSchema(Schema):
@@ -405,6 +422,7 @@ def test_nested_schema_dumps_and_loads():
     ) == {"title": "Notes", "author": {"name": "Ada", "email": "ada@example.com"}}
 
 
+@pytest.mark.depends_on("test_load_email_field_validates", "test_collection_errors_keyed_by_index")
 def test_list_of_nested_reports_indexed_errors():
     """Seam: error propagation through nested list schema."""
     class UserSchema(Schema):
@@ -448,6 +466,7 @@ def test_pluck_many_dumps_list():
     }
 
 
+@pytest.mark.depends_on("test_only_limits_fields")
 def test_nested_only_limits_nested_fields():
     """Seam: config interaction between nested only and dump output."""
     class UserSchema(Schema):
@@ -514,6 +533,7 @@ def test_nested_unknown_policy_applies_inside():
 # --- many instance ---
 
 
+@pytest.mark.depends_on("test_load_str_field_accepts_string", "test_dump_reads_from_dict")
 def test_many_instance_processes_collections():
     """Seam: state consistency between many=True instance and list processing."""
     class S(Schema):

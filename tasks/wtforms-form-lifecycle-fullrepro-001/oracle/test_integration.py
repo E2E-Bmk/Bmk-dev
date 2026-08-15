@@ -33,6 +33,7 @@ from conftest import FormData
 
 
 @pytest.mark.parametrize("submitted, expected", [("x", "x"), ("", ""), ("first", "first")])
+@pytest.mark.depends_on("test_string_field_retains_first_submitted_value")
 def test_string_input_reaches_field_and_form_data(submitted, expected):
     """Seam: state consistency between submitted string and form.data."""
     class F(Form):
@@ -43,6 +44,7 @@ def test_string_input_reaches_field_and_form_data(submitted, expected):
     assert form.data["value"] == expected
 
 @pytest.mark.parametrize("value, valid", [("a", True), ("b", True), ("z", False)])
+@pytest.mark.depends_on("test_missing_choices_raise_when_membership_is_required")
 def test_select_field_selection_and_validation(value, valid):
     """Seam: lifecycle crossing from SelectField choice to validation."""
     class F(Form):
@@ -54,6 +56,7 @@ def test_select_field_selection_and_validation(value, valid):
         assert [choice.value for choice in form.choice.iter_choices() if choice.selected] == [value]
 
 @pytest.mark.parametrize("values, valid", [(["a"], True), (["a", "b"], True), (["a", "z"], False)])
+@pytest.mark.depends_on("test_missing_choices_raise_when_membership_is_required")
 def test_select_multiple_preserves_all_values_and_rejects_invalid_members(values, valid):
     """Seam: state consistency for SelectMultipleField multi-value submission."""
     class F(Form):
@@ -63,6 +66,7 @@ def test_select_multiple_preserves_all_values_and_rejects_invalid_members(values
     assert form.validate() is valid
     assert form.choices.data == values
 
+@pytest.mark.depends_on("test_missing_choices_raise_when_membership_is_required")
 def test_select_can_disable_membership_validation():
     """Seam: config interaction when validate_choice=False accepts free text."""
     class F(Form):
@@ -72,6 +76,7 @@ def test_select_can_disable_membership_validation():
     assert form.validate() is True
     assert form.choice.data == "other"
 
+@pytest.mark.depends_on("test_data_required_uses_post_coercion_truthiness")
 def test_optional_stops_following_data_required_for_empty_input():
     """Seam: config interaction between Optional and DataRequired validators."""
     class F(Form):
@@ -82,6 +87,7 @@ def test_optional_stops_following_data_required_for_empty_input():
     assert form.errors == {}
 
 @pytest.mark.parametrize("left, right, valid", [("x", "x", True), ("x", "y", False), ("", "", True)])
+@pytest.mark.depends_on("test_string_field_retains_first_submitted_value")
 def test_equal_to_compares_named_field_data(left, right, valid):
     """Seam: state consistency between EqualTo and referenced field data."""
     class F(Form):
@@ -90,6 +96,7 @@ def test_equal_to_compares_named_field_data(left, right, valid):
 
     assert F(FormData(first=[left], second=[right])).validate() is valid
 
+@pytest.mark.depends_on("test_data_required_uses_post_coercion_truthiness")
 def test_readonly_rejects_changed_value_and_sets_flag():
     """Seam: error propagation from ReadOnly validator on changed value."""
     class F(Form):
@@ -143,6 +150,7 @@ def test_filter_value_error_becomes_processing_error():
     assert form.validate() is False
     assert form.value.process_errors
 
+@pytest.mark.depends_on("test_string_field_retains_first_submitted_value")
 def test_field_list_compacts_sparse_input_indices():
     """Seam: state consistency when FieldList compacts sparse indices."""
     class F(Form):
@@ -152,6 +160,7 @@ def test_field_list_compacts_sparse_input_indices():
     assert form.items.data == ["a", "b"]
     assert [entry.name for entry in form.items] == ["items-0", "items-1"]
 
+@pytest.mark.depends_on("test_string_field_retains_first_submitted_value")
 def test_field_list_min_entries_creates_blank_entries():
     """Seam: lifecycle crossing when min_entries creates blank FieldList rows."""
     class F(Form):
@@ -159,6 +168,7 @@ def test_field_list_min_entries_creates_blank_entries():
 
     assert len(F().items) == 2
 
+@pytest.mark.depends_on("test_string_field_retains_first_submitted_value")
 def test_field_list_append_insert_and_pop_preserve_order():
     """Seam: lifecycle crossing through FieldList append, insert, and pop."""
     class F(Form):
@@ -210,6 +220,7 @@ def test_invalid_extra_validator_raises_type_error_before_field_validation():
         form.validate(extra_validators={"value": [validators.DataRequired]})
     assert called == []
 
+@pytest.mark.depends_on("test_string_field_retains_first_submitted_value")
 def test_form_data_precedence_beats_object_kwargs_and_data():
     """Seam: config interaction for formdata over object, kwargs, and data."""
     class F(Form):
@@ -219,6 +230,7 @@ def test_form_data_precedence_beats_object_kwargs_and_data():
     form = F(FormData(value=["submitted"]), obj=obj, data={"value": "data"}, value="kwargs")
     assert form.value.data == "submitted"
 
+@pytest.mark.depends_on("test_integer_input_is_coerced")
 def test_populate_obj_overwrites_matching_attribute():
     """Seam: protocol handoff from validated form data to object attribute."""
     class F(Form):
@@ -229,6 +241,7 @@ def test_populate_obj_overwrites_matching_attribute():
     form.populate_obj(obj)
     assert obj.value == 4
 
+@pytest.mark.depends_on("test_integer_input_is_coerced", "test_number_range_is_inclusive")
 def test_form_field_projects_nested_data_and_errors():
     """Seam: state consistency between FormField nested data and errors."""
     class Inner(Form):
@@ -241,3 +254,75 @@ def test_form_field_projects_nested_data_and_errors():
     assert form.validate() is False
     assert form.inner.data == {"value": 1}
     assert form.inner.errors == {"value": form.inner.form.value.errors}
+
+
+def test_field_list_max_entries_rejects_surplus_submitted_entries():
+    """Seam: config interaction — FieldList max_entries limits accepted entries."""
+    class F(Form):
+        items = FieldList(StringField(), max_entries=2)
+
+    form = F(FormData(**{"items-0": ["a"], "items-1": ["b"], "items-2": ["c"]}))
+    assert len(form.items) == 2
+    assert form.items.data == ["a", "b"]
+
+
+def test_form_field_populate_obj_cascades_nested_attributes():
+    """Seam: protocol handoff — FormField populate_obj cascades to nested attributes."""
+    class Inner(Form):
+        name = StringField()
+
+    class Outer(Form):
+        inner = FormField(Inner)
+
+    obj = type("Obj", (), {"inner": type("Inner", (), {"name": "old"})()})()
+    form = Outer(FormData(**{"inner-name": ["new"]}))
+    form.populate_obj(obj)
+    assert obj.inner.name == "new"
+
+
+@pytest.mark.depends_on("test_length_enforces_inclusive_bounds", "test_regexp_uses_prefix_matching_by_default")
+def test_multiple_validators_accumulate_all_error_messages():
+    """Seam: error propagation — multiple validator failures accumulate all messages."""
+    class F(Form):
+        value = StringField(validators=[
+            validators.Length(min=5, message="too short"),
+            validators.Regexp(r"^[a-z]+$", message="lowercase letters required"),
+        ])
+
+    form = F(FormData(value=["AB"]))
+    assert form.validate() is False
+    assert form.value.errors == ["too short", "lowercase letters required"]
+
+
+@pytest.mark.depends_on("test_select_field_coerces_value_with_int_coerce")
+def test_select_field_coerce_failure_records_processing_error():
+    """Seam: error propagation — SelectField coerce failure becomes processing error."""
+    class F(Form):
+        choice = SelectField(choices=[(1, "One"), (2, "Two")], coerce=int)
+
+    form = F(FormData(choice=["not-int"]))
+    assert form.validate() is False
+    assert form.choice.process_errors
+
+
+@pytest.mark.depends_on("test_integer_input_is_coerced", "test_data_required_uses_post_coercion_truthiness")
+def test_form_errors_contains_only_fields_with_errors():
+    """Seam: state consistency — form.errors maps only fields with non-empty errors."""
+    class F(Form):
+        good = StringField(validators=[validators.DataRequired()])
+        bad = IntegerField(validators=[validators.DataRequired()])
+
+    form = F(FormData(good=["ok"], bad=[""]))
+    assert form.validate() is False
+    assert form.errors == {"bad": form.bad.errors}
+
+
+@pytest.mark.depends_on("test_select_multiple_field_coerces_all_values_to_list")
+def test_select_multiple_with_int_coerce_converts_all_values():
+    """Seam: state consistency — SelectMultipleField coerces all submitted values to int."""
+    class F(Form):
+        choices = SelectMultipleField(choices=[(1, "One"), (2, "Two"), (3, "Three")], coerce=int)
+
+    form = F(FormData(choices=["1", "3"]))
+    assert form.choices.data == [1, 3]
+    assert form.validate() is True

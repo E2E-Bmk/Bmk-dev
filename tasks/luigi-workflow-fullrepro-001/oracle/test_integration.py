@@ -14,6 +14,10 @@ from conftest import run_cli, run_script, write_module
 # build: dependency graph + output reuse
 # ═══════════════════════════════════════════════════════════════════
 
+@pytest.mark.depends_on(
+    "test_task_complete_reflects_output_existence",
+    "test_local_target_path_exists_and_open_read_write",
+)
 def test_build_runs_deps_then_downstream_and_reuses_outputs(tmp_path):
     """Seam: lifecycle crossing — scheduler execution propagates dependency outputs to downstream tasks."""
     import luigi
@@ -51,6 +55,7 @@ def test_build_runs_deps_then_downstream_and_reuses_outputs(tmp_path):
     assert order == ["dep", "main"]
 
 
+@pytest.mark.depends_on("test_luigi_status_code_values_exist")
 def test_build_reports_failed_task_status(tmp_path):
     """Seam: error propagation — task RuntimeError surfaces as FAILED LuigiRunResult status."""
     import luigi
@@ -71,6 +76,10 @@ def test_build_reports_failed_task_status(tmp_path):
     assert result.scheduling_succeeded is False
 
 
+@pytest.mark.depends_on(
+    "test_external_task_run_is_none_and_incomplete",
+    "test_luigi_status_code_values_exist",
+)
 def test_build_reports_missing_external_dependency(tmp_path):
     """Seam: error propagation — missing ExternalTask dependency blocks downstream execution."""
     import luigi
@@ -102,6 +111,10 @@ def test_build_reports_missing_external_dependency(tmp_path):
 # run()
 # ═══════════════════════════════════════════════════════════════════
 
+@pytest.mark.depends_on(
+    "test_int_parameter_parse_valid_and_reject_invalid",
+    "test_local_target_path_exists_and_open_read_write",
+)
 def test_run_accepts_cmdline_args_and_main_task_cls(tmp_path):
     """Seam: protocol handoff — luigi.run cmdline_args populate task parameters for build."""
     proc = run_script(
@@ -133,6 +146,10 @@ def test_run_accepts_cmdline_args_and_main_task_cls(tmp_path):
 # CLI
 # ═══════════════════════════════════════════════════════════════════
 
+@pytest.mark.depends_on(
+    "test_int_parameter_parse_valid_and_reject_invalid",
+    "test_local_target_path_exists_and_open_read_write",
+)
 def test_cli_module_invocation_with_local_scheduler(tmp_path):
     """Seam: protocol handoff — python -m luigi CLI executes module task with parameters."""
     write_module(
@@ -160,6 +177,7 @@ def test_cli_module_invocation_with_local_scheduler(tmp_path):
     assert out.read_text(encoding="utf-8") == "12"
 
 
+@pytest.mark.depends_on("test_int_parameter_parse_valid_and_reject_invalid")
 def test_cli_hyphenated_parameter_maps_to_underscore(tmp_path):
     """Seam: protocol handoff — hyphenated CLI flags map to underscore task parameters."""
     write_module(
@@ -231,6 +249,7 @@ def test_cli_class_qualified_parameter_supplies_dependency(tmp_path):
 # Config
 # ═══════════════════════════════════════════════════════════════════
 
+@pytest.mark.depends_on("test_int_parameter_parse_valid_and_reject_invalid")
 def test_config_file_supplies_task_parameter_default(tmp_path):
     """Seam: config interaction — LUIGI_CONFIG_PATH cfg file supplies task parameter defaults."""
     cfg = tmp_path / "client.cfg"
@@ -335,6 +354,7 @@ def test_toml_config_parser_reads_values(tmp_path):
 # Lifecycle callbacks
 # ═══════════════════════════════════════════════════════════════════
 
+@pytest.mark.depends_on("test_luigi_status_code_values_exist")
 def test_failed_run_calls_on_failure_callback(tmp_path):
     """Seam: error propagation — failed task run invokes on_failure with the raised exception."""
     import luigi
@@ -359,6 +379,7 @@ def test_failed_run_calls_on_failure_callback(tmp_path):
     assert seen == ["RuntimeError"]
 
 
+@pytest.mark.depends_on("test_task_complete_reflects_output_existence")
 def test_successful_run_calls_on_success_callback(tmp_path):
     """Seam: lifecycle crossing — successful build invokes task on_success callback."""
     import luigi
@@ -386,7 +407,7 @@ def test_successful_run_calls_on_success_callback(tmp_path):
 
 @pytest.mark.depends_on(
     "test_task_complete_reflects_output_existence",
-    "test_build_runs_deps_then_downstream_and_reuses_outputs",
+    "test_task_complete_reflects_output_existence",
 )
 def test_priority_affects_order_after_dependencies(tmp_path):
     """Seam: lifecycle crossing — task priority influences ready-task execution order."""
@@ -444,6 +465,10 @@ def test_priority_affects_order_after_dependencies(tmp_path):
 # Dynamic dependencies
 # ═══════════════════════════════════════════════════════════════════
 
+@pytest.mark.depends_on(
+    "test_task_complete_reflects_output_existence",
+    "test_local_target_path_exists_and_open_read_write",
+)
 def test_dynamic_yield_restarts_task_and_uses_output(tmp_path):
     """Seam: lifecycle crossing — create/use/teardown phases preserve observable state."""
     import luigi
@@ -582,6 +607,7 @@ def test_python_and_cli_create_same_outputs(tmp_path):
 # Task without output blocks downstream
 # ═══════════════════════════════════════════════════════════════════
 
+@pytest.mark.depends_on("test_task_complete_reflects_output_existence")
 def test_task_without_output_blocks_downstream(tmp_path):
     """Seam: lifecycle crossing — dependency without output prevents downstream scheduling."""
     import luigi
@@ -672,6 +698,7 @@ def test_local_target_write_makes_exists_complete_input_agree(tmp_path):
     assert (tmp_path / "read.txt").read_text(encoding="utf-8") == "produced-read"
 
 
+@pytest.mark.depends_on("test_luigi_status_code_values_exist")
 def test_summary_text_and_result_reflect_workflow(tmp_path):
     """CVI-6: task state reflected in LuigiRunResult."""
     import luigi
@@ -735,6 +762,7 @@ def test_worker_scheduler_factory_methods_used(tmp_path):
     assert proc.stdout.splitlines() == ["local", "worker:2:False"]
 
 
+@pytest.mark.depends_on("test_task_complete_reflects_output_existence")
 def test_wrapper_task_complete_reflects_requirements(tmp_path):
     """CVI-1: cross-view invariants hold across listing, invocation, and runtime APIs."""
     """WrapperTask.complete() depends on wrapped requirements' completion."""

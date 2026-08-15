@@ -14,6 +14,7 @@ import diskcache as dc
 # --- State Consistency: write → read across projections ---
 
 
+@pytest.mark.depends_on("test_cache_set_returns_true_on_success")
 def test_mapping_write_visible_via_get_contains_iteration_len(tmp_path):
     """Seam: state consistency across multiple read projections."""
     cache = dc.Cache(tmp_path / "c")
@@ -25,6 +26,7 @@ def test_mapping_write_visible_via_get_contains_iteration_len(tmp_path):
     assert "alpha" in list(cache)
 
 
+@pytest.mark.depends_on("test_cache_set_returns_true_on_success", "test_cache_evict_removes_matching_tag")
 def test_set_with_tag_removable_via_evict(tmp_path):
     """Seam: state consistency between set(tag=) and evict(tag)."""
     cache = dc.Cache(tmp_path / "c")
@@ -39,6 +41,7 @@ def test_set_with_tag_removable_via_evict(tmp_path):
     assert cache.get("item-c") == 3
 
 
+@pytest.mark.depends_on("test_cache_set_returns_true_on_success")
 def test_get_with_metadata_flags_returns_correct_tuple(tmp_path):
     """Seam: state consistency between set metadata and get metadata flags."""
     cache = dc.Cache(tmp_path / "c")
@@ -51,6 +54,7 @@ def test_get_with_metadata_flags_returns_correct_tuple(tmp_path):
     assert tag == "grp"
 
 
+@pytest.mark.depends_on("test_cache_set_returns_true_on_success")
 def test_pop_with_metadata_flags_removes_and_returns_tuple(tmp_path):
     """Seam: state consistency between set and pop with metadata."""
     cache = dc.Cache(tmp_path / "c")
@@ -66,6 +70,7 @@ def test_pop_with_metadata_flags_removes_and_returns_tuple(tmp_path):
 # --- Lifecycle Crossing: close → reopen ---
 
 
+@pytest.mark.depends_on("test_cache_creates_directory_on_construction")
 def test_cache_persists_across_close_and_reopen(tmp_path):
     """Seam: lifecycle crossing - data survives close/reopen."""
     directory = tmp_path / "persist"
@@ -78,6 +83,7 @@ def test_cache_persists_across_close_and_reopen(tmp_path):
     second.close()
 
 
+@pytest.mark.depends_on("test_cache_creates_directory_on_construction")
 def test_cache_auto_reopens_after_close(tmp_path):
     """Seam: lifecycle crossing - closed cache reopens on access."""
     cache = dc.Cache(tmp_path / "c")
@@ -87,6 +93,7 @@ def test_cache_auto_reopens_after_close(tmp_path):
     assert cache.get("k") == "auto"
 
 
+@pytest.mark.depends_on("test_cache_creates_directory_on_construction")
 def test_fanout_persists_across_close_and_reopen(tmp_path):
     """Seam: lifecycle crossing - FanoutCache survives close/reopen."""
     directory = tmp_path / "fanout"
@@ -102,6 +109,7 @@ def test_fanout_persists_across_close_and_reopen(tmp_path):
 # --- Protocol Handoff: queue keys → lookup ---
 
 
+@pytest.mark.depends_on("test_cache_push_front_and_back_keys", "test_cache_pull_empty_returns_default")
 def test_queue_push_pull_back_and_front_ordering(tmp_path):
     """Seam: protocol handoff between push key generation and pull retrieval."""
     cache = dc.Cache(tmp_path / "c")
@@ -114,6 +122,7 @@ def test_queue_push_pull_back_and_front_ordering(tmp_path):
     assert cache.pull(side="back") == (k2, "second")
 
 
+@pytest.mark.depends_on("test_cache_push_with_prefix_uses_string_format")
 def test_queue_prefix_key_visible_via_mapping_lookup(tmp_path):
     """Seam: protocol handoff between push(prefix=) and mapping get."""
     cache = dc.Cache(tmp_path / "c")
@@ -126,6 +135,7 @@ def test_queue_prefix_key_visible_via_mapping_lookup(tmp_path):
 # --- Config Interaction: stats ---
 
 
+@pytest.mark.depends_on("test_cache_set_returns_true_on_success")
 def test_stats_counts_hits_and_misses(tmp_path):
     """Seam: config interaction between stats enable and get operations."""
     cache = dc.Cache(tmp_path / "c")
@@ -143,6 +153,7 @@ def test_stats_counts_hits_and_misses(tmp_path):
 # --- Iteration ---
 
 
+@pytest.mark.depends_on("test_cache_set_returns_true_on_success")
 def test_iteration_follows_insertion_order(tmp_path):
     """Seam: state consistency between insertion order and iteration."""
     cache = dc.Cache(tmp_path / "c")
@@ -165,6 +176,7 @@ def test_iterkeys_produces_sorted_order(tmp_path):
 # --- Transaction ---
 
 
+@pytest.mark.depends_on("test_cache_set_returns_true_on_success")
 def test_cache_transact_groups_writes(tmp_path):
     """Seam: config interaction between transact context and cache state."""
     cache = dc.Cache(tmp_path / "c")
@@ -191,6 +203,7 @@ def test_fanout_transact_groups_writes_across_shards(tmp_path):
 # --- Memoize integration ---
 
 
+@pytest.mark.depends_on("test_cache_set_returns_true_on_success")
 def test_memoize_caches_result_by_arguments(tmp_path):
     """Seam: state consistency between memoize decorator and cache storage."""
     cache = dc.Cache(tmp_path / "c")
@@ -240,6 +253,7 @@ def test_fanout_named_index_isolates_entries(tmp_path):
     fanout.close()
 
 
+@pytest.mark.depends_on("test_cache_evict_removes_matching_tag")
 def test_fanout_evict_clear_across_shards(tmp_path):
     """Seam: state consistency between fanout aggregate ops and shards."""
     fanout = dc.FanoutCache(tmp_path / "f", shards=4, timeout=1)
@@ -256,6 +270,7 @@ def test_fanout_evict_clear_across_shards(tmp_path):
 # --- Deque persistence and operations ---
 
 
+@pytest.mark.depends_on("test_deque_bounded_maxlen_discards_opposite_end")
 def test_deque_persists_across_reopen(tmp_path):
     """Seam: lifecycle crossing - Deque data survives reopen."""
     directory = tmp_path / "deque"
@@ -267,6 +282,7 @@ def test_deque_persists_across_reopen(tmp_path):
     assert list(reopened) == [-1, 0, 1, 2, 3, 4]
 
 
+@pytest.mark.depends_on("test_deque_bounded_maxlen_discards_opposite_end")
 def test_deque_mutations_visible_through_iteration(tmp_path):
     """Seam: state consistency between deque mutations and iteration."""
     deque = dc.Deque(["a", "b", "c", "a"], directory=tmp_path / "d")
@@ -299,6 +315,7 @@ def test_deque_fromcache_exposes_underlying_cache(tmp_path):
 # --- Index persistence and operations ---
 
 
+@pytest.mark.depends_on("test_index_setdefault_inserts_only_for_missing")
 def test_index_persists_across_reopen(tmp_path):
     """Seam: lifecycle crossing - Index data survives reopen."""
     directory = str(tmp_path / "idx")

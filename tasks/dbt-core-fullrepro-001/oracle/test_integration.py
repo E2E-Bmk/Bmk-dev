@@ -138,6 +138,7 @@ def run_env(full_project):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_parse_valid_project_returns_success", "test_parse_writes_manifest_json")
 def test_cvi1_parse_result_node_count_matches_manifest_json(parse_env):
     """CVI-1: parse result node count matches manifest.json."""
     result = parse_env["result"]
@@ -153,6 +154,8 @@ def test_cvi1_parse_result_node_count_matches_manifest_json(parse_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_list_output_json_returns_parseable_json", "test_parse_writes_manifest_json")
+@pytest.mark.depends_on("test_list_output_json_returns_parseable_json")
 def test_cvi2_list_json_unique_ids_exist_in_manifest(list_env):
     """CVI-2: list JSON unique_ids exist in manifest.json."""
     manifest = load_json(list_env["manifest_path"])
@@ -171,6 +174,7 @@ def test_cvi2_list_json_unique_ids_exist_in_manifest(list_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_list_output_path_returns_file_path")
 def test_cvi3_list_path_matches_manifest_original_file_path(list_env):
     """CVI-3: list path output matches manifest original_file_path."""
     manifest = load_json(list_env["manifest_path"])
@@ -191,6 +195,7 @@ def test_cvi3_list_path_matches_manifest_original_file_path(list_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_list_output_name_returns_model_name")
 def test_cvi4_ls_alias_produces_identical_results_to_list(list_env):
     """CVI-4: dbt ls alias produces identical results to dbt list."""
     assert list_env["ls_names"].success is True
@@ -203,6 +208,8 @@ def test_cvi4_ls_alias_produces_identical_results_to_list(list_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_compile_writes_run_results_json", "test_parse_writes_manifest_json")
+@pytest.mark.depends_on("test_compile_writes_run_results_json")
 def test_cvi5_compile_run_results_ids_in_manifest(compile_env):
     """CVI-5: compile run_results unique_ids found in manifest.json."""
     run_results = load_json(compile_env["run_results_path"])
@@ -216,6 +223,7 @@ def test_cvi5_compile_run_results_ids_in_manifest(compile_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_compile_selected_model_succeeds")
 def test_cvi6_compiled_file_content_matches_manifest_compiled_code(compile_env):
     """CVI-6: compiled file content matches manifest compiled_code."""
     manifest = load_json(compile_env["manifest_path"])
@@ -234,6 +242,7 @@ def test_cvi6_compiled_file_content_matches_manifest_compiled_code(compile_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_parse_result_contains_project_model")
 def test_cvi7_run_results_only_contain_executed_nodes(run_env):
     """CVI-7: run_results only contain executed nodes."""
     run_results = load_json(run_env["run_results_path"])
@@ -242,6 +251,7 @@ def test_cvi7_run_results_only_contain_executed_nodes(run_env):
     assert f"model.{PROJECT_NAME}.{MODEL_BETA}" not in executed_ids
 
 
+@pytest.mark.depends_on("test_parse_result_contains_project_model")
 def test_cvi7_manifest_contains_full_graph_after_run(run_env):
     """CVI-7: manifest retains full graph after selective run."""
     manifest = load_json(run_env["manifest_path"])
@@ -254,6 +264,7 @@ def test_cvi7_manifest_contains_full_graph_after_run(run_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_compile_writes_run_results_json", "test_parse_writes_manifest_json")
 def test_cvi8_custom_target_path_contains_all_artifacts(full_project):
     """CVI-8: custom --target-path redirects all artifacts."""
     root = full_project["root"]
@@ -290,6 +301,7 @@ def test_cvi8_compiled_files_reside_under_custom_target(full_project):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_parse_no_write_json_suppresses_manifest")
 def test_cvi9_no_write_json_returns_valid_manifest_object(full_project):
     """CVI-9: --no-write-json returns valid manifest object."""
     root = full_project["root"]
@@ -304,6 +316,7 @@ def test_cvi9_no_write_json_returns_valid_manifest_object(full_project):
     assert hasattr(result.result, "nodes")
 
 
+@pytest.mark.depends_on("test_parse_no_write_json_suppresses_manifest")
 def test_cvi9_no_write_json_suppresses_all_json_files(full_project):
     """CVI-9: --no-write-json suppresses JSON artifact files."""
     root = full_project["root"]
@@ -322,6 +335,7 @@ def test_cvi9_no_write_json_suppresses_all_json_files(full_project):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_parse_no_partial_parse_still_succeeds")
 def test_cvi10_no_partial_parse_same_nodes_as_normal_parse(full_project):
     """CVI-10: --no-partial-parse yields same nodes as normal parse."""
     root = full_project["root"]
@@ -346,6 +360,8 @@ def test_cvi10_no_partial_parse_same_nodes_as_normal_parse(full_project):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_runner_accepts_manifest_keyword_argument", "test_list_output_name_returns_model_name")
+@pytest.mark.depends_on("test_runner_accepts_manifest_keyword_argument")
 def test_seam_cached_manifest_reuse_in_list(full_project):
     """Seam: protocol handoff — cached manifest reuse in list command."""
     root = full_project["root"]
@@ -368,6 +384,7 @@ def test_seam_cached_manifest_reuse_in_list(full_project):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_parse_valid_project_returns_success", "test_compile_selected_model_succeeds")
 def test_seam_parse_then_compile_produces_sql_file(full_project):
     """Seam: lifecycle crossing — parse then compile produces SQL file."""
     root = full_project["root"]
@@ -410,6 +427,7 @@ def test_seam_compile_run_results_cross_references_manifest(compile_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_list_output_json_respects_output_keys")
 def test_seam_output_keys_filters_json_fields(list_env):
     """Seam: protocol handoff — output-keys filters JSON list fields."""
     rows = [json.loads(r) for r in list_env["list_json"].result]
@@ -460,6 +478,7 @@ def test_manifest_model_names_subset_of_list_names(list_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_parse_writes_partial_parse_msgpack")
 def test_partial_parse_cache_survives_second_invocation(full_project):
     """Seam: lifecycle crossing — partial parse cache survives second invocation."""
     root = full_project["root"]
@@ -572,6 +591,7 @@ def test_run_result_statuses_match_artifact_file(run_env):
 # ===========================================================================
 
 
+@pytest.mark.depends_on("test_list_resource_type_model_returns_success")
 def test_list_resource_type_analysis_filters_correctly(list_env):
     """Seam: protocol handoff — resource-type filter selects analysis only."""
     args = base_args(list_env["project"], list_env["profiles"], list_env["target"])

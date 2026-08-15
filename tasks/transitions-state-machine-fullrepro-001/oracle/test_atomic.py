@@ -21,7 +21,7 @@ from transitions.extensions.states import (
 )
 from transitions.experimental.utils import generate_base_model, transition
 
-from conftest import HAS_GRAPH_BACKEND, make_model, run_async
+from conftest import make_model, run_async
 
 # ---------------------------------------------------------------------------
 # State
@@ -61,7 +61,9 @@ def test_state_on_exit_callback_fires():
 @pytest.mark.parametrize("trigger", ["enter", "exit"])
 def test_state_add_callback_accepts_enter_and_exit(trigger):
     s = State("demo")
-    s.add_callback(trigger, lambda: None)
+    callback = lambda: None
+    s.add_callback(trigger, callback)
+    assert callback in getattr(s, f"on_{trigger}")
 
 
 def test_state_add_callback_rejects_unsupported_trigger():
@@ -81,7 +83,10 @@ def test_transition_exposes_source_and_dest():
 
 @pytest.mark.parametrize("phase", ["prepare", "before", "after"])
 def test_transition_add_callback_accepts_valid_phase(phase):
-    Transition("alpha", "bravo").add_callback(phase, lambda: None)
+    transition = Transition("alpha", "bravo")
+    callback = lambda: None
+    transition.add_callback(phase, callback)
+    assert callback in getattr(transition, phase)
 
 
 def test_transition_add_callback_rejects_invalid_phase():
@@ -532,15 +537,18 @@ def test_nested_state_separator_default():
     assert NestedState.separator == "_"
 
 
-@pytest.mark.skipif(not HAS_GRAPH_BACKEND, reason="no graph backend")
 def test_graph_machine_model_has_get_graph():
     from transitions.extensions import GraphMachine
 
-    m = GraphMachine(states=["alpha", "bravo"], initial="alpha")
+    m = GraphMachine(
+        states=["alpha", "bravo"], initial="alpha", graph_engine="mermaid"
+    )
     graph = m.get_graph()
     assert graph is not None
     raw = graph.draw(None)
-    assert isinstance(raw, bytes)
+    assert isinstance(raw, str)
+    assert "stateDiagram-v2" in raw
+    assert "alpha" in raw and "bravo" in raw
 
 
 def test_locked_machine_basic_transition():
@@ -676,6 +684,8 @@ def test_retry_exceeds_limit_invokes_failure():
     m.again()
     assert len(failed) == 0
     m.again()
+    assert len(failed) == 0
+    m.again()
     assert len(failed) >= 1
 
 
@@ -692,6 +702,12 @@ def test_transition_utility_returns_definition_dict():
 
 
 def test_generate_base_model_creates_class():
-    cfg = Machine(model=None, states=["alpha", "bravo"], initial="alpha")
-    Base = generate_base_model(cfg)
-    assert callable(Base)
+    cfg = {
+        "states": ["alpha", "bravo"],
+        "initial": "alpha",
+        "auto_transitions": True,
+    }
+    definition = generate_base_model(cfg)
+    assert "class BaseModel" in definition
+    assert "def is_alpha(self) -> bool" in definition
+    assert "def to_bravo(self) -> bool" in definition

@@ -74,8 +74,9 @@ def test_decimal_has_native_decimal_and_primitive_text():
 
 # ── BooleanType ──────────────────────────────────────────────────
 
-def test_boolean_accepts_false_digit():
-    assert BooleanType().to_native("0") is False
+@pytest.mark.parametrize("raw, expected", [("0", False), ("1", True)])
+def test_boolean_accepts_digit_values(raw, expected):
+    assert BooleanType().to_native(raw) is expected
 
 
 def test_boolean_accepts_true_text():

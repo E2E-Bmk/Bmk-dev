@@ -14,9 +14,12 @@ import pytest
 import anyio
 from anyio import (
     BrokenResourceError,
+    CapacityLimiter,
     ClosedResourceError,
     EndOfStream,
     Event,
+    Lock,
+    TaskCancelled,
     WouldBlock,
     create_memory_object_stream,
     create_task_group,
@@ -34,6 +37,7 @@ from anyio.abc import TaskStatus
 from anyio.lowlevel import current_token
 from anyio.streams.buffered import BufferedByteReceiveStream
 from anyio.streams.stapled import StapledObjectStream
+from anyio.streams.text import TextReceiveStream, TextSendStream
 from anyio import Path as AsyncPath
 
 pytestmark = pytest.mark.anyio
@@ -137,6 +141,7 @@ async def test_task_group_waits_for_child_result_side_effect():
 
 # ── Protocol handoff: start → started value ──────────────────────
 
+@pytest.mark.depends_on("test_start_soon_handle_returns_result_after_completion")
 async def test_task_group_start_returns_started_value():
     """Seam: protocol handoff — task group start returns started value."""
     async def child(*, task_status: TaskStatus[str]) -> None:
@@ -265,6 +270,7 @@ async def test_from_thread_run_sync_uses_originating_loop():
 
 # ── State consistency: event wakes waiter in task group ───────────
 
+@pytest.mark.depends_on("test_event_set_wakes_all_counted_waiters")
 async def test_event_wakes_waiter():
     """Seam: state consistency — event set wakes blocked waiter in task group."""
     event = Event()
@@ -283,6 +289,7 @@ async def test_event_wakes_waiter():
 
 # ── Representative workflow: memory + timeout ─────────────────────
 
+@pytest.mark.depends_on("test_memory_stream_send_receive_one_item", "test_move_on_after_suppresses_own_timeout")
 async def test_representative_memory_timeout_workflow():
     """Seam: lifecycle crossing — memory stream receive within timeout scope."""
     send, receive = create_memory_object_stream[bytes](1)
@@ -296,6 +303,7 @@ async def test_representative_memory_timeout_workflow():
 
 # ── Representative workflow: task start and cancel ────────────────
 
+@pytest.mark.depends_on("test_start_soon_handle_returns_result_after_completion")
 async def test_representative_task_start_and_cancel_workflow():
     """Seam: lifecycle crossing — task start then cancel scope termination."""
     async def worker(*, task_status: TaskStatus[str]) -> None:
@@ -309,6 +317,7 @@ async def test_representative_task_start_and_cancel_workflow():
 
 # ── Representative workflow: task + memory + file ─────────────────
 
+@pytest.mark.depends_on("test_memory_stream_send_receive_one_item", "test_open_file_writes_and_reads_text")
 async def test_representative_task_memory_file_workflow(tmp_path):
     """Seam: lifecycle crossing — task start writes file and sends on stream."""
     send, receive = create_memory_object_stream[str](1)
@@ -360,3 +369,137 @@ async def test_buffered_receive_until_across_chunks():
     assert await buffered.receive_until(b"h", 10) == b"fg"
     send.close()
     receive.close()
+
+
+# ── CVI-2: cancel scope → TaskHandle cancelled state ─────────────
+
+@pytest.mark.depends_on("test_start_soon_handle_returns_result_after_completion")
+async def test_cancel_scope_moves_task_handle_to_cancelled():
+    """CVI-2: cancel_scope.cancel moves unfinished TaskHandle to cancelled.
+    Seam: state consistency — cancel scope and task handle status agree."""
+    async def long_task():
+        await sleep(999)
+
+    async with create_task_group() as tg:
+        handle = tg.start_soon(long_task)
+        await wait_all_tasks_blocked()
+        tg.cancel_scope.cancel()
+
+    with pytest.raises(TaskCancelled):
+        handle.return_value
+
+
+# ── State consistency: Lock mutual exclusion in task group ────────
+
+@pytest.mark.depends_on("test_lock_statistics_report_locked_state")
+async def test_lock_enforces_mutual_exclusion_across_tasks():
+    """Seam: state consistency — Lock enforces mutual exclusion in task group.
+    Seam: lifecycle crossing — Lock acquire/release spans task lifecycle."""
+    lock = Lock()
+    concurrent_count = 0
+    max_concurrent = 0
+
+    async def worker():
+        nonlocal concurrent_count, max_concurrent
+        await lock.acquire()
+        try:
+            concurrent_count += 1
+            max_concurrent = max(max_concurrent, concurrent_count)
+            await sleep(0.01)
+            concurrent_count -= 1
+        finally:
+            lock.release()
+
+    async with create_task_group() as tg:
+        for _ in range(3):
+            tg.start_soon(worker)
+
+    assert max_concurrent == 1
+
+
+# ── State consistency: CapacityLimiter limits task group concurrency
+
+@pytest.mark.depends_on("test_capacity_limiter_statistics_track_borrowed_tokens")
+async def test_capacity_limiter_limits_concurrency_in_task_group():
+    """Seam: state consistency — CapacityLimiter limits concurrent borrows.
+    Seam: lifecycle crossing — limiter acquire/release across task lifecycle."""
+    limiter = CapacityLimiter(2)
+    max_concurrent = 0
+    concurrent_count = 0
+
+    async def worker():
+        nonlocal concurrent_count, max_concurrent
+        async with limiter:
+            concurrent_count += 1
+            max_concurrent = max(max_concurrent, concurrent_count)
+            await sleep(0.01)
+            concurrent_count -= 1
+
+    async with create_task_group() as tg:
+        for _ in range(5):
+            tg.start_soon(worker)
+
+    assert max_concurrent <= 2
+
+
+# ── Cross-view: text stream encode/decode across task group ───────
+
+@pytest.mark.depends_on("test_text_send_stream_encodes_to_bytes", "test_text_receive_stream_decodes_bytes")
+async def test_text_stream_roundtrip_across_task_group():
+    """CVI-N: text stream encode/decode roundtrip across task group boundary."""
+    send_bytes, receive_bytes = create_memory_object_stream[bytes](1)
+    text_send = TextSendStream(send_bytes, encoding="utf-8")
+    text_receive = TextReceiveStream(receive_bytes, encoding="utf-8")
+    received: list[str] = []
+
+    async def consumer():
+        received.append(await text_receive.receive())
+
+    async with create_task_group() as tg:
+        tg.start_soon(consumer)
+        await wait_all_tasks_blocked()
+        await text_send.send("hello-text")
+
+    assert received == ["hello-text"]
+    await text_send.aclose()
+    await text_receive.aclose()
+
+
+# ── State consistency: async path writes match real filesystem ────
+
+@pytest.mark.depends_on("test_async_path_read_write_roundtrip")
+async def test_async_path_operations_match_real_filesystem(tmp_path):
+    """Seam: state consistency — async path operations match real filesystem state."""
+    apath = AsyncPath(tmp_path / "sub" / "deep")
+    await apath.mkdir(parents=True)
+    assert (tmp_path / "sub" / "deep").is_dir()
+    target = apath / "data.txt"
+    await target.write_text("content")
+    assert await target.exists()
+    assert await target.read_text() == "content"
+    entries = [e async for e in apath.iterdir()]
+    assert [e.name for e in entries] == ["data.txt"]
+
+
+# ── State consistency: lock serializes concurrent task group access
+
+@pytest.mark.depends_on("test_lock_statistics_report_locked_state")
+async def test_lock_serializes_concurrent_task_group_access():
+    """Seam: state consistency — lock serializes concurrent task group access."""
+    lock = Lock()
+    counter = [0]
+    max_concurrent = [0]
+
+    async def worker():
+        async with lock:
+            counter[0] += 1
+            if counter[0] > max_concurrent[0]:
+                max_concurrent[0] = counter[0]
+            await sleep(0)
+            counter[0] -= 1
+
+    async with create_task_group() as tg:
+        for _ in range(5):
+            tg.start_soon(worker)
+
+    assert max_concurrent[0] == 1

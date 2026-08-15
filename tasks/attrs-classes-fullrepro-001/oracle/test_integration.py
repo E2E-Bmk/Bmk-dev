@@ -14,6 +14,7 @@ import attrs
 # --- State Consistency: init → fields → asdict/astuple ---
 
 
+@pytest.mark.depends_on("test_define_creates_class_from_annotated_attributes", "test_fields_supports_index_and_named_access")
 def test_init_values_visible_through_fields_asdict_astuple():
     """Seam: state consistency across init, fields, asdict, astuple."""
     @attrs.define
@@ -27,6 +28,7 @@ def test_init_values_visible_through_fields_asdict_astuple():
     assert attrs.astuple(inst) == ("alpha", 3)
 
 
+@pytest.mark.depends_on("test_fields_dict_returns_ordered_mapping")
 def test_fields_dict_same_objects_as_fields():
     """Seam: state consistency between fields() and fields_dict()."""
     @attrs.define
@@ -38,6 +40,7 @@ def test_fields_dict_same_objects_as_fields():
     assert attrs.fields_dict(Pair)["right"] is attrs.fields(Pair).right
 
 
+@pytest.mark.depends_on("test_converter_runs_before_validator")
 def test_converter_result_visible_in_all_projections():
     """Seam: converter result consistent across attribute access, asdict, equality."""
     @attrs.define
@@ -50,6 +53,7 @@ def test_converter_result_visible_in_all_projections():
     assert inst == Num(42)
 
 
+@pytest.mark.depends_on("test_instance_of_validator_rejects_wrong_type")
 def test_validator_failure_prevents_storage():
     """Seam: validator interacts with init to prevent bad state."""
     @attrs.define
@@ -63,6 +67,7 @@ def test_validator_failure_prevents_storage():
 # --- Protocol Handoff: converter → validator → stored value ---
 
 
+@pytest.mark.depends_on("test_converter_runs_before_validator", "test_instance_of_validator_rejects_wrong_type")
 def test_converter_then_validator_pipeline_on_init():
     """Seam: protocol handoff between converter output and validator input."""
     @attrs.define
@@ -74,6 +79,7 @@ def test_converter_then_validator_pipeline_on_init():
         Port("0")
 
 
+@pytest.mark.depends_on("test_converter_runs_before_validator")
 def test_modern_assignment_runs_converter_then_validator():
     """Seam: protocol handoff on assignment for modern classes."""
     @attrs.define
@@ -87,6 +93,7 @@ def test_modern_assignment_runs_converter_then_validator():
         inst.v = "-1"
 
 
+@pytest.mark.depends_on("test_pipe_converter_chains_in_order")
 def test_setters_pipe_converts_then_validates():
     """Seam: protocol handoff using explicit setters.pipe."""
     @attrs.define(on_setattr=attrs.setters.pipe(attrs.setters.convert, attrs.setters.validate))
@@ -100,6 +107,7 @@ def test_setters_pipe_converts_then_validates():
         inst.v = "0"
 
 
+@pytest.mark.depends_on("test_converter_runs_before_validator")
 def test_no_op_setter_skips_converter_on_assignment():
     """Seam: config interaction between NO_OP setter and converter."""
     @attrs.define
@@ -117,6 +125,7 @@ def test_no_op_setter_skips_converter_on_assignment():
 # --- Lifecycle: evolve ---
 
 
+@pytest.mark.depends_on("test_define_creates_class_from_annotated_attributes", "test_equality_compares_same_class_field_values")
 def test_evolve_produces_new_instance_with_unchanged_fields():
     """Seam: lifecycle - evolve preserves original and creates modified copy."""
     @attrs.define
@@ -132,6 +141,7 @@ def test_evolve_produces_new_instance_with_unchanged_fields():
     assert evolved.host == "localhost"
 
 
+@pytest.mark.depends_on("test_converter_runs_before_validator")
 def test_evolve_runs_converters_and_validators():
     """Seam: protocol handoff - evolve goes through init pipeline."""
     @attrs.define
@@ -145,6 +155,7 @@ def test_evolve_runs_converters_and_validators():
         attrs.evolve(inst, v="0")
 
 
+@pytest.mark.depends_on("test_private_field_strips_underscore_in_init")
 def test_evolve_uses_stripped_alias_for_private_field():
     """Seam: protocol handoff between field naming and evolve argument."""
     @attrs.define
@@ -155,6 +166,7 @@ def test_evolve_uses_stripped_alias_for_private_field():
     assert attrs.asdict(changed) == {"_value": 2}
 
 
+@pytest.mark.depends_on("test_init_false_field_not_accepted_as_argument")
 def test_evolve_rejects_init_false_field():
     """Seam: config interaction between init=False and evolve."""
     @attrs.define
@@ -169,6 +181,7 @@ def test_evolve_rejects_init_false_field():
 # --- Collection Conversion: asdict/astuple with nesting ---
 
 
+@pytest.mark.depends_on("test_define_creates_class_from_annotated_attributes")
 def test_asdict_recurses_nested_attrs_in_lists():
     """Seam: state consistency between asdict recursion and nested instances."""
     @attrs.define
@@ -184,6 +197,7 @@ def test_asdict_recurses_nested_attrs_in_lists():
     assert attrs.asdict(shape) == {"points": [{"x": 1, "y": 2}, {"x": 3, "y": 4}]}
 
 
+@pytest.mark.depends_on("test_define_creates_class_from_annotated_attributes")
 def test_asdict_recurse_false_preserves_instances():
     """Seam: config interaction between recurse=False and nested values."""
     @attrs.define
@@ -198,6 +212,7 @@ def test_asdict_recurse_false_preserves_instances():
     assert attrs.asdict(Outer(inner), recurse=False) == {"child": inner}
 
 
+@pytest.mark.depends_on("test_fields_supports_index_and_named_access")
 def test_astuple_returns_values_in_field_order_recursive():
     """Seam: state consistency between field order and astuple output."""
     @attrs.define
@@ -216,6 +231,7 @@ def test_astuple_returns_values_in_field_order_recursive():
 # --- Filters ---
 
 
+@pytest.mark.depends_on("test_field_type_from_annotation")
 def test_include_filter_selects_by_name_and_type():
     """Seam: config interaction between filter and asdict output."""
     @attrs.define
@@ -229,6 +245,7 @@ def test_include_filter_selects_by_name_and_type():
     assert attrs.asdict(user, filter=attrs.filters.include("name")) == {"name": "jane"}
 
 
+@pytest.mark.depends_on("test_field_type_from_annotation")
 def test_exclude_filter_removes_matching_fields():
     """Seam: config interaction between filter and asdict output."""
     @attrs.define
@@ -241,6 +258,7 @@ def test_exclude_filter_removes_matching_fields():
     assert attrs.asdict(user, filter=attrs.filters.exclude("password", int)) == {"name": "jane"}
 
 
+@pytest.mark.depends_on("test_define_creates_class_from_annotated_attributes")
 def test_value_serializer_transforms_output_values():
     """Seam: protocol handoff between asdict iteration and serializer."""
     @attrs.define

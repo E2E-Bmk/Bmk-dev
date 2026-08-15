@@ -37,6 +37,7 @@ from conftest import (
 # --- CVI: key and message projections ---
 
 
+@pytest.mark.depends_on("test_oct_key_import_preserves_base64url_k_value", "test_jws_missing_alg_raises_missing_algorithm_error")
 def test_imported_key_public_projection_supports_verification(oct_key_256):
     """CVI-1: imported key public JWK fields must support signature verification."""
     jws = JsonWebSignature()
@@ -48,6 +49,7 @@ def test_imported_key_public_projection_supports_verification(oct_key_256):
     assert exported["kid"] == ORACLE_KID_ALPHA
 
 
+@pytest.mark.depends_on("test_rsa_key_import_preserves_public_modulus_and_exponent")
 def test_private_key_reimport_preserves_public_projection(rsa_private_key):
     """CVI-2: private export and reimport must preserve the public projection."""
     exported_private = rsa_private_key.as_dict(is_private=True)
@@ -59,6 +61,7 @@ def test_private_key_reimport_preserves_public_projection(rsa_private_key):
     assert "d" not in reimported_public
 
 
+@pytest.mark.depends_on("test_key_set_find_by_kid_returns_matching_key", "test_jwt_claims_registered_attribute_returns_value")
 def test_keyset_kid_visible_in_jwt_header(key_set_single):
     """CVI-3: key-set kid selection must appear in encoded JWT headers."""
     token = JsonWebToken(["HS256"]).encode({"alg": "HS256"}, {"sub": "user-7"}, key_set_single)
@@ -67,6 +70,7 @@ def test_keyset_kid_visible_in_jwt_header(key_set_single):
     assert claims["sub"] == "user-7"
 
 
+@pytest.mark.depends_on("test_jws_missing_alg_raises_missing_algorithm_error")
 def test_jws_compact_sign_deserialize_round_trip(oct_key_256):
     """CVI-4: compact JWS serialize and deserialize must preserve payload bytes."""
     jws = JsonWebSignature()
@@ -86,6 +90,7 @@ def test_jws_json_sign_deserialize_round_trip():
     assert verified["header"]["kid"] == "json-jws-kid"
 
 
+@pytest.mark.depends_on("test_jwe_missing_alg_raises_missing_algorithm_error")
 def test_jwe_compact_encrypt_decrypt_round_trip(oct_key_128):
     """CVI-6: compact JWE serialize and deserialize must preserve payload bytes."""
     jwe = JsonWebEncryption()
@@ -96,6 +101,7 @@ def test_jwe_compact_encrypt_decrypt_round_trip(oct_key_128):
     assert decrypted["header"]["enc"] == "A128GCM"
 
 
+@pytest.mark.depends_on("test_jwe_missing_enc_raises_missing_encryption_algorithm_error")
 def test_jwe_json_encrypt_decrypt_round_trip(oct_key_128):
     """CVI-7: JSON JWE serialize and deserialize must preserve payload bytes."""
     jwe = JsonWebEncryption()
@@ -109,6 +115,7 @@ def test_jwe_json_encrypt_decrypt_round_trip(oct_key_128):
     assert decrypted["header"]["recipients"][0]["header"]["kid"] == ORACLE_KID_BETA
 
 
+@pytest.mark.depends_on("test_jwt_decode_wrong_segment_count_raises_decode_error")
 def test_jwt_jws_path_encode_decode_round_trip(oct_key_256):
     """CVI-8: JWT without enc must decode through the JWS path with equal claims."""
     payload = {"sub": "jwt-jws-user", "scope": "read:data"}
@@ -118,6 +125,7 @@ def test_jwt_jws_path_encode_decode_round_trip(oct_key_256):
     assert dict(claims) == payload
 
 
+@pytest.mark.depends_on("test_rsa_key_import_preserves_public_modulus_and_exponent", "test_jwe_missing_enc_raises_missing_encryption_algorithm_error")
 def test_jwt_jwe_path_encode_decode_round_trip(rsa_public_key, rsa_private_key):
     """CVI-9: JWT with enc must decode through the JWE path with equal claims."""
     payload = {"sub": "jwt-jwe-user", "scope": "read:secret"}
@@ -132,6 +140,7 @@ def test_jwt_jwe_path_encode_decode_round_trip(rsa_public_key, rsa_private_key):
     assert dict(claims) == payload
 
 
+@pytest.mark.depends_on("test_jws_header_protected_values_take_precedence_over_unprotected")
 def test_decoded_claims_header_matches_protected_serialization():
     """CVI-10: decoded claims header must match protected compact header values."""
     key = OctKey.import_key(SYMMETRIC_SECRET, {"kty": "oct", "kid": ORACLE_KID_BETA})
@@ -149,6 +158,7 @@ def test_decoded_claims_header_matches_protected_serialization():
 # --- Seam: state consistency ---
 
 
+@pytest.mark.depends_on("test_oct_key_generate_includes_kid_in_export", "test_json_web_key_import_key_set_from_keys_list")
 def test_keyset_json_import_find_preserves_kid():
     """Seam: state consistency between KeySet export, import_key_set, and find_by_kid."""
     key = OctKey.generate_key(256, options={"kid": "set-roundtrip"}, is_private=True)
@@ -159,6 +169,7 @@ def test_keyset_json_import_find_preserves_kid():
     assert found["kty"] == "oct"
 
 
+@pytest.mark.depends_on("test_jwt_claims_registered_attribute_returns_value")
 def test_preconfigured_jwt_encode_decode_typ_and_claims():
     """Seam: state consistency between jwt.encode header defaults and jwt.decode claims."""
     token = jwt.encode({"alg": "HS256"}, {"sub": "preconfigured-user"}, SYMMETRIC_SECRET)
@@ -168,6 +179,7 @@ def test_preconfigured_jwt_encode_decode_typ_and_claims():
     assert claims["sub"] == "preconfigured-user"
 
 
+@pytest.mark.depends_on("test_rsa_key_import_preserves_public_modulus_and_exponent")
 def test_rsa_jws_private_sign_public_verify_payload(rsa_private_key, rsa_public_key):
     """Seam: protocol handoff between RSA private signing and public verification keys."""
     jws = JsonWebSignature()
@@ -177,6 +189,7 @@ def test_rsa_jws_private_sign_public_verify_payload(rsa_private_key, rsa_public_
     assert verified["header"]["alg"] == "RS256"
 
 
+@pytest.mark.depends_on("test_oct_key_generate_includes_kid_in_export")
 def test_jws_bad_signature_exposes_partial_result(oct_key_256):
     """Seam: error propagation from verification failure to BadSignatureError.result."""
     jws = JsonWebSignature()
@@ -200,6 +213,7 @@ def test_jwe_def_compression_round_trip(rsa_public_key, rsa_private_key):
 # --- Seam: config interaction ---
 
 
+@pytest.mark.depends_on("test_jwt_claims_registered_attribute_returns_value")
 def test_jwt_datetime_claims_converted_on_encode():
     """Seam: config interaction between datetime payload values and decoded NumericDate claims."""
     moment = dt.datetime(2026, 3, 15, 12, 0, 0, tzinfo=dt.timezone.utc)
@@ -225,6 +239,7 @@ def test_jwt_sensitive_payload_rejected_when_check_enabled():
     assert claims["password"] == "oracle-secret"
 
 
+@pytest.mark.depends_on("test_jws_disallowed_alg_raises_unsupported_algorithm_error")
 def test_jwt_algorithm_allowlist_blocks_disallowed_alg():
     """Seam: config interaction between JsonWebToken algorithms and encode path."""
     processor = JsonWebToken(["RS256"])
@@ -243,6 +258,7 @@ def test_jwks_mapping_encode_decode_with_kid():
     assert claims.header["kid"] == "jwks-alpha"
 
 
+@pytest.mark.depends_on("test_ec_key_import_preserves_curve_coordinates")
 def test_ec_jwt_sign_and_verify_round_trip(ec_private_key, ec_public_key):
     """Seam: protocol handoff between EC signing key and ES256 verification key."""
     payload = {"sub": "ec-user", "tier": "gold"}

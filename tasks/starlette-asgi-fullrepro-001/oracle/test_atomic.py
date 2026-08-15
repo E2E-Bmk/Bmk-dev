@@ -4,15 +4,17 @@ Each test exercises ONE public API with ONE behavior.
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import math
+from io import BytesIO
 from pathlib import Path
 
 import pytest
 
 from starlette.background import BackgroundTask, BackgroundTasks
 from starlette.convertors import Convertor, register_url_convertor
-from starlette.datastructures import URL, Headers, MutableHeaders, QueryParams
+from starlette.datastructures import FormData, Headers, MutableHeaders, QueryParams, URL, UploadFile
 from starlette.exceptions import HTTPException, WebSocketException
 from starlette.middleware import Middleware
 from starlette.requests import Request
@@ -86,11 +88,11 @@ def test_mutable_headers_assignment():
 
 def test_queryparams_multidict():
     qp = QueryParams("a=1&a=2&b=3")
-    assert qp["a"] == "1"
     assert qp.getlist("a") == ["1", "2"]
+    assert qp.get("a") == "2"
     assert qp.get("missing", "default") == "default"
-    assert ("a", "1") in qp.multi_items()
-    assert ("a", "2") in qp.multi_items()
+    assert list(qp.keys()) == ["a", "b"]
+    assert qp.multi_items() == [("a", "1"), ("a", "2"), ("b", "3")]
 
 
 # =============================================================================
@@ -258,3 +260,57 @@ def test_websocket_disconnect_preserves_code_and_reason():
     exc = WebSocketDisconnect(code=1001, reason="going away")
     assert exc.code == 1001
     assert exc.reason == "going away"
+
+
+def test_formdata_preserves_repeated_values_and_uploads():
+    upload = UploadFile(BytesIO(b"payload"), filename="sample.txt")
+    form = FormData([("tag", "one"), ("tag", "two"), ("file", upload)])
+
+    assert form.getlist("tag") == ["one", "two"]
+    assert form["file"] is upload
+    assert upload.filename == "sample.txt"
+
+
+def test_uploadfile_async_io_updates_size():
+    upload = UploadFile(BytesIO(), size=0, filename="sample.bin")
+
+    async def exercise_upload():
+        await upload.write(b"abc")
+        await upload.seek(0)
+        body = await upload.read()
+        await upload.close()
+        return body
+
+    assert asyncio.run(exercise_upload()) == b"abc"
+    assert upload.size == 3
+    assert upload.file.closed is True
+
+
+def test_response_set_cookie_with_secure_flag():
+    resp = Response(content="ok")
+    resp.set_cookie(
+        "token",
+        "abc",
+        max_age=60,
+        path="/api",
+        domain="example.test",
+        secure=True,
+        httponly=True,
+        samesite="strict",
+    )
+    msgs = run_asgi(resp, http_scope())
+    cookie_headers = [v for k, v in msgs[0]["headers"] if k == b"set-cookie"]
+    cookie = cookie_headers[-1].lower()
+    assert b"token=abc" in cookie
+    assert b"max-age=60" in cookie
+    assert b"domain=example.test" in cookie
+    assert b"path=/api" in cookie
+    assert b"secure" in cookie
+    assert b"httponly" in cookie
+    assert b"samesite=strict" in cookie
+
+
+def test_websocket_exception_preserves_code_and_reason():
+    exc = WebSocketException(code=1008, reason="policy violation")
+    assert exc.code == 1008
+    assert exc.reason == "policy violation"

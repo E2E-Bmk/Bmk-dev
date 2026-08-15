@@ -182,3 +182,95 @@ def test_install_kernel_spec_derives_lowercase_name_from_source_directory():
         installed = KernelSpecManager(kernel_dirs=[]).install_kernel_spec(str(source), prefix=str(prefix))
         assert Path(installed).name == "mixedcase"
         assert installed == str(prefix / "share" / "jupyter" / "kernels" / "mixedcase")
+
+# --- supplemental atomic tests (2026-07-23) ---
+
+def test_session_msg_header_exposes_required_protocol_fields():
+    session = Session()
+    header = session.msg_header("inspect_request")
+    assert header["msg_type"] == "inspect_request"
+    assert "msg_id" in header
+    assert "session" in header
+    assert "username" in header
+    assert "version" in header
+    assert "date" in header
+
+def test_connection_file_mixin_exposes_documented_public_methods():
+    from jupyter_client.connect import ConnectionFileMixin
+    mixin = ConnectionFileMixin()
+    for name in ("get_connection_info", "load_connection_file",
+                 "load_connection_info", "write_connection_file",
+                 "cleanup_connection_file"):
+        assert callable(getattr(mixin, name)), f"missing callable {name}"
+
+def test_write_connection_file_stores_byte_key_as_json_string():
+    with TemporaryDirectory() as directory:
+        path, written = write_connection_file(
+            os.path.join(directory, "conn.json"),
+            key=b"oracle-key-77",
+        )
+        on_disk = json.loads(Path(path).read_text(encoding="utf-8"))
+    assert isinstance(on_disk["key"], str)
+    assert on_disk["key"] == "oracle-key-77"
+
+def test_session_deserialize_rejects_too_few_frames_with_type_error():
+    session = Session(key=b"key-93")
+    frames = session.serialize(session.msg("execute_request"))
+    message_frames = frames[2:-1]
+    signature = session.sign(message_frames)
+    with pytest.raises(TypeError):
+        session.deserialize([signature, *message_frames])
+
+def test_find_connection_file_selects_most_recently_accessed_match():
+    import time
+    with TemporaryDirectory() as directory:
+        older = Path(directory, "conn-older.json")
+        older.write_text("{}", encoding="utf-8")
+        time.sleep(0.05)
+        newer = Path(directory, "conn-newer.json")
+        newer.write_text("{}", encoding="utf-8")
+        os.utime(str(newer), None)
+        found = find_connection_file("conn-*.json", path=[directory])
+    assert found == str(newer)
+    assert os.path.isabs(found)
+
+def test_remove_kernel_spec_raises_key_error_for_absent_name():
+    with TemporaryDirectory() as directory:
+        manager = KernelSpecManager(kernel_dirs=[directory])
+        with pytest.raises(KeyError):
+            manager.remove_kernel_spec("absent-kernel-spec-9c4f")
+
+def test_kernelspec_from_resource_dir_raises_for_missing_resource():
+    with pytest.raises((FileNotFoundError, OSError)):
+        KernelSpec.from_resource_dir("/nonexistent/kernel/resource/abc123")
+
+def test_find_kernel_specs_normalizes_names_and_omits_dirs_without_kernel_json():
+    with TemporaryDirectory() as directory:
+        resource = _write_spec(directory, "PascalCase", "Pascal Display")
+        empty_dir = Path(directory, "EmptyDir")
+        empty_dir.mkdir()
+        manager = KernelSpecManager(kernel_dirs=[directory])
+        discovered = manager.find_kernel_specs()
+    assert "pascalcase" in discovered
+    assert discovered["pascalcase"] == str(resource)
+    assert "PascalCase" not in discovered
+    assert "emptydir" not in discovered
+
+def test_session_serialize_round_trip_preserves_content_with_signing():
+    session = Session(key=b"round-trip-key-55")
+    msg = session.msg("is_complete_request", content={"code": "for x in range(5):"})
+    frames = session.serialize(msg)
+    _, wire = session.feed_identities(frames)
+    decoded = session.deserialize(wire)
+    assert decoded["msg_id"] == msg["msg_id"]
+    assert decoded["msg_type"] == "is_complete_request"
+    assert decoded["content"] == {"code": "for x in range(5):"}
+
+def test_session_feed_identities_splits_routing_from_protocol_frames():
+    session = Session(key=b"feed-key-31")
+    msg = session.msg("kernel_info_request")
+    frames = session.serialize(msg, ident=[b"id-alpha", b"id-beta"])
+    identities, protocol = session.feed_identities(frames)
+    assert identities == [b"id-alpha", b"id-beta"]
+    decoded = session.deserialize(protocol)
+    assert decoded["msg_type"] == "kernel_info_request"

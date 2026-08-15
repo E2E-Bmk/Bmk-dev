@@ -28,6 +28,7 @@ from conftest import (
 # ===== Config → Catalog (state consistency seam) =====
 
 class TestConfigCatalogSeam:
+    @pytest.mark.depends_on("test_builds_memory_dataset_by_class_name")
     def test_config_catalog_entry_builds_loadable_dataset(self, tmp_path):
         """Seam: state consistency — config catalog entry builds loadable DataCatalog dataset."""
         conf = tmp_path / "conf"
@@ -39,6 +40,7 @@ class TestConfigCatalogSeam:
         catalog = DataCatalog.from_config(config)
         assert catalog.load("answer") == 44
 
+    @pytest.mark.depends_on("test_loads_base_and_default_env_with_destructive_merge")
     def test_env_override_changes_dataset_value_from_config(self, tmp_path):
         """Seam: config interaction — env override changes dataset value from config loader."""
         conf = tmp_path / "config"
@@ -58,6 +60,7 @@ class TestConfigCatalogSeam:
 # ===== Runner ↔ Pipeline ↔ Catalog (protocol handoff seams) =====
 
 class TestRunnerPipelineCatalog:
+    @pytest.mark.depends_on("test_single_string_input_and_output", "test_save_load_exists_release_cycle")
     def test_runner_shares_catalog_state_across_dependent_nodes(self):
         """Seam: state consistency — runner shares catalog state across dependent nodes."""
         pipe = Pipeline([
@@ -67,6 +70,7 @@ class TestRunnerPipelineCatalog:
         result = SequentialRunner().run(pipe, DataCatalog({"seed": MemoryDataset(5)}))
         assert result["result"].load() == 12
 
+    @pytest.mark.depends_on("test_single_string_input_and_output")
     def test_runner_joins_outputs_from_parallel_branches(self):
         """Seam: protocol handoff — runner joins outputs from parallel pipeline branches."""
         pipe = Pipeline([
@@ -77,6 +81,7 @@ class TestRunnerPipelineCatalog:
         result = SequentialRunner().run(pipe, DataCatalog({"seed": MemoryDataset(4)}))
         assert result["total"].load() == 13
 
+    @pytest.mark.depends_on("test_nodes_ordered_by_dependency_not_input_order")
     def test_runner_uses_dependency_order(self):
         """Seam: protocol handoff — runner executes nodes in dependency order."""
         calls = []
@@ -96,6 +101,7 @@ class TestRunnerPipelineCatalog:
         SequentialRunner().run(pipe, DataCatalog({"in": MemoryDataset(3)}))
         assert calls == ["first", "second"]
 
+    @pytest.mark.depends_on("test_list_outputs_require_matching_sequence_length")
     def test_runner_consumes_multiple_outputs_in_later_node(self):
         """Seam: protocol handoff — runner consumes multiple upstream outputs in join node."""
         pipe = Pipeline([
@@ -109,12 +115,14 @@ class TestRunnerPipelineCatalog:
 # ===== Runner ↔ Pipeline Filtering (config interaction seam) =====
 
 class TestRunnerFiltering:
+    @pytest.mark.depends_on("test_from_inputs_and_to_outputs")
     def test_from_inputs_slice_executed_by_runner(self):
         """Seam: config interaction — from_inputs pipeline slice executed by runner."""
         selected = make_three_step_pipeline().from_inputs("clean")
         result = SequentialRunner().run(selected, DataCatalog({"clean": MemoryDataset(6)}))
         assert result["report"].load() == "12"
 
+    @pytest.mark.depends_on("test_from_inputs_and_to_outputs")
     def test_to_outputs_slice_executed_by_runner(self):
         """Seam: config interaction — to_outputs pipeline slice limits runner outputs."""
         selected = make_three_step_pipeline().to_outputs("model")
@@ -122,6 +130,7 @@ class TestRunnerFiltering:
         assert set(result) == {"model"}
         assert result["model"].load() == 12
 
+    @pytest.mark.depends_on("test_only_nodes_with_tags")
     def test_tag_filtered_node_executed_with_catalog_input(self):
         """Seam: config interaction — tag-filtered pipeline node executed with catalog input."""
         selected = make_three_step_pipeline().only_nodes_with_tags("train")
@@ -134,6 +143,7 @@ class TestRunnerFiltering:
         result = SequentialRunner().run(selected, DataCatalog({"raw": MemoryDataset(6)}))
         assert result["model"].load() == 14
 
+    @pytest.mark.depends_on("test_only_nodes_with_namespaces")
     def test_namespace_filtered_pipeline(self):
         """Seam: config interaction — namespace filter limits runner to namespace nodes."""
         pipe = Pipeline([
@@ -157,6 +167,7 @@ class TestRunnerErrors:
             SequentialRunner().run(pipe, DataCatalog())
         assert called == []
 
+    @pytest.mark.depends_on("test_single_string_input_and_output")
     def test_upstream_exception_prevents_downstream(self):
         """Seam: error propagation — upstream exception prevents downstream node execution."""
         called = []
@@ -184,6 +195,7 @@ class TestRunnerErrors:
             SequentialRunner().run(pipe, catalog)
         assert called == []
 
+    @pytest.mark.depends_on("test_load_failure_wrapped_in_dataset_error")
     def test_load_error_prevents_node(self):
         """Seam: error propagation — dataset load error prevents consuming node."""
         called = []
@@ -196,6 +208,7 @@ class TestRunnerErrors:
 # ===== Runner Confirmations (lifecycle crossing seam) =====
 
 class TestRunnerConfirmations:
+    @pytest.mark.depends_on("test_confirm_calls_public_confirm_method")
     def test_runner_applies_dataset_confirmation_after_node(self):
         """Seam: lifecycle crossing — runner applies dataset confirmation after node completes."""
         audit = ConfirmableMemoryDataset("ready")
@@ -207,6 +220,7 @@ class TestRunnerConfirmations:
 # ===== Config ↔ Catalog ↔ Runner (multi-seam composition) =====
 
 class TestConfigCatalogRunner:
+    @pytest.mark.depends_on("test_runtime_params_override_file_values")
     def test_env_override_feeds_runner_via_config(self, tmp_path):
         """Seam: config interaction — env override feeds runner via OmegaConfigLoader parameters."""
         conf = tmp_path / "config"
@@ -219,6 +233,7 @@ class TestConfigCatalogRunner:
         result = SequentialRunner().run(pipe, DataCatalog({"params:value": MemoryDataset(params["value"])}))
         assert result["result"].load() == 16
 
+    @pytest.mark.depends_on("test_soft_merge_preserves_nested_base_keys")
     def test_soft_merged_config_values_feed_runner(self, tmp_path):
         """Seam: config interaction — soft-merged config values feed runner pipeline."""
         conf = tmp_path / "config"
@@ -237,6 +252,7 @@ class TestConfigCatalogRunner:
         })
         assert SequentialRunner().run(pipe, catalog)["total"].load() == 12
 
+    @pytest.mark.depends_on("test_runtime_params_override_file_values")
     def test_runtime_param_override_feeds_runner(self, tmp_path):
         """Seam: config interaction — runtime param override feeds runner via config loader."""
         conf = tmp_path / "config"
@@ -260,6 +276,7 @@ class TestConfigCatalogRunner:
 # ===== Cross-View Invariants =====
 
 class TestCrossViewInvariants:
+    @pytest.mark.depends_on("test_free_inputs_outputs_all_inputs_outputs_datasets", "test_keys_containment_len_and_indexing")
     def test_pipeline_inputs_match_catalog_load_keys(self):
         """CVI-N: pipeline inputs match catalog load keys across runner execution."""
         pipe = Pipeline([node(add_one, "source", "result", name="add")])
@@ -268,6 +285,7 @@ class TestCrossViewInvariants:
         assert catalog.load(next(iter(pipe.inputs()))) == 5
         assert SequentialRunner().run(pipe, catalog)["result"].load() == 6
 
+    @pytest.mark.depends_on("test_free_inputs_outputs_all_inputs_outputs_datasets")
     def test_pipeline_outputs_match_catalog_saved_values(self):
         """CVI-N: pipeline outputs match catalog saved values after runner."""
         pipe = Pipeline([node(double, "source", "product", name="double")])

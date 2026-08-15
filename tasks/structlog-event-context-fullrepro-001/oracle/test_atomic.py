@@ -157,3 +157,84 @@ def test_unbind_reports_missing_key():
 def test_filtering_bound_logger_rejects_unknown_level_name():
     with pytest.raises(KeyError):
         structlog.make_filtering_bound_logger("loud")
+
+# --- supplemental atomic tests (2026-07-23) ---
+
+def test_write_logger_raises_type_error_for_non_string_message():
+    stream = io.StringIO()
+    with pytest.raises(TypeError):
+        structlog.WriteLogger(stream).msg(12345)
+
+def test_bytes_logger_raises_type_error_for_non_bytes_message():
+    stream = io.BytesIO()
+    with pytest.raises(TypeError):
+        structlog.BytesLogger(stream).msg("not-bytes")
+
+def test_bytes_logger_accepts_optional_name_argument():
+    stream = io.BytesIO()
+    logger = structlog.BytesLogger(stream, name="custom")
+    logger.msg(b"data")
+    assert stream.getvalue() == b"data\n"
+
+def test_key_value_renderer_omits_absent_requested_key():
+    rendered = processors.KeyValueRenderer(
+        key_order=["event", "missing_key"], drop_missing=True
+    )(
+        None, "info", {"event": "go", "extra": 2}
+    )
+    assert "missing_key" not in rendered
+    assert "event=" in rendered
+    assert "extra=" in rendered
+
+def test_return_logger_factory_reuses_single_instance():
+    with pytest.raises(TypeError):
+        structlog.ReturnLoggerFactory("unsupported")
+    factory = structlog.ReturnLoggerFactory()
+    first = factory()
+    second = factory("ignored-arg")
+    assert first is second
+    assert isinstance(first, structlog.ReturnLogger)
+
+def test_write_logger_factory_creates_write_logger():
+    stream = io.StringIO()
+    factory = structlog.WriteLoggerFactory(stream)
+    logger = factory("positional", "ignored")
+    logger.msg("factory-line")
+    assert stream.getvalue() == "factory-line\n"
+    assert isinstance(logger, structlog.WriteLogger)
+
+def test_bytes_logger_factory_creates_bytes_logger():
+    stream = io.BytesIO()
+    factory = structlog.BytesLoggerFactory(stream)
+    logger = factory("positional")
+    logger.msg(b"factory-bytes")
+    assert stream.getvalue() == b"factory-bytes\n"
+    assert isinstance(logger, structlog.BytesLogger)
+
+def test_log_capture_appends_entry_and_raises_drop_event():
+    from structlog.testing import LogCapture
+    lc = LogCapture()
+    with pytest.raises(structlog.DropEvent):
+        lc(None, "warning", {"event": "captured", "value": 3})
+    assert lc.entries == [
+        {"event": "captured", "value": 3, "log_level": "warning"}
+    ]
+
+def test_timestamper_adds_timestamp_to_event():
+    timestamper = processors.TimeStamper()
+    result = timestamper(None, "info", {"event": "go"})
+    assert "timestamp" in result
+    assert result["event"] == "go"
+
+def test_console_renderer_renders_true_exc_info_after_log_line():
+    import sys
+    try:
+        raise ValueError("test-exc-94")
+    except ValueError:
+        exc = sys.exc_info()
+    rendered = dev.ConsoleRenderer(colors=False)(
+        None, "error", {"event": "crash", "exc_info": exc}
+    )
+    event_position = rendered.index("crash")
+    exception_position = rendered.index("ValueError: test-exc-94")
+    assert event_position < exception_position

@@ -1,4 +1,4 @@
-﻿"""Integration tests for rq-fullrepro-001.
+"""Integration tests for rq-fullrepro-001.
 
 Each test crosses ≥2 public API boundaries.
 """
@@ -43,6 +43,7 @@ from rq.serializers import JSONSerializer
 # --- Cross-view invariants ---
 
 
+@pytest.mark.depends_on("test_send_stop_job_command_raises_for_idle_job", "test_retry_exposes_max_intervals_and_enqueue_at_front", "test_requeue_job_missing_raises_no_such_job_error")
 def test_enqueue_job_is_fetchable(connection, queue):
     """CVI-1: enqueue projection must match Job.fetch view."""
     job = queue.enqueue(multiply, 11, 13, job_id="fetch-oracle")
@@ -53,6 +54,7 @@ def test_enqueue_job_is_fetchable(connection, queue):
     assert fetched.args == (11, 13)
 
 
+@pytest.mark.depends_on("test_get_jobs_matches_job_ids_order", "test_job_fetch_many_aligns_missing_entries_with_none", "test_get_job_ids_returns_empty_for_new_queue")
 def test_get_jobs_aligns_with_get_job_ids(queue):
     """CVI-2: ready id list and Job list must stay aligned."""
     first = queue.enqueue(format_greeting, "one", job_id="align-one")
@@ -63,6 +65,7 @@ def test_get_jobs_aligns_with_get_job_ids(queue):
     assert queue.get_jobs()[1].id == second.id
 
 
+@pytest.mark.depends_on("test_job_exists_is_false_before_persistence", "test_send_stop_job_command_raises_for_idle_job", "test_return_value_is_none_before_execution")
 def test_at_front_job_runs_before_earlier_ready_job(connection):
     """CVI-3: at_front enqueue order must control worker dequeue order."""
     queue = make_queue(connection, QUEUE_BETA)
@@ -75,6 +78,7 @@ def test_at_front_job_runs_before_earlier_ready_job(connection):
     assert Job.fetch(first.id, connection=connection).get_status() == JobStatus.QUEUED
 
 
+@pytest.mark.depends_on("test_send_stop_job_command_raises_for_idle_job", "test_retry_exposes_max_intervals_and_enqueue_at_front", "test_requeue_job_missing_raises_no_such_job_error")
 def test_enqueue_in_keeps_job_in_scheduled_registry(queue):
     """CVI-4: delayed jobs must live in scheduled registry, not ready queue."""
     job = queue.enqueue_in(timedelta(minutes=12), format_greeting, "later", job_id="later-oracle")
@@ -84,6 +88,7 @@ def test_enqueue_in_keeps_job_in_scheduled_registry(queue):
     assert job in ScheduledJobRegistry(queue=queue)
 
 
+@pytest.mark.depends_on("test_send_stop_job_command_raises_for_idle_job", "test_requeue_job_missing_raises_no_such_job_error", "test_queue_remove_clears_ready_membership")
 def test_running_job_reports_started_registry_membership(connection, queue):
     """CVI-5: executing jobs must appear in StartedJobRegistry."""
     job = queue.enqueue(started_registry_snapshot, job_id="started-view")
@@ -93,6 +98,7 @@ def test_running_job_reports_started_registry_membership(connection, queue):
     assert snapshot == {"status": "started", "in_started": True}
 
 
+@pytest.mark.depends_on("test_return_value_is_none_before_execution", "test_retry_exposes_max_intervals_and_enqueue_at_front", "test_repeat_exposes_times_and_intervals")
 def test_successful_execution_updates_finished_registry_and_return_value(connection, queue):
     """CVI-6: success must finish the job and expose the return value."""
     job = queue.enqueue(multiply, 6, 7, job_id="success-oracle")
@@ -105,6 +111,7 @@ def test_successful_execution_updates_finished_registry_and_return_value(connect
     assert job not in StartedJobRegistry(queue=queue)
 
 
+@pytest.mark.depends_on("test_return_value_is_none_before_execution", "test_retry_exposes_max_intervals_and_enqueue_at_front", "test_repeat_exposes_times_and_intervals")
 def test_failed_execution_updates_failed_registry_and_result(connection, queue):
     """CVI-7: terminal failure must land in FailedJobRegistry with result metadata."""
     job = queue.enqueue(raise_runtime_failure, job_id="fail-oracle")
@@ -117,6 +124,7 @@ def test_failed_execution_updates_failed_registry_and_result(connection, queue):
     assert "RuntimeError" in job.latest_result().exc_string
 
 
+@pytest.mark.depends_on("test_send_stop_job_command_raises_for_idle_job", "test_requeue_job_missing_raises_no_such_job_error", "test_job_status_queued_value")
 def test_cancel_moves_job_to_canceled_registry(queue):
     """CVI-8: cancel must remove ready membership and add canceled registry entry."""
     job = queue.enqueue(format_greeting, "cancel-me", job_id="cancel-oracle")
@@ -128,6 +136,7 @@ def test_cancel_moves_job_to_canceled_registry(queue):
     assert job in CanceledJobRegistry(queue=queue)
 
 
+@pytest.mark.depends_on("test_queue_remove_clears_ready_membership", "test_requeue_job_missing_raises_no_such_job_error", "test_queue_requires_connection")
 def test_failed_registry_requeue_restores_ready_queue(connection, queue):
     """CVI-9: failed registry requeue must restore ready queue membership."""
     job = queue.enqueue(raise_runtime_failure, job_id="requeue-oracle")
@@ -139,6 +148,7 @@ def test_failed_registry_requeue_restores_ready_queue(connection, queue):
     assert job not in FailedJobRegistry(queue=queue)
 
 
+@pytest.mark.depends_on("test_retry_exposes_max_intervals_and_enqueue_at_front", "test_repeat_exposes_times_and_intervals", "test_rate_limit_stores_key_and_concurrency")
 def test_worker_registration_visible_during_and_cleared_after_burst(connection, queue):
     """CVI-11: a processing worker must be discoverable through Worker.all and
     Worker.count (monitoring projection) while it runs, and must deregister after
@@ -156,6 +166,7 @@ def test_worker_registration_visible_during_and_cleared_after_burst(connection, 
     assert Worker.all(connection=connection) == []
 
 
+@pytest.mark.depends_on("test_json_serializer_round_trips_compatible_payload", "test_queue_requires_connection", "test_queue_remove_clears_ready_membership")
 def test_json_serializer_queue_worker_round_trip(connection):
     """CVI-12: serializer choice must stay consistent across queue and worker."""
     queue = Queue("json-lane", connection=connection, serializer=JSONSerializer)
@@ -170,6 +181,7 @@ def test_json_serializer_queue_worker_round_trip(connection):
 # --- State consistency seams ---
 
 
+@pytest.mark.depends_on("test_retry_exposes_max_intervals_and_enqueue_at_front", "test_repeat_exposes_times_and_intervals", "test_rate_limit_stores_key_and_concurrency")
 def test_enqueue_persists_origin_status_and_arguments(queue):
     """Seam: state consistency between Queue.enqueue and Job status fields."""
     job = queue.enqueue(multiply, 17, 19, job_id="persist-oracle")
@@ -179,6 +191,7 @@ def test_enqueue_persists_origin_status_and_arguments(queue):
     assert queue.fetch_job(job.id).kwargs == {}
 
 
+@pytest.mark.depends_on("test_return_value_is_none_before_execution", "test_job_status_queued_value", "test_job_fetch_raises_no_such_job_error")
 def test_finished_return_value_survives_job_fetch(connection, queue):
     """Seam: state consistency between worker result and Job.fetch return_value."""
     job = queue.enqueue(multiply, 8, 9, job_id="refetch-oracle")
@@ -189,6 +202,7 @@ def test_finished_return_value_survives_job_fetch(connection, queue):
     assert fetched.return_value() == 72
 
 
+@pytest.mark.depends_on("test_retry_exposes_max_intervals_and_enqueue_at_front")
 def test_enqueue_at_records_scheduled_time(queue):
     """Seam: state consistency between enqueue_at and ScheduledJobRegistry time."""
     scheduled_at = datetime.now(timezone.utc) + timedelta(minutes=20)
@@ -198,6 +212,7 @@ def test_enqueue_at_records_scheduled_time(queue):
     assert recorded.replace(microsecond=0) == scheduled_at.replace(microsecond=0)
 
 
+@pytest.mark.depends_on("test_return_value_is_none_before_execution", "test_latest_result_returns_none_with_zero_timeout", "test_job_status_queued_value")
 def test_result_history_records_successful_return_value(connection, queue):
     """Seam: state consistency between return_value and results history."""
     job = queue.enqueue(multiply, 10, 11, job_id="history-oracle")
@@ -211,6 +226,7 @@ def test_result_history_records_successful_return_value(connection, queue):
     assert results[0].job_id == job.id
 
 
+@pytest.mark.depends_on("test_retry_exposes_max_intervals_and_enqueue_at_front", "test_queue_requires_connection", "test_queue_remove_clears_ready_membership")
 def test_queue_all_lists_queue_after_enqueue(connection):
     """Seam: state consistency between Queue.all and enqueue side effects."""
     queue = make_queue(connection, "listed-queue")
@@ -219,6 +235,7 @@ def test_queue_all_lists_queue_after_enqueue(connection):
     assert [item.name for item in Queue.all(connection=connection)] == ["listed-queue"]
 
 
+@pytest.mark.depends_on("test_retry_exposes_max_intervals_and_enqueue_at_front", "test_job_fetch_many_aligns_missing_entries_with_none", "test_group_fetch_missing_raises_no_such_group_error")
 def test_group_enqueue_many_links_jobs_to_group(connection, queue):
     """Seam: state consistency between Group.enqueue_many and group.get_jobs."""
     group = Group.create(connection=connection, name="batch-oracle")
@@ -231,6 +248,7 @@ def test_group_enqueue_many_links_jobs_to_group(connection, queue):
     assert {job.id for job in group.get_jobs()} == {job.id for job in jobs}
 
 
+@pytest.mark.depends_on("test_get_jobs_matches_job_ids_order", "test_get_job_position_is_none_after_remove", "test_get_job_ids_returns_empty_for_new_queue")
 def test_get_current_job_matches_executed_job_id(connection, queue):
     """Seam: state consistency between worker execution and get_current_job."""
     job = queue.enqueue(capture_running_job_id, job_id="current-oracle")
@@ -242,6 +260,7 @@ def test_get_current_job_matches_executed_job_id(connection, queue):
 # --- Lifecycle crossing seams ---
 
 
+@pytest.mark.depends_on("test_requeue_job_missing_raises_no_such_job_error", "test_queue_remove_clears_ready_membership", "test_get_job_ids_returns_empty_for_new_queue")
 def test_job_requeue_helper_restores_ready_queue(connection, queue):
     """Seam: lifecycle crossing from failed registry back to ready queue via Job.requeue."""
     job = queue.enqueue(raise_runtime_failure, job_id="job-requeue-oracle")
@@ -252,6 +271,7 @@ def test_job_requeue_helper_restores_ready_queue(connection, queue):
     assert queue.get_job_ids() == [job.id]
 
 
+@pytest.mark.depends_on("test_requeue_job_missing_raises_no_such_job_error", "test_queue_remove_clears_ready_membership", "test_get_job_ids_returns_empty_for_new_queue")
 def test_requeue_job_function_restores_ready_queue(connection, queue):
     """Seam: lifecycle crossing through requeue_job helper."""
     job = queue.enqueue(raise_runtime_failure, job_id="helper-requeue-oracle")

@@ -37,8 +37,23 @@ todo:
 
 - `S3B_TRIGGER` 要求 `filter/rewrite_audit.md` 存在 — 否则回 `S3A_REWRITE`
 - `S3_ORACLE_MERGE` 要求 `kept_upstream.txt` 或 `generated_tests.py` 至少一个存在
+- `S4_SETUP` 要求 `filter/lint_result.txt` 存在且首行为 `LINT_PASS`
 - `S4_SETUP` 要求 `filter/reference_score.json` 存在且 pass rate = 100%
 - `S5_JUDGE` 要求 `candidate-runs/.../score_result.json` 存在
+- `QUALIFIED` 要求 `filter/lint_result.txt` 的时间戳晚于 `oracle/` 下所有测试文件的最后修改
+  时间 — judging 期间改过 oracle 就必须重跑 lint
+
+`filter/lint_result.txt` 由下列命令产生，输出整体重定向，不要只记结论：
+
+```bash
+python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
+  > wip/<task>/filter/lint_result.txt 2>&1
+```
+
+**为什么这条要落盘而不是"检查过了"就行。** httpcore 通过了 judging，其 oracle 有
+8 条 atomic 测试断言 spec 从未声明的上游异常树；Fairness Gate A 的抽样按流程执行
+了，但抽样看不见这 8 条。规则被遵守，缺陷仍然通过。产物落盘让检查结果可被下游与
+人工复核，而不是依赖执行者的自述。
 
 ---
 
@@ -256,6 +271,8 @@ todo:
 ### S5_JUDGE
 ```
 todo:
+  - [ ] 复跑符号声明 lint 并落盘（judging 期间改过 oracle 时必须重跑）:
+        `python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md > wip/<task>/filter/lint_result.txt 2>&1`
   - [ ] Anti-cheat preflight: `python -c "import <pkg>; print(<pkg>.__file__)"`，结果写入报告
   - [ ] Solvability: reference 跑 oracle，要求 ≥ 95%
   - [ ] Fairness Gate A: spec_section spot-check（covered 行 → 验证 spec heading 存在）

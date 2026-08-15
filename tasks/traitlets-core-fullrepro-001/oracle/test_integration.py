@@ -63,6 +63,7 @@ from traitlets.config.loader import (
 from conftest import IntegerModel, Worker, MiniApp, clear_application_tree
 
 
+@pytest.mark.depends_on("test_trait_constructor_keyword_sets_public_value")
 def test_dynamic_default_is_lazy_and_constructor_overrides_it():
     """Seam: lifecycle crossing — @default lazy evaluation vs constructor override."""
     class Model(HasTraits):
@@ -82,6 +83,7 @@ def test_dynamic_default_is_lazy_and_constructor_overrides_it():
     assert lazy.value == 10
     assert lazy.calls == 1
 
+@pytest.mark.depends_on("test_bunch_attribute_and_item_views_match")
 def test_observe_receives_bunch_change_and_unobserve_stops_it():
     """Seam: protocol handoff — observe/unobserve controls change notification delivery."""
     class Model(HasTraits):
@@ -100,6 +102,7 @@ def test_observe_receives_bunch_change_and_unobserve_stops_it():
     obj.value = 3
     assert seen == [(obj, "value", 1, 2, "change")]
 
+@pytest.mark.depends_on("test_trait_constructor_keyword_sets_public_value")
 def test_observe_decorator_registers_class_observer():
     """Seam: protocol handoff — @observe decorator registers class-level handler."""
     class Model(HasTraits):
@@ -113,6 +116,7 @@ def test_observe_decorator_registers_class_observer():
     obj.value = 9
     assert obj.last == (4, 9)
 
+@pytest.mark.depends_on("test_rejected_assignment_preserves_previous_value")
 def test_validator_transforms_value_before_storage():
     """Seam: state consistency — @validate transform applied before trait storage."""
     class Model(HasTraits):
@@ -126,6 +130,7 @@ def test_validator_transforms_value_before_storage():
     obj.value = 4
     assert obj.value == 5
 
+@pytest.mark.depends_on("test_rejected_assignment_preserves_previous_value")
 def test_validator_rejection_preserves_old_value():
     """Seam: error propagation — validator rejection preserves previous trait value."""
     class Model(HasTraits):
@@ -142,6 +147,7 @@ def test_validator_rejection_preserves_old_value():
         obj.value = -1
     assert obj.value == 1
 
+@pytest.mark.depends_on("test_trait_constructor_keyword_sets_public_value")
 def test_hold_trait_notifications_batches_successful_changes():
     """Seam: lifecycle crossing — hold_trait_notifications batches observer delivery."""
     class Model(HasTraits):
@@ -158,6 +164,7 @@ def test_hold_trait_notifications_batches_successful_changes():
     assert obj.b == 2
     assert set(seen) == {"a", "b"}
 
+@pytest.mark.depends_on("test_rejected_assignment_preserves_previous_value")
 def test_hold_trait_notifications_rolls_back_on_validation_error():
     """Seam: error propagation — hold block rolls back all changes on TraitError."""
     class Model(HasTraits):
@@ -176,6 +183,7 @@ def test_hold_trait_notifications_rolls_back_on_validation_error():
             obj.value = -1
     assert obj.value == 1
 
+@pytest.mark.depends_on("test_trait_constructor_keyword_sets_public_value")
 def test_bidirectional_link_synchronizes_and_unlink_detaches():
     """Seam: state consistency — bidirectional link syncs traits until unlink."""
     class Model(HasTraits):
@@ -192,6 +200,7 @@ def test_bidirectional_link_synchronizes_and_unlink_detaches():
     left.value = 9
     assert right.value == 7
 
+@pytest.mark.depends_on("test_trait_constructor_keyword_sets_public_value")
 def test_directional_link_only_updates_target():
     """Seam: protocol handoff — directional_link updates target without reverse propagation."""
     class Model(HasTraits):
@@ -206,6 +215,7 @@ def test_directional_link_only_updates_target():
     assert source.value == 4
     connector.unlink()
 
+@pytest.mark.depends_on("test_trait_constructor_keyword_sets_public_value")
 def test_link_transform_uses_forward_and_reverse_functions():
     """Seam: config interaction — link transform forward/reverse functions on sync."""
     class Model(HasTraits):
@@ -220,6 +230,7 @@ def test_link_transform_uses_forward_and_reverse_functions():
     assert left.value == 20
     connector.unlink()
 
+@pytest.mark.depends_on("test_error_semantics_invalid_trait_and_import_item")
 def test_invalid_link_endpoint_raises_before_linking():
     """Seam: error propagation — invalid link endpoint raises before linking."""
     class Model(HasTraits):
@@ -229,6 +240,7 @@ def test_invalid_link_endpoint_raises_before_linking():
     with pytest.raises((TypeError, ValueError, TraitError)):
         link((obj, "missing"), (obj, "value"))
 
+@pytest.mark.depends_on("test_config_installable_surface_exports_core_names")
 def test_config_uppercase_attribute_creates_section_and_lowercase_missing_fails():
     """Seam: state consistency — Config uppercase attrs ↔ dict section views."""
     cfg = Config()
@@ -237,6 +249,7 @@ def test_config_uppercase_attribute_creates_section_and_lowercase_missing_fails(
     cfg["Worker"]["count"] = 3
     assert cfg.Worker.count == 3
 
+@pytest.mark.depends_on("test_config_installable_surface_exports_core_names")
 def test_config_merge_overrides_scalars_and_preserves_nested_values():
     """Seam: config interaction — Config.merge overrides scalars, preserves nested keys."""
     base = Config({"Worker": {"name": "base", "count": 1}})
@@ -246,6 +259,7 @@ def test_config_merge_overrides_scalars_and_preserves_nested_values():
     assert base.Worker.count == 1
     assert base.Worker.enabled is True
 
+@pytest.mark.depends_on("test_config_installable_surface_exports_core_names")
 def test_config_collisions_reports_conflicting_values():
     """Seam: state consistency — Config.collisions detects conflicting section values."""
     left = Config({"Worker": {"name": "left"}})
@@ -254,6 +268,7 @@ def test_config_collisions_reports_conflicting_values():
     assert "Worker" in collisions
     assert collisions["Worker"]
 
+@pytest.mark.depends_on("test_loader_installable_surface_exports_loader_names")
 def test_lazy_config_value_applies_container_updates():
     """Seam: protocol handoff — LazyConfigValue defers list/dict container mutations."""
     lazy = LazyConfigValue()
@@ -264,6 +279,7 @@ def test_lazy_config_value_applies_container_updates():
     mapping.update({"a": 1})
     assert mapping.get_value({"b": 2}) == {"a": 1, "b": 2}
 
+@pytest.mark.depends_on("test_loader_installable_surface_exports_loader_names")
 def test_json_config_loader_reads_public_config_values(tmp_path):
     """Seam: protocol handoff — JSONFileConfigLoader file → Config section values."""
     path = tmp_path / "sample.json"
@@ -271,6 +287,7 @@ def test_json_config_loader_reads_public_config_values(tmp_path):
     cfg = JSONFileConfigLoader(str(path)).load_config()
     assert cfg.Worker.name == "json"
 
+@pytest.mark.depends_on("test_loader_installable_surface_exports_loader_names")
 def test_py_config_loader_uses_get_config_object(tmp_path):
     """Seam: protocol handoff — PyFileConfigLoader executes get_config() assignments."""
     path = tmp_path / "sample.py"
@@ -278,12 +295,14 @@ def test_py_config_loader_uses_get_config_object(tmp_path):
     cfg = PyFileConfigLoader(str(path)).load_config()
     assert cfg.Worker.name == "python"
 
+@pytest.mark.depends_on("test_error_semantics_invalid_config_value_raises_trait_error")
 def test_missing_required_config_file_raises(tmp_path):
     """Seam: error propagation — missing config file raises ConfigFileNotFound."""
     loader = JSONFileConfigLoader("missing.json", path=str(tmp_path))
     with pytest.raises(ConfigFileNotFound):
         loader.load_config()
 
+@pytest.mark.depends_on("test_trait_metadata_tag_visible_through_trait_metadata")
 def test_configurable_loads_tagged_traits_from_matching_section():
     """Seam: config interaction — Config section loads tagged Configurable traits."""
     cfg = Config({"Worker": {"label": "configured", "enabled": True}})
@@ -291,12 +310,14 @@ def test_configurable_loads_tagged_traits_from_matching_section():
     assert worker.label == "configured"
     assert worker.enabled is True
 
+@pytest.mark.depends_on("test_trait_constructor_keyword_sets_public_value")
 def test_configurable_constructor_keyword_overrides_config_value():
     """Seam: config interaction — constructor keyword overrides Config-provided trait."""
     cfg = Config({"Worker": {"label": "configured"}})
     worker = Worker(config=cfg, label="kw")
     assert worker.label == "kw"
 
+@pytest.mark.depends_on("test_config_installable_surface_exports_core_names")
 def test_update_config_changes_existing_configurable_trait():
     """Seam: lifecycle crossing — update_config mutates live Configurable traits."""
     worker = Worker()

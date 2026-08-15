@@ -43,6 +43,7 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_plain_text_response")
 def test_route_returns_correct_response_through_test_client():
     """CVI-1: Seam: protocol handoff — route dispatch ↔ TestClient JSON response."""
     async def homepage(request):
@@ -55,6 +56,7 @@ def test_route_returns_correct_response_through_test_client():
     assert resp.json() == {"path": "/home"}
 
 
+@pytest.mark.depends_on("test_route_path_must_start_with_slash")
 def test_unmatched_route_returns_404():
     """CVI-1: Seam: error propagation — unmatched route ↔ 404 response."""
     app = Starlette(routes=[Route("/exists", lambda r: PlainTextResponse("ok"))])
@@ -62,6 +64,7 @@ def test_unmatched_route_returns_404():
         assert client.get("/missing").status_code == 404
 
 
+@pytest.mark.depends_on("test_route_path_must_start_with_slash")
 def test_wrong_method_returns_405_with_allow_header():
     """CVI-1: Seam: error propagation — wrong HTTP method ↔ 405 with Allow header."""
     app = Starlette(routes=[Route("/item", lambda r: PlainTextResponse("ok"), methods=["POST"])])
@@ -71,6 +74,7 @@ def test_wrong_method_returns_405_with_allow_header():
     assert "POST" in resp.headers["allow"]
 
 
+@pytest.mark.depends_on("test_plain_text_response")
 def test_get_implies_head():
     """CVI-1: Seam: protocol handoff — GET route registration ↔ HEAD request empty-body response."""
     app = Starlette(routes=[Route("/page", lambda r: PlainTextResponse("body"), methods=["GET"])])
@@ -86,6 +90,7 @@ def test_get_implies_head():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_unknown_convertor_raises")
 def test_int_convertor_passes_integer():
     """CVI-2: Seam: state consistency — int path convertor ↔ integer path_params value."""
     async def handler(request):
@@ -97,6 +102,7 @@ def test_int_convertor_passes_integer():
     assert resp.json() == {"id": 42, "type": "int"}
 
 
+@pytest.mark.depends_on("test_unknown_convertor_raises")
 def test_int_convertor_rejects_non_integer():
     """CVI-2: Seam: error propagation — non-integer path segment ↔ 404 no match."""
     app = Starlette(routes=[Route("/items/{id:int}", lambda r: PlainTextResponse("ok"))])
@@ -104,6 +110,7 @@ def test_int_convertor_rejects_non_integer():
         assert client.get("/items/abc").status_code == 404
 
 
+@pytest.mark.depends_on("test_unknown_convertor_raises")
 def test_path_convertor_includes_slashes():
     """CVI-2: Seam: state consistency — path convertor ↔ slash-containing path param capture."""
     async def handler(request):
@@ -121,6 +128,7 @@ def test_path_convertor_includes_slashes():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_response_auto_content_length")
 def test_custom_headers_and_status_visible_through_client():
     """CVI-3: Seam: state consistency — Response status/headers ↔ TestClient visibility."""
     async def handler(request):
@@ -236,6 +244,7 @@ def test_static_files_method_enforcement(tmp_path):
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_websocket_asserts_websocket_scope")
 def test_websocket_json_exchange():
     """CVI-7: Seam: protocol handoff — WebSocket accept/send ↔ client JSON receive."""
     async def ws_handler(websocket):
@@ -250,6 +259,7 @@ def test_websocket_json_exchange():
     assert data == {"msg": "hello"}
 
 
+@pytest.mark.depends_on("test_websocket_disconnect_preserves_code_and_reason")
 def test_websocket_disconnect_raises_on_receive():
     """CVI-7: Seam: error propagation — WebSocket close ↔ WebSocketDisconnect on receive."""
     async def ws_handler(websocket):
@@ -271,6 +281,7 @@ def test_websocket_disconnect_raises_on_receive():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_plain_text_response")
 def test_background_task_runs_after_response():
     """CVI-8: Seam: lifecycle crossing — response delivery ↔ background task execution."""
     results = []
@@ -286,6 +297,7 @@ def test_background_task_runs_after_response():
     assert results == ["done"]
 
 
+@pytest.mark.depends_on("test_plain_text_response")
 def test_background_tasks_run_in_order():
     """CVI-8: Seam: lifecycle crossing — BackgroundTasks queue ↔ ordered post-response execution."""
     order = []
@@ -319,7 +331,8 @@ def test_gzip_middleware_compresses_large_responses():
     with TestClient(app) as client:
         resp = client.get("/", headers={"Accept-Encoding": "gzip"})
     assert resp.headers["content-encoding"] == "gzip"
-    assert len(resp.content) < 500
+    assert int(resp.headers["content-length"]) < 500
+    assert resp.content == b"x" * 500
 
 
 def test_gzip_middleware_skips_small_responses():
@@ -400,6 +413,7 @@ def test_cors_disallowed_origin_returns_400():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_no_match_found_on_bad_reverse_lookup")
 def test_url_for_generates_absolute_url():
     """Seam: state consistency — named route ↔ url_for absolute URL in handler."""
     async def handler(request):
@@ -412,6 +426,7 @@ def test_url_for_generates_absolute_url():
     assert "/items/7" in resp.text
 
 
+@pytest.mark.depends_on("test_no_match_found_on_bad_reverse_lookup")
 def test_url_path_for_raises_no_match():
     """Seam: error propagation — unknown route name ↔ NoMatchFound exception."""
     app = Starlette(routes=[Route("/x", lambda r: PlainTextResponse("ok"), name="x")])
@@ -424,6 +439,7 @@ def test_url_path_for_raises_no_match():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_http_exception_preserves_attributes")
 def test_http_exception_becomes_error_response():
     """Seam: error propagation — HTTPException in handler ↔ error response status."""
     async def handler(request):
@@ -435,6 +451,7 @@ def test_http_exception_becomes_error_response():
     assert resp.status_code == 403
 
 
+@pytest.mark.depends_on("test_http_exception_preserves_attributes")
 def test_custom_exception_handler():
     """Seam: error propagation — registered exception handler ↔ custom JSON error response."""
     async def handler(request):
@@ -482,6 +499,7 @@ def test_add_middleware_after_first_request_raises():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_plain_text_response")
 def test_streaming_response_sends_chunks():
     """Seam: protocol handoff — StreamingResponse generator ↔ concatenated response body."""
     async def gen():
@@ -502,6 +520,7 @@ def test_streaming_response_sends_chunks():
 # =============================================================================
 
 
+@pytest.mark.depends_on("test_request_mapping_access")
 def test_request_body_cached_after_first_read():
     """Seam: state consistency — repeated request.body() ↔ cached byte identity."""
     async def handler(request):
@@ -515,6 +534,7 @@ def test_request_body_cached_after_first_read():
     assert resp.json() == {"same": True, "body": "data"}
 
 
+@pytest.mark.depends_on("test_request_mapping_access")
 def test_request_json_parses_body():
     """Seam: state consistency — JSON request body ↔ request.json() parsed dict."""
     async def handler(request):

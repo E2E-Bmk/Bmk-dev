@@ -433,3 +433,83 @@ def test_column_collection_iteration_and_keys_match_declaration_order():
     assert list(table.c.keys()) == ["alpha", "beta", "gamma"]
     assert [col.name for col in table.c] == ["alpha", "beta", "gamma"]
     assert table.c.beta.name == "beta"
+
+
+def test_insert_returning_provides_inserted_primary_key():
+    engine = sa.create_engine("sqlite://")
+    table = sa.Table(
+        "pk_return", sa.MetaData(),
+        sa.Column("id", sa.Integer, primary_key=True),
+        sa.Column("name", sa.String),
+    )
+    table.create(engine)
+
+    with engine.begin() as conn:
+        result = conn.execute(sa.insert(table), {"name": "sandy"})
+
+    assert result.inserted_primary_key == (1,)
+
+
+def test_table_create_checkfirst_skips_existing():
+    engine = sa.create_engine("sqlite://")
+    table = sa.Table(
+        "dup", sa.MetaData(),
+        sa.Column("id", sa.Integer, primary_key=True),
+    )
+    table.create(engine)
+    table.create(engine, checkfirst=True)
+
+    with engine.connect() as conn:
+        assert conn.scalar(sa.select(sa.func.count()).select_from(table)) == 0
+
+
+def test_in_operator_filters_matching_values():
+    engine = sa.create_engine("sqlite://")
+    table = sa.Table(
+        "in_test", sa.MetaData(),
+        sa.Column("name", sa.String, primary_key=True),
+    )
+    table.create(engine)
+
+    with engine.begin() as conn:
+        conn.execute(sa.insert(table), [{"name": "a"}, {"name": "b"}, {"name": "c"}])
+        result = conn.execute(
+            sa.select(table.c.name).where(table.c.name.in_(["a", "c"])).order_by(table.c.name)
+        ).scalars().all()
+
+    assert result == ["a", "c"]
+
+
+def test_like_operator_pattern_matches():
+    engine = sa.create_engine("sqlite://")
+    table = sa.Table(
+        "like_test", sa.MetaData(),
+        sa.Column("name", sa.String, primary_key=True),
+    )
+    table.create(engine)
+
+    with engine.begin() as conn:
+        conn.execute(sa.insert(table), [{"name": "alice"}, {"name": "bob"}, {"name": "alicia"}])
+        result = conn.execute(
+            sa.select(table.c.name).where(table.c.name.like("ali%")).order_by(table.c.name)
+        ).scalars().all()
+
+    assert result == ["alice", "alicia"]
+
+
+def test_table_name_attribute_matches_declaration():
+    metadata = sa.MetaData()
+    table = sa.Table(
+        "my_table", metadata,
+        sa.Column("id", sa.Integer, primary_key=True),
+    )
+
+    assert table.name == "my_table"
+    assert "my_table" in metadata.tables
+
+
+def test_session_get_returns_none_for_missing_primary_key():
+    engine = make_user_engine()
+
+    with Session(engine) as session:
+        assert session.get(User, 999) is None

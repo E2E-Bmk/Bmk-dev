@@ -27,6 +27,7 @@ def test_in_memory_factory_wires_public_managers_and_queries():
     assert pgq.sm.resources["name"] == "shared"
 
 
+@pytest.mark.depends_on("test_enqueue_single_returns_monotonic_job_id_and_log", "test_enqueue_batch_returns_monotonic_ids_in_input_order")
 def test_enqueue_batch_preserves_order_and_payloads():
     """Seam: state consistency — enqueue batch preserves order and payloads."""
     async def scenario():
@@ -56,6 +57,7 @@ def test_enqueue_batch_preserves_order_and_payloads():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_run_rejects_too_low_max_concurrent_tasks")
 def test_dequeue_raises_for_zero_batch_size():
     """Seam: protocol handoff — dequeue raises for zero batch size."""
     async def scenario():
@@ -66,6 +68,7 @@ def test_dequeue_raises_for_zero_batch_size():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_enqueue_single_returns_monotonic_job_id_and_log")
 def test_dequeue_empty_entrypoints_returns_empty():
     """Seam: protocol handoff — dequeue empty entrypoints returns empty."""
     async def scenario():
@@ -76,6 +79,7 @@ def test_dequeue_empty_entrypoints_returns_empty():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_entrypoint_decorator_registers_and_returns_function")
 def test_dequeue_filters_by_registered_entrypoints():
     """Seam: protocol handoff — dequeue filters by registered entrypoints."""
     async def scenario():
@@ -100,6 +104,7 @@ def test_dequeue_filters_by_registered_entrypoints():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_enqueue_single_returns_monotonic_job_id_and_log")
 def test_dequeue_orders_by_priority_then_id():
     """Seam: protocol handoff — dequeue orders by priority then id."""
     async def scenario():
@@ -128,6 +133,7 @@ def test_dequeue_orders_by_priority_then_id():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_new_jobs_report_queued_status_before_processing")
 def test_dequeue_marks_jobs_picked_and_job_status_reflects_latest():
     """Seam: state consistency — dequeue marks jobs picked and job status reflects latest."""
     async def scenario():
@@ -152,6 +158,7 @@ def test_dequeue_marks_jobs_picked_and_job_status_reflects_latest():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_entrypoint_rejects_negative_concurrency_limit")
 def test_dequeue_respects_per_entrypoint_concurrency_limit():
     """Seam: protocol handoff — dequeue respects per entrypoint concurrency limit."""
     async def scenario():
@@ -208,6 +215,7 @@ def test_dequeue_respects_global_concurrency_limit():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_entrypoint_decorator_registers_and_returns_function")
 def test_entrypoint_rejects_non_boolean_accepts_context():
     """Seam: error propagation — entrypoint rejects non boolean accepts context."""
     pgq = PgQueuer.in_memory()
@@ -215,6 +223,7 @@ def test_entrypoint_rejects_non_boolean_accepts_context():
         pgq.entrypoint("bad", accepts_context="yes")
 
 
+@pytest.mark.depends_on("test_enqueue_single_returns_monotonic_job_id_and_log", "test_entrypoint_decorator_registers_and_returns_function")
 def test_queue_manager_run_drain_processes_priority_order_and_success_logs():
     """Seam: lifecycle crossing — queue manager run drain processes priority order and success logs."""
     async def scenario():
@@ -284,6 +293,7 @@ def test_accepts_context_false_suppresses_annotation_injection():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_retry_requested_defaults_and_reason_attributes")
 def test_retry_requested_requeues_same_job_and_increments_attempts():
     """Seam: lifecycle crossing — retry requested requeues same job and increments attempts."""
     async def scenario():
@@ -309,6 +319,7 @@ def test_retry_requested_requeues_same_job_and_increments_attempts():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_entrypoint_decorator_registers_and_returns_function")
 def test_unhandled_exception_delete_policy_logs_exception_and_removes_job():
     """Seam: error propagation — unhandled exception delete policy logs exception and removes job."""
     async def scenario():
@@ -331,6 +342,7 @@ def test_unhandled_exception_delete_policy_logs_exception_and_removes_job():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_entrypoint_rejects_unknown_failure_policy")
 def test_unhandled_exception_hold_policy_keeps_failed_job_visible():
     """Seam: error propagation — unhandled exception hold policy keeps failed job visible."""
     async def scenario():
@@ -354,6 +366,7 @@ def test_unhandled_exception_hold_policy_keeps_failed_job_visible():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_requeue_jobs_ignores_non_failed_and_missing_ids")
 def test_requeue_jobs_restores_failed_job_and_resets_attempts():
     """Seam: lifecycle crossing — requeue jobs restores failed job and resets attempts."""
     async def scenario():
@@ -377,6 +390,7 @@ def test_requeue_jobs_restores_failed_job_and_resets_attempts():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_queue_size_counts_active_jobs_by_entrypoint")
 def test_clear_queue_without_filter_removes_jobs_without_delete_logs():
     """Seam: lifecycle crossing — clear queue without filter removes jobs without delete logs."""
     async def scenario():
@@ -417,6 +431,7 @@ def test_clear_queue_with_entrypoint_list_filters_any_match():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_dedupe_key_rejects_duplicate_active_job")
 def test_dedupe_key_released_after_successful_log():
     """Seam: state consistency — dedupe key released after successful log."""
     async def scenario():
@@ -440,6 +455,7 @@ def test_dedupe_key_released_after_successful_log():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_dedupe_key_rejects_duplicate_active_job")
 def test_dedupe_key_released_after_failed_hold():
     """Seam: state consistency — dedupe key released after failed hold."""
     async def scenario():
@@ -532,6 +548,7 @@ def test_clear_queue_log_removes_selected_entrypoint_only():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_schedule_decorator_registers_and_returns_function")
 def test_scheduler_run_populates_peek_schedule_with_registered_schedule():
     """Seam: lifecycle crossing — scheduler run populates peek schedule with registered schedule."""
     async def scenario():
@@ -550,6 +567,7 @@ def test_scheduler_run_populates_peek_schedule_with_registered_schedule():
     run(scenario())
 
 
+@pytest.mark.depends_on("test_schedule_duplicate_normalized_pair_raises_runtime_error")
 def test_scheduler_run_skips_duplicate_entrypoint_expression():
     """Seam: lifecycle crossing — scheduler run skips duplicate entrypoint expression."""
     async def scenario():
@@ -640,6 +658,7 @@ def test_schedule_dispatch_injects_schedule_context_resources_and_requeues():
 
     run(scenario())
 
+@pytest.mark.depends_on("test_retry_requested_defaults_and_reason_attributes")
 def test_retry_preserves_payload_priority_and_job_id():
     """Seam: lifecycle crossing — retry preserves payload, priority, and job id."""
     async def scenario():

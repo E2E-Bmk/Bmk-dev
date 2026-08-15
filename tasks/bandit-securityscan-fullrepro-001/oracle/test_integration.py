@@ -12,6 +12,7 @@ import yaml
 from conftest import run_bandit, write_source, json_scan, one_issue, ids
 
 
+@pytest.mark.depends_on("test_issue_decodes_byte_text_as_utf8", "test_rule_b704_dynamic_markup")
 def test_issue_preserves_supplied_plugin_result_fields(tmp_path):
     """Seam: protocol handoff — integration path for issue preserves supplied plugin result fields across cooperating public APIs."""
     import bandit
@@ -42,6 +43,7 @@ def test_issue_preserves_supplied_plugin_result_fields(tmp_path):
     assert projected["issue_cwe"]["id"] == 79
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_rule_b110_try_except_pass(tmp_path):
     """Seam: error propagation — integration path for rule b110 try except pass across cooperating public APIs."""
     config = write_source(
@@ -106,6 +108,7 @@ for item in items:
     } == {("B112", "LOW", "HIGH", 703)}
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_stdin_scan_reports_stdin_filename_and_status(tmp_path):
     """Seam: protocol handoff — integration path for stdin scan reports stdin filename and status across cooperating public APIs."""
     proc = run_bandit("bandit", ["-q", "-f", "json", "-t", "B101", "-"], stdin="assert value\n")
@@ -115,6 +118,7 @@ def test_stdin_scan_reports_stdin_filename_and_status(tmp_path):
     assert report["results"][0]["test_id"] == "B101"
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_recursive_scan_discovers_nested_python(tmp_path):
     """Seam: protocol handoff — integration path for recursive scan discovers nested python across cooperating public APIs."""
     target = write_source(tmp_path, "src/nested/vulnerable.py", "assert value\n")
@@ -124,6 +128,7 @@ def test_recursive_scan_discovers_nested_python(tmp_path):
     assert Path(report["results"][0]["filename"]).name == target.name
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_cli_and_config_exclusions_are_additive(tmp_path):
     """Seam: config interaction — integration path for cli and config exclusions are additive across cooperating public APIs."""
     write_source(tmp_path, "src/keep.py", "assert value\n")
@@ -135,6 +140,7 @@ def test_cli_and_config_exclusions_are_additive(tmp_path):
     assert {Path(x["filename"]).name for x in report["results"]} == {"keep.py"}
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used", "test_rule_b102_exec_used")
 def test_tests_option_selects_only_requested_rules(tmp_path):
     """Seam: config interaction — integration path for tests option selects only requested rules across cooperating public APIs."""
     proc, report, _ = json_scan(tmp_path, "assert value\nexec('x=1')\n", "-t", "B101")
@@ -142,6 +148,7 @@ def test_tests_option_selects_only_requested_rules(tmp_path):
     assert ids(report) == {"B101"}
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used", "test_rule_b102_exec_used")
 def test_skips_option_removes_requested_rule(tmp_path):
     """Seam: config interaction — integration path for skips option removes requested rule across cooperating public APIs."""
     proc, report, _ = json_scan(tmp_path, "assert value\nexec('x=1')\n", "-s", "B101")
@@ -150,6 +157,7 @@ def test_skips_option_removes_requested_rule(tmp_path):
     assert "B102" in ids(report)
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_overlapping_tests_and_skips_exit_two(tmp_path):
     """Seam: config interaction — integration path for overlapping tests and skips exit two across cooperating public APIs."""
     target = write_source(tmp_path, "sample.py", "assert value\n")
@@ -158,6 +166,7 @@ def test_overlapping_tests_and_skips_exit_two(tmp_path):
     assert not proc.stdout.strip().startswith("{")
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_high_threshold_filters_low_issue_but_preserves_metrics(tmp_path):
     """Seam: config interaction — integration path for high threshold filters low issue but preserves metrics across cooperating public APIs."""
     proc, report, _ = json_scan(tmp_path, "assert value\n", "-t", "B101", "--severity-level", "high")
@@ -166,6 +175,7 @@ def test_high_threshold_filters_low_issue_but_preserves_metrics(tmp_path):
     assert report["metrics"]["_totals"]["SEVERITY.LOW"] == 1
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_bare_nosec_suppresses_issue_and_updates_metric(tmp_path):
     """Seam: config interaction — integration path for bare nosec suppresses issue and updates metric across cooperating public APIs."""
     proc, report, _ = json_scan(tmp_path, "assert value  # nosec\n", "-t", "B101")
@@ -174,6 +184,7 @@ def test_bare_nosec_suppresses_issue_and_updates_metric(tmp_path):
     assert report["metrics"]["_totals"]["nosec"] == 1
 
 
+@pytest.mark.depends_on("test_rule_b102_exec_used")
 def test_selective_nosec_does_not_suppress_different_rule(tmp_path):
     """Seam: config interaction — integration path for selective nosec does not suppress different rule across cooperating public APIs."""
     proc, report, _ = json_scan(tmp_path, "exec('x=1')  # nosec B101\n", "-t", "B102")
@@ -181,6 +192,7 @@ def test_selective_nosec_does_not_suppress_different_rule(tmp_path):
     assert ids(report) == {"B102"}
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_ignore_nosec_restores_finding_and_resets_suppression(tmp_path):
     """Seam: config interaction — integration path for ignore nosec restores finding and resets suppression across cooperating public APIs."""
     proc, report, _ = json_scan(tmp_path, "assert value  # nosec\n", "-t", "B101", "--ignore-nosec")
@@ -204,6 +216,7 @@ def test_missing_config_exits_two(tmp_path):
     assert proc.returncode == 2
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_exit_zero_keeps_findings_but_forces_success(tmp_path):
     """Seam: protocol handoff — integration path for exit zero keeps findings but forces success across cooperating public APIs."""
     proc, report, _ = json_scan(tmp_path, "assert value\n", "-t", "B101", "--exit-zero")
@@ -228,6 +241,7 @@ def test_toml_tool_bandit_tests_are_loaded(tmp_path):
     assert ids(json.loads(proc.stdout)) == {"B102"}
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_json_report_has_semantic_issue_and_metric_fields(tmp_path):
     """Seam: protocol handoff — integration path for json report has semantic issue and metric fields across cooperating public APIs."""
     proc, report, target = json_scan(tmp_path, "assert value\n", "-t", "B101")
@@ -238,6 +252,7 @@ def test_json_report_has_semantic_issue_and_metric_fields(tmp_path):
     assert "_totals" in report["metrics"]
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_yaml_and_json_reports_have_equal_issue_identity_and_metrics(tmp_path):
     """Seam: config interaction — integration path for yaml and json reports have equal issue identity and metrics across cooperating public APIs."""
     target = write_source(tmp_path, "sample.py", "assert value\n")
@@ -249,6 +264,7 @@ def test_yaml_and_json_reports_have_equal_issue_identity_and_metrics(tmp_path):
     assert jr["metrics"]["_totals"] == yr["metrics"]["_totals"]
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_csv_report_projects_semantic_issue_columns(tmp_path):
     """Seam: protocol handoff — integration path for csv report projects semantic issue columns across cooperating public APIs."""
     target = write_source(tmp_path, "sample.py", "assert value\n")
@@ -261,6 +277,7 @@ def test_csv_report_projects_semantic_issue_columns(tmp_path):
     assert rows[0]["issue_cwe"].endswith("/703.html")
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_xml_report_count_and_issue_identity(tmp_path):
     """Seam: error propagation — integration path for xml report count and issue identity across cooperating public APIs."""
     target = write_source(tmp_path, "sample.py", "assert value\n")
@@ -273,6 +290,7 @@ def test_xml_report_count_and_issue_identity(tmp_path):
     assert "B101" in "".join(error.itertext())
 
 
+@pytest.mark.depends_on("test_rule_b101_assert_used")
 def test_sarif_report_projects_rule_result_and_metrics(tmp_path):
     """Seam: protocol handoff — integration path for sarif report projects rule result and metrics across cooperating public APIs."""
     target = write_source(tmp_path, "sample.py", "assert value\n")
@@ -398,6 +416,7 @@ def test_malformed_readable_baseline_behaves_as_empty(tmp_path):
     assert ids(json.loads(proc.stdout)) == {"B101"}
 
 
+@pytest.mark.depends_on("test_config_generator_no_action_returns_one")
 def test_config_generator_creates_parseable_profile(tmp_path):
     """Seam: config interaction — integration path for config generator creates parseable profile across cooperating public APIs."""
     output = tmp_path / "bandit.yaml"

@@ -33,6 +33,7 @@ def _group_contains(excinfo: pytest.ExceptionInfo[ExceptionGroup], exc_type: typ
         return True
     return False
 
+@pytest.mark.depends_on("test_basic_valid_requirement_parsing", "test_normalized_requirements")
 def test_lookup_on_trivial_normalization() -> None:
     """Seam: protocol handoff — lookup on trivial normalization."""
     groups: GroupsTable = {'test': ['pytest']}
@@ -43,6 +44,7 @@ def test_lookup_on_trivial_normalization() -> None:
     req = parsed_group[0]
     assert req.name == 'pytest'
 
+@pytest.mark.depends_on("test_types_with_url", "test_types_with_specifier_and_marker", "test_types_with_nothing")
 def test_lookup_with_include_result() -> None:
     """Seam: protocol handoff — lookup with include result."""
     groups: GroupsTable = {'test': ['pytest', {'include-group': 'runtime'}], 'runtime': ['click']}
@@ -54,6 +56,7 @@ def test_lookup_with_include_result() -> None:
     assert isinstance(parsed_group[1], DependencyGroupInclude)
     assert parsed_group[1].include_group == 'runtime'
 
+@pytest.mark.depends_on("test_basic_valid_requirement_parsing", "test_normalized_requirements")
 def test_lookup_does_not_trigger_cyclic_include() -> None:
     """Seam: protocol handoff — lookup does not trigger cyclic include."""
     groups: GroupsTable = {'group1': [{'include-group': 'group2'}], 'group2': [{'include-group': 'group1'}]}
@@ -65,6 +68,7 @@ def test_lookup_does_not_trigger_cyclic_include() -> None:
 
 @pytest.mark.parametrize('group_name_declared', ['foo-bar', 'foo_bar', 'foo..bar'])
 @pytest.mark.parametrize('group_name_used', ['foo-bar', 'foo_bar', 'foo..bar'])
+@pytest.mark.depends_on("test_is_normalized_name", "test_normalized_requirements", "test_marker_missing_environment_name_raises_public_error")
 def test_normalized_name_is_used_for_include_group_lookups(group_name_declared: str, group_name_used: str) -> None:
     """Seam: protocol handoff — normalized name is used for include group lookups."""
     groups: GroupsTable = {group_name_declared: ['spam'], 'eggs': [{'include-group': group_name_used}]}
@@ -75,26 +79,31 @@ def test_normalized_name_is_used_for_include_group_lookups(group_name_declared: 
     req = result[0]
     assert req.name == 'spam'
 
+@pytest.mark.depends_on("test_error_helper_exception_group_collects_public_errors", "test_empty_specifier", "test_empty_extras")
 def test_empty_group() -> None:
     """Seam: state consistency — empty group."""
     groups: GroupsTable = {'test': []}
     assert resolve_dependency_groups(groups, 'test') == ()
 
+@pytest.mark.depends_on("test_error_helper_exception_group_collects_public_errors")
 def test_str_list_group() -> None:
     """Seam: state consistency — str list group."""
     groups: GroupsTable = {'test': ['pytest']}
     assert resolve_dependency_groups(groups, 'test') == ('pytest',)
 
+@pytest.mark.depends_on("test_error_helper_exception_group_collects_public_errors")
 def test_single_include_group() -> None:
     """Seam: state consistency — single include group."""
     groups: GroupsTable = {'test': ['pytest', {'include-group': 'runtime'}], 'runtime': ['sqlalchemy']}
     assert set(resolve_dependency_groups(groups, 'test')) == {'pytest', 'sqlalchemy'}
 
+@pytest.mark.depends_on("test_error_helper_exception_group_collects_public_errors")
 def test_sdual_include_group() -> None:
     """Seam: state consistency — sdual include group."""
     groups: GroupsTable = {'test': ['pytest'], 'runtime': ['sqlalchemy']}
     assert set(resolve_dependency_groups(groups, 'test', 'runtime')) == {'pytest', 'sqlalchemy'}
 
+@pytest.mark.depends_on("test_is_normalized_name", "test_normalized_requirements", "test_marker_missing_environment_name_raises_public_error")
 def test_normalized_group_name() -> None:
     """Seam: config interaction — normalized group name."""
     groups: GroupsTable = {'TEST': ['pytest']}
@@ -127,10 +136,12 @@ else:
     import tomli as tomllib
 
 @pytest.mark.parametrize(('file_name', 'valid'), [('pylock.toml', True), ('pylock.spam.toml', True), ('pylock.json', False), ('pylock..toml', False)])
+@pytest.mark.depends_on("test_marker_missing_environment_name_raises_public_error", "test_is_normalized_name", "test_file_url")
 def test_pylock_file_name(file_name: str, valid: bool) -> None:
     """Seam: state consistency — pylock file name."""
     assert is_valid_pylock_path(Path(file_name)) is valid
 
+@pytest.mark.depends_on("test_pickle_requirement_roundtrip")
 def test_toml_roundtrip() -> None:
     """Seam: state consistency — toml roundtrip."""
     pep751_example = (Path(__file__).parent / 'pylock' / 'pylock.spec-example.toml').read_text()
@@ -139,6 +150,7 @@ def test_toml_roundtrip() -> None:
     assert tomli_w.dumps(pylock.to_dict()) == tomli_w.dumps(pylock_dict)
 
 @pytest.mark.parametrize('version', ['1.0', '1.1'])
+@pytest.mark.depends_on("test_version_range_union_difference_and_complement", "test_version_range_set_relations_compare_accepted_versions", "test_version_range_membership_and_intersection")
 def test_pylock_version(version: str) -> None:
     """Seam: state consistency — pylock version."""
     data = {'lock-version': version, 'created-by': 'pip', 'packages': []}
@@ -147,12 +159,14 @@ def test_pylock_version(version: str) -> None:
     assert pylock.created_by == 'pip'
 
 @pytest.mark.parametrize('version', ['0.9', '2', '2.0', '2.1'])
+@pytest.mark.depends_on("test_version_range_union_difference_and_complement", "test_version_range_set_relations_compare_accepted_versions", "test_version_range_membership_and_intersection")
 def test_pylock_unsupported_version(version: str) -> None:
     """Seam: error propagation — pylock unsupported version."""
     data = {'lock-version': version, 'created-by': 'pip', 'packages': []}
     with pytest.raises(PylockUnsupportedVersionError):
         Pylock.from_dict(data)
 
+@pytest.mark.depends_on("test_basic_valid_requirement_parsing")
 def test_pylock_basic_package() -> None:
     """Seam: state consistency — pylock basic package."""
     data = {'lock-version': '1.0', 'created-by': 'pip', 'requires-python': '>=3.10', 'environments': ['os_name == "posix"'], 'packages': [{'name': 'example', 'version': '1.0', 'marker': 'os_name == "posix"', 'requires-python': '!=3.10.1,>=3.10', 'directory': {'path': '.', 'editable': False}}]}
@@ -164,6 +178,7 @@ def test_pylock_basic_package() -> None:
     assert package.requires_python == SpecifierSet('>=3.10, !=3.10.1')
     assert pylock.to_dict() == data
 
+@pytest.mark.depends_on("test_direct_url_vcs_record_round_trips_revision_fields")
 def test_pylock_vcs_package() -> None:
     """Seam: state consistency — pylock vcs package."""
     data = {'lock-version': '1.0', 'created-by': 'pip', 'packages': [{'name': 'packaging', 'vcs': {'type': 'git', 'url': 'https://githhub/pypa/packaging', 'commit-id': '...'}}]}
@@ -171,10 +186,12 @@ def test_pylock_vcs_package() -> None:
     assert pylock.to_dict() == data
 
 @pytest.mark.parametrize(('dist', 'expected_filename'), [(PackageSdist(name='example-1.0.tar.gz', hashes={}), 'example-1.0.tar.gz'), (PackageSdist(path='./example-1.0.tar.gz', hashes={}), 'example-1.0.tar.gz'), (PackageSdist(path='.\\example-1.0.tar.gz', hashes={}), 'example-1.0.tar.gz'), (PackageSdist(path='example-1.0.tar.gz', hashes={}), 'example-1.0.tar.gz'), (PackageSdist(url='https://example.com/example-1.0.tar.gz', hashes={}), 'example-1.0.tar.gz'), (PackageSdist(name='example-2.0.tar.gz', path='.\\example-1.0.tar.gz', hashes={}), 'example-2.0.tar.gz'), (PackageSdist(name='example-2.0.tar.gz', url='https://example.com/example-1.0.tar.gz', hashes={}), 'example-2.0.tar.gz'), (PackageSdist(url='https://example.com/example-2.0.tar.gz', path='./example-1.0.tar.gz', hashes={}), 'example-1.0.tar.gz'), (PackageWheel(name='example-1.0-py3-none-any.whl', hashes={}), 'example-1.0-py3-none-any.whl'), (PackageWheel(path='./example-1.0-py3-none-any.whl', hashes={}), 'example-1.0-py3-none-any.whl'), (PackageWheel(path='.\\example-1.0-py3-none-any.whl', hashes={}), 'example-1.0-py3-none-any.whl'), (PackageWheel(path='example-1.0-py3-none-any.whl', hashes={}), 'example-1.0-py3-none-any.whl'), (PackageWheel(url='https://example.com/example-1.0-py3-none-any.whl', hashes={}), 'example-1.0-py3-none-any.whl'), (PackageWheel(name='example-2.0-py3-none-any.whl', path='.\\example-1.0-py3-none-any.whl', hashes={}), 'example-2.0-py3-none-any.whl'), (PackageWheel(name='example-2.0-py3-none-any.whl', url='https://example.com/example-1.0-py3-none-any.whl', hashes={}), 'example-2.0-py3-none-any.whl'), (PackageWheel(url='https://example.com/example-2.0-py3-none-any.whl', path='./example-1.0-py3-none-any.whl', hashes={}), 'example-1.0-py3-none-any.whl')])
+@pytest.mark.depends_on("test_parse_wheel_invalid_filename", "test_parse_wheel_filename", "test_parse_sdist_invalid_filename")
 def test_dist_filename(dist: PackageSdist | PackageWheel, expected_filename: str) -> None:
     """Seam: state consistency — dist filename."""
     assert dist.filename == expected_filename
 
+@pytest.mark.depends_on("test_version_range_union_difference_and_complement", "test_version_range_membership_and_intersection", "test_version_ordering_covers_development_prerelease_final_and_postrelease")
 def test_pylock_extras_and_groups() -> None:
     """Seam: config interaction — pylock extras and groups."""
     data = {'lock-version': '1.0', 'created-by': 'pip', 'extras': ['feat1', 'feat2'], 'dependency-groups': ['dev', 'docs'], 'default-groups': ['dev'], 'packages': []}
@@ -183,6 +200,7 @@ def test_pylock_extras_and_groups() -> None:
     assert pylock.dependency_groups == ['dev', 'docs']
     assert pylock.default_groups == ['dev']
 
+@pytest.mark.depends_on("test_basic_valid_requirement_parsing", "test_normalized_requirements")
 def test_pylock_tool() -> None:
     """Seam: state consistency — pylock tool."""
     data = {'lock-version': '1.0', 'created-by': 'pip', 'packages': [{'name': 'example', 'sdist': {'name': 'example-1.0.tar.gz', 'path': './example-1.0.tar.gz', 'upload-time': datetime.datetime(2023, 10, 1, 0, 0, tzinfo=datetime.timezone.utc), 'hashes': {'sha256': 'f' * 40}}, 'tool': {'pip': {'foo': 'bar'}}}], 'tool': {'pip': {'version': '25.2'}}}
@@ -191,6 +209,7 @@ def test_pylock_tool() -> None:
     package = pylock.packages[0]
     assert package.tool == {'pip': {'foo': 'bar'}}
 
+@pytest.mark.depends_on("test_direct_url_vcs_record_round_trips_revision_fields", "test_direct_url_rejects_missing_info_section", "test_direct_url_directory_record_round_trips_public_fields")
 def test_is_direct() -> None:
     """Seam: state consistency — is direct."""
     direct_package = Package(name=NormalizedName('example'), directory=PackageDirectory(path='.'))
@@ -215,6 +234,7 @@ class Platform:
     environment: Environment
 _py312_linux = Platform(tags=[Tag('cp312', 'cp312', 'manylinux_2_17_x86_64'), Tag('py3', 'none', 'any')], environment={'implementation_name': 'cpython', 'implementation_version': '3.12.12', 'os_name': 'posix', 'platform_machine': 'x86_64', 'platform_release': '6.8.0-100-generic', 'platform_system': 'Linux', 'platform_version': '#100-Ubuntu SMP PREEMPT_DYNAMIC', 'python_full_version': '3.12.12', 'platform_python_implementation': 'CPython', 'python_version': '3.12', 'sys_platform': 'linux'})
 
+@pytest.mark.depends_on("test_basic_valid_requirement_parsing", "test_normalized_requirements")
 def test_smoke_test() -> None:
     """Seam: lifecycle crossing — smoke test."""
     pylock_path = Path(__file__).parent / 'pylock' / 'pylock.spec-example.toml'
@@ -225,6 +245,7 @@ def test_smoke_test() -> None:
         assert package.name == 'example'
         assert dist.filename.endswith('.whl')
 
+@pytest.mark.depends_on("test_valid_marker", "test_types_with_specifier_and_marker", "test_marker_missing_environment_name_raises_public_error")
 def test_package_select_by_marker() -> None:
     """Seam: protocol handoff — package select by marker."""
     pylock = Pylock(lock_version=Version('1.0'), created_by='some_tool', packages=[Package(name=cast('NormalizedName', 'tomli'), marker=Marker('python_version < "3.11"'), version=Version('1.0'), archive=PackageArchive(path='tomli-1.0.tar.gz', hashes={'sha256': 'abc123'})), Package(name=cast('NormalizedName', 'foo'), marker=Marker('python_version >= "3.11"'), version=Version('1.0'), archive=PackageArchive(path='foo-1.0.tar.gz', hashes={'sha256': 'abc123'}))])
@@ -233,6 +254,7 @@ def test_package_select_by_marker() -> None:
     assert len(selected) == 1
     assert selected[0][0].name == 'foo'
 
+@pytest.mark.depends_on("test_types_with_url", "test_types_with_specifier_and_marker", "test_types_with_nothing")
 def test_yield_all_types() -> None:
     """Seam: state consistency — yield all types."""
     pylock = Pylock(lock_version=Version('1.0'), created_by='some_tool', packages=[Package(name=cast('NormalizedName', 'foo-archive'), archive=PackageArchive(path='tomli-1.0.tar.gz', hashes={'sha256': 'abc123'})), Package(name=cast('NormalizedName', 'foo-directory'), directory=PackageDirectory(path='./foo-directory')), Package(name=cast('NormalizedName', 'foo-vcs'), vcs=PackageVcs(type='git', url='https://example.com/foo.git', commit_id='fa123')), Package(name=cast('NormalizedName', 'foo-sdist'), sdist=PackageSdist(path='foo_sdist-1.0.tar.gz', hashes={'sha256': 'abc123'})), Package(name=cast('NormalizedName', 'foo-wheel'), wheels=[PackageWheel(name='foo_wheel-1.0-py3-none-any.whl', path='./foo_wheel-1.0-py3-none-any.whl', hashes={'sha256': 'abc123'})])])

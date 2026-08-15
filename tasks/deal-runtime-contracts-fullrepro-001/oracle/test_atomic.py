@@ -317,3 +317,23 @@ def test_root_exception_hierarchy():
     assert issubclass(deal.OfflineContractError, deal.ContractError)
     assert issubclass(deal.SilentContractError, deal.ContractError)
     assert not issubclass(deal.NoMatchError, deal.ContractError)
+
+
+def test_disable_prevents_sync_contract_enforcement():
+    @deal.pre(lambda x: x > 0)
+    def func(x):
+        return x
+
+    deal.disable(warn=False)
+    assert func(-5) == -5
+
+
+def test_pre_underscore_shorthand_receives_bound_arguments_with_defaults():
+    @deal.pre(lambda _: _.step > 0 and _.base >= 0)
+    def advance(base, step=1):
+        return base + step
+
+    assert advance(3) == 4
+    assert advance(0, step=2) == 2
+    with pytest.raises(deal.PreContractError):
+        advance(5, step=-1)

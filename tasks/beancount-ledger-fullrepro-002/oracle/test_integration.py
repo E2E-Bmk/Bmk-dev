@@ -16,6 +16,7 @@ from beancount import api as bn_api
 from conftest import write_ledger
 
 
+@pytest.mark.depends_on("test_directive_objects_metadata_and_filter_txns", "test_tags_and_links_store_without_markers_and_print_with_markers")
 def test_load_file_returns_entries_errors_and_options(tmp_path):
     """Seam: error propagation — integration path for load file returns entries errors and options across cooperating public APIs."""
     ledger = write_ledger(tmp_path, "main.bean", """
@@ -39,6 +40,7 @@ def test_load_file_returns_entries_errors_and_options(tmp_path):
     assert txn.links == frozenset({"pay"})
 
 
+@pytest.mark.depends_on("test_directive_objects_metadata_and_filter_txns", "test_account_helpers_component_semantics")
 def test_load_file_resolves_relative_includes_and_aggregates_options(tmp_path):
     """Seam: error propagation — integration path for load file resolves relative includes and aggregates options across cooperating public APIs."""
     write_ledger(tmp_path, "included.bean", """
@@ -68,6 +70,7 @@ def test_load_file_reports_missing_include_as_error(tmp_path):
     assert "filename" in errors[0].source
 
 
+@pytest.mark.depends_on("test_directive_objects_metadata_and_filter_txns")
 def test_load_file_balance_validation_error_contains_entry(tmp_path):
     """Seam: error propagation — integration path for load file balance validation error contains entry across cooperating public APIs."""
     ledger = write_ledger(tmp_path, "bad_balance.bean", """
@@ -82,6 +85,7 @@ def test_load_file_balance_validation_error_contains_entry(tmp_path):
     assert errors[0].source["lineno"] == 2
 
 
+@pytest.mark.depends_on("test_directive_objects_metadata_and_filter_txns")
 def test_load_doc_decorator_supplies_parsed_ledger_to_function():
     """Seam: error propagation — integration path for load doc decorator supplies parsed ledger to function across cooperating public APIs."""
     seen = {}
@@ -118,6 +122,7 @@ def test_load_doc_expect_errors_accepts_invalid_docstring():
     assert len(seen["errors"]) >= 1
 
 
+@pytest.mark.depends_on("test_directive_objects_metadata_and_filter_txns")
 def test_loader_plugin_can_append_directive_via_public_contract(tmp_path, monkeypatch):
     """Seam: error propagation — integration path for loader plugin can append directive via public contract across cooperating public APIs."""
     plugin = write_ledger(tmp_path, "myplugin.py", """
@@ -152,6 +157,7 @@ def test_plugin_import_failure_is_returned_as_load_error(tmp_path):
     assert "missing_public_surface_plugin" in errors[0].message
 
 
+@pytest.mark.depends_on("test_inventory_operations_preserve_lots_and_currencies", "test_real_account_child_constraints_are_enforced", "test_getters_report_accounts_and_lifecycle")
 def test_realize_builds_tree_and_account_postings_from_loaded_entries(tmp_path):
     """Seam: error propagation — integration path for realize builds tree and account postings from loaded entries across cooperating public APIs."""
     ledger = write_ledger(tmp_path, "main.bean", """
@@ -170,6 +176,7 @@ def test_realize_builds_tree_and_account_postings_from_loaded_entries(tmp_path):
     assert len(root["Income"]["Salary"].txn_postings) == 2
 
 
+@pytest.mark.depends_on("test_real_account_child_constraints_are_enforced")
 def test_realize_min_accounts_creates_empty_requested_accounts():
     """Seam: state consistency — integration path for realize min accounts creates empty requested accounts across cooperating public APIs."""
     root = bn.realize([], min_accounts=["Assets:Cash"], compute_balance=True)
@@ -177,6 +184,7 @@ def test_realize_min_accounts_creates_empty_requested_accounts():
     assert root["Assets"]["Cash"].balance.is_empty()
 
 
+@pytest.mark.depends_on("test_directive_objects_metadata_and_filter_txns")
 def test_same_day_ordering_balance_before_transaction_and_close_last(tmp_path):
     """Seam: error propagation — integration path for same day ordering balance before transaction and close last across cooperating public APIs."""
     ledger = write_ledger(tmp_path, "same_day.bean", """
@@ -193,6 +201,7 @@ def test_same_day_ordering_balance_before_transaction_and_close_last(tmp_path):
     assert [type(entry) for entry in entries] == [bn.Open, bn.Open, bn.Balance, bn.Transaction, bn.Close]
 
 
+@pytest.mark.depends_on("test_account_type_helpers_default_signs_and_sorting", "test_account_helpers_component_semantics")
 def test_configured_root_account_names_affect_parsing_and_signs(tmp_path):
     """Seam: error propagation — integration path for configured root account names affect parsing and signs across cooperating public APIs."""
     ledger = write_ledger(tmp_path, "custom_roots.bean", """
@@ -228,6 +237,7 @@ def test_booking_enum_exposes_public_methods():
     assert bn.Booking.AVERAGE.value == "AVERAGE"
 
 
+@pytest.mark.depends_on("test_inventory_split_returns_unit_currency_keys", "test_inventory_average_collapses_same_currency_lots", "test_inventory_get_only_position_returns_none_for_empty_and_raises_for_many")
 def test_inventory_split_average_and_only_position_behavior():
     """Seam: error propagation — integration path for inventory split average and only position behavior across cooperating public APIs."""
     inventory = bn.Inventory.from_string("2 HOOL {5 USD, 2020-01-01}, 3 HOOL {7 USD, 2020-01-03}, -1 USD")
@@ -241,6 +251,7 @@ def test_inventory_split_average_and_only_position_behavior():
         inventory.get_only_position()
 
 
+@pytest.mark.depends_on("test_inventory_add_position_inserts_position_object", "test_inventory_add_inventory_returns_self_and_accumulates")
 def test_inventory_add_position_and_add_inventory_accumulate_units():
     """Seam: state consistency — integration path for inventory add position and add inventory accumulate units across cooperating public APIs."""
     left = bn.Inventory()
@@ -253,6 +264,7 @@ def test_inventory_add_position_and_add_inventory_accumulate_units():
     assert left.get_currency_units("CAD") == bn.Amount(bn.D("0"), "CAD")
 
 
+@pytest.mark.depends_on("test_inventory_operations_preserve_lots_and_currencies", "test_position_from_string_and_value_helpers")
 def test_inventory_reduce_does_not_mutate_original_inventory():
     """Seam: state consistency — integration path for inventory reduce does not mutate original inventory across cooperating public APIs."""
     inventory = bn.Inventory.from_string("2 HOOL {5 USD}, 3 USD")
@@ -261,6 +273,7 @@ def test_inventory_reduce_does_not_mutate_original_inventory():
     assert inventory.get_currency_units("HOOL") == bn.Amount(bn.D("2"), "HOOL")
 
 
+@pytest.mark.depends_on("test_price_map_lookup_latest_inverse_and_identity", "test_decimal_constructor_normalizes_public_inputs")
 def test_price_map_duplicate_dates_keep_later_price_and_add_inverse():
     """Seam: config interaction — integration path for price map duplicate dates keep later price and add inverse across cooperating public APIs."""
     prices = [
@@ -275,6 +288,7 @@ def test_price_map_duplicate_dates_keep_later_price_and_add_inverse():
     assert inverse_rate == bn.D("1") / bn.D("11")
 
 
+@pytest.mark.depends_on("test_cost_object_exposes_per_unit_fields", "test_amount_parsing_comparison_and_boolean_behavior")
 def test_get_weight_uses_cost_before_price_and_price_without_cost():
     """Seam: state consistency — integration path for get weight uses cost before price and price without cost across cooperating public APIs."""
     with_cost = bn.Posting(
@@ -292,6 +306,7 @@ def test_get_weight_uses_cost_before_price_and_price_without_cost():
     assert bn.get_weight(plain) == bn.Amount(bn.D("3"), "USD")
 
 
+@pytest.mark.depends_on("test_price_map_lookup_latest_inverse_and_identity", "test_conversion_helpers_use_prices_or_return_original_amount", "test_position_from_string_and_value_helpers")
 def test_get_value_infers_value_currency_from_cost_or_price():
     """Seam: config interaction — integration path for get value infers value currency from cost or price across cooperating public APIs."""
     price_map = bn.build_price_map([
@@ -319,6 +334,7 @@ def test_note_event_query_document_and_custom_fields_are_public():
     assert custom.type == "public" and custom.values[0] == bn.Amount(bn.D("1"), "USD")
 
 
+@pytest.mark.depends_on("test_getters_report_accounts_and_lifecycle", "test_directive_objects_metadata_and_filter_txns")
 def test_get_account_open_close_keeps_first_lifecycle_directives():
     """Seam: config interaction — integration path for get account open close keeps first lifecycle directives across cooperating public APIs."""
     first_open = bn.Open(bn.new_metadata("ledger.bean", 1), dt.date(2020, 1, 1), "Assets:Cash", ["USD"], None)
@@ -351,6 +367,7 @@ def test_load_file_unmatched_include_glob_is_returned_as_error(tmp_path):
     assert "missing-*.bean" in errors[0].message
 
 
+@pytest.mark.depends_on("test_directive_objects_metadata_and_filter_txns")
 def test_plugin_exception_is_converted_to_load_error(tmp_path, monkeypatch):
     """Seam: error propagation — integration path for plugin exception is converted to load error across cooperating public APIs."""
     write_ledger(tmp_path, "badplugin.py", """
@@ -388,6 +405,7 @@ def test_plugin_systemexit_is_allowed_to_propagate(tmp_path, monkeypatch):
     assert excinfo.value.code == 7
 
 
+@pytest.mark.depends_on("test_real_account_child_constraints_are_enforced", "test_directive_objects_metadata_and_filter_txns")
 def test_realize_stores_account_attached_directives_and_pad_on_both_accounts():
     """Seam: config interaction — integration path for realize stores account attached directives and pad on both accounts across cooperating public APIs."""
     meta = bn.new_metadata("ledger.bean", 1)
@@ -420,6 +438,7 @@ def test_realize_compute_balance_false_preserves_postings_without_balance(tmp_pa
     assert root["Assets"]["Cash"].balance.is_empty()
 
 
+@pytest.mark.depends_on("test_directive_objects_metadata_and_filter_txns", "test_amount_parsing_comparison_and_boolean_behavior")
 def test_load_file_parses_note_event_query_price_and_custom(tmp_path):
     """Seam: error propagation — integration path for load file parses note event query price and custom across cooperating public APIs."""
     ledger = write_ledger(tmp_path, "objects.bean", f'''
@@ -464,6 +483,7 @@ def test_price_lookup_is_as_of_requested_date():
     assert bn.get_price(price_map, ("HOOL", "USD"), dt.date(2020, 1, 5)) == (dt.date(2020, 1, 5), bn.D("15"))
 
 
+@pytest.mark.depends_on("test_real_account_child_constraints_are_enforced", "test_directive_objects_metadata_and_filter_txns", "test_amount_parsing_comparison_and_boolean_behavior")
 def test_realized_transaction_postings_preserve_parent_transaction():
     """Seam: config interaction — integration path for realized transaction postings preserve parent transaction across cooperating public APIs."""
     meta = bn.new_metadata("ledger.bean", 1)

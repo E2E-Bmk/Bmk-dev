@@ -33,6 +33,18 @@ A test that checks exact field names, repr strings, internal maps, exception mes
 
 A test passes if and only if it can be mapped to a specific point in the spec - explicitly stated, or derivable by a senior engineer from what is stated. If the mapping cannot be written, the test is excluded.
 
+**Q2 strict enforcement, symbol level (automated, not sampled):** every symbol a test reads off the target package must appear somewhere in the spec text. Run, and require `LINT_PASS`:
+
+```bash
+python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md
+```
+
+The lint checks two levels: module level (imports name a module the Installable Surface mentions) and symbol level (`pkg.Name` attribute reads and `from pkg import Name`). Module level alone is not sufficient. `httpcore` shipped with eight atomic tests asserting an upstream exception tree — `NetworkError`, `TimeoutException`, `ProtocolError` and four `*Timeout` subclasses — none of which the spec declares; the spec declares four public exceptions. `import httpcore` is legitimate, so a module level check passes while the assertions require reproducing upstream's internal class tree.
+
+The consequence of skipping this is measurable and inverts what the benchmark claims to measure: on that task a 498-line delivery written from the spec scored 73.7%, a 1216-line delivery that reproduced the upstream tree scored 100%, and after removing the eight tests the spec-following delivery scored 94.1%. The scorer was rewarding recall of upstream internals and penalising spec-following.
+
+Do not satisfy this gate by adding the missing symbols to the spec. A symbol the spec never needed is not a spec gap; route it through spec-writer only when the behaviour itself is in scope.
+
 Both criteria are enforced structurally: filling `spec_test_map.md` one row per test **is** the filtering process. A row that cannot be completed means the test fails one or both criteria.
 
 **Clause traceability (for tasks whose spec has a `clauses.md` sidecar):** every test ADDED or MODIFIED after the SDD clause discipline shipped must name the clause IDs it verifies in its docstring — `Verifies: KEDRO-SCAF-003, KEDRO-SCAF-004`. A test that cannot name a supporting clause is either checking an implementation detail (exclude it) or has found a genuine spec gap (route a `spec_gap` patch through spec-writer first, then cite the new clause). The reverse query — clauses with no covering test — is the standing ADD-TEST backlog.

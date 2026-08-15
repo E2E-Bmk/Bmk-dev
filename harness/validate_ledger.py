@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
-"""Validate the benchmark task ledger against task, wip, and weakness files."""
+"""Validate every task packet under tasks/, and cross-check the ledger loosely.
+
+The previous version compared `CANDIDATES.md`'s `repo` column against directory
+names under `tasks/`. Those are different namespaces -- the column holds
+`rq/rq`, `getnikola__nikola` and bare task IDs interchangeably (29 / 37 / 21
+occurrences at the time of writing), while a directory is always a task ID -- so
+rules R1, R2 and R5 could not succeed by construction and reported 94 failures
+that no data change would clear. Cross-referencing runs as warnings now, and
+only where the ledger states a task ID explicitly.
+
+The authoritative per-task checks live in `verify_task.check_task`, which
+derives everything from the physical oracle files. That makes this script the
+static gate `docs/QUALITY_GATE.md` and the task-judge Gate E describe.
+
+    python harness/validate_ledger.py            # all tasks
+    python harness/validate_ledger.py <task_id>  # one task
+"""
 
 from __future__ import annotations
 
@@ -8,9 +24,15 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+try:
+    from harness.verify_task import check_task
+except ModuleNotFoundError:  # Direct execution from the repository root.
+    from verify_task import check_task
+
 
 ROOT = Path(__file__).resolve().parent.parent
-ALLOWED_STATUSES = {"SELECTED", "RETIRED", "QUALIFIED", "REOPENED"}
+ALLOWED_STATUSES = {"SELECTED", "RETIRED", "QUALIFIED", "REOPENED", "SUPERSEDED"}
+TASK_ID_RE = re.compile(r"(?:task[=\s]+`?|`)([a-z0-9_]+(?:-[a-z0-9_]+)*-fullrepro-\d+)`?")
 
 
 def parse_markdown_table(path: Path) -> list[dict[str, str]]:
@@ -18,7 +40,7 @@ def parse_markdown_table(path: Path) -> list[dict[str, str]]:
         return []
     rows: list[dict[str, str]] = []
     header: list[str] | None = None
-    for line in path.read_text(encoding="utf-8").splitlines():
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
         stripped = line.strip()
         if not stripped.startswith("|") or not stripped.endswith("|"):
             continue
@@ -36,89 +58,88 @@ def parse_markdown_table(path: Path) -> list[dict[str, str]]:
     return rows
 
 
-def pipeline_state_is_qualified(path: Path) -> bool:
-    if not path.exists():
-        return False
-    text = path.read_text(encoding="utf-8", errors="replace")
-    return bool(re.search(r"(?im)^\s*state\s*[:=]\s*QUALIFIED\s*$", text))
+def ledger_warnings() -> list[str]:
+    """Ledger checks that hold regardless of the repo/task-id namespace mismatch."""
+    warnings: list[str] = []
+    rows = parse_markdown_table(ROOT / "CANDIDATES.md")
 
+    by_repo: dict[str, set[str]] = defaultdict(set)
+    for row in rows:
+        repo = row.get("repo", "").strip()
+        status = row.get("status", "").strip()
+        if status and status not in ALLOWED_STATUSES:
+            warnings.append(f"CANDIDATES.md: unknown status {status!r} for {repo or '<no repo>'}")
+        if repo:
+            by_repo[repo].add(status)
 
-def emit(rule_id: str, task_id: str, detail: str, errors: list[str]) -> None:
-    errors.append(f"ERROR [{rule_id}] [{task_id}] [{detail}]")
+    # A task ID named anywhere in a row must exist on disk. The reverse does not
+    # hold: most rows identify their repository, not their task.
+    task_dirs = (
+        {path.name for path in (ROOT / "tasks").iterdir() if path.is_dir()}
+        if (ROOT / "tasks").is_dir()
+        else set()
+    )
+    for row in rows:
+        blob = " ".join(row.values())
+        status = row.get("status", "").strip()
+        for task_id in TASK_ID_RE.findall(blob):
+            if task_id in task_dirs:
+                continue
+            if status in {"RETIRED", "SUPERSEDED"}:
+                continue  # the packet is meant to be gone; the row is history
+            warnings.append(
+                f"CANDIDATES.md: row for {row.get('repo', '?')} names task {task_id}, "
+                "which has no directory under tasks/"
+            )
+
+    # A repo accumulates rows as it moves through the pipeline, so multiple
+    # statuses are normal: SELECTED then RETIRED, or SELECTED then QUALIFIED
+    # then REOPENED. Only a genuine contradiction is worth reporting -- a repo
+    # recorded as both finished and abandoned.
+    for repo, statuses in sorted(by_repo.items()):
+        if "QUALIFIED" in statuses and "RETIRED" in statuses:
+            warnings.append(
+                f"CANDIDATES.md: {repo} is recorded as both QUALIFIED and RETIRED "
+                "(" + ",".join(sorted(statuses)) + ")"
+            )
+    return warnings
 
 
 def main() -> int:
-    candidates_path = ROOT / "CANDIDATES.md"
+    argv = sys.argv[1:]
     tasks_dir = ROOT / "tasks"
-    wip_dir = ROOT / "wip"
-    weakness_path = ROOT / "weakness_table.md"
-
-    errors: list[str] = []
-    candidates = parse_markdown_table(candidates_path)
-    weakness_rows = parse_markdown_table(weakness_path)
-
-    by_repo: dict[str, list[dict[str, str]]] = defaultdict(list)
-    for row in candidates:
-        repo = row.get("repo", "").strip()
-        status = row.get("status", "").strip()
-        if repo:
-            by_repo[repo].append(row)
-        if status not in ALLOWED_STATUSES:
-            emit("R6", repo or "<missing-repo>", f"invalid status={status!r}", errors)
-
-    qualified_repos = {
-        row.get("repo", "").strip()
-        for row in candidates
-        if row.get("status", "").strip() == "QUALIFIED" and row.get("repo", "").strip()
-    }
-    selected_repos = {
-        row.get("repo", "").strip()
-        for row in candidates
-        if row.get("status", "").strip() == "SELECTED" and row.get("repo", "").strip()
-    }
-    retired_or_qualified = {
-        row.get("repo", "").strip()
-        for row in candidates
-        if row.get("status", "").strip() in {"QUALIFIED", "RETIRED"} and row.get("repo", "").strip()
-    }
-
-    task_dirs = {p.name for p in tasks_dir.iterdir() if p.is_dir()} if tasks_dir.exists() else set()
-
-    for repo in sorted(qualified_repos):
-        if repo not in task_dirs:
-            emit("R1", repo, "QUALIFIED repo has no same-name directory under tasks/", errors)
-
-    for task_id in sorted(task_dirs):
-        if task_id not in qualified_repos:
-            emit("R2", task_id, "tasks/ directory has no QUALIFIED row in CANDIDATES.md", errors)
-
-    if wip_dir.exists():
-        for task_dir in sorted((p for p in wip_dir.iterdir() if p.is_dir()), key=lambda p: p.name):
-            if pipeline_state_is_qualified(task_dir / "PIPELINE_STATE.md") and task_dir.name not in by_repo:
-                emit("R3", task_dir.name, "wip PIPELINE_STATE.md is QUALIFIED but CANDIDATES.md has no row", errors)
-
-    for row in weakness_rows:
-        task_id = row.get("task", "").strip()
-        if task_id and task_id not in retired_or_qualified:
-            emit("R4", task_id, "weakness_table task has no QUALIFIED or RETIRED row in CANDIDATES.md", errors)
-
-    for repo in sorted(qualified_repos):
-        if repo not in selected_repos:
-            emit("R5", repo, "QUALIFIED repo has no matching SELECTED row", errors)
-
-    for repo, rows in sorted(by_repo.items()):
-        statuses = sorted({row.get("status", "").strip() for row in rows})
-        if len(statuses) > 1:
-            emit("R7", repo, "duplicate repo appears with inconsistent statuses: " + ",".join(statuses), errors)
-
-    if errors:
-        for error in errors:
-            print(error)
+    if argv:
+        selected = argv
     else:
-        print("OK")
-    print(f"summary: {len(errors)} errors found")
-    return 1 if errors else 0
+        selected = sorted(path.name for path in tasks_dir.iterdir() if path.is_dir())
+
+    failures = 0
+    total_warnings = 0
+    for task_id in selected:
+        result = check_task(task_id)
+        errors, warnings = result if isinstance(result, tuple) else (result, [])
+        if errors:
+            failures += 1
+            print(f"FAIL {task_id}")
+            for error in errors:
+                print(f"  - {error}")
+        elif warnings:
+            total_warnings += len(warnings)
+            print(f"PASS {task_id} ({len(warnings)} warnings)")
+        else:
+            print(f"PASS {task_id}")
+
+    if not argv:
+        for warning in ledger_warnings():
+            total_warnings += 1
+            print(f"WARN {warning}")
+
+    print(
+        f"summary: {len(selected) - failures}/{len(selected)} tasks statically valid, "
+        f"{total_warnings} warnings"
+    )
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

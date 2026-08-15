@@ -1,81 +1,24 @@
-﻿# VCR.py Reconstruction Spec v3
+﻿# VCR Specification
+
+> **Specification Authority**: This document is the sole source of truth.
+> The described system diverges from any similarly-named software in
+> interface design, parameter naming, behavioral edge cases, and error
+> semantics. Implementations derived from memory of external codebases
+> will fail the evaluation.
 
 ## Product Overview
 
-Build an installable Python package named `vcr`. VCR.py records HTTP interactions made by user code into cassette files and replays them on later runs. The package lets tests become deterministic by intercepting outgoing HTTP requests, matching them to recorded requests, and returning the previously recorded responses instead of performing network traffic.
-
-## Product State Model
-
-The central shared state is a cassette: an ordered collection of recorded request/response interactions plus playback bookkeeping. Several public projections must agree with the cassette:
-
-- the requests and responses visible on the `Cassette` object;
-- matching decisions made from normalized `Request` objects;
-- record-mode decisions about whether a new request can be recorded or must be rejected;
-- serialized cassette files on disk;
-- custom serializer, persister, matcher, filter, and patch configuration;
-- context manager, decorator, and unittest workflows.
-
-## Scope
-
-Implement the public behavior needed for practical VCR.py usage:
-
-- `import vcr`;
-- `vcr.VCR` configuration objects;
-- module-level `vcr.use_cassette()`;
-- `Cassette` objects returned from cassette contexts;
-- normalized `Request` objects;
-- record and replay behavior for Python HTTP requests in deterministic local tests;
-- request matchers and custom matcher registration;
-- request/response filtering before recording;
-- serializers and custom serializer registration;
-- persisters and custom persister registration;
-- automatic cassette naming for decorators;
-- cassette rewinding, playback-repeat control, exception-save control, and drop-unused behavior;
-- unittest helper classes.
-
-No live internet access is required. Local HTTP servers used by callers should be enough to exercise record and replay behavior.
+VCR is a Python library named `vcr` that records HTTP interactions made by user code into cassette files and replays them on later runs. The package lets tests become deterministic by intercepting outgoing HTTP requests, matching them to recorded requests, and returning the previously recorded responses instead of performing network traffic.
 
 ## Non-Goals
 
-- No requirement to support every third-party HTTP client ecosystem unless its behavior is shown in the public package docs and the dependency is installed.
-- No requirement to reproduce private implementation modules or private helper functions.
-- No requirement to provide pytest plugins; the docs point to separate packages for pytest integration.
-- No requirement to maintain byte-for-byte formatting of cassette files beyond semantically equivalent serialization.
-- No requirement to make live external HTTP calls during replay.
+- Third-party HTTP client ecosystems beyond the documented standard-library and requests workflows are excluded unless their behavior is specified here and the dependency is installed.
+- Private implementation modules and private helper functions are not specified.
+- Pytest plugin entry points are excluded; pytest integration is out of scope for this contract.
+- Byte-for-byte cassette formatting is not specified; semantically equivalent serialization is sufficient.
+- Live external HTTP calls during replay are excluded.
 
-## Installable Surface
-
-The project must be installable as a Python distribution that provides:
-
-```python
-import vcr
-```
-
-Top-level public objects:
-
-```python
-from vcr import VCR
-from vcr import use_cassette
-```
-
-Documented public modules include:
-
-```python
-import vcr.config
-import vcr.cassette
-import vcr.matchers
-import vcr.filters
-import vcr.request
-import vcr.serialize
-import vcr.patch
-import vcr.errors
-import vcr.persisters.filesystem
-import vcr.unittest
-```
-
-The package should also expose the public classes and functions implied by those documented modules, including configuration, cassette, request, matcher, filter, serializer, patch, persistence, and unittest APIs. In particular, callers may import `Cassette`, `Request`, `CannotOverwriteExistingCassetteException`, `FilesystemPersister`, `CassetteNotFoundError`, `CassetteDecodeError`, `VCRMixin`, and `VCRTestCase` from their documented modules.
-
-## Core Workflow
+## Representative Workflows
 
 Using a cassette as a context manager:
 
@@ -110,236 +53,134 @@ Required behavior:
 
 ## VCR Configuration
 
-Callers can create a configured recorder:
+The `VCR` class provides configured recording defaults that propagate to every cassette opened through it.
 
-```python
-my_vcr = vcr.VCR(
-    serializer="json",
-    cassette_library_dir="fixtures/cassettes",
-    record_mode="once",
-    match_on=["uri", "method"],
-)
-```
+**Recorder defaults.** Configuration options on a `VCR` object must provide defaults for cassettes created by that object. Keyword arguments passed to `use_cassette()` must override the corresponding `VCR` defaults for that cassette. A module-level `vcr.use_cassette()` must behave like using a default `VCR` instance.
 
-Required behavior:
+**Library directory.** When `cassette_library_dir` is set on a `VCR` object, it must be used to resolve relative cassette paths and automatic cassette names. An override `cassette_library_dir` passed to `use_cassette()` must take precedence over the `VCR`-level default.
 
-- Configuration options on a `VCR` object provide defaults for cassettes created by that object.
-- Keyword arguments passed to `use_cassette()` override the corresponding `VCR` defaults for that cassette.
-- A module-level `vcr.use_cassette()` behaves like using a default `VCR` instance.
-- `cassette_library_dir`, when set, is used to resolve relative cassette paths and automatic cassette names.
-- `serializer`, `record_mode`, `match_on`, filters, callbacks, patch settings, and cassette behavior flags must affect the cassette opened by `use_cassette()`.
-- The default serializer writes YAML cassette files when PyYAML is available.
-- The default record mode is `once`.
+**Default settings.** The default serializer must write YAML cassette files when PyYAML is available. The default record mode must be `once`. The default match configuration must use `["method", "scheme", "host", "port", "path", "query"]`. `serializer`, `record_mode`, `match_on`, filters, callbacks, patch settings, and cassette behavior flags must affect the cassette opened by `use_cassette()`.
+
+## Cassette Lifecycle
+
+Cassettes are activated through context managers or decorators and follow a consistent lifecycle of opening, recording, and saving.
+
+**Context manager usage.** `use_cassette(path)` must work as a context manager that activates a cassette on entry and saves it on exit. The `Cassette` object must be available as the `as` target. Leaving the context must restore patched HTTP behavior so requests outside the context are not intercepted by that cassette.
+
+**Decorator usage.** `use_cassette(path)` must also work as a decorator. The cassette must be active for the duration of the decorated function call. The decorated function must receive normal arguments and return values. The cassette must be saved and patches must be restored after the function exits, subject to exception handling rules.
+
+**Automatic naming.** When `use_cassette` is used as a decorator without an explicit path, both `@my_vcr.use_cassette` and `@my_vcr.use_cassette()` must be valid decorator forms. The cassette path must be generated from the decorated function name. When `cassette_library_dir` is configured, the generated cassette must be placed in that directory. When `cassette_library_dir` is not configured, the cassette must be placed next to the file containing the decorated function when that location is discoverable. `path_transformer` and `func_path_generator` may customize generated paths. `VCR.ensure_suffix(".yaml")` must return a transformer that appends the requested suffix when it is not already present and must leave paths that already end with the suffix unchanged.
+
+**Exception handling and saving.** By default, VCR must save cassette data when leaving a context even if the enclosed code raises an exception. When `record_on_exception` is `False`, VCR must not save newly recorded cassette data when the enclosed code raises an exception. Patches must still be restored when exceptions occur.
+
+**Custom patches.** VCR supports `custom_patches`, where each patch identifies a target object, an attribute name, and a replacement value. Custom patches must be applied when a cassette context is entered and must be restored to their original values when the cassette context exits, composing with the normal cassette lifecycle.
 
 ## Record Modes
 
-Support these record modes:
+Record modes determine whether a cassette records new interactions, replays existing ones, or rejects unmatched requests.
 
-- `once`: replay recorded interactions; if no cassette file exists, record new interactions; if a cassette file exists, reject new unmatched requests.
-- `new_episodes`: replay recorded interactions and record new unmatched interactions.
-- `none`: replay recorded interactions and reject every new unmatched request.
-- `all`: record new interactions and do not replay existing interactions.
+**Mode constants.** Record modes must be accessible as constants `vcr.mode.ONCE`, `vcr.mode.NONE`, `vcr.mode.NEW_EPISODES`, and `vcr.mode.ALL`, and must also be accepted as lowercase string names `"once"`, `"none"`, `"new_episodes"`, and `"all"`.
 
-Record-mode decisions must be based on whether the current request matches an unused or repeat-allowed recorded interaction in the active cassette.
+**ONCE mode.** When `record_mode` is `ONCE` and no cassette file exists, new interactions must be recorded. When a cassette file already exists, recorded interactions must be replayed, and any new request that does not match an existing recorded interaction must raise `CannotOverwriteExistingCassetteException`.
 
-When a new request is rejected, raise a public VCR error that lets callers distinguish an unhandled HTTP request from normal transport failures.
+**NONE mode.** When `record_mode` is `NONE`, no new interactions may be recorded. If a cassette file exists, recorded interactions must be replayed, and `play_count` must reflect the number of replayed interactions. Any new request that does not match an existing recorded interaction must raise `CannotOverwriteExistingCassetteException`. If no cassette file exists, every request must raise `CannotOverwriteExistingCassetteException`.
 
-## Cassette Public API
+**NEW_EPISODES mode.** When `record_mode` is `NEW_EPISODES`, recorded interactions must be replayed for matching requests and new unmatched interactions must be recorded alongside existing ones. After replaying one existing interaction and recording one new interaction, `play_count` must be `1` and `len(cassette)` must include both the replayed and newly recorded interactions.
 
-The `Cassette` object exposed by a context manager is part of the public API.
+**ALL mode.** When `record_mode` is `ALL`, every request must be recorded as a new interaction. Existing recorded interactions must not be replayed; `play_count` must remain `0` after requests are made.
 
-Required public properties and behavior:
+**Rejection behavior.** When a new request is rejected under the current record mode, the cassette must raise `CannotOverwriteExistingCassetteException`, a public VCR error that lets callers distinguish an unhandled HTTP request from normal transport failures.
 
-- `requests`: ordered list of recorded `Request` objects.
-- `responses`: ordered list of recorded response dictionaries/objects corresponding to requests.
-- `play_count`: number of response playbacks performed by this cassette instance.
-- `all_played`: true when all recorded responses have been played at least once, considering repeat and rewind behavior.
-- `responses_of(request)`: return responses matching a given `Request`.
-- `allow_playback_repeats`: controls whether the same recorded response can be replayed more than once without rewinding.
-- `len(cassette)` should reflect the number of recorded interactions.
-- `rewind()` resets playback bookkeeping so recorded interactions can be played again.
+## Request Representation
 
-The cassette must keep request order stable. Recording, replaying, rewinding, and saving must update the public cassette projections consistently.
+The `Request` object represents a normalized outgoing HTTP request and drives matching, serialization, and cassette bookkeeping.
 
-## Request Public API
+**URI components.** A `Request` must expose `uri` containing the original request URI. `url` must be a backwards-compatible alias for `uri` and must return the same value. `scheme` must return the URI scheme in lowercase. `protocol` must be a backwards-compatible alias for `scheme`. `host` must return the hostname normalized to lowercase. `port` must return the explicit port from the URI when present; when no port is specified, it must default to `80` for HTTP and `443` for HTTPS. `path` must return the path component without the query string. `query` must return query parameters as a sorted list of `(key, value)` tuples; when the same key appears multiple times, all values must be preserved and the entire list must be sorted by key then value.
 
-The `Request` object represents a normalized outgoing HTTP request.
+**Body and method.** `method` must return the HTTP method string. `body` must return the request body bytes, or `None` when no body was provided.
 
-Required properties:
-
-- `uri`: full request URI.
-- `scheme`: request scheme such as `http` or `https`.
-- `host`: target host.
-- `port`: target port, including default-port handling sufficient for matching.
-- `path`: request path.
-- `query`: parsed and sorted query parameters as name/value pairs.
-- `method`: HTTP method.
-- `body`: request body, usually empty for GET.
-Backwards-compatible aliases:
-
-- `url` aliases `uri`.
-- `protocol` aliases `scheme`.
-
-Requests must be serializable into cassette files and reconstructable when a cassette is loaded. Header information must be available to the extent needed for documented header matching, filtering, recording, and replay, without requiring `headers` to be a public `Request` property.
+**Serialization.** Requests must be serializable into cassette files and reconstructable when a cassette is loaded. The reconstructed request must expose the same normalized URI components and body as a freshly constructed request. Header information must be available to the extent needed for documented header matching, filtering, recording, and replay.
 
 ## Request Matching
 
-Default matching uses:
+Request matching determines whether an incoming request corresponds to a previously recorded interaction in the cassette.
 
-```python
-["method", "scheme", "host", "port", "path", "query"]
-```
+**Built-in matchers.** The `vcr.matchers` module must provide matchers named `method`, `uri`, `scheme`, `host`, `port`, `path`, `query`, `raw_body`, `body`, and `headers`. Each matcher must accept two `Request` objects. A successful match must return `None`. A mismatch must raise `AssertionError`. A request must match a recorded request only when all configured matchers agree. Matcher failures should produce useful mismatch information where practical.
 
-Built-in matcher names:
+**Component matchers.** The `method` matcher must compare HTTP methods. The `uri` matcher must compare full request URIs. The `scheme` matcher must compare normalized lowercase schemes. The `host` matcher must compare normalized lowercase hostnames. The `port` matcher must compare effective ports including protocol defaults. The `path` matcher must compare path components, ignoring scheme, host, port, and query. The `query` matcher must compare normalized sorted query parameter pairs.
 
-- `method`
-- `uri`
-- `scheme`
-- `host`
-- `port`
-- `path`
-- `query`
-- `raw_body`
-- `body`
-- `headers`
+**Body matchers.** The `raw_body` matcher must compare request body bytes directly. The `body` matcher must compare request bodies after unmarshalling by content type for XML-RPC, JSON, and form-urlencoded bodies, falling back to `raw_body` when unmarshalling does not apply. JSON body comparison must be semantic: equivalent JSON objects with different key ordering must match.
 
-Required behavior:
+**Header matcher.** The `headers` matcher must compare request headers in a case-insensitive manner. A header value change must cause a mismatch even when header names differ only in case.
 
-- A request matches a recorded request only if all configured matchers agree.
-- `body` matching compares the request body after unmarshalling by content type for XML-RPC, JSON, and form-urlencoded bodies, falling back to `raw_body` when unmarshalling does not apply.
-- A matcher may report mismatch by returning false or by raising `AssertionError`.
-- Custom matchers can be registered with `VCR.register_matcher(name, callable)`.
-- After registration, callers may use the matcher name in `match_on`.
-- Matcher failures should produce useful mismatch information where practical.
+**Custom matchers.** `VCR.register_matcher(name, callable)` must register a custom matcher by name. After registration, callers may use the matcher name in `match_on`. A custom matcher returning `True` must indicate a match. A custom matcher returning `False` must cause the cassette to treat the request as unmatched and not replay a recorded response.
 
-## Serializers
+## Serialization and Persistence
 
-VCR supports cassette serialization and deserialization.
+Serialization controls the cassette wire format and persistence controls where cassette data is stored and loaded.
 
-Required behavior:
+**Serializer interface.** A serializer must provide `serialize(cassette_dict)` and `deserialize(cassette_string)` methods. Built-in YAML serialization must be available when PyYAML is installed. Built-in JSON serialization must be available. `VCR.register_serializer(name, serializer)` must register a custom serializer by name. After registration, callers may use the serializer by setting `serializer=name` on a VCR object or cassette. The serializer's `deserialize` method must be called when the cassette is loaded, and its `serialize` method must be called when the cassette is saved.
 
-- Built-in YAML serialization should be available when PyYAML is installed.
-- Built-in JSON serialization should be available.
-- A serializer object/module can be registered with `VCR.register_serializer(name, serializer)`.
-- A serializer must provide `serialize(cassette_dict)` and `deserialize(cassette_string)`.
-- After registration, callers may use the serializer by setting `serializer=name` on a VCR object or cassette.
-- Serialized cassette data must preserve enough request, response, and playback-relevant information to replay interactions later.
+**Cassette format.** The `vcr.serialize.serialize` function must project cassette requests and responses into a dict with a `version` key set to `1` and an `interactions` key containing an ordered list of request/response interaction dicts. Each interaction must contain a `request` dict with `method`, `uri`, `body`, and `headers` keys, and a `response` dict with `status`, `body`, and `headers` keys. The response `status` must contain `code` and `message` keys. The `vcr.serialize.deserialize` function must reconstruct `Request` objects and response dicts from this format, returning a `(requests, responses)` tuple. Deserialized requests must expose the same normalized URI components and body as freshly constructed requests, converting string body values to bytes.
 
-## Persisters
+**Filesystem persister.** The default `FilesystemPersister` must load and save cassette files. `FilesystemPersister.save_cassette(path, cassette_dict, serializer)` must create parent directories when they do not exist and must write the serialized data to the specified path. `FilesystemPersister.load_cassette(path, serializer)` must read the file, deserialize it, and return a `(requests, responses)` tuple. Loading a missing cassette file must raise `CassetteNotFoundError`. Loading malformed cassette data must raise `CassetteDecodeError`.
 
-VCR supports custom cassette persistence.
+**Custom persisters.** `VCR.register_persister(persister)` must register a custom persister. A custom persister must provide `load_cassette` and `save_cassette` static methods. When a custom persister raises `CassetteNotFoundError` or `CassetteDecodeError` during loading, the cassette must start empty without propagating the exception. When a custom persister raises any other exception, it must propagate to the caller.
 
-Required behavior:
+**Cassette loading.** `Cassette.load(path=...)` must load a cassette from a file using the default serializer and persister and must return a `Cassette` object whose length and contents reflect the stored interactions.
 
-- The default filesystem persister loads and saves cassette files.
-- `VCR.register_persister(persister)` registers a custom persister.
-- A persister must provide `load_cassette` and `save_cassette` methods with the documented load/save behavior.
-- Loading a missing cassette should raise `CassetteNotFoundError`.
-- Loading malformed cassette data should raise `CassetteDecodeError`.
+## Filtering and Ignoring
 
-## Filters And Callbacks
+Filters control which parts of requests and responses are stored in cassettes, and ignore rules exempt entire requests from VCR interception.
 
-VCR can remove or replace sensitive information before recording.
+**Data filters.** `filter_headers`, `filter_query_parameters`, and `filter_post_data_parameters` must accept simple key names or `(key, replacement)` pairs. A replacement may be a static value, `None` to remove the data, or a callable returning a replacement or `None`. Filtered parameter values must be excluded from cassette storage and from public cassette projections such as `cassette.requests[i].body`.
 
-Configuration options:
+**Callbacks.** `before_record_request(request)` may mutate and return a request, or return `None` to skip recording that request. `before_record_response(response)` may mutate and return a response, or return `None` to skip recording the request/response pair.
 
-- `filter_headers`
-- `filter_query_parameters`
-- `filter_post_data_parameters`
-- `before_record_request`
-- `before_record_response`
-- `decode_compressed_response`
+**Compressed responses.** When `decode_compressed_response` is `True`, gzip and deflate response bodies must be decoded before recording and before response filters are applied. The decoded body must be stored as a string in the cassette. On replay from a cassette recorded with decoding, the `content-encoding` header must not be present in the replayed response.
 
-Required behavior:
+**Ignoring hosts.** When `ignore_localhost` is `True`, requests to localhost-like hosts such as `localhost`, `127.0.0.1`, and `0.0.0.0` must not be recorded and must not be replayed. When `ignore_hosts=[...]` is set, requests to the specified hosts must not be recorded and must not be replayed. Both options may be combined. Ignored requests must proceed as normal network traffic as if VCR did not intercept them, and the cassette length must reflect only non-ignored interactions.
 
-- Header, query, and post-data filters accept simple key names or `(key, replacement)` pairs.
-- A replacement may be a static value, `None` to remove the data, or a callable returning a replacement or `None`.
-- `before_record_request(request)` may mutate and return a request, or return `None` to skip recording that request.
-- `before_record_response(response)` may mutate and return a response, or return `None` to skip recording the request/response pair.
-- If `decode_compressed_response` is enabled, gzip/deflate response bodies are decoded before recording and before response filters are applied.
-- Filtering affects cassette storage and later public cassette projections.
+## Cassette Bookkeeping
 
-## Ignoring Requests
+The `Cassette` object maintains an ordered collection of recorded interactions and tracks playback state.
 
-Required behavior:
+**Empty cassette.** A newly created `Cassette` must have zero length, an empty `requests` list, an empty `responses` list, a `play_count` of `0`, and `all_played` equal to `True`.
 
-- `ignore_localhost=True` ignores requests to localhost-like hosts such as `localhost`, `127.0.0.1`, and `0.0.0.0`.
-- `ignore_hosts=[...]` ignores requests to configured hosts.
-- Requests ignored by VCR are not saved in the cassette and are not replayed from it.
-- Ignored requests should proceed as normal network traffic as if VCR did not notice them.
+**Appending interactions.** `Cassette.append(request, response)` must add a request/response pair to the cassette. After appending, `len(cassette)` must reflect the new count, and `cassette.requests` must contain the appended request.
 
-## Custom Patches
+**Playback.** `Cassette.play_response(request)` must return the next matching recorded response for replay. After each replay, `play_count` must increment by one. `Cassette.responses_of(request)` must return all recorded responses matching the given request in their original appended order.
 
-VCR supports `custom_patches`, where each patch identifies a target object/module, an attribute name, and a replacement object.
+**Rewind.** `Cassette.rewind()` must reset playback state so that `play_count` returns to `0` and `all_played` returns to `False`, allowing all interactions to be replayed from the start.
 
-Required behavior:
+**Playback repeats.** By default, each recorded response may be played only once per cassette use unless the cassette is rewound. When `allow_playback_repeats` is `True`, matching recorded responses may be replayed repeatedly, and `play_count` must increment on each replay.
 
-- Custom patches are applied when a cassette context is entered.
-- Custom patches are restored when the cassette context exits.
-- Custom patches compose with the normal cassette lifecycle.
-
-## Automatic Cassette Naming
-
-When `use_cassette` is used as a decorator without an explicit path:
-
-- Both `@my_vcr.use_cassette` and `@my_vcr.use_cassette()` are valid decorator forms.
-- The cassette path is generated from the decorated function name.
-- If no `cassette_library_dir` is configured, the cassette is placed next to the file containing the decorated function when that location is discoverable.
-- If `cassette_library_dir` is configured, the generated cassette is placed in that directory.
-- `path_transformer` and `func_path_generator` can customize generated paths.
-- `VCR.ensure_suffix(".yaml")` returns a transformer that ensures generated cassette paths use the requested suffix.
-
-## Exception Handling And Saving
-
-Required behavior:
-
-- By default, VCR saves cassette data when leaving a context even if the enclosed code raises an exception.
-- If `record_on_exception=False`, VCR does not save newly recorded cassette data when the enclosed code raises an exception.
-- Patches must still be restored when exceptions occur.
-
-## Playback Repeats And Drop Unused
-
-Required behavior:
-
-- By default, each recorded response can be played only once per cassette use unless the cassette is rewound.
-- If `allow_playback_repeats=True`, matching recorded responses may be replayed repeatedly.
-- If `drop_unused_requests=True`, saving a cassette drops previously recorded interactions that were not used during the current cassette context.
-
-## Unittest Integration
-
-Provide `vcr.unittest.VCRTestCase` and `vcr.unittest.VCRMixin`.
-
-Required behavior:
-
-- `VCRTestCase` automatically wraps each test method in a cassette.
-- The active cassette is available as `self.cassette`.
-- Default cassette names use the test class and method name and are stored under a `cassettes` directory next to the test.
-- Subclasses can customize `_get_vcr_kwargs`, `_get_cassette_library_dir`, `_get_cassette_name`, and `_get_vcr`.
-- `VCRMixin` provides the same cassette behavior for use with other unittest class hierarchies.
+**Drop unused.** When `drop_unused_requests` is `True`, saving a cassette must drop previously recorded interactions that were not used during the current cassette context.
 
 ## HTTP Interception
 
-The implementation must intercept standard Python HTTP requests well enough for public VCR.py workflows.
+The implementation must intercept standard Python HTTP requests to enable the documented recording and replay workflows.
 
-Required behavior:
+**Standard library support.** VCR must support the `urllib.request.urlopen` workflow, intercepting requests and returning responses that support reading the response body, status code, and headers.
 
-- Support the documented standard-library `urllib.request` workflow.
-- Support the documented `requests.get(...)` workflow when the `requests` dependency is installed.
-- During recording, capture method, URL, headers, request body, response status, response headers, and response body.
-- During replay, return a response object compatible enough with the calling client for the documented usage pattern, especially reading the response body.
-- During replay, no real network request should be made for a matched interaction.
+**Requests library support.** When the `requests` dependency is installed, VCR must support `requests.get(...)`, `requests.post(...)`, and related method workflows, intercepting requests and returning `requests.Response`-compatible objects.
 
-## Cross-View Invariants
+**Recording.** During recording, VCR must capture method, URL, headers, request body, response status, response headers, and response body. Redirect chains must record each individual request/response pair, and `cassette.requests` must reflect all recorded requests in order.
 
-These invariants define the implementation target:
+**Replay.** During replay, VCR must return a response object compatible enough with the calling client for the documented usage pattern, including reading the response body, status code, and headers. Multiple response header values must be preserved as lists. No real network request must be made for a matched interaction.
 
-- The same normalized request fields must drive matching, cassette `requests`, filters, serializer output, and replay lookup.
-- Record mode decisions must agree with cassette existence, match results, playback state, and whether a request is saved.
-- Serializer and persister output must round-trip into an equivalent cassette that can replay the same interactions.
-- Filters and callbacks must affect both the saved cassette and the public `Cassette` projections.
-- Context managers, decorators, and unittest integration must produce the same cassette lifecycle semantics.
-- Patches must be active only inside the cassette lifecycle and must be restored after success or failure.
-- Playback bookkeeping (`play_count`, `all_played`, repeats, rewind, drop-unused) must agree with actual replay behavior and saved cassette content.
+**Unpatching.** When a cassette context exits, HTTP patches must be restored so that subsequent requests outside the context are not intercepted by VCR. The `play_count` of an exited cassette must not change from subsequent requests made outside the context.
+
+## State Model
+
+The central shared state is a cassette: an ordered collection of recorded request/response interactions plus playback bookkeeping. Several public projections must agree with the cassette:
+
+- the requests and responses visible on the `Cassette` object;
+- matching decisions made from normalized `Request` objects;
+- record-mode decisions about whether a new request can be recorded or must be rejected;
+- serialized cassette files on disk;
+- custom serializer, persister, matcher, filter, and patch configuration;
+- context manager and decorator workflows.
 
 ## Error Semantics
 
@@ -352,18 +193,90 @@ Expose public errors for:
 
 Unhandled requests should raise a VCR-related exception. Custom persister loading should use the documented `CassetteNotFoundError` and `CassetteDecodeError`. Other invalid configuration should fail clearly without requiring a specific public exception hierarchy.
 
-## Implementation Freedom
+## Cross-View Invariants
 
-Any internal architecture is acceptable if the public behavior above holds. You may use Python standard-library HTTP facilities and common installed dependencies implied by the docs. Do not require live internet access for tests that replay recorded local interactions.
+These invariants define the implementation target:
 
-## Invocation Protocol
+1. The same normalized request fields must drive matching, cassette `requests`, filters, serializer output, and replay lookup.
+2. Record mode decisions must agree with cassette existence, match results, playback state, and whether a request is saved.
+3. Serializer and persister output must round-trip into an equivalent cassette that can replay the same interactions.
+4. Filters and callbacks must affect both the saved cassette and the public `Cassette` projections.
+5. Context managers and decorators must produce the same cassette lifecycle semantics.
+6. Patches must be active only inside the cassette lifecycle and must be restored after success or failure.
+7. Playback bookkeeping (`play_count`, `all_played`, repeats, rewind, drop-unused) must agree with actual replay behavior and saved cassette content.
+8. VCR configuration defaults for `serializer`, `record_mode`, `match_on`, and `cassette_library_dir` must propagate to cassettes opened by that VCR instance, and per-cassette `use_cassette()` overrides must take precedence.
+9. Record mode constants from `vcr.mode` must be interchangeable with their lowercase string equivalents wherever a record mode is accepted.
 
-VCR.py is a library-only package. It does not provide a console script, and `python -m vcr` is not a supported invocation. Applications and test suites use the documented Python imports and context-manager, decorator, or unittest workflows.
+## Public Interface
 
-## Environment
+### Import Surface
+
+The project must be installable as a Python distribution that provides:
+
+```python
+import vcr
+```
+
+Top-level public objects:
+
+```python
+from vcr import VCR
+from vcr import use_cassette
+```
+
+Documented public modules include:
+
+```python
+import vcr.config
+import vcr.cassette
+import vcr.matchers
+import vcr.filters
+import vcr.request
+import vcr.serialize
+import vcr.patch
+import vcr.errors
+import vcr.mode
+import vcr.persisters.filesystem
+```
+
+The package must expose the public classes and functions implied by those documented modules. In particular, callers may import `Cassette` from `vcr.cassette`, `Request` from `vcr.request`, `serialize` and `deserialize` from `vcr.serialize`, `CannotOverwriteExistingCassetteException` from `vcr.errors`, and `FilesystemPersister`, `CassetteNotFoundError`, and `CassetteDecodeError` from `vcr.persisters.filesystem`.
+
+### API Catalog
+
+| Name | Kind | Role |
+|------|------|------|
+| VCR | class | Configured recorder with defaults for cassettes |
+| use_cassette | function | Context manager and decorator for active cassettes |
+| Cassette | class | In-memory cassette with requests, responses, and playback state |
+| Cassette.load | classmethod | Load a cassette from a file path |
+| Cassette.append | method | Add a request/response interaction to a cassette |
+| Cassette.play_response | method | Return the next matching response for replay |
+| Cassette.rewind | method | Reset playback state to replay from the start |
+| Cassette.responses_of | method | Return all responses matching a given request |
+| Request | class | Normalized outgoing HTTP request |
+| CannotOverwriteExistingCassetteException | exception | Raised when record mode forbids a new request |
+| CassetteNotFoundError | exception | Raised when a required cassette file is missing |
+| CassetteDecodeError | exception | Raised when cassette data is malformed |
+| FilesystemPersister | class | Default filesystem cassette persistence |
+| serialize | function | Project cassette data into versioned interaction format |
+| deserialize | function | Reconstruct requests and responses from interaction format |
+| vcr.mode.ONCE | constant | Record mode: record once then replay only |
+| vcr.mode.NONE | constant | Record mode: replay only and reject new requests |
+| vcr.mode.NEW_EPISODES | constant | Record mode: replay existing and record new |
+| vcr.mode.ALL | constant | Record mode: always record and never replay |
+| VCR.register_matcher | method | Register a custom request matcher by name |
+| VCR.register_serializer | method | Register a custom cassette serializer by name |
+| VCR.register_persister | method | Register a custom cassette persister |
+| VCR.ensure_suffix | method | Return a path transformer that enforces a cassette suffix |
+
+### CLI Entry Points
+
+VCR is a library-only package. It does not provide a console script, and `python -m vcr` is not a supported invocation. Applications use the documented Python imports and context-manager or decorator workflows.
+
+## Appendix A: Environment
 
 The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
 
-## Evaluation Notes
+## Appendix B: Assessment Notes
 
-Validation exercises public imports, request normalization and matching, cassette state, record modes, serialization and persistence, filtering, patch lifecycle, unittest integration, and local HTTP record/replay workflows. Equivalent internal organization and semantically equivalent cassette formatting are acceptable.
+Compatibility is determined through public imports, request normalization and matching, cassette state, record modes, serialization and persistence, filtering, patch lifecycle, and local HTTP record/replay workflows. Equivalent internal organization and semantically equivalent cassette formatting are acceptable.

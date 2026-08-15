@@ -13,6 +13,11 @@ from coverage.exceptions import ConfigError, NoDataError, NoSource, DataError
 from conftest import write_py, run_cli, measured_file, collect_file
 
 
+depends_on = pytest.mark.depends_on
+
+
+@depends_on("test_atomic::test_branch_measurement_records_arcs", "test_atomic::test_measured_contexts_includes_static_context_label")
+@pytest.mark.depends_on("test_cli_report_fail_under_returns_status_two", "test_cli_help_and_version_exit_successfully", "test_set_query_context_narrows_line_results_to_matching_context")
 def test_cli_branch_context_json_and_total_report_agree(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     write_py(
@@ -44,6 +49,8 @@ def test_cli_branch_context_json_and_total_report_agree(tmp_path):
     assert total_result.stdout.strip() == "66.67"
 
 
+@depends_on("test_atomic::test_branch_measurement_records_arcs")
+@pytest.mark.depends_on("test_cli_run_missing_script_fails_nonzero", "test_cli_report_fail_under_returns_status_two", "test_cli_help_and_version_exit_successfully")
 def test_cli_xml_report_exposes_branch_totals_and_missing_branch(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     write_py(
@@ -70,6 +77,8 @@ def test_cli_xml_report_exposes_branch_totals_and_missing_branch(tmp_path):
     assert branch_lines[0]["missing-branches"].isdigit()
 
 
+@depends_on("test_atomic::test_coverage_data_add_lines_round_trips_to_disk")
+@pytest.mark.depends_on("test_cli_erase_removes_configured_data_file", "test_coverage_data_file_tracer_and_touch_file_roundtrip", "test_cli_debug_data_reports_measured_file")
 def test_configured_data_file_is_shared_by_cli_and_coveragedata(tmp_path):
     """Seam: state consistency — projections agree across API boundaries."""
     write_py(tmp_path / "prog.py", "value = 7\nprint(value)\n")
@@ -85,6 +94,8 @@ def test_configured_data_file_is_shared_by_cli_and_coveragedata(tmp_path):
     assert {Path(name).name for name in data.measured_files()} == {"prog.py"}
 
 
+@depends_on("test_atomic::test_coverage_data_dumps_and_loads_preserve_lines", "test_atomic::test_branch_measurement_records_arcs")
+@pytest.mark.depends_on("test_measured_contexts_includes_static_context_label", "test_coverage_data_has_arcs_false_without_branch", "test_contexts_by_lineno_maps_lines_to_context_labels")
 def test_programmatic_branch_contexts_survive_serialization(tmp_path):
     """Seam: state consistency — projections agree across API boundaries."""
     program = write_py(
@@ -116,6 +127,8 @@ def test_programmatic_branch_contexts_survive_serialization(tmp_path):
     assert loaded.arcs(loaded_measured) == data.arcs(measured)
 
 
+@depends_on("test_atomic::test_statement_measurement_records_executed_lines", "test_atomic::test_coverage_current_tracks_collecting_instance")
+@pytest.mark.depends_on("test_statement_measurement_records_executed_lines", "test_coverage_data_dumps_and_loads_preserve_lines", "test_coverage_data_add_lines_round_trips_to_disk")
 def test_coverage_collect_context_manager_records_lines(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     program = write_py(tmp_path / "prog.py", "a = 1\nb = 2\nc = a + b\n")
@@ -132,6 +145,8 @@ def test_coverage_collect_context_manager_records_lines(tmp_path):
     assert data.lines(measured) == [1, 2, 3]
 
 
+@depends_on("test_atomic::test_statement_measurement_records_executed_lines")
+@pytest.mark.depends_on("test_coverage_data_dumps_and_loads_preserve_lines", "test_coverage_data_file_tracer_and_touch_file_roundtrip", "test_coverage_data_add_lines_round_trips_to_disk")
 def test_coverage_analysis_and_analysis2_report_missing_lines(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     program = write_py(
@@ -158,6 +173,7 @@ def test_coverage_analysis_and_analysis2_report_missing_lines(tmp_path):
     assert analysis2[3] == [5]
 
 
+@pytest.mark.depends_on("test_set_query_context_narrows_line_results_to_matching_context", "test_missing_source_raises_public_no_source", "test_get_and_set_option_roundtrip_configuration_value")
 def test_exclude_and_clear_exclude_change_missing_line_analysis(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     program = write_py(
@@ -183,6 +199,8 @@ def test_exclude_and_clear_exclude_change_missing_line_analysis(tmp_path):
     assert "pragma: skip-branch" not in cov.get_exclude_list("exclude")
 
 
+@depends_on("test_atomic::test_set_query_context_narrows_line_results_to_matching_context", "test_atomic::test_measured_contexts_includes_static_context_label")
+@pytest.mark.depends_on("test_set_query_context_narrows_line_results_to_matching_context", "test_measured_contexts_includes_static_context_label", "test_contexts_by_lineno_maps_lines_to_context_labels")
 def test_switch_context_filters_coveragedata_queries(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     first = write_py(tmp_path / "first.py", "value = 1\n")
@@ -205,6 +223,7 @@ def test_switch_context_filters_coveragedata_queries(tmp_path):
     assert data.lines(second_file) == []
 
 
+@pytest.mark.depends_on("test_touch_files_marks_multiple_files_as_measured", "test_coverage_data_update_merges_measured_files", "test_coverage_data_purge_files_removes_measured_file")
 def test_include_omit_measurement_controls_measured_files(tmp_path):
     """Seam: config interaction — multiple sources merge with documented precedence."""
     keep = write_py(tmp_path / "keep.py", "value = 'keep'\n")
@@ -220,6 +239,8 @@ def test_include_omit_measurement_controls_measured_files(tmp_path):
     assert measured == {"keep.py"}
 
 
+@depends_on("test_atomic::test_statement_measurement_records_executed_lines")
+@pytest.mark.depends_on("test_get_and_set_option_roundtrip_configuration_value", "test_coverage_data_file_tracer_and_touch_file_roundtrip", "test_coverage_data_dumps_and_loads_preserve_lines")
 def test_programmatic_json_xml_html_and_lcov_reports_share_total(tmp_path):
     """Seam: state consistency — projections agree across API boundaries."""
     program = write_py(tmp_path / "prog.py", "print('hello')\n")
@@ -241,6 +262,8 @@ def test_programmatic_json_xml_html_and_lcov_reports_share_total(tmp_path):
     assert (tmp_path / "coverage.lcov").exists()
 
 
+@depends_on("test_atomic::test_coverage_data_update_merges_measured_files")
+@pytest.mark.depends_on("test_touch_files_marks_multiple_files_as_measured", "test_coverage_data_update_merges_measured_files", "test_coverage_data_purge_files_removes_measured_file")
 def test_combine_keep_preserves_parallel_input_files(tmp_path):
     """Seam: state consistency — persisted and in-memory views stay aligned."""
     write_py(tmp_path / "one.py", "print('one')\n")
@@ -259,6 +282,8 @@ def test_combine_keep_preserves_parallel_input_files(tmp_path):
     assert measured == {"one.py", "two.py"}
 
 
+@depends_on("test_atomic::test_cli_erase_removes_configured_data_file", "test_atomic::test_no_data_error_for_report_without_measurement")
+@pytest.mark.depends_on("test_coverage_erase_removes_data_file", "test_cli_erase_removes_configured_data_file", "test_coverage_data_purge_files_removes_measured_file")
 def test_cli_erase_removes_coverage_file_and_report_has_no_data(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     write_py(tmp_path / "prog.py", "print('hello')\n")
@@ -273,6 +298,7 @@ def test_cli_erase_removes_coverage_file_and_report_has_no_data(tmp_path):
     assert report.returncode != 0
 
 
+@pytest.mark.depends_on("test_cli_run_missing_script_fails_nonzero", "test_cli_report_fail_under_returns_status_two", "test_cli_help_and_version_exit_successfully")
 def test_cli_run_module_passes_program_arguments(tmp_path):
     """Seam: protocol handoff — CLI command crosses into runtime or reporting layer."""
     package = tmp_path / "pkg"
@@ -291,6 +317,8 @@ def test_cli_run_module_passes_program_arguments(tmp_path):
     assert json.loads((tmp_path / "args.json").read_text(encoding="utf-8")) == ["left", "right"]
 
 
+@depends_on("test_atomic::test_coverage_file_environment_selects_data_file")
+@pytest.mark.depends_on("test_coverage_file_environment_selects_data_file", "test_coverage_erase_removes_data_file", "test_coverage_data_purge_files_removes_measured_file")
 def test_coverage_file_environment_is_used_by_report_command(tmp_path):
     """Seam: config interaction — configuration sources combine with expected precedence."""
     write_py(tmp_path / "prog.py", "print('hello')\n")
@@ -303,6 +331,8 @@ def test_coverage_file_environment_is_used_by_report_command(tmp_path):
     assert report.stdout.strip() == "100"
 
 
+@depends_on("test_atomic::test_set_query_context_narrows_line_results_to_matching_context")
+@pytest.mark.depends_on("test_coverage_data_dumps_and_loads_preserve_lines", "test_coverage_data_add_lines_round_trips_to_disk", "test_set_query_context_narrows_line_results_to_matching_context")
 def test_coverage_data_query_context_filters_lines(tmp_path):
     """Seam: state consistency — integrated workflow preserves expected invariants."""
     program = write_py(tmp_path / "ctx.py", "a = 1\nb = 2\nc = 3\n")
@@ -323,6 +353,7 @@ def test_coverage_data_query_context_filters_lines(tmp_path):
     assert data.lines(filename) == []
 
 
+@pytest.mark.depends_on("test_statement_measurement_records_executed_lines", "test_no_data_error_for_report_without_measurement", "test_missing_source_raises_public_no_source")
 def test_exclusion_rules_remove_lines_from_missing_report(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     cov, program = collect_file(tmp_path, "x = 1\nif x:\n    y = 2\nelse:  # pragma: no cover\n    y = 3\n")
@@ -334,6 +365,8 @@ def test_exclusion_rules_remove_lines_from_missing_report(tmp_path):
     assert "raise NotImplementedError" not in cov.get_exclude_list("exclude")
 
 
+@depends_on("test_atomic::test_branch_measurement_records_arcs")
+@pytest.mark.depends_on("test_coverage_data_file_tracer_and_touch_file_roundtrip", "test_no_data_error_for_report_without_measurement", "test_invalid_config_file_raises_config_error")
 def test_json_report_contains_totals_and_file_details(tmp_path):
     """Seam: protocol handoff — command output matches artifact or API state."""
     cov, _program = collect_file(tmp_path, "x = 1\nprint(x)\n", branch=True)
@@ -420,6 +453,7 @@ def test_rcfile_config_controls_branch_and_report_output(tmp_path):
     assert "4" in report.stdout
 
 
+@depends_on("test_atomic::test_statement_measurement_records_executed_lines")
 def test_public_report_methods_return_same_total_for_same_data(tmp_path):
     """Seam: state consistency — projections agree across API boundaries."""
     cov, _program = collect_file(tmp_path, "x = 1\nprint(x)\n")
@@ -457,6 +491,7 @@ def test_installable_surface_imports_version_and_module_cli(tmp_path):
     assert "Coverage.py" in result.stdout
 
 
+@depends_on("test_atomic::test_invalid_config_file_raises_config_error")
 def test_invalid_rcfile_reports_config_error_via_cli_and_api(tmp_path):
     """Seam: error propagation — invalid rcfile errors surface via CLI and Coverage API."""
     bad = tmp_path / ".coveragerc"
@@ -475,3 +510,41 @@ def test_invalid_rcfile_reports_config_error_via_cli_and_api(tmp_path):
 
     assert cli.returncode != 0
     assert api_error is True
+
+
+@depends_on("test_atomic::test_statement_measurement_records_executed_lines", "test_atomic::test_coverage_data_add_lines_round_trips_to_disk")
+def test_annotate_creates_executed_and_missed_markers(tmp_path):
+    """Seam: protocol handoff — annotate markers agree with analysis missing-line data."""
+    program = write_py(
+        tmp_path / "prog.py",
+        "a = 1\nif a:\n    b = 2\nelse:\n    b = 3\n",
+    )
+    cov = Coverage(data_file=str(tmp_path / ".coverage"), source=[str(tmp_path)])
+    cov.start()
+    exec(compile(program.read_text(encoding="utf-8"), str(program), "exec"), {})
+    cov.stop()
+    cov.save()
+
+    outdir = tmp_path / "ann"
+    cov.annotate(directory=str(outdir))
+    annotated = next(outdir.glob("*prog*,cover"))
+    text = annotated.read_text(encoding="utf-8")
+
+    assert ">" in text
+    assert "!" in text
+
+
+@depends_on("test_atomic::test_branch_measurement_records_arcs", "test_atomic::test_cli_help_and_version_exit_successfully")
+def test_cli_run_branch_with_show_missing_report(tmp_path):
+    """Seam: protocol handoff — CLI run with branch produces missing-line report text."""
+    write_py(
+        tmp_path / "prog.py",
+        "val = True\nif val:\n    x = 1\nelse:\n    x = 2\n",
+    )
+    run_result = run_cli(tmp_path, "run", "--branch", f"--source={tmp_path}", "prog.py")
+    assert run_result.returncode == 0
+
+    report = run_cli(tmp_path, "report", "-m")
+    assert report.returncode == 0
+    assert "prog.py" in report.stdout
+    assert "5" in report.stdout

@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import importlib
-
 import pytest
 
 from transitions import Machine, MachineError, State, Transition
@@ -26,9 +24,3 @@ def run_async(coro):
 def fresh_model():
     """Provide a clean model object for each test."""
     return make_model()
-
-
-HAS_GRAPH_BACKEND = (
-    importlib.util.find_spec("pygraphviz") is not None
-    or importlib.util.find_spec("graphviz") is not None
-)

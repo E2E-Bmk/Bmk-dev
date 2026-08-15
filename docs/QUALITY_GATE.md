@@ -12,32 +12,44 @@ human-review items are marked *(review)*.
 |---------------|---------|
 | `tasks/{id}/spec.md` | Behavioral specification given to the model |
 | `tasks/{id}/task.json` | Machine-readable metadata |
-| `oracle/{id}/test_atomic.py` | Atomic-layer oracle tests |
-| `oracle/{id}/test_integration.py` | Integration-layer oracle tests |
-| `oracle/{id}/requirements.txt` | Third-party dependencies for scoring |
+| `tasks/{id}/oracle/test_atomic.py` | Atomic-layer oracle tests |
+| `tasks/{id}/oracle/test_integration.py` | Integration-layer oracle tests |
+| `tasks/{id}/oracle/requirements.txt` | Third-party dependencies for scoring |
 
 All fixture files referenced by tests (e.g. TOML data files, sample configs)
-MUST also be present under `oracle/{id}/`.
+MUST also be present under `tasks/{id}/oracle/`.
+
+The oracle lives inside the task packet so that each task is self-contained and
+there is one copy of every test. The release repo uses a separate top-level
+`oracle/{id}/` tree instead, because a leakage-resistant evaluation there swaps
+in a private oracle via `--oracle-dir`. Bmk-dev is the construction side and
+does not need that, and a second copy on this side drifted from the first
+(a comparison of the two found zero identical files).
 
 ---
 
 ## Gate 1 — Spec Structure
 
-`spec.md` MUST contain these `##`-level sections (exact heading or listed alias):
+`spec.md` MUST contain these `##`-level sections. The authority for the section
+set is the six-layer structure in `Spec2Repo/docs/SPEC_STANDARD.md`; the aliases
+column lists the pre-restructure names that `harness/verify_task.py` still
+accepts, so a spec written before the SDD rewrite is not reported as broken.
+New specs use the current name.
 
-| Section | Aliases |
+| Section (current) | Accepted aliases (legacy) |
 |---------|---------|
 | Product Overview | — |
-| Scope | — |
-| Installable Surface | Public Import Surface |
-| Product State Model | Notebook JSON State Model |
+| Non-Goals | Scope |
+| Public Interface | Installable Surface, Public Import Surface, Public API |
+| State Model | Product State Model, Notebook JSON State Model |
 | Error Semantics | Validation And Error Reporting |
 | Cross-View Invariants | Cross-Component Invariants |
-| Representative Workflow(s) | — |
-| Non-Goals | — |
-| Invocation Protocol | — |
-| Environment | — |
-| Evaluation Notes | Implementation Guidance |
+| Representative Workflows | Representative Workflow |
+| Appendix A: Environment | Environment |
+| Appendix B: Assessment Notes | Evaluation Notes, Implementation Guidance |
+
+`Invocation Protocol` is no longer a top-level section: CLI behavior belongs
+under `Public Interface > CLI Entry Points`.
 
 ---
 

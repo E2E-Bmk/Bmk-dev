@@ -57,6 +57,40 @@ python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
 
 ---
 
+## Java Catalogue Overrides（`language=java` 时优先）
+
+以下条目替换 Catalogue 中冲突的 Python-only todo；其他状态、计数、循环和 gate
+保持不变。
+
+- `S2_SPEC_DRAFT`：从公开 package、public type/member、Maven plugin goal 或 CLI
+  入口整理 public surface，不读取 `__init__.py` / `__all__`。
+- `S3A_*`：处理并重写 Java 测试源；construction oracle 位于
+  `filter/src/test/java/{atomic,integration,support}`，依赖写入 `filter/pom.xml`。
+- `S3A_DUMMY` / `S3B_DUMMY`：用最小 Maven candidate 调用
+  `harness/score_java.py` 做真实 Docker dummy run；不得用 pytest。
+- `S3B_COVERAGE`：对 pinned reference 运行 JaCoCo，生成
+  `target/site/jacoco/jacoco.xml`，再把未覆盖 method/branch 及源码上下文写入
+  `filter/coverage_gaps.txt`；不运行 Python `coverage --branch` 或
+  `tools/format_coverage.py`。
+- `S3B_GENERATE`：生成 `.java` 测试；方法 Javadoc 写 `Verifies:` clause IDs。
+- `S3_ORACLE_MERGE`：保留 Java nodeid
+  `atomic::Class::method` / `integration::Class::method`；integration 方法用 Javadoc
+  `Depends-On: atomicMethodA, atomicMethodB` 建立依赖。
+- `S3_REFERENCE_RUN`：先确保 `filter/lint_result.txt` 首行为 `LINT_PASS` 且新于所有
+  oracle `.java`，再用 `harness/score_java.py --reference` 运行 pinned reference；
+  必须 100%。
+- `S4_SETUP`：cleanroom 的 `program_file` 是 `pom.xml`，评分只能走 Docker Java
+  scorer。
+- `S5_JUDGE`：`Preflight output` 记录 Maven coordinate、resolved JAR、candidate
+  SHA-256、resolved SHA-256 和 provenance status；`status=passed` 且两个非空 hash
+  相等，替代 Python `__file__`。
+- `QUALIFIED`：复制 `spec.md`、`task.json`、`oracle/pom.xml`、
+  `oracle/requirements.txt` 和
+  `oracle/src/test/java/{atomic,integration,support}`；运行 metadata sync 后执行
+  `python harness/verify_task.py {task_id}`，必须输出 `STATIC_VALID`。
+
+---
+
 ## Catalogue（只读）
 
 ### S1_SCREENING

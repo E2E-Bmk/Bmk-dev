@@ -103,6 +103,50 @@ is generated from those files.
 
 All stages write to `wip/{task-id}/` under their designated subdirectory. Do not write to `tasks/` directly - only the orchestrator moves a task there upon QUALIFIED.
 
+### Java branch (authoritative override)
+
+When `task.json.language` is `java`, this branch replaces every Python-only
+filename, command, and provenance instruction elsewhere in this skill. The
+state machine, fairness rules, coverage quotas, and graduation gates are
+unchanged.
+
+- The candidate program file is `pom.xml`; create the cleanroom with
+  `--program-file pom.xml`.
+- The graduated oracle is one Maven project:
+
+  ```text
+  oracle/
+  |-- pom.xml
+  |-- requirements.txt
+  `-- src/test/java/
+      |-- atomic/*.java
+      |-- integration/*.java
+      `-- support/*.java          # optional shared fixtures/helpers
+  ```
+
+  `requirements.txt` remains a required packet marker, while Java test and
+  plugin dependencies live in `oracle/pom.xml`. The oracle must depend on the
+  target `groupId:artifactId` through `${candidate.version}`.
+- Stage 3 writes Java test IDs as `atomic::Class::method` and
+  `integration::Class::method`. `harness/sync_task_metadata.py` derives the
+  graduated taxonomy and counts with `JavaRunner`; do not create Python test
+  files for a Java task.
+- Stage 4 uses the Java scorer documented below. Do not run
+  `score_pytest_original.py`, install `requirements.txt`, or install the target
+  from a package registry for Java scoring.
+- The judge's `Preflight output` block contains the scorer's Maven coordinate,
+  resolved JAR path, `provenance.candidate_sha256`,
+  `provenance.resolved_sha256`, and provenance status. It replaces the Python
+  `__file__` probe; `provenance.status` must be `passed` and both hashes must be
+  non-empty and equal.
+- For graduation, copy the assembled Maven oracle tree unchanged, keep
+  `pom.xml` and `requirements.txt`, write `language`, `maven_coordinates`, and
+  `program_file: "pom.xml"` in `task.json`, then run metadata sync and
+  `verify_task.py` exactly as for other languages.
+- Every Java oracle change requires a newly written `filter/lint_result.txt`
+  whose first line is `LINT_PASS` and whose timestamp is newer than every
+  selected `.java` test source. Reference mode must then pass 100%.
+
 ---
 
 ## Pipeline Stages
@@ -189,6 +233,47 @@ python harness/score_pytest_original.py \
   --remove-path {package_name} \
   --output candidate-runs/{run-id}/score_result.json
 ```
+
+**Java Stage 4 scoring:** Java tasks use the Docker-only Java scorer instead of
+`score_pytest_original.py`. Build the scorer image once, then score the frozen
+candidate packet:
+
+```bash
+docker build -t spec2repo-java:latest -f docker/Dockerfile.java docker/
+
+python harness/score_java.py \
+  --task-dir wip/{task-id}/ \
+  --oracle-dir {assembled-oracle-dir}/ \
+  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
+  --maven-coordinate {groupId}:{artifactId} \
+  --solution-dir candidate-runs/{run-id}/solution/ \
+  --run-dir candidate-runs/{run-id}/
+```
+
+The result is `candidate-runs/{run-id}/score_result.json`; raw Maven, Surefire,
+and provenance evidence is under `candidate-runs/{run-id}/scoring/`. Candidate
+installation cannot see the oracle. Every score-bearing batch and provenance
+probe runs in Docker with `--network none`.
+
+Run the same entrypoint against the pinned reference before Stage 4:
+
+```bash
+python harness/score_java.py \
+  --task-dir wip/{task-id}/ \
+  --oracle-dir {assembled-oracle-dir}/ \
+  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
+  --maven-coordinate {groupId}:{artifactId} \
+  --solution-dir repo/{repo-dir}/ \
+  --run-dir wip/{task-id}/filter/reference-run/ \
+  --json-out wip/{task-id}/filter/reference_score.json \
+  --reference
+```
+
+Reference mode is blocked unless `filter/lint_result.txt` begins with
+`LINT_PASS` and is newer than every selected oracle Java source. It exits zero
+only at 100% and writes the Python-compatible core JSON fields (`summary`,
+`pass_rate_excluding_skips`, `by_layer`, `cases`, `grouped_results`) plus Java
+artifact provenance.
 
 **Environment setup for scoring:**
 - Install test dependencies: `pip install -r wip/{task-id}/filter/oracle_requirements.txt`

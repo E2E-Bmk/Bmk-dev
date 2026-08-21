@@ -48,6 +48,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "dynaconf-settings-fullrepro-001": ["dynaconf"],
     "expr-rule-engine-fullrepro-001": ["github.com/expr-lang/expr"],
     "fsspec-filesystem-fullrepro-001": ["fsspec"],
+    "gocmp-semantic-comparison-fullrepro-001": ["github.com/google/go-cmp"],
     "griffe-apimodel-fullrepro-001": ["griffe"],
     "h2-protocol-fullrepro-001": ["h2"],
     "halodb-fullrepro-001": ["com.oath.halodb"],

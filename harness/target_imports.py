@@ -19,6 +19,7 @@ from __future__ import annotations
 
 
 TARGET_IMPORTS: dict[str, list[str]] = {
+    "afero-layered-filesystems-fullrepro-001": ["github.com/spf13/afero"],
     "anyio-async-runtime-fullrepro-001": ["anyio"],
     "apscheduler-jobs-fullrepro-001": ["apscheduler"],
     "astroid-ast-inference-fullrepro-001": ["astroid"],

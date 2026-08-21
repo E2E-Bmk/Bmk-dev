@@ -1,4 +1,4 @@
-FROM maven:3.9-eclipse-temurin-21
+FROM maven:3.9.12-eclipse-temurin-17
 
 # Package sources, overridable at build time:
 #   docker build --build-arg APT_MIRROR=mirrors.aliyun.com \
@@ -9,7 +9,7 @@ FROM maven:3.9-eclipse-temurin-21
 ARG APT_MIRROR=deb.debian.org
 ARG MAVEN_MIRROR_URL=
 ARG JUNIT_VERSION=5.11.3
-ARG SUREFIRE_VERSION=3.5.2
+ARG SUREFIRE_VERSION=3.5.4
 
 RUN if [ "${APT_MIRROR}" != "deb.debian.org" ]; then \
         for f in /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list; do \
@@ -48,8 +48,8 @@ RUN mkdir -p /tmp/warm/src/test/java/warm && cd /tmp/warm && \
     printf '%s\n' \
       '<project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion>' \
       '<groupId>warm</groupId><artifactId>warm</artifactId><version>1.0</version>' \
-      '<properties><maven.compiler.source>21</maven.compiler.source>' \
-      '<maven.compiler.target>21</maven.compiler.target>' \
+      '<properties><maven.compiler.source>17</maven.compiler.source>' \
+      '<maven.compiler.target>17</maven.compiler.target>' \
       '<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding></properties>' \
       '<dependencies><dependency><groupId>org.junit.jupiter</groupId>' \
       "<artifactId>junit-jupiter</artifactId><version>${JUNIT_VERSION}</version>" \

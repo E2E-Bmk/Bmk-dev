@@ -41,6 +41,11 @@ _TEST_METHOD = re.compile(
     r"[\w.<>\[\],\s]+?\s+(\w+)\s*\(",
     re.DOTALL,
 )
+_DEPENDS_ON = re.compile(r"(?i)Depends-On:\s*([^.*\r\n]+)")
+_CANDIDATE_VERSION_FLAGS = (
+    '"-Dcandidate.version=$(cat .candidate-version)" '
+    '"-D$(cat .candidate-version-property)=$(cat .candidate-version)"'
+)
 
 
 class JavaRunner(Runner):
@@ -89,13 +94,115 @@ class JavaRunner(Runner):
 
         yield Step(
             f"cd {env.workspace} && "
-            "if [ -f pom.xml ]; then mvn -B -DskipTests install 2>&1; fi",
+            "if [ -f pom.xml ]; then "
+            "mvn -B -DskipTests install "
+            "-Dmaven.buildNumber.skip=true -Dlicense.skip=true "
+            "-Ddocker.skip=true "
+            "-Drewrite.skip=true -Dformatter.skip=true -Dimpsort.skip=true "
+            "-Dwhitespace.skip=true 2>&1; fi",
             timeout=900,
             capture=True,
         )
 
+        # A Java benchmark may deliberately expose one root artifact while the
+        # candidate is free to choose its Maven version.  Persist that explicit
+        # root-POM version so the separate oracle can resolve the artifact that
+        # setup just installed instead of requiring a hidden fixed version.
+        version_probe = (
+            "import xml.etree.ElementTree as ET\n"
+            f"root = ET.parse({f'{env.workspace}/pom.xml'!r}).getroot()\n"
+            "ns = {'m': root.tag.split('}')[0].strip('{')} if '}' in root.tag else {}\n"
+            "node = root.find('m:version', ns) if ns else root.find('version')\n"
+            "assert node is not None and node.text and '${' not in node.text, "
+            "'candidate root pom.xml must declare a concrete project version'\n"
+            "print(node.text.strip())\n"
+        )
+        target_coordinate = env.target_modules[0] if env.target_modules else ""
+        version_property_probe = (
+            "import re, xml.etree.ElementTree as ET\n"
+            f"target_group, target_artifact = {target_coordinate!r}.split(':', 1)\n"
+            f"root = ET.parse({f'{env.oracle}/pom.xml'!r}).getroot()\n"
+            "ns = {'m': root.tag.split('}')[0].strip('{')} if '}' in root.tag else {}\n"
+            "dependencies = root.findall('.//m:dependency', ns) if ns else root.findall('.//dependency')\n"
+            "find = (lambda p, t: p.find(f'm:{t}', ns)) if ns else (lambda p, t: p.find(t))\n"
+            "property_name = 'candidate.version'\n"
+            "for dependency in dependencies:\n"
+            "    group = find(dependency, 'groupId')\n"
+            "    artifact = find(dependency, 'artifactId')\n"
+            "    version = find(dependency, 'version')\n"
+            "    if (group is not None and group.text and group.text.strip() == target_group "
+            "and artifact is not None and artifact.text and artifact.text.strip() == target_artifact "
+            "and version is not None and version.text):\n"
+            "        match = re.fullmatch(r'\\$\\{([A-Za-z0-9_.-]+)\\}', version.text.strip())\n"
+            "        if match:\n"
+            "            property_name = match.group(1)\n"
+            "        break\n"
+            "print(property_name)\n"
+        )
         yield Step(
-            f"cd {env.oracle} && mvn -B -DskipTests test-compile 2>&1",
+            f"python3 -c {shlex.quote(version_probe)} > {env.oracle}/.candidate-version && "
+            f"python3 -c {shlex.quote(version_property_probe)} "
+            f"> {env.oracle}/.candidate-version-property",
+            timeout=120,
+            required=True,
+        )
+
+        target_version_rewrite = (
+            "import xml.etree.ElementTree as ET\n"
+            "from pathlib import Path\n"
+            f"pom = Path({f'{env.oracle}/pom.xml'!r})\n"
+            f"candidate = Path({f'{env.oracle}/.candidate-version'!r}).read_text().strip()\n"
+            f"target_group, target_artifact = {target_coordinate!r}.split(':', 1)\n"
+            "tree = ET.parse(pom)\n"
+            "root = tree.getroot()\n"
+            "namespace = root.tag.split('}')[0].strip('{') if '}' in root.tag else ''\n"
+            "prefix = f'{{{namespace}}}' if namespace else ''\n"
+            "dependencies = root.findall(f'.//{prefix}dependency')\n"
+            "rewritten = 0\n"
+            "for dependency in dependencies:\n"
+            "    group = dependency.find(f'{prefix}groupId')\n"
+            "    artifact = dependency.find(f'{prefix}artifactId')\n"
+            "    system_path = dependency.find(f'{prefix}systemPath')\n"
+            "    if (group is None or artifact is None or group.text is None or artifact.text is None\n"
+            "            or group.text.strip() != target_group or artifact.text.strip() != target_artifact\n"
+            "            or system_path is not None):\n"
+            "        continue\n"
+            "    version = dependency.find(f'{prefix}version')\n"
+            "    if version is None:\n"
+            "        version = ET.SubElement(dependency, f'{prefix}version')\n"
+            "    version.text = candidate\n"
+            "    rewritten += 1\n"
+            "if rewritten:\n"
+            "    if namespace:\n"
+            "        ET.register_namespace('', namespace)\n"
+            "    tree.write(pom, encoding='unicode', xml_declaration=False)\n"
+            f"Path({f'{env.oracle}/.rewrite-target-dependency'!r}).write_text(str(rewritten))\n"
+        )
+        warmup_test_probe = (
+            "import re\n"
+            "from pathlib import Path\n"
+            f"root = Path({f'{env.oracle}/src/test/java'!r})\n"
+            f"class_pattern = re.compile({_CLASS_DECL.pattern!r})\n"
+            f"method_pattern = re.compile({_TEST_METHOD.pattern!r}, re.DOTALL)\n"
+            "for suite in ('atomic', 'integration'):\n"
+            "    for source in sorted((root / suite).rglob('*.java')):\n"
+            "        text = source.read_text(encoding='utf-8-sig', errors='replace')\n"
+            "        class_match = class_pattern.search(text)\n"
+            "        method_match = method_pattern.search(text)\n"
+            "        if class_match and method_match:\n"
+            "            print(f'{class_match.group(1)}#{method_match.group(1)}')\n"
+            "            raise SystemExit(0)\n"
+            "raise AssertionError('oracle has no test method for Surefire warm-up')\n"
+        )
+        yield Step(
+            f"python3 -c {shlex.quote(target_version_rewrite)} && "
+            f"cd {env.oracle} && mvn -B -DskipTests "
+            f"{_CANDIDATE_VERSION_FLAGS} test-compile 2>&1 && "
+            f"python3 -c {shlex.quote(warmup_test_probe)} > .warmup-test && "
+            "mvn -B test "
+            f"{_CANDIDATE_VERSION_FLAGS} "
+            "-Dmaven.test.failure.ignore=true "
+            '"-Dtest=$(cat .warmup-test)" 2>&1',
             timeout=900,
             capture=True,
         )
@@ -134,6 +241,7 @@ class JavaRunner(Runner):
             command=(
                 f"cd {shlex.quote(f'/eval/oracle')} && rm -rf {reports} && "
                 f"timeout {timeout} mvn -B -o test "
+                f"{_CANDIDATE_VERSION_FLAGS} "
                 f"-Dtest={shlex.quote(selector)} "
                 f"-DfailIfNoSpecifiedTests=false -Dsurefire.failIfNoSpecifiedTests=false "
                 f"> /dev/null 2>&1; "
@@ -176,23 +284,35 @@ class JavaRunner(Runner):
             return None
 
         results: dict[TestId, str] = {}
-        for case in root.iter("testcase"):
-            name = case.get("name") or ""
-            classname = case.get("classname") or ""
-            if not name:
-                continue
-            suite, _, simple = classname.rpartition(".")
-            key = f"{suite}::{simple}::{name}" if suite else f"{simple}::{name}"
-            outcome = "passed"
-            for child in case:
-                tag = child.tag.rsplit("}", 1)[-1]
-                if tag in {"failure", "error"}:
-                    outcome = "failed"
-                    break
-                if tag == "skipped":
-                    outcome = "skipped"
-                    break
-            results[key] = outcome
+        for test_suite in root.iter("testsuite"):
+            fallback_classname = test_suite.get("name") or ""
+            for case in test_suite.findall("./testcase"):
+                name = case.get("name") or ""
+                classname = case.get("classname") or ""
+                if not name:
+                    continue
+                # Surefire 3.5.x paired with older JUnit Platform versions may
+                # emit the phrased test name (for example ``method()``) in the
+                # testcase ``classname`` field.  The enclosing testsuite still
+                # carries the stable fully qualified class name.  Falling back
+                # only when the field is not a legal Java binary name preserves
+                # ordinary/default-package reports while keeping nodeids stable.
+                if not re.fullmatch(
+                    r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*", classname
+                ):
+                    classname = fallback_classname
+                suite, _, simple = classname.rpartition(".")
+                key = f"{suite}::{simple}::{name}" if suite else f"{simple}::{name}"
+                outcome = "passed"
+                for child in case:
+                    tag = child.tag.rsplit("}", 1)[-1]
+                    if tag in {"failure", "error"}:
+                        outcome = "failed"
+                        break
+                    if tag == "skipped":
+                        outcome = "skipped"
+                        break
+                results[key] = outcome
         return results or None
 
     def function_of(self, test: TestId) -> str:
@@ -210,6 +330,50 @@ class JavaRunner(Runner):
 
     def synthetic_id(self, suite: str) -> TestId:
         return f"{suite}::Placeholder::placeholder"
+
+    # ── dependencies ─────────────────────────────────────────────────────
+
+    def dependencies(self, oracle_host: Path) -> dict[str, list[str]]:
+        """Read logical atomic dependencies from integration-test Javadocs.
+
+        Java has no pytest marker equivalent, so a nearest method Javadoc may
+        declare ``Depends-On: method_a, method_b``. Values are normalized to
+        bare atomic method names, matching the dependency representation used
+        by the scoring harness.
+        """
+        directory = oracle_host / "src" / "test" / "java" / "integration"
+        if not directory.is_dir():
+            return {}
+        result: dict[str, list[str]] = {}
+        for source in sorted(directory.rglob("*.java")):
+            text = source.read_text(encoding="utf-8-sig", errors="replace")
+            for match in _TEST_METHOD.finditer(text):
+                prefix = text[: match.start()]
+                comment_end = prefix.rfind("*/")
+                comment_start = prefix.rfind("/**", 0, comment_end + 1)
+                if comment_start == -1 or comment_end == -1:
+                    continue
+                between = prefix[comment_end + 2 :]
+                if re.sub(r"@\w+(?:\([^)]*\))?", "", between).strip():
+                    continue
+                dependency_match = _DEPENDS_ON.search(
+                    prefix[comment_start : comment_end + 2]
+                )
+                if not dependency_match:
+                    continue
+                dependencies: list[str] = []
+                for raw in dependency_match.group(1).split(","):
+                    dependency = raw.strip().removeprefix("atomic::")
+                    dependency = dependency.rsplit("#", 1)[-1]
+                    # Accept a fully qualified logical test id as well as the
+                    # documented bare method form.  The rest of the harness
+                    # compares dependencies with bare atomic method names.
+                    dependency = dependency.rsplit("::", 1)[-1]
+                    if dependency and dependency not in dependencies:
+                        dependencies.append(dependency)
+                if dependencies:
+                    result[match.group(1)] = dependencies
+        return result
 
     # ── provenance ────────────────────────────────────────────────────────
 
@@ -240,11 +404,13 @@ class JavaRunner(Runner):
         names = list(env.target_modules)
         reshape = (
             "import json, re, sys, xml.etree.ElementTree as ET\n"
+            "from pathlib import Path\n"
             f"names = {names!r}\n"
             f"workspace = {env.workspace!r}\n"
+            f"oracle = {env.oracle!r}\n"
             "found = {}\n"
             "for line in sys.stdin:\n"
-            "    match = re.search(r'([\\w.\\-]+):([\\w.\\-]+):[\\w.\\-]+:[\\w.\\-]+:[\\w.\\-]+:(/\\S+)', line)\n"
+            "    match = re.search(r'([\\w.\\-]+):([\\w.\\-]+):[\\w.\\-]+:[\\w.\\-]+:[\\w.\\-]+:(\\S+)', line)\n"
             "    if match:\n"
             "        group, artifact, path = match.groups()\n"
             "        found.setdefault(artifact, path)\n"
@@ -253,30 +419,54 @@ class JavaRunner(Runner):
             # oracle resolved is the one this workspace declares, which is the
             # evidence the install took.
             "own = set()\n"
-            "try:\n"
-            "    root = ET.parse(f'{workspace}/pom.xml').getroot()\n"
-            "    ns = {'m': root.tag.split('}')[0].strip('{')} if '}' in root.tag else {}\n"
-            "    find = (lambda t: root.find(f'm:{t}', ns)) if ns else (lambda t: root.find(t))\n"
-            "    group = find('groupId')\n"
-            "    artifact = find('artifactId')\n"
-            "    if artifact is not None and artifact.text:\n"
-            "        own.add(artifact.text.strip())\n"
-            "        if group is not None and group.text:\n"
-            "            own.add(f'{group.text.strip()}:{artifact.text.strip()}')\n"
-            "except Exception:\n"
-            "    pass\n"
+            "root_group = root_artifact = None\n"
+            "workspace_root = Path(workspace)\n"
+            "for pom in sorted(workspace_root.rglob('pom.xml')):\n"
+            "    if 'target' in pom.relative_to(workspace_root).parts:\n"
+            "        continue\n"
+            "    try:\n"
+            "        project = ET.parse(pom).getroot()\n"
+            "        ns = {'m': project.tag.split('}')[0].strip('{')} if '}' in project.tag else {}\n"
+            "        find = (lambda p, t: p.find(f'm:{t}', ns)) if ns else (lambda p, t: p.find(t))\n"
+            "        group = find(project, 'groupId')\n"
+            "        artifact = find(project, 'artifactId')\n"
+            "        parent = find(project, 'parent')\n"
+            "        if (group is None or not group.text) and parent is not None:\n"
+            "            group = find(parent, 'groupId')\n"
+            "        if artifact is None or not artifact.text:\n"
+            "            continue\n"
+            "        artifact_text = artifact.text.strip()\n"
+            "        group_text = group.text.strip() if group is not None and group.text else None\n"
+            "        own.add(artifact_text)\n"
+            "        if group_text:\n"
+            "            own.add(f'{group_text}:{artifact_text}')\n"
+            "        if pom.parent == workspace_root:\n"
+            "            root_group, root_artifact = group_text, artifact_text\n"
+            "    except Exception:\n"
+            "        continue\n"
+            "system_paths = sorted({path for path in found.values() "
+            "if Path(path).is_relative_to(Path(oracle))})\n"
             "rows = []\n"
             "for n in names:\n"
             "    path = found.get(n)\n"
+            "    own_name = n\n"
+            "    system_fallback = False\n"
+            "    if path is None and root_group and root_artifact and n == root_group:\n"
+            "        own_name = f'{root_group}:{root_artifact}'\n"
+            "        path = found.get(own_name)\n"
+            "    if path is None and len(system_paths) == 1:\n"
+            "        path = system_paths[0]\n"
+            "        system_fallback = True\n"
             "    rows.append({'name': n,\n"
             "                 'paths': [path] if path else [],\n"
             "                 'direct_urls': ([f'file://{workspace}']\n"
-            "                                 if path and n in own else []),\n"
+            "                                 if path and (own_name in own or system_fallback) else []),\n"
             "                 'error': None if path else 'absent from dependency:list'})\n"
             "print('__PROVENANCE__' + json.dumps(rows, sort_keys=True))\n"
         )
         return (
             f"cd {shlex.quote(env.oracle)} && "
-            "mvn -B -o dependency:list -DoutputAbsoluteArtifactFilename=true 2>/dev/null"
+            f"mvn -B -o dependency:list {_CANDIDATE_VERSION_FLAGS} "
+            "-DoutputAbsoluteArtifactFilename=true 2>/dev/null"
             f" | python3 -c {shlex.quote(reshape)}"
         )

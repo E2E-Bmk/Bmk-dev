@@ -71,6 +71,29 @@ All later Python examples remain authoritative only when `language=python`.
 
 ---
 
+## Go branch (authoritative override)
+
+When `task.json.language` is `go`, retain the behavioral gates and counts but
+replace Python-specific layout and commands as follows.
+
+- Keep `oracle/go.mod` plus external test packages under
+  `oracle/atomic/*_test.go` and `oracle/integration/*_test.go`.
+- Discover the denominator with `GoRunner.discover()`; taxonomy keys are
+  `atomic::TestName` and `integration::TestName`.
+- Put `// Verifies: ...` immediately above every scoreable test. Integration
+  tests may add `// Depends-On: TestAtomicA, TestAtomicB`; `GoRunner.dependencies()`
+  reads these declarations and the same 50% dependency-coverage floor applies.
+- Collection safety is a successful `go test` compile against the pinned
+  reference with the exact discovered denominator. The reference gate is 100%.
+- The behavior-empty gate must provide the complete exported Go surface and
+  reach test call phase; compile/setup failures are invalid, not zero passes.
+- Run `oracle_import_lint.py` after every Go oracle change and persist the full
+  output in `filter/lint_result.txt`.
+
+All later Python examples remain authoritative only when `language=python`.
+
+---
+
 ## Core Criterion
 
 Every filtering decision reduces to two questions. Both must be true to keep a test.

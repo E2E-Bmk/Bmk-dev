@@ -54,6 +54,11 @@ def task_ids() -> list[str]:
                 and (path / "oracle" / "test_integration.py").exists()
             )
             or (path / "oracle" / "src" / "test" / "java" / "atomic").is_dir()
+            or (
+                (path / "oracle" / "go.mod").exists()
+                and (path / "oracle" / "atomic").is_dir()
+                and (path / "oracle" / "integration").is_dir()
+            )
         )
     )
 
@@ -84,7 +89,7 @@ def synchronized_metadata(task_id: str) -> dict:
 
     taxonomy: dict[str, str] = {}
     language = str(data.get("language", "python")).lower()
-    if language == "java":
+    if language in {"java", "go"}:
         runner = get_runner(language)
         atomic_ids = runner.discover(oracle_dir(task_id), "atomic")
         integration_ids = runner.discover(oracle_dir(task_id), "integration")

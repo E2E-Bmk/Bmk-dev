@@ -93,7 +93,7 @@ def oracle_dir(task_id: str) -> Path:
     for candidate in candidates:
         if (candidate / "test_atomic.py").is_file() or (
             candidate / "src" / "test" / "java" / "atomic"
-        ).is_dir():
+        ).is_dir() or (candidate / "atomic").is_dir():
             return candidate
     for candidate in candidates:
         if candidate.is_dir():
@@ -376,6 +376,27 @@ def java_builder_member_declared(symbol: str, spec_text: str) -> bool:
     return bool(components) and all(declared(component) for component in components)
 
 
+def go_target_symbols(path: Path, target_roots: set[str]) -> list[tuple[str, int]]:
+    """Collect exported names selected from aliases of target Go imports."""
+    text = path.read_text(encoding="utf-8-sig", errors="replace")
+    aliases: set[str] = set()
+    for match in re.finditer(
+        r'(?m)^\s*(?:import\s+)?(?:(?P<alias>[A-Za-z_]\w*)\s+)?"(?P<module>[^"]+)"',
+        text,
+    ):
+        module = match.group("module")
+        if module not in target_roots:
+            continue
+        aliases.add(match.group("alias") or module.rsplit("/", 1)[-1])
+    if not aliases:
+        return []
+    alias_alt = "|".join(map(re.escape, sorted(aliases)))
+    found: list[tuple[str, int]] = []
+    for match in re.finditer(rf"\b(?:{alias_alt})\.([A-Z][A-Za-z0-9_]*)", text):
+        found.append((match.group(1), text.count("\n", 0, match.start()) + 1))
+    return found
+
+
 def main(argv: list[str]) -> int:
     if len(argv) != 3:
         print("usage: python oracle_import_lint.py <task_id> <spec_md_path>", file=sys.stderr)
@@ -402,37 +423,59 @@ def main(argv: list[str]) -> int:
     atomic_path = selected_oracle / "test_atomic.py"
     java_atomic_dir = selected_oracle / "src" / "test" / "java" / "atomic"
     java_source_root = selected_oracle / "src" / "test" / "java"
+    go_atomic_dir = selected_oracle / "atomic"
+    go_integration_dir = selected_oracle / "integration"
     target_roots = set(TARGET_IMPORTS[task_id])
     violations: list[tuple[str, Path, int]] = []
     if atomic_path.exists():
+        source_language = "python"
         atomic_sources = [atomic_path]
     elif java_atomic_dir.is_dir():
+        source_language = "java"
         atomic_sources = sorted(java_source_root.rglob("*.java"))
+    elif go_atomic_dir.is_dir() and go_integration_dir.is_dir():
+        source_language = "go"
+        atomic_sources = sorted(go_atomic_dir.glob("*_test.go")) + sorted(
+            go_integration_dir.glob("*_test.go")
+        )
     else:
         print("LINT_FAIL")
-        print(f"[oracle] missing [{atomic_path}] or [{java_atomic_dir}]::0")
+        print(
+            f"[oracle] missing [{atomic_path}], [{java_atomic_dir}], "
+            f"or Go suites [{go_atomic_dir}] [{go_integration_dir}]::0"
+        )
         return 1
-    for source_path in atomic_sources:
-        for module, lineno in imports_from_ast(source_path):
-            if not any(
-                module == target or module.startswith(target + ".")
-                for target in target_roots
-            ):
-                continue
-            if re.search(rf"(?<![\w.]){re.escape(module)}(?!\w)", section):
-                continue
-            violations.append((module, source_path, lineno))
+    if source_language == "python":
+        for source_path in atomic_sources:
+            for module, lineno in imports_from_ast(source_path):
+                if not any(
+                    module == target or module.startswith(target + ".")
+                    for target in target_roots
+                ):
+                    continue
+                if re.search(rf"(?<![\w.]){re.escape(module)}(?!\w)", section):
+                    continue
+                violations.append((module, source_path, lineno))
+    elif source_language == "go":
+        for source_path in atomic_sources:
+            text = source_path.read_text(encoding="utf-8-sig", errors="replace")
+            for target in target_roots:
+                if f'"{target}"' not in text:
+                    continue
+                lineno = text.count("\n", 0, text.find(f'"{target}"')) + 1
+                if not re.search(rf"(?<![\w./-]){re.escape(target)}(?![\w./-])", section):
+                    violations.append((target, source_path, lineno))
 
     # Symbol level: the whole spec text is the reference, not just the surface
     # section, because behaviour clauses introduce names outside that section.
     spec_text = spec_path.read_text(encoding="utf-8-sig", errors="replace")
     spec_words = set(re.findall(r"[A-Za-z_]\w+", spec_text))
-    if atomic_path.exists():
+    if source_language == "python":
         for symbol, lineno in target_symbols(atomic_path, target_roots):
             if symbol in spec_words:
                 continue
             violations.append((symbol, atomic_path, lineno))
-    else:
+    elif source_language == "java":
         for source_path in atomic_sources:
             for symbol, lineno in java_target_symbols(source_path, target_roots):
                 if (
@@ -441,6 +484,12 @@ def main(argv: list[str]) -> int:
                     or java_accessor_declared(symbol, spec_text, section)
                     or java_builder_member_declared(symbol, spec_text)
                 ):
+                    continue
+                violations.append((symbol, source_path, lineno))
+    else:
+        for source_path in atomic_sources:
+            for symbol, lineno in go_target_symbols(source_path, target_roots):
+                if symbol in spec_words:
                     continue
                 violations.append((symbol, source_path, lineno))
 

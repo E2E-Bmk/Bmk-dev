@@ -24,7 +24,13 @@ except ImportError:  # direct execution of a harness script
     from runners.base import Batch, Env, Runner, Step, TestId
 
 #: `func TestXxx(t *testing.T)` at the top level of a file.
-_TEST_FUNC = re.compile(r"^func\s+(Test\w*)\s*\(\s*\w+\s+\*testing\.[TB]\s*\)", re.M)
+_TEST_FUNC = re.compile(r"^func\s+(Test(?:[A-Z0-9]\w*)?)\s*\(\s*\w+\s+\*testing\.[TB]\s*\)", re.M)
+_TEST_WITH_COMMENT = re.compile(
+    r"(?P<comment>(?:(?:^//[^\n]*\n)+))"
+    r"func\s+(?P<name>Test(?:[A-Z0-9]\w*)?)\s*\(\s*\w+\s+\*testing\.[TB]\s*\)",
+    re.M,
+)
+_DEPENDS_ON = re.compile(r"Depends-On:\s*([^\n]+)")
 
 
 class GoRunner(Runner):
@@ -132,6 +138,27 @@ class GoRunner(Runner):
         """``pkg::TestName``, with subtest paths folded onto the parent."""
         package, _, name = test.rpartition("::")
         return f"{package}::{name.split('/', 1)[0]}" if package else name.split("/", 1)[0]
+
+    def dependencies(self, oracle_host: Path) -> dict[str, list[str]]:
+        """Read logical atomic dependencies from integration-test comments."""
+        directory = oracle_host / "integration"
+        if not directory.is_dir():
+            return {}
+        result: dict[str, list[str]] = {}
+        for source in sorted(directory.glob("*_test.go")):
+            text = source.read_text(encoding="utf-8", errors="replace")
+            for match in _TEST_WITH_COMMENT.finditer(text):
+                dependency_match = _DEPENDS_ON.search(match.group("comment"))
+                if not dependency_match:
+                    continue
+                dependencies: list[str] = []
+                for raw in dependency_match.group(1).split(","):
+                    dependency = raw.strip().removeprefix("atomic::")
+                    if dependency and dependency not in dependencies:
+                        dependencies.append(dependency)
+                if dependencies:
+                    result[match.group("name")] = dependencies
+        return result
 
     def synthetic_id(self, suite: str) -> TestId:
         return f"{suite}::TestPlaceholder"

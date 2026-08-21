@@ -149,6 +149,18 @@ unchanged.
 
 ---
 
+### Go branch (authoritative override)
+
+When `task.json.language` is `go`, use `go.mod` as the candidate program file
+and keep `oracle/go.mod`, `oracle/atomic/*_test.go`, and
+`oracle/integration/*_test.go`. Test IDs are discovered by `GoRunner` as
+`atomic::TestName` and `integration::TestName`; metadata sync and static
+verification use that runner. Stage 4 runs only on Linux/WSL, wires the target
+module to the cleanroom with a Go `replace` directive, and records module-path
+provenance. Do not create Python test files or a Java `pom.xml` for Go tasks.
+
+---
+
 ## Pipeline Stages
 
 ```

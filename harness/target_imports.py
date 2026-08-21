@@ -66,6 +66,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "mkdocs-sitebuild-fullrepro-002": ["mkdocs"],
     "nbformat-notebook-fullrepro-001": ["nbformat"],
     "networkx-graph-state-fullrepro-001": ["networkx"],
+    "nutsdb-transactional-collections-fullrepro-001": ["github.com/nutsdb/nutsdb"],
     "nikola-fullrepro-001": ["nikola"],
     "packaging-core-fullrepro-001": ["packaging"],
     "peewee-fullrepro-001": ["peewee", "playhouse"],

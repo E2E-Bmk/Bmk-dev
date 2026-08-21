@@ -102,7 +102,7 @@ def check_task(task_id: str) -> list[str]:
     oracle_dir = task_dir / "oracle"
     errors: list[str] = []
     warnings: list[str] = []
-    required = [task_dir / "spec.md", task_dir / "task.json", oracle_dir / "requirements.txt"]
+    required = [task_dir / "spec.md", task_dir / "task.json"]
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
     if missing:
         return ["missing files: " + ", ".join(missing)]
@@ -125,12 +125,23 @@ def check_task(task_id: str) -> list[str]:
     language = str(data.get("language", "python")).lower()
     if language == "java":
         required = [
+            oracle_dir / "requirements.txt",
             oracle_dir / "pom.xml",
             oracle_dir / "src" / "test" / "java" / "atomic",
             oracle_dir / "src" / "test" / "java" / "integration",
         ]
+    elif language == "go":
+        required = [
+            oracle_dir / "go.mod",
+            oracle_dir / "atomic",
+            oracle_dir / "integration",
+        ]
     else:
-        required = [oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"]
+        required = [
+            oracle_dir / "requirements.txt",
+            oracle_dir / "test_atomic.py",
+            oracle_dir / "test_integration.py",
+        ]
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
     if missing:
         return errors + ["missing files: " + ", ".join(missing)]
@@ -138,7 +149,7 @@ def check_task(task_id: str) -> list[str]:
         errors.append("task.json instance_id does not match directory")
     strict_assertion_gate = isinstance(data.get("validation"), dict)
 
-    if language == "java":
+    if language in {"java", "go"}:
         runner = get_runner(language)
         atomic_ids = runner.discover(oracle_dir, "atomic")
         integration_ids = runner.discover(oracle_dir, "integration")
@@ -175,8 +186,8 @@ def check_task(task_id: str) -> list[str]:
     taxonomy = data.get("taxonomy", {})
     if set(taxonomy) != expected_keys:
         errors.append("taxonomy keys do not match the physical test functions")
-    atomic_keys = atomic_ids if language == "java" else [f"test_atomic::{name}" for name in atomic_names]
-    integration_keys = integration_ids if language == "java" else [f"test_integration::{name}" for name in integration_names]
+    atomic_keys = atomic_ids if language in {"java", "go"} else [f"test_atomic::{name}" for name in atomic_names]
+    integration_keys = integration_ids if language in {"java", "go"} else [f"test_integration::{name}" for name in integration_names]
     if any(taxonomy.get(key) != "atomic" for key in atomic_keys):
         errors.append("an atomic-file test has a non-atomic taxonomy layer")
     allowed_integration = {"integration", "system_e2e"}
@@ -199,7 +210,7 @@ def check_task(task_id: str) -> list[str]:
 
     dependency_map = (
         get_runner(language).dependencies(oracle_dir)
-        if language == "java"
+        if language in {"java", "go"}
         else _depends_on_map(oracle_dir / "test_integration.py")
     )
     dependency_coverage = len(dependency_map) / max(integration, 1)
@@ -220,7 +231,7 @@ def check_task(task_id: str) -> list[str]:
             + ", ".join(sorted(unknown_dependencies))
         )
 
-    if language != "java":
+    if language == "python":
         section, _ = allowed_from_spec(task_dir / "spec.md")
         targets = set(TARGET_IMPORTS.get(task_id, []))
         for module, lineno in imports_from_ast(oracle_dir / "test_atomic.py"):
@@ -232,12 +243,12 @@ def check_task(task_id: str) -> list[str]:
     # Assertion-composition gate: the atomic layer must mostly verify produced
     # values, not merely correct rejection, or the Integration Gap numerator
     # inherits a systematic bias (failure_path tests are dummy-passable).
-    annotations = {} if language == "java" else _annotate_assertions(oracle_dir / "test_atomic.py")
+    annotations = {} if language in {"java", "go"} else _annotate_assertions(oracle_dir / "test_atomic.py")
     external_assert_helpers = {
         "assert_nonzero": "failure_path",
         "assert_raises": "failure_path",
     }
-    source = "" if language == "java" else (oracle_dir / "test_atomic.py").read_text(
+    source = "" if language in {"java", "go"} else (oracle_dir / "test_atomic.py").read_text(
         encoding="utf-8-sig", errors="replace"
     )
     for helper_name, kind in external_assert_helpers.items():
@@ -263,7 +274,7 @@ def check_task(task_id: str) -> list[str]:
             target.append("atomic tests without any check: " + ", ".join(sorted(no_check)))
 
     # Gate 3f: duplicate top-level imports that shadow each other (warning-only)
-    if language != "java":
+    if language == "python":
         for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
             _check_duplicate_imports(test_file, warnings)
 

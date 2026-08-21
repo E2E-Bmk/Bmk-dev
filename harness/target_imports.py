@@ -26,6 +26,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "authlib-fullrepro-001": ["authlib"],
     "babel-fullrepro-001": ["babel"],
     "bandit-securityscan-fullrepro-001": ["bandit"],
+    "bbolt-transactional-kv-fullrepro-001": ["go.etcd.io/bbolt"],
     "beancount-ledger-fullrepro-002": ["beancount"],
     "boltons-coreutils-fullrepro-001": ["boltons"],
     "cattrs-converters-fullrepro-001": ["cattrs"],

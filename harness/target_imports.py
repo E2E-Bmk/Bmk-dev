@@ -44,6 +44,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "doit-taskrunner-fullrepro-002": ["doit"],
     "dvc-fullrepro-001": ["dvc"],
     "dynaconf-settings-fullrepro-001": ["dynaconf"],
+    "expr-rule-engine-fullrepro-001": ["github.com/expr-lang/expr"],
     "fsspec-filesystem-fullrepro-001": ["fsspec"],
     "griffe-apimodel-fullrepro-001": ["griffe"],
     "h2-protocol-fullrepro-001": ["h2"],

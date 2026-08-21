@@ -91,6 +91,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "structlog-event-context-fullrepro-001": ["structlog"],
     "tox-envrunner-fullrepro-001": ["tox"],
     "traitlets-core-fullrepro-001": ["traitlets"],
+    "validator-struct-rules-fullrepro-001": ["github.com/go-playground/validator/v10"],
     "transitions-state-machine-fullrepro-001": ["transitions"],
     "vcrpy-fullrepro-001": ["vcr"],
     "webob-request-response-fullrepro-001": ["webob"],

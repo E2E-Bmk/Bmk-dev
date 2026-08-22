@@ -1,0 +1,245 @@
+mod presets_test {
+use comfy_table::{presets::*, *};
+use pretty_assertions::assert_eq;
+
+fn get_preset_table() -> Table {
+    let mut table = Table::new();
+    table
+        .set_header(vec!["Hello", "there"])
+        .add_row(vec!["a", "b"])
+        .add_row(vec!["c", "d"]);
+
+    table
+}
+
+#[test]
+fn test_ascii_full() {
+    let mut table = get_preset_table();
+    table.load_style(ASCII_FULL);
+    println!("{table}");
+    let expected = "
++-------+-------+
+| Hello | there |
++===============+
+| a     | b     |
+|-------+-------|
+| c     | d     |
++-------+-------+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+#[test]
+fn test_ascii_full_condensed() {
+    let mut table = get_preset_table();
+    table.load_style(ASCII_FULL_CONDENSED);
+    println!("{table}");
+    let expected = "
++-------+-------+
+| Hello | there |
++===============+
+| a     | b     |
+| c     | d     |
++-------+-------+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_ascii_no_borders() {
+    let mut table = get_preset_table();
+    table.load_style(ASCII_NO_BORDERS);
+    println!("{table}");
+    let expected = "
+ Hello | there
+===============
+ a     | b
+-------+-------
+ c     | d";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_ascii_borders_only() {
+    let mut table = get_preset_table();
+    table.load_style(ASCII_BORDERS_ONLY);
+    println!("{table}");
+    let expected = "
++---------------+
+| Hello   there |
++===============+
+| a       b     |
+|               |
+| c       d     |
++---------------+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+#[test]
+fn test_ascii_borders_only_condensed() {
+    let mut table = get_preset_table();
+    table.load_style(ASCII_BORDERS_ONLY_CONDENSED);
+    println!("{table}");
+    let expected = "
++---------------+
+| Hello   there |
++===============+
+| a       b     |
+| c       d     |
++---------------+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+#[test]
+fn test_ascii_horizontal_only() {
+    let mut table = get_preset_table();
+    table.load_style(ASCII_HORIZONTAL_ONLY);
+    println!("{table}");
+    let expected = "
+---------------
+ Hello   there
+===============
+ a       b
+---------------
+ c       d
+---------------";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_ascii_markdown() {
+    let mut table = get_preset_table();
+    table.load_style(ASCII_MARKDOWN);
+    println!("{table}");
+    let expected = "
+| Hello | there |
+|-------|-------|
+| a     | b     |
+| c     | d     |";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_utf8_full() {
+    let mut table = get_preset_table();
+    table.load_style(UTF8_FULL);
+    println!("{table}");
+    let expected = "
+┌───────┬───────┐
+│ Hello ┆ there │
+╞═══════╪═══════╡
+│ a     ┆ b     │
+├╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌┤
+│ c     ┆ d     │
+└───────┴───────┘";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_utf8_full_condensed() {
+    let mut table = get_preset_table();
+    table.load_style(UTF8_FULL_CONDENSED);
+    println!("{table}");
+    let expected = "
+┌───────┬───────┐
+│ Hello ┆ there │
+╞═══════╪═══════╡
+│ a     ┆ b     │
+│ c     ┆ d     │
+└───────┴───────┘";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_utf8_no_borders() {
+    let mut table = get_preset_table();
+    table.load_style(UTF8_NO_BORDERS);
+    println!("{table}");
+    let expected = "
+ Hello ┆ there
+═══════╪═══════
+ a     ┆ b
+╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌
+ c     ┆ d";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_utf8_horizontal_only() {
+    let mut table = get_preset_table();
+    table.load_style(UTF8_HORIZONTAL_ONLY);
+    println!("{table}");
+    let expected = "
+───────────────
+ Hello   there
+═══════════════
+ a       b
+───────────────
+ c       d
+───────────────";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_nothing() {
+    let mut table = get_preset_table();
+    table.load_style(NOTHING);
+    println!("{table}");
+    let expected = "
+ Hello  there
+ a      b
+ c      d";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_nothing_without_padding() {
+    let mut table = get_preset_table();
+    table.load_style(NOTHING);
+    let column = table.column_iter_mut().next().unwrap();
+    column.set_padding((0, 1));
+    println!("{table}");
+    let expected = "
+Hello  there
+a      b
+c      d";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+#[test]
+fn test_no_vertical_styling() {
+    let mut table = Table::new();
+    table
+        .set_header(vec!["Hello", "there", "again"])
+        .add_row(vec!["a", "b", "something different"])
+        .add_row(vec!["omfg why though", "d", "f"]);
+
+    table.load_style(
+        TableStyle::new()
+            .header_lines(ContentLineStyle::none().left('|').right('|'))
+            .header_separator(LineStyle::none().fill('-'))
+            .content_lines(ContentLineStyle::none().left('|').right('|')),
+    );
+
+    println!("{table}");
+    let expected = "
+| Hello            there  again               |
+ ---------------------------------------------
+| a                b      something different |
+| omfg why though  d      f                   |";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
+
+}

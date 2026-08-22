@@ -6,6 +6,67 @@ human-review items are marked *(review)*.
 
 ---
 
+## Java Maven branch (authoritative override)
+
+For a task whose `task.json.language` is `java`, the semantic gates below are
+unchanged, but these Java artifacts and commands replace Python-only paths and
+commands elsewhere in this document.
+
+**Required oracle files:**
+
+```text
+tasks/{id}/oracle/pom.xml
+tasks/{id}/oracle/requirements.txt
+tasks/{id}/oracle/src/test/java/atomic/*.java
+tasks/{id}/oracle/src/test/java/integration/*.java
+tasks/{id}/oracle/src/test/java/support/*.java    # optional
+```
+
+Java dependencies and plugins are declared in `oracle/pom.xml`;
+`requirements.txt` remains a required packet marker. The target dependency
+must use `${candidate.version}`. Counts and taxonomy are derived by
+`JavaRunner`, using `atomic::Class::method` and
+`integration::Class::method` base-function IDs. The same layer floors apply to
+those directories. Java collection safety requires a successful Maven
+`test-compile` against the pinned reference and a non-zero, stable
+`JavaRunner.discover()` denominator. Relative fixtures and resources referenced
+by Java tests must exist under the oracle tree.
+
+Integration dependency coverage is declared in the nearest method Javadoc as
+`Depends-On: atomicMethodA, atomicMethodB`. Assertion composition and private
+surface checks remain review gates for Java where the Python AST checks do not
+apply.
+
+**Reference validation:** first produce a fresh lint result on disk:
+
+```bash
+python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
+  > wip/<task>/filter/lint_result.txt 2>&1
+```
+
+Its first line must be `LINT_PASS` and it must be newer than every selected
+oracle `.java` source. Then run the pinned reference through the Java scorer:
+
+```bash
+python harness/score_java.py \
+  --task-dir wip/<task_id>/ \
+  --oracle-dir <assembled-oracle-dir>/ \
+  --taxonomy wip/<task_id>/filter/taxonomy.jsonl \
+  --maven-coordinate <groupId>:<artifactId> \
+  --solution-dir repo/<reference-checkout>/ \
+  --run-dir wip/<task_id>/filter/reference-run/ \
+  --json-out wip/<task_id>/filter/reference_score.json \
+  --reference
+```
+
+The reference gate requires `valid == true`, provenance status `passed`, equal
+non-empty candidate/resolved JAR SHA-256 values, and 100% of the complete
+oracle passing. Java dummy discrimination uses the same scorer against a
+minimal Maven candidate and must satisfy Gate 6. All score-bearing batches and
+provenance probes run in Docker with no network.
+
+---
+
 ## Gate 0 — File Completeness
 
 | Required file | Purpose |

@@ -28,6 +28,11 @@ import json
 from collections import Counter
 from pathlib import Path
 
+try:
+    from harness.runners import get_runner
+except ModuleNotFoundError:
+    from runners import get_runner
+
 
 ROOT = Path(__file__).resolve().parent.parent
 SYSTEM_E2E_HINTS = ("cross_view", "representative", "workflow", "end_to_end")
@@ -43,8 +48,13 @@ def task_ids() -> list[str]:
         for path in (ROOT / "tasks").iterdir()
         if path.is_dir()
         and (path / "task.json").exists()
-        and (path / "oracle" / "test_atomic.py").exists()
-        and (path / "oracle" / "test_integration.py").exists()
+        and (
+            (
+                (path / "oracle" / "test_atomic.py").exists()
+                and (path / "oracle" / "test_integration.py").exists()
+            )
+            or (path / "oracle" / "src" / "test" / "java" / "atomic").is_dir()
+        )
     )
 
 
@@ -72,19 +82,35 @@ def synchronized_metadata(task_id: str) -> dict:
     data.setdefault("status", "STATICALLY_VALIDATED")
     data.setdefault("language", "python")
 
-    atomic = test_names(oracle_dir(task_id) / "test_atomic.py")
-    integration = test_names(oracle_dir(task_id) / "test_integration.py")
     taxonomy: dict[str, str] = {}
-    for name in atomic:
-        taxonomy[f"test_atomic::{name}"] = "atomic"
-    for name in integration:
-        key = f"test_integration::{name}"
-        old_layer = previous.get(key)
-        taxonomy[key] = (
-            old_layer
-            if old_layer in {"integration", "system_e2e"}
-            else inferred_integration_layer(name)
-        )
+    language = str(data.get("language", "python")).lower()
+    if language == "java":
+        runner = get_runner(language)
+        atomic_ids = runner.discover(oracle_dir(task_id), "atomic")
+        integration_ids = runner.discover(oracle_dir(task_id), "integration")
+        for test_id in atomic_ids:
+            taxonomy[test_id] = "atomic"
+        for test_id in integration_ids:
+            method = test_id.rpartition("::")[2]
+            old_layer = previous.get(test_id)
+            taxonomy[test_id] = (
+                old_layer
+                if old_layer in {"integration", "system_e2e"}
+                else "system_e2e" if method.startswith("system") else "integration"
+            )
+    else:
+        atomic = test_names(oracle_dir(task_id) / "test_atomic.py")
+        integration = test_names(oracle_dir(task_id) / "test_integration.py")
+        for name in atomic:
+            taxonomy[f"test_atomic::{name}"] = "atomic"
+        for name in integration:
+            key = f"test_integration::{name}"
+            old_layer = previous.get(key)
+            taxonomy[key] = (
+                old_layer
+                if old_layer in {"integration", "system_e2e"}
+                else inferred_integration_layer(name)
+            )
 
     counts = Counter(taxonomy.values())
     total = len(taxonomy)

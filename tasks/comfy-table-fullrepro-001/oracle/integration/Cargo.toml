@@ -1,0 +1,16 @@
+[package]
+name = "integration"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default = ["tty", "custom_styling"]
+tty = ["comfy-table/tty"]
+custom_styling = ["comfy-table/custom_styling"]
+
+[dependencies]
+comfy-table = { workspace = true, default-features = false }
+pretty_assertions = { workspace = true }
+rstest = { workspace = true }
+unicode-width = { workspace = true }
+console = { workspace = true }

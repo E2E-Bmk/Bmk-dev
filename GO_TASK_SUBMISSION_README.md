@@ -1,6 +1,6 @@
 # Go task submission batch
 
-This branch contains eight complete Go reconstruction task packets:
+This branch contains nine complete Go reconstruction task packets:
 
 | Task | Upstream repository | Oracle | Candidate model | Candidate score |
 | --- | --- | ---: | --- | ---: |
@@ -12,6 +12,7 @@ This branch contains eight complete Go reconstruction task packets:
 | `bbolt-transactional-kv-fullrepro-001` | `etcd-io/bbolt` | 65/65 | `deepseek-v4-pro[1m]` | 65/65 (100%) |
 | `goose-sqlite-migrations-fullrepro-001` | `pressly/goose` | 68/68 | `deepseek-v4-pro[1m]` | 68/68 (100%) |
 | `gojq-query-engine-fullrepro-001` | `itchyny/gojq` | 60/60 | `deepseek-v4-pro[1m]` | 50/60 (83.33%) |
+| `tengo-script-runtime-fullrepro-001` | `d5/tengo` | 60/60 | `deepseek-v4-pro[1m]` | 56/60 (93.33%) |
 
 Each directory includes the public specification, oracle tests, specification-to-test map, taxonomy metadata, and task metadata. Candidate solutions are not included.
 

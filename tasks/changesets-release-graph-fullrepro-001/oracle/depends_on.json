@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::write then read preserves changeset projections": ["atomic::write creates a formatted changeset file", "atomic::read returns live and pre changesets"],
+    "integration::read filters helper markdown files": ["atomic::read returns live and pre changesets"],
+    "integration::read rejects missing changeset directory": ["atomic::read returns live and pre changesets"],
+    "integration::read includes pre directory with prefixed id": ["atomic::read returns live and pre changesets"],
+    "integration::dependents graph includes root and reverse edge": ["atomic::range operator returns expected prefixes"],
+    "integration::dependents graph without root is empty": ["atomic::range operator returns expected prefixes"],
+    "integration::assembly consolidates multiple changesets": ["atomic::default config exposes normalized defaults", "atomic::parse accepts none releases"],
+    "integration::assembly rejects unknown package": ["atomic::validateConfig rejects invalid schema"],
+    "integration::assembly propagates dependent release": ["atomic::range operator returns expected prefixes", "atomic::shouldSkipPackage returns expected decisions"],
+    "integration::pre lifecycle enters and reads state": ["atomic::read returns live and pre changesets", "atomic::pre and internal error classes are constructible"],
+    "integration::pre lifecycle rejects repeated enter": ["atomic::pre and internal error classes are constructible"],
+    "integration::pre lifecycle exits and reads exit state": ["atomic::read returns live and pre changesets"],
+    "integration::pre exit rejects without state": ["atomic::pre and internal error classes are constructible"],
+    "integration::apply plan updates package and removes changeset": ["atomic::write creates a formatted changeset file", "atomic::default config exposes normalized defaults"],
+    "integration::apply plan rejects missing package before writing": ["atomic::validateConfig rejects invalid schema"],
+    "integration::apply pre plan moves changeset into pre directory": ["atomic::write creates a formatted changeset file", "atomic::read returns live and pre changesets"],
+    "integration::snapshot plan produces tagged version": ["atomic::config snapshot template must be non-empty", "atomic::range operator returns expected prefixes"],
+    "integration::pre state filters pre-prefixed changesets": ["atomic::read returns live and pre changesets"],
+    "integration::fixed group converges releases": ["atomic::default config exposes normalized defaults", "atomic::range operator returns expected prefixes"],
+    "integration::named and default behavior is cross-view consistent": ["atomic::write creates a formatted changeset file", "atomic::read returns live and pre changesets"],
+    "integration::assembly preserves none version": ["atomic::none release type is preserved by parser", "atomic::range operator returns expected prefixes"],
+    "integration::assembly rejects mixed ignored and non-ignored changeset": ["atomic::shouldSkipPackage returns expected decisions", "atomic::validateConfig rejects invalid schema"],
+    "integration::apply plan preserves dependency range style": ["atomic::range operator returns expected prefixes", "atomic::default config supplies dependency update policy"],
+    "integration::apply exit plan removes pre state": ["atomic::read returns live and pre changesets"],
+    "integration::pre migration moves listed changeset": ["atomic::read returns live and pre changesets"],
+    "integration::assembly returns pre state projection": ["atomic::read returns live and pre changesets"],
+    "integration::apply plan reports unique touched paths": ["atomic::default config exposes normalized defaults"]
+  }
+}

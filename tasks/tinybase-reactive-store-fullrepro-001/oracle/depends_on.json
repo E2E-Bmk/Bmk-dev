@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::metrics exclude non numeric values from numeric aggregation": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::index definitions group rows into slice ids": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::relationships expose remote and local row projections": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::query definitions select and group source rows": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::cell writes are consistent across readers listeners and transaction changes": [
+      "atomic::store writer methods are fluent and update table projections",
+      "atomic::transaction changes include table and value writes"
+    ],
+    "integration::value writes are consistent across readers JSON listeners and transaction changes": [
+      "atomic::store value writer methods are fluent and update value projections",
+      "atomic::JSON readers serialize table value and combined projections"
+    ],
+    "integration::schema defaults appear in JSON and derived metrics": [
+      "atomic::schemas expose defaults through row and value readers",
+      "atomic::JSON readers serialize table value and combined projections"
+    ],
+    "integration::metric listeners and iteration see recomputed values after store mutations": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::index listeners and iteration see rows move between slices": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::relationship readers update when a remote row id source changes": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::query result readers update when source rows change": [
+      "atomic::query definitions filter source rows with where clauses"
+    ],
+    "integration::query result listeners observe recomputed result tables": [
+      "atomic::query definitions filter source rows with where clauses"
+    ],
+    "integration::checkpoint navigation restores derived metric projections": [
+      "atomic::checkpoint navigation restores store content"
+    ],
+    "integration::checkpoint backward and forward navigation restores value projections": [
+      "atomic::checkpoint navigation restores store content"
+    ],
+    "integration::middleware transformed writes are visible to readers listeners and metrics": [
+      "atomic::set middleware callbacks transform pending cell writes"
+    ],
+    "integration::destroyed metrics detach listeners from later store mutations": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::destroyed indexes clear definitions and detach from later store mutations": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::destroyed relationships clear definitions and detach from later store mutations": [
+      "atomic::store writer methods are fluent and update table projections"
+    ],
+    "integration::destroyed queries clear definitions and detach from later store mutations": [
+      "atomic::query definitions filter source rows with where clauses"
+    ],
+    "integration::destroyed checkpoints detach from later store mutations": [
+      "atomic::checkpoints expose backward current and forward ids"
+    ],
+    "integration::destroyed middleware no longer transforms writes": [
+      "atomic::set middleware callbacks transform pending cell writes"
+    ],
+    "integration::merge reconciles later store content and hash projections": [
+      "atomic::mergeable store satisfies ordinary store content contract"
+    ],
+    "integration::setDefaultContent installs mergeable content without exposing local mutation stamps": [
+      "atomic::mergeable store satisfies ordinary store content contract"
+    ],
+    "integration::row sorting agrees with table readers after schema defaults are applied": [
+      "atomic::sorted row ids honor descending offset and limit",
+      "atomic::schemas expose defaults through row and value readers"
+    ],
+    "integration::JSON full content round trip updates derived index and query projections": [
+      "atomic::JSON setters parse and apply their projections",
+      "atomic::store writer methods are fluent and update table projections",
+      "atomic::query definitions filter source rows with where clauses"
+    ]
+  }
+}

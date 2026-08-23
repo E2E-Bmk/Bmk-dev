@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::configuration and command workflows::loads a local command graph": [
+      "atomic::identifiers and terminal projections::converts configured IDs to standardized IDs",
+      "atomic::identifiers and terminal projections::converts standardized IDs to configured IDs"
+    ],
+    "integration::configuration and command workflows::finds and loads a command class": [
+      "atomic::identifiers and terminal projections::converts configured IDs to standardized IDs"
+    ],
+    "integration::configuration and command workflows::runs a configured command through its lifecycle": [
+      "atomic::argument and flag parsing::parses a required string argument",
+      "atomic::argument and flag parsing::accepts a flag alias"
+    ],
+    "integration::configuration and command workflows::runs command finalization when the command fails": [
+      "atomic::constraints and errors::preserves CLI error metadata"
+    ],
+    "integration::configuration and command workflows::runs a command class from a root load option": [
+      "atomic::argument and flag parsing::parses a required string argument"
+    ],
+    "integration::configuration and command workflows::derives scoped environment keys from the CLI bin": [
+      "atomic::identifiers and terminal projections::converts configured IDs to standardized IDs"
+    ],
+    "integration::configuration and command workflows::loads configuration from a package file URL": [
+      "atomic::identifiers and terminal projections::converts configured IDs to standardized IDs"
+    ],
+    "integration::configuration and command workflows::returns undefined for a missing optional command": [
+      "atomic::identifiers and terminal projections::converts configured IDs to standardized IDs"
+    ],
+    "integration::configuration and command workflows::rejects a missing required command": [
+      "atomic::constraints and errors::preserves CLI error metadata"
+    ],
+    "integration::configuration and command workflows::uses a configured space topic separator": [
+      "atomic::identifiers and terminal projections::converts configured IDs to standardized IDs",
+      "atomic::identifiers and terminal projections::converts standardized IDs to configured IDs"
+    ],
+    "integration::configuration and command workflows::suppresses command logs when JSON output is enabled": [
+      "atomic::identifiers and terminal projections::exposes terminal writers and action lifecycle"
+    ],
+    "integration::help and dispatch workflows::reads configured help aliases": [
+      "atomic::identifiers and terminal projections::exposes terminal writers and action lifecycle"
+    ],
+    "integration::help and dispatch workflows::standardizes command argv for a configured graph": [
+      "atomic::identifiers and terminal projections::converts configured IDs to standardized IDs"
+    ],
+    "integration::help and dispatch workflows::renders root help from a loaded configuration": [
+      "atomic::identifiers and terminal projections::exposes terminal writers and action lifecycle"
+    ],
+    "integration::help and dispatch workflows::dispatches a help request without running a command": [
+      "atomic::identifiers and terminal projections::exposes terminal writers and action lifecycle"
+    ],
+    "integration::help and dispatch workflows::dispatches a version request without running a command": [
+      "atomic::identifiers and terminal projections::converts configured IDs to standardized IDs"
+    ],
+    "integration::help and dispatch workflows::runs a selected command through the top-level dispatcher": [
+      "atomic::argument and flag parsing::parses a required string argument"
+    ],
+    "integration::help and dispatch workflows::requires a directory or load options for execute": [
+      "atomic::constraints and errors::preserves CLI error metadata"
+    ],
+    "integration::help and dispatch workflows::executes a local command through execute": [
+      "atomic::argument and flag parsing::parses a required string argument"
+    ],
+    "integration::help and dispatch workflows::flushes pending output": [
+      "atomic::identifiers and terminal projections::exposes terminal writers and action lifecycle"
+    ],
+    "integration::hook, logger, and settings workflows::returns a successful hook result": [
+      "atomic::identifiers and terminal projections::exposes terminal writers and action lifecycle"
+    ],
+    "integration::hook, logger, and settings workflows::captures a failing hook when requested": [
+      "atomic::constraints and errors::preserves CLI error metadata"
+    ],
+    "integration::hook, logger, and settings workflows::returns a preparse hook result containing argv": [
+      "atomic::argument and flag parsing::parses a required string argument"
+    ],
+    "integration::hook, logger, and settings workflows::returns a logger for a namespace": [
+      "atomic::identifiers and terminal projections::exposes terminal writers and action lifecycle"
+    ],
+    "integration::hook, logger, and settings workflows::exposes mutable global settings": [
+      "atomic::identifiers and terminal projections::exposes terminal writers and action lifecycle"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 # Go task submission batch
 
-This branch contains six complete Go reconstruction task packets:
+This branch contains seven complete Go reconstruction task packets:
 
 | Task | Upstream repository | Oracle | Candidate model | Candidate score |
 | --- | --- | ---: | --- | ---: |
@@ -10,6 +10,7 @@ This branch contains six complete Go reconstruction task packets:
 | `nutsdb-transactional-collections-fullrepro-001` | `nutsdb/nutsdb` | 67/67 | `deepseek-v4-pro[1m]` | 66/67 (98.51%) |
 | `afero-layered-filesystems-fullrepro-001` | `spf13/afero` | 64/64 | `deepseek-v4-pro[1m]` | 62/64 (96.88%) |
 | `bbolt-transactional-kv-fullrepro-001` | `etcd-io/bbolt` | 65/65 | `deepseek-v4-pro[1m]` | 65/65 (100%) |
+| `goose-sqlite-migrations-fullrepro-001` | `pressly/goose` | 68/68 | `deepseek-v4-pro[1m]` | 68/68 (100%) |
 
 Each directory includes the public specification, oracle tests, specification-to-test map, taxonomy metadata, and task metadata. Candidate solutions are not included.
 

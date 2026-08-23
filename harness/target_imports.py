@@ -51,6 +51,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "fsspec-filesystem-fullrepro-001": ["fsspec"],
     "gocmp-semantic-comparison-fullrepro-001": ["github.com/google/go-cmp"],
     "griffe-apimodel-fullrepro-001": ["griffe"],
+    "goose-sqlite-migrations-fullrepro-001": ["github.com/pressly/goose/v3"],
     "h2-protocol-fullrepro-001": ["h2"],
     "halodb-fullrepro-001": ["com.oath.halodb"],
     "hikaricp-fullrepro-001": ["com.zaxxer.hikari"],

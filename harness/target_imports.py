@@ -50,6 +50,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "expr-rule-engine-fullrepro-001": ["github.com/expr-lang/expr"],
     "fsspec-filesystem-fullrepro-001": ["fsspec"],
     "gocmp-semantic-comparison-fullrepro-001": ["github.com/google/go-cmp"],
+    "gojq-query-engine-fullrepro-001": ["github.com/itchyny/gojq"],
     "griffe-apimodel-fullrepro-001": ["griffe"],
     "goose-sqlite-migrations-fullrepro-001": ["github.com/pressly/goose/v3"],
     "h2-protocol-fullrepro-001": ["h2"],

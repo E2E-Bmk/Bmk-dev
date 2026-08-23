@@ -30,6 +30,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "bbolt-transactional-kv-fullrepro-001": ["go.etcd.io/bbolt"],
     "beancount-ledger-fullrepro-002": ["beancount"],
     "boltons-coreutils-fullrepro-001": ["boltons"],
+    "casbin-policy-enforcement-fullrepro-001": ["github.com/casbin/casbin/v3"],
     "cattrs-converters-fullrepro-001": ["cattrs"],
     "cookiecutter-fullrepro-001": ["cookiecutter"],
     "copier-template-fullrepro-001": ["copier"],

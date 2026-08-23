@@ -86,6 +86,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "pypdf-fullrepro-001": ["pypdf"],
     "quart-async-web-fullrepro-001": ["quart"],
     "requests-cache-fullrepro-001": ["requests_cache"],
+    "ristretto-concurrent-cache-fullrepro-001": ["github.com/dgraph-io/ristretto/v2"],
     "revapi": ["org.revapi"],
     "rq-fullrepro-001": ["rq"],
     "schematics-model-validation-fullrepro-001": ["schematics"],

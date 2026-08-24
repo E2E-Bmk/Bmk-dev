@@ -93,7 +93,7 @@ def oracle_dir(task_id: str) -> Path:
     for candidate in candidates:
         if (candidate / "test_atomic.py").is_file() or (
             candidate / "src" / "test" / "java" / "atomic"
-        ).is_dir():
+        ).is_dir() or (candidate / "atomic").is_dir():
             return candidate
     for candidate in candidates:
         if candidate.is_dir():
@@ -136,6 +136,54 @@ def imports_from_regex(text: str) -> list[tuple[str, int]]:
         if import_match:
             imports.append((import_match.group(1), lineno))
     return imports
+
+
+def typescript_imports(path: Path) -> list[tuple[str, int]]:
+    """Return module specifiers imported by a TypeScript oracle file."""
+    text = path.read_text(encoding="utf-8-sig", errors="replace")
+    imports: list[tuple[str, int]] = []
+    pattern = re.compile(
+        r"(?m)^\s*import\s+(?:[^;\n]+?\s+from\s+)?[\"']([^\"']+)[\"']"
+    )
+    for match in pattern.finditer(text):
+        imports.append((match.group(1), text.count("\n", 0, match.start()) + 1))
+    for match in re.finditer(r"\brequire\s*\(\s*[\"']([^\"']+)[\"']\s*\)", text):
+        imports.append((match.group(1), text.count("\n", 0, match.start()) + 1))
+    return imports
+
+
+def typescript_target_symbols(path: Path, target_roots: set[str]) -> list[tuple[str, int]]:
+    """Collect named imports and namespace members from a TypeScript oracle."""
+    text = path.read_text(encoding="utf-8-sig", errors="replace")
+    found: list[tuple[str, int]] = []
+    namespace_aliases: set[str] = set()
+    import_pattern = re.compile(
+        r"(?ms)^\s*import\s+(?P<clause>[^;\n]+?)\s+from\s+[\"'](?P<module>[^\"']+)[\"']"
+    )
+    for match in import_pattern.finditer(text):
+        module = match.group("module")
+        if not any(module == root or module.startswith(root + "/") for root in target_roots):
+            continue
+        clause = match.group("clause").strip()
+        line = text.count("\n", 0, match.start()) + 1
+        namespace = re.search(r"\*\s+as\s+([A-Za-z_$][\w$]*)", clause)
+        if namespace:
+            namespace_aliases.add(namespace.group(1))
+        named = re.search(r"\{(?P<body>[^}]*)\}", clause, flags=re.DOTALL)
+        if named:
+            for item in named.group("body").split(","):
+                item = re.sub(r"\btype\s+", "", item).strip()
+                if not item:
+                    continue
+                imported = re.split(r"\s+as\s+", item, maxsplit=1)[0].strip()
+                if len(imported) > 1 and not imported.startswith("_"):
+                    found.append((imported, line))
+    for alias in namespace_aliases:
+        for match in re.finditer(rf"\b{re.escape(alias)}\.([A-Za-z_$][\w$]*)", text):
+            member = match.group(1)
+            if len(member) > 1 and not member.startswith("_"):
+                found.append((member, text.count("\n", 0, match.start()) + 1))
+    return found
 
 
 def target_symbols(path: Path, target_roots: set[str]) -> list[tuple[str, int]]:
@@ -402,18 +450,31 @@ def main(argv: list[str]) -> int:
     atomic_path = selected_oracle / "test_atomic.py"
     java_atomic_dir = selected_oracle / "src" / "test" / "java" / "atomic"
     java_source_root = selected_oracle / "src" / "test" / "java"
+    typescript_atomic_dir = selected_oracle / "atomic"
     target_roots = set(TARGET_IMPORTS[task_id])
     violations: list[tuple[str, Path, int]] = []
+    oracle_language = "python"
     if atomic_path.exists():
         atomic_sources = [atomic_path]
     elif java_atomic_dir.is_dir():
         atomic_sources = sorted(java_source_root.rglob("*.java"))
+        oracle_language = "java"
+    elif typescript_atomic_dir.is_dir():
+        atomic_sources = sorted(
+            [*typescript_atomic_dir.rglob("*.test.ts"), *typescript_atomic_dir.rglob("*.test.tsx")]
+        )
+        oracle_language = "typescript"
     else:
         print("LINT_FAIL")
         print(f"[oracle] missing [{atomic_path}] or [{java_atomic_dir}]::0")
         return 1
     for source_path in atomic_sources:
-        for module, lineno in imports_from_ast(source_path):
+        imports = (
+            typescript_imports(source_path)
+            if oracle_language == "typescript"
+            else imports_from_ast(source_path)
+        )
+        for module, lineno in imports:
             if not any(
                 module == target or module.startswith(target + ".")
                 for target in target_roots
@@ -427,7 +488,12 @@ def main(argv: list[str]) -> int:
     # section, because behaviour clauses introduce names outside that section.
     spec_text = spec_path.read_text(encoding="utf-8-sig", errors="replace")
     spec_words = set(re.findall(r"[A-Za-z_]\w+", spec_text))
-    if atomic_path.exists():
+    if oracle_language == "typescript":
+        for source_path in atomic_sources:
+            for symbol, lineno in typescript_target_symbols(source_path, target_roots):
+                if symbol not in spec_words:
+                    violations.append((symbol, source_path, lineno))
+    elif atomic_path.exists():
         for symbol, lineno in target_symbols(atomic_path, target_roots):
             if symbol in spec_words:
                 continue

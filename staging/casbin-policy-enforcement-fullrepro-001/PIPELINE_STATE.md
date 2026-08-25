@@ -11,18 +11,26 @@
 ## Current
 
 ```
-state:      S1_SELECTED
-stage:      1
+state:      S3_DONE
+stage:      3
 spec_iter:  0
-filter_iter: 0
+filter_iter: 1
 eval_iter:  0
 language:   go
 updated:    2026-08-25
 ```
 
 todo:
-- [x] 在选择记录中追加 SELECTED 行（见 filter_notes.md 底部；CANDIDATES.md 写入延后，
-      本批次写入范围仅 staging/）
+- [x] Track B 生成测试：84（55 atomic + 29 integration），spec_test_map 全量落盘
+- [x] reference gate: pinned v3.11.0 replace 后 84/84 = 100% pass（filter/reference_score.json）
+- [x] dummy gate: 对抗性 stub 双变体，worst-case 5/84 = 6.0%（filter/dummy_result.txt）
+- [x] lint LINT_PASS 落盘（filter/lint_result.txt，晚于全部 oracle 测试文件）
+- [x] task.json + kept_nodeids + taxonomy 落盘
+
+functions_in_scope: 233 (upstream Test funcs; all excluded, see rewrite_audit.md)
+functions_kept: 0 (Track A)
+functions_excluded: 233
+generated_functions: 84 (Track B; 55 atomic + 29 integration)
 
 ---
 
@@ -31,6 +39,18 @@ todo:
 | # | date | from | to | note |
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | go-chi/chi rejected (router pkg 1785 LOC < 3000 hard gate); casbin kept; upstream tests in-package + fixture-bound -> Track B expected |
+| 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | 6-layer spec drafted from casbin.org docs + 4 probe rounds against pinned v3.11.0 |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_CHECK | probes verified all error fragments, effect folds, matcher functions, RBAC/domain queries, adapter round-trips; adapterless SavePolicy panics upstream -> kept out of scope |
+| 4 | 2026-08-25 | S2_SPEC_CHECK | S2_SPEC_DONE | 25-check pass; RemovePolicies excluded from scope (non-atomic remove semantics not spec-worthy); no leakage words |
+| 5 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | upstream tree audited: in-package (package casbin) tests + examples/ fixture files + unexported assert helpers |
+| 6 | 2026-08-25 | S3A_IMPORT_AUDIT | S3B_TRIGGER | 100% discard share -> Track B early trigger (rewrite_audit.md on disk) |
+| 7 | 2026-08-25 | S3B_TRIGGER | S3B_GENERATE | targets enumerated from spec sections (6 behavior sections, error table, 7 CVIs, 2 workflows) |
+| 8 | 2026-08-25 | S3B_GENERATE | S3B_DUMMY | 84 tests generated (55 atomic + 29 integration); dummy stub worst-case 5/84 = 6.0% <= 10% |
+| 9 | 2026-08-25 | S3B_DUMMY | S3B_REFERENCE | filter_iter=1: TestLoadPolicyRebuildsRoleGraph reworked to file adapter (string-adapter RemovePolicy clears Line -> upstream quirk, not spec behavior); TestPriorityWithRoleRules assertion corrected after probe |
+| 10 | 2026-08-25 | S3B_REFERENCE | S3B_DONE | reference 84/84 = 100% (filter/reference_score.json) |
+| 11 | 2026-08-25 | S3B_DONE | S3_ORACLE_MERGE | single-track (B only), merge trivial; spec_test_map covers all 84 with section minimums met |
+| 12 | 2026-08-25 | S3_ORACLE_MERGE | S3_REFERENCE_RUN | full oracle re-run against pinned v3.11.0: 84/84 |
+| 13 | 2026-08-25 | S3_REFERENCE_RUN | S3_DONE | lint LINT_PASS on disk; task.json/kept_nodeids/taxonomy landed; packet complete |
 
 ---
 

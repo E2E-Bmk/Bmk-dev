@@ -1,0 +1,22 @@
+{
+  "instance_id": "casbin-policy-enforcement-fullrepro-001",
+  "reference": {
+    "repo": "casbin/casbin",
+    "commit": "e9df34e092f925e0031f7db4e062f2fbddf3dc86",
+    "tag": "v3.11.0",
+    "wiring": "go mod edit -replace github.com/casbin/casbin/v3 => <pinned checkout>"
+  },
+  "run": {
+    "date": "2026-08-25",
+    "command": "go test -count=1 -json ./...",
+    "go_version": "go1.21+",
+    "passed": 84,
+    "failed": 0,
+    "total": 84,
+    "pass_rate": 1.0
+  },
+  "by_suite": {
+    "atomic": {"passed": 55, "failed": 0},
+    "integration": {"passed": 29, "failed": 0}
+  }
+}

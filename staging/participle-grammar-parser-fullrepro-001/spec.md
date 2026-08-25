@@ -243,11 +243,11 @@ is given, literal terminals in the grammar must match tokens of the listed
 types case-insensitively. The token value captured into the field must be
 the original input spelling, not the literal's spelling.
 
-**Lookahead.** The parser must decide between alternatives with a bounded
-token lookahead, defaulting to 1. Where `UseLookahead(n)` is given, branch
-disambiguation must consider up to `n` tokens before committing; grammars
-whose alternatives cannot be distinguished within the configured lookahead
-fail at parse time on the inputs that need more. The constant `MaxLookahead`
+**Lookahead.** The parser must decide between alternatives by trying them
+in order with backtracking, under a bounded branch-decision depth that
+defaults to 1 token. Where `UseLookahead(n)` is given, the parser must
+accept a decision depth of up to `n` tokens; raising the depth must never
+reject an input that a lower depth accepts. The constant `MaxLookahead`
 provides a practically unbounded depth.
 
 ## Value Capture
@@ -353,8 +353,9 @@ return the inverse mapping of `def.Symbols()`.
 properties:
 
 - One production per line, in the form `Name = body .`, where `Name` is the
-  producing struct (or union interface) type's name. The root production
-  comes first; referenced productions follow, each rendered once.
+  producing struct (or union interface) type's name with its first rune
+  upper-cased. The root production comes first; referenced productions
+  follow, each rendered once.
 - References to token types render as the token name lower-cased inside
   angle brackets (for example `<ident>`); literal terminals render
   double-quoted; sequences separate elements with single spaces; groups are

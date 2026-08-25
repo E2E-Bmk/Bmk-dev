@@ -11,7 +11,7 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
@@ -21,10 +21,16 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] audit upstream test tree: imports, golden reprs, in-repo helpers
-- [ ] Track A/B decision -> rewrite_audit.md
+- [x] Track B 生成测试：104（72 atomic + 32 integration），spec_test_map 全量落盘
+- [x] reference gate: pinned v2.1.4 replace 后 104/104 pass（filter/reference_score.json）
+- [x] dummy gate: 对抗性 stub 双变体，worst-case 5/104 = 4.8% <= 10%（filter/dummy_result.txt）
+- [x] lint LINT_PASS 落盘（含 alias 修正后 symbol 级检查注入验证：注入 UndeclaredBogusSymbol → LINT_FAIL，移除后 LINT_PASS）
+- [x] task.json + kept_nodeids + taxonomy 落盘
 
-functions_in_scope: 146 (upstream Test funcs at v2.1.4)
+functions_in_scope: 142 (upstream Test funcs; all excluded, see rewrite_audit.md)
+functions_kept: 0 (Track A)
+functions_excluded: 142
+generated_tests: 104 (72 atomic + 32 integration)
 
 ---
 
@@ -37,6 +43,11 @@ functions_in_scope: 146 (upstream Test funcs at v2.1.4)
 | 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_CHECK | probes verified: EBNF casing/format, bool-capture-true, string concat capture, per-token TextUnmarshaler, iteration guard, first-match-wins lexer order, error taxonomy fields, Wrapf position keep, elided explicit match |
 | 4 | 2026-08-25 | S2_SPEC_CHECK | S2_SPEC_DONE | 25-check pass after fixes: modal verbs removed, API catalog converted to Name/Kind/Role tables, Appendix A/B aligned to batch style; ebnf subpackage + codegen + backrefs in Non-Goals |
 | 5 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | entering upstream test audit |
+| 6 | 2026-08-25 | S3A_IMPORT_AUDIT | S3B_TRIGGER | 142 upstream tests all depend on third-party assert/repr modules + repr goldens; 100% discard -> Track B early trigger |
+| 7 | 2026-08-25 | S3B_TRIGGER | S3B_GENERATE | targets enumerated from spec sections (6 behavior sections, error table, 7 CVIs, 2 workflows) |
+| 8 | 2026-08-25 | S3B_GENERATE | S3B_REFERENCE | 104 tests written (72 atomic + 32 integration); ref-run fixes: EBNF title-casing (spec updated per observed v2.1.4 behaviour), Unquote invalid-escape input, lookahead test redesigned around backtracking |
+| 9 | 2026-08-25 | S3B_REFERENCE | S3B_DUMMY | reference 104/104 vs pinned v2.1.4 |
+| 10 | 2026-08-25 | S3B_DUMMY | S3_DONE | dummy stub accept-variant 5/104 (4.8%), reject-variant 4/104 (3.8%); explicit `participle` import alias added so lint symbol check covers /v2 module path (verified via injected violation → LINT_FAIL); final lint LINT_PASS on disk |
 
 ---
 

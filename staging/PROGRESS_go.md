@@ -45,7 +45,18 @@ the packets graduate):
 ],
 "dig-container-graph-fullrepro-001": ["go.uber.org/dig"],
 "gocmp-equality-engine-fullrepro-001": ["github.com/google/go-cmp/cmp"],
+"participle-grammar-parser-fullrepro-001": [
+    "github.com/alecthomas/participle/v2",
+    "github.com/alecthomas/participle/v2/lexer",
+],
 ```
+
+Lint caveat for `/vN` module paths: `go_target_symbols` derives the package
+alias from the import path's last segment, so `.../participle/v2` maps to `v2`
+and unaliased imports silently skip the symbol check. Oracles for such modules
+use an explicit import alias (`participle "github.com/alecthomas/participle/v2"`);
+the participle packet's symbol check was verified live by injecting an
+undeclared symbol (LINT_FAIL observed) before recording the final LINT_PASS.
 
 Reference runs execute `go test -json ./...` per suite against the pinned
 upstream version wired in with `go mod edit -replace`, mirroring
@@ -59,6 +70,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | 1 | jsonschema-compile-validate-fullrepro-001 | santhosh-tekuri/jsonschema @ v6.0.3 | S3_DONE | 79 (52+27) | 79/79 | Track B (upstream = data-driven suite runners); dummy 2/79=2.5% |
 | 2 | dig-container-graph-fullrepro-001 | uber-go/dig @ v1.19.0 | S3_DONE | 99 (62+37) | 99/99 | Track B (upstream tests bound to internal/digtest); dummy worst-case 5/99=5.1% |
 | 3 | gocmp-equality-engine-fullrepro-001 | google/go-cmp @ v0.7.0 | S3_DONE | 87 (54+33) | 87/87 | Track B (upstream = golden-transcript mega-runner + white-box); dummy worst-case 3/87=3.4% |
+| 4 | participle-grammar-parser-fullrepro-001 | alecthomas/participle @ v2.1.4 | S3_DONE | 104 (72+32) | 104/104 | Track B (upstream tests bound to alecthomas/assert+repr goldens); dummy worst-case 5/104=4.8% |
 
 ## Candidate selection log (CANDIDATES.md rows deferred; write scope is staging/ only)
 
@@ -78,7 +90,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | spf13/viper | REJECTED | 2280 LOC < 3000 | precedence logic thin; real work delegated to deps (mapstructure/cast/afero) |
 | tidwall/buntdb | REJECTED | 1691 LOC < 3000; single-file library | also shape-overlaps nutsdb task on go branch |
 | google/go-jsonnet | REJECTED | LOC dominated by generated stdast (~200k); heavy build | interpreter core viable but generated-code accounting and build weight make it a poor fit |
-| alecthomas/participle | SELECTED | 6759 LOC, 146 test funcs | parser-builder: struct-tag grammar mini-language, lexer defs, EBNF projection; Track TBD |
+| alecthomas/participle | SELECTED | 6759 LOC, 146 test funcs | parser-builder: struct-tag grammar mini-language, lexer defs, EBNF projection; Track B |
 | goccy/go-yaml | QUEUED (candidate) | 13130 LOC, 143 test funcs | YAML engine: decode/encode, PathString queries, anchors, source-annotated errors |
 | alecthomas/kong | QUEUED (candidate) | 5629 LOC, 300 test funcs | CLI grammar engine: struct-tag DSL, parse+help+defaults+validation projections |
 | antchfx/xpath | QUEUED (candidate) | 4032 LOC, 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator |

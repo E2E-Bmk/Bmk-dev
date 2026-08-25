@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S1_SELECTED
-stage:      1
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,7 +20,7 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] hand off to spec-writer: inventory public surface from docs.rs 0.4.7, draft 6-layer spec
+- [ ] audit upstream test imports against spec surface; excluded surface: Node/Transition/CompiledAddr, search_with_state/StreamWithState, get_key_into, map_data, new_type/fst_type, quickcheck properties
 
 ---
 
@@ -29,6 +29,10 @@ todo:
 | # | date | from | to | note |
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (FST engine, 6425 non-test LOC, 7 in-scope projections of one byte image; levenshtein feature scoped out; builds on rustc 1.83) |
+| 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | spec.md drafted from docs.rs 0.4.7 (6-layer): build ordering contract, queries, streams/ranges, automaton search, set-op lattice, raw/bytes, error taxonomy |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_CHECK | self-check: no modal verbs, no leakage words; Non-Goals phrasing conforms; API catalog Name/Kind/Role only; scoped-out surface excluded from Import Surface |
+| 4 | 2026-08-25 | S2_SPEC_CHECK | S2_SPEC_DONE | spec passes SPEC_STANDARD phrasing/structure; no features required; WrongType documented as reserved |
+| 5 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin oracle: tests/test.rs public-path tests keepable; raw/tests.rs mixes private helpers — per-function extraction |
 
 ---
 

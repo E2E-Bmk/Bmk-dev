@@ -20,7 +20,7 @@ import shlex
 from pathlib import Path
 from typing import Iterator, Optional
 
-from harness.runners.base import Batch, Env, Runner, Step, TestId, nested_names
+from harness.runners.base import Batch, Env, Runner, Step, TestId, depends_on_above, nested_names
 
 _TEST_FN = re.compile(r"#\[(?:test|tokio::test)[^\]]*\]\s*(?:async\s+)?fn\s+(\w+)")
 _MOD_DECL = re.compile(r"\bmod\s+(\w+)\s*\{")
@@ -163,6 +163,28 @@ class RustRunner(Runner):
 
     def synthetic_id(self, suite: str) -> TestId:
         return f"{suite}::placeholder"
+
+    def dependencies(self, oracle_host: Path) -> dict[str, list[str]]:
+        """`// DependsOn:` comments above each integration `#[test]`.
+
+        Keyed by the test's own function name -- the leaf of the
+        `{suite}::{module path}::{fn}` id `discover` builds -- because that leaf
+        is what both the sandbox and `verify_task` index the relation by. Values
+        are atomic function names, read the same way. Read from source on the
+        host, like `discover`, so the candidate cannot influence the eligible
+        set.
+        """
+        directory = oracle_host / "integration"
+        if not directory.is_dir():
+            return {}
+        result: dict[str, list[str]] = {}
+        for source in sorted(directory.rglob("*.rs")):
+            text = source.read_text(encoding="utf-8-sig", errors="replace")
+            for match in _TEST_FN.finditer(text):
+                names = depends_on_above(text, match.start())
+                if names:
+                    result[self.function_of(match.group(1))] = names
+        return result
 
     # ── provenance ────────────────────────────────────────────────────────
 

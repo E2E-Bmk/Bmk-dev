@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,7 +20,7 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] draft spec.md (6-layer) from docs.rs 0.16.2: wrapping model (words/fragments/widths), Options builder, wrap/fill/fill_inplace, refill/unfill prefix inference, wrap_columns, indent/dedent, core layer, wrap_algorithms (first-fit, optimal-fit + Penalties, OverflowError), word_separators, word_splitters, LineEnding; scope out hyphenation + terminal_size features
+- [ ] audit upstream tests (src #[cfg(test)] mods + tests/) for public-surface vs private/internal reliance; classify per file; decide keep vs generated-only
 
 ---
 
@@ -29,6 +29,9 @@ todo:
 | # | date | from | to | note |
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (two wrapping algorithms behind one config engine, 3183 non-test LOC, 137 test fns, 8 public projections; 0.16.2 MSRV 1.70 builds on rustc 1.83) |
+| 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec: probed reference (defaults, indent-on-empty-line, CR passthrough, fill_inplace last-space rule, Cow borrowing, wrap_columns arithmetic, penalty model) |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec.md v1: 6 behavior sections (wrap/fill, config, refill/indent, columns, text model, algorithms), 8 invariants, error table; 25 checks + style gate pass; smawk pinned =0.3.2 for toolchain 1.83 (noted for lock) |
+| 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
 
 ---
 

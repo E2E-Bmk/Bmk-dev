@@ -1,0 +1,32 @@
+Dummy gate — gocmp-equality-engine-fullrepro-001 (2026-08-25)
+
+Method: adversarial stub module at github.com/google/go-cmp (package cmp) with
+the full exported surface the oracle uses: Equal/Diff, Option/Options, Ignore/
+Comparer/Transformer/FilterPath/FilterValues/Exporter/AllowUnexported/Reporter,
+Result with all cause flags, Path/PathStep and all six concrete step types with
+their accessors. Accept-all variant: Equal always true, Diff always empty,
+Result.Equal true, flags false, no panics, no traversal (Reporter callbacks
+never invoked, filter predicates never called). DUMMY_REJECT=1 flips to
+reject-all: Equal false, Diff non-empty, Result.Equal false — projections stay
+mutually consistent in both variants, so consistency-only assertions would
+pass. Wired with go mod edit -replace, run with go test -count=1 -json ./....
+
+Variant accept-all: 0 passes / 87
+Variant reject-all: 3 passes / 87
+  atomic::TestTopLevelTypeMismatchIsNotPanic
+  integration::TestUnequalCyclicPayloadTerminates
+  integration::TestDifferentCycleLengthsUnequal
+
+Disposition: the three reject-all passes are negative-predicate tests (a type
+mismatch, and two unequal-cycle shapes, must be judged unequal with a
+non-empty report). Each has positive twins that fail both variants
+(TestUntypedNilRootsEqual and the kind-rule tests anchor the mismatch family;
+TestEqualCyclesJudgedEqualByCycle and TestDoublyLinkedCycleComparison anchor
+the cycle family), so no test is free under both variants. Worst-case union
+3/87 = 3.4% <= 10% gate threshold; kept.
+
+Note: panic-contract tests (unfiltered ignore, ambiguous options, invalid
+comparer, invalid transformer name, unexported field) fail both variants
+because the stub never panics — they are counted as failure_path rows in
+spec_test_map.md and are outnumbered 48:6 by positive rows in the atomic
+layer.

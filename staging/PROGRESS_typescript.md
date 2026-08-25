@@ -25,6 +25,7 @@ oclif-core, tinybase, typedoc, unstorage, wireit).
 | 2 | rrule-recurrence-engine-fullrepro-001 | jkbrzt/rrule (rrule@2.8.1) | S3_DONE (packet committed) | 90 (64/22/4) | 90/90 local vitest | 0/90 | RFC 5545 recurrence engine; expansion/string/text/set projections; 3 spec claims corrected from reference execution |
 | 3 | kysely-query-compiler-fullrepro-001 | kysely-org/kysely (kysely@0.29.5) | S3_DONE (packet committed) | 96 (70/22/4) | 96/96 local vitest | 0/96 | SQL query compiler; builder AST -> pg/mysql/sqlite compile + plugin/schema transforms + DummyDriver lifecycle; 2 spec claims corrected from reference execution |
 | 4 | xstate-statechart-engine-fullrepro-001 | statelyai/xstate (xstate@5.32.5) | S3_DONE (packet committed) | 96 (71/21/4) | 96/96 local vitest | 0/96 | statechart engine; SCXML-style transition selection/microsteps + actor, pure-step, query, persistence, SimulatedClock, completion projections |
+| 5 | mobx-reactivity-engine-fullrepro-001 | mobxjs/mobx (mobx@7.0.3) | S3_DONE (packet committed) | 100 (75/21/4) | 100/100 local vitest | 0/100 | reactive graph engine; observables/computed/effects/actions/collections/events/introspection; v7 fresh-major memorization traps probed (observable(primitive) boxes, standalone annotation tokens, enforceActions warns) |
 
 ## Rejected candidates (hard gates)
 

@@ -304,7 +304,8 @@ address into an already-parsed tree.
 
 **Rewriting.** `Path.ReplaceWithReader(file, src)` must replace the
 addressed node inside a parsed file with the content read from `src`,
-leaving every other byte of the rendered document unchanged.
+leaving every other byte of the rendered document unchanged; a line
+comment attached to the replaced node itself is dropped with it.
 `Path.ReplaceWithFile` and `Path.ReplaceWithNode` accept already-parsed
 replacements. `Path.MergeFromReader(dst, src)` must merge a mapping or
 sequence into the addressed node (appending new keys after existing ones);
@@ -330,9 +331,12 @@ parse.
 **Tokenizing.** `lexer.Tokenize(src)` must return the ordered
 `token.Tokens` for the source. Every `token.Token` carries `Type`,
 `Value` (the cleaned scalar text), `Origin` (the exact source text
-including surrounding whitespace and newlines, so that concatenating all
-origins reproduces the input), and `Position` with 1-based `Line` and
-`Column`, byte `Offset`, and `IndentNum`. Structural tokens report types
+including surrounding whitespace and newlines — a newline that separates
+two tokens is carried on the following token's origin, so concatenating
+all origins reproduces the input except that newline bytes at the very
+end of the input after a final plain scalar are dropped), and `Position`
+with 1-based `Line` and `Column`, 1-based byte `Offset`, and
+`IndentNum`. Structural tokens report types
 such as `MappingValue` for `:`, `SequenceStart` for `[`, `CollectEntry`
 for `,`, and `SequenceEnd` for `]`; scalar tokens report their resolved
 kind (`String`, `Integer`, `Bool`, `Comment`, and the other scalar kinds).
@@ -404,10 +408,12 @@ destination pointer and the raw value bytes.
 
 **Validation.** `Validator(v)` accepts any `yaml.StructValidator` — a
 type with a `Struct(interface{}) error` method, invoked with each decoded
-struct value. If the validator returns an error, then decoding must fail
-with that error; when the error implements `yaml.FieldError` (a
-`StructField() string` method) and the offending field is present in the
-source, the failure must be source-annotated at that field.
+struct value. If the validator returns an error, then decoding must fail.
+When the returned error is a slice whose elements implement
+`yaml.FieldError` (a `StructField() string` method) and the offending
+field is present in the source, the failure must be source-annotated at
+that field's position; a validator error of any other shape must be
+returned to the caller unchanged.
 
 **JSON interop.** `UseJSONMarshaler()` (encode) and `UseJSONUnmarshaler()`
 (decode) must let types implementing the standard-library
@@ -455,7 +461,7 @@ appear exactly when `colored` is true.
 | Integer literal exceeding the destination integer type's range | error satisfying `errors.As` with `*yaml.OverflowError` |
 | Malformed path string | error from `PathString` satisfying `yaml.IsInvalidPathStringError` |
 | Valid path addressing an absent node | error satisfying `yaml.IsNotFoundNodeError` |
-| Validator rejection | the validator's error; source-annotated at the field when it implements `yaml.FieldError` and the field is present |
+| Validator rejection | the validator's error; source-annotated at the field when the error is a slice of `yaml.FieldError` elements and the field is present in the source, returned unchanged otherwise |
 | `Decode` after the last document | `io.EOF` |
 
 `yaml.Error` is the interface every engine error satisfies through
@@ -466,9 +472,10 @@ errors above are exported for callers to match on.
 
 1. **Token origins reproduce the source.** For any input accepted by
    `lexer.Tokenize`, concatenating every token's `Origin` in order must
-   reproduce the input bytes exactly; each token's `Position` (`Line`,
-   `Column`, `Offset`) must agree with the location of its origin text in
-   those bytes.
+   reproduce the input bytes exactly, except that newline bytes at the
+   very end of the input following a final plain scalar token are
+   dropped; each token's `Position` (`Line`, `Column`, `Offset`) must
+   agree with the location of its content in those bytes.
 2. **Tree rendering agrees with the encoder.** For any Go value,
    `ValueToNode(v).String()` must equal the text `Marshal(v)` produces
    (up to the trailing newline), and parsing that text back must yield a

@@ -55,6 +55,13 @@ the packets graduate):
     "github.com/zclconf/go-cty/cty/json",
     "github.com/zclconf/go-cty/cty/msgpack",
 ],
+"goyaml-yaml-engine-fullrepro-001": [
+    "github.com/goccy/go-yaml",
+    "github.com/goccy/go-yaml/ast",
+    "github.com/goccy/go-yaml/parser",
+    "github.com/goccy/go-yaml/lexer",
+    "github.com/goccy/go-yaml/token",
+],
 ```
 
 Lint caveat for `/vN` module paths: `go_target_symbols` derives the package
@@ -78,6 +85,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | 3 | gocmp-equality-engine-fullrepro-001 | google/go-cmp @ v0.7.0 | S3_DONE | 87 (54+33) | 87/87 | Track B (upstream = golden-transcript mega-runner + white-box); dummy worst-case 3/87=3.4% |
 | 4 | participle-grammar-parser-fullrepro-001 | alecthomas/participle @ v2.1.4 | S3_DONE | 104 (72+32) | 104/104 | Track B (upstream tests bound to alecthomas/assert+repr goldens); dummy worst-case 5/104=4.8% |
 | 5 | cty-value-type-system-fullrepro-001 | zclconf/go-cty @ v1.19.0 | S3_DONE | 132 (96+36) | 132/132 | Track B (upstream 81/83 in-package white-box); dummy worst-case 6/132=4.5% after strengthening pass (initial accept-stub 15.2% → negative controls + native-content assertions); module requires go >= 1.25 |
+| 6 | goyaml-yaml-engine-fullrepro-001 | goccy/go-yaml @ v1.19.2 | S3_DONE | 134 (97+37) | 134/134 | Track B (upstream mega-tables import internal/errors; path/lexer suites golden-bound); dummy worst-case 1/134=0.7% after non-vacuity fix (initial 2/134, one vacuous all-nil round-trip passer); 3 spec_error fixes during ref run (validator FieldError-slice annotation, trailing-newline Origin loss, ReplaceWithReader comment drop) |
 
 ## Candidate selection log (CANDIDATES.md rows deferred; write scope is staging/ only)
 
@@ -98,7 +106,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | tidwall/buntdb | REJECTED | 1691 LOC < 3000; single-file library | also shape-overlaps nutsdb task on go branch |
 | google/go-jsonnet | REJECTED | LOC dominated by generated stdast (~200k); heavy build | interpreter core viable but generated-code accounting and build weight make it a poor fit |
 | alecthomas/participle | SELECTED | 6759 LOC, 146 test funcs | parser-builder: struct-tag grammar mini-language, lexer defs, EBNF projection; Track B |
-| goccy/go-yaml | QUEUED (candidate) | 13130 LOC, 143 test funcs | YAML engine: decode/encode, PathString queries, anchors, source-annotated errors |
+| goccy/go-yaml | SELECTED | 13130 LOC, 140 black-box test funcs | YAML engine: decode/encode, PathString queries, anchors, source-annotated errors, lexer/parser projections; Track B |
 | alecthomas/kong | QUEUED (candidate) | 5629 LOC, 300 test funcs | CLI grammar engine: struct-tag DSL, parse+help+defaults+validation projections |
 | antchfx/xpath | QUEUED (candidate) | 4032 LOC, 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator |
 | zclconf/go-cty | SELECTED | 13657 LOC, 165 test funcs | value/type system: conversions, unification, refinements/marks, json/msgpack round trips; Track B |

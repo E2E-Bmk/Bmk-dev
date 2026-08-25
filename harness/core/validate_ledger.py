@@ -19,6 +19,7 @@ static gate `docs/QUALITY_GATE.md` and the task-judge Gate E describe.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from collections import defaultdict
@@ -103,6 +104,30 @@ def ledger_warnings() -> list[str]:
             f"{path.relative_to(ROOT)}: outside the language buckets, so no "
             "per-language tool sees it"
         )
+
+    # The same id in both trees means one of the two copies is being measured and
+    # the other is being read, with no way to tell which.
+    for task_id in layout.duplicates():
+        warnings.append(
+            f"{task_id}: a packet under tasks/ and another inside its bench"
+        )
+
+    # A packet whose verdict says one tier while it sits in the other is the
+    # case the tier line exists to prevent, so it is named rather than tolerated.
+    for task_id, path in sorted(layout.task_dirs().items()):
+        verdict_path = layout.verdict_path(task_id)
+        if verdict_path is None or not verdict_path.is_file():
+            continue
+        try:
+            tier = json.loads(verdict_path.read_text(encoding="utf-8-sig"))["tier"]
+        except (ValueError, OSError, KeyError):
+            continue
+        filed_under = layout.tier_of(task_id)
+        if tier != filed_under:
+            warnings.append(
+                f"{task_id}: verdict.json tiers it {tier!r} but it is filed "
+                f"under {filed_under}/"
+            )
 
     for repo, statuses in sorted(by_repo.items()):
         if "QUALIFIED" in statuses and "RETIRED" in statuses:

@@ -146,6 +146,10 @@ def build(task_id: str) -> dict:
         },
         "tier": "wip" if errors else "tasks",
         "tier_reason": errors[0] if errors else "the static gate passes",
+        # Where the packet belongs and where it actually sits are separate facts.
+        # Recording both is what makes "passes but still parked in wip" and
+        # "fails but still presented under tasks" visible instead of implicit.
+        "filed_under": layout.tier_of(task_id),
         "evidence": evidence,
         "evidence_pending": pending,
     }
@@ -174,7 +178,7 @@ def main(argv: list[str]) -> int:
     for task_id in selected:
         verdict = build(task_id)
         tiers[verdict["tier"]] += 1
-        path = layout.task_dir(task_id) / FILENAME
+        path = layout.verdict_path(task_id)
         text = render(verdict)
         if write:
             path.write_text(text, encoding="utf-8")

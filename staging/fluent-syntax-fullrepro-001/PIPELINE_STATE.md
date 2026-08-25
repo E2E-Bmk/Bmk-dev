@@ -11,7 +11,7 @@
 ## Current
 
 ```
-state:      S3B_TRIGGER
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
@@ -21,9 +21,9 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] generate oracle test crates (atomic + integration) from spec, fresh fixtures, probe-verified assertions
-- [ ] run against pinned reference (path-patched + registry lock), require 100%
-- [ ] write spec_test_map.md, taxonomy.jsonl, kept_nodeids.txt, depends_on.json, task.json; run lint
+- [x] generate oracle test crates (atomic + integration) from spec, fresh fixtures, probe-verified assertions
+- [x] run against pinned reference (path-patched + registry lock), require 100%
+- [x] write spec_test_map.md, taxonomy.jsonl, kept_nodeids.txt, depends_on.json, task.json; run lint
 
 ## History
 
@@ -35,6 +35,7 @@ todo:
 | 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
 | 5 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit done: 18 upstream fns — parser fixtures serde/json-gated + snapshot corpus, serializer fixtures glob+corpus, in-crate serializer tests private TextWriter/impl blocks, unicode test public but memorization-prone; decision generated-only |
 | 6 | 2026-08-25 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md landed: per-file disposition; fresh harbor/orbital vocabulary replaces hello-world/foo-bar corpus; dummy-passable patterns avoided (error tests paired with recovered-tree positives; pattern assertions on full element vectors) |
+| 7 | 2026-08-25 | S3B_TRIGGER | S3_DONE | oracle generated: 71 atomic + 27 integration = 98 fns; reference 98/98 on path-patch AND registry lock (fluent-syntax 0.12.0, cargo 1.83); warning-free build; nextest IDs captured; spec_test_map/taxonomy/kept_nodeids/depends_on/task.json/reference_score landed; lint LINT_PASS |
 
 ---
 

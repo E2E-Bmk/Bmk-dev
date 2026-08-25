@@ -1,0 +1,25 @@
+{
+  "task_id": "fluent-syntax-fullrepro-001",
+  "reference": "projectfluent/fluent-rs @ f22da4ea48328b4c617b7666c482634c49fbe0a7 (fluent-syntax@0.12.0), workspace member fluent-syntax",
+  "runs": [
+    {
+      "mode": "path_patch",
+      "detail": "[patch.crates-io] fluent-syntax = { path = <pinned checkout>/fluent-syntax } appended to oracle workspace manifest",
+      "runner": "cargo nextest run (also cargo test --workspace)",
+      "total": 98,
+      "passed": 98,
+      "failed": 0
+    },
+    {
+      "mode": "registry_lock",
+      "detail": "no patch; cargo generate-lockfile resolves fluent-syntax 0.12.0 + memchr 2.8.3 + thiserror 2.0.20 from crates.io on cargo 1.83; this lock ships as oracle/Cargo.lock",
+      "runner": "cargo nextest run",
+      "total": 98,
+      "passed": 98,
+      "failed": 0
+    }
+  ],
+  "pass_rate": 1.0,
+  "toolchain": "cargo 1.83.0",
+  "date": "2026-08-25"
+}

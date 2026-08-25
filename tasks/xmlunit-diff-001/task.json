@@ -1,0 +1,156 @@
+{
+  "instance_id": "xmlunit-diff-001",
+  "status": "REJECTED_E1",
+  "repo": "xmlunit/xmlunit",
+  "repo_commit": "963cfe6",
+  "repo_tag": "xmlunit-core-2.10.x",
+  "language": "java",
+  "package_name": "org.xmldiff",
+  "maven_coordinates": "org.xmldiff:xmldiff-core",
+  "primary_module": "xmldiff-core",
+  "program_file": "pom.xml",
+  "spec_version": "v1",
+  "de_identified": true,
+  "de_identification": {
+    "upstream_root": "org.xmlunit",
+    "task_root": "org.xmldiff",
+    "note": "Rename package. JDK XML + JAXB 2.3.3 stay as published deps.",
+    "reason": "cuts recall-by-name for a comparison library"
+  },
+  "mutation": {
+    "source": "ROOT-MAP.json (4 families, audit valid: frac 0.64, largest_family_share 0.25, 50 roots)",
+    "families": [
+      {
+        "id": "F1_nsprefix",
+        "owner": "nsprefix",
+        "clause": "DIFF-NAMESPACE-PREFIX",
+        "upstream": "a namespace-prefix-only difference is downgraded to SIMILAR",
+        "mutation": "it is reported as DIFFERENT",
+        "why_upstream_default": "prefix is not semantically significant when the URI matches, so it is conventionally minor"
+      },
+      {
+        "id": "F2_childseq",
+        "owner": "childseq",
+        "clause": "DIFF-CHILD-SEQUENCE",
+        "upstream": "a child-order difference (CHILD_NODELIST_SEQUENCE) is downgraded to SIMILAR",
+        "mutation": "it is reported as DIFFERENT",
+        "why_upstream_default": "reordering matched children is conventionally a minor difference"
+      },
+      {
+        "id": "F3_xmlenc",
+        "owner": "xmlenc",
+        "clause": "DIFF-XML-ENCODING",
+        "upstream": "an XML_ENCODING difference is downgraded to SIMILAR",
+        "mutation": "it is reported as DIFFERENT",
+        "why_upstream_default": "the declared encoding does not change the infoset, so it is conventionally minor"
+      },
+      {
+        "id": "F4_nodetype",
+        "owner": "nodetype",
+        "clause": "DIFF-NODETYPE-CDATA",
+        "upstream": "a CDATA-vs-text NODE_TYPE difference is downgraded to SIMILAR",
+        "mutation": "it is reported as DIFFERENT",
+        "why_upstream_default": "CDATA and text carrying the same characters are conventionally equivalent"
+      }
+    ],
+    "clauses": [
+      "DIFF-NAMESPACE-PREFIX",
+      "DIFF-CHILD-SEQUENCE",
+      "DIFF-XML-ENCODING",
+      "DIFF-NODETYPE-CDATA"
+    ],
+    "tests": "12 tests marked // MUTATED (8 atomic + 4 integration); each family >=2; clean upstream (M2) fails exactly these 12, 49 native pass"
+  },
+  "provenance_note": "oracle declares org.xmldiff:xmldiff-core:1.0.0; JavaRunner installs candidate; jaxb provided transitively.",
+  "qualification": {
+    "basis": "v2 E1-E7 (E6 replaced by verify_task+lint for Java)",
+    "E3_controls_partial": {
+      "reference": "61/61 (100%)",
+      "clean_upstream": "exactly 12 mutation tests fail; 49 native pass"
+    },
+    "E4": "ROOT-MAP audit valid",
+    "E7": "mutation block + // MUTATED",
+    "E1_pass_rate": "atomic ~94%/integ ~96% - difference classification is spec-trivial lookup; rejected"
+  },
+  "stats": {
+    "atomic": 35,
+    "integration": 26,
+    "system_e2e": 0
+  },
+  "taxonomy": {
+    "atomic::DiffTest::aNamespacePrefixOnlyDifferenceIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aRootNamespacePrefixChangeIsReportedDifferent": "atomic",
+    "atomic::DiffTest::reorderedChildrenAreReportedDifferent": "atomic",
+    "atomic::DiffTest::reorderingThreeChildrenIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aDifferentXmlEncodingIsReportedDifferent": "atomic",
+    "atomic::DiffTest::anotherXmlEncodingChangeIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aCdataVersusTextPairingIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aTextVersusCdataPairingIsReportedDifferent": "atomic",
+    "atomic::DiffTest::identicalDocumentsHaveNoDifferences": "atomic",
+    "atomic::DiffTest::aTextValueDifferenceIsReportedDifferent": "atomic",
+    "atomic::DiffTest::anElementTagNameDifferenceIsReportedDifferent": "atomic",
+    "atomic::DiffTest::anAttributeValueDifferenceIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aNamespaceUriDifferenceIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aDifferingNumberOfAttributesIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aDifferingNumberOfChildrenIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aMissingElementIsDetectedAsAChildLookup": "atomic",
+    "atomic::DiffTest::aTextValueChangeMakesDocumentsDiffer": "atomic",
+    "atomic::DiffTest::anIdenticalAttributedElementHasNoDifferences": "atomic",
+    "atomic::DiffTest::attributeOrderDoesNotMatter": "atomic",
+    "atomic::DiffTest::aDeepIdenticalTreeHasNoDifferences": "atomic",
+    "atomic::DiffTest::aNestedTextChangeIsReportedDifferent": "atomic",
+    "atomic::DiffTest::aChangedAttributeMakesDocumentsDiffer": "atomic",
+    "atomic::DiffTest::aRenamedRootIsReportedDifferent": "atomic",
+    "atomic::DiffTest::identicalNamespacedDocumentsHaveNoDifferences": "atomic",
+    "atomic::DiffTest::aDifferentNamespaceUriMakesDocumentsDiffer": "atomic",
+    "atomic::DiffTest::anAddedAttributeMakesDocumentsDiffer": "atomic",
+    "atomic::DiffTest::aRemovedChildMakesDocumentsDiffer": "atomic",
+    "atomic::DiffTest::identicalSelfClosingAndOpenTagsAreEqual": "atomic",
+    "atomic::DiffTest::aValueChangeInOneOfManyChildrenIsDifferent": "atomic",
+    "atomic::DiffTest::aDeeplyNestedStructureChangeMakesDocumentsDiffer": "atomic",
+    "atomic::DiffTest::twoEmptyRootsAreEqual": "atomic",
+    "atomic::DiffTest::aChangedTextAmongIdenticalSiblingsCountsOneTextDifference": "atomic",
+    "atomic::DiffTest::anAttributeNameChangeIsDetected": "atomic",
+    "atomic::DiffTest::aWhitespaceOnlyTextChangeIsDetectedByDefault": "atomic",
+    "atomic::DiffTest::identicalCommentsProduceNoDifferences": "atomic",
+    "integration::EngineTest::aPrefixOnlyDifferenceAloneMakesTheDocumentsDiffer": "integration",
+    "integration::EngineTest::reorderedChildrenAloneMakeTheDocumentsDiffer": "integration",
+    "integration::EngineTest::aDifferentEncodingAloneMakesTheDocumentsDiffer": "integration",
+    "integration::EngineTest::aCdataVersusTextPairingAloneMakesTheDocumentsDiffer": "integration",
+    "integration::EngineTest::identicalComplexTreesProduceNoDifferences": "integration",
+    "integration::EngineTest::aStopWhenDifferentControllerRecordsAtMostOneDifference": "integration",
+    "integration::EngineTest::aDefaultControllerRecordsEveryValueDifference": "integration",
+    "integration::EngineTest::aCustomEvaluatorCanDowngradeATextDifferenceToEqual": "integration",
+    "integration::EngineTest::aTagNameDifferenceIsRecordedInAComplexTree": "integration",
+    "integration::EngineTest::anAttributeDifferenceIsFoundOnANestedElement": "integration",
+    "integration::EngineTest::aNamespaceUriDifferenceIsFoundOnAChild": "integration",
+    "integration::EngineTest::aMissingChildIsReflectedInTheChildCount": "integration",
+    "integration::EngineTest::attributeOrderIsIgnoredInANestedElement": "integration",
+    "integration::EngineTest::multipleValueDifferencesAreAllRecordedUnderTheDefaultController": "integration",
+    "integration::EngineTest::aDeepIdenticalTreeWithAttributesHasNoDifferences": "integration",
+    "integration::EngineTest::aStopWhenDifferentControllerReportsHasDifferences": "integration",
+    "integration::EngineTest::aRenamedDeepElementMakesTheTreeDiffer": "integration",
+    "integration::EngineTest::aChainedEvaluatorPreservesUnrelatedDifferences": "integration",
+    "integration::EngineTest::aLargeIdenticalDocumentIsEqual": "integration",
+    "integration::EngineTest::aSingleNestedChangeInALargeDocumentIsFound": "integration",
+    "integration::EngineTest::anExtraAttributeOnANestedElementIsDetected": "integration",
+    "integration::EngineTest::mixedSelfClosingFormsAreEqualInATree": "integration",
+    "integration::EngineTest::aTextChangeUnderTwoLevelsMakesDocumentsDiffer": "integration",
+    "integration::EngineTest::aChangedNestedAttributeMakesDocumentsDiffer": "integration",
+    "integration::EngineTest::twoIdenticalNestedEmptyStructuresAreEqual": "integration",
+    "integration::EngineTest::addingAChildDeepInTheTreeMakesDocumentsDiffer": "integration"
+  },
+  "oracle": {
+    "count": 61,
+    "count_unit": "base_test_functions",
+    "test_files": [
+      "oracle/src/test/java/atomic/DiffTest.java",
+      "oracle/src/test/java/integration/EngineTest.java"
+    ],
+    "support_files": [
+      "oracle/pom.xml",
+      "oracle/src/test/java/fixtures/Xml.java"
+    ],
+    "maven_pom": "oracle/pom.xml"
+  }
+}

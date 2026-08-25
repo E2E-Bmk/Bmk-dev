@@ -1,0 +1,155 @@
+{
+  "instance_id": "jimfs-filesystem-001",
+  "status": "REJECTED_E1",
+  "repo": "google/jimfs",
+  "repo_commit": "5319800",
+  "repo_tag": "v1.3.2",
+  "language": "java",
+  "package_name": "org.memfs",
+  "maven_coordinates": "org.memfs:memfs-core",
+  "primary_module": "memfs-core",
+  "program_file": "pom.xml",
+  "spec_version": "v1",
+  "de_identified": true,
+  "de_identification": {
+    "upstream_root": "com.google.common.jimfs",
+    "task_root": "org.memfs",
+    "note": "Rename package + the public factory class (Jimfs->Memfs) and URI scheme. Guava/ICU4J stay as published deps.",
+    "reason": "cuts recall-by-name for a well-known in-memory filesystem"
+  },
+  "mutation": {
+    "source": "ROOT-MAP.json (4 families, audit valid: frac 0.64, largest_family_share 0.25, 50 roots)",
+    "families": [
+      {
+        "id": "F1_normalize_parent",
+        "owner": "normalize",
+        "clause": "PATH-NORMALIZE-ABOVE-ROOT",
+        "upstream": "a .. that would ascend above the root of an absolute path is discarded (/.. -> /)",
+        "mutation": "such a .. is preserved (/.. stays /..)",
+        "why_upstream_default": "POSIX/NIO normalize collapses .. at root to the root"
+      },
+      {
+        "id": "F2_config_workdir",
+        "owner": "config",
+        "clause": "CONFIG-UNIX-WORKDIR",
+        "upstream": "the unix configuration default working directory is /work",
+        "mutation": "the default working directory is the root /",
+        "why_upstream_default": "a dedicated working directory (e.g. /work) is the conventional default"
+      },
+      {
+        "id": "F3_glob_question",
+        "owner": "globq",
+        "clause": "GLOB-QUESTION-SEPARATOR",
+        "upstream": "glob ? matches any character except a separator",
+        "mutation": "glob ? matches any character including a separator",
+        "why_upstream_default": "in standard glob, ? does not cross directory boundaries"
+      },
+      {
+        "id": "F4_glob_star",
+        "owner": "globstar",
+        "clause": "GLOB-STAR-SEPARATOR",
+        "upstream": "glob * matches any run of non-separator characters",
+        "mutation": "glob * matches across separators like **",
+        "why_upstream_default": "in standard glob, a single * stays within one path segment"
+      }
+    ],
+    "clauses": [
+      "PATH-NORMALIZE-ABOVE-ROOT",
+      "CONFIG-UNIX-WORKDIR",
+      "GLOB-QUESTION-SEPARATOR",
+      "GLOB-STAR-SEPARATOR"
+    ],
+    "tests": "12 tests marked // MUTATED (8 atomic + 4 integration); each family >=2; clean upstream (M2) fails exactly these 12, 48 native pass"
+  },
+  "provenance_note": "oracle declares org.memfs:memfs-core:1.0.0; JavaRunner installs candidate; guava/icu4j provided transitively.",
+  "qualification": {
+    "basis": "v2 E1-E7 (E6 replaced by verify_task+lint for Java)",
+    "E3_controls_partial": {
+      "reference": "60/60 (100%)",
+      "clean_upstream": "exactly 12 mutation tests fail; 48 native pass"
+    },
+    "E4": "ROOT-MAP audit valid",
+    "E7": "mutation block + // MUTATED",
+    "E1_pass_rate": "atomic 100%/integ 100% - jimfs memorized + mutations clearly specified -> solved. rejected"
+  },
+  "stats": {
+    "atomic": 34,
+    "integration": 26,
+    "system_e2e": 0
+  },
+  "taxonomy": {
+    "atomic::BehaviorTest::normalizeKeepsADotDotAtTheRootOfAnAbsolutePath": "atomic",
+    "atomic::BehaviorTest::normalizeKeepsADotDotBeforeANameOnAnAbsolutePath": "atomic",
+    "atomic::BehaviorTest::aRelativePathResolvesAgainstTheRoot": "atomic",
+    "atomic::BehaviorTest::aRelativeMultiSegmentPathResolvesAgainstTheRoot": "atomic",
+    "atomic::BehaviorTest::globQuestionMarkMatchesASeparator": "atomic",
+    "atomic::BehaviorTest::globQuestionMarkMatchesASeparatorAmongNames": "atomic",
+    "atomic::BehaviorTest::globStarMatchesAcrossASeparator": "atomic",
+    "atomic::BehaviorTest::globStarSpansMultipleSegments": "atomic",
+    "atomic::BehaviorTest::normalizeDropsDotElements": "atomic",
+    "atomic::BehaviorTest::normalizeCollapsesDotDotAgainstAName": "atomic",
+    "atomic::BehaviorTest::normalizeCollapsesInteriorDotDot": "atomic",
+    "atomic::BehaviorTest::anAbsolutePathIsUnchangedByToAbsolutePath": "atomic",
+    "atomic::BehaviorTest::aRootPathIsUnchangedByToAbsolutePath": "atomic",
+    "atomic::BehaviorTest::globStarMatchesWithinASingleSegment": "atomic",
+    "atomic::BehaviorTest::globQuestionMarkMatchesASingleCharWithinASegment": "atomic",
+    "atomic::BehaviorTest::globLiteralMatchesExactly": "atomic",
+    "atomic::BehaviorTest::globBracketMatchesOneOfASet": "atomic",
+    "atomic::BehaviorTest::globThatDoesNotMatchReturnsFalse": "atomic",
+    "atomic::BehaviorTest::writtenBytesAreReadBackIdentically": "atomic",
+    "atomic::BehaviorTest::fileSizeEqualsBytesWritten": "atomic",
+    "atomic::BehaviorTest::anEmptyFileHasZeroSize": "atomic",
+    "atomic::BehaviorTest::createdDirectoryExists": "atomic",
+    "atomic::BehaviorTest::aRegularFileIsNotADirectory": "atomic",
+    "atomic::BehaviorTest::aDirectoryStreamListsCreatedEntries": "atomic",
+    "atomic::BehaviorTest::resolveJoinsRelativeChild": "atomic",
+    "atomic::BehaviorTest::getParentReturnsTheContainingDirectory": "atomic",
+    "atomic::BehaviorTest::getFileNameReturnsTheLastElement": "atomic",
+    "atomic::BehaviorTest::startsWithHonoursPathBoundaries": "atomic",
+    "atomic::BehaviorTest::relativizeProducesTheStepBetweenTwoPaths": "atomic",
+    "atomic::BehaviorTest::getNameCountCountsSegments": "atomic",
+    "atomic::BehaviorTest::aSeparatorIsReportedByTheFileSystem": "atomic",
+    "atomic::BehaviorTest::aSymbolicLinkResolvesToItsTarget": "atomic",
+    "atomic::BehaviorTest::readingAMissingFileThrows": "atomic",
+    "atomic::BehaviorTest::rootIsADirectory": "atomic",
+    "integration::FileSystemTest::aFileWrittenToARelativePathIsReadableUnderTheRoot": "integration",
+    "integration::FileSystemTest::aGlobStarSelectsANestedFileThatExists": "integration",
+    "integration::FileSystemTest::resolvingAboveRootAndNormalizingKeepsTheDotDot": "integration",
+    "integration::FileSystemTest::aGlobQuestionMarkSpansASeparatorToAName": "integration",
+    "integration::FileSystemTest::twoFilesWrittenToADirectoryBothReadBack": "integration",
+    "integration::FileSystemTest::aDirectoryStreamReflectsEveryWrittenFile": "integration",
+    "integration::FileSystemTest::aDeepTreeStoresAndReturnsContent": "integration",
+    "integration::FileSystemTest::copyingAFilePreservesItsContent": "integration",
+    "integration::FileSystemTest::movingAFileRelocatesItsContent": "integration",
+    "integration::FileSystemTest::deletingAFileMakesItUnreadable": "integration",
+    "integration::FileSystemTest::aSymbolicLinkIsListedInItsParentDirectory": "integration",
+    "integration::FileSystemTest::resolveAndRelativizeRoundTripWithinATree": "integration",
+    "integration::FileSystemTest::aGlobStarWithinASegmentSelectsARealFileName": "integration",
+    "integration::FileSystemTest::normalizingAResolvedInteriorDotDotCancelsAName": "integration",
+    "integration::FileSystemTest::anAbsolutePathWrittenAndListedKeepsItsForm": "integration",
+    "integration::FileSystemTest::overwritingAFileUpdatesItsSize": "integration",
+    "integration::FileSystemTest::createDirectoriesMakesEveryIntermediateDirectory": "integration",
+    "integration::FileSystemTest::aWrittenFileParentIsItsDirectory": "integration",
+    "integration::FileSystemTest::aLiteralGlobSelectsExactlyOneRealPath": "integration",
+    "integration::FileSystemTest::aBracketGlobSelectsAmongRealFiles": "integration",
+    "integration::FileSystemTest::anEmptyFileListsInItsDirectoryWithZeroSize": "integration",
+    "integration::FileSystemTest::resolvingAChildThenReadingReturnsContent": "integration",
+    "integration::FileSystemTest::aWrittenFileIsRegularAndItsParentIsADirectory": "integration",
+    "integration::FileSystemTest::aDeepPathStartsWithEachAncestorDirectory": "integration",
+    "integration::FileSystemTest::normalizingAResolvedDotSegmentIsANoOp": "integration",
+    "integration::FileSystemTest::theFileNameOfADeepWrittenFileIsItsLastSegment": "integration"
+  },
+  "oracle": {
+    "count": 60,
+    "count_unit": "base_test_functions",
+    "test_files": [
+      "oracle/src/test/java/atomic/BehaviorTest.java",
+      "oracle/src/test/java/integration/FileSystemTest.java"
+    ],
+    "support_files": [
+      "oracle/pom.xml",
+      "oracle/src/test/java/fixtures/Fs.java"
+    ],
+    "maven_pom": "oracle/pom.xml"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "instance_id": "mvnresolver-select-traverse-001",
+  "status": "REJECTED_E1",
+  "repo": "apache/maven-resolver",
+  "repo_commit": "402b249c",
+  "repo_tag": "maven-resolver-2.0.22",
+  "language": "java",
+  "package_name": "org.siftway",
+  "maven_coordinates": "org.siftway:siftway-core",
+  "primary_module": "siftway-core",
+  "program_file": "pom.xml",
+  "spec_version": "v1",
+  "de_identified": true,
+  "de_identification": {
+    "upstream_root": "org.eclipse.aether.util.graph.selector + org.eclipse.aether.util.graph.traverser",
+    "task_root": "org.siftway",
+    "note": "Rename ONLY the carved selector/traverser classes. The api types (DependencySelector, DependencyTraverser, DependencyCollectionContext, Dependency, Exclusion, Artifact, ArtifactProperties) come from the published sibling maven-resolver-api and MUST stay under org.eclipse.aether.* (provided dependency, not rebuilt).",
+    "reason": "cuts recall-by-name; Aether/maven-resolver dependency selection is heavily represented in training data"
+  },
+  "mutation": {
+    "source": "ROOT-MAP.json (5 families, audit valid: mutation_fraction 0.625, largest_family_share 0.20, 64 roots)",
+    "families": [
+      {
+        "id": "F1_optional_depth",
+        "owner": "optional",
+        "clause": "SEL-OPTIONAL-DEPTH",
+        "api_anchor": "OptionalDependencySelector.selectDependency / deriveChildSelector depth counter",
+        "upstream": "optional dependencies are pruned once they occur beyond the first level (retained only at depths 0 and 1)",
+        "mutation": "optional dependencies are retained through depth 2 and pruned only at depth 3 or deeper",
+        "why_upstream_default": "Maven's OptionalDependencySelector javadoc says 'beyond level one'; a senior engineer reproduces the depth-2 cutoff"
+      },
+      {
+        "id": "F2_scope_root",
+        "owner": "scope",
+        "clause": "SEL-SCOPE-ROOT",
+        "api_anchor": "ScopeDependencySelector constructor transitive flag / selectDependency",
+        "upstream": "a freshly constructed scope selector exempts direct (root) dependencies from filtering; the filter applies only transitively",
+        "mutation": "the scope filter applies from the root, including direct dependencies",
+        "why_upstream_default": "Maven keeps direct dependencies regardless of scope; the first-level exemption is the well-known rule"
+      },
+      {
+        "id": "F3_exclusion_wildcard",
+        "owner": "exclusion",
+        "clause": "SEL-EXCLUSION-WILDCARD",
+        "api_anchor": "ExclusionDependencySelector coordinate matching",
+        "upstream": "only the literal '*' is a wildcard coordinate in an exclusion",
+        "mutation": "an empty-string coordinate is also treated as a wildcard, matching any value",
+        "why_upstream_default": "an empty coordinate conventionally matches only the empty value, not everything"
+      },
+      {
+        "id": "F4_fat_default",
+        "owner": "fat",
+        "clause": "TRAV-FAT-DEFAULT",
+        "api_anchor": "FatArtifactTraverser.traverseDependency includesDependencies default",
+        "upstream": "an artifact that does not declare includesDependencies is traversed (default is non-fat)",
+        "mutation": "an artifact that does not declare includesDependencies is treated as fat and is not traversed",
+        "why_upstream_default": "absent metadata conventionally means 'not fat', so the subtree is walked"
+      },
+      {
+        "id": "F5_and_or",
+        "owner": "and_sel",
+        "clause": "SEL-AND-SEMANTICS",
+        "api_anchor": "AndDependencySelector.selectDependency combination rule",
+        "upstream": "the composite selects a dependency only when every member selects it (logical AND)",
+        "mutation": "the composite selects a dependency when at least one member selects it (logical OR)",
+        "why_upstream_default": "an 'And' combinator conjoins its members; AND is the intuitive reading of the name"
+      }
+    ],
+    "clauses": [
+      "SEL-OPTIONAL-DEPTH",
+      "SEL-SCOPE-ROOT",
+      "SEL-EXCLUSION-WILDCARD",
+      "TRAV-FAT-DEFAULT",
+      "SEL-AND-SEMANTICS"
+    ],
+    "tests": "17 tests marked // MUTATED: <family> (10 atomic + 7 integration); each family has >=2 independent tests pinning a specific value; clean upstream (M2) fails exactly these 17 and passes the 45 native tests"
+  },
+  "provenance_note": "oracle declares org.siftway:siftway-core:1.0.0; JavaRunner installs candidate from /eval/workspace into ~/.m2 and provenance confirms resolution. maven-resolver-api provided as published dep 2.0.10.",
+  "qualification": {
+    "basis": "v2 exit criteria E1-E7 (E6 Rust-specific, replaced by verify_task+lint for Java)",
+    "E3_controls_partial": {
+      "reference": "62/62 (100%)",
+      "clean_upstream": "exactly 17 mutation tests fail (10 atomic + 7 integration); 45 native pass"
+    },
+    "E4": "ROOT-MAP audit valid (frac 0.625, largest_share 0.20, 64 roots)",
+    "E7": "task.json mutation block + // MUTATED markers",
+    "candidate": "maven-resolver-util selector/traverser carve, de-identified org.siftway:siftway-core:1.0.0, anchored to published 2.0.10",
+    "E1_pass_rate": "100% (atomic 36/36, integ 26/26) — too easy, rejected"
+  },
+  "stats": {
+    "atomic": 36,
+    "integration": 26,
+    "system_e2e": 0
+  },
+  "taxonomy": {
+    "atomic::AndOrTest::aCompositeSelectsWhenOnlyItsFirstMemberSelects": "atomic",
+    "atomic::AndOrTest::aCompositeSelectsWhenOnlyItsLastOfThreeMembersSelects": "atomic",
+    "atomic::AndOrTest::aCompositeSelectsWhenEveryMemberSelects": "atomic",
+    "atomic::AndOrTest::aCompositeRejectsWhenEveryMemberRejects": "atomic",
+    "atomic::AndOrTest::newInstanceOfTwoEqualSelectorsReturnsASingleSelector": "atomic",
+    "atomic::AndTraverserTest::aCompositeTraversesWhenEveryMemberTraverses": "atomic",
+    "atomic::AndTraverserTest::aCompositeSkipsWhenAnyMemberSkips": "atomic",
+    "atomic::AndTraverserTest::anEmptyCompositeTraverserTraversesEveryDependency": "atomic",
+    "atomic::AndTraverserTest::newInstanceOfTwoEqualTraversersReturnsASingleTraverser": "atomic",
+    "atomic::ExclusionTest::anEmptyGroupIdInAnExclusionMatchesAnyGroup": "atomic",
+    "atomic::ExclusionTest::anEmptyArtifactIdInAnExclusionMatchesAnyArtifact": "atomic",
+    "atomic::ExclusionTest::anExplicitCoordinateExclusionPrunesTheMatchingDependency": "atomic",
+    "atomic::ExclusionTest::aStarGroupWildcardPrunesRegardlessOfGroup": "atomic",
+    "atomic::ExclusionTest::anExclusionThatMatchesNoCoordinateKeepsTheDependency": "atomic",
+    "atomic::FatTest::anArtifactWithoutTheFatPropertyIsNotTraversed": "atomic",
+    "atomic::FatTest::anArtifactDeclaringOnlyAnUnrelatedPropertyIsNotTraversed": "atomic",
+    "atomic::FatTest::anArtifactExplicitlyMarkedFatIsNotTraversed": "atomic",
+    "atomic::FatTest::anArtifactExplicitlyMarkedNonFatIsTraversed": "atomic",
+    "atomic::FatTest::theFatTraverserDerivesAnInstanceEqualToItself": "atomic",
+    "atomic::OptionalTest::optionalDependencyIsRetainedAtDepthTwo": "atomic",
+    "atomic::OptionalTest::theOptionalSelectorStillAdvancesToADeeperLevelAtDepthTwo": "atomic",
+    "atomic::OptionalTest::aNonOptionalDependencyIsRetainedAtDepthTwo": "atomic",
+    "atomic::OptionalTest::anOptionalDependencyIsRetainedAtTheRoot": "atomic",
+    "atomic::OptionalTest::anOptionalDependencyIsRetainedAtDepthOne": "atomic",
+    "atomic::ScopeTest::aFreshScopeSelectorExcludesADirectTestScopedDependency": "atomic",
+    "atomic::ScopeTest::aFreshScopeSelectorAppliesItsIncludeFilterToADirectDependency": "atomic",
+    "atomic::ScopeTest::aTransitiveScopeSelectorExcludesTheTestScope": "atomic",
+    "atomic::ScopeTest::aTransitiveScopeSelectorKeepsTheCompileScope": "atomic",
+    "atomic::ScopeTest::scopeSelectorsWithTheSameConfigurationAreEqual": "atomic",
+    "atomic::StaticTest::staticTrueSelectorSelectsAnyDependency": "atomic",
+    "atomic::StaticTest::staticFalseSelectorRejectsAnyDependency": "atomic",
+    "atomic::StaticTest::staticTrueTraverserTraversesAnyDependency": "atomic",
+    "atomic::StaticTest::staticFalseTraverserSkipsAnyDependency": "atomic",
+    "atomic::StaticTest::staticSelectorDerivesAnInstanceEqualToItself": "atomic",
+    "atomic::StaticTest::staticTraverserDerivesAnInstanceEqualToItself": "atomic",
+    "atomic::StaticTest::staticSelectorsWithTheSameFlagAreEqual": "atomic",
+    "integration::CompositionTest::aCompositeKeepsADependencyThatOnlyTheOptionalMemberKeeps": "integration",
+    "integration::CompositionTest::aCompositeWithAnOptionalMemberKeepsTheOptionalDependencyAtDepthTwo": "integration",
+    "integration::CompositionTest::aCompositeOfOptionalAndExclusionKeepsAnExcludedOptionalAtDepthTwo": "integration",
+    "integration::CompositionTest::newInstanceOfTwoDifferingSelectorsKeepsWhenEitherKeeps": "integration",
+    "integration::CompositionTest::aTraverserCompositeSkipsAnUndeclaredArtifact": "integration",
+    "integration::CompositionTest::aScopeSelectorFiltersADirectDependencyAndThenItsTransitiveChild": "integration",
+    "integration::CompositionTest::aDerivedExclusionSelectorAppliesAnEmptyWildcardFromANodeExclusion": "integration",
+    "integration::CompositionTest::aCompositeRejectsADependencyEveryMemberRejectsUnderScope": "integration",
+    "integration::CompositionTest::aCompositeOfTwoKeepingStaticsKeeps": "integration",
+    "integration::CompositionTest::aCompositeOfTwoRejectingStaticsRejects": "integration",
+    "integration::CompositionTest::aTraverserCompositeTraversesWhenBothMembersTraverse": "integration",
+    "integration::CompositionTest::aTraverserCompositeSkipsWhenOneMemberSkips": "integration",
+    "integration::CompositionTest::aCompositeKeepsANonOptionalDependencyThroughBothMembers": "integration",
+    "integration::CompositionTest::aCompositeKeepsADependencyNoMemberPrunes": "integration",
+    "integration::DerivationTest::aDeepStaticSelectorDerivationIsStable": "integration",
+    "integration::DerivationTest::aDeepStaticTraverserDerivationIsStable": "integration",
+    "integration::DerivationTest::aDerivedOptionalSelectorKeepsANonOptionalDependencyAtDepthTwo": "integration",
+    "integration::DerivationTest::aDerivedOptionalSelectorKeepsANonOptionalDependencyAtDepthThree": "integration",
+    "integration::DerivationTest::aDerivedScopeSelectorExcludesTheTestScopeTransitively": "integration",
+    "integration::DerivationTest::aDerivedScopeSelectorKeepsTheCompileScopeTransitively": "integration",
+    "integration::DerivationTest::aDerivedScopeSelectorStillExcludesTheTestScopeAtADeeperLevel": "integration",
+    "integration::DerivationTest::aDerivedFatTraverserSkipsAnExplicitlyFatArtifact": "integration",
+    "integration::DerivationTest::aDerivedFatTraverserTraversesAnExplicitlyNonFatArtifact": "integration",
+    "integration::DerivationTest::aDerivedCompositeOfKeepingStaticsStillKeeps": "integration",
+    "integration::DerivationTest::aDerivedTraverserCompositeStillSkipsWhenAMemberSkips": "integration",
+    "integration::DerivationTest::anEmptyExclusionSelectorKeepsEverythingAfterDerivation": "integration"
+  },
+  "oracle": {
+    "count": 62,
+    "count_unit": "base_test_functions",
+    "test_files": [
+      "oracle/src/test/java/atomic/AndOrTest.java",
+      "oracle/src/test/java/atomic/AndTraverserTest.java",
+      "oracle/src/test/java/atomic/ExclusionTest.java",
+      "oracle/src/test/java/atomic/FatTest.java",
+      "oracle/src/test/java/atomic/OptionalTest.java",
+      "oracle/src/test/java/atomic/ScopeTest.java",
+      "oracle/src/test/java/atomic/StaticTest.java",
+      "oracle/src/test/java/integration/CompositionTest.java",
+      "oracle/src/test/java/integration/DerivationTest.java"
+    ],
+    "support_files": [
+      "oracle/pom.xml",
+      "oracle/src/test/java/fixtures/Deps.java"
+    ],
+    "maven_pom": "oracle/pom.xml"
+  }
+}

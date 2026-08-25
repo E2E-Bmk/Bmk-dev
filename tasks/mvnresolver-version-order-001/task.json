@@ -1,0 +1,168 @@
+{
+ "instance_id": "mvnresolver-version-order-001",
+ "status": "REJECTED_E1",
+ "repo": "apache/maven-resolver",
+ "repo_commit": "HEAD",
+ "language": "java",
+ "package_name": "org.versionway",
+ "maven_coordinates": "org.versionway:versionway-core",
+ "primary_module": "versionway-core",
+ "program_file": "pom.xml",
+ "spec_version": "v1",
+ "de_identified": true,
+ "de_identification": {
+  "upstream_root": "org.eclipse.aether",
+  "task_root": "org.versionway",
+  "note": "de-id maven-resolver generic version scheme (org.eclipse.aether.util.version + version API) to org.versionway; pure-JDK carve, offline-buildable.",
+  "reason": "cuts recall-by-name; difficulty is implementing the DEVIATED qualifier ranking against memorized Maven ordering"
+ },
+ "difficulty_basis": "mutation-rich (c): the spec pins a version-ordering scheme that reverses six Maven-memorized rules (snapshot>release, sp/final below alpha, cr not an rc alias, beta above milestone, no a/b/m short aliases). A model leaning on memorized Maven ordering implements the upstream defaults and fails exactly the mutated clauses, yielding an atomic-vs-composition gap.",
+ "mutation": {
+  "source": "ROOT-MAP.json (6 families, audit VALID: 66 roots, mutation_fraction 0.606, largest_family_share 0.225)",
+  "families": [
+   {
+    "id": "F1_snapshot",
+    "clause": "QUAL-SNAPSHOT-PLACEMENT",
+    "upstream": "snapshot sorts BELOW the release (pre-release)",
+    "mutation": "snapshot sorts ABOVE the release",
+    "why_upstream_default": "Maven ranks SNAPSHOT below the release; the memorized default"
+   },
+   {
+    "id": "F2_sp",
+    "clause": "QUAL-SP-PLACEMENT",
+    "upstream": "sp sorts ABOVE the release (service pack)",
+    "mutation": "sp sorts BELOW alpha (lowest)",
+    "why_upstream_default": "Maven ranks sp above release"
+   },
+   {
+    "id": "F3_cr",
+    "clause": "QUAL-CR-ALIAS",
+    "upstream": "cr is an alias of rc (equal)",
+    "mutation": "cr is an unrecognized string, distinct from and above rc",
+    "why_upstream_default": "Maven treats cr and rc as equal release-candidate aliases"
+   },
+   {
+    "id": "F4_final",
+    "clause": "QUAL-FINAL-PLACEMENT",
+    "upstream": "final equals the release (rank zero)",
+    "mutation": "final is a deep pre-release, below alpha",
+    "why_upstream_default": "Maven treats final as equal to the release"
+   },
+   {
+    "id": "F5_shortalias",
+    "clause": "QUAL-SHORT-ALIAS",
+    "upstream": "single a/b/m before a number alias alpha/beta/milestone",
+    "mutation": "single a/b/m are unrecognized strings (no short aliases)",
+    "why_upstream_default": "Maven expands a1/b1/m1 to alpha/beta/milestone"
+   },
+   {
+    "id": "F6_betamilestone",
+    "clause": "QUAL-BETA-MILESTONE-ORDER",
+    "upstream": "beta sorts BELOW milestone",
+    "mutation": "beta sorts ABOVE milestone",
+    "why_upstream_default": "Maven orders milestone above beta"
+   }
+  ],
+  "tests": "40 tests carry // MUTATED: <clause>; clean upstream fails exactly these 40 (M2), mutated reference passes all 66 (M1)"
+ },
+ "provenance_note": "oracle depends on org.versionway:versionway-core:1.0.0 (the mutated reference = M1); JavaRunner installs candidate; pure-JDK.",
+ "stats": {
+  "atomic": 40,
+  "integration": 26,
+  "system_e2e": 0
+ },
+ "taxonomy": {
+  "atomic::CompareTest::snapshotAboveReleaseAtOne": "atomic",
+  "atomic::CompareTest::snapshotAboveReleaseAtTwo": "atomic",
+  "atomic::CompareTest::snapshotAboveGeneralAvailability": "atomic",
+  "atomic::CompareTest::snapshotAboveReleaseAtThreeFive": "atomic",
+  "atomic::CompareTest::servicePackBelowReleaseAtOne": "atomic",
+  "atomic::CompareTest::servicePackBelowReleaseAtTwo": "atomic",
+  "atomic::CompareTest::servicePackBelowAlpha": "atomic",
+  "atomic::CompareTest::servicePackBelowReleaseAtThree": "atomic",
+  "atomic::CompareTest::crDistinctFromRcAtOne": "atomic",
+  "atomic::CompareTest::crDistinctFromRcAtTwo": "atomic",
+  "atomic::CompareTest::crDistinctFromRcAtOneFive": "atomic",
+  "atomic::CompareTest::crDistinctFromRcAtThree": "atomic",
+  "atomic::CompareTest::finalBelowReleaseAtOne": "atomic",
+  "atomic::CompareTest::finalBelowReleaseAtTwo": "atomic",
+  "atomic::CompareTest::finalBelowAlpha": "atomic",
+  "atomic::CompareTest::finalBelowReleaseAtThree": "atomic",
+  "atomic::CompareTest::shortAlphaNotAliasAtOne": "atomic",
+  "atomic::CompareTest::shortBetaNotAliasAtOne": "atomic",
+  "atomic::CompareTest::shortAlphaNotAliasAtTwo": "atomic",
+  "atomic::CompareTest::shortBetaNotAliasAtTwo": "atomic",
+  "atomic::CompareTest::betaAboveMilestoneAtOne": "atomic",
+  "atomic::CompareTest::betaAboveMilestoneAtTwo": "atomic",
+  "atomic::CompareTest::milestoneBelowBetaAtOne": "atomic",
+  "atomic::CompareTest::betaAboveMilestoneAtThree": "atomic",
+  "atomic::CompareTest::alphaBelowRelease": "atomic",
+  "atomic::CompareTest::alphaBelowBeta": "atomic",
+  "atomic::CompareTest::alphaBelowMilestone": "atomic",
+  "atomic::CompareTest::rcBelowRelease": "atomic",
+  "atomic::CompareTest::betaBelowRelease": "atomic",
+  "atomic::CompareTest::milestoneBelowRelease": "atomic",
+  "atomic::CompareTest::generalAvailabilityEqualsRelease": "atomic",
+  "atomic::CompareTest::trailingZeroEqualsBare": "atomic",
+  "atomic::CompareTest::twoTrailingZerosEqualBare": "atomic",
+  "atomic::CompareTest::higherPatchAbove": "atomic",
+  "atomic::CompareTest::higherMajorAboveLowerMinor": "atomic",
+  "atomic::CompareTest::lowerNumberBelow": "atomic",
+  "atomic::CompareTest::identicalEqual": "atomic",
+  "atomic::CompareTest::aRangeContainsInterior": "atomic",
+  "atomic::CompareTest::aHalfOpenRangeExcludesUpper": "atomic",
+  "atomic::CompareTest::aConstraintRangeContainsInterior": "atomic",
+  "integration::TreeTest::alphaReleaseSnapshotSort": "integration",
+  "integration::TreeTest::snapshotOutranksServicePack": "integration",
+  "integration::TreeTest::servicePackBelowAlphaBelowRelease": "integration",
+  "integration::TreeTest::alphaMilestoneBetaSort": "integration",
+  "integration::TreeTest::finalBelowAlphaBelowRelease": "integration",
+  "integration::TreeTest::crAboveRcWhichIsBelowRelease": "integration",
+  "integration::TreeTest::shortAOutranksLongAlpha": "integration",
+  "integration::TreeTest::finalReleaseSnapshotSort": "integration",
+  "integration::TreeTest::betaAboveMilestoneButBelowRelease": "integration",
+  "integration::TreeTest::bothFinalAndServicePackBelowRelease": "integration",
+  "integration::TreeTest::snapshotSortAtBaseTwo": "integration",
+  "integration::TreeTest::betaAboveMilestoneAtBaseTwo": "integration",
+  "integration::TreeTest::servicePackBelowAlphaAtBaseTwo": "integration",
+  "integration::TreeTest::crAboveRcAtBaseTwo": "integration",
+  "integration::TreeTest::shortBOutranksLongBeta": "integration",
+  "integration::TreeTest::snapshotOutranksBothFinalAndServicePack": "integration",
+  "integration::TreeTest::alphaBetaReleaseChain": "integration",
+  "integration::TreeTest::patchReleasesAscending": "integration",
+  "integration::TreeTest::majorMinorNumericSort": "integration",
+  "integration::TreeTest::trailingZeroFormsEqual": "integration",
+  "integration::TreeTest::rcBelowReleaseBelowPatch": "integration",
+  "integration::TreeTest::gaInterchangeableWithRelease": "integration",
+  "integration::TreeTest::rangeIncludesInteriorAndLowerNotUpper": "integration",
+  "integration::TreeTest::rangeExcludesOutsideEnds": "integration",
+  "integration::TreeTest::minorVersionsAscending": "integration",
+  "integration::TreeTest::patchOutranksPreRelease": "integration"
+ },
+ "oracle": {
+  "count": 66,
+  "count_unit": "base_test_functions",
+  "test_files": [
+   "oracle/src/test/java/atomic/CompareTest.java",
+   "oracle/src/test/java/integration/TreeTest.java"
+  ],
+  "support_files": [
+   "oracle/pom.xml",
+   "oracle/src/test/java/fixtures/Model.java"
+  ],
+  "maven_pom": "oracle/pom.xml"
+ },
+ "qualification": {
+  "basis": "REJECTED_E1: qwen candidate passed 64/66=97% (>=50%).",
+  "e1_pass_rate": 0.97,
+  "triage": "product_success (D3, clean recompile): candidate implemented the spec-stated DEVIATED ranking correctly (40/40 atomic incl 24 mutated, 24/26 integration). qwen followed the explicit counter-intuitive spec rather than leaning on memorized Maven ordering. Version ordering is a simple comparator: once the spec pins the ranking (required for scorability, rule 13), a capable model implements it literally -> no gap. M1/M2/E4 structurally perfect but difficulty does not hold.",
+  "lesson": "mutation-based (c) needs an algorithm complex enough to implement WRONG even when deviated rules are fully specified (graph-transform conflict-resolution). Simple pure-function algorithms fail this.",
+  "gates": {
+   "reference_M1": "66/66",
+   "M2": "exactly 40",
+   "root_map_audit": "VALID",
+   "lint_java": "LINT_PASS",
+   "qwen": "97% product_success -> fail E1"
+  }
+ }
+}

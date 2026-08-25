@@ -1,0 +1,183 @@
+{
+  "instance_id": "mvnresolver-graph-project-001",
+  "status": "REJECTED_E1",
+  "repo": "apache/maven-resolver",
+  "repo_commit": "402b249c",
+  "repo_tag": "maven-resolver-2.0.22",
+  "language": "java",
+  "package_name": "org.treeway",
+  "maven_coordinates": "org.treeway:treeway-core",
+  "primary_module": "treeway-core",
+  "program_file": "pom.xml",
+  "spec_version": "v1",
+  "de_identified": true,
+  "de_identification": {
+    "upstream_root": "org.eclipse.aether.util.graph.visitor (excluding DependencyGraphDumper)",
+    "task_root": "org.treeway",
+    "note": "Rename ONLY the carved visitor classes. The api types (DependencyNode, DependencyVisitor, DependencyFilter, Dependency, Artifact) come from the published sibling maven-resolver-api and MUST stay under org.eclipse.aether.* (provided dependency, not rebuilt).",
+    "reason": "cuts recall-by-name; Aether/maven-resolver graph projections are heavily represented in training data"
+  },
+  "mutation": {
+    "source": "ROOT-MAP.json (5 families, audit valid: mutation_fraction 0.625, largest_family_share 0.20, 64 roots)",
+    "families": [
+      {
+        "id": "F1_artifacts_unresolved",
+        "owner": "artifacts",
+        "clause": "PROJ-INCLUDE-UNRESOLVED",
+        "api_anchor": "NodeListGenerator.getArtifacts/getDependencies includeUnresolved filter",
+        "upstream": "includeUnresolved=true returns all entries, false returns only resolved",
+        "mutation": "includeUnresolved meaning inverted: true returns only resolved, false returns all",
+        "why_upstream_default": "the flag name reads as 'also include unresolved'; the natural reading is include-all-when-true"
+      },
+      {
+        "id": "F2_classpath_sep",
+        "owner": "classpath",
+        "clause": "PROJ-CLASSPATH-SEP",
+        "api_anchor": "NodeListGenerator.getClassPath separator",
+        "upstream": "class-path entries joined by the platform path separator (File.pathSeparator)",
+        "mutation": "entries joined by the platform file separator (File.separator)",
+        "why_upstream_default": "a class path is conventionally joined by the path separator"
+      },
+      {
+        "id": "F3_pathrec_children",
+        "owner": "pathrec",
+        "clause": "PATH-CHILDREN-DEFAULT",
+        "api_anchor": "PathRecordingDependencyVisitor(filter) default excludeChildrenOfMatches",
+        "upstream": "single-argument constructor excludes children of a matched node (stops at first match)",
+        "mutation": "single-argument constructor keeps descending past a match and records deeper matches",
+        "why_upstream_default": "path recorders conventionally stop at the first match on a branch"
+      },
+      {
+        "id": "F4_pathrec_nullfilter",
+        "owner": "pathnull",
+        "clause": "PATH-NULL-FILTER",
+        "api_anchor": "PathRecordingDependencyVisitor.visitEnter null-filter handling",
+        "upstream": "a null filter accepts every node and records every path",
+        "mutation": "a null filter accepts nothing and records no paths",
+        "why_upstream_default": "an absent filter conventionally means 'no restriction' (accept all)"
+      },
+      {
+        "id": "F5_preorder_revisit",
+        "owner": "preorder",
+        "clause": "PREORDER-REVISIT",
+        "api_anchor": "PreorderNodeListGenerator.visitEnter de-duplication",
+        "upstream": "a node reachable by multiple paths is recorded once (de-duplicated)",
+        "mutation": "no de-duplication: a shared node is recorded once per incoming path",
+        "why_upstream_default": "preorder generators conventionally de-duplicate shared nodes"
+      }
+    ],
+    "clauses": [
+      "PROJ-INCLUDE-UNRESOLVED",
+      "PROJ-CLASSPATH-SEP",
+      "PATH-CHILDREN-DEFAULT",
+      "PATH-NULL-FILTER",
+      "PREORDER-REVISIT"
+    ],
+    "tests": "21 tests marked // MUTATED: <family> (~14 atomic + ~7 integration); each family has >=2 independent tests; clean upstream (M2) fails exactly these 21 and passes the 51 native tests"
+  },
+  "provenance_note": "oracle declares org.treeway:treeway-core:1.0.0; JavaRunner installs candidate from /eval/workspace into ~/.m2 and provenance confirms resolution. maven-resolver-api provided as published dep 2.0.10.",
+  "qualification": {
+    "basis": "v2 exit criteria E1-E7 (E6 Rust-specific, replaced by verify_task+lint for Java)",
+    "E3_controls_partial": {
+      "reference": "72/72 (100%)",
+      "clean_upstream": "exactly 21 mutation tests fail; 51 native pass"
+    },
+    "E4": "ROOT-MAP audit valid (frac 0.625, largest_share 0.20, 64 roots)",
+    "E7": "task.json mutation block + // MUTATED markers",
+    "candidate": "maven-resolver-util visitor carve, de-identified org.treeway:treeway-core:1.0.0, anchored to published 2.0.10",
+    "E1_pass_rate": "atomic 76% / integ 69% / combined 72.5% >=50% (adj_gap +22pp met E2, but E1 failed) - rejected"
+  },
+  "stats": {
+    "atomic": 46,
+    "integration": 26,
+    "system_e2e": 0
+  },
+  "taxonomy": {
+    "atomic::PathAndCloneTest::singleArgRecorderDescendsPastAMatchAndRecordsBoth": "atomic",
+    "atomic::PathAndCloneTest::singleArgRecorderRecordsADeeperPathBeneathAMatch": "atomic",
+    "atomic::PathAndCloneTest::aNullFilterRecordsNoPaths": "atomic",
+    "atomic::PathAndCloneTest::aNullFilterWithExplicitModeAlsoRecordsNoPaths": "atomic",
+    "atomic::PathAndCloneTest::aFilterMatchingOneNodeRecordsOnePath": "atomic",
+    "atomic::PathAndCloneTest::aRecordedPathTerminatesAtTheMatchedNode": "atomic",
+    "atomic::PathAndCloneTest::aFilterMatchingNothingRecordsNoPaths": "atomic",
+    "atomic::PathAndCloneTest::getFilterReturnsTheSuppliedFilter": "atomic",
+    "atomic::PathAndCloneTest::cloneRootIsNonNullAfterVisitingAGraph": "atomic",
+    "atomic::PathAndCloneTest::cloneRootIsNullBeforeAnyVisit": "atomic",
+    "atomic::PathAndCloneTest::cloneReproducesThePreorderNodeCount": "atomic",
+    "atomic::PathAndCloneTest::cloneOfADiamondSharesTheSharedNode": "atomic",
+    "atomic::PathAndCloneTest::cloneIsADistinctObjectFromTheOriginalRoot": "atomic",
+    "atomic::ProjectionTest::getArtifactsTrueReturnsOnlyResolvedEntries": "atomic",
+    "atomic::ProjectionTest::getArtifactsFalseReturnsEveryEntry": "atomic",
+    "atomic::ProjectionTest::classPathDoesNotUseThePathSeparator": "atomic",
+    "atomic::ProjectionTest::classPathJoinsEntriesWithTheFileSeparator": "atomic",
+    "atomic::ProjectionTest::preorderListsASharedNodeOncePerPath": "atomic",
+    "atomic::ProjectionTest::preorderArtifactCountCountsSharedNodeTwice": "atomic",
+    "atomic::ProjectionTest::preorderVisitsParentBeforeChild": "atomic",
+    "atomic::ProjectionTest::preorderChainHasThreeNodes": "atomic",
+    "atomic::ProjectionTest::postorderVisitsChildBeforeParent": "atomic",
+    "atomic::ProjectionTest::postorderChainHasThreeNodes": "atomic",
+    "atomic::ProjectionTest::postorderListsASharedNodeOnlyOnce": "atomic",
+    "atomic::ProjectionTest::filesListCoversResolvedNodesOnly": "atomic",
+    "atomic::ProjectionTest::filesListForAResolvedChainHasThreeEntries": "atomic",
+    "atomic::ProjectionTest::dependenciesTrueReturnsOnlyResolved": "atomic",
+    "atomic::ProjectionTest::dependenciesFalseReturnsAll": "atomic",
+    "atomic::ProjectionTest::nodesListExcludesTheDependencylessRoot": "atomic",
+    "atomic::ProjectionTest::emptyGraphYieldsEmptyNodeList": "atomic",
+    "atomic::ProjectionTest::emptyGraphYieldsEmptyClassPath": "atomic",
+    "atomic::ProjectionTest::classPathContainsEachResolvedFileName": "atomic",
+    "atomic::ProjectionTest::singleResolvedDependencyClassPathHasNoSeparator": "atomic",
+    "atomic::ProjectionTest::preorderNodesEachCarryADependency": "atomic",
+    "atomic::ProjectionTest::postorderNodesEachCarryADependency": "atomic",
+    "atomic::ProjectionTest::artifactsTrueOnAResolvedChainMatchesFileCount": "atomic",
+    "atomic::ProjectionTest::mixedGraphNodesIncludeBothChildren": "atomic",
+    "atomic::ProjectionTest::postorderMixedGraphKeepsBothChildren": "atomic",
+    "atomic::ProjectionTest::artifactsTrueOnAllResolvedChainReturnsThree": "atomic",
+    "atomic::ProjectionTest::artifactsFalseOnAllResolvedChainReturnsThree": "atomic",
+    "atomic::ProjectionTest::postorderArtifactsFalseOnDiamondCountsSharedOnce": "atomic",
+    "atomic::ProjectionTest::classPathForDiamondListsSharedFileTwiceInPreorder": "atomic",
+    "atomic::ProjectionTest::nodeListGeneratorConsumerCollectsFedNodes": "atomic",
+    "atomic::ProjectionTest::nodeListGeneratorClassPathHasNoPathSeparatorForTwoResolved": "atomic",
+    "atomic::ProjectionTest::preorderChainClassPathContainsThreeFileNames": "atomic",
+    "atomic::ProjectionTest::postorderRootlessCountMatchesPreorderForChain": "atomic",
+    "integration::GraphProjectionTest::classPathAndFileListAgreeAndUseTheFileSeparator": "integration",
+    "integration::GraphProjectionTest::preorderKeepsBothChildrenButArtifactsTrueDropsTheUnresolved": "integration",
+    "integration::GraphProjectionTest::preorderCountsASharedNodeTwiceWhilePostorderCountsItOnce": "integration",
+    "integration::GraphProjectionTest::aSingleArgRecorderOnAChainRecordsBothTheMatchAndItsDescendant": "integration",
+    "integration::GraphProjectionTest::aNullFilterRecorderStaysEmptyEvenAsPreorderSeesEveryNode": "integration",
+    "integration::GraphProjectionTest::preorderAndPostorderCoverTheSameNodeSetForAChain": "integration",
+    "integration::GraphProjectionTest::preorderStartsAtTheShallowestNode": "integration",
+    "integration::GraphProjectionTest::postorderStartsAtTheDeepestNode": "integration",
+    "integration::GraphProjectionTest::classPathListsAsManyFilesAsTheFileList": "integration",
+    "integration::GraphProjectionTest::aCloneReproducesThePreorderProjectionOfAChain": "integration",
+    "integration::GraphProjectionTest::aCloneOfADiamondReproducesThePreorderCount": "integration",
+    "integration::GraphProjectionTest::aCloneOfADiamondReproducesThePostorderCount": "integration",
+    "integration::GraphProjectionTest::aRecordedPathTerminatesAtANodeThatAppearsInThePreorderList": "integration",
+    "integration::GraphProjectionTest::aFilteringVisitorForwardsOnlyAcceptedNodesToAPreorderGenerator": "integration",
+    "integration::GraphProjectionTest::aFilteringVisitorWithAMatchAllForwardsEveryDependencyNode": "integration",
+    "integration::GraphProjectionTest::artifactsTrueIsASublistOfArtifactsFalseOnAMixedGraph": "integration",
+    "integration::GraphProjectionTest::everyPreorderNodeOfAChainCarriesADependency": "integration",
+    "integration::GraphProjectionTest::theClassPathOfAChainListsEveryResolvedFile": "integration",
+    "integration::GraphProjectionTest::aFilterMatchingNoNodeLeavesPathsEmptyWhilePreorderIsNonEmpty": "integration",
+    "integration::GraphProjectionTest::aClonedDiamondStillSharesItsSharedNode": "integration",
+    "integration::GraphProjectionTest::filesAndArtifactsTrueHaveTheSameSizeOnAChain": "integration",
+    "integration::GraphProjectionTest::postorderOfAMixedGraphStillIncludesBothChildren": "integration",
+    "integration::GraphProjectionTest::aChainClassPathContainsNoPathSeparatorAcrossThreeEntries": "integration",
+    "integration::GraphProjectionTest::aFullyResolvedChainHasEqualArtifactCountsForBothFlags": "integration",
+    "integration::GraphProjectionTest::aDeepMatchRecordsAPathThatStartsAtTheRootChild": "integration",
+    "integration::GraphProjectionTest::preorderAndPostorderAgreeOnArtifactCountForAChain": "integration"
+  },
+  "oracle": {
+    "count": 72,
+    "count_unit": "base_test_functions",
+    "test_files": [
+      "oracle/src/test/java/atomic/PathAndCloneTest.java",
+      "oracle/src/test/java/atomic/ProjectionTest.java",
+      "oracle/src/test/java/integration/GraphProjectionTest.java"
+    ],
+    "support_files": [
+      "oracle/pom.xml",
+      "oracle/src/test/java/fixtures/Graphs.java"
+    ],
+    "maven_pom": "oracle/pom.xml"
+  }
+}

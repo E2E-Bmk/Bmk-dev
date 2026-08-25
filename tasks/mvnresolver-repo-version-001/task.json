@@ -1,0 +1,159 @@
+{
+  "instance_id": "mvnresolver-repo-version-001",
+  "status": "S2_SPEC",
+  "repo": "apache/maven-resolver",
+  "repo_tag": "maven-resolver-2.0.10",
+  "language": "java",
+  "package_name": "org.versionsmith",
+  "maven_coordinates": "org.versionsmith:versionsmith-core",
+  "primary_module": "versionsmith-core",
+  "program_file": "pom.xml",
+  "spec_version": "v1",
+  "de_identified": true,
+  "de_identification": {
+    "upstream_root": "org.eclipse.aether.util.version",
+    "task_root": "org.versionsmith",
+    "note": "only the util.version carve is renamed; api version model (org.eclipse.aether.version.*) provided by published maven-resolver-api:2.0.10"
+  },
+  "mutation": {
+    "source": "ROOT-MAP.json (5 families, audit valid: frac 0.625, largest 0.20, 64 roots)",
+    "clauses": [
+      "VER-QUALIFIER-ORDER",
+      "VER-SNAPSHOT-ORDER",
+      "VER-RANGE-UPPER",
+      "VER-CONSTRAINT-RECOMMEND",
+      "VER-UNION-CONTAIN"
+    ],
+    "families": [
+      {
+        "id": "F1_qualifier_precedence",
+        "owner": "qualifier",
+        "clause": "VER-QUALIFIER-ORDER",
+        "upstream": "alpha<beta<milestone<rc<snapshot<release<sp",
+        "mutation": "milestone ranks above rc"
+      },
+      {
+        "id": "F2_snapshot_ordering",
+        "owner": "compare",
+        "clause": "VER-SNAPSHOT-ORDER",
+        "upstream": "1.0-SNAPSHOT < 1.0",
+        "mutation": "1.0-SNAPSHOT > 1.0"
+      },
+      {
+        "id": "F3_range_upper_bound",
+        "owner": "rangecontains",
+        "clause": "VER-RANGE-UPPER",
+        "upstream": "[1.0,2.0) excludes 2.0",
+        "mutation": "round upper delimiter includes endpoint"
+      },
+      {
+        "id": "F4_constraint_recommend",
+        "owner": "constraint",
+        "clause": "VER-CONSTRAINT-RECOMMEND",
+        "upstream": "range constraint recommends nothing (getVersion null)",
+        "mutation": "range recommends its lower bound"
+      },
+      {
+        "id": "F5_union_containment",
+        "owner": "union",
+        "clause": "VER-UNION-CONTAIN",
+        "upstream": "union contains v if ANY member contains",
+        "mutation": "union requires ALL members contain"
+      }
+    ],
+    "tests": "populated in S3 (>=2 independent @Test per family, // MUTATED: <clause>)"
+  },
+  "stats": {
+    "atomic": 38,
+    "integration": 27,
+    "system_e2e": 0
+  },
+  "taxonomy": {
+    "atomic::ConstraintRecommendTest::aRangeConstraintRecommendsItsLowerBound": "atomic",
+    "atomic::ConstraintRecommendTest::anotherRangeConstraintRecommendsItsLowerBound": "atomic",
+    "atomic::ParseConstraintNativeTest::aBareVersionConstraintRecommendsItself": "atomic",
+    "atomic::ParseConstraintNativeTest::aBareVersionConstraintHasNoRange": "atomic",
+    "atomic::ParseConstraintNativeTest::aBareVersionConstraintContainsItself": "atomic",
+    "atomic::ParseConstraintNativeTest::aBareVersionConstraintExcludesADifferentVersion": "atomic",
+    "atomic::ParseConstraintNativeTest::aRangeConstraintExposesItsRange": "atomic",
+    "atomic::ParseConstraintNativeTest::aRangeConstraintContainsAnInteriorVersion": "atomic",
+    "atomic::ParseConstraintNativeTest::aRangeConstraintExcludesAVersionBelow": "atomic",
+    "atomic::ParseConstraintNativeTest::theStringFormRoundTrips": "atomic",
+    "atomic::ParseConstraintNativeTest::theItemListIsNonEmpty": "atomic",
+    "atomic::ParseConstraintNativeTest::equalVersionsShareAHashCode": "atomic",
+    "atomic::QualifierPrecedenceTest::milestoneRanksAboveRc": "atomic",
+    "atomic::QualifierPrecedenceTest::milestoneBuildRanksAboveRcBuild": "atomic",
+    "atomic::RangeNativeTest::anInteriorVersionIsContained": "atomic",
+    "atomic::RangeNativeTest::aVersionBelowTheLowerBoundIsNotContained": "atomic",
+    "atomic::RangeNativeTest::aVersionAboveTheUpperBoundIsNotContained": "atomic",
+    "atomic::RangeNativeTest::aSquareLowerBoundIncludesItsEndpoint": "atomic",
+    "atomic::RangeNativeTest::aSquareUpperBoundIncludesItsEndpoint": "atomic",
+    "atomic::RangeNativeTest::aRoundLowerBoundExcludesItsEndpoint": "atomic",
+    "atomic::RangeNativeTest::theLowerBoundVersionIsReported": "atomic",
+    "atomic::RangeNativeTest::theUpperBoundVersionIsReported": "atomic",
+    "atomic::RangeNativeTest::aSquareLowerBoundIsInclusive": "atomic",
+    "atomic::RangeNativeTest::aRoundLowerBoundIsNotInclusive": "atomic",
+    "atomic::RangeUpperTest::roundUpperDelimiterIncludesTheEndpoint": "atomic",
+    "atomic::RangeUpperTest::roundUpperDelimiterIncludesTheEndpointForAnotherRange": "atomic",
+    "atomic::SnapshotOrderTest::snapshotRanksAfterRelease": "atomic",
+    "atomic::SnapshotOrderTest::aLaterSnapshotAlsoRanksAfterItsRelease": "atomic",
+    "atomic::VersionCompareNativeTest::aHigherMinorIsGreater": "atomic",
+    "atomic::VersionCompareNativeTest::aHigherMajorIsGreater": "atomic",
+    "atomic::VersionCompareNativeTest::aTrailingZeroCompareEqual": "atomic",
+    "atomic::VersionCompareNativeTest::aMorePreciseVersionIsGreater": "atomic",
+    "atomic::VersionCompareNativeTest::doubleDigitSegmentComparesNumerically": "atomic",
+    "atomic::VersionCompareNativeTest::alphaPrecedesBeta": "atomic",
+    "atomic::VersionCompareNativeTest::alphaPrecedesRelease": "atomic",
+    "atomic::VersionCompareNativeTest::spFollowsRelease": "atomic",
+    "atomic::VersionCompareNativeTest::equalStringsCompareEqual": "atomic",
+    "atomic::VersionCompareNativeTest::comparisonIsAntisymmetric": "atomic",
+    "integration::CrossViewVersionNativeTest::constraintContainmentMatchesItsRangeInside": "integration",
+    "integration::CrossViewVersionNativeTest::constraintContainmentMatchesItsRangeOutside": "integration",
+    "integration::CrossViewVersionNativeTest::singleRangeUnionMatchesItsMemberInside": "integration",
+    "integration::CrossViewVersionNativeTest::singleRangeUnionMatchesItsMemberOutside": "integration",
+    "integration::CrossViewVersionNativeTest::anInteriorVersionExceedsTheLowerBound": "integration",
+    "integration::CrossViewVersionNativeTest::anInteriorVersionPrecedesTheUpperBound": "integration",
+    "integration::CrossViewVersionNativeTest::aConstraintRangeReportsItsLowerBoundVersion": "integration",
+    "integration::CrossViewVersionNativeTest::anOverlapVersionIsInBothTheUnionAndAMember": "integration",
+    "integration::CrossViewVersionNativeTest::aVersionAboveTheRangeAlsoComparesGreaterThanTheUpperBound": "integration",
+    "integration::CrossViewVersionNativeTest::constraintContainsItsLowerEdgeLikeItsRange": "integration",
+    "integration::CrossViewVersionNativeTest::bareConstraintsOrderByTheirRecommendedVersions": "integration",
+    "integration::CrossViewVersionNativeTest::everyEndpointAndInteriorIsWithinTheRange": "integration",
+    "integration::CrossViewVersionNativeTest::aVersionOutsideASingleRangeUnionIsAbsentLikeInTheRange": "integration",
+    "integration::UnionContainTest::aVersionInOnlyOneMemberIsNotContainedByTheUnion": "integration",
+    "integration::UnionContainTest::aVersionInTheOtherLoneMemberIsAlsoNotContained": "integration",
+    "integration::UnionNativeTest::anOverlapInteriorVersionIsContained": "integration",
+    "integration::UnionNativeTest::theOverlapLowerEdgeIsContained": "integration",
+    "integration::UnionNativeTest::theOverlapUpperEdgeIsContained": "integration",
+    "integration::UnionNativeTest::anotherOverlapInteriorVersionIsContained": "integration",
+    "integration::UnionNativeTest::aVersionBelowAllMembersIsNotContained": "integration",
+    "integration::UnionNativeTest::aVersionAboveAllMembersIsNotContained": "integration",
+    "integration::UnionNativeTest::aFarBelowVersionIsNotContained": "integration",
+    "integration::UnionNativeTest::aSingleRangeUnionContainsAnInteriorVersion": "integration",
+    "integration::UnionNativeTest::aSingleRangeUnionExcludesAnOutsideVersion": "integration",
+    "integration::UnionNativeTest::aSingleRangeUnionIncludesItsLowerEndpoint": "integration",
+    "integration::UnionNativeTest::anotherSingleRangeUnionContainsAnInteriorVersion": "integration",
+    "integration::UnionNativeTest::anEmptyOverlapVersionAboveIsNotContained": "integration"
+  },
+  "oracle": {
+    "count": 65,
+    "count_unit": "base_test_functions",
+    "test_files": [
+      "oracle/src/test/java/atomic/ConstraintRecommendTest.java",
+      "oracle/src/test/java/atomic/ParseConstraintNativeTest.java",
+      "oracle/src/test/java/atomic/QualifierPrecedenceTest.java",
+      "oracle/src/test/java/atomic/RangeNativeTest.java",
+      "oracle/src/test/java/atomic/RangeUpperTest.java",
+      "oracle/src/test/java/atomic/SnapshotOrderTest.java",
+      "oracle/src/test/java/atomic/VersionCompareNativeTest.java",
+      "oracle/src/test/java/integration/CrossViewVersionNativeTest.java",
+      "oracle/src/test/java/integration/UnionContainTest.java",
+      "oracle/src/test/java/integration/UnionNativeTest.java"
+    ],
+    "support_files": [
+      "oracle/pom.xml",
+      "oracle/src/test/java/fixtures/Vs.java"
+    ],
+    "maven_pom": "oracle/pom.xml"
+  }
+}

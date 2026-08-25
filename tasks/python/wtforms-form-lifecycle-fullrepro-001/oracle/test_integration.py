@@ -57,21 +57,14 @@ def test_select_field_selection_and_validation(value, valid):
 
 @pytest.mark.parametrize("values, valid", [(["a"], True), (["a", "b"], True), (["a", "z"], False)])
 @pytest.mark.depends_on("test_missing_choices_raise_when_membership_is_required")
-@pytest.mark.mutated("spec.md:100")
 def test_select_multiple_preserves_all_values_and_rejects_invalid_members(values, valid):
-    """Seam: state consistency for SelectMultipleField multi-value submission.
-
-    Mutated: asserts data is a tuple per the mutated spec. The upstream package
-    returns a list, so this test fails against it by construction.
-
-    Verifies: spec.md:100
-    """
+    """Seam: state consistency for SelectMultipleField multi-value submission."""
     class F(Form):
         choices = SelectMultipleField(choices=[("a", "A"), ("b", "B")])
 
     form = F(FormData(choices=values))
     assert form.validate() is valid
-    assert form.choices.data == tuple(values)
+    assert form.choices.data == values
 
 @pytest.mark.depends_on("test_missing_choices_raise_when_membership_is_required")
 def test_select_can_disable_membership_validation():
@@ -325,18 +318,11 @@ def test_form_errors_contains_only_fields_with_errors():
 
 
 @pytest.mark.depends_on("test_select_multiple_field_coerces_all_values_to_list")
-@pytest.mark.mutated("spec.md:100")
 def test_select_multiple_with_int_coerce_converts_all_values():
-    """Seam: state consistency — SelectMultipleField coerces all submitted values to int.
-
-    Mutated: asserts data is a tuple per the mutated spec. The upstream package
-    returns a list, so this test fails against it by construction.
-
-    Verifies: spec.md:100
-    """
+    """Seam: state consistency — SelectMultipleField coerces all submitted values to int."""
     class F(Form):
         choices = SelectMultipleField(choices=[(1, "One"), (2, "Two"), (3, "Three")], coerce=int)
 
     form = F(FormData(choices=["1", "3"]))
-    assert form.choices.data == (1, 3)
+    assert form.choices.data == [1, 3]
     assert form.validate() is True

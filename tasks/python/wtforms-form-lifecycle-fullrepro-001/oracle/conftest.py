@@ -1,12 +1,4 @@
 """Shared helpers for WTForms oracle tests."""
-import pytest
-
-
-def pytest_configure(config):
-    config.addinivalue_line(
-        "markers",
-        "mutated(clause_id): asserts behavior that diverges from the upstream package",
-    )
 
 
 class FormData(dict):

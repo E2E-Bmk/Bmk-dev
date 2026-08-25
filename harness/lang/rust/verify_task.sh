@@ -11,7 +11,6 @@ TASK_ID="${1:?usage: verify_rust_task.sh <task_id> [--stage]}"
 STAGE="${2:-}"
 
 BMK_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
-HARNESS_DIR="$BMK_DIR/../spec2repo/harness"
 WIP_DIR="$BMK_DIR/wip/rust/$TASK_ID"
 TASKS_DIR="$BMK_DIR/tasks/rust/$TASK_ID"
 TARGET_IMPORTS="$BMK_DIR/harness/lang/rust/target_imports.json"
@@ -67,10 +66,8 @@ else
         echo "FAIL: tasks/rust/$TASK_ID/ does not exist. Use --stage for wip tasks."
         exit 1
     fi
-    # verify_task.py resolves tasks/<id> against the spec2repo repo root unless a
-    # pool is named. Without this every Bmk-dev task reports STATIC_INVALID for
-    # missing spec.md/task.json that are in fact present.
-    export SPEC2REPO_TASKS_DIR="$BMK_DIR/tasks/rust"
+    # The in-repo checker resolves tasks/rust/<id> through harness/core/layout.py,
+    # so no sibling checkout or environment override is needed.
 fi
 
 echo ""
@@ -195,8 +192,8 @@ done
 echo ""
 echo "=== 6. verify_task.py ==="
 if [ -f "$CHECK_DIR/task.json" ] && [ -f "$CHECK_DIR/spec.md" ]; then
-    cd "$HARNESS_DIR"
-    RESULT=$(python3 verify_task.py "$TASK_ID" 2>&1) || true
+    cd "$BMK_DIR"
+    RESULT=$(python3 harness/core/verify_task.py "$TASK_ID" 2>&1) || true
     echo "$RESULT" | head -20
     if echo "$RESULT" | grep -q "STATIC_VALID"; then
         pass "verify_task: STATIC_VALID"

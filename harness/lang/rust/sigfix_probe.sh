@@ -20,8 +20,8 @@ ID="${1:?usage: sigfix_probe.sh <task_id> stage|build|score|diff}"
 CMD="${2:?usage: sigfix_probe.sh <task_id> stage|build|score|diff}"
 SRC_RUN="${3:-qwen3.8-max}"
 
-BMK=/root/research/Bmk-dev
-S2R=/root/research/spec2repo
+BMK="$(cd "$(dirname "$0")/../../.." && pwd)"
+S2R="${SPEC2REPO_DIR:-$BMK/../spec2repo}"
 W="$BMK/wip/rust/$ID"
 AGENT_WS="$W/eval/runs/$SRC_RUN/$ID/workspace"
 SIGFIX_WS="$W/eval/runs/sigfix/$ID/workspace"

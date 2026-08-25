@@ -19,7 +19,7 @@
 
 set -uo pipefail
 
-ROOT=/root/research/javabench
+ROOT="${JAVABENCH_DIR:-$(cd "$(dirname "$0")/../../../.." && pwd)/javabench}"
 REPO=${1:?usage: java_stage1_probe.sh <repo> <tag> <module|.> [extra mvn args]}
 TAG=${2:?missing tag}
 MODULE=${3:?missing module (use . for single-module)}

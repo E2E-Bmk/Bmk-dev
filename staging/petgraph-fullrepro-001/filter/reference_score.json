@@ -1,0 +1,17 @@
+{
+  "task_id": "petgraph-fullrepro-001",
+  "reference_repo": "petgraph/petgraph",
+  "reference_commit": "162903562ce5b00cdba390a0d9c1bb80f1c75bf5",
+  "method": "cargo nextest run on the oracle workspace, twice: (1) with [patch.crates-io] petgraph = { path = <reference clone at pinned commit> } appended, mirroring harness/runners/rust.py setup; (2) unpatched with the shipped Cargo.lock resolving petgraph 0.8.3 from the registry. 129/129 both runs. indexmap pinned =2.7.1 in the lock (2.14 pulls hashbrown 0.17 which requires edition2024, unavailable on cargo 1.83); fixedbitset 0.5.7 and hashbrown 0.15.5 resolve cleanly.",
+  "toolchain": "cargo 1.83 + cargo-nextest (see Appendix A)",
+  "total": 129,
+  "passed": 129,
+  "failed": 0,
+  "skipped": 0,
+  "pass_rate": 1.0,
+  "stats": {
+    "atomic": 95,
+    "integration": 34
+  },
+  "date": "2026-08-25"
+}

@@ -1,0 +1,149 @@
+{
+  "integration::containers::generated_extend_with_edges_then_analysis": [
+    "atomic::generated_extend_with_edges_creates_missing_nodes",
+    "atomic::generated_toposort_ok_successor_rule",
+    "atomic::generated_externals_by_direction"
+  ],
+  "integration::containers::generated_filter_map_matches_hand_built_subgraph": [
+    "atomic::generated_filter_map_drops_node_and_reindexes",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent",
+    "atomic::generated_connected_components_weak_and_isolated"
+  ],
+  "integration::containers::generated_graph_vs_stable_removal_contract": [
+    "atomic::generated_remove_node_swap_relocates_last",
+    "atomic::generated_stable_remove_keeps_other_indices",
+    "atomic::generated_has_path_connecting_follows_direction"
+  ],
+  "integration::containers::generated_map_scales_dijkstra_costs": [
+    "atomic::generated_map_preserves_structure",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent"
+  ],
+  "integration::containers::generated_retain_edges_changes_reachability": [
+    "atomic::generated_retain_edges_keeps_predicate_survivors",
+    "atomic::generated_has_path_connecting_follows_direction",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent"
+  ],
+  "integration::containers::generated_reverse_matches_reversed_view": [
+    "atomic::generated_reverse_flips_edges",
+    "atomic::generated_reversed_neighbors_swapped",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent"
+  ],
+  "integration::scc_condensation::generated_condensation_keep_edges_counts": [
+    "atomic::generated_condensation_keeps_all_edges_when_not_acyclic",
+    "atomic::generated_condensation_acyclic_drops_intra_edges"
+  ],
+  "integration::scc_condensation::generated_condensation_partitions_and_toposorts": [
+    "atomic::generated_condensation_acyclic_drops_intra_edges",
+    "atomic::generated_toposort_ok_successor_rule",
+    "atomic::generated_is_cyclic_directed_detects"
+  ],
+  "integration::scc_condensation::generated_cycle_collapse_enables_toposort": [
+    "atomic::generated_toposort_cycle_error_names_participant",
+    "atomic::generated_remove_edge_swap_relocates_last",
+    "atomic::generated_is_cyclic_directed_detects"
+  ],
+  "integration::scc_condensation::generated_scc_invariant_under_reversal": [
+    "atomic::generated_kosaraju_partitions_by_mutual_reachability",
+    "atomic::generated_reversed_neighbors_swapped"
+  ],
+  "integration::scc_condensation::generated_scc_matches_mutual_reachability": [
+    "atomic::generated_kosaraju_partitions_by_mutual_reachability",
+    "atomic::generated_has_path_connecting_follows_direction"
+  ],
+  "integration::scc_condensation::generated_scc_partitions_agree": [
+    "atomic::generated_kosaraju_partitions_by_mutual_reachability",
+    "atomic::generated_tarjan_partitions_by_mutual_reachability"
+  ],
+  "integration::scc_condensation::generated_scc_postorder_respects_linkage": [
+    "atomic::generated_scc_postorder_sink_component_first",
+    "atomic::generated_edges_edgeref_accessors"
+  ],
+  "integration::shortest_paths::generated_astar_admissible_heuristic_same_cost": [
+    "atomic::generated_astar_returns_cost_and_path"
+  ],
+  "integration::shortest_paths::generated_astar_path_is_valid_walk": [
+    "atomic::generated_astar_returns_cost_and_path",
+    "atomic::generated_find_edge_parallel_prefers_most_recent"
+  ],
+  "integration::shortest_paths::generated_astar_zero_heuristic_matches_dijkstra": [
+    "atomic::generated_astar_returns_cost_and_path",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent",
+    "atomic::generated_astar_unreachable_none"
+  ],
+  "integration::shortest_paths::generated_bellman_ford_agrees_with_dijkstra": [
+    "atomic::generated_bellman_ford_distances_and_predecessors",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent"
+  ],
+  "integration::shortest_paths::generated_dijkstra_unit_costs_equal_bfs_depth": [
+    "atomic::generated_dijkstra_costs_and_unreachable_absent",
+    "atomic::generated_neighbors_reverse_insertion_order"
+  ],
+  "integration::shortest_paths::generated_edge_filtered_dijkstra_matches_subgraph": [
+    "atomic::generated_edge_filtered_from_fn_hides_edges",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent"
+  ],
+  "integration::shortest_paths::generated_reachability_views_agree": [
+    "atomic::generated_dijkstra_costs_and_unreachable_absent",
+    "atomic::generated_has_path_connecting_follows_direction"
+  ],
+  "integration::spanning_convert::generated_from_elements_stream_reindexes_positions": [
+    "atomic::generated_min_spanning_tree_element_stream",
+    "atomic::generated_from_elements_materializes_tree"
+  ],
+  "integration::spanning_convert::generated_graphmap_and_graph_dijkstra_agree": [
+    "atomic::generated_graphmap_into_graph_insertion_order",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent",
+    "atomic::generated_graphmap_add_edge_none_then_replace"
+  ],
+  "integration::spanning_convert::generated_graphmap_into_graph_consistency": [
+    "atomic::generated_graphmap_into_graph_insertion_order",
+    "atomic::generated_graphmap_all_edges_in_insertion_order"
+  ],
+  "integration::spanning_convert::generated_mst_beats_alternative_spanning_edges": [
+    "atomic::generated_min_spanning_tree_element_stream",
+    "atomic::generated_from_elements_materializes_tree"
+  ],
+  "integration::spanning_convert::generated_mst_of_tree_is_identity": [
+    "atomic::generated_min_spanning_tree_element_stream",
+    "atomic::generated_from_elements_materializes_tree"
+  ],
+  "integration::spanning_convert::generated_mst_roundtrip_preserves_components": [
+    "atomic::generated_min_spanning_tree_element_stream",
+    "atomic::generated_from_elements_materializes_tree",
+    "atomic::generated_connected_components_undirected"
+  ],
+  "integration::spanning_convert::generated_stable_graph_algorithms_after_removals": [
+    "atomic::generated_stable_remove_keeps_other_indices",
+    "atomic::generated_toposort_ok_successor_rule",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent"
+  ],
+  "integration::traversal::generated_dfs_move_to_covers_forest_without_repeats": [
+    "atomic::generated_dfs_move_to_keeps_visit_map",
+    "atomic::generated_dfs_preorder_explores_earliest_edge_first"
+  ],
+  "integration::traversal::generated_node_filtered_walk_matches_hand_built_subgraph": [
+    "atomic::generated_node_filtered_hides_node_and_edges",
+    "atomic::generated_bfs_start_then_layers_in_neighbor_order"
+  ],
+  "integration::traversal::generated_postorder_reversed_is_topological_for_reachable": [
+    "atomic::generated_dfs_postorder_children_before_parent",
+    "atomic::generated_has_path_connecting_follows_direction"
+  ],
+  "integration::traversal::generated_reversed_walk_equals_reachability_set": [
+    "atomic::generated_reversed_neighbors_swapped",
+    "atomic::generated_bfs_start_then_layers_in_neighbor_order",
+    "atomic::generated_has_path_connecting_follows_direction"
+  ],
+  "integration::traversal::generated_topo_walker_and_toposort_agree_on_rule": [
+    "atomic::generated_topo_yields_valid_order",
+    "atomic::generated_toposort_ok_successor_rule"
+  ],
+  "integration::traversal::generated_visitor_interleaves_with_weight_mutation": [
+    "atomic::generated_bfs_start_then_layers_in_neighbor_order",
+    "atomic::generated_weight_accessors_and_mut"
+  ],
+  "integration::traversal::generated_walkers_and_dijkstra_agree_on_reachable_set": [
+    "atomic::generated_bfs_start_then_layers_in_neighbor_order",
+    "atomic::generated_dijkstra_costs_and_unreachable_absent"
+  ]
+}

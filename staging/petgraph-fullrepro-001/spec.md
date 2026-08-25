@@ -1,7 +1,8 @@
 <!-- INTERNAL
 task_id: petgraph-fullrepro-001
 spec_version: v1
-delta: initial version
+delta: initial version; DFS child-exploration order corrected to reverse
+neighbor order (probe-verified) before oracle authorship
 source_boundary: docs.rs/petgraph 0.8.3 (crate root, graph/stable_graph/graphmap module docs, visit module docs, algo module and per-function docs, data module docs), README at pinned commit; reference behavior observed by running the pinned checkout (probe binary)
 -->
 
@@ -282,8 +283,12 @@ visitor tracks its own visit map: nodes are yielded at most once.
 breadth-first layers; within a layer, neighbor order follows the graph's
 neighbor iteration order. `Dfs` yields nodes in depth-first preorder
 (a node is yielded when first discovered); `DfsPostOrder` yields nodes in
-depth-first postorder (a node is yielded after all its descendants); for
-both, the next child explored follows the graph's neighbor order. `Topo`
+depth-first postorder (a node is yielded after all its descendants). Both
+depth-first walkers push newly discovered neighbors onto a stack in the
+graph's neighbor iteration order and explore the most recently pushed
+first, so among a node's unvisited children the one whose edge was added
+earliest is descended into first — the reverse of the neighbor iteration
+order. `Topo`
 yields every node of an acyclic directed graph in a topological order —
 each node before all of its successors — starting from the nodes with no
 incoming edges; nodes on cycles are never yielded. `Dfs::move_to` (also on

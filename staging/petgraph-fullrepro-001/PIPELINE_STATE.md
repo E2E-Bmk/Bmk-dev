@@ -11,18 +11,24 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
+oracle_count: 129
+functions_in_scope: 378
+functions_kept: 0
+functions_excluded: 378
 updated:    2026-08-25
 ```
 
 todo:
-- [ ] inventory upstream test functions (tests/*.rs external + in-crate mods) within scope
-- [ ] per-file import/scope audit: which files import only in-scope public API
-- [ ] write filter/rewrite_audit.md with per-file disposition before any oracle work
+- [x] rewrite_audit.md with per-file disposition (378 upstream fns, all excluded; generated-only)
+- [x] oracle assembled: atomic (95) + integration (34 in 5 modules)
+- [x] reference 129/129 (patched path + registry lock), depends_on 34/34
+- [x] spec_test_map.md, taxonomy.jsonl, kept_nodeids.txt, task.json, reference_score.json
+- [x] lint fresh on disk: LINT_PASS (negative control LINT_FAIL confirms sensitivity)
 
 ---
 
@@ -34,6 +40,10 @@ todo:
 | 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec drafting from docs.rs 0.8.3 within scope_plan |
 | 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec.md v1: 6-layer, 5 behavior sections (construction/mutation, indices+adjacency, stable+keyed, visitors+adapters, analysis, pathfinding+MST), state model, error table, 8 CVIs, import surface + API catalog; all contracts verified by probe against pinned 0.8.3 |
 | 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
+| 5 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit done: 112 in-crate fns all in out-of-scope modules; 142 external fns out-of-scope files; 124 in-scope external fns rely on out-of-scope imports at file level (Dot, dominators, iso, GraphError, IndexType, node_index helpers, visit traits, itertools/defmac); decision generated-only |
+| 6 | 2026-08-25 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md landed: per-file disposition; fresh vocabularies; dummy-passable patterns avoided (Err assertions paired with positive siblings; property checks for multi-valid orders) |
+| 7 | 2026-08-25 | S3B_TRIGGER | S3_ORACLE_MERGE | oracle assembled: workspace + atomic(95) + integration(34 in 5 modules: containers/traversal/scc_condensation/shortest_paths/spanning_convert), depends_on.json 34/34, Cargo.lock (registry petgraph 0.8.3; indexmap pinned =2.7.1 for cargo 1.83) |
+| 8 | 2026-08-25 | S3_ORACLE_MERGE | S3_DONE | reference 129/129 patched path AND registry-lock path (reference_score.json); 1 spec fix during dev: DFS child-exploration order corrected to reverse neighbor order (probe-verified, pre-oracle); 1 compile fix: connected_components needs compact indices so StableGraph comparison re-expressed via has_path_connecting; spec_test_map.md, taxonomy.jsonl, task.json written; lint fresh: LINT_PASS (negative control LINT_FAIL confirms sensitivity) |
 
 ---
 

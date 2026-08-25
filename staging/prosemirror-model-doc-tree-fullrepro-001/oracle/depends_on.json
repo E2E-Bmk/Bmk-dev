@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::cross-view invariants::JSON round trip preserves equality for a marked multi-block document": [
+      "atomic::json serialization::fromJSON rebuilds nodes and fragments equal to the originals",
+      "atomic::slices and replacement::slice JSON round trip and empty-slice null form",
+      "atomic::nodes and fragments::eq, sameMarkup, and hasMarkup compare at different depths"
+    ],
+    "integration::cross-view invariants::descendants positions agree with nodeAt and size arithmetic": [
+      "atomic::nodes and fragments::descendants visits positions and honors early exit",
+      "atomic::positions and resolution::nodeAt maps positions to covering nodes",
+      "atomic::nodes and fragments::nodeSize arithmetic: text length, leaf 1, container +2"
+    ],
+    "integration::cross-view invariants::slice then replace reproduces the document over every block range": [
+      "atomic::slices and replacement::slice records open depths and size",
+      "atomic::slices and replacement::replacing a range with its own slice is identity"
+    ],
+    "integration::cross-view invariants::cut agrees with the content captured by slice": [
+      "atomic::slices and replacement::cut returns the standalone region between positions",
+      "atomic::slices and replacement::slice records open depths and size"
+    ],
+    "integration::cross-view invariants::automaton, createChecked, and check agree on validity": [
+      "atomic::content rules::matchFragment consumes whole fragments",
+      "atomic::schema construction::create skips content validation while createChecked enforces it",
+      "atomic::nodes and fragments::check passes valid trees and rejects invalid content",
+      "atomic::schema construction::validContent reports content-rule satisfaction"
+    ],
+    "integration::cross-view invariants::diffing agrees with equality across fragment edits": [
+      "atomic::nodes and fragments::findDiffStart and findDiffEnd locate divergence",
+      "atomic::nodes and fragments::fragment operations produce expected sequences"
+    ],
+    "integration::cross-view invariants::mark sets agree between construction, node marks, resolver, and rangeHasMark": [
+      "atomic::marks::addToSet keeps schema order and deduplicates",
+      "atomic::positions and resolution::marks() reports the inline marks at a position",
+      "atomic::marks::mark constraints are enforced by createChecked, check, and rangeHasMark"
+    ],
+    "integration::cross-view invariants::resolution agrees with child access at every depth": [
+      "atomic::positions and resolution::resolved position exposes depth, parent, offsets",
+      "atomic::positions and resolution::index, indexAfter, and posAtIndex map between views",
+      "atomic::nodes and fragments::child access distinguishes throwing and null-returning forms"
+    ],
+    "integration::editing workflows::open slice paste splits and merges paragraph halves": [
+      "atomic::slices and replacement::replace splices closed slices into text ranges",
+      "atomic::slices and replacement::slice records open depths and size"
+    ],
+    "integration::editing workflows::slice cut from a nested context splices into a flat paragraph": [
+      "atomic::slices and replacement::slice records open depths and size",
+      "atomic::slices and replacement::replace splices closed slices into text ranges"
+    ],
+    "integration::editing workflows::deleting a block range found through blockRange": [
+      "atomic::positions and resolution::blockRange and NodeRange expose block-level spans",
+      "atomic::slices and replacement::replace splices closed slices into text ranges"
+    ],
+    "integration::editing workflows::wrapping a node according to findWrapping produces valid content": [
+      "atomic::content rules::findWrapping computes wrapper chains or null",
+      "atomic::nodes and fragments::check passes valid trees and rejects invalid content"
+    ],
+    "integration::editing workflows::fillBefore output completes a partial section into checked validity": [
+      "atomic::content rules::fillBefore synthesizes completing fragments",
+      "atomic::schema construction::create skips content validation while createChecked enforces it"
+    ],
+    "integration::editing workflows::replace failures leave clear error taxonomy while valid edits pass check": [
+      "atomic::slices and replacement::invalid replacements raise ReplaceError",
+      "atomic::slices and replacement::replace splices closed slices into text ranges",
+      "atomic::nodes and fragments::check passes valid trees and rejects invalid content"
+    ],
+    "integration::editing workflows::structural sharing keeps untouched branches identical after replace": [
+      "atomic::slices and replacement::replace splices closed slices into text ranges"
+    ],
+    "integration::editing workflows::mark exclusion plays through document construction and checking": [
+      "atomic::marks::exclusion removes expelled marks and blocks excluded additions",
+      "atomic::marks::mark constraints are enforced by createChecked, check, and rangeHasMark"
+    ],
+    "integration::editing workflows::text projections agree with slices over the same range": [
+      "atomic::nodes and fragments::textContent and textBetween project text with separators and leaf text",
+      "atomic::slices and replacement::slice records open depths and size"
+    ],
+    "integration::editing workflows::NodeRange constructed directly matches blockRange discovery": [
+      "atomic::positions and resolution::blockRange and NodeRange expose block-level spans"
+    ],
+    "integration::editing workflows::counted expressions guide fill and reject overflow through replace": [
+      "atomic::content rules::counted range modifiers bound repetition",
+      "atomic::schema construction::createAndFill synthesizes required content",
+      "atomic::schema construction::validContent reports content-rule satisfaction"
+    ],
+    "integration::editing workflows::copy and mark derive new nodes without touching originals": [
+      "atomic::nodes and fragments::copy keeps markup while replacing content",
+      "atomic::nodes and fragments::node.mark replaces the mark set",
+      "atomic::nodes and fragments::eq, sameMarkup, and hasMarkup compare at different depths"
+    ],
+    "integration::end-to-end document sessions::author, navigate, edit, validate, and persist a document": [
+      "atomic::positions and resolution::resolved position exposes depth, parent, offsets",
+      "atomic::slices and replacement::replace splices closed slices into text ranges",
+      "atomic::json serialization::fromJSON rebuilds nodes and fragments equal to the originals",
+      "atomic::nodes and fragments::check passes valid trees and rejects invalid content"
+    ],
+    "integration::end-to-end document sessions::split a paragraph, then join it back through open slices": [
+      "atomic::slices and replacement::replace splices closed slices into text ranges",
+      "atomic::slices and replacement::replacing a range with its own slice is identity"
+    ],
+    "integration::end-to-end document sessions::schema-driven synthesis composes a valid document from automaton hints": [
+      "atomic::content rules::defaultType, edgeCount, edge, and contentMatchAt inspect states",
+      "atomic::content rules::fillBefore synthesizes completing fragments",
+      "atomic::content rules::createAndFill completes structured content and skips optional non-generatable slots"
+    ],
+    "integration::end-to-end document sessions::diff-guided reconciliation converges two documents": [
+      "atomic::nodes and fragments::findDiffStart and findDiffEnd locate divergence",
+      "atomic::slices and replacement::replace splices closed slices into text ranges"
+    ],
+    "integration::end-to-end document sessions::full multi-projection sweep stays consistent on a nested document": [
+      "atomic::nodes and fragments::descendants visits positions and honors early exit",
+      "atomic::positions and resolution::marks() reports the inline marks at a position",
+      "atomic::json serialization::fromJSON rebuilds nodes and fragments equal to the originals"
+    ],
+    "integration::end-to-end document sessions::template completion pipeline: fill, verify, serialize, restore, re-verify": [
+      "atomic::content rules::createAndFill completes structured content and skips optional non-generatable slots",
+      "atomic::json serialization::fromJSON rebuilds nodes and fragments equal to the originals",
+      "atomic::nodes and fragments::check passes valid trees and rejects invalid content"
+    ]
+  }
+}

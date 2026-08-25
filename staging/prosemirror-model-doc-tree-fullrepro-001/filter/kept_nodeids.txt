@@ -1,0 +1,100 @@
+atomic::schema construction::compiled schema exposes type tables, top node, and spec
+atomic::schema construction::topNode option selects the top-level type
+atomic::schema construction::node type flags reflect inline/block/text/leaf/textblock roles
+atomic::schema construction::atom spec flag marks a non-leaf node atomic
+atomic::schema construction::null attribute argument fills defaults and nulls
+atomic::schema construction::attribute object omitting a required attribute raises RangeError
+atomic::schema construction::undeclared attribute names are dropped from created values
+atomic::schema construction::hasRequiredAttrs reflects presence of default-less attributes
+atomic::schema construction::schema.node accepts a name or NodeType and several content forms
+atomic::schema construction::unknown node type name raises RangeError
+atomic::schema construction::schema.text builds text nodes and rejects empty text
+atomic::schema construction::schema.mark builds marks from a name or MarkType
+atomic::schema construction::create skips content validation while createChecked enforces it
+atomic::schema construction::createAndFill synthesizes required content
+atomic::schema construction::validContent reports content-rule satisfaction
+atomic::schema construction::compatibleContent detects shared allowed content
+atomic::schema construction::marks spec strings and defaults govern allowsMarkType
+atomic::schema construction::allowedMarks filters a set down to permitted marks
+atomic::schema construction::mixing inline and block content raises SyntaxError at construction
+atomic::schema construction::non-generatable type in a required position raises SyntaxError
+atomic::nodes and fragments::node anatomy exposes type, attrs, content, marks, and text
+atomic::nodes and fragments::child access distinguishes throwing and null-returning forms
+atomic::nodes and fragments::forEach passes each child with offset and index
+atomic::nodes and fragments::descendants visits positions and honors early exit
+atomic::nodes and fragments::nodesBetween visits the nodes touching a range
+atomic::nodes and fragments::nodeSize arithmetic: text length, leaf 1, container +2
+atomic::nodes and fragments::node flags mirror type flags on instances
+atomic::nodes and fragments::textContent and textBetween project text with separators and leaf text
+atomic::nodes and fragments::copy keeps markup while replacing content
+atomic::nodes and fragments::node.mark replaces the mark set
+atomic::nodes and fragments::cut on a text node slices the string and keeps marks
+atomic::nodes and fragments::eq, sameMarkup, and hasMarkup compare at different depths
+atomic::nodes and fragments::toString renders the debugging tree with mark wrappers
+atomic::nodes and fragments::Fragment.from accepts null, node, array, and fragment
+atomic::nodes and fragments::adjacent text nodes with identical marks merge
+atomic::nodes and fragments::fragment operations produce expected sequences
+atomic::nodes and fragments::findDiffStart and findDiffEnd locate divergence
+atomic::nodes and fragments::check passes valid trees and rejects invalid content
+atomic::positions and resolution::nodeAt maps positions to covering nodes
+atomic::positions and resolution::childAfter and childBefore report direct children with offsets
+atomic::positions and resolution::resolve rejects out-of-range positions
+atomic::positions and resolution::resolved position exposes depth, parent, offsets
+atomic::positions and resolution::start, end, before, after work across depths
+atomic::positions and resolution::before and after at depth 0 raise RangeError
+atomic::positions and resolution::nodeBefore and nodeAfter split text at the position
+atomic::positions and resolution::index, indexAfter, and posAtIndex map between views
+atomic::positions and resolution::marks() reports the inline marks at a position
+atomic::positions and resolution::sameParent, sharedDepth, min, and max relate positions
+atomic::positions and resolution::blockRange and NodeRange expose block-level spans
+atomic::slices and replacement::slice records open depths and size
+atomic::slices and replacement::Slice.empty and Slice.maxOpen bound openness
+atomic::slices and replacement::slice JSON round trip and empty-slice null form
+atomic::slices and replacement::replace splices closed slices into text ranges
+atomic::slices and replacement::replacing a range with its own slice is identity
+atomic::slices and replacement::invalid replacements raise ReplaceError
+atomic::slices and replacement::canReplace, canReplaceWith, and canAppend answer feasibility
+atomic::slices and replacement::cut returns the standalone region between positions
+atomic::content rules::match automaton walks the doc content expression
+atomic::content rules::sequenced expression tracks required members
+atomic::content rules::matchFragment consumes whole fragments
+atomic::content rules::defaultType, edgeCount, edge, and contentMatchAt inspect states
+atomic::content rules::fillBefore synthesizes completing fragments
+atomic::content rules::findWrapping computes wrapper chains or null
+atomic::content rules::counted range modifiers bound repetition
+atomic::content rules::alternation and optional groups admit either branch once
+atomic::content rules::createAndFill completes structured content and skips optional non-generatable slots
+atomic::marks::mark creation defaults attributes and enforces required ones
+atomic::marks::addToSet keeps schema order and deduplicates
+atomic::marks::Mark.none, setFrom, and sameSet handle set construction
+atomic::marks::exclusion removes expelled marks and blocks excluded additions
+atomic::marks::mark constraints are enforced by createChecked, check, and rangeHasMark
+atomic::marks::mark JSON round trips through the schema
+atomic::json serialization::node JSON carries type, attrs, content, marks, and text
+atomic::json serialization::fromJSON rebuilds nodes and fragments equal to the originals
+integration::cross-view invariants::JSON round trip preserves equality for a marked multi-block document
+integration::cross-view invariants::descendants positions agree with nodeAt and size arithmetic
+integration::cross-view invariants::slice then replace reproduces the document over every block range
+integration::cross-view invariants::cut agrees with the content captured by slice
+integration::cross-view invariants::automaton, createChecked, and check agree on validity
+integration::cross-view invariants::diffing agrees with equality across fragment edits
+integration::cross-view invariants::mark sets agree between construction, node marks, resolver, and rangeHasMark
+integration::cross-view invariants::resolution agrees with child access at every depth
+integration::editing workflows::open slice paste splits and merges paragraph halves
+integration::editing workflows::slice cut from a nested context splices into a flat paragraph
+integration::editing workflows::deleting a block range found through blockRange
+integration::editing workflows::wrapping a node according to findWrapping produces valid content
+integration::editing workflows::fillBefore output completes a partial section into checked validity
+integration::editing workflows::replace failures leave clear error taxonomy while valid edits pass check
+integration::editing workflows::structural sharing keeps untouched branches identical after replace
+integration::editing workflows::mark exclusion plays through document construction and checking
+integration::editing workflows::text projections agree with slices over the same range
+integration::editing workflows::NodeRange constructed directly matches blockRange discovery
+integration::editing workflows::counted expressions guide fill and reject overflow through replace
+integration::editing workflows::copy and mark derive new nodes without touching originals
+integration::end-to-end document sessions::author, navigate, edit, validate, and persist a document
+integration::end-to-end document sessions::split a paragraph, then join it back through open slices
+integration::end-to-end document sessions::schema-driven synthesis composes a valid document from automaton hints
+integration::end-to-end document sessions::diff-guided reconciliation converges two documents
+integration::end-to-end document sessions::full multi-projection sweep stays consistent on a nested document
+integration::end-to-end document sessions::template completion pipeline: fill, verify, serialize, restore, re-verify

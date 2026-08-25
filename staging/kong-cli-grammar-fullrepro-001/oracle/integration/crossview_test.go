@@ -163,14 +163,21 @@ func TestValueSetReflectsSource(t *testing.T) {
 	}
 	a := build(t, &cli)
 	ctx := mustParse(t, a, []string{"--given", "x"})
+	var sawGiven, sawAbsent bool
 	for _, f := range ctx.Flags() {
 		switch f.Name {
 		case "given":
+			sawGiven = true
 			wantEq(t, f.Set, true, "explicitly set flag reports Set")
 		case "absent":
+			sawAbsent = true
 			wantEq(t, f.Set, false, "untouched flag does not report Set")
 		}
 	}
+	if !sawGiven || !sawAbsent {
+		t.Fatalf("context flags missing declared flags (given=%v absent=%v)", sawGiven, sawAbsent)
+	}
+	wantEq(t, cli.Given, "x", "bound value agrees with Set")
 }
 
 // Verifies: Cross-View Invariants 5 (staged parsing equals one-shot

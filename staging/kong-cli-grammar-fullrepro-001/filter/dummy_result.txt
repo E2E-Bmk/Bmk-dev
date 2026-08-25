@@ -1,0 +1,30 @@
+DUMMY GATE — kong-cli-grammar-fullrepro-001 (2026-08-25)
+
+Stub: adversarial module at the same import path
+(github.com/alecthomas/kong), wired via go mod edit -replace. Two modes
+toggled by KONG_STUB_REJECT:
+  accept-all — every function returns zero values / nil errors
+  reject-all — every function returns a stub failure error (New fails,
+               Parse returns a ParseError-wrapped stub error)
+
+Each of the 149 kept tests run individually (go test -run '^Name$'
+-count=1).
+
+  mode=accept  passed=0  total=149  (0.0%)
+  mode=reject  passed=1  total=149  (0.7%)
+
+Sole reject-mode passer: atomic::TestMustPanicsOnGrammarError — a
+failure_path test asserting that Must panics on an invalid grammar; a
+stub whose New rejects everything necessarily satisfies it. Inherent to
+the assertion kind, reported separately in spec_test_map.md. Kept.
+
+History: initial accept-all sweep had 2 passers —
+atomic::TestCustomNegationName (zero-value false coincided with the
+expected negated value) and integration::TestValueSetReflectsSource
+(empty Flags() list skipped the assertion loop). Both strengthened with
+non-vacuity guards (default-true assertion before negation; required
+presence of both flags plus a bound-value check). Both now fail in both
+stub modes and the full oracle still passes 149/149 against the pinned
+reference.
+
+Gate threshold: <=10% pass rate required. Result: worst case 0.7% — PASS.

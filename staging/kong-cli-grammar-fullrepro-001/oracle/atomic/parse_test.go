@@ -106,8 +106,17 @@ func TestCustomNegationName(t *testing.T) {
 		Feature bool `negatable:"no-custom-feature" default:"true"`
 	}
 	a := build(t, &cli)
-	mustParse(t, a, []string{"--no-custom-feature"})
-	wantEq(t, cli.Feature, false, "custom negation")
+	// Non-vacuity: the default must actually produce true before the
+	// negated form is exercised.
+	mustParse(t, a, nil)
+	wantEq(t, cli.Feature, true, "default true applied")
+
+	var cli2 struct {
+		Feature bool `negatable:"no-custom-feature" default:"true"`
+	}
+	b := build(t, &cli2)
+	mustParse(t, b, []string{"--no-custom-feature"})
+	wantEq(t, cli2.Feature, false, "custom negation")
 }
 
 // Verifies: Parsing and Binding — terminator and passthrough (--).

@@ -202,10 +202,13 @@ func TestKongPublicFields(t *testing.T) {
 	if a.k.Model == nil {
 		t.Fatal("Model is nil")
 	}
+	wantEq(t, a.k.Model.Name, "app", "Model.Name from Name option")
 	if a.k.Exit == nil {
 		t.Fatal("Exit is nil")
 	}
 	if a.k.Stdout == nil || a.k.Stderr == nil {
 		t.Fatal("writers are nil")
 	}
+	a.k.Printf("through model")
+	wantEq(t, a.out.String(), "app: through model\n", "Stdout is the configured writer")
 }

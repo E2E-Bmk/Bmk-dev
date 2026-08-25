@@ -277,3 +277,4 @@ func TestUndefinedInterpolationVarError(t *testing.T) {
 	}
 	wantEq(t, err.Error(), `default value for --a="": undefined variable ${undeclared}`, "error text")
 }
+

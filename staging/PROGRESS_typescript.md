@@ -26,6 +26,7 @@ oclif-core, tinybase, typedoc, unstorage, wireit).
 | 3 | kysely-query-compiler-fullrepro-001 | kysely-org/kysely (kysely@0.29.5) | S3_DONE (packet committed) | 96 (70/22/4) | 96/96 local vitest | 0/96 | SQL query compiler; builder AST -> pg/mysql/sqlite compile + plugin/schema transforms + DummyDriver lifecycle; 2 spec claims corrected from reference execution |
 | 4 | xstate-statechart-engine-fullrepro-001 | statelyai/xstate (xstate@5.32.5) | S3_DONE (packet committed) | 96 (71/21/4) | 96/96 local vitest | 0/96 | statechart engine; SCXML-style transition selection/microsteps + actor, pure-step, query, persistence, SimulatedClock, completion projections |
 | 5 | mobx-reactivity-engine-fullrepro-001 | mobxjs/mobx (mobx@7.0.3) | S3_DONE (packet committed) | 100 (75/21/4) | 100/100 local vitest | 0/100 | reactive graph engine; observables/computed/effects/actions/collections/events/introspection; v7 fresh-major memorization traps probed (observable(primitive) boxes, standalone annotation tokens, enforceActions warns) |
+| 6 | chevrotain-parser-toolkit-fullrepro-001 | Chevrotain/chevrotain (chevrotain@13.2.0) | S3_DONE (packet committed) | 98 (73/21/4) | 98/98 local vitest | 0/98 | parser toolkit; tokens/lexer modes/CST/visitors/recovery/validation/GAst/serialization/dts/embedded values; v13 traps probed (content assist removed, onlyOffset drops endOffset, maxLookahead 3) |
 
 ## Rejected candidates (hard gates)
 

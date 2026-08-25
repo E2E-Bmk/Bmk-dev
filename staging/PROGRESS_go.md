@@ -43,6 +43,7 @@ the packets graduate):
     "github.com/santhosh-tekuri/jsonschema/v6",
     "github.com/santhosh-tekuri/jsonschema/v6/kind",
 ],
+"dig-container-graph-fullrepro-001": ["go.uber.org/dig"],
 ```
 
 Reference runs execute `go test -json ./...` per suite against the pinned
@@ -55,9 +56,11 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | # | task_id | repo | state | oracle (atomic+integration) | reference | notes |
 |---|---------|------|-------|-----------------------------|-----------|-------|
 | 1 | jsonschema-compile-validate-fullrepro-001 | santhosh-tekuri/jsonschema @ v6.0.3 | S3_DONE | 79 (52+27) | 79/79 | Track B (upstream = data-driven suite runners); dummy 2/79=2.5% |
+| 2 | dig-container-graph-fullrepro-001 | uber-go/dig @ v1.19.0 | S3_DONE | 99 (62+37) | 99/99 | Track B (upstream tests bound to internal/digtest); dummy worst-case 5/99=5.1% |
 
 ## Candidate selection log (CANDIDATES.md rows deferred; write scope is staging/ only)
 
 | repo | status | metric | detail |
 |------|--------|--------|--------|
 | santhosh-tekuri/jsonschema | SELECTED | ~5.4k LOC core, 27 upstream test funcs + 4700 suite cases | JSON Schema 2020-12/draft-7 engine: lazy ref graphs, rational-number equality, output projections; Track B |
+| uber-go/dig | SELECTED | ~6.0k LOC, 72 test funcs | reflection DI graph: scopes/groups/decorators, cycle detection, error tree + DOT projections; Track B |

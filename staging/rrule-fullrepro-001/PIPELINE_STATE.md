@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,8 +20,9 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] draft spec.md (6-layer) from docs.rs 0.14.0 + RFC 5545 recurrence semantics within scope_plan: parse/build/validate/serialize, iteration, set algebra, getters; scope out serde/cli-tool features, Tz::Local, fine-grained parse error taxonomy; decide by_easter via probe
-- [ ] probe pinned checkout for: normalization in Display, validation bounds, DST fold/gap behavior, limit semantics (all(limit) vs all_unchecked), BYSETPOS interactions
+- [ ] audit upstream test imports (all 317 in-crate; confirm structural unavailability)
+- [ ] land filter/rewrite_audit.md; assemble generated-only oracle (atomic + integration)
+- [ ] validate reference 100%, fresh LINT_PASS, filter artifacts, task.json
 
 ---
 
@@ -31,6 +32,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (~9000 non-test LOC; RFC 5545 recurrence engine with four projections of one property model; builds on cargo 1.83, MSRV 1.74) |
 | 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec drafting |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 landed; three probe rounds fixed: UNTIL-must-be-UTC (same-zone rejected), BYMONTHDAY zero pruning, negative-monthday getter/Display invisibility, parse-vs-builder range error split, limited-flag on exact cap, duplicate-preserving merge, instant-based exdate, DST gap +1h shift, fall-back earlier offset; floating datetimes + Tz::LOCAL scoped out (host-dependent); 25 validation checks + style gate pass |
+| 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
 
 ---
 

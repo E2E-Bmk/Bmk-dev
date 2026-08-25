@@ -24,6 +24,7 @@ oclif-core, tinybase, typedoc, unstorage, wireit).
 | 1 | orama-search-engine-fullrepro-001 | oramasearch/orama (@orama/orama@3.1.18) | S3_DONE (packet committed) | 78 (52/23/3) | 78/78 local vitest | 0/78 | full-text engine; filters/facets/groups/sort/persistence |
 | 2 | rrule-recurrence-engine-fullrepro-001 | jkbrzt/rrule (rrule@2.8.1) | S3_DONE (packet committed) | 90 (64/22/4) | 90/90 local vitest | 0/90 | RFC 5545 recurrence engine; expansion/string/text/set projections; 3 spec claims corrected from reference execution |
 | 3 | kysely-query-compiler-fullrepro-001 | kysely-org/kysely (kysely@0.29.5) | S3_DONE (packet committed) | 96 (70/22/4) | 96/96 local vitest | 0/96 | SQL query compiler; builder AST -> pg/mysql/sqlite compile + plugin/schema transforms + DummyDriver lifecycle; 2 spec claims corrected from reference execution |
+| 4 | xstate-statechart-engine-fullrepro-001 | statelyai/xstate (xstate@5.32.5) | S3_DONE (packet committed) | 96 (71/21/4) | 96/96 local vitest | 0/96 | statechart engine; SCXML-style transition selection/microsteps + actor, pure-step, query, persistence, SimulatedClock, completion projections |
 
 ## Rejected candidates (hard gates)
 

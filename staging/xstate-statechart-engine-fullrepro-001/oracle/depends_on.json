@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::cross-projection invariants::actor interpretation and pure stepping agree over a mixed event sequence": [
+      "atomic::actor lifecycle and snapshots::send transitions and updates the snapshot",
+      "atomic::pure stepping and persistence::getNextSnapshot returns the successor without mutating its input",
+      "atomic::transition selection::raise enqueues an internal event processed before external events"
+    ],
+    "integration::cross-projection invariants::a false can implies the event leaves value and context unchanged": [
+      "atomic::guards::can returns false when every candidate is guarded off",
+      "atomic::actor lifecycle and snapshots::can reports whether an event would select a transition",
+      "atomic::guards::an inline guard blocks the transition when false"
+    ],
+    "integration::cross-projection invariants::matches agrees with matchesState across a nested run": [
+      "atomic::actor lifecycle and snapshots::matches accepts full and partial state values",
+      "atomic::actor lifecycle and snapshots::matchesState tests refinement of plain state values",
+      "atomic::hierarchy parallel and history::matches accepts every prefix of the active path"
+    ],
+    "integration::cross-projection invariants::a resumed actor continues exactly like the original": [
+      "atomic::pure stepping and persistence::a persisted snapshot restores value and context in a new actor",
+      "atomic::actions and context::assign accepts property updaters and plain values"
+    ],
+    "integration::guarded routing workflows::a triage machine routes by combinator guards over payload and context": [
+      "atomic::guards::and or and not combine guards",
+      "atomic::transition selection::candidates evaluate in document order with guard fall-through",
+      "atomic::guards::guards read the event payload"
+    ],
+    "integration::guarded routing workflows::provide swaps a named guard without touching the source machine": [
+      "atomic::machine definitions::provide returns a machine with overriding implementations",
+      "atomic::machine definitions::named guards resolve from the second createMachine argument"
+    ],
+    "integration::guarded routing workflows::wildcard descriptors and child precedence route a hierarchical dispatcher": [
+      "atomic::transition selection::descriptor specificity ranks exact over partial wildcard over star",
+      "atomic::transition selection::an active child transition overrides the ancestor for the same event",
+      "atomic::transition selection::a dot-prefixed target names a child of the source"
+    ],
+    "integration::guarded routing workflows::raised events cascade through guards to a quiescent state": [
+      "atomic::transition selection::multiple raised events process in first-in first-out order",
+      "atomic::actions and context::raised event payloads reach the triggered transition",
+      "atomic::transition selection::always transitions resolve immediately on entry"
+    ],
+    "integration::parallel coordination::stateIn gates one region on another across a workflow": [
+      "atomic::guards::stateIn gates a transition on another parallel region",
+      "atomic::hierarchy parallel and history::a parallel state activates every region"
+    ],
+    "integration::parallel coordination::regions finish independently and onDone fires only at full completion": [
+      "atomic::hierarchy parallel and history::a finished region keeps its final key while others continue",
+      "atomic::final states and output::a parallel onDone fires only when every region is final"
+    ],
+    "integration::parallel coordination::independent timers in parallel regions fire from one simulated clock": [
+      "atomic::timed transitions::an after transition fires at its threshold and not before",
+      "atomic::hierarchy parallel and history::a parallel state activates every region",
+      "atomic::timed transitions::delays accumulate across several increments"
+    ],
+    "integration::history workflows::shallow and deep history nodes in one parent restore different depths": [
+      "atomic::hierarchy parallel and history::shallow history re-enters the remembered child through its initial defaults",
+      "atomic::hierarchy parallel and history::deep history restores the remembered leaf configuration"
+    ],
+    "integration::history workflows::deep history memory survives a persistence round trip": [
+      "atomic::hierarchy parallel and history::deep history restores the remembered leaf configuration",
+      "atomic::pure stepping and persistence::a persisted snapshot restores value and context in a new actor"
+    ],
+    "integration::timed workflows::a reenter self-transition re-arms the timer while a plain one does not": [
+      "atomic::transition selection::reenter true forces exit and re-entry of the source",
+      "atomic::transition selection::a self-targeting transition does not re-enter by default",
+      "atomic::timed transitions::re-entering a state re-arms its timer from zero"
+    ],
+    "integration::timed workflows::an escalation ladder climbs one rung per accumulated threshold": [
+      "atomic::timed transitions::delays accumulate across several increments",
+      "atomic::timed transitions::one large increment advances a delayed chain by a single step",
+      "atomic::actions and context::actions run as exit then transition then entry"
+    ],
+    "integration::completion pipelines::final output routes through guarded onDone into machine output": [
+      "atomic::final states and output::a final state's output reaches onDone as event.output",
+      "atomic::final states and output::machine output maps the completion event and defaults to undefined",
+      "atomic::final states and output::a compound onDone fires when its child reaches final"
+    ],
+    "integration::completion pipelines::toPromise observes a completion driven by raised events": [
+      "atomic::final states and output::toPromise resolves with the snapshot output at completion",
+      "atomic::transition selection::raise enqueues an internal event processed before external events"
+    ],
+    "integration::completion pipelines::input shapes context and the completion output derives from it": [
+      "atomic::machine definitions::a context factory receives the actor input",
+      "atomic::final states and output::machine output maps the completion event and defaults to undefined"
+    ],
+    "integration::pure stepping pipelines::a pure fold reaches done with computed output": [
+      "atomic::pure stepping and persistence::getInitialSnapshot resolves the initial configuration and context",
+      "atomic::pure stepping and persistence::stepping a done snapshot keeps it done and unchanged",
+      "atomic::final states and output::machine output maps the completion event and defaults to undefined"
+    ],
+    "integration::pure stepping pipelines::pure steps replay a raise pipeline applying assigns but no effects": [
+      "atomic::pure stepping and persistence::pure steps apply assigns but never run side-effecting actions",
+      "atomic::pure stepping and persistence::pure steps process raised events and always transitions to quiescence"
+    ],
+    "integration::persistence workflows::a restored snapshot answers tags, can and matches like the original": [
+      "atomic::pure stepping and persistence::a persisted snapshot restores value and context in a new actor",
+      "atomic::actor lifecycle and snapshots::hasTag reflects tags of active states",
+      "atomic::actor lifecycle and snapshots::can reports whether an event would select a transition"
+    ],
+    "integration::end-to-end workflows::an order fulfilment machine runs from input to completion across every projection": [
+      "atomic::machine definitions::a context factory receives the actor input",
+      "atomic::transition selection::candidates evaluate in document order with guard fall-through",
+      "atomic::final states and output::a compound onDone fires when its child reaches final",
+      "atomic::final states and output::toPromise resolves with the snapshot output at completion",
+      "atomic::actor lifecycle and snapshots::hasTag reflects tags of active states"
+    ],
+    "integration::end-to-end workflows::a batch pipeline persists mid-flight and finishes on a simulated clock": [
+      "atomic::pure stepping and persistence::a persisted snapshot restores value and context in a new actor",
+      "atomic::timed transitions::an after transition fires at its threshold and not before",
+      "atomic::final states and output::machine output maps the completion event and defaults to undefined"
+    ],
+    "integration::end-to-end workflows::a launch checklist coordinates parallel regions, timers and completion output": [
+      "atomic::guards::stateIn gates a transition on another parallel region",
+      "atomic::timed transitions::an after transition fires at its threshold and not before",
+      "atomic::final states and output::a parallel onDone fires only when every region is final",
+      "atomic::final states and output::a final state's output reaches onDone as event.output"
+    ],
+    "integration::end-to-end workflows::pure stepping replays an actor's full run to an identical terminal snapshot": [
+      "atomic::pure stepping and persistence::getNextSnapshot returns the successor without mutating its input",
+      "atomic::pure stepping and persistence::stepping a done snapshot keeps it done and unchanged",
+      "atomic::final states and output::machine output maps the completion event and defaults to undefined",
+      "atomic::transition selection::raise enqueues an internal event processed before external events"
+    ]
+  }
+}

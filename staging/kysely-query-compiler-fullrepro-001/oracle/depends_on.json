@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::cross-dialect consistency::one join query compiles under all three dialects with identical parameters": [
+      "atomic::compilation contract::a filtered selection compiles to sql text with ordered parameters",
+      "atomic::compilation contract::mysql and sqlite compilers render their own quoting and placeholder styles",
+      "atomic::row selection::innerJoin renders an on clause from column references"
+    ],
+    "integration::cross-dialect consistency::placeholder counts equal parameter lengths across dialects": [
+      "atomic::expressions and functions::in binds one parameter per element and an empty list renders bare parentheses",
+      "atomic::row selection::limit and offset bind counts as parameters in every dialect",
+      "atomic::compilation contract::mysql and sqlite compilers render their own quoting and placeholder styles"
+    ],
+    "integration::cross-dialect consistency::a mysql pipeline renders question marks throughout": [
+      "atomic::compilation contract::mysql and sqlite compilers render their own quoting and placeholder styles",
+      "atomic::row selection::leftJoin callback combines onRef and parameterized on conditions",
+      "atomic::row selection::limit and offset bind counts as parameters in every dialect"
+    ],
+    "integration::cross-dialect consistency::a sqlite insert returning renders question marks with double quotes": [
+      "atomic::compilation contract::mysql and sqlite compilers render their own quoting and placeholder styles",
+      "atomic::mutations::insert renders columns from object keys and binds values",
+      "atomic::mutations::returning lists columns and returningAll renders star"
+    ],
+    "integration::composed queries::a cte feeds a join with grouped aggregation": [
+      "atomic::composition primitives::with prepends common table expressions in declaration order",
+      "atomic::row selection::innerJoin renders an on clause from column references",
+      "atomic::expressions and functions::aggregate helpers render count and distinct",
+      "atomic::row selection::groupBy and having accept aggregate and simple forms"
+    ],
+    "integration::composed queries::chained ctes reference earlier definitions and union a tail": [
+      "atomic::composition primitives::with prepends common table expressions in declaration order",
+      "atomic::composition primitives::union and unionAll chain in call order"
+    ],
+    "integration::composed queries::a recursive counter cte compiles with a union all body": [
+      "atomic::composition primitives::withRecursive renders the recursive keyword and column list",
+      "atomic::composition primitives::union and unionAll chain in call order",
+      "atomic::compilation contract::selectNoFrom compiles a from-less selection"
+    ],
+    "integration::composed queries::an exists filter pairs with a correlated projection": [
+      "atomic::expressions and functions::exists wraps a correlated subquery",
+      "atomic::expressions and functions::a correlated subquery projects as an aliased column"
+    ],
+    "integration::composed queries::a derived table join filters on expressions": [
+      "atomic::row selection::a derived table joins as an aliased subquery",
+      "atomic::expressions and functions::or and and lists render inside one pair of parentheses"
+    ],
+    "integration::composed queries::conditional refinements match a hand-built chain": [
+      "atomic::composition primitives::$if applies its refinement only when the condition is true",
+      "atomic::compilation contract::a filtered selection compiles to sql text with ordered parameters"
+    ],
+    "integration::composed queries::clearWhere resets filters before new ones apply": [
+      "atomic::row selection::clearWhere discards accumulated filters",
+      "atomic::row selection::repeated where calls join with and in call order"
+    ],
+    "integration::composed queries::case cast and aggregates compose in one projection": [
+      "atomic::expressions and functions::a case expression parameterizes then and else values",
+      "atomic::expressions and functions::cast renders the target type unquoted and val binds through coalesce",
+      "atomic::expressions and functions::aggregate helpers render count and distinct"
+    ],
+    "integration::mutation pipelines::a multi-row insert with conflict handling and returning binds in order": [
+      "atomic::mutations::multi-row insert unions columns and renders default for gaps",
+      "atomic::mutations::on conflict renders do nothing and parameterized do update set",
+      "atomic::mutations::returning lists columns and returningAll renders star"
+    ],
+    "integration::mutation pipelines::an update mixes expression assignments with bound values and returning": [
+      "atomic::mutations::update set accepts expression assignments",
+      "atomic::mutations::update set renders assignments in key order",
+      "atomic::mutations::returning lists columns and returningAll renders star"
+    ],
+    "integration::mutation pipelines::a delete filters through a subquery and returns rows": [
+      "atomic::mutations::delete renders with filters and returning",
+      "atomic::row selection::a subquery is accepted as a filter right-hand side"
+    ],
+    "integration::raw and builder interleaving::embedded fragment parameters interleave left to right": [
+      "atomic::raw sql fragments::a fragment serves as a filter left-hand side",
+      "atomic::row selection::repeated where calls join with and in call order"
+    ],
+    "integration::raw and builder interleaving::fragment values keep interpolation order standalone and embedded": [
+      "atomic::raw sql fragments::the template tag binds interpolations in order",
+      "atomic::raw sql fragments::a fragment serves as a filter left-hand side"
+    ],
+    "integration::raw and builder interleaving::identifier helpers follow the compiling dialect": [
+      "atomic::raw sql fragments::a fragment renders under the dialect it compiles against",
+      "atomic::raw sql fragments::identifier helpers render quoted references"
+    ],
+    "integration::transforms over mutations::camel case rewrite leaves mutation parameters identical": [
+      "atomic::identifier transforms::camel case plugin renders snake case tables and columns",
+      "atomic::identifier transforms::camel case plugin leaves parameters untouched",
+      "atomic::mutations::update set renders assignments in key order"
+    ],
+    "integration::transforms over mutations::schema scoping spans queries mutations and ddl": [
+      "atomic::identifier transforms::withSchema qualifies table references across statement kinds",
+      "atomic::mutations::update set renders assignments in key order",
+      "atomic::schema definition::createTable passes column types through and lists columns"
+    ],
+    "integration::transforms over mutations::camel case composes with schema scoping": [
+      "atomic::identifier transforms::camel case plugin renders snake case tables and columns",
+      "atomic::identifier transforms::withSchema qualifies table references across statement kinds"
+    ],
+    "integration::immutability across derivations::a shared base branches into independent queries": [
+      "atomic::composition primitives::deriving a builder leaves the original unchanged",
+      "atomic::row selection::orderBy accumulates terms with optional directions"
+    ],
+    "integration::end-to-end workflows::define schema insert query and destroy in one lifecycle": [
+      "atomic::schema definition::createTable passes column types through and lists columns",
+      "atomic::schema definition::references with onDelete renders the foreign key action",
+      "atomic::mutations::insert renders columns from object keys and binds values",
+      "atomic::execution lifecycle::execute resolves with no rows and executeTakeFirst resolves undefined under the dummy driver",
+      "atomic::execution lifecycle::execution after destroy rejects while compilation still works"
+    ],
+    "integration::end-to-end workflows::one reporting query compiles under all dialects and executes": [
+      "atomic::compilation contract::mysql and sqlite compilers render their own quoting and placeholder styles",
+      "atomic::expressions and functions::aggregate helpers render count and distinct",
+      "atomic::execution lifecycle::execute resolves with no rows and executeTakeFirst resolves undefined under the dummy driver"
+    ],
+    "integration::end-to-end workflows::a camel case pipeline runs from ddl to select": [
+      "atomic::identifier transforms::camel case plugin renders snake case tables and columns",
+      "atomic::schema definition::createTable passes column types through and lists columns",
+      "atomic::schema definition::createIndex dropTable and alterTable render their statements",
+      "atomic::execution lifecycle::execute resolves with no rows and executeTakeFirst resolves undefined under the dummy driver"
+    ],
+    "integration::end-to-end workflows::raw fragments builders ctes and unions cooperate end to end": [
+      "atomic::composition primitives::with prepends common table expressions in declaration order",
+      "atomic::composition primitives::union and unionAll chain in call order",
+      "atomic::raw sql fragments::a fragment serves as a filter left-hand side",
+      "atomic::execution lifecycle::executeTakeFirstOrThrow rejects with NoResultError"
+    ]
+  }
+}

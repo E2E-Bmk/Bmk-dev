@@ -1,0 +1,96 @@
+{"taxonomy_key": "atomic::compilation contract::a filtered selection compiles to sql text with ordered parameters", "layer": "atomic"}
+{"taxonomy_key": "atomic::compilation contract::mysql and sqlite compilers render their own quoting and placeholder styles", "layer": "atomic"}
+{"taxonomy_key": "atomic::compilation contract::repeated compilation returns equal sql and parameters", "layer": "atomic"}
+{"taxonomy_key": "atomic::compilation contract::constructing an instance without a dialect throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::compilation contract::a query with no bound values compiles with an empty parameters array", "layer": "atomic"}
+{"taxonomy_key": "atomic::compilation contract::a table alias registers through the as form", "layer": "atomic"}
+{"taxonomy_key": "atomic::compilation contract::selectNoFrom compiles a from-less selection", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::select accepts a single column, a list, and aliases", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::qualified column names render each segment quoted", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::selectAll and distinct render star and distinct forms", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::repeated where calls join with and in call order", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::whereRef compares two columns without binding", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::is and is not render null literally without parameters", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::equality with null binds null as a parameter", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::clearWhere discards accumulated filters", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::a subquery is accepted as a filter right-hand side", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::innerJoin renders an on clause from column references", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::leftJoin callback combines onRef and parameterized on conditions", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::a derived table joins as an aliased subquery", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::groupBy and having accept aggregate and simple forms", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::orderBy accumulates terms with optional directions", "layer": "atomic"}
+{"taxonomy_key": "atomic::row selection::limit and offset bind counts as parameters in every dialect", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::the expression builder renders a comparison with a bound value", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::inequality operators render exactly as written", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::an operator outside the supported set is rejected by name", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::or and and lists render inside one pair of parentheses", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::not prefixes the wrapped expression", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::between binds both bounds", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::in binds one parameter per element and an empty list renders bare parentheses", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::like and ilike bind their patterns", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::exists wraps a correlated subquery", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::a correlated subquery projects as an aliased column", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::a case expression parameterizes then and else values", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::cast renders the target type unquoted and val binds through coalesce", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::fn renders a generic function over column references", "layer": "atomic"}
+{"taxonomy_key": "atomic::expressions and functions::aggregate helpers render count and distinct", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::insert renders columns from object keys and binds values", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::multi-row insert unions columns and renders default for gaps", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::a raw fragment inserts inline instead of binding", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::defaultValues renders the default values clause", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::on conflict renders do nothing and parameterized do update set", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::mysql ignore renders insert ignore", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::returning lists columns and returningAll renders star", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::update set renders assignments in key order", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::update set accepts expression assignments", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::delete renders with filters and returning", "layer": "atomic"}
+{"taxonomy_key": "atomic::composition primitives::with prepends common table expressions in declaration order", "layer": "atomic"}
+{"taxonomy_key": "atomic::composition primitives::withRecursive renders the recursive keyword and column list", "layer": "atomic"}
+{"taxonomy_key": "atomic::composition primitives::union and unionAll chain in call order", "layer": "atomic"}
+{"taxonomy_key": "atomic::composition primitives::$if applies its refinement only when the condition is true", "layer": "atomic"}
+{"taxonomy_key": "atomic::composition primitives::deriving a builder leaves the original unchanged", "layer": "atomic"}
+{"taxonomy_key": "atomic::raw sql fragments::the template tag binds interpolations in order", "layer": "atomic"}
+{"taxonomy_key": "atomic::raw sql fragments::a fragment renders under the dialect it compiles against", "layer": "atomic"}
+{"taxonomy_key": "atomic::raw sql fragments::identifier helpers render quoted references", "layer": "atomic"}
+{"taxonomy_key": "atomic::raw sql fragments::lit inlines a literal and raw splices verbatim", "layer": "atomic"}
+{"taxonomy_key": "atomic::raw sql fragments::join renders parameters with a default and a custom separator", "layer": "atomic"}
+{"taxonomy_key": "atomic::raw sql fragments::a fragment serves as a filter left-hand side", "layer": "atomic"}
+{"taxonomy_key": "atomic::identifier transforms::camel case plugin renders snake case tables and columns", "layer": "atomic"}
+{"taxonomy_key": "atomic::identifier transforms::camel case plugin transforms alias positions qualified refs and raw refs", "layer": "atomic"}
+{"taxonomy_key": "atomic::identifier transforms::camel case plugin leaves parameters untouched", "layer": "atomic"}
+{"taxonomy_key": "atomic::identifier transforms::withSchema qualifies table references across statement kinds", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema definition::createTable passes column types through and lists columns", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema definition::references with onDelete renders the foreign key action", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema definition::column modifiers render in canonical order regardless of call order", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema definition::defaultTo inlines literals and raw fragments", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema definition::createIndex dropTable and alterTable render their statements", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema definition::schema statements compile with empty parameters", "layer": "atomic"}
+{"taxonomy_key": "atomic::execution lifecycle::execute resolves with no rows and executeTakeFirst resolves undefined under the dummy driver", "layer": "atomic"}
+{"taxonomy_key": "atomic::execution lifecycle::executeTakeFirstOrThrow rejects with NoResultError", "layer": "atomic"}
+{"taxonomy_key": "atomic::execution lifecycle::execution after destroy rejects while compilation still works", "layer": "atomic"}
+{"taxonomy_key": "integration::cross-dialect consistency::one join query compiles under all three dialects with identical parameters", "layer": "integration"}
+{"taxonomy_key": "integration::cross-dialect consistency::placeholder counts equal parameter lengths across dialects", "layer": "integration"}
+{"taxonomy_key": "integration::cross-dialect consistency::a mysql pipeline renders question marks throughout", "layer": "integration"}
+{"taxonomy_key": "integration::cross-dialect consistency::a sqlite insert returning renders question marks with double quotes", "layer": "integration"}
+{"taxonomy_key": "integration::composed queries::a cte feeds a join with grouped aggregation", "layer": "integration"}
+{"taxonomy_key": "integration::composed queries::chained ctes reference earlier definitions and union a tail", "layer": "integration"}
+{"taxonomy_key": "integration::composed queries::a recursive counter cte compiles with a union all body", "layer": "integration"}
+{"taxonomy_key": "integration::composed queries::an exists filter pairs with a correlated projection", "layer": "integration"}
+{"taxonomy_key": "integration::composed queries::a derived table join filters on expressions", "layer": "integration"}
+{"taxonomy_key": "integration::composed queries::conditional refinements match a hand-built chain", "layer": "integration"}
+{"taxonomy_key": "integration::composed queries::clearWhere resets filters before new ones apply", "layer": "integration"}
+{"taxonomy_key": "integration::composed queries::case cast and aggregates compose in one projection", "layer": "integration"}
+{"taxonomy_key": "integration::mutation pipelines::a multi-row insert with conflict handling and returning binds in order", "layer": "integration"}
+{"taxonomy_key": "integration::mutation pipelines::an update mixes expression assignments with bound values and returning", "layer": "integration"}
+{"taxonomy_key": "integration::mutation pipelines::a delete filters through a subquery and returns rows", "layer": "integration"}
+{"taxonomy_key": "integration::raw and builder interleaving::embedded fragment parameters interleave left to right", "layer": "integration"}
+{"taxonomy_key": "integration::raw and builder interleaving::fragment values keep interpolation order standalone and embedded", "layer": "integration"}
+{"taxonomy_key": "integration::raw and builder interleaving::identifier helpers follow the compiling dialect", "layer": "integration"}
+{"taxonomy_key": "integration::transforms over mutations::camel case rewrite leaves mutation parameters identical", "layer": "integration"}
+{"taxonomy_key": "integration::transforms over mutations::schema scoping spans queries mutations and ddl", "layer": "integration"}
+{"taxonomy_key": "integration::transforms over mutations::camel case composes with schema scoping", "layer": "integration"}
+{"taxonomy_key": "integration::immutability across derivations::a shared base branches into independent queries", "layer": "integration"}
+{"taxonomy_key": "integration::end-to-end workflows::define schema insert query and destroy in one lifecycle", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::one reporting query compiles under all dialects and executes", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a camel case pipeline runs from ddl to select", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::raw fragments builders ctes and unions cooperate end to end", "layer": "system_e2e"}

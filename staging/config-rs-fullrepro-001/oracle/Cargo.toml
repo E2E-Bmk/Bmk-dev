@@ -1,0 +1,12 @@
+[workspace]
+members = ["atomic", "integration"]
+resolver = "2"
+
+# The oracle ships without [patch.crates-io]: the runner appends it, pointing
+# config at the candidate workspace (member-manifest patches are ignored by
+# cargo, so the patch lives on this root manifest).
+[workspace.dependencies]
+# `version = "*"` so the patched workspace version satisfies the requirement.
+# Feature scope follows the spec: toml/json/ini only, no default features.
+config = { version = "*", default-features = false, features = ["toml", "json", "ini"] }
+serde = { version = "1", features = ["derive"] }

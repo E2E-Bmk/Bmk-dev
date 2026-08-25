@@ -3,7 +3,7 @@
 ```
 repo: rust-cli/config-rs
 source_path: https://github.com/rust-cli/config-rs (local: /tmp/refs/config-rs)
-commit: dd71fb46bc53f23b2baee422ec83b393b9c3f486 (tag v0.15.20)
+commit: 532ab4d827db199c1b0e9e457441fcc82b819fb9 (tag v0.15.11)
 language: rust
 target_crates: config
 src_loc: 4887 across src/, excluding tests/ and examples/
@@ -35,12 +35,12 @@ test_import_audit: clean — tests import only `config::{...}` public items
   (0% private-module imports)
 docs_test_alignment: aligned — docs.rs documents exactly the builder/source/
   lookup/deserialize projections the suite exercises
-contamination_note: config@0.15.20, released 2026-03-12, after 2025-era
+contamination_note: config@0.15.11, released 2025-03-12, near/before 2025-era
   training cutoffs; the crate API is old and stable (builder API since 0.12,
   2021) so prior-version semantics are likely memorized; mitigated by
   generated tests with values distinct from upstream and by the
   version-specific v0.15 behaviors (Environment::source injection,
-  convert-case, list parsing keys)
+  list parsing keys, negative-subscript writes)
 decision: keep
 reason: layered-config rule engine (ordered-layer deep-merge into one fact
   source) with 6 public projections, multi-format agreement obligations, and
@@ -49,8 +49,11 @@ risks: config loading is a common pattern; mitigated because the specific
   coercion table (bool<->int<->string), path grammar with negative indices,
   env normalization pipeline (prefix strip, separator translation, list
   parse keys, try_parsing) and layer precedence rules are library-specific;
-  MSRV: v0.15.21+ needs rustc 1.85 (edition 2024), so the task pins v0.15.20
-  (edition 2018, MSRV 1.76) which builds on the sandbox toolchain (1.83)
+  MSRV: v0.15.12+ pull toml 0.9/1.x whose subcrates need rustc 1.85
+  (edition 2024), so the task pins v0.15.11 (edition 2018, MSRV 1.75,
+  toml 0.8) which builds on the sandbox toolchain (1.83); the oracle
+  Cargo.lock additionally pins indexmap 2.7.1 / hashbrown 0.15.5 to keep
+  transitive resolution inside edition-2021 crates
 scope_plan: target_subdomain=core engine + toml/json/ini formats via
   File::from_str + Environment via injected source maps; expected_oracle_max=70
   (excluded: yaml/ron/json5/corn formats, async sources, file-on-disk

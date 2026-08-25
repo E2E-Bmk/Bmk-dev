@@ -53,3 +53,4 @@ rhai, comfy-table, toml-rs (toml/toml_edit/taplo), cargo-generate, gitoxide
 | # | task_id | repo | state | notes |
 |---|---------|------|-------|-------|
 | 1 | evalexpr-fullrepro-001 | ISibboI/evalexpr @ 92d99f4 (v13.1.0) | S3_DONE | 56 tests (29 atomic / 27 integration incl. 5 generated); reference 56/56; LINT_PASS |
+| 2 | config-rs-fullrepro-001 | rust-cli/config-rs @ 532ab4d (v0.15.11) | S3_DONE | 82 tests (39 atomic / 43 integration incl. 14 generated); reference 82/82; LINT_PASS; Cargo.lock pins indexmap 2.7.1 / hashbrown 0.15.5 for rustc 1.83 |

@@ -330,3 +330,4 @@
 | ISibboI/evalexpr | SELECTED | 3811 | 56 | rust; expression-engine rule shape: tokenizer+precedence tree, typed eval projections, context state, library-specific error taxonomy |
 | rust-cli/config-rs | SELECTED | 4887 | 154 | layered-config rule engine: ordered-layer deep merge, 6 public projections (typed get, deserialize, path grammar, env normalization, Config-as-source, error taxonomy); pinned v0.15.11 for sandbox MSRV (toml 0.8 line) |
 | mitsuhiko/similar | SELECTED | 5009 | 50 | rust; diff engine: one DiffOp fact stream projected through ops/changes/grouped/unified/ratio/inline/remap surfaces, 3 algorithms + 2 postprocessing hooks; pinned 2.7.0 for sandbox rustc 1.83 |
+| cessen/ropey | SELECTED | 8328 | 415 | rust; rope text engine: one B-tree text state projected through byte/char/line/utf16 coordinates, editing, 4 iterators, slices, chunks/builder, io, cmp/hash; scoped to oracle max 110; v1.6.1 MSRV 1.65 |

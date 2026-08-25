@@ -465,7 +465,7 @@ There is no console entry point in this deliverable.
 - Language: Rust, edition 2018-compatible (toolchain 1.83; the crate's
   declared minimum supported Rust version must not exceed it).
 - The crate must build as `config` with cargo features `toml`, `json`, and
-  `ini` available and enabled by the oracle dependency declaration
+  `ini` available; the assessment suite depends on the crate as
   `config = { version = "*", default-features = false, features = ["toml", "json", "ini"] }`.
 - Format parsing may use third-party parser crates (TOML, JSON, INI parsers
   and serde integrations); the layering, path, coercion, environment, and

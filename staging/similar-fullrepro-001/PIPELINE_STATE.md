@@ -11,7 +11,7 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
@@ -20,7 +20,7 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] audit upstream test imports against spec surface; rewrite or drop undeclared-surface asserts
+- [ ] (next stage) S4_SETUP: build task environment from repo_commit and run scorer end-to-end
 
 ---
 
@@ -33,6 +33,10 @@ todo:
 | 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_CHECK | self-check: modal phrasing fixed (2 `can` clauses), no leakage words in body, Non-Goals phrasing conforms, API catalog Name/Kind/Role only |
 | 4 | 2026-08-25 | S2_SPEC_CHECK | S2_SPEC_DONE | spec passes phrasing/structure rules of docs/SPEC_STANDARD.md; features scoped text+unicode+inline; bytes/serde/wasm scoped out |
 | 5 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin oracle: inline unit tests in src/, must be lifted onto public surface only |
+| 6 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit done: dropped find_middle_snake/serde/bytes/deadline-timing tests; 2 raw-callback asserts rewritten onto declared guarantees (minimal script, capture_diff_slices) |
+| 7 | 2026-08-25 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md landed: 33 upstream kept (snapshots inlined as assert_eq via reference probe), 58 generated on fresh inputs |
+| 8 | 2026-08-25 | S3B_TRIGGER | S3_ORACLE_MERGE | oracle assembled: workspace + atomic(64) + integration(27 in 4 modules), depends_on.json, Cargo.lock pinned (similar 2.7.0, unicode-segmentation 1.12.0) |
+| 9 | 2026-08-25 | S3_ORACLE_MERGE | S3_DONE | reference run 91/91 pass (reference_score.json); spec_test_map.md, kept lists, taxonomy.jsonl, task.json written; lint fresh: LINT_PASS |
 
 ---
 

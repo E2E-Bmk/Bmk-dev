@@ -212,8 +212,11 @@ empty values of the empty structural types.
 `cty.Value`. `IsNull` reports nullness. `IsKnown` reports whether the
 receiver itself is known; `IsWhollyKnown` additionally requires every nested
 value to be known, so a known list containing an unknown element is known but
-not wholly known. `HasWhollyKnownType` reports whether the value's type
-contains no dynamic placeholders anywhere. `cty.UnknownAsNull` returns a deep
+not wholly known. `HasWhollyKnownType` returns `false` exactly when the value
+is the dynamic unknown (`cty.DynamicVal`) or contains it nested at any depth —
+so its final type could still change — and `true` for every other value,
+including a null of the dynamic pseudo-type and an empty collection whose
+element type is dynamic. `cty.UnknownAsNull` returns a deep
 copy of a value in which every unknown, at any depth, is replaced by the null
 of its type.
 
@@ -385,8 +388,8 @@ superset of the possible final values, for known and unknown receivers alike:
 refined non-null; `CouldBeNull` is its complement; `TypeConstraint`,
 `StringPrefix`, `NumberLowerBound`, `NumberUpperBound`,
 `LengthLowerBound`, and `LengthUpperBound` expose the refined bounds, and
-`Includes` reports whether a candidate value falls inside the range as a
-`cty.Bool`.
+`Includes` returns known `cty.False` for a candidate value provably outside
+the range and an unknown boolean otherwise.
 
 ## Conversion Engine
 

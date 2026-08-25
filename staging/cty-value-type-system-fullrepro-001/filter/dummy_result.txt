@@ -1,0 +1,38 @@
+Dummy gate — cty-value-type-system-fullrepro-001 (2026-08-25)
+
+Stub: adversarial Go module at module path github.com/zclconf/go-cty
+(packages cty, cty/convert, cty/json, cty/msgpack), providing the full
+spec-declared API surface. Two variants toggled by a package flag:
+
+- accept-all: every predicate returns true / cty.True, every constructor
+  returns a zero value, every fallible call returns a nil error, codecs
+  return trivial payloads ("null" / nil byte).
+- reject-all: every predicate returns false / cty.False, every fallible
+  call returns a generic "stub failure" error.
+
+Wiring: go mod edit -replace github.com/zclconf/go-cty => <stub>;
+each of the 132 base tests executed individually
+(go test ./<pkg> -run '^<TestName>$') so that a panic in one test cannot
+mask the outcome of another.
+
+Results:
+- accept-all variant: 6 / 132 passed = 4.5%
+  (TestRefinedAnswersAgreeWithEventualValues, TestTypeProjectionsAgree,
+   TestIterationAgreesWithAccess, TestPathApplyAgreesWithDirectAccess,
+   TestSchemaEvolutionWorkflow, TestTypeInferenceWorkflow — all
+   agreement/consistency assertions that any internally uniform
+   implementation satisfies)
+- reject-all variant: 2 / 132 passed = 1.5%
+  (TestListToTupleUnavailable — expects a conversion error, which the
+   reject stub supplies; TestIterationAgreesWithAccess — vacuous over an
+   empty iterator)
+
+Worst case 6/132 = 4.5% <= 10% — dummy gate PASS.
+
+History: an earlier oracle revision passed 20/132 (15.2%) against the
+accept-all stub because round-trip and identity tests relied solely on
+RawEquals/Equals, which a constant-true equality satisfies. Those tests
+were strengthened with negative equality controls (assert X must NOT
+equal an unrelated value) and native-content assertions (AsString,
+AsBigFloat, IsNull, LengthInt, marshaled byte content) before this run;
+the reference was re-verified at 132/132 after the change.

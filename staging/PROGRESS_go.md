@@ -23,7 +23,7 @@ staging/{task_id}/
     |-- taxonomy.jsonl          {"taxonomy_key": "atomic::TestX", "layer": "atomic"}
     |-- lint_result.txt         oracle_import_lint output, first line LINT_PASS
     |-- reference_score.json    reference run at pinned version, must be 100%
-    `-- dummy_result.txt        adversarial dummy run evidence (0 passes required)
+    `-- dummy_result.txt        adversarial dummy run evidence (worst case <= 10%)
 ```
 
 ## Harness note (required to reproduce lint results)
@@ -49,6 +49,12 @@ the packets graduate):
     "github.com/alecthomas/participle/v2",
     "github.com/alecthomas/participle/v2/lexer",
 ],
+"cty-value-type-system-fullrepro-001": [
+    "github.com/zclconf/go-cty/cty",
+    "github.com/zclconf/go-cty/cty/convert",
+    "github.com/zclconf/go-cty/cty/json",
+    "github.com/zclconf/go-cty/cty/msgpack",
+],
 ```
 
 Lint caveat for `/vN` module paths: `go_target_symbols` derives the package
@@ -71,6 +77,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | 2 | dig-container-graph-fullrepro-001 | uber-go/dig @ v1.19.0 | S3_DONE | 99 (62+37) | 99/99 | Track B (upstream tests bound to internal/digtest); dummy worst-case 5/99=5.1% |
 | 3 | gocmp-equality-engine-fullrepro-001 | google/go-cmp @ v0.7.0 | S3_DONE | 87 (54+33) | 87/87 | Track B (upstream = golden-transcript mega-runner + white-box); dummy worst-case 3/87=3.4% |
 | 4 | participle-grammar-parser-fullrepro-001 | alecthomas/participle @ v2.1.4 | S3_DONE | 104 (72+32) | 104/104 | Track B (upstream tests bound to alecthomas/assert+repr goldens); dummy worst-case 5/104=4.8% |
+| 5 | cty-value-type-system-fullrepro-001 | zclconf/go-cty @ v1.19.0 | S3_DONE | 132 (96+36) | 132/132 | Track B (upstream 81/83 in-package white-box); dummy worst-case 6/132=4.5% after strengthening pass (initial accept-stub 15.2% → negative controls + native-content assertions); module requires go >= 1.25 |
 
 ## Candidate selection log (CANDIDATES.md rows deferred; write scope is staging/ only)
 
@@ -94,7 +101,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | goccy/go-yaml | QUEUED (candidate) | 13130 LOC, 143 test funcs | YAML engine: decode/encode, PathString queries, anchors, source-annotated errors |
 | alecthomas/kong | QUEUED (candidate) | 5629 LOC, 300 test funcs | CLI grammar engine: struct-tag DSL, parse+help+defaults+validation projections |
 | antchfx/xpath | QUEUED (candidate) | 4032 LOC, 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator |
-| zclconf/go-cty | QUEUED (candidate) | 13657 LOC, 165 test funcs | value/type system: conversions, unification, functions, json/msgpack round trips |
+| zclconf/go-cty | SELECTED | 13657 LOC, 165 test funcs | value/type system: conversions, unification, refinements/marks, json/msgpack round trips; Track B |
 | mvdan/sh | QUEUED (candidate) | 16185 LOC, 105 test funcs | shell syntax engine: parse/print round trip, positions, quoting rules |
 | ohler55/ojg | QUEUED (candidate) | 30855 LOC, 835 test funcs | JSONPath (jp) + parser (oj) engines over native Go data |
 

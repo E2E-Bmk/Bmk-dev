@@ -1,0 +1,11 @@
+[workspace]
+members = ["atomic", "integration"]
+resolver = "2"
+
+# The oracle ships without [patch.crates-io]: the runner appends it, pointing
+# evalexpr at the candidate workspace (member-manifest patches are ignored by
+# cargo, so the patch lives on this root manifest).
+[workspace.dependencies]
+# `version = "*"` so the patched workspace version satisfies the requirement.
+# No features: the spec scopes out serde/regex/rand.
+evalexpr = { version = "*" }

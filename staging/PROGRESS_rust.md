@@ -52,5 +52,4 @@ rhai, comfy-table, toml-rs (toml/toml_edit/taplo), cargo-generate, gitoxide
 
 | # | task_id | repo | state | notes |
 |---|---------|------|-------|-------|
-
-(rows appended as tasks complete)
+| 1 | evalexpr-fullrepro-001 | ISibboI/evalexpr @ 92d99f4 (v13.1.0) | S3_DONE | 56 tests (29 atomic / 27 integration incl. 5 generated); reference 56/56; LINT_PASS |

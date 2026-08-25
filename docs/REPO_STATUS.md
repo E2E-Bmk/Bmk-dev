@@ -1,123 +1,101 @@
 # Repo Status
 
-> 最后更新：2026-08-05
-> 用途：组员认领 task 前查阅，避免重复工作
-> 本表由 `tasks/` 下的实际文件生成，不手工维护。重新生成见文末命令。
+> 最后更新：2026-08-23
+> 用途：认领题目前查阅，避免重复工作
+> 本文只记录能从仓库现状再生的事实。逐包数据不在此复制，重算命令见文末。
 
 ---
 
-## tasks/ 中的 task（60 个）
+## 层级由 verdict.json 判定，不由标签声明
 
-> 表头说明：`Lang` 取 `task.json` 的 `language` 字段，评分沙箱据此选择测试运行器。
-> `Atomic`/`Integ` 是 oracle 文件里实际的测试函数数（`ast` 计数，非 `task.json` 自述）。
-> `Lint` 是 `harness/core/oracle_import_lint.py` 的结果 —— 它检查 oracle 是否断言了 spec
-> 从未声明的符号。`Static` 是 `harness/core/verify_task.py` 的结果：章节完整性、层底线、
-> 断言构成、metadata 与物理文件一致性、`depends_on` 覆盖率、fixture 完整性。
-> `Status` 取 `task.json`，是流水线状态而非静态校验结论 —— 两者互相独立。
+`tasks/{language}/{id}/` 是通过静态门禁的题包，`wip/{language}/{id}/` 是尚未通过的工作台。这条线不再由 `task.json` 里的人工标签划出，而由 `harness/core/verify_task.py` 的结论逐包写入 `verdict.json`：`tier` 是门禁算出的应属层级，`filed_under` 是它当前实际所在的层级。两者不一致时 `validate_ledger.py` 会告警，因此「已通过却仍停在工作台」与「未通过却摆在 tasks 下」都不会静默存在。
 
-| # | Task ID | 上游 Repo | Lang | Status | Atomic | Integ | Total | Lint | Static |
-|---|---------|-----------|------|--------|--------|-------|-------|------|--------|
-| 1 | anyio-async-runtime-fullrepro-001 | agronholm/anyio | python | QUALIFIED | 56 | 28 | 84 | PASS | PASS |
-| 2 | apscheduler-jobs-fullrepro-001 | agronholm/apscheduler | python | REVALIDATION-REQUIRED | 41 | 42 | 83 | PASS | PASS |
-| 3 | astroid-ast-inference-fullrepro-001 | pylint-dev/astroid | python | QUALIFIED | 51 | 29 | 80 | PASS | PASS |
-| 4 | attrs-classes-fullrepro-001 | python-attrs/attrs | python | REVALIDATION-REQUIRED | 50 | 35 | 85 | PASS | PASS |
-| 5 | authlib-fullrepro-001 | lepture/authlib | python | QUALIFIED | 39 | 29 | 68 | PASS | WARN |
-| 6 | babel-fullrepro-001 | python-babel/babel | python | QUALIFIED | 55 | 37 | 92 | PASS | FAIL |
-| 7 | bandit-securityscan-fullrepro-001 | PyCQA/bandit | python | REVALIDATION-REQUIRED | 30 | 37 | 67 | PASS | PASS |
-| 8 | beancount-ledger-fullrepro-002 | beancount/beancount | python | REVALIDATION-REQUIRED | 30 | 31 | 61 | PASS | PASS |
-| 9 | boltons-coreutils-fullrepro-001 | mahmoud/boltons | python | REVALIDATION-REQUIRED | 137 | 31 | 168 | PASS | PASS |
-| 10 | cattrs-converters-fullrepro-001 | python-attrs/cattrs | python | REVALIDATION-REQUIRED | 46 | 26 | 72 | PASS | PASS |
-| 11 | cookiecutter-fullrepro-001 | cookiecutter/cookiecutter | python | REVALIDATION-REQUIRED | 36 | 65 | 101 | PASS | PASS |
-| 12 | copier-template-fullrepro-001 | copier-org/copier | python | REVALIDATION-REQUIRED | 31 | 29 | 60 | PASS | PASS |
-| 13 | coveragepy-fullrepro-001 | nedbat/coveragepy | python | REVALIDATION-REQUIRED | 30 | 30 | 60 | PASS | PASS |
-| 14 | curio-task-coordination-fullrepro-001 | dabeaz/curio | python | QUALIFIED | 35 | 36 | 71 | PASS | PASS |
-| 15 | dateparser-dates-fullrepro-001 | scrapinghub/dateparser | python | REVALIDATION-REQUIRED | 60 | 29 | 89 | PASS | PASS |
-| 16 | dbt-core-fullrepro-001 | dbt-labs/dbt-core | python | REVALIDATION-REQUIRED | 36 | 26 | 62 | PASS | PASS |
-| 17 | deal-runtime-contracts-fullrepro-001 | deal | python | QUALIFIED | 31 | 32 | 63 | PASS | PASS |
-| 18 | diskcache-cache-fullrepro-001 | grantjenks/python-diskcache | python | REVALIDATION-REQUIRED | 48 | 34 | 82 | PASS | PASS |
-| 19 | dnspython-fullrepro-001 | rthalley/dnspython | python | QUALIFIED | 52 | 30 | 82 | FAIL | FAIL |
-| 20 | doit-taskrunner-fullrepro-002 | pydoit/doit | python | REVALIDATION-REQUIRED | 36 | 35 | 71 | PASS | PASS |
-| 21 | dvc-fullrepro-001 | iterative/dvc | python | REVALIDATION-REQUIRED | 33 | 38 | 71 | PASS | PASS |
-| 22 | dynaconf-settings-fullrepro-001 | rochacbruno/dynaconf | python | REVALIDATION-REQUIRED | 30 | 43 | 73 | PASS | PASS |
-| 23 | fsspec-filesystem-fullrepro-001 | fsspec/filesystem_spec | python | REVALIDATION-REQUIRED | 36 | 35 | 71 | PASS | PASS |
-| 24 | griffe-apimodel-fullrepro-001 | mkdocstrings/griffe | python | REVALIDATION-REQUIRED | 30 | 30 | 60 | PASS | PASS |
-| 25 | h2-protocol-fullrepro-001 | python-hyper/h2 | python | REVALIDATION-REQUIRED | 39 | 39 | 78 | PASS | PASS |
-| 26 | httpcore-transport-fullrepro-001 | encode/httpcore | python | REOPENED_S3 | 31 | 47 | 78 | PASS | PASS |
-| 27 | httpx-client-fullrepro-001 | encode/httpx | python | REOPENED_S3 | 40 | 31 | 71 | PASS | PASS |
-| 28 | invoke-taskrunner-fullrepro-001 | pyinvoke/invoke | python | REOPENED_S3 | 47 | 37 | 84 | PASS | PASS |
-| 29 | jrnl-journal-fullrepro-002 | jrnl-org/jrnl | python | REOPENED_S3 | 64 | 58 | 122 | PASS | PASS |
-| 30 | jupyter-client-kernel-protocol-fullrepro-001 | jupyter_client | python | QUALIFIED | 30 | 30 | 60 | PASS | PASS |
-| 31 | kedro-pipeline-fullrepro-001 | kedro-org/kedro | python | REOPENED_S3 | 62 | 33 | 95 | PASS | PASS |
-| 32 | loguru-fullrepro-001 | Delgan/loguru | python | STATICALLY_VALIDATED | 66 | 58 | 124 | PASS | PASS |
-| 33 | luigi-workflow-fullrepro-001 | spotify/luigi | python | REOPENED_S3 | 40 | 25 | 65 | PASS | PASS |
-| 34 | marshmallow-schema-fullrepro-001 | marshmallow-code/marshmallow | python | REOPENED_S3 | 49 | 39 | 88 | PASS | PASS |
-| 35 | mkdocs-sitebuild-fullrepro-002 | mkdocs/mkdocs | python | REOPENED_S3 | 69 | 27 | 96 | PASS | PASS |
-| 36 | nbformat-notebook-fullrepro-001 | jupyter/nbformat | python | REOPENED_S3 | 42 | 26 | 68 | PASS | PASS |
-| 37 | networkx-graph-state-fullrepro-001 | networkx/networkx | python | QUALIFIED | 55 | 32 | 87 | PASS | PASS |
-| 38 | nikola-fullrepro-001 | getnikola/nikola | python | QUALIFIED | 40 | 26 | 66 | PASS | WARN |
-| 39 | packaging-core-fullrepro-001 | pypa/packaging | python | REVALIDATION-REQUIRED | 55 | 39 | 94 | PASS | PASS |
-| 40 | peewee-fullrepro-001 | coleifer/peewee | python | QUALIFIED | 30 | 35 | 65 | PASS | PASS |
-| 41 | pelican-sitegen-fullrepro-001 | getpelican/pelican | python | QUALIFIED | 41 | 28 | 69 | PASS | PASS |
-| 42 | pgqueuer-fullrepro-001 | janbjorge/pgqueuer | python | QUALIFIED | 30 | 35 | 65 | PASS | PASS |
-| 43 | pint-fullrepro-001 | hgrecco/pint | python | QUALIFIED | 56 | 36 | 92 | PASS | FAIL |
-| 44 | pre-commit-hooks-fullrepro-002 | pre-commit/pre-commit | python | REOPENED_S3 | 59 | 44 | 103 | PASS | PASS |
-| 45 | prompt_toolkit-terminal-ui-fullrepro-001 | prompt-toolkit/python-prompt-toolkit | python | QUALIFIED | 79 | 25 | 104 | PASS | PASS |
-| 46 | pypdf-fullrepro-001 | py-pdf/pypdf | python | QUALIFIED | 36 | 32 | 68 | PASS | PASS |
-| 47 | quart-async-web-fullrepro-001 | pallets/quart | python | QUALIFIED | 30 | 34 | 64 | PASS | PASS |
-| 48 | requests-cache-fullrepro-001 | requests-cache/requests-cache | python | REVALIDATION-REQUIRED | 31 | 31 | 62 | PASS | PASS |
-| 49 | rq-fullrepro-001 | rq/rq | python | QUALIFIED | 31 | 36 | 67 | FAIL | FAIL |
-| 50 | schematics-model-validation-fullrepro-001 | schematics | python | QUALIFIED | 40 | 28 | 68 | PASS | PASS |
-| 51 | sqlalchemy-fullrepro-001 | sqlalchemy/sqlalchemy | python | REVALIDATION-REQUIRED | 30 | 39 | 69 | PASS | PASS |
-| 52 | starlette-asgi-fullrepro-001 | encode/starlette | python | QUALIFIED | 30 | 33 | 63 | PASS | PASS |
-| 53 | structlog-event-context-fullrepro-001 | hynek/structlog | python | QUALIFIED | 30 | 30 | 60 | PASS | PASS |
-| 54 | tox-envrunner-fullrepro-001 | tox-dev/tox | python | REOPENED_S3 | 34 | 26 | 60 | PASS | PASS |
-| 55 | traitlets-core-fullrepro-001 | ipython/traitlets | python | QUALIFIED | 31 | 41 | 72 | PASS | PASS |
-| 56 | transitions-state-machine-fullrepro-001 | pytransitions/transitions | python | QUALIFIED | 68 | 29 | 97 | PASS | PASS |
-| 57 | vcrpy-fullrepro-001 | kevin1024/vcrpy | python | REOPENED_S3 | 41 | 31 | 72 | PASS | PASS |
-| 58 | webob-request-response-fullrepro-001 | Pylons/webob | python | QUALIFIED | 49 | 25 | 74 | PASS | PASS |
-| 59 | whoosh-index-search-fullrepro-001 | mchaput/whoosh | python | QUALIFIED | 35 | 49 | 84 | PASS | PASS |
-| 60 | wtforms-form-lifecycle-fullrepro-001 | pallets-eco/wtforms | python | QUALIFIED | 32 | 28 | 60 | PASS | PASS |
+`verdict.json` 是生成物，不手工编辑。`harness/core/verdict.py --check` 重算全部题包，并把任何手改报为漂移。
 
-**统计**：Atomic 总计 2631，Integration 总计 2059，总测试 4690。达到 A≥30 / I≥25 / T≥60 的：60/60。
+当前划线：97 个题包中 72 个在 `tasks/`，25 个在 `wip/`。
 
-**Status 分布**：QUALIFIED 26，REVALIDATION-REQUIRED 21，REOPENED_S3 12，STATICALLY_VALIDATED 1。
+## 各语言的实况差异极大
 
-**校验**：Lint PASS 58/60，Static PASS+WARN 56/60。
+| 语言 | tasks/ | wip/ | 合计 |
+|------|--------|------|------|
+| python | 60 | 0 | 60 |
+| java | 10 | 18 | 28 |
+| rust | 0 | 7 | 7 |
+| typescript | 2 | 0 | 2 |
 
-### 未通过静态校验的 task
+python 与 typescript 两条线的题包全部通过静态门禁；java 通过 10/28；rust 尚无一个通过。
 
-| Task ID | 问题 |
-|---------|------|
-| babel-fullrepro-001 | `depends_on` 引用 4 个不存在的 atomic 测试 |
-| dnspython-fullrepro-001 | `depends_on` 引用 7 个不存在的 atomic 测试；oracle 断言 17 个 spec 未声明的符号 |
-| pint-fullrepro-001 | `depends_on` 引用 4 个不存在的 atomic 测试（其中若干指向 integration 文件内的函数，含自我依赖）|
-| rq-fullrepro-001 | oracle 从 `rq.exceptions` 导入，spec 的 Import Surface 未声明该路径（三个异常类名本身在正文出现）|
+## 25 个未通过里，19 个栽在同一处
 
-这四个都是 SDD 重写之后新建或未随之更新的 task。`depends_on` 指向不存在的测试会让
-True Integration Gap 无法计算；未声明符号是 httpcore 事故的形状（照 spec 实现的交付无法
-满足这类断言，而复刻上游内部结构的交付可以）。修这两类需要改 oracle 与 spec 内容，属
-test-filter 与 spec-writer 的职责，不在台账维护范围内。
+按门禁异议类型统计，一个题包可能同时触发多条：
 
----
+| 次数 | 门禁异议 |
+|------|----------|
+| 24 | `depends_on` 覆盖率低于底线，多为 0/N = 0% |
+| 4 | 未在 `TARGET_IMPORTS` 注册导入根 |
+| 4 | taxonomy 与实际测试不匹配 |
+| 1 | 层底线未达（atomic / integration 数量） |
+| 1 | 可评分测试数未达底线 |
 
-## 进行中（wip/ 中）
+25 个中 19 个的唯一异议就是 `depends_on` 覆盖率，另 6 个触发多条。这不是个案而是系统性缺口：java 与 rust 两条线在建包时未填 `depends_on`，而 True Integration Gap 的计算依赖它。补齐属 test-filter 职责，不在台账维护范围内。
 
-`wip/{language}/{task}/` 是构建过程的工作区，不进版本库（见 `.gitignore`），所以 clone 出来看不到
-它。`kept_nodeids.txt`、`taxonomy.jsonl`、`spec_test_map.md` 留在那里作为过滤的审计追踪，
-毕业时不复制进 `tasks/{language}/{id}/`。认领任务前先跟负责人确认在建 task，本表只反映已毕业的。
+## 静态门禁通过不等于证据齐备
 
----
+`verdict.json` 的 `evidence` 汇总题包已有的测量，`evidence_pending` 列出缺的。97 个题包的覆盖情况：
+
+| 已有 | 槽位 |
+|------|------|
+| 74 | candidate_score |
+| 72 | reference_pass |
+| 36 | adjusted_gap |
+| 12 | mutation |
+| 7 | coverage_gap |
+| 2 | dummy_pass |
+
+`reference_pass` 缺的 25 个与降级的 25 个基本重合。真正刺眼的是 `dummy_pass`：只有 2 个题包记录过「空实现能拿多少分」这一对照，也就是说绝大多数题包从未验证过自己不是靠平凡实现就能通过。这是本仓库当前最大的证据缺口。
+
+同一测量此前散落在三个字段名下 —— `reference_pass_rate` 56 个、`reference_score` 35 个、`reference.pass_rate` 2 个。`verdict.json` 按固定槽位收敛，并在 `from` 字段记下取自哪个原始键。
+
+## CANDIDATES.md 的 23 个告警属既有欠账
+
+`validate_ledger.py` 当前报 23 个告警：12 个是 `CANDIDATES.md` 的行指向已不存在的题包，8 个是同一上游仓库同时被记为 QUALIFIED 与 RETIRED，3 个是通过门禁但带告警的题包。前两类是候选台账自身的历史欠账，本次重构未改动 `CANDIDATES.md` 的行内容。
+
+## pipeline_note 记录流水线位置，不是结论
+
+`task.json` 里原有的 `status` 字段混装了两类信息：流水线位置（`S2_SPEC`、`REOPENED_S3`、`REVALIDATION-REQUIRED`）与门禁结论（`QUALIFIED`、`STATICALLY_VALIDATED`、`REJECTED_E1`）。因为名字叫 status，它持续被当作结论读取。该字段已改名为 `pipeline_note`，只保留溯源用途；结论一律看 `verdict.json`。`sync_task_metadata.py` 不再为它补写默认值 —— 旧代码默认补 `STATICALLY_VALIDATED`，等于在不运行门禁的情况下断言门禁结果。
+
+## wip/ 进版本库，但只进记录
+
+`wip/` 在磁盘上约 28G，绝大部分是 `target/`、`node_modules/` 与运行产物。`.gitignore` 对它采用白名单：只有下列四类进版本库，其余一概忽略。
+
+| 路径 | 内容 |
+|------|------|
+| `wip/{lang}/{id}/BENCH.md` | 工作台说明，手写，随工作推进修改 |
+| `wip/{lang}/{id}/verdict.json` | 门禁结论，生成物，勿手改 |
+| `wip/{lang}/{id}/packet/**` | 题包本体，与 `tasks/{lang}/{id}/` 同构 |
+| `wip/{lang}/{id}/runs/index.jsonl` | 运行索引；`runs/` 下其余产物不进库 |
+
+当前 `wip/` 下入库 295 个文件、约 3.4M。磁盘上另有 38 个工作台未入库：它们尚无 `packet/`，不命中白名单。
+
+## 一个题包可从两棵树中的任一棵解析
+
+`harness/core/layout.py` 同时认 `tasks/{lang}/{id}/` 与 `wip/{lang}/{id}/packet/`。所有门禁读到的是同一个题包，因此题包可以在两层之间来回移动而测量不会失联。`tier_of()` 报告它实际在哪棵树；同一 id 若两棵树都有，`duplicates()` 会点名，且以 `tasks/` 的那份为准。
+
+新建工作台按上表放置四件套即可，无需另立约定。
 
 ## 质量标准
 
-- Spec 标准：`Spec2Repo/docs/SPEC_STANDARD.md`（6 层结构）
+- Spec 标准：`docs/SPEC_STANDARD.md`
 - Oracle 标准：`docs/ORACLE_STANDARD.md`（A≥30, I≥25, T≥60, depends_on≥50%）
 - 静态门禁：`docs/QUALITY_GATE.md`，由 `harness/core/verify_task.py` 实施
 - 验收清单：`docs/ACCEPTANCE_CHECKLIST.md`
 
-## 重新生成本表
+## 重新生成本文的数字
 
 ```bash
-python harness/core/validate_ledger.py            # 全部 task 的静态校验 + 台账交叉检查
-python harness/core/sync_task_metadata.py --all --check   # 检查 task.json 是否与 oracle 文件漂移
+python3 harness/core/verdict.py --check                    # 重算全部 verdict.json，报告手改漂移
+python3 harness/core/validate_ledger.py                    # 逐包静态校验 + 台账交叉检查
+python3 harness/core/sync_task_metadata.py --all --check    # 检查 task.json 与 oracle 文件是否漂移
 ```
+
+逐包的 Atomic / Integration 计数与 Lint、Static 结论由 `validate_ledger.py` 逐行输出，本文不再复制，以免快照与实际再次分叉。

@@ -90,7 +90,7 @@ def ledger_warnings() -> list[str]:
                 continue  # the packet is meant to be gone; the row is history
             warnings.append(
                 f"CANDIDATES.md: row for {row.get('repo', '?')} names task {task_id}, "
-                "which has no directory under tasks/"
+                "which has no packet under tasks/ or wip/"
             )
 
     # A repo accumulates rows as it moves through the pipeline, so multiple

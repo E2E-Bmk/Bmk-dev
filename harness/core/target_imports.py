@@ -94,7 +94,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
 }
 
 
-# The TypeScript lane keeps its import roots in typescript_target_imports.json for
+# The TypeScript lane keeps its import roots in lang/typescript/target_imports.json for
 # the same reason the Rust lane does: the scorer and the lint must agree on one
 # source per language rather than drift apart.
 def _merge_typescript_registrations() -> None:
@@ -116,7 +116,7 @@ def _merge_typescript_registrations() -> None:
 
 _merge_typescript_registrations()
 
-# Java tasks keep their roots in java_target_imports.json, following the rust and
+# Java tasks keep their roots in lang/java/target_imports.json, following the rust and
 # typescript lanes. The value is a Maven artifactId, not a Java package: the
 # provenance audit matches it against `dependency:list` output, where the artifact
 # is what appears. Registering `org.markline` instead of `markline-core` resolves

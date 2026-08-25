@@ -2,12 +2,12 @@ DO NOT send optional commentary
 
 # Non-negotiable rules
 
-Nine rules. Everything else lives in `dev/skills/{skill}/SKILL.md`; read the skill
+The rules below are non-negotiable. Everything else lives in `skills/{skill}/SKILL.md`; read the skill
 for the pipeline stage you are in before touching any artifact.
 
 ## 1. Read the stage skill first
 
-Before starting a pipeline stage, read `dev/skills/{skill}/SKILL.md` for that
+Before starting a pipeline stage, read `skills/{skill}/SKILL.md` for that
 stage. When delegating to a subagent, put the exact skill path in the delegation
 prompt and instruct it to read the skill before inspecting artifacts.
 
@@ -57,7 +57,7 @@ threshold costs more than keeping a task that turned out easy.
 ## 6. A task is not qualified until a mutation distinguishes spec-following from recall
 
 Every task built from a real library must carry one validated mutation before it
-enters the release set. Read `dev/skills/spec-mutator/SKILL.md` and run its
+enters the release set. Read `skills/spec-mutator/SKILL.md` and run its
 `S5_MUTATE` stage: change one spec clause and its oracle assertions together so the
 described system diverges from the upstream namesake, mark each flipping test with
 `// MUTATED: <clause-ref>`, and validate with the paired reference gates -- the
@@ -104,7 +104,7 @@ assertions, computed metrics — are fixed once the oracle is built.
 
 ### 6b. Low pass rate comes from mutation-rich architecture, not from one clause
 
-`dev/skills/spec2repo-gate-calibration/SKILL.md` is the authority for driving a pass rate
+`skills/spec2repo-gate-calibration/SKILL.md` is the authority for driving a pass rate
 down. Its campaign defaults are the target for any task scoring at or above 50%:
 
 - mutation union roughly **60-75% of roots**, spread over **5-9 independent families**,
@@ -241,3 +241,33 @@ and packed refs; a config model with resolution, writers and normalisation).
 **The declaration surface must be enumerable, and it is larger than functions and enum shapes.** egglog-lang-layer-001 first read as unscoreable, and that reading was wrong — it came from watching the compile-error count rise across runs without attributing the errors. Attribution per D3 showed the opposite: 28 of 38 named symbols were spec-declared and simply not delivered by the candidate. The real gap was a declaration surface stated only as type names: 19 enums with no variant bodies, 29 traits with no method sets, 26 structs with no public field lists. In a static language a trait is its method set and a struct is its public fields; a candidate cannot implement `Core` or construct `EGraph` without them. Supplying all 74 shapes verbatim from the carve (spec 1268 -> 1822 lines) moved the failures from "symbol not found" to "declared trait not implemented for this sort" — which is product_failure, the reconstruction difficulty the candidate was chosen for. So the surface must be enumerated in full (functions, enum variant shapes, trait method sets, struct public fields), but its size is not itself a disqualifier: a large surface that is fully stated and fully attributable is a valid hard task, not an unscoreable one.
 
 What still disqualifies a candidate on this axis is a surface that cannot be enumerated by inspection at all, or one whose contract is behaviour a stub cannot stand in for. egglog sits at that edge: its remaining failures are missing trait implementations, so a signature-only probe cannot score it without supplying behaviour.
+
+## 12. A packet's tier is written by the gate, not declared by a label
+
+`harness/core/verify_task.py` decides which tier a packet belongs in, and
+`harness/core/verdict.py` records that decision as a `verdict.json` beside every
+packet. A packet that passes sits at `tasks/<language>/<id>/`; one that does not
+sits at `wip/<language>/<id>/packet/`, inside a bench. Both trees resolve through
+`harness/core/layout.py`, so every gate reads the same packet either way and a
+packet can move between tiers without its measurements becoming unreachable.
+
+`verdict.json` is generated, not authored. Do not hand-edit it: `python3
+harness/core/verdict.py --check` recomputes every one of them and reports any
+difference as drift. Its `tier` field is where the gate says the packet belongs;
+`filed_under` is where it currently sits. `validate_ledger.py` warns when the two
+disagree, which is what stops "passes the gate but still parked in a bench" from
+being invisible.
+
+The field once called `status` in `task.json` is now `pipeline_note`. It records a
+pipeline waypoint such as `S2_SPEC` or `REOPENED_S3`, never a gate outcome. Do not
+read it as a verdict and do not write a conclusion into it. 25 of 97 packets were
+presented as qualified while failing the static gate, because one field name
+carried both a waypoint and a conclusion and readers could not tell which they
+had.
+
+A bench keeps four things in version control and nothing else: `BENCH.md`
+(hand-written, edited as the work proceeds), `verdict.json` (generated),
+`packet/**` (the packet itself, laid out exactly as it would be under `tasks/`),
+and `runs/index.jsonl`. Everything else under `wip/` is ignored, because the
+directory holds roughly 28G of build output; `.gitignore` allows those four rather
+than trying to enumerate what to exclude.

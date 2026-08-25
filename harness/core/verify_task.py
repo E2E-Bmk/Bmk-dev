@@ -132,7 +132,8 @@ def check_task(task_id: str) -> list[str]:
     for suite, found in (("atomic", atomic_ids), ("integration", integration_ids)):
         if not found:
             errors.append(
-                f"{suite} suite enumerates no tests under tasks/{task_id}/oracle"
+                f"{suite} suite enumerates no tests under "
+                f"{oracle_dir.relative_to(ROOT)}"
             )
     if errors and not (atomic_ids or integration_ids):
         return errors, warnings
@@ -239,8 +240,9 @@ def check_task(task_id: str) -> list[str]:
     if language != "python":
         return errors, warnings
 
-    if not (oracle_dir / "requirements.txt").exists():
-        errors.append(f"missing files: tasks/{task_id}/oracle/requirements.txt")
+    requirements = oracle_dir / "requirements.txt"
+    if not requirements.exists():
+        errors.append(f"missing files: {requirements.relative_to(ROOT)}")
 
     section, _ = allowed_from_spec(task_dir / "spec.md")
     for module, lineno in imports_from_ast(oracle_dir / "test_atomic.py"):

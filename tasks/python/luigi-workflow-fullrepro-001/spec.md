@@ -1,304 +1,266 @@
-﻿# Luigi Specification
-
-> **Specification Authority**: This document is the sole source of truth.
-> The described system diverges from any similarly-named software in
-> interface design, parameter naming, behavioral edge cases, and error
-> semantics. Implementations derived from memory of external codebases
-> will fail the evaluation.
-
-## Product Overview
-
-Luigi is a Python workflow library for declaring parameterized tasks, linking them through dependencies, and running the resulting graph through a scheduler and worker. A task defines its required upstream tasks, its output targets, and the work that creates those targets. Luigi then schedules only the tasks whose dependencies are complete, runs task code in worker processes, and records task state through a scheduler view.
-
-## Non-Goals
-
-- Contrib integrations for Hadoop, Spark, HDFS, S3, GCS, BigQuery, Redis, SQL databases, Kubernetes, Prometheus, Dropbox, SSH, FTP, and cloud services are out of scope.
-- Browser visualizer pages, HTML structure, static assets, and JavaScript behavior are out of scope.
-- Starting, daemonizing, supervising, or backgrounding the central scheduler process is out of scope.
-- Exact log text, exact HTML text, exact stack trace formatting, and exact execution-summary line wrapping are out of scope.
-- Private modules, private helper functions, private scheduler data structures, and local test helper utilities are out of scope.
-- Range tools, grep/dependency helper console tools, email notification transports, database task history storage, and metrics collectors are out of scope unless they affect the core APIs listed above.
-
-## Representative Workflows
-
-```python
-import datetime
-import luigi
-
-class DailyWords(luigi.Task):
-    day = luigi.DateParameter()
-    root = luigi.PathParameter()
-
-    def output(self):
-        return luigi.LocalTarget(self.root / f"words-{self.day:%Y-%m-%d}.txt")
-
-    def run(self):
-        with self.output().open("w") as f:
-            f.write("apple\nbanana\n")
-
-class CountLetters(luigi.Task):
-    day = luigi.DateParameter()
-    root = luigi.PathParameter()
-
-    def requires(self):
-        return DailyWords(day=self.day, root=self.root)
-
-    def output(self):
-        return luigi.LocalTarget(self.root / f"counts-{self.day:%Y-%m-%d}.txt")
-
-    def run(self):
-        with self.input().open("r") as source:
-            words = source.read().splitlines()
-        with self.output().open("w") as target:
-            for word in words:
-                target.write(f"{word}\t{len(word)}\n")
-
-luigi.build(
-    [CountLetters(day=datetime.date(2026, 7, 10), root="data")],
-    local_scheduler=True,
-)
-```
-
-The build must first check the count target, then check and run `DailyWords` when its target is missing, then pass the `DailyWords` target through `CountLetters.input()`, then write the count target. A second build with the same parameter values and existing files must report both tasks complete without running either `run()` method again.
-
-The equivalent command-line invocation must parse hyphenated task parameters and use the same local scheduler behavior:
-
-```console
-luigi --module my_workflow CountLetters --day 2026-07-10 --root data --local-scheduler
-```
-
-## Task Lifecycle
-
-This section covers how tasks declare dependencies, outputs, and work.
-
-**Core task methods.** `requires()` returns no dependencies by default. It must return tasks or nested dict/list/tuple structures containing tasks when the task has dependencies. `output()` returns no targets by default. It must return a target or nested structures containing targets when output-based completion is used. `run()` performs no work by default. A subclass must override it when the task creates outputs itself.
-
-**Completion.** `complete()` returns `True` when every flattened output target exists. It returns `False` for a task with no outputs and no override. It raises when an output object has no usable `exists()` method.
-
-**Dependency mapping.** `input()` returns the outputs of the tasks returned by `requires()` and preserves list, tuple, and dict containers. The nested container shape must match between `requires()` and `input()`.
-
-**Cloning.** `clone(cls=None, **kwargs)` returns a new task of `cls` or the current task class, copying same-named parameter values from the source task and overriding names present in `kwargs`.
-
-**Task identity.** `get_task_family()` returns the class name when no namespace is set and returns `<namespace>.<ClassName>` when a namespace is set. Task equality and hashing are based on class and the identifier formed from significant public parameters. Two instances with equal significant values must compare equal and hash equal even when insignificant values differ. The task representation must include the task family and significant parameters serialized as strings; insignificant parameters must be omitted.
-
-**Lifecycle callbacks.** When `run()` completes successfully, `on_success()` must be called on the task instance. When `run()` raises an exception, `on_failure(exception)` must be called with the exception instance before the task is marked as failed.
-
-**Event system.** `Task.event_handler(event_name)` must register a callback function as a handler for the named event. `Task.trigger_event(event_name, *args)` must invoke all registered handlers for that event with the supplied arguments. `Task.remove_event_handler(event_name, handler)` must unregister the specified handler; subsequent triggers must not invoke the removed handler.
-
-**ExternalTask.** `ExternalTask` represents a dependency created outside Luigi. Its `run` attribute is `None`. An incomplete external dependency must leave dependent work pending rather than running the dependent task.
-
-**WrapperTask.** `WrapperTask` represents a task that only wraps requirements. Its `complete()` returns `True` only when every flattened requirement is complete.
-
-**Config.** `Config` is a parameterized configuration container. A `Config` subclass must read parameters through the same default, config, and command-line machinery as `Task`.
-
-**DynamicRequirements.** `DynamicRequirements(requirements, custom_complete=None)` wraps requirements yielded from `run()`. Its `flat_requirements` returns the flattened task list, `paths` returns their outputs, and `complete()` returns `True` only when every wrapped requirement is complete. When `custom_complete` is provided, `complete()` must return the result of calling it with the per-task completion function.
-
-**Namespace control.** `namespace(namespace=None, scope="")` sets the namespace used by task classes declared after the call. A class-level `task_namespace` value must take precedence over `namespace()`. `auto_namespace(scope="")` sets the namespace for matching task classes to their Python module name.
-
-## Parameter Declaration and Parsing
-
-This section covers how parameters are declared, parsed, and serialized.
-
-**Parameter sources and precedence.** A parameter declared on a task class must become an instance attribute with the parsed or normalized value. Constructor keyword arguments must override every other source. Root-task command-line flags must override config and defaults for the root task. Class-qualified command-line flags must override config and defaults for later instances of that class. Config values must override parameter defaults. A missing required value must raise `MissingParameterException`.
-
-**Positional and unknown parameters.** Positional constructor arguments must bind only to parameters whose `positional` attribute is true, in declaration order. Too many positional values must raise `UnknownParameterException`. Passing the same parameter by position and keyword must raise `DuplicateParameterException`. Unknown keyword parameters must raise `UnknownParameterException`.
-
-**Significance and visibility.** When `significant=False`, the parameter is omitted from task equality, hashing, public serialized identity, and representation, while the value remains available on the task instance. `visibility=ParameterVisibility.PUBLIC` exposes the parameter in public serialized values. `HIDDEN` omits it from public web-style views. `PRIVATE` omits it from public serialized values and `to_str_params(only_public=True)` output.
-
-**Serialization methods.** `to_str_params(only_significant=False, only_public=False)` must serialize task parameter values. With `only_significant=True`, insignificant parameters must be omitted. With `only_public=True`, private parameters must be omitted. `from_str_params(params_str)` must parse the supplied string mapping and construct a task; missing keys must fall back to class-level defaults.
-
-**Core parameter types.** `Parameter` and `StrParameter` return strings from `parse()` and serialize with `str(x)`. `IntParameter` parses base-10 strings into `int`. `FloatParameter` parses strings into `float`. `BoolParameter` parses true and false strings case-insensitively and must reject unknown strings with `ValueError`. `DateParameter` parses `YYYY-MM-DD` into `datetime.date`. `MonthParameter` parses `YYYY-MM`. `YearParameter` parses `YYYY`. `DateHourParameter` parses `YYYY-MM-DDTHH`. `DateMinuteParameter` parses `YYYY-MM-DDTHHMM`. `DateSecondParameter` parses `YYYY-MM-DDTHHMMSS`. Invalid strings for any date parameter must raise `ValueError`. Date parameters must serialize back to their documented string format.
-
-**Collection parameters.** `ListParameter` parses JSON arrays and returns an immutable normalized sequence. `DictParameter` parses JSON objects into an immutable ordered mapping. `TupleParameter` parses JSON array syntax into tuples; a plain string must raise `ValueError`.
-
-**Enum parameters.** `EnumParameter(enum=SomeEnum)` parses an enum member name into that member and serializes to the member name. Unknown names must raise `ValueError` or `KeyError`. `EnumListParameter(enum=SomeEnum)` parses comma-separated names into a tuple and serializes back to comma-separated names.
-
-**Constrained parameters.** `NumericalParameter` parses with its `var_type` and accepts only values inside the configured interval defined by `min_value`, `max_value`, `left_op`, and `right_op`. Missing `var_type`, `min_value`, or `max_value` must raise `ParameterException`. `ChoiceParameter(choices=...)` accepts only configured choices; missing choices must raise `ParameterException` and invalid values must raise `ValueError`. `ChoiceListParameter` parses comma-separated values, preserves order and duplicates, accepts an empty string as an empty tuple, and rejects values outside choices.
-
-**Path parameter.** `PathParameter` returns strings from `parse()`. `normalize(x)` returns a `pathlib.Path`, converts to absolute when `absolute=True`, and raises `ValueError` when `exists=True` and the path does not exist.
-
-**Optional parameters.** Optional parameter classes parse the empty string as `None`, serialize `None` as the empty string, and warn when a supplied non-`None` constructor value has the wrong Python type.
-
-## Target Operations
-
-This section covers how targets represent and manage task outputs.
-
-**Target existence.** `Target.exists()` is the abstract existence predicate. A target subclass must return `True` only when the output resource exists.
-
-**FileSystemTarget.** `FileSystemTarget(path)` stores `path` as a string and delegates `exists()` and `remove()` to its `fs` object. `temporary_path()` returns a context manager that yields a temporary path, creates parent directories before yielding, and renames the temporary path to the final path only when the context exits without an exception. If the context body raises, the final path must not be committed.
-
-**LocalTarget construction.** `LocalTarget` requires a `path` argument; construction without `path` and without `is_tmp=True` must raise `Exception`. With `is_tmp=True`, it must create a temporary local path. `LocalTarget.path` must return the stored path string. `LocalTarget.exists()` must reflect whether the local file exists.
-
-**Read and write.** `open("w")` must create parent directories, write through a temporary file, and atomically replace the final path when the stream is closed successfully. If the stream exits with an exception, the final path must not be committed. `open("r")` must return a readable stream and must raise the underlying file exception when the path does not exist. Modes other than read or write must raise `Exception`.
-
-**File operations.** `move(new_path, raise_if_exists=False)`, `copy(new_path, raise_if_exists=False)`, and `remove()` must delegate to the local file system. When `raise_if_exists=True` and the destination exists, move/copy must raise a file-exists exception.
-
-## Workflow Execution and Configuration
-
-This section covers how builds, runs, and configuration drive task execution.
-
-**build function.** `build(tasks, ...)` accepts an iterable of already constructed task objects. It must default to `no_lock=True` when no value is supplied. It returns `True` or `False` by default, using `True` when scheduling and worker execution completed without scheduling errors. With `detailed_summary=True`, it returns a `LuigiRunResult`.
-
-**LuigiRunResult.** `LuigiRunResult` must expose `status` as a `LuigiStatusCode` value, `scheduling_succeeded` as a boolean, and `summary_text` as a string. `LuigiStatusCode` values include `SUCCESS`, `FAILED`, `MISSING_EXT`, `NOT_RUN`, and `SCHEDULING_FAILED`.
-
-**run function.** `run` parses command-line style arguments. When `cmdline_args` is `None`, it must use `sys.argv[1:]`. When `cmdline_args` is supplied, the value must be a list or tuple; other types must raise `TypeError`. When `main_task_cls` is supplied, the task family's name must be inserted as the root task. When `local_scheduler=True`, `--local-scheduler` must be appended.
-
-**Scheduler modes.** When `local_scheduler=True`, the build must use an in-memory scheduler in the current process. When `local_scheduler=False`, it must connect to a remote scheduler. Connection failures must raise the RPC or connection exception.
-
-**Worker-scheduler factory.** When `worker_scheduler_factory` is supplied, Luigi must use its `create_local_scheduler`, `create_remote_scheduler`, and `create_worker` methods instead of defaults.
-
-**Completion and reuse.** A task whose outputs already exist must be recorded as complete and must not run again. A task whose dependencies are incomplete must not run until every dependency is complete.
-
-**Priority.** A task with higher `priority` must be preferred over lower-priority tasks only among tasks whose dependencies are already satisfied. Dependency readiness must take precedence over priority.
-
-**Dynamic dependencies.** Dependencies yielded from `run()` must suspend the current task, run the yielded tasks, and then restart the yielding task's `run()` method from the beginning. The yielding task must therefore be idempotent.
-
-**CLI grammar.** The CLI shape is `luigi [--module MODULE] [--local-scheduler] [--workers N] [--help] [--help-all] TaskFamily [task parameters]`. `--module MODULE` must import the module before resolving the root task family. The root task family is required for normal execution; missing it must terminate with a command-line error. Task parameters with underscores must be exposed as hyphenated CLI flags. Class-qualified flags must use `--TaskFamily-param-name` format. `--help` must display core and root-task flags.
-
-**Return codes.** The CLI must use configured return-code values from `[retcode]`. With default settings, unhandled internal exceptions exit with code `4`, and other categories default to code `0`. When several configured nonzero categories apply, the numerically greatest code must be used.
-
-**Configuration.** The cfg parser must read, in increasing priority, `/etc/luigi/client.cfg`, `/etc/luigi/luigi.cfg`, `client.cfg`, `luigi.cfg`, and the path named by `LUIGI_CONFIG_PATH`. The toml parser is selected by `LUIGI_CONFIG_PARSER=toml`. Cfg values must support environment-variable interpolation using `${ENVVAR}`; a missing variable reference must raise a configuration interpolation error. Parameter defaults from config must use a section matching the task family and an option matching the parameter name. Config classes must use the class name as the section name.
-
-## State Model
-
-Luigi exposes one workflow state through three public projections:
-
-- The Python projection: task objects, parameters, targets, `complete()`, `input()`, `output()`, `requires()`, `luigi.build`, and `luigi.run`.
-- The command-line projection: task family names, root-task arguments, class-qualified arguments, config files, local scheduler flags, and process exit status.
-- The scheduler/worker projection: task states such as pending, running, done, failed, not run, missing external dependency, and scheduling failure, plus `LuigiRunResult` summaries.
-
-## Error Semantics
-
-- Missing a required task parameter must raise `MissingParameterException`.
-- Passing an unknown task parameter must raise `UnknownParameterException`.
-- Passing the same task parameter by position and keyword must raise `DuplicateParameterException`.
-- Creating a parameter with an invalid `config_path` object must raise `ParameterException`.
-- Creating `NumericalParameter` without `var_type`, `min_value`, or `max_value` must raise `ParameterException`.
-- Creating `ChoiceParameter` without `choices` must raise `ParameterException`.
-- Parsing an invalid integer, float, date, time, JSON value, enum name, choice, path, or bounded number must raise the parsing or validation exception for that parameter type.
-- Constructing `LocalTarget()` without `path` and without `is_tmp=True` must raise `Exception`.
-- Opening a `LocalTarget` with a mode other than read or write must raise `Exception`.
-- Reading a missing `LocalTarget` must raise the underlying file exception.
-- Returning a target object from `requires()` must be treated as invalid dependency structure during scheduling.
-- A failure in `Task.requires()` or `Task.complete()` during scheduling must be reported as a scheduling failure.
-- A failure in `Task.run()` must be reported as task failure and must call `on_failure(exception)`.
-- Remote scheduler communication failure must raise `RPCError` or the underlying request exception.
-
-## Cross-View Invariants
-
-1. Constructor values, root CLI values, class-qualified CLI values, config values, and parameter defaults must resolve to one task instance value using Luigi's precedence rules, and that value must be the value visible from Python attributes and scheduler parameter serialization.
-2. The same root task run through `luigi.build(..., local_scheduler=True)` and through `luigi --local-scheduler` must schedule the same dependency graph when given equivalent parsed parameter values.
-3. A `LocalTarget` written by a task must make `Target.exists()`, `Task.complete()`, downstream `Task.input()`, and repeated local scheduler runs agree that the output exists.
-4. If a dependency task fails, downstream tasks that require it must remain not run or pending due to upstream failure; they must not report success.
-5. If an `ExternalTask` output is missing, dependent tasks must be reported as missing external dependency or pending; they must not run before the external output exists.
-6. A task state transition recorded by the worker must be reflected in the `LuigiRunResult.status`, `summary_text`, and boolean scheduling result according to the same completed, failed, scheduling-failed, missing-external, and not-run categories.
-7. Task namespace and family strings must be identical across Python construction, command-line root task lookup, task representation, and scheduler records.
-8. Parameter visibility must affect public serialized parameter views and scheduler/web-style parameter exposure without changing the Python attribute value used by task code.
-9. Priority must affect runnable task ordering only after dependency completion; a low-priority ready task must run before a high-priority task whose dependencies are not complete.
-10. Dynamic requirements yielded from `run()` must become scheduler-visible dependencies and their outputs must be passed back through the yielded result or through `input()` after the yielding task restarts.
-
-## Public Interface
-
-### Import Surface
-
-The package must expose these top-level imports:
-
-```python
-import luigi
-
-from luigi import (
-    Task, ExternalTask, WrapperTask, Config, DynamicRequirements,
-    Target, LocalTarget,
-    Parameter, StrParameter, IntParameter, FloatParameter, BoolParameter,
-    DateParameter, MonthParameter, YearParameter, DateHourParameter,
-    DateMinuteParameter, DateSecondParameter, DateIntervalParameter,
-    TimeDeltaParameter, PathParameter, TaskParameter,
-    ListParameter, TupleParameter, DictParameter,
-    EnumParameter, EnumListParameter,
-    NumericalParameter, ChoiceParameter, ChoiceListParameter,
-    OptionalParameter, OptionalStrParameter, OptionalIntParameter,
-    OptionalFloatParameter, OptionalBoolParameter, OptionalPathParameter,
-    OptionalDictParameter, OptionalListParameter, OptionalTupleParameter,
-    OptionalChoiceParameter, OptionalNumericalParameter,
-    Event, LuigiStatusCode, RemoteScheduler, RPCError,
-    build, run, namespace, auto_namespace,
-)
-```
-
-The package must expose these documented module imports:
-
-```python
-from luigi.parameter import (
-    ParameterVisibility, ParameterException,
-    MissingParameterException, UnknownParameterException,
-    DuplicateParameterException,
-)
-from luigi.target import (
-    FileSystemTarget, FileSystemException, FileAlreadyExists,
-    MissingParentDirectory, NotADirectory,
-)
-from luigi.execution_summary import LuigiRunResult
-```
-
-The installed console entry point is `luigi`. `python -m luigi` is supported and must accept the same task invocation arguments as the console entry point for running tasks.
-
-### API Catalog
-
-| Name | Kind | Role |
-|---|---|---|
-| Task | class | Base unit of work with dependencies and outputs |
-| ExternalTask | class | Dependency created outside the workflow |
-| WrapperTask | class | Task that only wraps requirements |
-| Config | class | Parameterized configuration container |
-| DynamicRequirements | class | Wrap requirements yielded from run() |
-| Target | class | Abstract existence predicate for task outputs |
-| LocalTarget | class | Local file target with atomic write |
-| FileSystemTarget | class | Abstract file system target |
-| Parameter | descriptor | String parameter descriptor |
-| IntParameter | descriptor | Integer parameter descriptor |
-| FloatParameter | descriptor | Float parameter descriptor |
-| BoolParameter | descriptor | Boolean parameter descriptor |
-| DateParameter | descriptor | Date parameter (YYYY-MM-DD) |
-| PathParameter | descriptor | Filesystem path parameter |
-| ListParameter | descriptor | JSON array parameter |
-| DictParameter | descriptor | JSON object parameter |
-| EnumParameter | descriptor | Enum member name parameter |
-| NumericalParameter | descriptor | Bounded numeric parameter |
-| ChoiceParameter | descriptor | Constrained-choice parameter |
-| build | function | Run tasks from Python with a scheduler |
-| run | function | Parse CLI arguments and run tasks |
-| namespace | function | Set the namespace for subsequent task classes |
-| auto_namespace | function | Set namespace to Python module name |
-| Event | class | Task lifecycle event identifiers |
-| LuigiStatusCode | class | Workflow outcome status codes |
-| LuigiRunResult | class | Detailed execution result with summary |
-| RemoteScheduler | class | Client for a remote scheduler |
-| RPCError | exception | Remote scheduler communication failure |
-
-### CLI Entry Points
-
-| Invocation | Supported | Required behavior |
-| --- | --- | --- |
-| `luigi --module pkg.mod TaskFamily --local-scheduler` | yes | imports `pkg.mod`, resolves `TaskFamily`, parses task flags, runs with an in-memory scheduler |
-| `python -m luigi --module pkg.mod TaskFamily --local-scheduler` | yes | same task invocation behavior as `luigi` |
-| `luigi TaskFamily` without `--local-scheduler` | yes | connects to the configured remote scheduler |
-
-CLI return code behavior:
-
-| Condition | Default code | Config key |
-| --- | ---: | --- |
-| Successful run or only default-zero categories apply | 0 | n/a |
-| Missing external dependency | 0 | `[retcode] missing_data` |
-| Task failure | 0 | `[retcode] task_failed` |
-| Already running or lock conflict | 0 | `[retcode] already_running` |
-| Scheduling error | 0 | `[retcode] scheduling_error` |
-| Not granted run permission | 0 | `[retcode] not_run` |
-| Unhandled internal exception | 4 | `[retcode] unhandled_exception` |
-
-## Appendix A: Environment
-
-The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment. Core workflows use local scheduler execution, local configuration files, and local targets.
-
-## Appendix B: Assessment Notes
-
-Compatibility covers user-facing imports, task objects, output files, configuration, command invocations, local scheduler runs, and `luigi.build` or `luigi.run` outcomes. Task graphs, parameters, completion state, target side effects, worker results, and public errors form the compatibility boundary without depending on private layouts, exact log wording, browser output, daemon management, or external services.
+<!-- SPEC.md -->
+# Luigi workflow specification
+
+## Authority and scope
+
+This document defines the public behavior of the `luigi` package for declaring
+parameterized task graphs and executing them with local targets and a local
+scheduler. It covers task identity, supported parameters, static and dynamic
+dependencies, atomic local-file publication, scheduler readiness and resource
+capacity, callbacks and events, configuration, installed command routes, and
+public build outcomes.
+
+The contract is behavioral. An implementation may use any internal parser,
+registry, graph, scheduler, worker, cache, or persistence strategy that
+preserves the public laws below.
+
+## Task declaration and identity
+
+`Task.requires()` and `Task.output()` return empty collections by default, and
+`Task.run()` performs no work by default. A task may override these methods to
+declare dependencies, targets, and work. Supported dependency and output
+containers include tasks or targets nested in lists, tuples, and dictionaries.
+`Task.input()` replaces each requirement with its output and preserves the
+supported container shape.
+
+`get_task_family()` returns the class name when no namespace applies and the
+qualified family when a namespace applies. `namespace()` affects subsequently
+declared matching task classes; a class-level `task_namespace` takes precedence
+over ambient namespace selection.
+
+Task equality and hashing use the task class plus significant parameter values.
+Equal significant values on the same class identify one logical task even when
+insignificant values differ. Different classes or significant values identify
+different tasks. An insignificant value remains available to task code but does
+not enter significant serialization or task identity. Workflow correctness must
+not depend on which identity-equal object supplies an insignificant value.
+
+`clone(cls=None, **kwargs)` constructs the current or supplied destination
+class, copies same-named parameter values, and applies explicit overrides using
+ordinary destination binding rules.
+
+## Parameters and configuration
+
+Plain and string parameters expose string values. Integer and Boolean
+parameters parse their documented command/configuration forms and serialize
+back to public string forms. Invalid integers and unknown Boolean spellings raise `ValueError`. Missing
+required values, unknown keywords, duplicate bindings, and excess positional
+values raise the applicable binding exception exposed by `luigi.parameter`.
+
+List parameters parse JSON arrays into their documented normalized sequence.
+Values declared `significant=False` remain Python attributes. They are absent
+when `to_str_params(only_significant=True)` requests the significant view; the
+default full string-parameter view includes them. `from_str_params()` applies
+the documented parsing rules.
+
+Declared defaults are used when no higher-precedence source supplies a value.
+Applicable task values progress from defaults to matching configuration, then
+command values, then explicit Python constructor values. A class-qualified
+command option changes the matching task family, including a dependency of the
+selected root. Python underscores in a parameter name use hyphens in command
+options.
+
+The cfg parser reads its documented sources, including `LUIGI_CONFIG_PATH`, in
+documented priority order. A `Config` subclass obtains typed values from its
+own section and remains configuration rather than a schedulable task. Fresh
+independent invocations observe current files and environment; recovery of a
+previously loaded configuration singleton in the same process is not required.
+
+## Completion, targets, and publication
+
+`Task.complete()` is true when all flattened output targets exist. A task with
+no output and no completion override is incomplete. A requirement or output
+whose public shape cannot be interpreted causes the corresponding public
+scheduling or completion failure rather than silently becoming ready.
+
+`LocalTarget(path)` represents a local file. `exists()` reflects final-file
+existence. Writing and reading use the public `open()` interface, with parent
+directories created as documented. A missing read exposes the underlying file
+failure. `remove`, `copy`, and `move` update controlled files and their public
+existence consistently.
+
+`open("w")` publishes through a temporary resource. Successful close commits
+the final bytes atomically; an exceptional context exit does not publish a
+partial final target. `temporary_path()` follows the same commit-on-success and
+no-final-publication-on-failure rule. Only a committed final target establishes
+output-based completion or unlocks a dependent task.
+
+Preexisting output makes its task complete and skips that task's `run()`.
+Removing a controlled output invalidates a later completion check and permits a
+fresh build to reconstruct the missing part of a graph. Reuse is based on
+current public target state, not on an inaccessible historical record.
+
+## Static and dynamic graph laws
+
+The local scheduler discovers work through `requires()`. A task is runnable
+only after every dependency is complete. Readiness takes precedence over
+priority; priority orders only tasks that are simultaneously ready and
+otherwise eligible to run.
+
+Identity-equal requirements denote one logical scheduled task. Different
+significant identities remain separate nodes and keep their own targets in
+nested `input()` structures. `ExternalTask.run` is `None`; a missing external
+target blocks its dependent branch without executing the external task.
+`WrapperTask` is complete when its flattened requirements are complete.
+
+A task whose `run()` returns without establishing its declared completion state
+does not unlock consumers. Exceptions from `requires()` or `complete()` are
+scheduling failures. An exception from `run()` is a task failure. In each case,
+dependent work stays blocked while an independent eligible branch may still
+commit its own output.
+
+`DynamicRequirements` exposes its flat requirements and output paths and uses
+its default or supplied public completion function. A task may yield a task or
+a flat `DynamicRequirements` collection from `run()`. The parent suspends while
+yielded work is scheduled and restarts from the beginning after that work
+completes, so code before the yield must be idempotent. The parent cannot
+publish final output before its yielded dependencies and its restarted final
+phase complete.
+
+Already-complete yielded work is reused. Failed or incomplete yielded work
+prevents successful parent completion. An independent later graph may correct
+the controlled cause and complete the dynamic chain without changing an
+already committed sibling target.
+
+## Scheduler resources and worker ownership
+
+`Task.resources` is a mapping from resource name to the amount claimed by the
+task. `process_resources()` supplies the effective mapping used for scheduling
+and may derive it from public parameter state. The `[resources]` configuration
+section supplies global capacities; an unspecified named resource has the
+documented default capacity of one.
+
+With multiple workers sharing one scheduler, the scheduler does not start a
+task when doing so would make the sum of running claims exceed a named
+capacity. Different resource names constrain their own capacities independently.
+Dependency readiness still applies before resource eligibility, and priority
+chooses only among tasks that are both ready and resource-eligible. A caller may
+use multiple single-process `Worker` instances when platform multiprocessing is
+not supported.
+
+A task holds its effective claim while its worker body is running. Completion
+or failure releases that claim so another eligible task can make progress.
+`decrease_running_resources(mapping)` reduces the current task's running claim
+through the public task interface; newly available capacity may then admit
+another ready task while the first task continues.
+
+Resource arbitration does not change identity, target ownership, dependency
+association, callback state, or result classification. A resource-blocked task
+has not run and cannot publish output. A failing resource holder does not make
+its consumer ready, but release of its claim may allow an independent waiting
+task to complete.
+
+`build(tasks, local_scheduler=True, workers=N, ...)` requests the supplied
+worker capacity; platform limitations on multiprocessing still apply. For
+deterministic local resource arbitration, callers may instead use public
+`Scheduler` and single-process `Worker` objects that share that scheduler. When
+a `worker_scheduler_factory` object implementing the documented creation
+methods is supplied, the scheduler and worker it creates execute the task graph.
+Private default-factory classes, queues, resource tables, worker messages, and
+object identities are not part of this contract.
+
+## Callbacks and events
+
+After `run()` returns successfully, Luigi calls that task instance's
+`on_success()`. When `run()` raises, Luigi calls `on_failure(exception)` with
+the raised exception before recording task failure. A preexisting complete
+task whose worker body is skipped receives no new run callback.
+
+`Task.event_handler(event)` registers a handler, `trigger_event(event, *args)`
+delivers controlled arguments, and `remove_event_handler(event, handler)`
+removes that registration. Ordinary exceptions raised by an event handler are protected from replacing
+the task's own execution outcome; other eligible handlers may still receive
+the event. `KeyboardInterrupt` is not covered by that guarantee.
+
+During ordinary local worker execution, public lifecycle events describe the
+same task transition as callbacks, targets, and results. `Event.START` precedes
+the worker body for a task that actually runs. Successful execution emits
+`Event.SUCCESS` and a processing-time event; failed execution emits
+`Event.FAILURE` with the task and raised exception. A reused complete task does
+not emit a new worker lifecycle. Exact elapsed values, log text, handler order,
+and timing are not specified.
+
+## Build, run, installed routes, and results
+
+By default, `build()` returns the same Boolean represented by the detailed
+result's `scheduling_succeeded` field. With `detailed_summary=True`, it returns
+`LuigiRunResult`, whose public fields include `status`, `scheduling_succeeded`,
+and string `summary_text`. Public `LuigiStatusCode` values distinguish success,
+task failure, missing external data, work not run, and scheduling failure; when
+several categories coexist, the aggregate enum may combine or prioritize them
+while branch target and event facts retain each branch's state.
+
+The Boolean or process outcome, detailed status, scheduling Boolean, callbacks,
+events, committed targets, and blocked consumers must describe the same
+workflow state. `summary_text` is required only to be a string; its exact
+vocabulary, layout, task ordering, and counts are not specified.
+
+`run()` accepts command-style arguments and may select a supplied
+`main_task_cls`. A supplied argument collection must have the documented list
+or tuple shape. The installed `luigi` command and `python -m luigi` accept the
+same local invocation grammar, including module import, root family, local
+scheduler, workers, and task options. Equivalent Python and command routes
+select the same typed task identities, graph, semantic target bytes, and
+success or failure category.
+
+Configured `[retcode]` values apply to their documented categories. When more
+than one configured nonzero category applies, the numerically greatest
+configured code wins. Exact stdout, stderr, help prose, logs, and traceback
+formatting are not part of the behavioral result.
+
+## Failure isolation and correction
+
+A scheduling failure does not run the invalid task as though scheduling had
+succeeded. A worker exception invokes the failure callback and event, does not
+commit an atomic final target, and blocks consumers. A missing external target
+blocks only the branch that depends on it. A failure in one root does not erase,
+rewrite, or relabel an independently committed sibling target.
+
+Correction may use a fresh task graph, scheduler, worker, configuration owner,
+process, or destination. The corrected build observes current public target
+state, reuses surviving siblings, and runs only work that is incomplete and
+eligible. Reuse of a failed task object, scheduler object, worker object,
+factory object, or configuration singleton is not required.
+
+## Cross-view laws
+
+1. A selected parameter value agrees across task attributes, significant
+   identity, dependency construction, effective resource claims, and target
+   content.
+2. Task family and namespace agree across Python construction and installed
+   command lookup.
+3. Static and dynamic dependency ownership agrees with input target shape and
+   scheduler readiness.
+4. Current committed target state agrees with completion, downstream access,
+   reuse, and selective rebuilding.
+5. Resource eligibility limits worker entry without changing graph identity or
+   falsely publishing blocked work.
+6. Completion or failure releases a running resource claim; failure still
+   blocks only its dependent branch.
+7. Worker callbacks and lifecycle events agree with whether the task actually
+   ran, committed, failed, or was reused.
+8. Boolean, detailed, and installed-command outcomes agree with scheduling,
+   target, callback, and event state.
+
+## Public import surface
+
+The package exposes its documented task, target, parameter, execution, event,
+configuration, scheduler-factory, status, and exception surfaces, including
+`Task`, `ExternalTask`, `WrapperTask`, `Config`, `DynamicRequirements`,
+`LocalTarget`, `Parameter`, `StrParameter`, `IntParameter`, `BoolParameter`,
+`ListParameter`, `Event`, `LuigiStatusCode`, `build`, `run`, `namespace`, and
+the public parameter-binding exception families from `luigi.parameter`.
+`LuigiRunResult` is available from its documented execution-summary module.
+
+## Out of scope
+
+- private scheduler/worker queues, graph records, resource tables, registries,
+  caches, RPC payloads, locks, persistence schemas, and task-history stores;
+- exact logs, warnings, messages, tracebacks, representations, summaries,
+  console prose, elapsed values, or incidental callback/handler ordering;
+- automatic retry counts, retry delay, disable windows, retry exhaustion,
+  batching, assistant workers, remote scheduling, and same-object recovery;
+- nested dynamic-yield grammar beyond one task or a flat
+  `DynamicRequirements` collection; and
+- Hadoop, Spark, HDFS, cloud, SQL, Redis, metrics, email, SSH, FTP,
+  Kubernetes, browser, daemon, and other contrib integrations.

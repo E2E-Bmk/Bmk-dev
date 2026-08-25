@@ -1,0 +1,23 @@
+from pathlib import Path
+from .support import integration_case
+def test_i05(tmp_path: Path) -> None: integration_case("I05", tmp_path)
+def test_i06(tmp_path: Path) -> None: integration_case("I06", tmp_path)
+def test_i07(tmp_path: Path) -> None: integration_case("I07", tmp_path)
+def test_i08(tmp_path: Path) -> None: integration_case("I08", tmp_path)
+def test_i09(tmp_path: Path) -> None: integration_case("I09", tmp_path)
+def test_i10(tmp_path: Path) -> None: integration_case("I10", tmp_path)
+def test_i11(tmp_path: Path) -> None: integration_case("I11", tmp_path)
+def test_i12(tmp_path: Path) -> None: integration_case("I12", tmp_path)
+def test_i13(tmp_path: Path) -> None: integration_case("I13", tmp_path)
+def test_i14(tmp_path: Path) -> None: integration_case("I14", tmp_path)
+def test_i15(tmp_path: Path) -> None: integration_case("I15", tmp_path)
+def test_i16(tmp_path: Path) -> None: integration_case("I16", tmp_path)
+def test_i17(tmp_path: Path) -> None: integration_case("I17", tmp_path)
+def test_i18(tmp_path: Path) -> None: integration_case("I18", tmp_path)
+def test_i19(tmp_path: Path) -> None: integration_case("I19", tmp_path)
+def test_i20(tmp_path: Path) -> None: integration_case("I20", tmp_path)
+def test_i21(tmp_path: Path) -> None: integration_case("I21", tmp_path)
+def test_i22(tmp_path: Path) -> None: integration_case("I22", tmp_path)
+def test_i23(tmp_path: Path) -> None: integration_case("I23", tmp_path)
+def test_i24(tmp_path: Path) -> None: integration_case("I24", tmp_path)
+

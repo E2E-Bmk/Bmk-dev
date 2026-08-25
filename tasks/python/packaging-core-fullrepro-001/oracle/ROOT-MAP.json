@@ -1,0 +1,31 @@
+{
+  "schema": "spec2repo.root-map.v3",
+  "atomic": [
+    {"id":"A01","tier":"atomic","mutation":false,"family":"native-version"},{"id":"A02","tier":"atomic","mutation":false,"family":"native-version"},
+    {"id":"A03","tier":"atomic","mutation":false,"family":"native-requirement"},{"id":"A04","tier":"atomic","mutation":false,"family":"native-requirement"},
+    {"id":"A05","tier":"atomic","mutation":false,"family":"native-marker"},{"id":"A06","tier":"atomic","mutation":false,"family":"native-tags"},
+    {"id":"A07","tier":"atomic","mutation":false,"family":"native-utils"},{"id":"A08","tier":"atomic","mutation":false,"family":"native-utils"},
+    {"id":"A09","tier":"atomic","mutation":true,"family":"policy-projection"},{"id":"A10","tier":"atomic","mutation":true,"family":"policy-projection"},
+    {"id":"A11","tier":"atomic","mutation":true,"family":"policy-projection"},{"id":"A12","tier":"atomic","mutation":true,"family":"policy-projection"},
+    {"id":"A13","tier":"atomic","mutation":true,"family":"witness-graph"},{"id":"A14","tier":"atomic","mutation":true,"family":"witness-graph"},
+    {"id":"A15","tier":"atomic","mutation":true,"family":"mirror-quorum"},{"id":"A16","tier":"atomic","mutation":true,"family":"transparency-log"}
+  ],
+  "composition": [
+    {"id":"I01","tier":"integration","mutation":false,"family":"native-version"},{"id":"I02","tier":"integration","mutation":false,"family":"native-requirement"},
+    {"id":"I03","tier":"integration","mutation":false,"family":"native-tags"},{"id":"I04","tier":"integration","mutation":false,"family":"native-marker"},
+    {"id":"I05","tier":"integration","mutation":true,"family":"policy-projection","depends_on":["A09"]},{"id":"I06","tier":"integration","mutation":true,"family":"policy-projection","depends_on":["A12"]},
+    {"id":"I07","tier":"integration","mutation":true,"family":"policy-projection","depends_on":["A12"]},{"id":"I08","tier":"integration","mutation":true,"family":"policy-projection","depends_on":["A12"]},
+    {"id":"I09","tier":"integration","mutation":true,"family":"witness-graph","depends_on":["A13"]},{"id":"I10","tier":"integration","mutation":true,"family":"witness-graph","depends_on":["A14"]},
+    {"id":"I11","tier":"integration","mutation":true,"family":"witness-graph","depends_on":["A14"]},{"id":"I12","tier":"integration","mutation":true,"family":"witness-graph","depends_on":["A14"]},
+    {"id":"I13","tier":"integration","mutation":true,"family":"mirror-quorum","depends_on":["A15"]},{"id":"I14","tier":"integration","mutation":true,"family":"mirror-quorum","depends_on":["A15"]},
+    {"id":"I15","tier":"integration","mutation":true,"family":"mirror-quorum","depends_on":["A15"]},{"id":"I16","tier":"integration","mutation":true,"family":"mirror-quorum","depends_on":["A15"]},
+    {"id":"I17","tier":"integration","mutation":true,"family":"transparency-log","depends_on":["A16"]},{"id":"I18","tier":"integration","mutation":true,"family":"transparency-log","depends_on":["A16"]},
+    {"id":"I19","tier":"integration","mutation":true,"family":"compensation","depends_on":[]},{"id":"I20","tier":"integration","mutation":true,"family":"compensation","depends_on":[]},
+    {"id":"I21","tier":"integration","mutation":true,"family":"federated-workflow","depends_on":["A12","A14"]},{"id":"I22","tier":"integration","mutation":true,"family":"federated-workflow","depends_on":["A15","A16"]},
+    {"id":"I23","tier":"integration","mutation":true,"family":"federated-workflow","depends_on":["A15","A16"]},{"id":"I24","tier":"integration","mutation":true,"family":"federated-workflow","depends_on":["A12"]},
+    {"id":"S01","tier":"system","mutation":false,"family":"native-requirement"},{"id":"S02","tier":"system","mutation":false,"family":"native-tags"},
+    {"id":"S03","tier":"system","mutation":true,"family":"federated-workflow","depends_on":["I21","I22","I23"]},{"id":"S04","tier":"system","mutation":true,"family":"federated-workflow","depends_on":["I22"]},
+    {"id":"S05","tier":"system","mutation":true,"family":"compensation","depends_on":["I19","I21"]},{"id":"S06","tier":"system","mutation":true,"family":"compensation","depends_on":["I20"]},
+    {"id":"S07","tier":"system","mutation":true,"family":"ownership-isolation","depends_on":["I12","I16"]},{"id":"S08","tier":"system","mutation":true,"family":"audit-stability","depends_on":["I23"]}
+  ]
+}

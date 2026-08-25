@@ -1,232 +1,80 @@
-﻿# Requests-Cache Specification
-
-> **Specification Authority**: This document is the sole source of truth.
-> The described system diverges from any similarly-named software in
-> interface design, parameter naming, behavioral edge cases, and error
-> semantics. Implementations derived from memory of external codebases
-> will fail the evaluation.
-
-## Product Overview
-
-Requests-Cache adds persistent HTTP response caching to the `requests` library. It exposes a `CachedSession` class for explicit session use and patcher functions that temporarily or globally replace `requests.Session` with a cached session. Cached entries are keyed from prepared requests, saved in a cache backend, and returned as response objects compatible with `requests.Response` plus cache metadata such as `from_cache`, `created_at`, `expires`, `is_expired`, and `cache_key`.
-
-## Non-Goals
-
-- Service-backed storage without the corresponding external service is excluded.
-- Private helper functions, private attributes, private module layout, and exact rich or text representation strings are not specified.
-- Compatibility shims for legacy cache file formats are excluded.
-- Exact internal logging messages or warning wording are not part of the contract.
-- Command-line interfaces are excluded.
-- Unsupported serializer dependency combinations must fail clearly rather than silently fall back.
-
-## Representative Workflows
-
-### Session Cache Hit
-
-```python
-from requests_cache import CachedSession
-
-session = CachedSession(backend="memory", expire_after=60)
-first = session.get("https://example.test/data")
-second = session.get("https://example.test/data")
-
-assert first.from_cache is False
-assert second.from_cache is True
-assert second.text == first.text
-```
-
-The first cacheable request must contact the configured adapter and write a cache entry. The second equivalent request must read the entry and return a cached response. If the response is deleted, expired, refreshed, or rejected by settings, the next request must follow the corresponding miss or refresh behavior instead.
-
-### Patching Requests
-
-```python
-import requests
-import requests_cache
-
-with requests_cache.enabled(backend="memory", expire_after=60):
-    first = requests.get("https://example.test/data")
-    second = requests.get("https://example.test/data")
-
-assert requests_cache.is_installed() is False
-```
-
-Inside the context, ordinary requests calls must use the configured cache. After the context exits, the previous requests session factory must be restored.
-
-### Persistent Local Cache
-
-```python
-from requests_cache import CachedSession
-
-session = CachedSession("http_cache", backend="sqlite")
-session.get("https://example.test/data")
-session.close()
-
-later = CachedSession("http_cache", backend="sqlite")
-cached = later.get("https://example.test/data")
-assert cached.from_cache is True
-```
-
-A persistent local backend must save enough response and request metadata for a later session to return the cached response without contacting the origin adapter.
-
-## Session Caching Behavior
-
-`CachedSession` is a `requests.Session` subclass whose HTTP methods route every request through a cache policy before reaching the origin adapter. Normal `requests` semantics must be preserved, including response hooks registered via `hooks={"response": ...}`.
-
-**Cache miss and hit.** When a cacheable request has no matching entry, the session must send the request to the origin adapter, save the response, and return it with `from_cache == False`. A subsequent equivalent request must return a cached copy with `from_cache == True` and the same content, status code, headers, URL, and request metadata.
-
-**Response metadata.** Origin responses written to the cache must expose `created_at`, `expires`, and `cache_key`. Cached responses read from storage must additionally expose `is_expired`, `expires_delta`, `expires_unix`, `size`, and `reset_expiration()`. When a response is not cacheable or not written, `expires` and `cache_key` must be `None`.
-
-**Per-request overrides.** `CachedSession.request()` and `CachedSession.send()` accept cache-specific options alongside normal `requests` arguments:
-
-- When `only_if_cached=True` and no usable cached response exists, the session must return a response with status code `504` and reason `Not Cached` without contacting the origin adapter.
-- When `force_refresh=True`, the session must send a new request and overwrite the existing entry if the new response is cacheable.
-- When `refresh=True` is combined with validators or cache-control headers, the session must follow the documented revalidation path.
-
-**Session-level modes.** `CachedSession.cache_disabled()` must temporarily bypass cache reads and writes for that session and restore the previous setting on exit. `read_only=True` must allow reading existing cache entries but must not write new origin responses; a read-only miss returns the origin response with `from_cache == False` and leaves the backend unchanged. `autoclose=True` must close backend connections when the session closes; `autoclose=False` must leave backend objects open for sharing.
-
-**Restriction.** Pickling a `CachedSession` must raise `NotImplementedError`.
-
-## Patcher Behavior
-
-The patcher functions control whether ordinary `requests.Session()` calls produce cached sessions.
-
-`install_cache(cache_name="http_cache", backend=None, session_factory=CachedSession, **kwargs)` must patch the global `requests.Session` factory so that new sessions use the configured cached session class.
-
-`uninstall_cache()` must restore the original `requests.Session` factory. Calling it when no cache is installed must leave `requests` usable.
-
-`is_installed()` must return `True` when `requests.Session()` currently constructs a cached session, and `False` otherwise.
-
-`enabled(*args, **kwargs)` must be a context manager that installs a cache on entry and uninstalls it on exit, restoring the previous uninstalled state.
-
-`disabled()` must be a context manager that uninstalls the cache on entry and restores the previously installed cache on exit. When no cache is installed before entry, it must leave requests uninstalled after exit.
-
-`get_cache()` must return the active cache object when a cache is installed and `None` otherwise.
-
-Top-level `clear()` and `delete(*args, **kwargs)` must operate on the currently installed cache. If no cached session is installed, they must not corrupt the `requests` session factory.
-
-## Backends and Persistence
-
-Backends store cached responses and redirect aliases. `init_backend(cache_name, backend=None, **kwargs)` must return a `BaseCache` subclass. When `backend is None`, it must choose SQLite if available, otherwise memory. When `backend` is a `BaseCache` instance, it must return that instance. When `backend` is an unknown name, it must raise `ValueError` listing the accepted aliases.
-
-**Memory.** `backend="memory"` must create a non-persistent `BaseCache` with dict-like `responses` and `redirects` storage.
-
-**SQLite.** `backend="sqlite"` or `SQLiteCache(path)` must store responses in a SQLite file. A cache name without an extension must produce a `.sqlite` database file; `session.cache.db_path` must reflect this resolved path. A new session using the same path must read responses stored by a previous closed session.
-
-**Filesystem.** `backend="filesystem"` or `FileCache(path)` must store cached responses as files under the cache directory. It must support serializers whose encoded values are bytes or text and must expose a file-backed dict-like response store.
-
-**Backend mapping interface.** `BaseCache` must expose `responses`, `redirects`, `contains()`, `get_response()`, `save_response()`, `create_key()`, `clear()`, `delete()`, `filter()`, `recreate_keys()`, and `close()`. `contains(url=...)` must check a GET request for that URL. `contains(request=...)` must use the active key settings. `delete(urls=[...])`, `delete(requests=[...])`, and `delete(keys...)` must remove matching responses and prune redirect aliases that point to deleted responses. Deleting a missing key must be silently ignored.
-
-**Backend filtering.** `filter(valid=True, expired=True, invalid=False, older_than=None)` must yield cached responses matching the requested validity and age filters. When all filter switches are false and `older_than` is absent, it must yield nothing.
-
-**Redirect aliases.** When the origin server returns a redirect chain, the session must store the final response and create redirect aliases so that requesting the original URL returns the cached final response with `from_cache == True` and the final URL.
-
-## Request Matching
-
-Cache keys control when two requests share a cached entry.
-
-**Key generation.** Keys must be derived from normalized prepared request data. Equivalent GET requests with query parameters in different order must produce the same key. Different methods, URLs, bodies, selected headers, or non-ignored parameters must produce different keys.
-
-**Ignored parameters.** `ignored_parameters` must apply to query parameters, request headers, and JSON/form body parameters. Ignored values must be excluded from matching and redacted to `REDACTED` in stored cached request and response URLs/headers/bodies. Default ignored parameters must include common credential names such as `Authorization`, `Proxy-Authorization`, `X-API-Key`, `X-Auth-Token`, `X-API-Token`, `X-Access-Token`, `access_token`, `api_key`, and `apikey`.
-
-**Header matching.** `match_headers=False` must ignore request headers for cache matching except for `Vary` header handling. `match_headers=True` must include all request headers. `match_headers=[...]` must include only the named headers, matching case-insensitively.
-
-**Body and content root.** `content_root_key` must restrict JSON body ignored-parameter filtering to the named root object when it exists. If the body is not valid JSON, body matching must fall back to normalized form parameters or raw body comparison without raising.
-
-**Custom key function.** `key_fn` must replace the default key generator when provided. The callable must receive the request and the same key-generation keyword arguments used by the default key function.
-
-**Normalization helpers.** `create_key()`, `normalize_request()`, `normalize_url()`, `normalize_params()`, `normalize_headers()`, and `normalize_body()` must be available for custom matching. Invalid inputs must raise normal Python exceptions; they must not silently create a key unrelated to the request.
-
-## Expiration and Cache-Control
-
-Expiration policies determine when cached responses become stale.
-
-**Expiration values.** Values must accept `None`, numbers of seconds, `datetime.timedelta`, timezone-aware or naive `datetime.datetime`, and HTTP date strings. `NEVER_EXPIRE` is `-1`, `EXPIRE_IMMEDIATELY` is `0`, and `DO_NOT_CACHE` is a sentinel for disabling storage. `expire_after=None` and `NEVER_EXPIRE` must produce responses with no expiration datetime. `EXPIRE_IMMEDIATELY` must prevent storage for ordinary responses that do not include validators. Positive values must expire relative to the response creation time. Absolute datetimes must be converted to UTC-aware datetimes.
-
-**Priority chain.** Expiration decisions must follow this precedence (highest first): response/request cache-control headers (when `cache_control=True`), explicit per-request `expire_after`, matching `urls_expire_after` rule, session-level `expire_after` fallback.
-
-**URL-specific rules.** When two `urls_expire_after` patterns match, the first mapping entry must win. String patterns must match the URL without requiring the scheme and must behave as glob prefixes with recursive wildcard behavior. Compiled regular expressions must match by regex search.
-
-**Cache-control headers.** `cache_control=True` must honor `Cache-Control`, `Expires`, `ETag`, `Last-Modified`, and validation headers. When a response requires validation, the next request must send conditional headers and must update the cached response on a `304 Not Modified`.
-
-**Stale responses.** `stale_if_error=True` must return an expired cached response when refreshing raises an exception. If `stale_if_error` is a time value, the stale window must be respected. If no usable stale response exists, the original exception must be raised. `stale_while_revalidate` must return a stale response immediately while scheduling a background refresh.
-
-## Filtering and Write Policy
-
-By default, only `GET` and `HEAD` requests with status code `200` must be cached. Other methods or status codes must return the origin response without writing a cache entry.
-
-`allowable_methods` must define the complete set of eligible HTTP methods (case-insensitive). `allowable_codes` must define the complete set of eligible status codes.
-
-`filter_fn(response)` must run after a response is available. When it returns `False`, the response must not be stored. When a previously cached response exists and a refreshed response fails `filter_fn`, the existing entry must be deleted.
-
-`expire_after=DO_NOT_CACHE` at session or URL-rule level must prevent matching responses from being stored.
-
-`cache_control=True` must prevent storage when response headers require no-store/no-cache behavior. Unsupported or malformed cache headers must not make unrelated entries unusable.
-
-## Cache Inspection and Mutation
-
-The cache backend exposes its state through mapping and query interfaces.
-
-`session.cache.responses` must behave like a mutable mapping from cache keys to cached response objects. `session.cache.redirects` must map redirect request keys to final response keys.
-
-`session.cache.contains(key=...)`, `contains(request=...)`, and `contains(url=...)` must return whether the corresponding response or redirect alias exists.
-
-`session.cache.delete()` must accept cache keys, `urls`, `requests`, `expired=True`, `invalid=True`, and `older_than=...`. It must ignore missing keys and must remove redirect aliases that no longer point to existing responses.
-
-`session.cache.filter()` must yield response objects matching validity, expiration, invalid-entry, and age filters. `older_than` must compare against `response.created_at`.
-
-`CachedResponse.reset_expiration(expire_after)` must update the response expiration and return whether the response is expired after the update.
-
-`CachedResponse.size` must return the length in bytes of the cached body content. `CachedResponse.next` must return the next prepared request in a redirect chain, or `None`.
-
-## Serializers
-
-Serializers control how cached responses are encoded for storage and decoded on retrieval.
-
-The `serializer` setting must accept `None`, a built-in name, or a compatible custom serializer. Built-in names must include `pickle`, `json`, `yaml`, and `bson` when their dependencies are installed. Unsupported names must raise a clear exception.
-
-A custom serializer must encode cached values for storage and decode them back into equivalent response objects. When a serializer produces text, filesystem storage must write text-compatible files. When it produces bytes, storage must write binary files.
-
-Deserialization failures for existing entries must be handled as invalid cache entries during filtering or retrieval, not as successful cache hits.
-
-## State Model
-
-The core state is a set of cached response entries. Each entry is keyed by normalized request data and contains response content, response headers, status, URL, request metadata, creation time, expiration time, and redirect aliases when applicable.
-
-The public projections of this state are:
-
-- The value returned by `CachedSession` request methods.
-- The patcher projection where calls through `requests` use an installed cached session.
-- The backend projection exposed through `session.cache.responses`, `session.cache.redirects`, `contains()`, `filter()`, `delete()`, `clear()`, and backend persistence files.
-- The response metadata projection exposed through `from_cache`, `created_at`, `expires`, `is_expired`, `cache_key`, `expires_delta`, and `size`.
-- The matching projection exposed through `create_key()` and normalized request helpers.
-
-## Error Semantics
-
-- When `backend` is an unknown alias, `init_backend()` must raise `ValueError`.
-- When an HTTP date string is invalid, `get_expiration_datetime()` must raise `ValueError`.
-- When `only_if_cached=True` and no cached response exists, the session must return a 504 response without raising a network exception.
-- When an origin request raises and no usable stale response is permitted, the original exception must be raised.
-- When optional backend or serializer dependencies are missing, constructing the corresponding class must raise an import-related error naming the missing dependency.
-- When a `CachedSession` is pickled, it must raise `NotImplementedError`.
-
-## Cross-View Invariants
-
-1. A response cached through `CachedSession.get()` must be discoverable through `session.cache.contains(url=...)` and must be returned by a later equivalent `get()` as `from_cache == True`.
-2. A response stored by a SQLite session must be returned from cache by a later SQLite session using the same cache path after the first session is closed.
-3. A response stored by a filesystem session must create a backend-visible file entry and must be returned from cache by a later filesystem session using the same cache directory and serializer.
-4. Calling `session.cache.delete(urls=[url])` must make the next equivalent session request miss the cache and contact the origin adapter.
-5. Calling `session.cache.clear()` must make every previously cached URL miss until it is requested and stored again.
-6. Installing the patcher must make ordinary `requests.get()` and a new `requests.Session()` use the active cache; uninstalling it must restore ordinary requests behavior.
-7. Entering `requests_cache.disabled()` while a patch is installed must prevent cache hits and writes inside the context and must restore the installed cache after the context exits.
-8. Changing `ignored_parameters` must change both key generation and stored redaction, so inspection of stored responses must agree with future cache-hit behavior.
-9. Expiration metadata visible on a returned response must agree with whether future requests treat it as fresh, stale, or uncacheable.
-10. `BaseCache.recreate_keys()` must keep existing cached responses reachable under keys recomputed with the current matching settings.
-
-## Public Interface
-
-### Import Surface
-
-The package is installed as `requests_cache`.
+<!-- SPEC.md -->
+# Requests Cache v1 public specification draft A
+
+## Authority and status
+
+This pre-freeze draft is the sole public behavioral authority for
+`requests-cache-fullrepro-001`. It is grounded in pinned Requests Cache 1.3.3
+source commit `2cdd81a3d71319fee175ecab47c550c7e2395dda`, tree
+`5919817e4d01d9f5fb4662bc2375affa53c90717`, and the independently installed
+reference runtime. The intake specification, intake clauses, original oracle,
+source, prefetch records, and semantic notes are design evidence only. They do
+not add requirements to this document.
+
+The normative requirements are exactly the 60 identified clauses in the seven
+tables below. Explanatory prose, examples, headings, and test-design guidance
+are non-normative. A later gate must map one independently runnable root to
+each clause, with no additional score-bearing behavior.
+
+## Product boundary
+
+The product is a Python package named `requests_cache`. It augments Requests
+with explicit cached sessions, local memory/SQLite/filesystem backends,
+request normalization and key construction, expiration and write policy,
+serializer pipelines, cached-response metadata, and reversible global Requests
+patching.
+
+All conformance observations must use documented public imports and ordinary
+Python, Requests, local adapter, temporary-file, thread/event, and subprocess
+facilities. A local adapter may stand in for an origin server. A subprocess may
+be used to prove that persistent state, rather than process memory, carries a
+response across process boundaries.
+
+For this specification:
+
+- an **origin call** is an invocation of the mounted local Requests adapter;
+- an **equivalent request** is one whose public cache key is equal under the
+  active matching settings;
+- a **written origin response** is the response returned by the session after
+  a cacheable origin call has been saved;
+- a **cached response** is a response reconstructed from a backend entry;
+- a **fresh** response has no expiration or has an expiration later than the
+  current UTC time; and
+- a **redirect alias** maps the prepared request for a redirecting URL to the
+  final cached response key.
+
+Tests may compare time values with a documented tolerance sufficient for call
+overhead. They may use explicit events and bounded public-state polling for the
+background-refresh clause. They must not use an unbounded wait or assume a
+particular thread identifier, scheduling order, database schema, or filename
+hash.
+
+## Out of scope
+
+The following are deliberately outside the contract:
+
+- Redis, MongoDB, GridFS, DynamoDB, or any service-backed workflow;
+- success of optional YAML, BSON, or signed-pickle features when their optional
+  dependencies are absent;
+- private helpers, private attributes, implementation source, SQL schema,
+  exact serialized bytes, filename hashes, logging, warning text, repr, or
+  exception-message text;
+- legacy cache migration and compatibility with files produced by older
+  releases;
+- live network access, a command-line entry point, or `python -m requests_cache`;
+- thread safety of patcher contexts or `CachedSession.cache_disabled()`;
+- wall-clock performance or a particular background-thread implementation;
+- an exact first task/thread/process identifier or exact filesystem metadata;
+- the local-time interpretation of a naive `datetime`;
+- lowercase values in `allowable_methods` (roots use Requests' prepared,
+  uppercase method names); and
+- cache metadata inside a response hook dispatched by Requests for the first
+  raw origin response. Clause `RC-SESSION-006` covers the valid cached-response
+  hook boundary after the cache has first been primed.
+
+## Public import surface
+
+Clause `RC-PUB-001` owns this complete top-level import list:
 
 ```python
 import requests_cache
@@ -238,6 +86,7 @@ from requests_cache import (
     DictStorage,
     SQLiteCache,
     FileCache,
+    CachedResponse,
     init_backend,
     install_cache,
     uninstall_cache,
@@ -272,7 +121,8 @@ from requests_cache import (
 )
 ```
 
-Advanced users also import from documented subpackages:
+The same public objects must be available through these documented advanced
+imports where named:
 
 ```python
 from requests_cache.backends import BaseCache, BaseStorage, DictStorage, init_backend
@@ -281,60 +131,126 @@ from requests_cache.policy import CacheActions, CacheSettings, get_expiration_da
 from requests_cache.serializers import init_serializer
 ```
 
-There is no `requests-cache` console script. `python -m requests_cache` is not a supported invocation.
+`pickle_serializer`, `json_serializer`, and `utf8_serializer` are configured
+serializer objects, and `utf8_encoder` is a serializer stage. `yaml_serializer`
+and `safe_pickle_serializer` may instead be dependency-error providers when
+their optional packages are unavailable. No clause requires these exported
+providers to be functions merely because the intake catalog called them
+factories.
 
-### API Catalog
+## Atomic clauses: public local contracts
 
-| Name | Kind | Role |
-|------|------|------|
-| CachedSession | class | requests.Session subclass with caching |
-| CacheMixin | class | Mixin adding cache behavior to a session class |
-| BaseCache | class | Base class for cache backends |
-| BaseStorage | class | Base storage abstraction for cache entries |
-| DictStorage | class | Dict-like storage helper |
-| SQLiteCache | class | SQLite-backed cache backend |
-| FileCache | class | Filesystem-backed cache backend |
-| CachedResponse | class | Response object with cache metadata |
-| CacheActions | class | Per-request cache action decisions |
-| CacheSettings | class | Session-level cache settings object |
-| CacheDirectives | class | Parsed cache-control directives |
-| init_backend | function | Construct a cache backend from name or instance |
-| install_cache | function | Monkey-patch requests.Session globally |
-| uninstall_cache | function | Restore the original requests.Session factory |
-| enabled | contextmanager | Temporarily install a global cache patch |
-| disabled | contextmanager | Temporarily disable an installed cache patch |
-| get_cache | function | Return the active installed cache object |
-| is_installed | function | Report whether a cache patch is installed |
-| clear | function | Clear the currently installed cache |
-| delete | function | Delete entries from the currently installed cache |
-| create_key | function | Generate a cache key from a request |
-| normalize_request | function | Normalize a request for matching |
-| normalize_url | function | Normalize a URL for matching |
-| normalize_params | function | Normalize query or form parameters |
-| normalize_headers | function | Normalize request headers for matching |
-| normalize_body | function | Normalize request body for matching |
-| get_expiration_datetime | function | Parse expiration values into datetimes |
-| get_url_expiration | function | Resolve expiration for a URL against rules |
-| init_serializer | function | Construct a serializer from name or object |
-| pickle_serializer | function | Pickle-based serializer factory |
-| json_serializer | function | JSON-based serializer factory |
-| yaml_serializer | function | YAML-based serializer factory |
-| utf8_serializer | function | UTF-8 text serializer factory |
-| utf8_encoder | function | UTF-8 encoding helper for serializers |
-| safe_pickle_serializer | function | Restricted pickle serializer factory |
-| NEVER_EXPIRE | constant | Sentinel for no-expiration policy |
-| EXPIRE_IMMEDIATELY | constant | Sentinel for immediate-expiration policy |
-| DO_NOT_CACHE | constant | Sentinel for disabling storage |
-| DEFAULT_IGNORED_PARAMS | constant | Default credential-like parameters to ignore |
+| Clause | Normative requirement |
+| --- | --- |
+| `RC-PUB-001` | Every top-level and advanced import listed above resolves. The eleven named class surfaces (`CachedSession`, `CacheMixin`, `BaseCache`, `BaseStorage`, `DictStorage`, `SQLiteCache`, `FileCache`, `CachedResponse`, `CacheActions`, `CacheSettings`, and `CacheDirectives`) are classes, and `CachedSession` is a subclass of `requests.Session`. Constants satisfy `NEVER_EXPIRE == -1`, `EXPIRE_IMMEDIATELY == 0`, and `DO_NOT_CACHE` is distinct from both. |
+| `RC-KEY-001` | `create_key(request, ...)` returns a deterministic string. Equivalent GET requests whose query pairs differ only in order have the same key. Changing the prepared method, normalized URL, non-ignored body, selected header, `verify` value, or serializer identity changes the key for the controlled inputs used by the root. |
+| `RC-KEY-002` | `normalize_request()` accepts a `requests.Request` or `PreparedRequest`, returns a prepared request copy, uppercases its method, and applies URL, header, and body normalization without mutating the caller's prepared request. |
+| `RC-KEY-003` | `normalize_url(url, ignored_parameters)` normalizes scheme/host/default-port variations, sorts query pairs, and replaces each present ignored query value with the literal `REDACTED`. |
+| `RC-KEY-004` | `normalize_params(value, ignored_parameters=None)` accepts text or bytes, orders parsed key/value pairs deterministically, preserves repeated and key-only parameters, and replaces present ignored values with `REDACTED`. |
+| `RC-KEY-005` | `normalize_headers(headers, ignored_parameters=None)` returns a case-insensitive mapping, preserves ordinary header lookup, deterministically normalizes comma-separated multi-values, and replaces the value of an exactly named ignored header with `REDACTED`. |
+| `RC-KEY-006` | `normalize_body(prepared_request, ignored_parameters, content_root_key=None)` returns bytes. It deterministically sorts and redacts JSON or form bodies, restricts JSON redaction to the named root when that root exists, and returns ordinary invalid-JSON or unrecognized-content-type bodies without raising or inventing unrelated content. |
+| `RC-EXP-001` | `get_expiration_datetime()` returns `None` for `None`, `NEVER_EXPIRE`, and `DO_NOT_CACHE`; with an explicit aware `start_time`, zero returns that start time and positive numeric or `timedelta` values return the start time plus the supplied duration. |
+| `RC-EXP-002` | An aware absolute `datetime` and a valid HTTP-date string are returned as UTC-aware instants. An invalid nonnumeric HTTP-date string raises `ValueError` unless `ignore_invalid_httpdate=True`, in which case it returns `None`. No exact message is required. |
+| `RC-EXP-003` | `get_url_expiration(url, mapping)` examines mapping entries in insertion order and returns the value for the first matching string pattern. String patterns ignore an optional scheme and act as recursive glob prefixes. |
+| `RC-EXP-004` | Compiled regular-expression URL patterns use search semantics. A missing URL, empty mapping, or no matching pattern returns `None`. |
+| `RC-BACK-001` | `init_backend(name, "memory")` returns an in-memory `BaseCache` with mutable-mapping `responses` and `redirects`. Passing an existing `BaseCache` instance as `backend` returns that same object. |
+| `RC-BACK-002` | `init_backend(name, unknown_alias)` raises `ValueError`. The root asserts the type only, not alias-list order or message text. |
+| `RC-BACK-003` | `SQLiteCache(path_without_suffix)` exposes a `db_path` with `.sqlite` appended. `FileCache(directory, serializer=...)` exposes that directory through `cache_dir`. Both expose response and redirect mappings and can be closed through `close()`. |
+| `RC-RESP-001` | A directly constructed `CachedResponse` behaves as a `requests.Response`, has `from_cache is True`, preserves public status, URL, headers, encoding, and body content, reports byte length through `size`, and reports `next is None` when no redirect successor was supplied. |
+| `RC-RESP-002` | `CachedResponse.reset_expiration(value)` updates `expires` and returns the resulting `is_expired` boolean. Zero makes the response expired, while `None` or `NEVER_EXPIRE` clears expiration and makes it non-expired. `expires_delta` and `expires_unix` agree with a non-null expiration within normal rounding tolerance. |
+| `RC-RESP-003` | Normal inherited Requests projections remain usable on a cached response: `content`, `text`, `json()`, `ok`, boolean truth, and `raise_for_status()` follow `requests.Response` semantics for controlled success and error inputs. |
+| `RC-SER-001` | `init_serializer(None, decode_content=...)` returns `None`. `init_serializer("pickle", ...)` and `init_serializer("json", ...)` return independent configured pipeline copies with the corresponding public names and binary/text modes. Passing an already configured pipeline returns a distinct compatible copy. An unknown serializer name raises `KeyError`; exact text is not required. |
+| `RC-SER-002` | The public pickle and JSON serializer pipelines each round-trip a `CachedResponse` into an equivalent `CachedResponse` preserving status, URL, headers, body, expiration, request metadata, and `from_cache`. Pickle emits bytes and JSON emits text; exact encoding is not specified. |
+| `RC-SER-003` | `utf8_serializer` and `utf8_encoder` encode non-ASCII text as UTF-8 bytes and decode those bytes to the original text. If an exported optional serializer provider is unavailable, using that provider raises an import-related error naming the missing dependency; if available, this clause imposes no extra optional-format behavior. |
 
-### CLI Entry Points
+## Integration clauses: composed cache graph
 
-There is no console script for this package. `python -m requests_cache` is not supported. Programmatic use is through Python imports and normal `requests` adapters.
+### Session routing and response state
 
-## Appendix A: Environment
+| Clause | Normative requirement |
+| --- | --- |
+| `RC-SESSION-001` | With a memory `CachedSession` and a cacheable local-adapter GET, the first request calls the adapter once, is returned with `from_cache is False`, and creates one response entry. A second equivalent request does not call the adapter, has `from_cache is True`, and preserves body, status, headers, URL, and prepared-request method/URL. The entry is simultaneously visible through `responses` and `contains(url=...)`. |
+| `RC-SESSION-002` | On a miss, `only_if_cached=True` returns status `504` and reason `Not Cached` without calling the adapter or writing an entry. On an existing usable hit it returns the cached response without an origin call. The clause intentionally does not prescribe `from_cache` on the synthetic 504. |
+| `RC-SESSION-003` | `force_refresh=True` bypasses a usable entry, calls the adapter, returns the new origin response with `from_cache is False`, and replaces the stored entry so the following equivalent request is a hit containing the new response. |
+| `RC-SESSION-004` | `read_only=True` may serve an existing hit, but a miss or forced refresh calls the adapter without adding or replacing an entry. The returned miss is an origin response with `from_cache is False`. |
+| `RC-SESSION-005` | Inside `CachedSession.cache_disabled()`, reads and writes are bypassed: an existing URL calls the adapter and does not replace its cached value, and a new URL is not stored. On exit the prior disabled state is restored and the original cached value is again returned. |
+| `RC-SESSION-006` | After a URL is primed without a response hook, a later equivalent request with a normal Requests response hook invokes that hook exactly once with the cached response. The callback may observe `from_cache is True` and the cached body. No requirement applies to cache metadata in the first raw-origin hook callback. |
+| `RC-SESSION-007` | A cacheable written origin response exposes `created_at`, a non-null `cache_key`, and expiration consistent with its policy. Its cached successor exposes the same key plus `is_expired`, `expires_delta`, `expires_unix`, `size`, and `reset_expiration()`. A non-written origin response has `cache_key is None` and `expires is None`. |
+| `RC-SESSION-008` | Closing a session configured with `autoclose=True` invokes `close()` on its supplied public backend; `autoclose=False` does not. A backend left open can be supplied to another session and the second session can read the first session's entry. |
 
-The implementation may use third-party packages available on PyPI. Runtime dependencies must be declared in a standard `requirements.txt` or `pyproject.toml` at the project root and are installed before use. The memory, SQLite, filesystem, JSON, and pickle workflows must operate with local files and adapters without requiring network services.
+### Matching and redaction cross-views
 
-## Appendix B: Assessment Notes
+| Clause | Normative requirement |
+| --- | --- |
+| `RC-MATCH-001` | Two GETs differing only in the value of an ignored query parameter share one entry and the second is a hit. The cached response URL and cached prepared-request URL contain `REDACTED`, not either secret value. A non-ignored query difference does not share that entry. |
+| `RC-MATCH-002` | Two requests differing only in an exactly named ignored credential header share an entry. The stored request header and any same-named stored response header are redacted to `REDACTED`; unrelated headers remain observable. |
+| `RC-MATCH-003` | For cacheable JSON requests and `content_root_key`, ignored fields inside the named root are redacted and excluded from value matching, while a same-named field outside that root remains part of matching. Stored request JSON agrees with those key decisions. |
+| `RC-MATCH-004` | Non-ignored query values and normalized form-body values participate in keys. Controlled requests differing in either dimension call the adapter separately and remain separately addressable, while reordered equivalent form fields share an entry. |
+| `RC-MATCH-005` | With `match_headers=False`, controlled header-value differences share an entry absent `Vary`. With `match_headers=True`, they separate. With a header-name list, only listed headers separate entries and the listed names are selected case-insensitively. |
+| `RC-MATCH-006` | A custom `key_fn` replaces default key generation consistently for session lookup, backend storage, `contains(request=...)`, and later hits. It receives the prepared request plus the active public key settings (`ignored_parameters`, `content_root_key`, `match_headers`, serializer, and request keyword inputs such as `verify`). |
 
-Implementations are exercised through public Python APIs. The checks cover local cache hit/miss behavior, patcher state, cache persistence, expiration priority, request matching, filtering, inspection, deletion, serializers, response metadata, and error semantics. Tests use local mock adapters and temporary files instead of live network services. The focus is on observable behavior from the public contract above, not private data structures or exact textual representations.
+### Expiration, revalidation, and stale policy
+
+| Clause | Normative requirement |
+| --- | --- |
+| `RC-POLICY-001` | `NEVER_EXPIRE` stores a reusable entry with no expiration. `EXPIRE_IMMEDIATELY` and `DO_NOT_CACHE` do not store an ordinary validator-free response; each following request calls the adapter again and each non-written response has null cache key and expiration. |
+| `RC-POLICY-002` | Effective expiration precedence is: request cache directives/per-request `expire_after`, then the first matching `urls_expire_after` rule, then session `expire_after`. Stored expiration metadata and later freshness decisions agree with the selected source. |
+| `RC-POLICY-003` | Resetting a stored response to immediate expiration makes the next equivalent request call the adapter and replace the stale entry. The returned replacement and following hit expose mutually consistent fresh/expired metadata and body content. |
+| `RC-POLICY-004` | With cache-control processing enabled, a stale cached response carrying `ETag` or `Last-Modified` is conditionally requested with the corresponding validation header. A local-adapter `304` causes the cached body/status/request metadata to be returned and its supported updated headers/expiration to be saved for the next hit. |
+| `RC-POLICY-005` | If refresh of an expired entry raises an origin exception, `stale_if_error=True` returns the stale cached response. A duration accepts only staleness within that window. With false or an exceeded window, the identical origin exception propagates. |
+| `RC-POLICY-006` | For an expired entry within an enabled `stale_while_revalidate` policy, the current call returns the stale cached response without waiting for a deliberately gated local-adapter refresh. After that refresh is released and public backend state reports completion, a later request returns the refreshed body. A duration limits acceptable staleness. |
+
+### Filtering and write policy
+
+| Clause | Normative requirement |
+| --- | --- |
+| `RC-WRITE-001` | By default, successful GET and HEAD responses are eligible for storage; POST and non-200 responses are returned from the origin but not stored. Each assertion is made from a fresh controlled key so prior state cannot mask write eligibility. |
+| `RC-WRITE-002` | `allowable_methods` and `allowable_codes` replace the default eligible sets. Using uppercase prepared method names, a listed method/code combination is cached and an unlisted method or code is not. |
+| `RC-WRITE-003` | `filter_fn(response)` runs on an origin response. A false result leaves no stored entry and the next equivalent request calls the adapter again; a true result permits ordinary storage. |
+| `RC-WRITE-004` | `filter_fn` also applies to a response obtained from an existing entry or refresh. If it returns false for that response, the matching stored entry is deleted before the call returns, so the next equivalent request is a miss. |
+| `RC-WRITE-005` | With cache-control processing enabled, a response with `Cache-Control: no-store` is not written. A malformed or unsupported cache directive on one response does not delete or prevent a hit for an unrelated valid entry. `no-cache` with a validator may be stored for revalidation and is not treated as synonymous with `no-store`. |
+
+### Backend inspection, redirects, and mutation
+
+| Clause | Normative requirement |
+| --- | --- |
+| `RC-MUT-001` | `BaseCache.delete()` accepts cache keys, `urls`, and prepared `requests`; each selector removes only its matching response. Missing keys are ignored. After deletion, redirect aliases whose target no longer exists are pruned. |
+| `RC-MUT-002` | `BaseCache.clear()` removes every response and redirect alias. Every formerly cached URL then misses and can be stored anew without damage to backend usability. |
+| `RC-MUT-003` | A local-adapter redirect chain stores the final response plus alias entries for redirecting request keys. A later request for the original URL avoids the adapter and returns the cached final response with final URL/body, redirect history, and `from_cache is True`. |
+| `RC-MUT-004` | `BaseCache.filter()` yields public response objects according to `valid`, `expired`, and `older_than` using response freshness and `created_at`. When all switches are false and no age is supplied it yields nothing. The root does not require iteration order. |
+| `RC-MUT-005` | After matching settings are changed, `BaseCache.recreate_keys()` moves existing responses to keys produced by the current public key function/settings. The old key is absent, the new key is present, and a later matching session request reaches the response without an origin call. |
+
+### Local persistence, serialization, and process boundaries
+
+| Clause | Normative requirement |
+| --- | --- |
+| `RC-PERSIST-001` | A SQLite session writes a complete cached response, closes, and a new session using the same path returns an equivalent hit without calling its mounted failing adapter. Public status, URL, headers, body, request metadata, cache key, and expiration survive. |
+| `RC-PERSIST-002` | A response written to SQLite in one process is returned from the same cache path in a separate process without an origin call. The child reports the expected public response fields and `from_cache is True`; process exit and output are bounded and validated. |
+| `RC-PERSIST-003` | A filesystem backend with the JSON serializer creates a backend-visible text file and a later session using the same directory/serializer returns an equivalent hit. The root may verify that the public cache path is decodable text, but not exact JSON layout or filename. |
+| `RC-PERSIST-004` | A filesystem backend with the pickle serializer carries a response across a real process boundary and returns an equivalent hit without an origin call. The cache artifact is binary-capable, but exact pickle bytes and filename are not specified. |
+| `RC-PERSIST-005` | If a publicly enumerated filesystem response artifact is replaced with data that the active serializer cannot decode, retrieval does not produce a successful cache hit. `filter(valid=False, expired=False, invalid=True)` exposes an invalid placeholder carrying that cache key, and deletion of invalid entries restores normal backend use. |
+
+### Global Requests patch lifecycle
+
+| Clause | Normative requirement |
+| --- | --- |
+| `RC-PATCH-001` | From an uninstalled state, `install_cache()` makes `is_installed()` true, makes new `requests.Session()` objects cached sessions, and makes ordinary `requests.get()` calls share the installed backend. `get_cache()` returns that backend. `uninstall_cache()` restores the exact prior Requests session factory and makes `get_cache()` return `None`. |
+| `RC-PATCH-002` | From an uninstalled state, `enabled(...)` installs a cache for its body, ordinary Requests calls demonstrate miss then hit through a root-owned local session factory, and normal or exceptional exit restores the prior uninstalled factory. |
+| `RC-PATCH-003` | From an installed state, `disabled()` restores ordinary Requests sessions for its body and does not read or write the installed backend. On normal or exceptional exit it restores the exact previously installed factory and its existing cache remains usable. From an initially uninstalled state it remains uninstalled. |
+| `RC-PATCH-004` | Top-level `clear()` operates on the active installed backend: after two ordinary URLs are cached, it removes both responses and redirects, and the next ordinary request for either URL calls the origin again. Calling it while uninstalled leaves Requests usable. |
+| `RC-PATCH-005` | Top-level `delete()` forwards public deletion selectors to the active installed backend: deleting one cached URL makes only that URL miss while an unrelated URL remains a hit. Calling it while uninstalled leaves the Requests factory unchanged. |
+
+## Error and cleanup rules
+
+Every root owns all state it creates. Sessions and backends are closed; patcher
+state is restored in `finally`; background refreshes and local adapter gates
+have finite bounds; subprocesses have finite timeouts; and temporary paths are
+root-local. An expected candidate exception is asserted by public exception
+type or object identity where a clause says so, never by exact message.
+
+An implementation may use any internal architecture. Passing behavior cannot
+depend on being implemented with a particular dictionary, serializer library,
+database schema, lock, worker type, or Requests wrapper. Conversely, an
+implementation that satisfies only a direct helper while breaking the
+cross-view outcome named by an Integration clause does not satisfy that
+clause.

@@ -1,0 +1,30 @@
+{
+  "schema": "spec2repo.scorer-config.v5",
+  "case": "vcrpy-v5-draft-a",
+  "constitution": "SPEC2REPO-GATE-CALIBRATION-2026-08-22",
+  "declared_dependency": "vcrpy==8.1.1",
+  "reference_package_root": "C:/Users/林霰/Documents/Codex/2026-08-09/spec2repo-batch-calibration-recovery/work/batch-calibration/vcrpy/v5/.runtime-reference",
+  "reference_kind": "ordinary-installed-runtime-not-upstream-source",
+  "candidate_provenance_policy": "candidate package entry and workflow extension plus exact declared runtime modules only",
+  "reference_repository_root": "C:/Users/林霰/Documents/Codex/2026-08-09/spec2repo-batch-calibration-recovery/work/batch-calibration/vcrpy/source",
+  "dependency_site": "C:/Users/林霰/Documents/Codex/2026-08-09/spec2repo-batch-calibration-recovery/work/batch-calibration/vcrpy/.venv-reference/Lib/site-packages",
+  "reference_commit": "16b6c2651bddb9b62debc20f1f82a52c8a8ae5ba",
+  "reference_tree": "fe9fe71a9798fb1f37a1ff9ece5f48ed8f4d0944",
+  "git_executable": "E:/Git/cmd/git.exe",
+  "root_timeout_seconds": 30,
+  "permutation_seed": 821647,
+  "formal_candidates": {
+    "reference": "control-candidates/reference-shim",
+    "clean": "control-candidates/clean-shim",
+    "dummy": "dummy",
+    "broad-owner-collapse": "control-candidates/broad-owner-collapse",
+    "broad-ack-is-delivery": "control-candidates/broad-ack-is-delivery",
+    "shallow-workflow": "control-candidates/shallow-workflow"
+  },
+  "profiles": ["reference", "clean", "dummy", "broad-owner-collapse", "broad-ack-is-delivery", "shallow-workflow", "anchor", "arbitrary"],
+  "execution_modes": ["natural", "reverse", "permuted"],
+  "score_formula": {
+    "combined": "(A_pass + I_pass + S_pass) / 48",
+    "gap": "A_pass / 16 - (I_pass + S_pass) / 32"
+  }
+}

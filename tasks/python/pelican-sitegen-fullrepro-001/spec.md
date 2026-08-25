@@ -1,203 +1,340 @@
-# Pelican Specification
+# Pelican Durable Publication Pipeline
 
-> **Specification Authority**: This document is the sole source of truth.
-> The described system diverges from any similarly-named software in
-> interface design, parameter naming, behavioral edge cases, and error
-> semantics. Implementations derived from memory of external codebases
-> will fail the evaluation.
+## Purpose
 
-## Product Overview
+Pelican can expose a durable publication workflow for applications that need to
+coordinate content discovery, public identity, rendering, filesystem
+publication, feeds, pagination, and signal delivery across restarts.  The
+workflow lives in `pelican.publication` and complements Pelican's existing
+configuration, URL, taxonomy, and pagination APIs.
 
-This package turns a directory of written content into a static site. A project combines settings, Markdown documents, templates, and static assets; generation produces article and page files, collection pages, feeds, and copied assets that all describe the same content objects.
+Every workflow object is opened on its own directory.  Reopening the same
+directory reconstructs committed public state.  Different directories are
+independent.  Methods either complete their documented transition or leave the
+last committed state observable; callers never need to inspect private files.
 
-## Non-Goals
+## Existing Pelican contracts
 
-- This specification does not require Import conversion, project quickstart, theme installation or removal, or plugin discovery.
-- This specification does not require Live serving, autoreload loops, or cache file compatibility.
-- This specification does not require Private helpers, exact log wording, exact HTML whitespace, or implementation-specific object representations.
-
-## Representative Workflows
-
-### Generate a site from settings and content
-
-```python
-from pelican import Pelican
-from pelican.settings import read_settings
-
-settings = read_settings(path="pelicanconf.py", override={
-    "SITENAME": "My Blog",
-    "SITEURL": "https://example.com",
-    "PATH": "content",
-    "OUTPUT_PATH": "output",
-    "FEED_ALL_ATOM": "feeds/all.atom.xml",
-})
-
-pelican = Pelican(settings)
-pelican.run()
-```
-
-`read_settings` loads defaults, file settings, and explicit overrides into one mapping. `Pelican(settings).run()` reads the configured content directory and writes the generated site (articles, pages, taxonomy pages, feeds, and static assets) to `OUTPUT_PATH`. The resulting article files, index entries, and feed entries must expose the same title, URL, and taxonomy values derived from Markdown metadata.
-
-### Parse arguments and generate via CLI
-
-```console
-$ pelican content -s pelicanconf.py -o output --extra-settings SITENAME=\"My Blog\"
-```
-
-```python
-from pelican import parse_arguments, get_config, Pelican
-
-args = parse_arguments(["content", "-s", "pelicanconf.py", "-o", "output"])
-settings = get_config(args)
-assert settings["SITENAME"] is not None
-
-pelican = Pelican(settings)
-pelican.run()
-```
-
-`parse_arguments` parses CLI arguments including `--extra-settings` overrides. `get_config` converts the parsed namespace into generation settings. Changing an article's `Status: hidden` keeps its file but removes it from indexes and feeds; `Status: draft` writes under the draft location and likewise excludes it from normal collections.
-
-## Content and Metadata Behavior
-
-Content items are articles and pages whose metadata drives their placement, classification, and appearance in the generated site.
-
-**Article metadata.** Markdown metadata must supply title, date, category, author, tags, slug, summary, and status values. These values must be available to the article template as `article.title`, `article.url`, `article.save_as`, `article.category`, `article.author`, `article.tags`, `article.summary`, and `article.content`. The template context must also include `SITENAME` and `SITEURL` from the effective settings.
-
-**Publication status.** Published articles must appear in the main index and feeds. When `Status: hidden` is set, the article must retain its output file at the configured article location but must be omitted from the index and all feeds. When `Status: draft` is set, the article must be written under the configured draft location determined by `DRAFT_URL` and `DRAFT_SAVE_AS`, and must be omitted from the main index and all feeds.
-
-**Page metadata.** Pages use the page URL and save-path settings (`PAGE_URL` and `PAGE_SAVE_AS`) independently from article settings. The page template must receive `page.title`, `page.url`, and `page.content`.
-
-**Taxonomy collection pages.** Category, tag, and author collection pages must be generated from the corresponding article metadata. Each unique category must produce a collection page at the location determined by `CATEGORY_SAVE_AS`. Each unique tag must produce a page at `TAG_SAVE_AS`. Each unique author must produce a page at `AUTHOR_SAVE_AS`.
-
-**Static assets.** A static path selected by `STATIC_PATHS` must be copied to the output tree. A `{static}` link in Markdown content must resolve to the copied asset under the configured `SITEURL`, producing an `href` attribute pointing to the full site URL plus the asset path.
-
-## Site Generation and Feeds
-
-`Pelican(settings).run()` reads the configured content directory and produces the complete output site.
-
-**Article output.** Article files must be written to the path determined by `ARTICLE_SAVE_AS`. The rendered output must contain the article's title, URL, save path, category, author, tags, summary, and body as derived from its Markdown metadata.
-
-**Page output.** Page files must be written to the path determined by `PAGE_SAVE_AS`. The rendered output must contain the page body.
-
-**Index output.** The generated index must list published articles by title. Hidden and draft articles must not appear in the index.
-
-**Atom feeds.** When `FEED_ALL_ATOM` is configured, an all-articles Atom feed must be generated at the configured path. Each published article must produce a feed entry whose title matches the article title and whose link `href` matches the full article URL including `SITEURL`. Hidden and draft articles must not appear in the feed. When `CATEGORY_FEED_ATOM` is configured, a category feed must be generated using the category slug in its output path.
-
-**Source exclusion.** Source Markdown files must not be copied into the generated output tree unless they are separately selected as static assets.
-
-**Settings consistency.** The command-line and programmatic settings views must describe the same site name when given equivalent `SITENAME` values through `get_config` and `read_settings` respectively.
-
-## Settings and Configuration
-
-Settings loading merges defaults, file settings, and explicit overrides into one effective mapping.
-
-**Default settings.** `DEFAULT_CONFIG` must contain built-in default values. The `DEFAULT_LANG` default must be `"en"`. All defaults must be present in the effective settings unless explicitly overridden.
-
-**Settings loading.** `read_settings` must return the effective settings mapping. Built-in defaults must always be present, settings loaded from a file (when a `path` is provided) must replace matching defaults, and explicit `override` values must replace both. When `OUTPUT_PATH` is supplied through an override, it must be normalized as a filesystem path.
-
-**CLI argument parsing.** `parse_arguments` must parse command arguments. Each `--extra-settings` (or `-e`) value must use `KEY=JSON_VALUE` format where the value is valid JSON; repeated options must accumulate in the returned `overrides` mapping on the parsed arguments object. A missing equals sign must raise `ValueError`. An invalid JSON value after the equals sign (such as bare `True` instead of `true`) must raise `ValueError`. The `--relative-urls` flag must be accepted.
-
-**CLI-to-settings conversion.** `get_config` must convert the parsed namespace into generation settings, incorporating the overrides and the relative-URL option. When `--relative-urls` is passed, the resulting settings must set `RELATIVE_URLS` to `True`.
-
-## Readers, Utilities, Taxonomy, and Pagination
-
-These components support content processing, URL generation, taxonomy classification, and collection pagination.
-
-**Content readers.** `Readers.read_file` must select a reader by file extension. Markdown input must return rendered content accessible through the result's `content` attribute and normalized metadata accessible through `metadata`, including at least the `title` field. An extension with no enabled reader must raise `TypeError` instead of being treated as plain text.
-
-**Slug generation.** `slugify` must apply configured regular-expression substitution pairs passed as `regex_subs` and return the URL slug. When `preserve_case` is not set or is `False`, the result must be lowercased. When `preserve_case` is `True`, the original casing must be retained.
-
-**Path utilities.** `posixize_path` must normalize paths to forward-slash form on every platform. `path_to_url` must produce forward-slash URL paths.
-
-**Date parsing.** `get_date` must parse Pelican date metadata strings into datetime values. Unparseable date metadata must raise a date-parsing error.
-
-**Taxonomy wrappers.** `Author`, `Category`, and `Tag` must each be created with a display name and a `settings` mapping. Each must expose a `slug`, `url`, and `save_as` derived from the display name and the corresponding URL/save-as setting patterns. The slug must be generated from the display name using standard slug rules. `as_dict()` must return a mapping containing at least the public `name` and `slug`.
-
-**Pagination.** `Paginator` must divide an ordered collection into pages based on a `per_page` count. It must report `count` (total items), `num_pages` (total pages), and `page_range` (list of page numbers starting at 1). `Paginator.page(n)` must return a page object exposing `object_list` for that page's items, `has_next()` returning whether a next page exists, and `has_previous()` returning whether a previous page exists. The first page must have a next page but no previous page; a middle page must have both neighbors. `PaginationRule` must be a public three-field value containing `min_page`, `URL` pattern, and `SAVE_AS` pattern.
-
-**Signals.** Signal objects must be available through both `from pelican import signals` and `from pelican.plugins import signals`. The same signal objects must be shared between both namespaces; `signals.article_generator_finalized` from either import path must be the same object, and `signals.content_object_init` must likewise be the same object.
-
-## State Model
-
-A generated site has three public projections of the same state: the loaded settings mapping, the in-memory content and taxonomy objects, and the output tree containing rendered pages, feeds, and assets. Generation must keep these projections aligned.
-
-A setting used to derive an article URL must produce the same URL in the article object, its rendered template context, and its feed entry. Metadata read from a source document must remain the same when exposed as content attributes and rendered page values. Publication status must control both where a content item is written and whether it appears in indexes and feeds.
-
-## Error Semantics
-
-- When `parse_arguments` encounters a `--extra-settings` value missing an equals sign, it must raise `ValueError`.
-- When `parse_arguments` encounters a `--extra-settings` value with invalid JSON after the equals sign, it must raise `ValueError`.
-- When `Readers.read_file` is called with a file extension that has no enabled reader, it must raise `TypeError` instead of treating the file as plain text.
-- When the content source directory (`PATH`) does not exist, generation must fail rather than report a successful partial site.
-- When required templates are missing, generation must fail rather than report a successful partial site.
-- When the output location (`OUTPUT_PATH`) is unwritable, generation must fail rather than report a successful partial site.
-- When `slugify` receives input with disabled case preservation, the result must be lowercased.
-- When `get_date` receives unparseable date metadata, it must raise a date-parsing error.
-
-## Cross-View Invariants
-
-1. Loaded defaults and explicit overrides must produce the same effective values through `read_settings()` and `get_config()`.
-2. Article metadata must match the values visible in its content object and template context.
-3. Article URL and save-path settings must agree with the written file and all links to it.
-4. Published, hidden, and draft status must agree across output location, index membership, and feed membership.
-5. Category, author, and tag slugs must agree across wrapper objects and generated collection paths.
-6. A feed entry title and URL must match the corresponding generated article page.
-7. A static link must resolve to the same asset copied into the output tree.
-8. Pagination neighbor values must agree with the page count and page range for the same collection.
-
-## Public Interface
-
-### Import Surface
-
-The package is imported as `pelican`.
+The package continues to expose the following imports.  These locations are
+part of the compatibility contract; applications may import them exactly as
+shown.
 
 ```python
 from pelican import Pelican, get_config, parse_arguments, signals
-from pelican.plugins import signals as plugin_signals
-from pelican.settings import DEFAULT_CONFIG, read_settings
-from pelican.readers import Readers
-from pelican.urlwrappers import Author, Category, Tag
 from pelican.paginator import PaginationRule, Paginator
+from pelican.plugins import signals as plugin_signals
+from pelican.readers import Readers
+from pelican.settings import DEFAULT_CONFIG, read_settings
+from pelican.urlwrappers import Author, Category, Tag
 from pelican.utils import get_date, path_to_url, posixize_path, slugify
 ```
 
-Signal objects are available through both `from pelican import signals` and `from pelican.plugins import signals`.
+The supported call forms used by this subsystem are:
 
-The `pelican` command accepts a content directory together with settings and output options. `python -m pelican` follows the same site-generation entry path.
+```python
+parse_arguments(argv=None)
+get_config(args)
+read_settings(path=None, override=None)
+slugify(value, regex_subs=(), preserve_case=False, use_unicode=False)
+posixize_path(rel_path)
+path_to_url(path)
+get_date(string)
+Author(name, settings)
+Category(name, settings)
+Tag(name, settings)
+Paginator(name, url, object_list, settings, per_page=None)
+PaginationRule(min_page, URL, SAVE_AS)
+```
 
-### API Catalog
+`parse_arguments()` returns an argument namespace and `get_config()` returns
+its typed configuration mapping.  `read_settings()` returns a completed
+mapping: built-in defaults are retained beneath values loaded from `path`, and
+the `override` mapping has highest precedence (for example, an override for
+`SITENAME` replaces the file value).  The built-in defaults include
+`DEFAULT_LANG` equal to `"en"`, `RELATIVE_URLS` equal to `False`, and an
+`OUTPUT_PATH` entry.
+The `-e NAME=value` command-line form parses JSON-like scalar values before
+they are passed through `get_config()`.
 
-| Name | Kind | Role |
-|---|---|---|
-| `read_settings` | function | Loads defaults, file settings, and overrides into one mapping |
-| `parse_arguments` | function | Parses CLI arguments and extra-settings overrides |
-| `get_config` | function | Converts parsed CLI arguments into generation settings |
-| `DEFAULT_CONFIG` | constant | Built-in default settings mapping |
-| `Readers` | class | Selects content readers by file extension |
-| `Pelican` | class | Site generator for articles, pages, feeds, and assets |
-| `Author` | class | Author taxonomy wrapper with slug and URL |
-| `Category` | class | Category taxonomy wrapper with slug and URL |
-| `Tag` | class | Tag taxonomy wrapper with slug and URL |
-| `Paginator` | class | Divides ordered collections into pages |
-| `PaginationRule` | class | Minimum page, URL pattern, and save-path pattern |
-| `slugify` | function | Converts display text into URL slugs |
-| `posixize_path` | function | Normalizes paths to forward-slash form |
-| `path_to_url` | function | Converts filesystem paths to URL paths |
-| `get_date` | function | Parses Pelican date metadata into datetime values |
-| `signals` | module | Public signal objects for plugin hooks |
+With no substitutions, `slugify()` applies its case policy but otherwise
+preserves text such as spaces; `regex_subs` are ordered `(pattern,
+replacement)` pairs applied before case conversion.  `posixize_path()` and
+`path_to_url()` return forward-slash strings.  `get_date()` returns a
+`datetime.datetime` for supported public date strings and rejects an invalid
+calendar value rather than silently inventing a date.
 
-Settings loading, CLI parsing, reader selection, slug and path utilities, taxonomy wrappers, and pagination behavior are defined in the behavior sections above.
+`Author`, `Category`, and `Tag` expose `name`, `slug`, `url`, and `save_as`;
+`as_dict()` includes at least `name` and `slug`.  URL and save projections come
+from the corresponding completed settings namespace.  `Paginator` is
+one-based, preserves input order, exposes `count`, `num_pages`, `page_range`,
+and `page(number).object_list`.  `PaginationRule` exposes `min_page`, `URL`,
+and `SAVE_AS`, keeping URL and save projections distinct.  Core and plugin
+signal modules share the same signal objects, including
+`article_generator_finalized` and `content_object_init`.
 
-### CLI Entry Points
+## Public module and failures
 
-The `pelican CONTENT -s SETTINGS -o OUTPUT` command generates a local site and returns zero on success. Invalid arguments or generation failures return nonzero. `python -m pelican` supports the same behavior. Other Pelican helper commands are outside this scope.
+`pelican.publication` exports these classes:
 
-## Appendix A: Environment
+```python
+ContentStore(path)
+IdentityIndex(path)
+ThemeRenderer(path)
+ArtifactPublisher(path)
+PublicationLedger(path)
+SignalOutbox(path)
+```
 
-The implementation may use third-party packages available on PyPI. Runtime dependencies must be declared in a standard `requirements.txt` or `pyproject.toml` at the project root and are installed before use. Site generation must remain deterministic with local temporary files and must not require network services.
+It also exports `PublicationError`, `StaleGenerationError`, `OwnershipError`,
+`AcknowledgementError`, and `RecoveryError`.  The four specialized errors are
+subclasses of `PublicationError`.
 
-## Appendix B: Assessment Notes
+Paths passed to workflow constructors may be strings or path-like objects.
+Public snapshots and receipts are ordinary dictionaries and lists containing
+JSON-compatible values.  Returned collections are detached copies: changing a
+receipt or snapshot does not mutate durable state.
 
-Correctness is evaluated through public behavior: CLI parsing and generation, settings loading and override precedence, content reader metadata, generated file trees, feeds, links, themes, static files, cache-visible behavior, plugin extension points, importer/theme helper command behavior, and the public Python objects used by templates and plugins.
+### Workflow call signatures
 
-The checks use temporary projects and local files. They do not require external services. Assertions focus on observable output, effective settings, object attributes, exceptions, and cross-view consistency rather than private helper names or source layout.
+The complete public call surface is:
+
+```python
+ContentStore.ingest(records, *, expected_generation=None)
+ContentStore.current()
+ContentStore.acknowledge(generation, digest)
+
+IdentityIndex.project(generation, records)
+IdentityIndex.snapshot()
+IdentityIndex.resolve(slug)
+
+ThemeRenderer.lease(generation, theme, identities)
+ThemeRenderer.render(token, content_id, body, *, context_generation)
+ThemeRenderer.commit(token)
+ThemeRenderer.snapshot()
+
+ArtifactPublisher.prepare(generation, artifacts)
+ArtifactPublisher.promote(token)
+ArtifactPublisher.acknowledge(generation, digest)
+ArtifactPublisher.recover()
+ArtifactPublisher.snapshot()
+ArtifactPublisher.read(relative_path)
+
+PublicationLedger.stage(generation, entries, *, page_size)
+PublicationLedger.commit(token, publication_receipt)
+PublicationLedger.view()
+
+SignalOutbox.enqueue(
+    generation, event_id, payload, *, publication_receipt
+)
+SignalOutbox.claim(worker)
+SignalOutbox.fail(token, worker)
+SignalOutbox.ack(token, worker)
+SignalOutbox.pending()
+SignalOutbox.delivered()
+```
+
+### Public record shapes
+
+Fields listed here are guaranteed.  Implementations may add other
+JSON-compatible informational fields, but callers never need them for the
+documented protocol.
+
+- A content receipt contains `generation` (integer), `digest` (64-character
+  hexadecimal string), `count` (integer), and `acknowledged` (boolean).
+  `current()` returns those fields plus `records`, the canonical ordered list
+  of record mappings.
+- An identity snapshot contains `generation` and `identities`.  Each identity
+  row contains `identity`, `source_id`, `slug`, `aliases`, `category`, and
+  `tags`.  `project()` returns this same snapshot shape, and `resolve()`
+  returns one identity row or `None`.
+- A theme lease contains `token`, `generation`, and `state`; a new lease has
+  state `live`.  A rendered artifact contains `path`, `text`, `generation`,
+  and `identity`.  `commit()` returns the ordered list of rendered artifacts;
+  `snapshot()` contains `generation` and `committed`.
+- A prepare receipt contains `token`, `generation`, `digest`, `state`,
+  `visible`, and `acknowledged`.  Its state is `prepared` and it is not
+  visible or acknowledged.  Promotion and acknowledgement receipts contain
+  `generation`, `digest`, `visible`, and `acknowledged`.  A publisher snapshot
+  contains `state` and `visible`, where `visible` is the current publication
+  receipt or `None`.
+- A staged ledger view contains `token`, `generation`, `feed`, and `pages`.
+  A committed view omits `token` and contains `generation`, `feed`, and
+  `pages`.  Every page row contains `number` and `items`.
+- An outbox event contains `event_id`, `token`, `generation`, `payload`,
+  `attempt`, `state`, `worker`, and `delivered_by`.  `claim()` returns such a
+  row or `None`; `fail()` and `ack()` return the updated row.  `pending()` and
+  `delivered()` return ordered lists of event rows.
+
+The error hierarchy is intended to prevent storage-shaped exceptions from
+leaking through the public protocol.  Bad public input and unsafe paths raise
+`PublicationError`; stale generations or fenced contexts raise
+`StaleGenerationError`; unknown, reused, or wrongly-owned tokens and worker
+claims raise `OwnershipError`; missing or mismatched acknowledgements raise
+`AcknowledgementError`; and unreadable or inconsistent durable state raises
+`RecoveryError`.  In particular, normal calls do not expose `KeyError`,
+`IndexError`, or storage-layout errors in place of these public failures.
+
+## Content generations
+
+`ContentStore.ingest(records, *, expected_generation=None)` accepts an iterable
+of mappings.  Each record has a non-empty `source_id` and may carry `title`,
+`slug`, `body`, `status`, `category`, `tags`, and other JSON-compatible public
+metadata.  Source identifiers are unique within a generation.  An accepted
+ingest canonicalizes records by source identifier, advances the committed
+generation by exactly one, and returns a receipt containing the generation,
+content digest, record count, and acknowledgement state.
+
+When `expected_generation` is supplied it names the currently committed
+generation, not the generation being created.  A mismatch raises
+`StaleGenerationError` without consuming a generation.  `current()` returns
+the current receipt and records.  `acknowledge(generation, digest)` accepts only
+the exact current pair, is idempotent for that pair, and rejects stale or
+mismatched acknowledgements with `AcknowledgementError`.  Acknowledgement is
+durable across reopen.
+
+## Identity lineage
+
+`IdentityIndex.project(generation, records)` commits public identity for a
+newer content generation.  Every source identifier owns a stable identity.
+Its current slug comes from an explicit slug when present, otherwise from the
+title through Pelican's public slug policy.  Changing a slug preserves the
+previous slug as an alias for that same identity.  Category and tag memberships
+are projected in separate namespaces even when their text is equal.
+
+Generations must increase strictly.  A stale projection raises
+`StaleGenerationError` without changing current identities or aliases.
+`snapshot()` exposes the current generation and identities.  `resolve(slug)`
+resolves both current slugs and retained aliases, returning `None` for an
+unknown slug.  Lineage and namespace membership survive reopen.
+
+## Theme leases and stale-context fencing
+
+`ThemeRenderer.lease(generation, theme, identities)` opens a render lease for a
+strictly newer generation and returns an opaque token.  Opening a newer lease
+fences every older uncommitted lease.  `render(token, content_id, body, *,
+context_generation)` returns an artifact mapping with a public path, rendered
+text, generation, and identity.  The token, content identity, and context
+generation must all belong to the same live lease; otherwise
+`StaleGenerationError` or `OwnershipError` is raised.
+
+`commit(token)` closes the lease and returns its ordered artifacts.  A token is
+single-use after commit.  The current generation and lease state are durable,
+so reopening cannot make a stale token live again.  Rendering is deterministic
+for the same committed public inputs.  The built-in renderer's public text
+projection is the theme name, identity, and body joined in that order by `|`;
+its public path is `articles/{current-slug}.html`.  Private token text and
+storage layout are unspecified.
+
+## Artifact prepare, visibility, acknowledgement, and recovery
+
+`ArtifactPublisher.prepare(generation, artifacts)` stages a mapping of safe
+relative output paths to text or bytes and returns a prepare receipt.  Absolute
+paths and paths containing a parent traversal raise `PublicationError`.
+Preparing does not change the visible output tree.
+
+`promote(token)` atomically makes exactly that prepared tree visible and
+returns a publication receipt containing its generation, digest, visibility,
+and acknowledgement state.  A token belongs to one publisher and is
+single-use.  `acknowledge(generation, digest)` accepts only the currently
+visible publication, is idempotent, and returns an acknowledged receipt.
+
+`recover()` is idempotent.  After interruption in the prepared state it
+discards the uncommitted stage and preserves the prior visible tree.  After
+promotion it retains the promoted tree and retires obsolete recovery material,
+whether or not acknowledgement had completed.  `snapshot()` reports the
+durable journal state and visible publication; `read(relative_path)` reads a
+visible artifact as bytes or returns `None` when it is absent.  Recovery of an
+interrupted prepare reports state `recovered-prepared`; recovery of an
+unacknowledged promotion reports `recovered-promoted`; an acknowledged
+publication continues to report `acknowledged`.
+
+## Feed and pagination ledger
+
+`PublicationLedger.stage(generation, entries, *, page_size)` builds a candidate
+publication view without making it current.  Entries are mappings containing
+at least `source_id`, `title`, and `url`.  Only entries whose status is absent
+or `published` enter the feed.  Feed order is descending public `date`, with
+`source_id` as the deterministic tie breaker.  Pages preserve that feed order,
+use one-based page numbers, and never contain more than the positive
+`page_size`.  The returned stage token is opaque.
+
+`commit(token, publication_receipt)` requires an acknowledged, visible
+publication receipt for the same generation.  Wrong generation, missing
+acknowledgement, a stale stage, or token reuse raises the corresponding public
+error without changing the committed view.  `view()` returns the committed
+generation, feed, and pages.  Staging state and the committed view survive
+reopen, and a newer commit replaces rather than merges the prior view.
+
+## Signal delivery outbox
+
+`SignalOutbox.enqueue(generation, event_id, payload, *, publication_receipt)`
+requires an acknowledged publication receipt for the same generation.  Event
+identifiers are unique: enqueueing the same identifier again returns the same
+event token and never creates a second delivery.  `claim(worker)` returns the
+oldest pending event with an attempt number and binds it to that non-empty
+worker, or returns `None` when no event is available.
+
+`fail(token, worker)` releases a matching claim for retry.  The next claim has
+a larger attempt number.  `ack(token, worker)` completes only the matching
+claim and makes the event visible through `delivered()`.  Wrong workers or
+tokens raise `OwnershipError`.  Acknowledgement is idempotent for the same
+worker and event.  `pending()` and `delivered()` return ordered detached
+snapshots.  Reopening turns interrupted claims back into pending work while
+preserving attempt counts and completed exactly-once delivery.
+
+## Cross-owner publication law
+
+A complete publication uses one content generation throughout: ingest commits
+the source facts; identity projection binds stable public names; a theme lease
+renders those identities; artifact promotion makes the rendered tree visible;
+an acknowledged publication authorizes the feed/page ledger and signal outbox.
+
+No downstream owner may infer acknowledgement from visible files, accept a
+receipt from another generation, or silently recompute history from only the
+latest values.  Failures before publication acknowledgement cannot advance the
+feed ledger or enqueue a delivery.  Retry after reopen begins from the last
+committed state, retains identity aliases, fences stale render contexts, and
+does not duplicate delivered events.
+
+## Typical application flow
+
+The owners exchange only the records described above.  For example, an
+application may ingest records, project identities from `current()["records"]`,
+pass the identity snapshot directly to `lease()`, and use the returned
+`lease["token"]` for every render and for `commit()`.  It then prepares a path
+to text/bytes mapping, promotes `prepared["token"]`, and acknowledges the
+returned generation and digest.  That acknowledged publication receipt is
+passed unchanged to both `PublicationLedger.commit()` and
+`SignalOutbox.enqueue()`.
+
+```python
+content = store.ingest([
+    {"source_id": "ember", "title": "Ember Almanac", "body": "..."}
+])
+identities = index.project(content["generation"], store.current()["records"])
+lease = renderer.lease(content["generation"], "harbor", identities)
+artifact = renderer.render(
+    lease["token"], identities["identities"][0]["identity"], "body",
+    context_generation=content["generation"],
+)
+renderer.commit(lease["token"])
+prepared = publisher.prepare(
+    content["generation"], {artifact["path"]: artifact["text"]}
+)
+visible = publisher.promote(prepared["token"])
+publication = publisher.acknowledge(
+    visible["generation"], visible["digest"]
+)
+```
+
+The returned mappings are the public handoff objects.  Tokens themselves are
+opaque strings: callers store and return them but do not parse them.
+
+## Non-goals
+
+The contract does not prescribe private file names, JSON layout, lock
+implementation, token spelling, HTML framework, network transport, worker
+process management, or a template language.  It does not require compatibility
+with private Pelican internals.  Concurrency performance and distributed
+storage are outside scope; durable single-host behavior and public ownership
+rules are in scope.

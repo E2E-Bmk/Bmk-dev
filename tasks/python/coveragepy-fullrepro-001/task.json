@@ -1,90 +1,98 @@
 {
   "instance_id": "coveragepy-fullrepro-001",
-  "pipeline_note": "REVALIDATION-REQUIRED",
-  "repo": "nedbat/coveragepy",
-  "repo_commit": "787af5ff90e8a73bfd8cba7d5661b4930cc53ce5",
-  "spec_version": "v1",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v2",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 60,
-    "scorer_isolation": [
-      "--remove-path"
-    ],
-    "count_unit": "base_test_functions",
-    "base_function_count": 60
-  },
-  "taxonomy": {
-    "test_atomic::test_coverage_data_update_merges_line_data_objects": "atomic",
-    "test_atomic::test_coverage_data_file_tracer_and_touch_file_roundtrip": "atomic",
-    "test_atomic::test_coverage_data_purge_files_removes_measured_file": "atomic",
-    "test_atomic::test_cli_run_missing_script_fails_nonzero": "atomic",
-    "test_atomic::test_coverage_current_tracks_collecting_instance": "atomic",
-    "test_atomic::test_statement_measurement_records_executed_lines": "atomic",
-    "test_atomic::test_branch_measurement_records_arcs": "atomic",
-    "test_atomic::test_data_file_none_keeps_measurement_in_memory": "atomic",
-    "test_atomic::test_coverage_data_add_lines_round_trips_to_disk": "atomic",
-    "test_atomic::test_coverage_data_add_arcs_round_trips_to_disk": "atomic",
-    "test_atomic::test_coverage_data_dumps_and_loads_preserve_lines": "atomic",
-    "test_atomic::test_no_data_error_for_report_without_measurement": "atomic",
-    "test_atomic::test_invalid_config_file_raises_config_error": "atomic",
-    "test_atomic::test_missing_source_raises_public_no_source": "atomic",
-    "test_atomic::test_cli_help_and_version_exit_successfully": "atomic",
-    "test_atomic::test_cli_erase_removes_configured_data_file": "atomic",
-    "test_atomic::test_coverage_data_update_merges_measured_files": "atomic",
-    "test_atomic::test_cli_debug_data_reports_measured_file": "atomic",
-    "test_atomic::test_coverage_file_environment_selects_data_file": "atomic",
-    "test_atomic::test_cli_report_fail_under_returns_status_two": "atomic",
-    "test_atomic::test_coverage_data_has_arcs_false_without_branch": "atomic",
-    "test_atomic::test_coverage_erase_removes_data_file": "atomic",
-    "test_atomic::test_coverage_alias_is_same_class": "atomic",
-    "test_atomic::test_measured_contexts_includes_static_context_label": "atomic",
-    "test_atomic::test_process_startup_without_configuration_does_not_start_measurement": "atomic",
-    "test_atomic::test_set_query_context_narrows_line_results_to_matching_context": "atomic",
-    "test_atomic::test_get_and_set_option_roundtrip_configuration_value": "atomic",
-    "test_atomic::test_contexts_by_lineno_maps_lines_to_context_labels": "atomic",
-    "test_atomic::test_touch_files_marks_multiple_files_as_measured": "atomic",
-    "test_atomic::test_no_disk_erase_clears_in_memory_data": "atomic",
-    "test_integration::test_cli_branch_context_json_and_total_report_agree": "integration",
-    "test_integration::test_cli_xml_report_exposes_branch_totals_and_missing_branch": "integration",
-    "test_integration::test_configured_data_file_is_shared_by_cli_and_coveragedata": "integration",
-    "test_integration::test_programmatic_branch_contexts_survive_serialization": "integration",
-    "test_integration::test_coverage_collect_context_manager_records_lines": "integration",
-    "test_integration::test_coverage_analysis_and_analysis2_report_missing_lines": "integration",
-    "test_integration::test_exclude_and_clear_exclude_change_missing_line_analysis": "integration",
-    "test_integration::test_switch_context_filters_coveragedata_queries": "integration",
-    "test_integration::test_include_omit_measurement_controls_measured_files": "integration",
-    "test_integration::test_programmatic_json_xml_html_and_lcov_reports_share_total": "integration",
-    "test_integration::test_combine_keep_preserves_parallel_input_files": "integration",
-    "test_integration::test_cli_erase_removes_coverage_file_and_report_has_no_data": "integration",
-    "test_integration::test_cli_run_module_passes_program_arguments": "integration",
-    "test_integration::test_coverage_file_environment_is_used_by_report_command": "integration",
-    "test_integration::test_coverage_data_query_context_filters_lines": "integration",
-    "test_integration::test_exclusion_rules_remove_lines_from_missing_report": "integration",
-    "test_integration::test_json_report_contains_totals_and_file_details": "integration",
-    "test_integration::test_xml_report_writes_cobertura_style_document": "integration",
-    "test_integration::test_html_report_writes_index_and_source_page": "integration",
-    "test_integration::test_lcov_report_mentions_source_file_and_lines": "integration",
-    "test_integration::test_annotate_report_marks_missing_lines": "integration",
-    "test_integration::test_cli_run_report_and_json_share_data_file": "integration",
-    "test_integration::test_cli_combine_merges_parallel_data_files": "integration",
-    "test_integration::test_rcfile_config_controls_branch_and_report_output": "integration",
-    "test_integration::test_public_report_methods_return_same_total_for_same_data": "integration",
-    "test_integration::test_include_and_omit_filters_affect_measured_files": "integration",
-    "test_integration::test_installable_surface_imports_version_and_module_cli": "integration",
-    "test_integration::test_invalid_rcfile_reports_config_error_via_cli_and_api": "integration",
-    "test_integration::test_annotate_creates_executed_and_missed_markers": "integration",
-    "test_integration::test_cli_run_branch_with_show_missing_report": "integration"
-  },
-  "stats": {
-    "atomic": 30,
-    "integration": 30,
-    "system_e2e": 0
-  },
-  "reference_pass_rate": null,
-  "candidate_score": null,
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "current-frozen-gate",
+    "files": [
+      {
+        "path": "ENVIRONMENT-CONTRACT.md",
+        "sha256": "bd1f0243a077d7f0c57186b922731425d6b6b3dd20baead447728cb419b3c809",
+        "bytes": 687
+      },
+      {
+        "path": "ROOT-MAP.json",
+        "sha256": "e002f8d9c315edfda997a73276ef92f9a63e5a40af56a3e6879ad58b9bc40950",
+        "bytes": 9649
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "2af7f9e86944b5fedf55e9585c27c55738a792eb3b2f2edc91323a57e2c85f02",
+        "bytes": 996
+      },
+      {
+        "path": "pyproject.toml",
+        "sha256": "fe44ce9f9577128c9ac4116cb913ec5a87d0edd298ae2736c5fd135265129668",
+        "bytes": 106
+      },
+      {
+        "path": "requirements.txt",
+        "sha256": "93c4ab5f175d24229e46ec70a8ecaeb6db8b36e3f54d8005808044c060acbc92",
+        "bytes": 14
+      },
+      {
+        "path": "run_root.py",
+        "sha256": "822da3fb9a894636857f493fd6784f93dc71c70d585fce956049b5d64c1ed799",
+        "bytes": 5323
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "bccafacafac6d06a5d106aeab730a026f537b66544f219e8f320a312f2d9d28b",
+        "bytes": 18088
+      },
+      {
+        "path": "sitecustomize.py",
+        "sha256": "21a3d6e247f559df7760af4121d8638030d0cf3740944fc48a0edd75ad17f7cd",
+        "bytes": 310
+      },
+      {
+        "path": "tests/__init__.py",
+        "sha256": "7804e23bbbf34d425c80f25ae4d2723ced5f717494607dc524ac555f1322d90a",
+        "bytes": 43
+      },
+      {
+        "path": "tests/atomic_support.py",
+        "sha256": "a45864785b4312724f1a1259789b25e022ed709303424db7a7eb82f0db09d4a8",
+        "bytes": 957
+      },
+      {
+        "path": "tests/conftest.py",
+        "sha256": "4f5aa73b5d072f2c9d1a0b42305cdd06d5ee2d87bdf8664c58a7a174c343f1f2",
+        "bytes": 84
+      },
+      {
+        "path": "tests/integration_support.py",
+        "sha256": "fe1dcd786b64b8bf87fcbdfd21c95c0f96d0e3874119b7bb02d971560b5732d2",
+        "bytes": 4117
+      },
+      {
+        "path": "tests/system_support.py",
+        "sha256": "80f9c7dad5b232b4e2b6d05bd9944f38e17c9b1f57dea880a41a264461ad72b0",
+        "bytes": 1369
+      },
+      {
+        "path": "tests/test_atomic.py",
+        "sha256": "015f380266ce8b71f18bf8e46ed25df2dc79928fbbd8c608a2792819025bc0c4",
+        "bytes": 13324
+      },
+      {
+        "path": "tests/test_integration.py",
+        "sha256": "7a47bce651b8dbe402287eca0a94c1ab6da638eb3968f9f3182d039dc3d095fb",
+        "bytes": 24827
+      },
+      {
+        "path": "tests/test_system.py",
+        "sha256": "c77ed902da0815e28bbc6cbacc3f4069c25f1718c6e403a4ff5521796ef990e9",
+        "bytes": 11920
+      }
+    ]
+  }
 }

@@ -1,131 +1,88 @@
 {
   "instance_id": "dateparser-dates-fullrepro-001",
-  "pipeline_note": "REVALIDATION-REQUIRED",
-  "repo": "scrapinghub/dateparser",
-  "repo_commit": "273eb23e4263b3dbbfd6981fcf6f7c48bcb9d662",
-  "spec_version": "v2",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v4",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 89,
-    "scorer_isolation": [
-      "--remove-path"
-    ],
-    "oracle_version": "2026-07-17T00:00:00+08:00-rp-audit-batch2",
-    "count_unit": "base_test_functions",
-    "base_function_count": 89
-  },
-  "taxonomy": {
-    "test_atomic::test_parse_absolute_english_month_name": "atomic",
-    "test_atomic::test_parse_numeric_default_mdy_order": "atomic",
-    "test_atomic::test_parse_french_numeric_uses_locale_order_without_override": "atomic",
-    "test_atomic::test_parse_explicit_date_order_overrides_locale_order": "atomic",
-    "test_atomic::test_parse_prefer_locale_date_order_false_uses_configured_order": "atomic",
-    "test_atomic::test_parse_custom_date_format_with_swapped_day_month": "atomic",
-    "test_atomic::test_parse_spanish_with_explicit_language": "atomic",
-    "test_atomic::test_parse_default_languages_fallback": "atomic",
-    "test_atomic::test_parse_use_given_language_order_false_uses_default_priority": "atomic",
-    "test_atomic::test_parse_use_given_language_order_true_preserves_caller_order": "atomic",
-    "test_atomic::test_parse_relative_tomorrow_uses_relative_base_time": "atomic",
-    "test_atomic::test_parse_relative_yesterday_uses_relative_base_time": "atomic",
-    "test_atomic::test_parse_relative_weeks_ago_uses_relative_base": "atomic",
-    "test_atomic::test_parse_relative_future_days_uses_relative_base": "atomic",
-    "test_atomic::test_parse_month_name_uses_current_day_from_relative_base": "atomic",
-    "test_atomic::test_parse_prefer_dates_from_future_moves_month_forward": "atomic",
-    "test_atomic::test_parse_prefer_dates_from_past_moves_month_backward": "atomic",
-    "test_atomic::test_parse_prefer_day_first_for_missing_day": "atomic",
-    "test_atomic::test_parse_prefer_day_last_for_missing_day": "atomic",
-    "test_atomic::test_parse_prefer_month_first_for_year_only": "atomic",
-    "test_atomic::test_parse_prefer_month_last_for_year_only": "atomic",
-    "test_atomic::test_parse_strict_parsing_rejects_incomplete_month": "atomic",
-    "test_atomic::test_parse_require_month_rejects_year_only_input": "atomic",
-    "test_atomic::test_parse_require_day_rejects_month_year_input": "atomic",
-    "test_atomic::test_parse_require_all_parts_accepts_complete_date": "atomic",
-    "test_atomic::test_parse_timestamp_in_utc": "atomic",
-    "test_atomic::test_parse_no_spaces_time_when_parser_enabled": "atomic",
-    "test_atomic::test_parse_custom_parser_list_can_exclude_relative_time": "atomic",
-    "test_atomic::test_parse_unicode_normalization_true_accepts_unaccented_french": "atomic",
-    "test_atomic::test_parse_unicode_normalization_false_rejects_unaccented_french": "atomic",
-    "test_atomic::test_parse_timezone_abbreviation_returns_naive_when_requested": "atomic",
-    "test_atomic::test_parse_timezone_abbreviation_returns_aware_when_requested": "atomic",
-    "test_atomic::test_parse_timezone_setting_converts_to_target_zone": "atomic",
-    "test_atomic::test_parse_input_timezone_converts_to_target_zone_with_tzinfo": "atomic",
-    "test_atomic::test_date_data_parser_returns_month_period_for_missing_day": "atomic",
-    "test_atomic::test_date_data_parser_returns_year_period_for_year_only": "atomic",
-    "test_atomic::test_date_data_parser_known_languages_selects_dutch_locale": "atomic",
-    "test_atomic::test_date_data_parser_known_languages_selects_german_locale": "atomic",
-    "test_atomic::test_date_data_parser_known_languages_rejects_outside_language": "atomic",
-    "test_atomic::test_date_data_parser_return_time_as_period": "atomic",
-    "test_atomic::test_date_data_parser_date_formats_report_month_period": "atomic",
-    "test_atomic::test_date_data_supports_dictionary_style_read": "atomic",
-    "test_atomic::test_date_data_supports_dictionary_style_write": "atomic",
-    "test_atomic::test_invalid_setting_name_raises_setting_validation_error": "atomic",
-    "test_atomic::test_invalid_date_order_raises_setting_validation_error": "atomic",
-    "test_atomic::test_unknown_parser_name_raises_setting_validation_error": "atomic",
-    "test_atomic::test_invalid_languages_type_raises_type_error": "atomic",
-    "test_atomic::test_unknown_language_raises_value_error": "atomic",
-    "test_atomic::test_invalid_locales_type_raises_type_error": "atomic",
-    "test_atomic::test_unknown_locale_raises_value_error": "atomic",
-    "test_atomic::test_invalid_region_type_raises_type_error": "atomic",
-    "test_atomic::test_use_given_order_without_languages_or_locales_raises_value_error": "atomic",
-    "test_atomic::test_get_date_data_non_string_input_raises_type_error": "atomic",
-    "test_atomic::test_date_data_unknown_key_read_raises_key_error": "atomic",
-    "test_atomic::test_date_data_unknown_key_write_raises_key_error": "atomic",
-    "test_atomic::test_parse_date_order_permutations_disambiguate_numeric_input": "atomic",
-    "test_atomic::test_parse_negative_timestamp_returns_pre_epoch_utc_datetime": "atomic",
-    "test_atomic::test_parse_relative_hours_and_minutes_use_relative_base": "atomic",
-    "test_atomic::test_parse_timestamp_applies_to_timezone_conversion": "atomic",
-    "test_atomic::test_parse_german_and_portuguese_absolute_dates": "atomic",
-    "test_integration::test_parse_custom_language_detector_for_top_level_parse": "integration",
-    "test_integration::test_parse_languages_argument_prevents_custom_detector_call": "integration",
-    "test_integration::test_search_dates_finds_documented_satellite_date": "integration",
-    "test_integration::test_search_dates_adds_detected_language_without_changing_datetime": "integration",
-    "test_integration::test_search_dates_extracts_multiple_dates_in_order": "integration",
-    "test_integration::test_search_dates_with_explicit_spanish_language": "integration",
-    "test_integration::test_search_dates_custom_language_detector": "integration",
-    "test_integration::test_search_dates_languages_argument_prevents_detector_call": "integration",
-    "test_integration::test_search_dates_relative_and_absolute_with_fixed_base": "integration",
-    "test_integration::test_search_dates_return_time_span_for_past_month": "integration",
-    "test_integration::test_search_dates_return_time_span_for_past_week_default_monday": "integration",
-    "test_integration::test_search_dates_return_time_span_respects_sunday_week_start": "integration",
-    "test_integration::test_cross_view_parse_matches_date_data_parser": "system_e2e",
-    "test_integration::test_cross_view_search_result_matches_direct_parse": "system_e2e",
-    "test_integration::test_cross_view_add_detected_language_preserves_search_payload": "system_e2e",
-    "test_integration::test_cross_view_timezone_parse_matches_date_data_parser": "system_e2e",
-    "test_integration::test_cross_view_strict_parsing_none_matches_date_data_parser_none": "system_e2e",
-    "test_integration::test_cross_view_parse_date_formats_matches_date_data_parser_formats": "system_e2e",
-    "test_integration::test_cross_view_all_entry_points_deterministic_with_fixed_base": "system_e2e",
-    "test_integration::test_date_data_parser_try_previous_locales_reuses_successful_locale": "integration",
-    "test_integration::test_parse_skip_tokens_does_not_change_parsed_datetime": "integration",
-    "test_integration::test_search_dates_and_parse_agree_for_german": "integration",
-    "test_integration::test_ddp_language_detection_and_parse_agree": "integration",
-    "test_integration::test_parse_and_ddp_period_agree_for_month_only": "integration",
-    "test_integration::test_search_dates_relative_matches_parse_relative": "integration",
-    "test_integration::test_cross_view_period_time_consistent_across_parse_and_ddp": "system_e2e",
-    "test_integration::test_cross_view_prefer_month_of_year_consistent_across_entry_points": "system_e2e",
-    "test_integration::test_cross_view_negative_timestamp_parse_matches_ddp": "system_e2e",
-    "test_integration::test_cross_view_relative_hours_deterministic_across_all_entry_points": "system_e2e"
-  },
-  "stats": {
-    "atomic": 60,
-    "integration": 18,
-    "system_e2e": 11
-  },
-  "reference_pass_rate": 1.0,
-  "candidate_score": null,
-  "oracle_version": "2026-07-17T00:00:00+08:00-rp-audit-batch2",
-  "reference_score": {
-    "passed": 72,
-    "failed": 0,
-    "total": 72,
-    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2",
-    "artifact": "dev/task-artifacts/dateparser-dates-fullrepro-001/reference_score.json"
-  },
-  "integration_gap": null,
-  "oracle_cleanup_date": "2026-07-17",
-  "oracle_cleanup_removed": 0,
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "current-frozen-gate",
+    "files": [
+      {
+        "path": "ENVIRONMENT-CONTRACT.md",
+        "sha256": "c2afc9e61fc80b05570bdf00b567124da96f8b141f1ae320d958552f133c904a",
+        "bytes": 758
+      },
+      {
+        "path": "INCOMPLETE-CONTROLS.json",
+        "sha256": "a232d6f160aaa72d61583b18f0c9acdcfcbbfb5552a684bf9565ed46e87d7757",
+        "bytes": 1425
+      },
+      {
+        "path": "REFERENCE-PROVENANCE.json",
+        "sha256": "10e239c47feb74d8671f6f03689af02726afe60386c8c0b9b479c888b2a16db7",
+        "bytes": 669
+      },
+      {
+        "path": "ROOT-MAP.json",
+        "sha256": "2f6f7ac2092647d49bf11d296551f18c66c0752a6eeaa412b93e20b0b246940c",
+        "bytes": 9276
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "b3f4634538aa345d8870f459892d42a20c4ad1c4288f34c68545bb6c639487ea",
+        "bytes": 1386
+      },
+      {
+        "path": "requirements.txt",
+        "sha256": "a2fc6689f443897217cf501355973bcd4d995770257d9c8a30e153c1eb600bcf",
+        "bytes": 95
+      },
+      {
+        "path": "run_root.py",
+        "sha256": "99fa6ebdb32a1464141ea531ee8ed00b17eefafe9985c42031f78e280f8ba8d5",
+        "bytes": 3848
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "3874b5aa73954da6e0ad8afbddf101f5c83d450c6fb9685d1446fe563899d782",
+        "bytes": 11942
+      },
+      {
+        "path": "tests/__init__.py",
+        "sha256": "5867759cc838188d4b4f3239ef2d5ecef1030d7d4f7be421f8f890468177d9bf",
+        "bytes": 64
+      },
+      {
+        "path": "tests/conftest.py",
+        "sha256": "0b08914c9ad05cf88d85c14d2dead2c41cab9f0e2df6638a783e2e547f27542e",
+        "bytes": 202
+      },
+      {
+        "path": "tests/support.py",
+        "sha256": "300c490ffe67aa9f86c7fad434170602de04e8d1d6cd261fa0ce5505732bb389",
+        "bytes": 3855
+      },
+      {
+        "path": "tests/test_atomic.py",
+        "sha256": "43ca8959a1d62226bd7f9d43184f920cdc02dfd9b7cb95a57204d3f8e9837de6",
+        "bytes": 7899
+      },
+      {
+        "path": "tests/test_composition.py",
+        "sha256": "94ddab91212bacb55de0e150e8b193e7b33af5f4ac4bff5693a183ca48f082bc",
+        "bytes": 15954
+      },
+      {
+        "path": "tests/test_e2e.py",
+        "sha256": "1577e00052cfe7f0f400fb8b22a02e7cd86686c2c10708e80229d98797058a68",
+        "bytes": 5268
+      }
+    ]
+  }
 }

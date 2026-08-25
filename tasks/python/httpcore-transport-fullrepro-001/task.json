@@ -1,110 +1,83 @@
 {
   "instance_id": "httpcore-transport-fullrepro-001",
-  "pipeline_note": "REOPENED_S3",
-  "repo": "encode/httpcore",
-  "repo_commit": "10a658221deb38a4c5b16db55ab554b0bf731707",
-  "spec_version": "v2",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v6",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 78,
-    "scorer_isolation": [
-      "--remove-path"
-    ],
-    "count_unit": "base_test_functions",
-    "base_function_count": 78
-  },
-  "taxonomy": {
-    "test_atomic::test_url_from_string_parses_scheme_host_target": "atomic",
-    "test_atomic::test_url_default_http_port_is_80": "atomic",
-    "test_atomic::test_url_default_https_port_is_443": "atomic",
-    "test_atomic::test_url_explicit_components_round_trips_to_bytes": "atomic",
-    "test_atomic::test_url_missing_path_produces_slash_target": "atomic",
-    "test_atomic::test_url_rejects_non_ascii_string": "atomic",
-    "test_atomic::test_origin_equality_requires_all_three_fields": "atomic",
-    "test_atomic::test_origin_stores_byte_scheme_and_host_with_int_port": "atomic",
-    "test_atomic::test_request_stores_method_as_bytes": "atomic",
-    "test_atomic::test_request_url_is_parsed_url_object": "atomic",
-    "test_atomic::test_request_headers_normalized_to_byte_pairs": "atomic",
-    "test_atomic::test_request_target_extension_overrides_url_target": "atomic",
-    "test_atomic::test_request_rejects_non_ascii_method": "atomic",
-    "test_atomic::test_request_rejects_non_ascii_header_values": "atomic",
-    "test_atomic::test_response_stores_status_and_headers": "atomic",
-    "test_atomic::test_response_read_caches_content_for_repeated_access": "atomic",
-    "test_atomic::test_response_iter_stream_yields_chunks_once": "atomic",
-    "test_atomic::test_response_content_before_read_on_streaming_raises": "atomic",
-    "test_atomic::test_response_close_calls_body_close_when_available": "atomic",
-    "test_atomic::test_proxy_stores_url_as_parsed_url": "atomic",
-    "test_atomic::test_proxy_auth_generates_basic_authorization_header": "atomic",
-    "test_atomic::test_proxy_custom_headers_follow_auth_header": "atomic",
-    "test_atomic::test_proxy_stores_ssl_context_when_provided": "atomic",
-    "test_atomic::test_mock_stream_returns_chunks_then_empty": "atomic",
-    "test_atomic::test_mock_stream_start_tls_returns_itself": "atomic",
-    "test_atomic::test_declared_public_exception_is_available": "atomic",
-    "test_atomic::test_unsupported_protocol_raised_for_missing_scheme": "atomic",
-    "test_atomic::test_request_preserves_duplicate_header_names": "atomic",
-    "test_atomic::test_url_explicit_port_preserved_in_bytes_representation": "atomic",
-    "test_atomic::test_response_extensions_stores_custom_metadata": "atomic",
-    "test_atomic::test_connect_error_preserves_constructor_arguments": "atomic",
-    "test_integration::test_request_line_uses_method_path_and_query_on_wire": "integration",
-    "test_integration::test_empty_url_path_serializes_as_slash": "integration",
-    "test_integration::test_target_extension_overrides_url_target_on_wire": "integration",
-    "test_integration::test_options_star_target_is_sent_unchanged": "integration",
-    "test_integration::test_default_http_port_omitted_from_host_header": "integration",
-    "test_integration::test_non_default_port_included_in_host_header": "integration",
-    "test_integration::test_caller_supplied_host_header_is_preserved": "integration",
-    "test_integration::test_bytes_content_adds_content_length_and_serializes_body": "integration",
-    "test_integration::test_empty_bytes_body_adds_zero_content_length": "integration",
-    "test_integration::test_iterable_body_uses_chunked_transfer_encoding": "integration",
-    "test_integration::test_explicit_content_length_header_is_preserved": "integration",
-    "test_integration::test_explicit_transfer_encoding_prevents_auto_content_length": "integration",
-    "test_integration::test_pool_request_returns_status_headers_content_and_extensions": "integration",
-    "test_integration::test_duplicate_response_headers_are_preserved": "integration",
-    "test_integration::test_stream_response_does_not_preload_body": "integration",
-    "test_integration::test_stream_read_makes_content_available": "integration",
-    "test_integration::test_same_origin_reuses_connection_after_body_consumed": "integration",
-    "test_integration::test_different_origins_open_separate_connections": "integration",
-    "test_integration::test_zero_keepalive_closes_connection_after_response": "integration",
-    "test_integration::test_pool_close_closes_idle_connections": "system_e2e",
-    "test_integration::test_pool_context_manager_closes_on_exit": "integration",
-    "test_integration::test_pool_connections_returns_list_snapshot": "integration",
-    "test_integration::test_http_connection_returns_response_for_configured_origin": "integration",
-    "test_integration::test_http_connection_rejects_different_origin": "integration",
-    "test_integration::test_http_connection_becomes_idle_after_response_consumed": "integration",
-    "test_integration::test_http_connection_close_closes_underlying_stream": "integration",
-    "test_integration::test_https_connects_to_port_443_and_starts_tls": "integration",
-    "test_integration::test_sni_hostname_extension_overrides_tls_server_name": "integration",
-    "test_integration::test_https_non_default_port_for_connect_and_host": "integration",
-    "test_integration::test_uds_path_uses_connect_unix_socket": "integration",
-    "test_integration::test_local_address_forwarded_to_backend": "integration",
-    "test_integration::test_socket_options_forwarded_to_backend": "integration",
-    "test_integration::test_connect_timeout_forwarded_to_backend": "integration",
-    "test_integration::test_read_timeout_forwarded_to_stream": "integration",
-    "test_integration::test_write_timeout_forwarded_to_stream": "integration",
-    "test_integration::test_connect_error_retried_once_succeeds": "integration",
-    "test_integration::test_connect_error_exhausts_retries_and_raises": "integration",
-    "test_integration::test_retry_backoff_uses_exponential_sequence": "integration",
-    "test_integration::test_trace_reports_tcp_connect_started_and_complete": "integration",
-    "test_integration::test_trace_reports_tcp_connect_failed_on_error": "integration",
-    "test_integration::test_trace_reports_tls_events_for_https": "integration",
-    "test_integration::test_premature_disconnect_raises_remote_protocol_error": "integration",
-    "test_integration::test_invalid_method_bytes_raise_local_protocol_error": "integration",
-    "test_integration::test_connect_response_exposes_network_stream": "integration",
-    "test_integration::test_mock_backend_serves_response_through_pool": "integration",
-    "test_integration::test_unsupported_protocol_is_raised_for_ftp_scheme": "integration",
-    "test_integration::test_unsupported_protocol_is_raised_for_missing_scheme": "integration"
-  },
-  "stats": {
-    "atomic": 31,
-    "integration": 46,
-    "system_e2e": 1
-  },
-  "reference_pass_rate": 1.0,
-  "candidate_score": null,
-  "oracle_version": "20260716T195327Z-rp-audit-b3",
-  "reference_score": null,
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "final-frozen-gate",
+    "files": [
+      {
+        "path": "ENVIRONMENT-CONTRACT.md",
+        "sha256": "a6f2354baa038aced5578f8874624d316230108f21bda90b16e3697d8104d819",
+        "bytes": 1008
+      },
+      {
+        "path": "ROOT-MAP.json",
+        "sha256": "574b4216a0b285beb7ea358a59215e0d2f5dd814d8e41764e79aae3f1140cf01",
+        "bytes": 9911
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "aa328a969e3f6a2b3dcbecfffb4d6cffc50a6442d6b891b892f30969edfb4c14",
+        "bytes": 1084
+      },
+      {
+        "path": "SOURCE-BLANK-CONTRACT.json",
+        "sha256": "251cb8c62ff1ccaa2ffac6c44c85c5b377e4907b034e042255ee26e50efd5a46",
+        "bytes": 1206
+      },
+      {
+        "path": "run_root.py",
+        "sha256": "3271d9267e7c9924a9f235d8e2980c7e253f1c3257b37b6583895d0e185f0465",
+        "bytes": 5788
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "7b8f07106f974f5e3e927b38e3cdc77a91c92df406e7633841eb82a3a4e3dad9",
+        "bytes": 12959
+      },
+      {
+        "path": "tests/__init__.py",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "bytes": 1
+      },
+      {
+        "path": "tests/native_support.py",
+        "sha256": "5956bef8e861be6aef54bca8674aee977bf02ceb1d114e7bde8ceb557e8d12d4",
+        "bytes": 9816
+      },
+      {
+        "path": "tests/test_native_controls.py",
+        "sha256": "90c9f67663fc2ace772a745a976271b8d5f24961ede0fec0ae1a6804fdd80c8c",
+        "bytes": 9848
+      },
+      {
+        "path": "tests/test_transport_atomic.py",
+        "sha256": "92c3b3b00b8f2a3a866e0eca5a6f9a7480b770b5fd8e74d6d0d2b150c6199837",
+        "bytes": 604
+      },
+      {
+        "path": "tests/test_transport_integration.py",
+        "sha256": "3af5455cf199195031314cc32d9c876d7e696ee0a46156be3287748d574ea960",
+        "bytes": 1513
+      },
+      {
+        "path": "tests/test_transport_system.py",
+        "sha256": "f59c43b5a46aa874d019908c5fd2b2a74691938e86b6becec375c6a2b7107ee7",
+        "bytes": 470
+      },
+      {
+        "path": "tests/transport_support.py",
+        "sha256": "f665e6c7f3ae737828a49d8eb86b390affe4a6e23d05a955d36ad241c0242e42",
+        "bytes": 15726
+      }
+    ]
+  }
 }

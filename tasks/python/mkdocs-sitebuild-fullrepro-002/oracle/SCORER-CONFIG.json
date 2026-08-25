@@ -1,0 +1,89 @@
+{
+  "schema_version": 2,
+  "suite": "mkdocs-v14-formal-a",
+  "status": "prefreeze-qualification",
+  "constitution": "SYNTHETIC-DESIGN-CONSTITUTION-2026-08-14-v1",
+  "scoring_formula": "native-macro-v2",
+  "reference": {
+    "source_root": "../../source",
+    "commit": "2862536793b3c67d9d83c33e0dd6d50a791928f8",
+    "tree": "cb7bc316a04ef9835d07b7497517eed81914910a",
+    "clean_build_sha256": "ebf8511d65830c5bd8ab7bf79fa0f87ac5b6d0c8e7ffd2ab87347faa60674246",
+    "patched_build_sha256": "fcf400274ca4cbbfebe00436e770af5fc18bd604712b5795f0fed38f3eccc74e",
+    "recovery_sha256": "4e3fe4bded3fee8e90033f05605eb04144177982a8838f2819cbe1903af186fc"
+  },
+  "environment": {
+    "python": "C:/Users/林霰/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+    "dependency_site_packages": "../../.venv-reference/Lib/site-packages",
+    "version": "3.12",
+    "mkdocs": "1.6.1"
+  },
+  "protocol": {
+    "orders": ["natural", "reverse", "permuted"],
+    "rounds_per_order": 3,
+    "permutation_start_zero_based": 7,
+    "permutation_stride": 11,
+    "per_root_timeout_seconds": 60,
+    "anchor_mode": "sealed-arbitrary-candidate-v1",
+    "anchor_required_files": [
+      "mkdocs/__init__.py",
+      "mkdocs/exceptions.py",
+      "mkdocs/config/__init__.py",
+      "mkdocs/commands/__init__.py",
+      "mkdocs/commands/build.py",
+      "mkdocs/structure/__init__.py",
+      "mkdocs/structure/files.py",
+      "mkdocs/structure/nav.py",
+      "mkdocs/structure/pages.py"
+    ],
+    "candidate_excluded_names": [
+      ".git", ".pytest_cache", "__pycache__", ".mypy_cache", ".ruff_cache",
+      ".tox", ".nox", "build", "dist"
+    ],
+    "seal_domain": "mkdocs-v14-anchor-admission-v1"
+  },
+  "expected": {
+    "m1": ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11","A12","I01","I02","I03","I04","I05","I06","I07","I08","I09","I10","I11","I12","I13","I14","S01","S02","S03","S04","S05","S06","S07","S08","S09","S10"],
+    "m2": ["A01","A02","A03","A04","A05","A06","I01","I02","I03","I04"],
+    "dummy": []
+  },
+  "candidate_payload": ["SPEC.md", "TASK.md", "ENVIRONMENT.json"],
+  "gate_files": [
+    "CAPABILITY-GRAPH.md",
+    "DEPENDENCY-GRAPH.json",
+    "ENVIRONMENT.json",
+    "MUTATION-RECORD.md",
+    "PREFREEZE-NOTES.md",
+    "PREREGISTRATION.md",
+    "PUBLIC-OPERATION-CONTRACT.json",
+    "PUBLIC-SURFACE-AUDIT.md",
+    "RECORD-SHAPE-CONTRACT.json",
+    "RECORD-SHAPE-AUDIT.md",
+    "ANCHOR-ADMISSION-PROTOCOL.md",
+    "ANCHOR-SEAL-KEY.txt",
+    "ROOT-DESIGN.md",
+    "ROOT-MAP.json",
+    "SCORER-CONFIG.json",
+    "SPEC.md",
+    "TASK.md",
+    "probe_root.py",
+    "scenario_driver.py",
+    "score_gate.py",
+    "anchor_protocol.py",
+    "anchor_admission.py",
+    "prove_anchor_admission.py",
+    "audit_public_operations.py",
+    "audit_record_shapes.py",
+    "REFERENCE-PATCH.patch",
+    "reference-overlay/mkdocs/commands/_recovery.py",
+    "dummy/mkdocs/__init__.py",
+    "dummy/mkdocs/exceptions.py",
+    "dummy/mkdocs/config/__init__.py",
+    "dummy/mkdocs/commands/__init__.py",
+    "dummy/mkdocs/commands/build.py",
+    "dummy/mkdocs/structure/__init__.py",
+    "dummy/mkdocs/structure/files.py",
+    "dummy/mkdocs/structure/nav.py",
+    "dummy/mkdocs/structure/pages.py"
+  ]
+}

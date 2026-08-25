@@ -1,180 +1,93 @@
 {
   "instance_id": "cookiecutter-fullrepro-001",
-  "pipeline_note": "REVALIDATION-REQUIRED",
-  "repo": "cookiecutter/cookiecutter",
-  "repo_url": "https://github.com/cookiecutter/cookiecutter",
-  "repo_commit": "c88fbe921c97c58b65f1883ba90a0ab53cc91b34",
-  "spec_version": "v2",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
-  "oracle_version": "2026-07-14T02:35:00+08:00-cookiecutter-stage3-repair-v2",
+  "cohort": "python-aligned-deliverable",
+  "version": "v7",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 101,
-    "source": "generated_only",
-    "scorer_isolation": [
-      "--remove-path",
-      "cookiecutter"
-    ],
-    "count_unit": "base_test_functions",
-    "base_function_count": 101
-  },
-  "taxonomy": {
-    "test_atomic::test_api_returns_an_absolute_project_path": "atomic",
-    "test_atomic::test_string_default_renders_file_content": "atomic",
-    "test_atomic::test_extra_context_overrides_the_project_directory_name": "atomic",
-    "test_atomic::test_extra_context_overrides_rendered_file_content": "atomic",
-    "test_atomic::test_templated_default_uses_an_earlier_variable": "atomic",
-    "test_atomic::test_choice_variable_uses_its_first_item_without_input": "atomic",
-    "test_atomic::test_true_boolean_is_available_as_a_boolean": "atomic",
-    "test_atomic::test_false_boolean_is_available_as_a_boolean": "atomic",
-    "test_atomic::test_dictionary_values_are_accessible_in_templates": "atomic",
-    "test_atomic::test_single_underscore_variable_is_not_pre_rendered": "atomic",
-    "test_atomic::test_double_underscore_variable_is_rendered_from_prior_context": "atomic",
-    "test_atomic::test_jsonify_filter_serializes_a_dictionary": "atomic",
-    "test_atomic::test_jsonify_filter_accepts_a_custom_indent": "atomic",
-    "test_atomic::test_random_ascii_string_honors_the_requested_length": "atomic",
-    "test_atomic::test_random_ascii_string_without_punctuation_uses_letters": "atomic",
-    "test_atomic::test_random_ascii_string_with_punctuation_uses_documented_corpus": "atomic",
-    "test_atomic::test_slugify_filter_produces_a_lowercase_hyphenated_slug": "atomic",
-    "test_atomic::test_uuid_global_produces_a_uuid4_string": "atomic",
-    "test_atomic::test_time_tag_formats_the_current_utc_year": "atomic",
-    "test_atomic::test_invalid_cookiecutter_json_raises_context_decoding_exception": "atomic",
-    "test_atomic::test_missing_config_file_raises_config_does_not_exist": "atomic",
-    "test_atomic::test_replay_and_no_input_raise_invalid_mode": "atomic",
-    "test_atomic::test_unknown_extension_raises_unknown_extension": "atomic",
-    "test_atomic::test_missing_local_template_raises_repository_not_found": "atomic",
-    "test_atomic::test_template_without_templated_project_dir_raises_public_exception": "atomic",
-    "test_atomic::test_undefined_content_variable_raises_public_exception": "atomic",
-    "test_atomic::test_empty_string_default_renders_as_empty_content": "atomic",
-    "test_atomic::test_nested_dictionary_default_is_available_to_template": "atomic",
-    "test_atomic::test_private_dictionary_value_is_preserved_and_accessible": "atomic",
-    "test_atomic::test_templated_defaults_can_chain_in_key_order": "atomic",
-    "test_atomic::test_jsonify_default_indent_is_four_spaces": "atomic",
-    "test_atomic::test_slugify_filter_accepts_separator_keyword": "atomic",
-    "test_atomic::test_slugify_filter_handles_apostrophes": "atomic",
-    "test_atomic::test_time_tag_formats_current_utc_month": "atomic",
-    "test_atomic::test_time_tag_formats_current_utc_hour": "atomic",
-    "test_atomic::test_multiple_uuid_calls_each_produce_uuid4_strings": "atomic",
-    "test_integration::test_local_extension_can_register_a_filter": "integration",
-    "test_integration::test_local_extension_can_register_a_global": "integration",
-    "test_integration::test_local_extension_can_register_a_tag": "integration",
-    "test_integration::test_human_readable_prompt_label_is_displayed_and_answer_is_used": "integration",
-    "test_integration::test_password_argument_opens_a_protected_zip_template": "integration",
-    "test_integration::test_cli_password_environment_opens_a_protected_zip_template": "integration",
-    "test_integration::test_wrong_password_for_protected_zip_raises_invalid_zip_repository": "integration",
-    "test_integration::test_nested_directory_and_file_names_render_with_contents": "integration",
-    "test_integration::test_multiple_files_share_the_same_resolved_context": "integration",
-    "test_integration::test_utf8_context_round_trips_through_names_and_contents": "integration",
-    "test_integration::test_copy_without_render_preserves_matching_file_contents": "integration",
-    "test_integration::test_copy_without_render_still_renders_matching_path_names": "integration",
-    "test_integration::test_output_dir_contains_the_returned_project": "integration",
-    "test_integration::test_existing_output_directory_raises_without_overwrite": "integration",
-    "test_integration::test_overwrite_if_exists_replaces_existing_file_contents": "integration",
-    "test_integration::test_skip_if_file_exists_preserves_existing_file_contents": "integration",
-    "test_integration::test_skip_if_file_exists_still_generates_missing_files": "integration",
-    "test_integration::test_binary_file_is_copied_without_template_rendering": "integration",
-    "test_integration::test_pre_generation_hook_receives_rendered_context": "integration",
-    "test_integration::test_post_generation_hook_can_read_generated_files": "integration",
-    "test_integration::test_accept_hooks_false_skips_pre_and_post_hooks": "integration",
-    "test_integration::test_failed_hook_removes_partial_project_by_default": "integration",
-    "test_integration::test_keep_project_on_failure_preserves_partial_project": "integration",
-    "test_integration::test_pre_and_post_hooks_run_in_documented_order": "integration",
-    "test_integration::test_directory_option_selects_the_named_template": "integration",
-    "test_integration::test_directory_option_preserves_rendering_behavior": "integration",
-    "test_integration::test_local_zip_archive_generates_a_project": "integration",
-    "test_integration::test_zip_archive_uses_context_for_names_and_contents": "integration",
-    "test_integration::test_user_config_default_context_overrides_template_defaults": "integration",
-    "test_integration::test_extra_context_has_precedence_over_user_config": "integration",
-    "test_integration::test_successful_generation_saves_resolved_context_to_replay": "integration",
-    "test_integration::test_replay_true_reuses_the_last_saved_context": "integration",
-    "test_integration::test_explicit_replay_file_controls_the_generated_context": "integration",
-    "test_integration::test_default_config_ignores_a_user_cookiecutterrc": "integration",
-    "test_integration::test_cli_no_input_generates_a_local_template": "integration",
-    "test_integration::test_cli_extra_context_overrides_template_values": "integration",
-    "test_integration::test_cli_output_dir_places_project_under_requested_path": "integration",
-    "test_integration::test_cli_skip_if_file_exists_preserves_user_content": "integration",
-    "test_integration::test_cli_overwrite_if_exists_replaces_user_content": "integration",
-    "test_integration::test_cli_and_python_api_produce_identical_file_trees": "integration",
-    "test_integration::test_context_is_consistent_across_name_content_and_replay": "integration",
-    "test_integration::test_cli_verbose_emits_debug_logging_while_generation_succeeds": "integration",
-    "test_integration::test_directory_selection_keeps_hook_and_replay_context_consistent": "integration",
-    "test_integration::test_legacy_template_key_selects_its_nested_template": "integration",
-    "test_integration::test_templates_mapping_selects_the_first_nested_template_without_input": "integration",
-    "test_integration::test_directory_option_selects_a_template_inside_a_zip_archive": "integration",
-    "test_integration::test_interactive_string_answer_preserves_spaces": "integration",
-    "test_integration::test_user_config_matching_choice_becomes_no_input_default": "integration",
-    "test_integration::test_interactive_choice_number_selects_corresponding_value": "integration",
-    "test_integration::test_interactive_boolean_yes_is_stored_as_true": "integration",
-    "test_integration::test_interactive_dictionary_json_replaces_default": "integration",
-    "test_integration::test_private_variable_is_omitted_from_interactive_prompts": "integration",
-    "test_integration::test_private_rendered_variable_uses_extra_context": "integration",
-    "test_integration::test_private_rendered_variable_drives_file_name": "integration",
-    "test_integration::test_custom_prompt_label_is_displayed": "integration",
-    "test_integration::test_choice_prompt_uses_custom_item_labels": "integration",
-    "test_integration::test_templated_default_recomputes_after_override": "integration",
-    "test_integration::test_copy_without_render_glob_preserves_all_matching_contents": "integration",
-    "test_integration::test_templates_mapping_supports_deep_relative_path": "integration",
-    "test_integration::test_interactive_templates_mapping_selects_second_entry": "integration",
-    "test_integration::test_legacy_template_list_defaults_to_first_entry": "integration",
-    "test_integration::test_interactive_legacy_template_list_selects_second_entry": "integration",
-    "test_integration::test_uuid_global_can_render_a_file_name": "integration",
-    "test_integration::test_verbose_long_option_emits_debug_logging": "integration",
-    "test_integration::test_verbose_short_option_emits_debug_logging": "integration"
-  },
-  "stats": {
-    "atomic": 36,
-    "integration": 65,
-    "system_e2e": 0
-  },
-  "reference_pass_rate": 1,
-  "reference_score": {
-    "passed": 101,
-    "total": 101,
-    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2.31",
-    "artifact": "reference_score.json"
-  },
-  "candidate_score": null,
-  "integration_gap": null,
-  "true_gap_events": [],
-  "weaknesses": [],
-  "labels": [
-    "discriminating",
-    "composition-signal",
-    "generated-only-oracle",
-    "full-linux-collection",
-    "partial-narrative-coverage"
-  ],
-  "coverage": {
-    "verdict": "PARTIAL_ACCEPTABLE",
-    "uncovered_sections": [
+    "root": "oracle",
+    "kind": "final-frozen-gate",
+    "files": [
       {
-        "spec_section": "Non-Goals",
-        "type": "narrative",
-        "impact": "none on executable behavior"
+        "path": "ENVIRONMENT-CONTRACT.md",
+        "sha256": "643ef7d2ebabb0b27430afc0e1566905836c44c3e2fce4f0d2f99f1d9b16d0d8",
+        "bytes": 1593
       },
       {
-        "spec_section": "Implementation Guidance",
-        "type": "narrative",
-        "impact": "none; structural tests would violate behavioral fairness"
+        "path": "ROOT-MAP.json",
+        "sha256": "174779cc74ce63bef46b7fdde7a061a7719c42198050e6ba1800ea3f1c7d1f82",
+        "bytes": 17515
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "884119e0fc79f75253de3c8a4a0d4d87ee58a7d8848500af0fa3ae5e74f483d9",
+        "bytes": 649
+      },
+      {
+        "path": "pytest.ini",
+        "sha256": "95bde37526ac3e9b5c0c515cd56880203145c8858516a60beaad761296249b03",
+        "bytes": 69
+      },
+      {
+        "path": "requirements.txt",
+        "sha256": "7735aaab3a35a3059d8122ec8191798adf1e40872972d6d5458dfe47bae6ff76",
+        "bytes": 109
+      },
+      {
+        "path": "run_root.py",
+        "sha256": "3ff7abcea691d77b9c82045c614a38bf27c29c3a34b480d374b0263fc6214962",
+        "bytes": 4667
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "497605e74d9c6b699762454d5f019e4d3aac73c13c51c41dd2e2082a436f9ac4",
+        "bytes": 17314
+      },
+      {
+        "path": "tests/__init__.py",
+        "sha256": "e3f889ee0abfe2767bd66c2b3fbd1028d27d0e671bfb237c5c1364710e6338b3",
+        "bytes": 49
+      },
+      {
+        "path": "tests/concurrency_support.py",
+        "sha256": "3f0d3dcaa218fa057a6f284f2bb074d0bea47bb65929cea2ee81defd66991564",
+        "bytes": 3918
+      },
+      {
+        "path": "tests/mutation_support.py",
+        "sha256": "e515da3a71b3f6b0fc6b3328db09e5edb488eff72e1b40c3305f39b8f1c1dd22",
+        "bytes": 43701
+      },
+      {
+        "path": "tests/release_support.py",
+        "sha256": "d8e0123631a3be8b1e8b7591314c28a31038a71c6333cb2f196baaf576498eff",
+        "bytes": 18484
+      },
+      {
+        "path": "tests/support.py",
+        "sha256": "0ac3ff47527e702bc17c2e849b4ce51848e2a969492212b730039b1793c7609b",
+        "bytes": 4724
+      },
+      {
+        "path": "tests/test_atomic.py",
+        "sha256": "489c71f1adc09cda24e47f54d118ba0d996cea3be4912b13f42660a70ed7d79d",
+        "bytes": 8578
+      },
+      {
+        "path": "tests/test_composition.py",
+        "sha256": "e533542dcc0070d8fbf2084da2d8624e8e2e261798afea2bbba08306ca240bf2",
+        "bytes": 8138
+      },
+      {
+        "path": "tests/workflow_support.py",
+        "sha256": "1b26f2a5f4a4cf733e0f169c2de64d179061508dee46fc0f8c2f01442333a8f9",
+        "bytes": 29714
       }
     ]
-  },
-  "source_meta": {
-    "github_stars": 24996,
-    "pypi_monthly_downloads": 18811019,
-    "loc": 2806,
-    "first_release": "2013-07-14",
-    "measured_at": "2026-07-14",
-    "pypi_version": "2.7.1"
-  },
-  "judge": null,
-  "prior_oracle_cleanup": {
-    "date": "2026-07-14",
-    "removed_unpromised_import_tests": 7,
-    "superseded_oracle_count": 9
-  },
-  "taxonomy_unit": "base_test_functions"
+  }
 }

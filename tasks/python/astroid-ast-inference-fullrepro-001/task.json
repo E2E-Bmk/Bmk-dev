@@ -1,114 +1,73 @@
 {
   "instance_id": "astroid-ast-inference-fullrepro-001",
-  "pipeline_note": "QUALIFIED",
-  "repo": "pylint-dev/astroid",
-  "repo_commit": "0053ffc6699afe1c04456cebdbb002005fec3a49",
-  "spec_version": "spec_v2",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v3",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 80,
-    "scorer_isolation": [
-      "--remove-path",
-      "astroid"
-    ],
-    "count_unit": "base_test_functions",
-    "base_function_count": 80
-  },
-  "taxonomy": {
-    "test_atomic::test_parse_returns_module_with_name_and_path": "atomic",
-    "test_atomic::test_parse_dedents_source_before_building_tree": "atomic",
-    "test_atomic::test_parse_raises_astroid_syntax_error_for_invalid_python": "atomic",
-    "test_atomic::test_parse_apply_transforms_false_skips_registered_transform": "atomic",
-    "test_atomic::test_extract_node_hash_marker_returns_marked_statement": "atomic",
-    "test_atomic::test_extract_node_wrapper_returns_inner_expression": "atomic",
-    "test_atomic::test_extract_node_multiple_markers_return_list": "atomic",
-    "test_atomic::test_extract_node_without_marker_returns_last_statement": "atomic",
-    "test_atomic::test_extract_node_expression_statement_unwraps_expression": "atomic",
-    "test_atomic::test_extract_node_empty_module_raises_value_error": "atomic",
-    "test_atomic::test_module_descendant_root_points_to_parse_root": "atomic",
-    "test_atomic::test_module_root_returns_itself": "atomic",
-    "test_atomic::test_get_children_yields_structural_children_in_order": "atomic",
-    "test_atomic::test_node_ancestors_walks_parent_chain_to_module": "atomic",
-    "test_atomic::test_statement_returns_nearest_statement_node": "atomic",
-    "test_atomic::test_statement_missing_is_raised_for_detached_expression": "atomic",
-    "test_atomic::test_frame_returns_nearest_function_frame": "atomic",
-    "test_atomic::test_scope_returns_nearest_function_scope": "atomic",
-    "test_atomic::test_scope_parentless_non_scope_raises_parent_missing_error": "atomic",
-    "test_atomic::test_nodes_of_class_finds_matching_descendants": "atomic",
-    "test_atomic::test_nodes_of_class_skip_klass_prevents_descent": "atomic",
-    "test_atomic::test_as_string_renders_source_like_expression": "atomic",
-    "test_atomic::test_repr_tree_includes_linenos_when_requested": "atomic",
-    "test_atomic::test_repr_tree_respects_max_depth_truncation": "atomic",
-    "test_atomic::test_infer_constant_binary_expression_returns_const_value": "atomic",
-    "test_atomic::test_inferred_returns_list_of_infer_results": "atomic",
-    "test_atomic::test_infer_unknown_dynamic_call_raises_name_inference_error": "atomic",
-    "test_atomic::test_instantiate_class_returns_instance_for_classdef": "atomic",
-    "test_atomic::test_instantiate_class_returns_self_for_non_class_node": "atomic",
-    "test_atomic::test_module_public_names_omits_private_names": "atomic",
-    "test_atomic::test_wildcard_import_names_uses_explicit_all_sequence": "atomic",
-    "test_atomic::test_wildcard_import_names_falls_back_to_public_locals": "atomic",
-    "test_atomic::test_module_getattr_returns_matching_attribute_nodes": "atomic",
-    "test_atomic::test_module_getattr_empty_name_raises_attribute_inference_error": "atomic",
-    "test_atomic::test_module_igetattr_infers_attribute_values": "atomic",
-    "test_atomic::test_module_igetattr_missing_name_raises_inference_error": "atomic",
-    "test_atomic::test_module_fully_defined_false_for_string_parsed_module": "atomic",
-    "test_atomic::test_lookup_finds_visible_local_assignment": "atomic",
-    "test_atomic::test_lookup_falls_back_to_builtins_for_builtin_name": "atomic",
-    "test_atomic::test_lookup_missing_name_returns_builtin_scope_empty_statements": "atomic",
-    "test_atomic::test_ilookup_infers_assignment_values": "atomic",
-    "test_atomic::test_inference_yields_instance_for_class_call": "atomic",
-    "test_atomic::test_uninferable_is_identity_comparable_sentinel": "atomic",
-    "test_atomic::test_top_level_deprecated_const_alias": "atomic",
-    "test_atomic::test_deprecated_call_alias": "atomic",
-    "test_atomic::test_deprecated_functiondef_alias": "atomic",
-    "test_atomic::test_public_exception_aliases_match_resolution_categories": "atomic",
-    "test_atomic::test_astroid_error_formats_keyword_fields": "atomic",
-    "test_atomic::test_astroid_import_error_is_building_error_subclass": "atomic",
-    "test_atomic::test_nodes_namespace_exposes_documented_assignment_and_function_nodes": "atomic",
-    "test_atomic::test_nodes_namespace_exposes_documented_pattern_and_type_nodes": "atomic",
-    "test_integration::test_manager_ast_from_string_returns_cached_named_module": "integration",
-    "test_integration::test_manager_ast_from_string_sets_filepath_when_provided": "integration",
-    "test_integration::test_manager_ast_from_file_builds_python_file_module": "integration",
-    "test_integration::test_manager_ast_from_file_missing_without_fallback_raises": "integration",
-    "test_integration::test_manager_ast_from_module_name_none_raises_building_error": "integration",
-    "test_integration::test_manager_ast_from_module_name_returns_stub_for_main": "integration",
-    "test_integration::test_manager_ast_from_module_builds_live_module": "integration",
-    "test_integration::test_manager_ast_from_class_returns_classdef": "integration",
-    "test_integration::test_manager_cache_module_keeps_first_module_for_name": "integration",
-    "test_integration::test_manager_clear_cache_keeps_builtin_import_working": "integration",
-    "test_integration::test_register_transform_applies_to_matching_future_nodes": "integration",
-    "test_integration::test_inference_tip_installs_custom_inference_and_returns_node": "integration",
-    "test_integration::test_inference_tip_can_request_default_inference": "integration",
-    "test_integration::test_register_module_extender_exposes_extension_public_names": "integration",
-    "test_integration::test_failed_import_hook_supplies_module_graph": "integration",
-    "test_integration::test_failed_import_hook_result_supports_lookup_and_getattr": "integration",
-    "test_integration::test_cli_ast_command_prints_repr_tree_for_valid_file": "integration",
-    "test_integration::test_cli_without_subcommand_returns_usage_error": "integration",
-    "test_integration::test_cross_view_parse_lookup_infer_and_root_are_consistent": "system_e2e",
-    "test_integration::test_cross_view_extract_node_parent_chain_and_rendering": "system_e2e",
-    "test_integration::test_cross_view_manager_cache_preserves_lookup_results": "system_e2e",
-    "test_integration::test_cross_view_extender_public_names_getattr_inference_agree": "system_e2e",
-    "test_integration::test_cross_view_failed_import_hook_cache_and_inference_agree": "system_e2e",
-    "test_integration::test_cross_view_transform_changes_future_parse_lookup_inference": "system_e2e",
-    "test_integration::test_cross_view_class_instance_and_attribute_lookup_share_tree": "system_e2e",
-    "test_integration::test_representative_workflow_parse_infer_extract_and_extend": "system_e2e",
-    "test_integration::test_representative_workflow_file_manager_cache_and_cli_render": "system_e2e",
-    "test_integration::test_representative_workflow_failed_import_hook_then_lookup_infer": "system_e2e",
-    "test_integration::test_cli_repr_tree_matches_parse_repr_tree": "integration"
-  },
-  "stats": {
-    "atomic": 51,
-    "integration": 19,
-    "system_e2e": 10
-  },
-  "reference_pass_rate": "79/79",
-  "candidate_score": {
-    "passed": 73,
-    "total": 79
-  },
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "final-frozen-gate",
+    "files": [
+      {
+        "path": "ENVIRONMENT-CONTRACT.md",
+        "sha256": "4ffda08de3bbc5c66b1744f4d67ce6a162e6227579b0790064ea19ad627981c0",
+        "bytes": 590
+      },
+      {
+        "path": "ROOT-MAP.json",
+        "sha256": "858b9d1972f46f1c9aef9d319cbab670073655b0e2fbdfb99cf67ccc939493f6",
+        "bytes": 10415
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "a42589c9bf76740ffc55d6c08f454caf22e287277042f723c8417c4a3859f377",
+        "bytes": 1225
+      },
+      {
+        "path": "run_root.py",
+        "sha256": "e1d9064b976152cc5f681c0e9c523ba608008eb7d602f94af467c531d023b793",
+        "bytes": 6861
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "affda9ecc85c1bafaeb4bdd83b0e89147ff81d66684df47bfc7f9b011a5c7aa7",
+        "bytes": 14327
+      },
+      {
+        "path": "tests/__init__.py",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "bytes": 1
+      },
+      {
+        "path": "tests/test_native_controls.py",
+        "sha256": "815a7836e7530b5d9bed0094712d5033b736932ed1b7c640a0e8a96d7a0628f4",
+        "bytes": 4597
+      },
+      {
+        "path": "tests/test_workflow_atomic.py",
+        "sha256": "914afadcb259ae0af980060d36f561ed0d3bfca17a94b2af50c82284ade4c525",
+        "bytes": 604
+      },
+      {
+        "path": "tests/test_workflow_integration.py",
+        "sha256": "b5295be60b0fabd163a31022ee99827713b35e39e63f63f9ac2eaaf8888a1731",
+        "bytes": 1513
+      },
+      {
+        "path": "tests/test_workflow_system.py",
+        "sha256": "9fc00fb3380c8b5a28ebb91afb0cae538e7aaedf5137e33bca69f7978b1b89e7",
+        "bytes": 470
+      },
+      {
+        "path": "tests/workflow_support.py",
+        "sha256": "e2f9c9af4e64b7c1af54b635a4a9999f15d66ce57e862ddabe66ceee5770a888",
+        "bytes": 16242
+      }
+    ]
+  }
 }

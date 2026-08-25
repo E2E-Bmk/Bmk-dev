@@ -1,97 +1,38 @@
 {
   "instance_id": "deal-runtime-contracts-fullrepro-001",
-  "pipeline_note": "QUALIFIED",
-  "repo": "deal",
-  "repo_commit": "751c0a7ebdf8527c8231b15038e4656d2a6a75c6",
-  "spec_version": "v2",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v2",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 63,
-    "scorer_isolation": [
-      "--remove-path",
-      "deal"
-    ],
-    "count_unit": "base_test_functions",
-    "base_function_count": 63
-  },
-  "taxonomy": {
-    "test_atomic::test_pre_rejects_invalid_argument": "atomic",
-    "test_atomic::test_pre_string_result_becomes_violation_description": "atomic",
-    "test_atomic::test_pre_preserves_function_name": "atomic",
-    "test_atomic::test_pre_preserves_type_annotations": "atomic",
-    "test_atomic::test_pre_on_class_method": "atomic",
-    "test_atomic::test_pre_stacking_same_kind_ordering": "atomic",
-    "test_atomic::test_post_rejects_invalid_return_value": "atomic",
-    "test_atomic::test_post_preserves_docstring": "atomic",
-    "test_atomic::test_post_on_generator_validates_each_yield": "atomic",
-    "test_atomic::test_ensure_validates_arguments_and_result": "atomic",
-    "test_atomic::test_ensure_underscore_shorthand_includes_result": "atomic",
-    "test_atomic::test_inv_rejects_invalid_attribute_assignment": "atomic",
-    "test_atomic::test_inv_multiple_invariants_check_all": "atomic",
-    "test_atomic::test_inv_with_slots": "atomic",
-    "test_atomic::test_raises_allows_declared_exception": "atomic",
-    "test_atomic::test_raises_wraps_undeclared_exception": "atomic",
-    "test_atomic::test_reason_passing_preserves_original_exception": "atomic",
-    "test_atomic::test_reason_failing_raises_reason_contract_error": "atomic",
-    "test_atomic::test_has_empty_blocks_socket": "atomic",
-    "test_atomic::test_has_custom_exception_replaces_default": "atomic",
-    "test_atomic::test_has_empty_blocks_stdout": "atomic",
-    "test_atomic::test_safe_rejects_every_exception": "atomic",
-    "test_atomic::test_example_is_not_triggered_in_runtime": "atomic",
-    "test_atomic::test_example_does_not_break_generator": "atomic",
-    "test_atomic::test_example_does_not_break_async": "atomic",
-    "test_atomic::test_implies": "atomic",
-    "test_atomic::test_catch": "atomic",
-    "test_atomic::test_root_runtime_exports_are_callable": "atomic",
-    "test_atomic::test_root_exception_hierarchy": "atomic",
-    "test_atomic::test_disable_prevents_sync_contract_enforcement": "atomic",
-    "test_atomic::test_pre_underscore_shorthand_receives_bound_arguments_with_defaults": "atomic",
-    "test_integration::test_get_contracts_pre_metadata": "integration",
-    "test_integration::test_get_contracts_raises_metadata": "integration",
-    "test_integration::test_get_contracts_reason_metadata": "integration",
-    "test_integration::test_get_contracts_has_metadata": "integration",
-    "test_integration::test_get_contracts_multiple_kinds_in_order": "integration",
-    "test_integration::test_get_contracts_example_validate": "integration",
-    "test_integration::test_custom_exception_and_message_visible_in_metadata": "integration",
-    "test_integration::test_unwrap_returns_original": "integration",
-    "test_integration::test_chained_contract_decorator": "integration",
-    "test_integration::test_pure_blocks_stdout_and_exceptions": "integration",
-    "test_integration::test_dispatch_selects_by_precondition": "integration",
-    "test_integration::test_dispatch_no_match_raises": "integration",
-    "test_integration::test_dispatch_default_registration": "integration",
-    "test_integration::test_dispatch_propagates_pre_contract_error_from_body": "integration",
-    "test_integration::test_dispatch_works_with_disabled_contracts": "integration",
-    "test_integration::test_recursive_contracts_do_not_recurse": "integration",
-    "test_integration::test_inherit_one_parent": "integration",
-    "test_integration::test_inherit_multiple_parents": "integration",
-    "test_integration::test_inherit_class_exposes_contracts_through_introspection": "integration",
-    "test_integration::test_inherit_func_exposes_contracts_through_introspection": "integration",
-    "test_integration::test_has_inherit_and_merge_markers": "integration",
-    "test_integration::test_contract_state_switch_sync": "integration",
-    "test_integration::test_contract_state_switch_async": "integration",
-    "test_integration::test_contract_state_switch_generator": "integration",
-    "test_integration::test_disabled_decoration_reappears_in_all_views": "integration",
-    "test_integration::test_retained_contract_and_unwrap_survive_disable": "integration",
-    "test_integration::test_inherited_precondition_matches_bound_metadata": "integration",
-    "test_integration::test_introspection_namespace_operates_independently": "integration",
-    "test_integration::test_custom_exception_class_and_instance_control_violation": "integration",
-    "test_integration::test_sync_fee_lifecycle_workflow": "system_e2e",
-    "test_integration::test_exception_policy_lifecycle_workflow": "system_e2e",
-    "test_integration::test_permanent_transitions_raise_runtime_error": "integration"
-  },
-  "stats": {
-    "atomic": 31,
-    "integration": 30,
-    "system_e2e": 2
-  },
-  "reference_pass_rate": 1.0,
-  "candidate_score": {
-    "passed": 58,
-    "total": 60
-  },
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "retained-release-oracle",
+    "files": [
+      {
+        "path": "conftest.py",
+        "sha256": "7e0301c9d5ce3909699d4e1e7ced9ccd4fdaf9a9e1e6195ad10d57ac17e31252",
+        "bytes": 309
+      },
+      {
+        "path": "requirements.txt",
+        "sha256": "35f1a86a7fef3412c4b0f1dd5523d72fa830a8bc945228aeba9f7f626368f414",
+        "bytes": 13
+      },
+      {
+        "path": "test_atomic.py",
+        "sha256": "74a230c3c8fc94c648f37b52dca76f625c0a103a90a71372b17e587ba824d440",
+        "bytes": 10047
+      },
+      {
+        "path": "test_integration.py",
+        "sha256": "78e661b2108c46a9fc8a4eac4b066e3208be2daf523be1a36fed40b25df216e9",
+        "bytes": 21506
+      }
+    ]
+  }
 }

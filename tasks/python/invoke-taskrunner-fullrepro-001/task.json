@@ -1,118 +1,83 @@
 {
   "instance_id": "invoke-taskrunner-fullrepro-001",
-  "pipeline_note": "REOPENED_S3",
-  "repo": "pyinvoke/invoke",
-  "repo_commit": "6a71e680c535ba6520e935c497099fbca011d03c",
-  "spec_version": "v1",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v2",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 84,
-    "scorer_isolation": [
-      "--remove-path"
-    ],
-    "count_unit": "base_test_functions",
-    "base_function_count": 84
-  },
-  "taxonomy": {
-    "test_atomic::test_task_bare_decorator_wraps_with_function_name": "atomic",
-    "test_atomic::test_task_bare_decorator_preserves_docstring": "atomic",
-    "test_atomic::test_task_configured_sets_name_aliases_default": "atomic",
-    "test_atomic::test_task_rejects_positional_with_pre_keyword": "atomic",
-    "test_atomic::test_task_called_transitions_after_invocation": "atomic",
-    "test_atomic::test_task_call_rejects_non_context_first_arg": "atomic",
-    "test_atomic::test_task_get_arguments_excludes_context": "atomic",
-    "test_atomic::test_argument_positional_param_is_positional": "atomic",
-    "test_atomic::test_argument_bool_default_sets_kind_bool": "atomic",
-    "test_atomic::test_argument_optional_iterable_incrementable_metadata": "atomic",
-    "test_atomic::test_argument_true_bool_default_keeps_kind_bool": "atomic",
-    "test_atomic::test_call_helper_stores_task_args_kwargs": "atomic",
-    "test_atomic::test_call_clone_replaces_data_preserves_task_ref": "atomic",
-    "test_atomic::test_call_make_context_applies_config_and_remainder": "atomic",
-    "test_atomic::test_collection_add_task_name_alias_lookup": "atomic",
-    "test_atomic::test_collection_default_via_none_and_empty": "atomic",
-    "test_atomic::test_collection_rejects_second_default": "atomic",
-    "test_atomic::test_collection_subcollection_dotted_lookup": "atomic",
-    "test_atomic::test_collection_task_names_include_dotted_paths": "atomic",
-    "test_atomic::test_collection_configure_parent_overrides_child": "atomic",
-    "test_atomic::test_collection_from_module_prefers_explicit_ns": "atomic",
-    "test_atomic::test_collection_from_module_uses_top_level_without_ns": "atomic",
-    "test_atomic::test_config_dict_and_attribute_access": "atomic",
-    "test_atomic::test_config_real_attribute_precedence": "atomic",
-    "test_atomic::test_config_clone_independence": "atomic",
-    "test_atomic::test_config_load_overrides_beats_defaults": "atomic",
-    "test_atomic::test_config_load_shell_env_casts_types": "atomic",
-    "test_atomic::test_context_run_warn_true_returns_failed": "atomic",
-    "test_atomic::test_context_run_warn_false_raises_unexpected_exit": "atomic",
-    "test_atomic::test_context_run_dry_does_not_execute": "atomic",
-    "test_atomic::test_result_exited_ok_failed_return_code": "atomic",
-    "test_atomic::test_result_truthy_when_ok_falsy_when_failed": "atomic",
-    "test_atomic::test_result_command_stdout_stderr_env": "atomic",
-    "test_atomic::test_result_tail_last_n_lines": "atomic",
-    "test_atomic::test_mock_context_string_becomes_result_stdout": "atomic",
-    "test_atomic::test_mock_context_false_becomes_failed_result": "atomic",
-    "test_atomic::test_mock_context_unmatched_raises_not_implemented": "atomic",
-    "test_atomic::test_stream_watcher_submit_raises_not_implemented": "atomic",
-    "test_atomic::test_responder_yields_on_match": "atomic",
-    "test_atomic::test_responder_consumes_segment_once_rematches_new": "atomic",
-    "test_atomic::test_failing_responder_raises_on_sentinel": "atomic",
-    "test_atomic::test_exit_no_message_code_zero": "atomic",
-    "test_atomic::test_exit_message_without_code_defaults_to_one": "atomic",
-    "test_atomic::test_exit_explicit_code_overrides_default": "atomic",
-    "test_atomic::test_collection_not_found_stores_name": "atomic",
-    "test_atomic::test_failure_exposes_result_and_reason": "atomic",
-    "test_atomic::test_command_timed_out_exposes_timeout": "atomic",
-    "test_integration::test_context_run_uses_configured_runner_class": "integration",
-    "test_integration::test_run_creates_anonymous_context_and_returns_result": "integration",
-    "test_integration::test_context_cd_changes_cwd_for_command": "integration",
-    "test_integration::test_context_prefix_prepends_command": "integration",
-    "test_integration::test_context_run_watcher_responds_and_preserves_output": "integration",
-    "test_integration::test_context_sudo_builds_prompt_responder": "integration",
-    "test_integration::test_cli_list_shows_task_names": "integration",
-    "test_integration::test_cli_json_list_reports_tasks_aliases_default": "integration",
-    "test_integration::test_cli_flat_list_dotted_names": "integration",
-    "test_integration::test_cli_nested_list_shows_nesting": "integration",
-    "test_integration::test_cli_list_depth_json_is_error": "integration",
-    "test_integration::test_cli_default_task_invoked_without_name": "integration",
-    "test_integration::test_cli_collection_replaces_default": "integration",
-    "test_integration::test_cli_dashed_flag_to_underscore_arg": "integration",
-    "test_integration::test_cli_inverse_boolean_flag": "integration",
-    "test_integration::test_cli_optional_argument_bare_and_valued": "integration",
-    "test_integration::test_cli_iterable_accumulates": "integration",
-    "test_integration::test_cli_incrementable_counts": "integration",
-    "test_integration::test_cli_pre_and_post_tasks": "integration",
-    "test_integration::test_cli_dedupes_by_default": "integration",
-    "test_integration::test_cli_no_dedupe_allows_repeat": "integration",
-    "test_integration::test_cli_remainder_after_double_dash": "integration",
-    "test_integration::test_cli_task_custom_name_visible_in_list_and_invocation": "integration",
-    "test_integration::test_cli_project_config_visible_to_task": "integration",
-    "test_integration::test_cli_env_var_overrides_config": "integration",
-    "test_integration::test_cli_runtime_config_overrides_project": "integration",
-    "test_integration::test_cli_run_flag_overrides_config": "integration",
-    "test_integration::test_cli_help_includes_docstring_and_options": "integration",
-    "test_integration::test_cli_unknown_task_exits_unsuccessfully": "integration",
-    "test_integration::test_program_run_string_argv_exit_false": "integration",
-    "test_integration::test_program_run_unknown_exit_false": "integration",
-    "test_integration::test_collection_alias_in_list_and_invocation": "integration",
-    "test_integration::test_warn_consistency_same_command_different_outcome": "integration",
-    "test_integration::test_from_module_ns_matches_cli_json_list": "integration",
-    "test_integration::test_workflow_dependency_and_artifact": "system_e2e",
-    "test_integration::test_workflow_merges_config_layers": "system_e2e",
-    "test_integration::test_workflow_default_task_uses_context_runner": "system_e2e"
-  },
-  "stats": {
-    "atomic": 47,
-    "integration": 34,
-    "system_e2e": 3
-  },
-  "reference_pass_rate": 1.0,
-  "candidate_score": null,
-  "oracle_cleanup_date": "2026-07-14",
-  "oracle_cleanup_removed": 1,
-  "oracle_version": "20260716T195327Z-rp-audit-b3",
-  "reference_score": null,
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "final-frozen-gate",
+    "files": [
+      {
+        "path": "ENVIRONMENT-CONTRACT.md",
+        "sha256": "5d86d09382591326d71ff27994b1eaa256c54337077c86c8d949bba158c51dc4",
+        "bytes": 520
+      },
+      {
+        "path": "ROOT-MAP.json",
+        "sha256": "2f5c3ec58482ce6873ba97ad6904a41f6c4697464a64f5162605b561581c4fdc",
+        "bytes": 10105
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "6f0da2de5c887436f59bdd85499dd7213089c51cc3122621068445a1efde6bfa",
+        "bytes": 1032
+      },
+      {
+        "path": "pyproject.toml",
+        "sha256": "bd7cead31ff266d1fbf23acac980ffde3d23bee51549026a574918121ee2119d",
+        "bytes": 85
+      },
+      {
+        "path": "run_root.py",
+        "sha256": "1e728ff97b3e46a43d026105c5310d8103327e958a69cdc115187855419f0c78",
+        "bytes": 5343
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "c0edc083af6e5e4c9d7458e7967b5c95c4a9270d955ccead48aca7631fa316b9",
+        "bytes": 12684
+      },
+      {
+        "path": "tests/__init__.py",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "bytes": 1
+      },
+      {
+        "path": "tests/invoke_support.py",
+        "sha256": "7438a072bbf27f863caf118ec0ea6f390a90564460aed4ec095ef0175ed428cd",
+        "bytes": 6552
+      },
+      {
+        "path": "tests/support.py",
+        "sha256": "5a635d85bb89ed52747662c83338b4eee35e2cccc138343df877834cf008b9f8",
+        "bytes": 20988
+      },
+      {
+        "path": "tests/test_native_controls.py",
+        "sha256": "e83d511f9ccd225ec42335d948a203d27ce0bd7b79bf3736b0f5b47b38fb40a8",
+        "bytes": 1004
+      },
+      {
+        "path": "tests/test_workflow_atomic.py",
+        "sha256": "66203a27acd73dd449dcc8aa76b72e96fe4a4b82385adbffd4b179a4563c3489",
+        "bytes": 595
+      },
+      {
+        "path": "tests/test_workflow_integration.py",
+        "sha256": "598723f955493af3e2b449bb28f50cc80df5dedd40fa20bda12e1c99181776db",
+        "bytes": 1504
+      },
+      {
+        "path": "tests/test_workflow_system.py",
+        "sha256": "d7c04db165ee6f4d4274bc018d97e629eac672091f4ce14d2c922c6c13c42c5a",
+        "bytes": 460
+      }
+    ]
+  }
 }

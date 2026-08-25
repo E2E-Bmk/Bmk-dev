@@ -1,281 +1,335 @@
-﻿# Cookiecutter Specification
+# Cookiecutter Local Project Generator
 
-> **Specification Authority**: This document is the sole source of truth.
-> The described system diverges from any similarly-named software in
-> interface design, parameter naming, behavioral edge cases, and error
-> semantics. Implementations derived from memory of external codebases
-> will fail the evaluation.
+Implement a Python package named `cookiecutter` for generating projects from
+local directory templates and coordinating durable local releases. The product
+supports ordered context resolution, Jinja rendering, lifecycle hooks, replay,
+nested templates, safe output transactions, content-addressed artifacts, and a
+multi-process publication workflow. Network downloads, version-control cloning,
+and remote template catalogues are outside scope.
 
-## Product Overview
+## Generator interface
 
-`cookiecutter` is a project-generation tool with a `cookiecutter` CLI entry point. It generates new projects from project templates. A template is a directory (or archive) containing a `cookiecutter.json` prompt/defaults file and a project directory tree whose names and contents may contain Jinja2 template expressions.
-
-This specification covers local, filesystem-based template generation. Remote repository cloning is not covered. Local paths and local zip archives must work.
-
-## Non-Goals
-
-- This specification does not require Remote template fetching through version-control clones or URL downloads.
-- This specification does not require Mercurial-based template sources.
-- This specification does not require Automatic installation of third-party Jinja2 extensions.
-- This specification does not require Exact compatibility with undocumented exception message text, log format strings, or internal object shapes.
-- This specification does not require Private source architecture or private test fixture content.
-
-## Representative Workflows
-
-### Generate a project via the Python API
+The package exposes a non-empty string `cookiecutter.__version__` and:
 
 ```python
 from cookiecutter.main import cookiecutter
-
-project_path = cookiecutter(
-    "path/to/template",
-    no_input=True,
-    extra_context={"project_name": "hello_world", "license": "MIT"},
-    output_dir="/tmp/output",
-)
-assert project_path.endswith("hello_world")
 ```
 
-Calling `cookiecutter(template, no_input=True, extra_context=..., output_dir=...)` resolves defaults and overrides without prompting, runs accepted hooks around generation, writes the project under the requested output directory, saves replay data when enabled, and returns the absolute project path as a string.
+The callable has this ordered signature:
 
-### Generate the same project via the CLI
-
-```console
-$ cookiecutter path/to/template --no-input --output-dir /tmp/output project_name=hello_world license=MIT
+```text
+cookiecutter(template, checkout=None, no_input=False, extra_context=None,
+ replay=None, overwrite_if_exists=False, output_dir='.', config_file=None,
+ default_config=False, password=None, directory=None,
+ skip_if_file_exists=False, accept_hooks=True,
+ keep_project_on_failure=False) -> str
 ```
 
-Running the equivalent CLI command with `--no-input` and `key=value` overrides must produce the same file tree as the Python API invocation above. The template must contain a `cookiecutter.json` and a `{{ cookiecutter.project_name }}`-named project directory with renderable files.
+It returns the absolute path of the generated project. The package also exposes
+`python -m cookiecutter` with local-template, no-input, output-directory,
+overwrite, skip, replay, configuration, nested-directory, hook, and `key=value`
+context options.
 
-## Template Structure and Variable Types
+`cookiecutter.exceptions` defines `CookiecutterException` and typed subclasses
+for context decoding, existing output, invalid mode combinations, failed hooks,
+undefined template values, missing configuration, and missing repositories.
+It also defines `BusyProjectException`, `ReplayConflictException`,
+`PublicationConflictException`, `ArtifactIntegrityException`,
+`ArtifactConflictException`, `ChannelConflictException`,
+`LeaseConflictException`, `LineageConflictException`,
+`ManifestClosureException`, `DeliveryConflictException`,
+`CompensationConflictException`, and `ReceiptClosureException`.
+`HookProtocolException` is a `FailedHookException`. Every product exception
+derives from `CookiecutterException`.
 
-A local template directory contains a required `cookiecutter.json` and a required project directory whose name is a Jinja2 template expression referencing `cookiecutter`. An optional `hooks/` subdirectory may contain lifecycle scripts.
+## Release interface
 
-**cookiecutter.json format.** The file must be UTF-8 JSON. Its top-level keys are variable names and its values define defaults and types. When the file cannot be decoded, `ContextDecodingException` must be raised.
-
-**String variables.** A string value defines a plain text variable with that default. The user may enter any text. An empty string default must render as empty content.
-
-**Choice variables.** A list value defines a choice variable. The first list item is the default. When prompting, choices must be displayed as a numbered list and the user enters a number. With `no_input=True` the first item must be used. When `default_context` in user config contains a matching key whose value is one of the list items, that item must move to position 0 and become the new default.
-
-**Boolean variables.** A JSON `true` or `false` value defines a boolean variable. Accepted input values are case-insensitive: `"1"`, `"true"`, `"t"`, `"yes"`, `"y"`, `"on"` for true and `"0"`, `"false"`, `"f"`, `"no"`, `"n"`, `"off"` for false. Any other input must re-prompt. With `no_input=True` the default boolean must be used. In template expressions the value must be a Python `bool`.
-
-**Dictionary variables.** A JSON object value defines a dictionary variable. When prompting, the current dict is shown as JSON and the user must enter valid JSON. Nested dictionaries must be accessible in templates by dotted attribute access.
-
-**Private variables (single underscore prefix).** A key beginning with a single underscore (e.g., `_copy_without_render`, `_extensions`) is private. The user must never be prompted for private variables. The value must be preserved exactly as written — it must not be rendered through Jinja2. Private variables must be available in the context for use by the implementation.
-
-**Private rendered variables (double underscore prefix).** A key beginning with a double underscore (e.g., `__project_slug`) is private and rendered. The user must never be prompted. The value must be rendered through Jinja2 using previously resolved context values before being stored, allowing derived computed values.
-
-**`__prompts__` key.** The special `__prompts__` key maps variable names to human-readable prompt labels. When present, the corresponding variable must use the mapped label as its prompt text instead of the raw variable name. `__prompts__` may contain nested dicts to provide labels for individual choice items.
-
-**Templated default values.** Default values may contain Jinja2 expressions that reference earlier variables in `cookiecutter.json` key order. Each rendered default must be available to subsequent variable expressions. When an earlier variable is overridden by `extra_context`, templated defaults that depend on it must recompute from the overridden value.
-
-**`_copy_without_render` key.** A private list of shell-style glob patterns. Files and directories whose paths match any pattern must have their contents copied byte-for-byte without Jinja2 rendering, while their path names must still be rendered.
-
-**`_extensions` key.** A private list of Jinja2 extension import paths. Each extension must be imported and added to the rendering environment. If an extension cannot be imported, `UnknownExtension` must be raised.
-
-**`templates` key (nested config).** When `cookiecutter.json` contains a top-level `"templates"` key whose value is a dict of named template entries, the user must be prompted to select one. Each entry has a `"path"` (relative subdirectory), a `"title"` (display name), and an optional `"description"`. After selection, cookiecutter must continue with the `cookiecutter.json` in the chosen subdirectory. With `no_input=True` the first entry must be selected.
-
-**`template` key (legacy format).** When `cookiecutter.json` contains a `"template"` key whose value is a list of strings in the form `"Title (./path)"`, the user must be prompted to select one. The path inside parentheses must be used as the subdirectory. With `no_input=True` the first entry must be selected.
-
-## Context Resolution and Rendering
-
-Context resolution determines how variable values are combined from multiple sources before rendering begins.
-
-**Precedence chain.** Template defaults from `cookiecutter.json` form the base. User configuration `default_context` values override those defaults. `extra_context` values supplied through the Python API or CLI override both. When prompting is enabled and replay mode is not active, interactive answers have final precedence. With `no_input=True`, all prompts must be skipped and defaults plus overrides must be used.
-
-**Replay mode.** With `replay=True`, context must be loaded from the replay file for this template and prompts must be skipped. With `replay=<file_path>` (a string), context must be loaded from the specified JSON file. The replay file must contain a `"cookiecutter"` key mapping variable names to values.
-
-**Replay persistence.** On successful generation, cookiecutter must save a replay file at `<replay_dir>/<template_name>.json` where `replay_dir` defaults to `~/.cookiecutter_replay/` and `template_name` is the base name of the template directory.
-
-**Jinja2 rendering.** All template rendering must use strict Jinja2 undefined-variable behavior: an undefined variable must raise `UndefinedVariableInTemplate`. Rendering applies to the project directory name, all file and subdirectory names under the project directory, and all text file contents unless the file path matches `_copy_without_render`. Binary files must be detected and copied without rendering.
-
-**File generation.** The rendered project directory must be placed under `output_dir`. When the output directory already exists, the default behavior must raise `OutputDirExistsException`. When `overwrite_if_exists=True`, the operation must proceed and overwrite existing files. When `skip_if_file_exists=True`, existing files must be preserved and only new files must be generated.
-
-**UTF-8 support.** Context values containing Unicode characters must round-trip correctly through rendered directory names, file names, and file contents.
-
-## Hooks and Lifecycle
-
-Hook scripts control pre- and post-generation behavior and live in `hooks/` inside the template directory. Supported file extensions are `.py` and `.sh`.
-
-**Hook timing and working directory.** `pre_prompt` runs before any variable is rendered, in a temporary copy of the repository directory. `pre_gen_project` runs after context is resolved and before files are generated, in the root of the generated project directory. `post_gen_project` runs after all project files are generated, in the root of the generated project directory. Hook script contents for `pre_gen_project` and `post_gen_project` must be rendered through Jinja2 before execution.
-
-**Hook ordering.** When both pre- and post-generation hooks are present, `pre_gen_project` must run before project files are generated and `post_gen_project` must run after. The post-generation hook must be able to read files produced during generation.
-
-**Hook failure.** When a hook exits with a nonzero status, `FailedHookException` must be raised and generation must halt. When `keep_project_on_failure=False` and a hook fails after the project directory was created, the project directory must be deleted. When `keep_project_on_failure=True`, the partially generated project must be preserved.
-
-**Hook acceptance.** `accept_hooks=False` must skip all hooks. `accept_hooks=True` (default) must run hooks. `accept_hooks='ask'` must prompt the user before running.
-
-## User Configuration
-
-Cookiecutter reads user preferences from a YAML configuration file.
-
-**Default config file.** The default location is `~/.cookiecutterrc`. The `COOKIECUTTER_CONFIG` environment variable may specify an alternative path. When `default_config=True`, all user config files must be ignored and built-in defaults must be used.
-
-**Config file loading.** When `config_file` is given, that YAML file must be read; `ConfigDoesNotExistException` must be raised if it does not exist. Otherwise, `~/.cookiecutterrc` and then `COOKIECUTTER_CONFIG` are tried. When neither exists, built-in defaults must be used.
-
-**Config keys.** `default_context` is a dict of key/value pairs injected into every generation as defaults. `replay_dir` is where replay files are stored. `cookiecutters_dir` is where cloned template repos are stored. `abbreviations` is a dict of shorthand aliases for template URLs/paths.
-
-## Template Directories and Archives
-
-Templates may reside in subdirectories within a repository or inside zip archives.
-
-**`--directory` option.** When `directory=NAME` is supplied, the named subdirectory must be used as the template root. It must contain its own `cookiecutter.json` and a templated project directory. All rendering, hook, and replay behavior must apply as for a root-level template.
-
-**Zip archives.** A local `.zip` file path must be accepted as a valid template argument. The archive must be extracted to a temporary directory and treated as a template repo. When the archive is password-protected, the `password` argument or the `COOKIECUTTER_REPO_PASSWORD` environment variable must supply the password. A wrong password must raise `InvalidZipRepository`. The `--directory` option must work inside zip archives.
-
-## Built-in Template Extensions
-
-These extensions must always be available in the rendering environment without listing them in `_extensions`.
-
-**JSON filter.** The `jsonify` filter must convert a Python object to a JSON string. Default indent must be 4 spaces. `{{ value | jsonify(2) }}` must use a custom indent of 2 spaces.
-
-**Random string global.** `random_ascii_string(length, punctuation=False)` must generate a random ASCII string of the given length. Without punctuation, the string must contain only letters and digits. With `punctuation=True`, the string must include punctuation characters.
-
-**Slugify filter.** The `slugify` filter must convert a string to a lowercase hyphen-separated slug. It must handle special characters such as apostrophes. It must accept keyword arguments such as `separator`.
-
-**Time tag.** `{% now '<timezone>', '<format>' %}` must return the current time formatted by strftime.
-
-**UUID global.** `uuid4()` must return a UUID4 string. Multiple calls must each produce valid UUID4 strings. The function must be usable in both file content and file name rendering.
-
-**Custom and local extensions.** Templates may list additional Jinja2 extension import paths in `_extensions`. A template may include local Python extension modules in its root directory. Custom extensions may register additional filters, globals, and tags. When an extension cannot be imported, `UnknownExtension` must be raised.
-
-## Logging
-
-Verbose mode (`--verbose` or `-v`) must enable DEBUG-level logging to stdout. Generation must succeed normally while verbose logging is active.
-
-## State Model
-
-A generation run has one resolved template source, one ordered context, one selected template directory, one generated project tree, and optionally one replay record. The CLI and Python API are two entry views over this same state.
-
-- A resolved context value must be identical wherever it appears in a rendered directory name, file name, file body, hook environment, and replay data.
-- CLI options and equivalent Python arguments must produce the same selected template, context precedence, file tree, overwrite behavior, and replay semantics.
-- Files matched by `_copy_without_render` must preserve their contents while their path names still use the resolved context.
-- A saved replay record must reproduce the same resolved answers unless explicitly overridden by a higher-precedence input.
-
-Returns the absolute path to the generated project directory as a string.
-
-## Error Semantics
-
-All exceptions inherit from `CookiecutterException(Exception)`.
-
-| Class | When raised |
-|-------|-------------|
-| `NonTemplatedInputDirException` | Template directory has no `{{ cookiecutter.* }}`-named project directory. |
-| `UnknownTemplateDirException` | Multiple `{{ cookiecutter.* }}`-named directories found in template root. |
-| `MissingProjectDir` | The expected generated project directory does not exist after generation. |
-| `ConfigDoesNotExistException` | Specified config file path does not exist. |
-| `InvalidConfiguration` | Config file content is malformed or missing required keys. |
-| `UnknownRepoType` | Template path does not match any known repository type. |
-| `VCSNotInstalled` | Required VCS tool (e.g., git) is not installed. |
-| `ContextDecodingException` | `cookiecutter.json` cannot be decoded (invalid JSON or encoding). |
-| `OutputDirExistsException` | Output project directory already exists and overwrite is not enabled. |
-| `EmptyDirNameException` | Rendered project directory name is empty. |
-| `InvalidModeException` | Incompatible combination of options (e.g., `replay` and `no_input` together, or `replay` and `extra_context` together). |
-| `FailedHookException` | A hook script exited with a nonzero status. |
-| `UndefinedVariableInTemplate` | A template expression references an undefined variable. Attributes: `message`, `error`, `context`. |
-| `UnknownExtension` | A listed Jinja2 extension could not be imported. |
-| `RepositoryNotFound` | The given template path does not exist or is not a valid repository. |
-| `RepositoryCloneFailed` | VCS clone of the template repository failed. |
-| `InvalidZipRepository` | The zip archive does not contain a valid template structure. |
-
-## Cross-View Invariants
-
-1. CLI and Python API invocations with identical inputs (template path, context, output dir, hook policy) must produce identical generated file trees.
-2. Context values must be consistent across: prompt display, generated file names, generated file contents, hook script rendering, and the saved replay file.
-3. `_copy_without_render` patterns must preserve matched file contents byte-for-byte while still rendering their path names.
-4. User `default_context` overrides and `extra_context` overrides must appear in the saved replay file.
-5. Hook failure must not leave a successfully-appearing output project when `keep_project_on_failure=False`.
-6. `--directory` selection must apply the same rendering, hook, and replay behavior as a root-level template.
-7. Replay round-trip: `dump` then `load` must return a context equal to the original.
-8. With `no_input=True`, no interactive prompt may be issued; defaults and overrides are used silently.
-
-## Public Interface
-
-### Import Surface
+The release API is imported from `cookiecutter.release`:
 
 ```python
-from cookiecutter.main import cookiecutter
-from cookiecutter.exceptions import (
-    CookiecutterException,
-    NonTemplatedInputDirException,
-    UnknownTemplateDirException,
-    MissingProjectDir,
-    ConfigDoesNotExistException,
-    InvalidConfiguration,
-    UnknownRepoType,
-    VCSNotInstalled,
-    ContextDecodingException,
-    OutputDirExistsException,
-    EmptyDirNameException,
-    InvalidModeException,
-    FailedHookException,
-    UndefinedVariableInTemplate,
-    UnknownExtension,
-    RepositoryNotFound,
-    RepositoryCloneFailed,
-    InvalidZipRepository,
+from cookiecutter.release import (
+    ArtifactCatalog, ChannelRegistry, DeliveryOutbox, LeaseRegistry,
+    LineageLedger, PublicationReconciler,
 )
 ```
 
-The required command-line entry point is `cookiecutter <template>`.
+`ArtifactCatalog(root)` has:
 
-### API Catalog
-
-| Name | Kind | Role |
-|------|------|------|
-| cookiecutter | function | Generate a project from a local template and return the absolute output path |
-| CookiecutterException | exception | Base exception for all cookiecutter errors |
-| NonTemplatedInputDirException | exception | Template has no templated project directory |
-| UnknownTemplateDirException | exception | Multiple templated directories found in template root |
-| MissingProjectDir | exception | Generated project directory does not exist after generation |
-| ConfigDoesNotExistException | exception | Specified config file path does not exist |
-| InvalidConfiguration | exception | Config file content is malformed or missing required keys |
-| UnknownRepoType | exception | Template path does not match any known repository type |
-| VCSNotInstalled | exception | Required VCS tool is not installed |
-| ContextDecodingException | exception | cookiecutter.json cannot be decoded |
-| OutputDirExistsException | exception | Output directory exists and overwrite is not enabled |
-| EmptyDirNameException | exception | Rendered project directory name is empty |
-| InvalidModeException | exception | Incompatible combination of options |
-| FailedHookException | exception | Hook script exited with nonzero status |
-| UndefinedVariableInTemplate | exception | Template expression references an undefined variable |
-| UnknownExtension | exception | Jinja2 extension could not be imported |
-| RepositoryNotFound | exception | Template path does not exist or is not valid |
-| RepositoryCloneFailed | exception | VCS clone of template repository failed |
-| InvalidZipRepository | exception | Zip archive does not contain valid template structure |
-
-### CLI Entry Points
-
-Entry point command: `cookiecutter`
-
-```
-cookiecutter [OPTIONS] TEMPLATE [EXTRA_CONTEXT]...
+```text
+seal(project, *, context, owner)
+inspect(artifact_id)
+list_artifacts()
+restore(artifact_id, destination, *, overwrite=False)
+close(artifact_ids, *, context, owner)
+inspect_closure(closure_id)
+list_closures()
 ```
 
-`TEMPLATE` is a local directory path or a local zip archive path. `EXTRA_CONTEXT` are zero or more `key=value` arguments that override values from `cookiecutter.json` and user configuration.
+`ChannelRegistry(root, catalog)` has:
 
-| Option | Description |
-|--------|-------------|
-| `--no-input` | Do not prompt; use template defaults plus any overrides. |
-| `-o, --output-dir PATH` | Write the generated project under PATH (default: current directory). |
-| `--overwrite-if-exists` | Overwrite the contents of an existing output directory. |
-| `--skip-if-file-exists` | Skip files that already exist in the output directory instead of overwriting. |
-| `--replay` | Reuse the last saved replay context for this template without prompting. |
-| `--replay-file PATH` | Use a specific JSON file as the replay context. |
-| `--config-file PATH` | Load user configuration from this YAML file instead of the default location. |
-| `--default-config` | Do not load any user config file; use built-in defaults only. |
-| `-d, --directory NAME` | Select a named subdirectory inside a repository or archive as the template root. |
-| `--accept-hooks [yes\|ask\|no]` | Control whether hook scripts are executed (default: yes). |
-| `--keep-project-on-failure` | Do not delete a partially generated project if a hook fails. |
-| `--verbose / -v` | Enable verbose logging. |
-| `--version` | Print version and exit. |
+```text
+reserve(channel, artifact_id, *, expected_epoch=None, owner)
+commit(reservation)
+abort(reservation)
+current(channel)
+history(channel)
+recover()
+rollback(channel, artifact_id, *, expected_epoch, owner)
+```
 
-The Python entry point accepts the same options: template source, output directory, context overrides, replay mode, overwrite and skip policies, configuration sources, zip password, subdirectory selection, hook acceptance, and failure cleanup behavior.
+`LeaseRegistry(root)` has:
 
-The CLI must also be invocable via `python -m cookiecutter`.
+```text
+acquire(resource, *, owner)
+handoff(grant, *, owner)
+recover(resource, *, owner)
+acknowledge(grant, *, receipt_digest, owner)
+current(resource)
+history(resource)
+receipt(resource, generation)
+```
 
-## Appendix A: Environment
+`LineageLedger(root)` has:
 
-The implementation may use any third-party packages available on PyPI. Declare runtime dependencies in a standard `requirements.txt` or `pyproject.toml` at the project root. All declared dependencies will be installed before assessment.
+```text
+prepare(subject, *, payload_digest, owner)
+commit(preparation, *, owner)
+acknowledge(committed, *, receipt_digest, owner)
+compensate(incomplete, *, reason_digest, owner)
+recover(subject, *, owner)
+history(subject)
+by_token(subject, token)
+```
 
-## Appendix B: Assessment Notes
+`DeliveryOutbox(root, catalog)` has:
 
-Compatibility covers context types and precedence, rendering, hooks, replay, user configuration, directories and archives, built-in extensions, error conditions, and CLI/API agreement. It observes public files, returned paths, prompts, documented logging behavior, replay data, exceptions, and exit statuses. Private helpers, prompt-library internals, caches, temporary-directory strategy, exact diagnostic wording, and source organization are not part of this contract.
+```text
+enqueue(route, closure_id, *, payload_digest, owner)
+current(delivery_id)
+claim(delivery_id, *, owner)
+acknowledge(claim, *, receipt_digest, owner)
+recover()
+cancel(delivery_id, *, reason_digest, owner)
+pending(route=None)
+receipts(route=None)
+```
+
+`PublicationReconciler(root, catalog, channels, outbox, lineages, leases)` has:
+
+```text
+prepare(channel, closure_id, replay_path, replay_document, *,
+        expected_epoch, owner, route=None)
+plan(plan_id)
+status(plan_id)
+receipt_closure(plan_id)
+commit(plan, *, owner)
+reconcile(plan_id, *, owner)
+close_receipts(plan_id, *, owner)
+inspect_receipt_closure(receipt_closure_id)
+```
+
+Results are immutable value records. Artifact records expose `artifact_id`,
+`context_digest`, `owner`, `file_count`, and `total_bytes`. Activation
+reservations expose `token`, `channel`, `artifact_id`, `base_epoch`,
+`next_epoch`, and `owner`. Channel states expose `channel`, `epoch`,
+`artifact_id`, `parent_artifact_id`, and `owner`.
+
+Lease grants expose `resource`, `token`, `generation`, `owner`, and
+`parent_token`. Lease receipts expose `receipt_id`, `resource`, `generation`,
+`lease_token`, `owner`, and `receipt_digest`. Lineage records expose `subject`,
+`sequence`, `phase`, `token`, `owner`, `payload_digest`, `parent_token`, and
+`receipt_digest`. Manifest closures expose `closure_id`, ordered `artifact_ids`,
+`context_digest`, `owner`, `file_count`, and `total_bytes`.
+
+Delivery entries expose `delivery_id`, `route`, `closure_id`, `payload_digest`,
+`owner`, and `status`. Claims expose `token`, `delivery_id`, `attempt`, and
+`owner`. Delivery receipts expose `receipt_id`, `delivery_id`, `claim_token`,
+`closure_id`, `payload_digest`, and `owner`. Publication plans expose `plan_id`,
+`channel`, `closure_id`, `artifact_id`, `replay_path`, `expected_epoch`,
+`payload_digest`, `delivery_id`, and `owner`. Reconcile results expose
+`plan_id`, `outcome`, `channel_epoch`, `owner`, `lineage_token`, and
+`delivery_id`. Receipt closures expose `receipt_closure_id`, `plan_id`,
+`payload_digest`, `owners`, `receipt_ids`, and `owner`.
+
+Identifiers and digests are non-empty opaque strings. Sequence, generation,
+attempt, and epoch values are positive monotonic integers where present.
+
+## Template context and rendering
+
+A template contains `cookiecutter.json` and a project directory whose name has
+a Cookiecutter expression. JSON key order is meaningful: later defaults may
+render values resolved earlier. Defaults may be strings, choices, booleans,
+dictionaries, empty values, and private controls.
+
+With `no_input=True`, defaults resolve without prompting. User configuration
+`default_context` overrides template defaults, and `extra_context` has highest
+precedence. Changing an earlier value recomputes later templated defaults.
+Choice, boolean, and dictionary values retain their types.
+
+The resolved context is shared by project directory, nested directories,
+filenames, text, hooks, and replay. Unicode round-trips. Binary inputs are
+copied byte-for-byte. Paths matched by `_copy_without_render` preserve their
+input bytes while surrounding path names still render.
+
+An existing target fails unless overwrite is enabled. With overwrite and skip
+enabled together, existing files remain unchanged and missing files are added.
+Hook execution can be disabled without changing rendering behavior.
+
+Invalid context JSON, undefined values, explicit missing configuration, and
+missing repositories raise their corresponding typed errors.
+
+## Hooks, replay, and output transaction
+
+When enabled, `pre_gen_project` runs after target preparation but before file
+rendering. `post_gen_project` runs after all files are present. Hooks use the
+generated project as their working directory and receive the same resolved
+context. A failed hook raises the typed hook error.
+
+A successful run stores replay in the configured replay directory. `replay=True`
+loads the current template's document; a path loads an explicit document.
+Replay cannot be combined with non-null extra context or explicit no-input
+mode. Saved public values overlay keys still present in the current schema,
+new keys use current defaults, removed keys disappear, and current private
+controls replace stale private controls. The selected nested path and inherited
+parent context are retained by root replay.
+
+Replay and output publish only after rendering and post-generation hooks
+succeed. Replay replacement is atomic. On ordinary failure, a new target is
+removed and an overwritten target's exact prior tree is restored unless
+`keep_project_on_failure=True` requests diagnostics. Unrelated output siblings
+are never changed.
+
+Nested generation participates in the root lifecycle. A child inherits resolved
+public parent values, while explicit call-time values retain highest precedence.
+Any failure at any depth restores state owned by the root lifecycle. A retry
+resolves the current template and configuration afresh.
+
+## Source and destination safety
+
+Every selected source remains within its repository. A nested path or
+`directory=` value is relative, has no parent traversal, and resolves below the
+repository root. Every rendered destination resolves below its output boundary.
+Absolute, traversing, or resolved escaping paths raise `ValueError` before an
+escaping file is created. Rejection leaves output and replay unchanged.
+
+## Content-addressed artifacts and manifests
+
+Sealing covers relative file names and bytes plus resolved public context;
+private context keys are excluded. Equal trees and public context converge on
+one artifact even across source directories and owners. Changed content or
+public context creates a different identity. Inspection verifies the complete
+artifact. Restore verifies first and replaces atomically only when overwrite is
+permitted. Concurrent equal seals converge without exposing partial objects.
+
+A manifest closes a non-empty set of already verified artifacts. Its identity
+covers the sorted unique artifact identities and public context, not input list
+order or private keys. It reports aggregate file and byte counts. Closing an
+unknown or corrupt artifact fails without creating a closure. Equal sets and
+public context converge during concurrent close; existing artifacts and
+closures remain immutable.
+
+## Channel activation
+
+A channel begins at epoch zero with no head. `reserve` binds channel, verified
+artifact, base epoch, and owner to a single-use token. `commit` advances exactly
+one epoch; `abort` consumes none. Supplied `expected_epoch` is compare-and-swap.
+A missing, consumed, borrowed, changed, or stale reservation fails. One live
+reservation owns a channel while distinct channels remain independent.
+
+Recovery retires reservations whose process is no longer live and never takes
+one from a live process. History is ordered and complete. Rollback selects an
+earlier verified artifact by appending a new epoch; epochs never rewind.
+
+## Cross-process lease generations
+
+Each non-empty resource has at most one live lease owner. Initial acquisition
+creates generation one. Handoff requires the exact current grant and creates
+the next generation with its token as parent. A grant is owner-bound and
+single-use. A live foreign owner cannot be recovered or replaced.
+
+If the process holding the current grant is no longer live, `recover` appends a
+new generation for the recovery owner. It never rewrites prior generations.
+Acknowledgement requires the exact current grant and a non-empty receipt digest,
+creates an immutable receipt, and releases the live resource. Current state,
+history, and generation receipt remain inspectable after reopening the registry.
+Resources are isolated: activity on one cannot advance or release another.
+
+## Append-only workflow lineage
+
+A subject begins with `prepare`, whose payload digest is bound to its token.
+`commit` requires the current preparation and appends a child record.
+`acknowledge` requires the current commit and appends a receipt-bound child.
+Tokens cannot be borrowed between subjects or reused after a later phase.
+
+An incomplete current record may be compensated with a reason digest. Recovery
+appends a recovery fact for a recoverable incomplete subject and does not edit
+or remove history. After acknowledgement or compensation, a later preparation
+may start from the actual current parent. Sequence numbers are contiguous and
+monotonic, and every non-initial record names its actual parent token.
+
+## Delivery outbox
+
+Enqueue binds a route, verified manifest closure, payload digest, and owner to a
+durable pending entry. Equal projections converge. Claim gives one live process
+an owner-bound attempt token. A competing process cannot claim a live attempt.
+When its process is gone, recovery retires that attempt and a new claim advances
+the attempt number.
+
+Acknowledgement requires the current claim, matching owner, exact payload
+digest, and exact manifest projection. It creates an immutable delivery receipt
+and marks the entry delivered. Cancellation records a reason without inventing
+a delivery receipt. A delivered route may be projected again only as a new
+entry with its own identity. Pending entries and receipts are filterable by
+route and durable across reopen.
+
+## Publication and compensation
+
+Preparation binds one verified manifest closure to a channel base epoch, a
+replay destination and canonical replay document, a route, a fresh lease
+generation, a lineage preparation, and an outbox projection. The plan identity
+and payload digest cover these bindings. The plan record is durable before any
+externally visible publication effect.
+
+Commit verifies the original plan and ownership, advances the channel from the
+expected epoch, atomically publishes the planned replay bytes, appends lineage
+commit, and hands off then acknowledges the plan lease. The channel artifact is
+the manifest's primary artifact, and the replay payload digest agrees with the
+lineage and delivery projection. Repeating or borrowing a plan cannot create a
+second publication.
+
+`reconcile` examines durable public facts after interruption. If channel,
+replay, manifest, and lineage already describe the planned fact, it completes
+missing protocol receipts without advancing the channel again. Otherwise it
+compensates the plan: a channel head created solely by that plan is rolled back
+through a new monotonic epoch, prior replay bytes are restored, incomplete
+lineage gains a compensation record, the outbox entry is cancelled, and the
+lease is released or recovered. An unrelated channel winner is never replaced
+by compensation. Compensation is idempotent and leaves enough lineage for a
+fresh plan to retry from current state.
+
+## Receipt closure
+
+A committed plan is not terminal until its delivery is acknowledged and its
+receipts close. Closure verifies the manifest, current channel head, exact
+replay digest, lease receipt, lineage acknowledgement, and delivery receipt.
+It includes their identities in one content-addressed terminal record.
+
+The terminal record must contain at least four distinct non-empty owners across
+planning/building, publication, delivery, and audit responsibilities. One
+process may reopen and inspect records produced by other processes, but a
+single owner cannot impersonate the required workflow handoffs. Missing,
+mismatched, compensated, cancelled, borrowed, or incomplete facts prevent
+closure. A closure is immutable, owner-bound, single-use, and inspectable after
+all component objects are reopened.
+
+## Cross-view invariants
+
+1. Rendered names, content, hooks, replay, and CLI/API results share one context.
+2. Failed generation restores only the target and replay resources it owns.
+3. Manifest membership and aggregate counts describe verified immutable bytes.
+4. Lease generation and lineage sequence never rewind across process recovery.
+5. Channel head, replay digest, manifest, lineage, and delivery name one plan.
+6. Compensation restores prior visible facts without overwriting a foreign win.
+7. Receipt closure covers every durable projection and at least four owners.
+8. Private records, token spellings, lock names, and staging paths are never
+   generated content and are not stable public API.

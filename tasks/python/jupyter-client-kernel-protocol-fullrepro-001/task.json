@@ -1,94 +1,73 @@
 {
   "instance_id": "jupyter-client-kernel-protocol-fullrepro-001",
-  "pipeline_note": "QUALIFIED",
-  "repo": "jupyter_client",
-  "repo_commit": "8d760b1efeff2ac7aa2b4b75c44023e59c6945f8",
-  "spec_version": "spec_v2",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v4",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 60,
-    "scorer_isolation": [
-      "--remove-path",
-      "jupyter_client"
-    ],
-    "count_unit": "base_test_functions",
-    "base_function_count": 60
-  },
-  "taxonomy": {
-    "test_atomic::test_root_kernel_surface_is_importable": "atomic",
-    "test_atomic::test_connection_helpers_are_available_at_both_public_paths": "atomic",
-    "test_atomic::test_write_connection_file_preserves_explicit_connection_values": "atomic",
-    "test_atomic::test_find_connection_file_returns_matching_absolute_path": "atomic",
-    "test_atomic::test_find_connection_file_raises_for_missing_file": "atomic",
-    "test_atomic::test_session_msg_has_public_message_shape": "atomic",
-    "test_atomic::test_session_headers_have_independent_message_ids": "atomic",
-    "test_atomic::test_session_with_empty_key_serializes_empty_signature": "atomic",
-    "test_atomic::test_session_rejects_invalid_signature": "atomic",
-    "test_atomic::test_kernelspec_from_resource_dir_has_serializable_public_fields": "atomic",
-    "test_atomic::test_install_kernel_spec_rejects_invalid_name": "atomic",
-    "test_atomic::test_install_kernel_spec_rejects_user_and_prefix_together": "atomic",
-    "test_atomic::test_write_connection_file_selects_ports_and_ip_when_unspecified": "atomic",
-    "test_atomic::test_write_connection_file_without_fname_creates_temporary_json_file": "atomic",
-    "test_atomic::test_session_msg_defaults_content_and_parent_to_empty_mappings": "atomic",
-    "test_atomic::test_session_msg_records_parent_header": "atomic",
-    "test_atomic::test_session_serialize_places_identities_before_delimiter_and_signature": "atomic",
-    "test_atomic::test_kernelspec_from_resource_dir_parses_env_and_metadata_values": "atomic",
-    "test_atomic::test_kernelspec_to_dict_exposes_documented_field_names": "atomic",
-    "test_atomic::test_install_kernel_spec_derives_lowercase_name_from_source_directory": "atomic",
-    "test_atomic::test_session_msg_header_exposes_required_protocol_fields": "atomic",
-    "test_atomic::test_connection_file_mixin_exposes_documented_public_methods": "atomic",
-    "test_atomic::test_write_connection_file_stores_byte_key_as_json_string": "atomic",
-    "test_atomic::test_session_deserialize_rejects_too_few_frames_with_type_error": "atomic",
-    "test_atomic::test_find_connection_file_selects_most_recently_accessed_match": "atomic",
-    "test_atomic::test_remove_kernel_spec_raises_key_error_for_absent_name": "atomic",
-    "test_atomic::test_kernelspec_from_resource_dir_raises_for_missing_resource": "atomic",
-    "test_atomic::test_find_kernel_specs_normalizes_names_and_omits_dirs_without_kernel_json": "atomic",
-    "test_atomic::test_session_serialize_round_trip_preserves_content_with_signing": "atomic",
-    "test_atomic::test_session_feed_identities_splits_routing_from_protocol_frames": "atomic",
-    "test_integration::test_client_loaded_from_connection_mapping_reports_same_values": "integration",
-    "test_integration::test_connection_file_can_be_written_then_loaded_by_client": "integration",
-    "test_integration::test_session_serialization_round_trip_preserves_routing_and_content": "integration",
-    "test_integration::test_kernelspec_discovery_and_lookup_share_resource_directory": "integration",
-    "test_integration::test_install_discover_and_remove_kernelspec_round_trip": "integration",
-    "test_integration::test_first_kernelspec_directory_wins_duplicate_name": "integration",
-    "test_integration::test_allowed_kernelspecs_filters_discovery": "integration",
-    "test_integration::test_missing_kernelspec_raises_public_exception": "integration",
-    "test_integration::test_manager_connection_mapping_flows_to_created_client": "integration",
-    "test_integration::test_manager_operations_without_kernel_raise_runtime_error": "integration",
-    "test_integration::test_disabled_transport_encryption_is_accepted": "integration",
-    "test_integration::test_unknown_transport_encryption_mode_is_rejected": "integration",
-    "test_integration::test_disabled_transport_encryption_writes_no_curve_keys": "integration",
-    "test_integration::test_documented_python_module_invocations_report_usage": "integration",
-    "test_integration::test_manager_client_keeps_loaded_workflow_connection_info": "system_e2e",
-    "test_integration::test_blocking_workflow_returns_request_id_before_empty_shell_reply": "system_e2e",
-    "test_integration::test_workflow_start_with_unknown_kernel_fails_without_running_one": "system_e2e",
-    "test_integration::test_get_all_specs_reports_resource_dir_and_serializable_spec": "integration",
-    "test_integration::test_get_all_specs_omits_spec_that_cannot_be_loaded": "integration",
-    "test_integration::test_find_kernel_specs_omits_directories_without_kernel_json": "integration",
-    "test_integration::test_find_kernel_specs_normalizes_directory_names_to_lowercase": "integration",
-    "test_integration::test_module_level_kernelspec_helpers_expose_manager_behavior": "integration",
-    "test_integration::test_cloned_sessions_from_connection_info_share_identity_with_independent_digests": "integration",
-    "test_integration::test_manager_write_connection_file_then_cleanup_removes_it": "integration",
-    "test_integration::test_manager_written_connection_file_configures_blocking_client": "integration",
-    "test_integration::test_blocking_client_loads_connection_file_from_configured_path": "integration",
-    "test_integration::test_session_round_trip_exposes_trailing_buffers_as_memoryviews": "integration",
-    "test_integration::test_install_kernel_spec_replaces_existing_destination": "integration",
-    "test_integration::test_provisioner_factory_availability_follows_kernelspec_metadata": "integration",
-    "test_integration::test_local_provisioner_persists_and_restores_provisioner_info": "integration"
-  },
-  "stats": {
-    "atomic": 30,
-    "integration": 27,
-    "system_e2e": 3
-  },
-  "reference_pass_rate": 1.0,
-  "candidate_score": {
-    "passed": 72,
-    "total": 72
-  },
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "current-frozen-gate",
+    "files": [
+      {
+        "path": "ENVIRONMENT.json",
+        "sha256": "f0e8f5a5caf135537d170b6f9ecb4cd48a3e806502a4943c8ab9eb1e6879c741",
+        "bytes": 609
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "0aae120081ceaef25bbcb76504c5582d16d020457d99abba09a438433e08f2dc",
+        "bytes": 8484
+      },
+      {
+        "path": "assets/public_provisioner.py",
+        "sha256": "00b651c53057c4256eae8c00ff6079cc37adf4fa97a0a7705a500909099b7294",
+        "bytes": 888
+      },
+      {
+        "path": "assets/public_provisioner_fixture-2.0.dist-info/entry_points.txt",
+        "sha256": "71e86b382a1de9edc6323985cb9c2c76446151a0a0666c146c2881cb2c39c3aa",
+        "bytes": 98
+      },
+      {
+        "path": "pytest.ini",
+        "sha256": "bc161b9b17069f061a56dc2ce60bd74fceb231b1f6d6204f831e8648f8d7fea2",
+        "bytes": 64
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "212523eec61900fb1df055e75244b707c021258c16074be0021c821439a7af6c",
+        "bytes": 19070
+      },
+      {
+        "path": "tests/conftest.py",
+        "sha256": "dc51f633c34bafa15018ca23aedb24cccbed335b8a36539e1682b177e9f1eb81",
+        "bytes": 1600
+      },
+      {
+        "path": "tests/helpers.py",
+        "sha256": "2e7c521db97b22024c54a472c3b63ac2fb91af807aafdc7630d6307171d7729b",
+        "bytes": 3513
+      },
+      {
+        "path": "tests/test_atomic.py",
+        "sha256": "7b20babe82a458e98861236c4d4d5d5a2097a19dc59dc063ba641d2fd8189dba",
+        "bytes": 11204
+      },
+      {
+        "path": "tests/test_composition.py",
+        "sha256": "63ec9088e37a9a6d86fac0054d4198960bd240bee95f6e2c5bd94a688e47bbe8",
+        "bytes": 16825
+      },
+      {
+        "path": "tests/test_system.py",
+        "sha256": "2f568443975ac585cc2c8fb2aa2eedfadd25c74dc7d3e1cb5d599dbb064ded82",
+        "bytes": 8501
+      }
+    ]
+  }
 }

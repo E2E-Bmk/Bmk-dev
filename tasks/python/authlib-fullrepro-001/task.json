@@ -1,141 +1,83 @@
 {
   "instance_id": "authlib-fullrepro-001",
-  "pipeline_note": "QUALIFIED",
-  "repo": "lepture/authlib",
-  "repo_commit": "956711fe93701caec3cbf8ed49b4e5fe6f7ceddd",
-  "spec_version": "v2",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v2",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "source": "mixed",
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 68,
-    "scorer_isolation": [
-      "--remove-path",
-      "authlib"
-    ],
-    "oracle_version": "2026-07-21-stage3-mixed-v5-oracle-split-specv2",
-    "count_unit": "base_test_functions",
-    "base_function_count": 68
-  },
-  "taxonomy": {
-    "test_atomic::test_oct_key_import_preserves_base64url_k_value": "atomic",
-    "test_atomic::test_oct_key_import_empty_mapping_raises_value_error": "atomic",
-    "test_atomic::test_oct_key_generate_rejects_non_byte_aligned_size": "atomic",
-    "test_atomic::test_oct_key_generate_rejects_public_only_mode": "atomic",
-    "test_atomic::test_oct_key_generate_includes_kid_in_export": "atomic",
-    "test_atomic::test_rsa_key_import_preserves_public_modulus_and_exponent": "atomic",
-    "test_atomic::test_rsa_key_import_missing_required_fields_raises_value_error": "atomic",
-    "test_atomic::test_rsa_key_import_partial_crt_fields_raises_value_error": "atomic",
-    "test_atomic::test_rsa_key_generate_rejects_invalid_key_size": "atomic",
-    "test_atomic::test_rsa_public_key_private_export_raises_value_error": "atomic",
-    "test_atomic::test_ec_key_import_preserves_curve_coordinates": "atomic",
-    "test_atomic::test_json_web_key_import_dispatches_oct_key_type": "atomic",
-    "test_atomic::test_json_web_key_import_key_set_from_keys_list": "atomic",
-    "test_atomic::test_key_set_find_by_kid_returns_matching_key": "atomic",
-    "test_atomic::test_key_set_find_by_kid_raises_when_no_match": "atomic",
-    "test_atomic::test_key_thumbprint_is_deterministic_base64url_sha256": "atomic",
-    "test_atomic::test_jws_header_protected_values_take_precedence_over_unprotected": "atomic",
-    "test_atomic::test_jws_private_header_restriction_raises_invalid_header_error": "atomic",
-    "test_atomic::test_jws_missing_alg_raises_missing_algorithm_error": "atomic",
-    "test_atomic::test_jws_disallowed_alg_raises_unsupported_algorithm_error": "atomic",
-    "test_atomic::test_jwe_missing_alg_raises_missing_algorithm_error": "atomic",
-    "test_atomic::test_jwe_unsupported_alg_raises_unsupported_algorithm_error": "atomic",
-    "test_atomic::test_jwe_missing_enc_raises_missing_encryption_algorithm_error": "atomic",
-    "test_atomic::test_jwe_unsupported_enc_raises_unsupported_encryption_algorithm_error": "atomic",
-    "test_atomic::test_jwe_unsupported_zip_raises_unsupported_compression_algorithm_error": "atomic",
-    "test_atomic::test_jwe_parse_json_rejects_non_object_json": "atomic",
-    "test_atomic::test_jwe_deserialize_compact_wrong_segment_count_raises_decode_error": "atomic",
-    "test_atomic::test_jwt_decode_wrong_segment_count_raises_decode_error": "atomic",
-    "test_atomic::test_jwt_claims_registered_attribute_returns_value": "atomic",
-    "test_atomic::test_jwt_claims_unknown_attribute_raises_attribute_error": "atomic",
-    "test_atomic::test_jwt_claims_validate_missing_essential_claim_raises_missing_claim_error": "atomic",
-    "test_atomic::test_jwt_claims_validate_wrong_value_raises_invalid_claim_error": "atomic",
-    "test_atomic::test_jwt_claims_validate_expired_token_raises_expired_token_error": "atomic",
-    "test_atomic::test_jwt_claims_validate_non_numeric_exp_raises_invalid_claim_error": "atomic",
-    "test_atomic::test_jwt_claims_validate_audience_list_membership": "atomic",
-    "test_atomic::test_jwt_claims_validate_nbf_in_future_raises_invalid_token_error": "atomic",
-    "test_atomic::test_jwt_claims_validate_iat_in_future_raises_invalid_token_error": "atomic",
-    "test_atomic::test_decode_error_inherits_from_jose_error_and_exposes_error_code": "atomic",
-    "test_atomic::test_jose_error_subclass_is_raised_for_malformed_jwt_segments": "atomic",
-    "test_integration::test_imported_key_public_projection_supports_verification": "integration",
-    "test_integration::test_private_key_reimport_preserves_public_projection": "integration",
-    "test_integration::test_keyset_kid_visible_in_jwt_header": "integration",
-    "test_integration::test_jws_compact_sign_deserialize_round_trip": "integration",
-    "test_integration::test_jws_json_sign_deserialize_round_trip": "integration",
-    "test_integration::test_jwe_compact_encrypt_decrypt_round_trip": "integration",
-    "test_integration::test_jwe_json_encrypt_decrypt_round_trip": "integration",
-    "test_integration::test_jwt_jws_path_encode_decode_round_trip": "integration",
-    "test_integration::test_jwt_jwe_path_encode_decode_round_trip": "integration",
-    "test_integration::test_decoded_claims_header_matches_protected_serialization": "integration",
-    "test_integration::test_keyset_json_import_find_preserves_kid": "integration",
-    "test_integration::test_preconfigured_jwt_encode_decode_typ_and_claims": "integration",
-    "test_integration::test_rsa_jws_private_sign_public_verify_payload": "integration",
-    "test_integration::test_jws_bad_signature_exposes_partial_result": "integration",
-    "test_integration::test_jwe_def_compression_round_trip": "integration",
-    "test_integration::test_jwt_datetime_claims_converted_on_encode": "integration",
-    "test_integration::test_jwt_sensitive_payload_rejected_when_check_enabled": "integration",
-    "test_integration::test_jwt_algorithm_allowlist_blocks_disallowed_alg": "integration",
-    "test_integration::test_jwks_mapping_encode_decode_with_kid": "integration",
-    "test_integration::test_ec_jwt_sign_and_verify_round_trip": "integration",
-    "test_integration::test_jws_general_json_multiple_signatures_verify": "integration",
-    "test_integration::test_symmetric_jwe_dir_mode_round_trip": "integration",
-    "test_integration::test_sign_then_encrypt_then_decrypt_then_verify": "integration",
-    "test_integration::test_custom_claims_class_receives_options_and_params": "integration",
-    "test_integration::test_jwe_json_ignores_extra_top_level_members": "integration",
-    "test_integration::test_jwe_unrestricted_private_headers_allow_custom_fields": "integration",
-    "test_integration::test_jwt_remote_jku_header_observable_without_fetch": "integration",
-    "test_integration::test_subprocess_symmetric_jws_round_trip": "integration",
-    "test_integration::test_subprocess_symmetric_jwe_round_trip": "integration"
-  },
-  "stats": {
-    "atomic": 39,
-    "integration": 29,
-    "system_e2e": 0
-  },
-  "reference_pass_rate": 1.0,
-  "candidate_score": {
-    "passed": 69,
-    "total": 90,
-    "pass_rate": 0.7666666666666667
-  },
-  "labels": [
-    "mixed-oracle",
-    "discriminating",
-    "composition-signal",
-    "non-saturated-candidate-score",
-    "crypto-serialization-workflow",
-    "public-api-heavy"
-  ],
-  "weaknesses": [
-    {
-      "dimension": "workflow-completeness",
-      "description": "JWE AES-GCMKW and ECDH-ES compact/JSON encryption workflows are partial: key wrapping, recipient handling, and payload decryption do not reliably round-trip through public serialize/deserialize APIs.",
-      "affected_tests": 10
-    },
-    {
-      "dimension": "cross-view-consistency",
-      "description": "JWT/JWKS single-key kid selection and JWE JSON recipient/header projections diverge across public key, token, and message views.",
-      "affected_tests": 4
-    },
-    {
-      "dimension": "atomic-behavior",
-      "description": "JWK option preservation, RSA private-key import/export, RSA key-size validation, and audience-list claim validation are incomplete.",
-      "affected_tests": 4
-    },
-    {
-      "dimension": "error-semantics",
-      "description": "Invalid A128GCMKW key material is accepted instead of raising the documented public error path at the JWE projection boundary.",
-      "affected_tests": 1
-    },
-    {
-      "dimension": "state-management",
-      "description": "JWS JSON serialization/deserialization does not preserve general JSON header-list and callable-key context through signing and verification.",
-      "affected_tests": 3
-    }
-  ],
-  "candidate_run": "candidate-runs/gpt5.4-authlib-fullrepro-001-specv2-20260721-001",
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "current-frozen-gate",
+    "files": [
+      {
+        "path": "REFERENCE-PROVENANCE.json",
+        "sha256": "c270d093a2582ea8d8eb65a2fa4b5ceae1c14a4c842980ab760d0a6ffd33db85",
+        "bytes": 782
+      },
+      {
+        "path": "ROOT-MAP.json",
+        "sha256": "47f516b3b6bce0a43fa8054eb7906107cb1348768c3048049d15a135ab339d35",
+        "bytes": 6265
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "572a659a9359f0269a53a0d604c62a7df38c11ed8de5afd097869ecb60098ada",
+        "bytes": 1308
+      },
+      {
+        "path": "pytest.ini",
+        "sha256": "ef8d2e17e00122ca41156aa955824fd5ee93c3e1ab35877678746c5f60600d71",
+        "bytes": 146
+      },
+      {
+        "path": "requirements.txt",
+        "sha256": "7e03eaf8421ce483be24679138ea62159e00ba63247dea7cbbbea27ecf20087b",
+        "bytes": 35
+      },
+      {
+        "path": "run_root.py",
+        "sha256": "1f44538749f0c9cd51f92bd6de5d281c7528b7a9fc094e5a9b5df380ec80a2f1",
+        "bytes": 4388
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "da1e8d4357dbfa8e8a372f61f4f1c060d3c42ae0bec9974a0e0ef1d075b7e779",
+        "bytes": 10979
+      },
+      {
+        "path": "tests/__init__.py",
+        "sha256": "fce3a6fcd32942c3921523859b996ffa230887448c108b83f64837ba4693cf2d",
+        "bytes": 44
+      },
+      {
+        "path": "tests/atomic_support.py",
+        "sha256": "42e9e6b6210a3918438c9733fc7177b9f9cb147b9495faac334a6f25361eee0e",
+        "bytes": 802
+      },
+      {
+        "path": "tests/composition_support.py",
+        "sha256": "1ffd75f8a80bdf34ebfa7f541b69a8fcd2fa0b325793ed139d1e34e48c289c2d",
+        "bytes": 807
+      },
+      {
+        "path": "tests/conftest.py",
+        "sha256": "014158d2e53c783ca0c15850a2da5e68d6d312b55cfd551acce542e925cd0190",
+        "bytes": 162
+      },
+      {
+        "path": "tests/test_atomic.py",
+        "sha256": "2861af3aa0cc5d47eef7813b052163437c146e9f29b855117ac3eaf5f3e2c8f2",
+        "bytes": 8833
+      },
+      {
+        "path": "tests/test_composition.py",
+        "sha256": "11946a0892298b9ed8919a31fbd28560e7d5dba35b9ca461474ba7be1a747190",
+        "bytes": 13084
+      }
+    ]
+  }
 }

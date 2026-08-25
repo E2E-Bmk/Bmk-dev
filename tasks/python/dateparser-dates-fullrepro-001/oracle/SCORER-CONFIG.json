@@ -1,0 +1,33 @@
+{
+  "schema": "spec2repo.scorer-config.v4",
+  "case": "dateparser-v4-reliable-ingestion",
+  "inventory": {"atomic": 20, "integration": 26, "system_e2e": 4, "composition_inclusive": 30, "all": 50},
+  "execution_modes": ["natural", "reverse", "permuted"],
+  "permutation_seed": "dateparser-v4-prefreeze-20260815",
+  "root_timeout_seconds": 30,
+  "validity": {
+    "exact_inventory_required": true,
+    "zero_argument_required": true,
+    "fresh_process_per_root": true,
+    "call_phase_only": true,
+    "candidate_containment_required": true,
+    "candidate_tree_immutable": true,
+    "unexpected_process_status_is_invalid": true,
+    "timeout_setup_teardown_invalid": true
+  },
+  "scoring": {
+    "atomic_weight": 0.5,
+    "composition_inclusive_weight": 0.5,
+    "combined_formula": "(AtomicRate + CompositionInclusiveRate) / 2",
+    "gap_formula": "AtomicRate - CompositionInclusiveRate",
+    "report_integration": "C roots only",
+    "report_system_e2e": "E roots only",
+    "conditional": "non-atomic roots whose declared prerequisites passed"
+  },
+  "calibration": {
+    "patched": "50/50 in three rounds of natural, reverse, and permuted order",
+    "unpatched_exact": "16/50; Atomic 10/20, Composition 6/30, Combined 35%, Gap +30pp",
+    "dummy": "valid call-phase 0/50 in all nine rounds",
+    "incomplete_controls": "four broad finite fault modes, each valid and bounded"
+  }
+}

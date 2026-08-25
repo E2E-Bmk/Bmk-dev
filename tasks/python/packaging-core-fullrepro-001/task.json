@@ -1,126 +1,78 @@
 {
   "instance_id": "packaging-core-fullrepro-001",
-  "pipeline_note": "REVALIDATION-REQUIRED",
-  "repo": "pypa/packaging",
-  "repo_commit": "0019d113dfc2db08c80e5ee73100ff6cab1dfe92",
-  "spec_version": "v1",
+  "dataset_id": "spec2repo-aligned-43_PYTHON",
+  "schema_version": 1,
   "language": "python",
+  "cohort": "python-aligned-deliverable",
+  "version": "v5",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [],
+  "provenance": "aligned-43 authoritative payload (verbatim)",
   "oracle": {
-    "test_files": [
-      "oracle/test_atomic.py",
-      "oracle/test_integration.py"
-    ],
-    "count": 94,
-    "scorer_isolation": [
-      "--remove-path"
-    ],
-    "count_unit": "base_test_functions",
-    "base_function_count": 94
-  },
-  "taxonomy": {
-    "test_atomic::test_basic_valid_requirement_parsing": "atomic",
-    "test_atomic::test_normalized_requirements": "atomic",
-    "test_atomic::test_pickle_requirement_roundtrip": "atomic",
-    "test_atomic::test_canonicalize_name": "atomic",
-    "test_atomic::test_canonicalize_name_invalid": "atomic",
-    "test_atomic::test_is_normalized_name": "atomic",
-    "test_atomic::test_canonicalize_version": "atomic",
-    "test_atomic::test_canonicalize_version_no_strip_trailing_zero": "atomic",
-    "test_atomic::test_parse_wheel_filename": "atomic",
-    "test_atomic::test_parse_wheel_invalid_filename": "atomic",
-    "test_atomic::test_parse_wheel_unsorted_tags_valid_by_default": "atomic",
-    "test_atomic::test_parse_wheel_unsorted_tags_invalid_with_validate": "atomic",
-    "test_atomic::test_parse_sdist_filename": "atomic",
-    "test_atomic::test_parse_sdist_invalid_filename": "atomic",
-    "test_atomic::test_version_normalizes_and_exposes_public_segments": "atomic",
-    "test_atomic::test_version_ordering_covers_development_prerelease_final_and_postrelease": "atomic",
-    "test_atomic::test_version_convenience_properties_fill_missing_release_components": "atomic",
-    "test_atomic::test_specifier_set_membership_and_filter_preserve_input_values": "atomic",
-    "test_atomic::test_compatible_specifier_and_prerelease_policy_are_observable": "atomic",
-    "test_atomic::test_specifier_set_combination_and_iteration_keep_both_constraints": "atomic",
-    "test_atomic::test_specifier_set_reports_unsatisfiable_constraints": "atomic",
-    "test_atomic::test_version_range_membership_and_intersection": "atomic",
-    "test_atomic::test_version_range_union_difference_and_complement": "atomic",
-    "test_atomic::test_version_range_set_relations_compare_accepted_versions": "atomic",
-    "test_atomic::test_marker_extra_evaluation_normalizes_requested_extra": "atomic",
-    "test_atomic::test_marker_missing_environment_name_raises_public_error": "atomic",
-    "test_atomic::test_marker_boolean_composition_uses_supplied_environment": "atomic",
-    "test_atomic::test_marker_default_environment_supplies_standard_keys": "atomic",
-    "test_atomic::test_tag_object_and_parse_tag_round_trip_public_values": "atomic",
-    "test_atomic::test_parse_tag_expands_compressed_public_components": "atomic",
-    "test_atomic::test_sys_tags_yields_ordered_public_tag_objects": "atomic",
-    "test_atomic::test_metadata_parse_email_reports_unparsed_fields_as_errors": "atomic",
-    "test_atomic::test_metadata_from_raw_validates_required_core_fields": "atomic",
-    "test_atomic::test_metadata_from_email_exposes_typed_public_fields": "atomic",
-    "test_atomic::test_direct_url_rejects_missing_info_section": "atomic",
-    "test_atomic::test_direct_url_directory_record_round_trips_public_fields": "atomic",
-    "test_atomic::test_direct_url_vcs_record_round_trips_revision_fields": "atomic",
-    "test_atomic::test_license_expression_canonicalizes_spdx_operators": "atomic",
-    "test_atomic::test_invalid_license_expression_raises_public_error": "atomic",
-    "test_atomic::test_license_expression_preserves_grouping_and_license_refs": "atomic",
-    "test_atomic::test_license_expression_canonicalizes_with_exception_clause": "atomic",
-    "test_atomic::test_error_helper_exception_group_collects_public_errors": "atomic",
-    "test_atomic::test_error_helper_preserves_message_and_exception_order": "atomic",
-    "test_atomic::test_error_helper_accepts_multiple_public_packaging_errors": "atomic",
-    "test_atomic::test_valid_marker": "atomic",
-    "test_atomic::test_file_url": "atomic",
-    "test_atomic::test_empty_extras": "atomic",
-    "test_atomic::test_empty_specifier": "atomic",
-    "test_atomic::test_types_with_nothing": "atomic",
-    "test_atomic::test_types_with_specifier_and_marker": "atomic",
-    "test_atomic::test_types_with_url": "atomic",
-    "test_atomic::test_equal_reqs_equal_hashes": "atomic",
-    "test_atomic::test_equivalent_reqs_equal_hashes_unequal_strings": "atomic",
-    "test_atomic::test_different_reqs_different_hashes": "atomic",
-    "test_atomic::test_compare_with_string": "atomic",
-    "test_integration::test_lookup_on_trivial_normalization": "integration",
-    "test_integration::test_lookup_with_include_result": "integration",
-    "test_integration::test_lookup_does_not_trigger_cyclic_include": "integration",
-    "test_integration::test_normalized_name_is_used_for_include_group_lookups": "integration",
-    "test_integration::test_empty_group": "integration",
-    "test_integration::test_str_list_group": "integration",
-    "test_integration::test_single_include_group": "integration",
-    "test_integration::test_sdual_include_group": "integration",
-    "test_integration::test_normalized_group_name": "integration",
-    "test_integration::test_pylock_file_name": "integration",
-    "test_integration::test_toml_roundtrip": "integration",
-    "test_integration::test_pylock_version": "integration",
-    "test_integration::test_pylock_unsupported_version": "integration",
-    "test_integration::test_pylock_basic_package": "integration",
-    "test_integration::test_pylock_vcs_package": "integration",
-    "test_integration::test_dist_filename": "integration",
-    "test_integration::test_pylock_extras_and_groups": "integration",
-    "test_integration::test_pylock_tool": "integration",
-    "test_integration::test_is_direct": "integration",
-    "test_integration::test_smoke_test": "integration",
-    "test_integration::test_package_select_by_marker": "integration",
-    "test_integration::test_yield_all_types": "integration",
-    "test_integration::test_sdist_fallback": "integration",
-    "test_integration::test_pylock_select_extras_and_groups": "integration",
-    "test_integration::test_python_prerelease": "integration",
-    "test_integration::test_requirement_parses_url_extras_and_marker_together": "integration",
-    "test_integration::test_metadata_from_raw_parses_requirements_into_public_objects": "integration",
-    "test_integration::test_direct_url_round_trips_archive_info_to_json": "integration",
-    "test_integration::test_cross_component_requirement_marker_and_specifier_agree": "integration",
-    "test_integration::test_requirement_version_and_marker_form_one_acceptance_decision": "integration",
-    "test_integration::test_requirement_extra_marker_and_version_gate_compose": "integration",
-    "test_integration::test_prerelease_ordering_respects_specifier_policy": "integration",
-    "test_integration::test_compatible_release_and_platform_marker_agree": "integration",
-    "test_integration::test_metadata_requirements_drive_marker_and_version_checks": "integration",
-    "test_integration::test_wheel_filename_projects_name_version_build_and_tags": "integration",
-    "test_integration::test_sdist_filename_projects_canonical_name_and_ordered_version": "integration",
-    "test_integration::test_requirement_name_canonicalization_preserves_specifier_semantics": "integration",
-    "test_integration::test_marker_boolean_expression_controls_requirement_applicability": "integration",
-    "test_integration::test_requirement_url_extras_and_environment_remain_consistent": "integration"
-  },
-  "stats": {
-    "atomic": 55,
-    "integration": 39,
-    "system_e2e": 0
-  },
-  "reference_pass_rate": 1.0,
-  "candidate_score": null,
-  "spec_style_note": "spec_style: MIXED, Package Shape and attribute lists need prose conversion",
-  "oracle_version": "20260716T184616Z",
-  "taxonomy_unit": "base_test_functions"
+    "root": "oracle",
+    "kind": "final-frozen-gate",
+    "files": [
+      {
+        "path": "ENVIRONMENT-CONTRACT.md",
+        "sha256": "6f4254b3ffd51d681fc8f182f9dbd09ea541d70b521af23ab80888cbb2cc57d2",
+        "bytes": 777
+      },
+      {
+        "path": "ROOT-MAP.json",
+        "sha256": "ff7543fd5363e5f556860524e3916eee9af76c396af4c53f58cfcb9997a99393",
+        "bytes": 4363
+      },
+      {
+        "path": "SCORER-CONFIG.json",
+        "sha256": "c0ccca7b6779b4b1740e66e21e8f93d7cf747b6cda2240af5a545ec8aa59c8bf",
+        "bytes": 714
+      },
+      {
+        "path": "run_root.py",
+        "sha256": "6c4334ae4f94915d363eb6d195b74b18c1ec34827cd0e16471591dd2a8569ed2",
+        "bytes": 5181
+      },
+      {
+        "path": "score_gate.py",
+        "sha256": "5063bdb1e63e297bd69abb6bdd3f828697422d9400ac62511d20db4f998bd754",
+        "bytes": 13321
+      },
+      {
+        "path": "tests/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "tests/federation_support.py",
+        "sha256": "ed67115be2eff4f5ca9aaffe1004d8bb53450c8980f345880102acb2f6ae3a0a",
+        "bytes": 1707
+      },
+      {
+        "path": "tests/native_support.py",
+        "sha256": "9a135726b33771b56f06505f730fee2b1afc3d7ee0ca77f0fe4fff07da19fc29",
+        "bytes": 128
+      },
+      {
+        "path": "tests/test_native_controls.py",
+        "sha256": "2fd51512f27efbdd9b0288b2e78622c0e802e5355577f5b46c13c2cd62f7accc",
+        "bytes": 3635
+      },
+      {
+        "path": "tests/test_product_atomic.py",
+        "sha256": "88963927b516288fda3d9712bb137ad35a01e70c8a84977cd054bb8e81246454",
+        "bytes": 1919
+      },
+      {
+        "path": "tests/test_product_integration.py",
+        "sha256": "a30ec9c7fd376ffac2244b03b454e02f8b264bf16cf526f3d73bd6ea8ee4d017",
+        "bytes": 4072
+      },
+      {
+        "path": "tests/test_product_system.py",
+        "sha256": "3068491720b4877afdc9ce8862928cae46e25a988e9eb98afff1b5899a46041c",
+        "bytes": 1900
+      }
+    ]
+  }
 }

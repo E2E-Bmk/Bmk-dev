@@ -1,4 +1,5 @@
-﻿# DiskCache Specification
+<!-- specs/01_base_spec.md -->
+# DiskCache Specification
 
 > **Specification Authority**: This document is the sole source of truth.
 > The described system diverges from any similarly-named software in
@@ -260,3 +261,333 @@ The implementation may use any third-party packages available on PyPI. Declare r
 ## Appendix B: Assessment Notes
 
 Cache methods, mapping operations, reopened objects, fanout views, persistent containers, and recipe helpers should all project the same filesystem-backed state described above. Public return values, exception classes, documented attributes, and durable side effects form the compatibility boundary; SQLite schema and helper layout do not.
+
+<!-- specs/02_v21_clarifications.md -->
+# DiskCache final behavioral clarifications
+
+This document supplements the base specification.  It states observable
+contracts only; it does not describe the assessment layout, test cases, vote
+counts, storage schema, or implementation strategy.
+
+## Persistent state and transactions
+
+- Objects opened on the same directory project one durable state, including
+  settings, statistics, queue entries, named views, persistent containers, and
+  recipe coordination records.  Closing and reusing an object automatically
+  reopens that state.
+- A transaction commits all of its public mutations when its outermost context
+  exits normally and rolls them all back when the outermost context exits with
+  an exception.  Nested contexts in one thread participate in that outer
+  transaction.  Therefore an exception raised by an inner context but caught
+  by user code before the outer context exits does not independently roll back
+  the outer transaction.
+- These rules apply to `Cache`, `FanoutCache`, `Deque`, and `Index` and remain
+  observable after another handle or process reopens the directory.
+
+## Cache projections
+
+- Expired entries are absent from all mapping, method, iteration, length, and
+  endpoint projections.  Operations on an already-expired entry have the same
+  missing-key result as operations on an absent entry.
+- `get` and `pop` always retain their documented metadata tuple shape.  For a
+  missing key, `expire_time=True, tag=True` returns
+  `(default, None, None)`; requesting one metadata field returns the analogous
+  two-element tuple.
+- `add`, `incr`, `decr`, `pop`, queue-key allocation, and recipe updates are
+  atomic across independently opened handles.  Normal bounded contention must
+  not leak backend-lock exceptions.
+- Mapping insertion order is persistent.  Updating an existing key preserves
+  its position; deleting and reinserting it moves it to the end.  `iterkeys`
+  is instead sorted by key for mutually comparable keys.
+- Statistics are persistent and shared.  Successful and unsuccessful `get`
+  calls change hit/miss counts while enabled; membership and other mapping
+  projections do not.
+- A constructor setting explicitly supplied by a later handle updates the
+  persistent setting seen by handles opened afterward.  `reset(name, value)`
+  returns the previous value and persists the replacement.
+- Explicit `cull()` first removes expired entries and then follows the selected
+  eviction policy until the cache satisfies its size limit.  Policy `none`
+  never removes a live entry solely to meet that limit.
+
+## Queue projections
+
+- Queue-formatted mapping keys and queue methods are two public projections of
+  the same entries.  Integer queue keys begin at `500000000000000`; prefixed
+  keys use `"prefix-integer"`.  An occupied key in either projection is never
+  overwritten by allocation.
+- Prefixes are independent and front/back operations share the documented
+  order within a prefix.  Allocation is atomic across handles and facades.
+- With metadata flags, the logical queue pair is the first result element:
+  `((key, value), expire_timestamp, tag)` when both flags are requested, with
+  the corresponding shorter forms for one flag.  Empty queues return the
+  supplied default.
+- Updating, touching, popping, evicting, clearing, expiring, or rolling back a
+  queue entry through one public projection is reflected by every other
+  projection and by reopened objects.
+
+## Fanout and named views
+
+- `FanoutCache` preserves Cache method contracts for routed keys and aggregates
+  whole-cache operations across shards.  Aggregate counts, settings, tag-index
+  changes, statistics, iteration, and queue state are durable across facades.
+- A Fanout transaction groups all routed shards and follows the same nested
+  commit/rollback rule as Cache.  Ordinary method forms that cannot acquire a
+  routed shard within the configured timeout return their documented failure
+  value without later applying a stale mutation; mapping forms retry.
+- Named cache, deque, and index views are persistent and isolated by both name
+  and view kind.
+
+## Persistent containers
+
+- `Deque` bulk and endpoint mutations are transactional and persistent.
+  Independently opened handles observe the same ordered sequence; bounded
+  deques discard only from the opposite side on overflow.  `fromcache` uses
+  the supplied cache and `copy` is another facade over the same deque state.
+- `Index` preserves insertion order and exposes live `keys`, `values`, and
+  `items` views across mutations by other handles.  Updating a key preserves
+  its position; deleting and reinserting moves it to the end.  Endpoint,
+  `setdefault`, queue-helper, and memoize operations share the same persistent
+  mapping state and are atomic where their method contract requires it.
+
+## Recipe coordination
+
+- Recipe state is coordinated by directory and public key/name, not Python
+  object identity.  Lock leases are ownership-safe; a stale release cannot
+  remove a newer lease.  RLock ownership is determined by the process/thread
+  calling `acquire`, and BoundedSemaphore capacity is shared across handles.
+- `expire` and `tag` supplied to Lock, RLock, BoundedSemaphore, and barrier are
+  applied to the persistent coordination entry and are publicly observable
+  while that entry exists.
+- Separately constructed barriers and throttles with the same explicit name
+  coordinate through shared state.  Injected clock/sleep functions make the
+  throttle bucket deterministic.
+- Averager updates are atomic shared total/count updates.  Memoization keys are
+  stable across equivalent positional/keyword calls and honor ignored argument
+  names.  A failed initial stampede computation is not cached and releases its
+  coordination; a successful entry stores the documented `(value, elapsed)`
+  record under the wrapper's public cache key.
+
+## Serialization and diagnostics
+
+- `read=True` file-like values, custom `Disk` subclasses, and `JSONDisk`
+  round-trip through reopened handles and process boundaries using their public
+  serialization contracts.
+- `check()` reports unrelated files and empty subdirectories using the public
+  `UnknownFileWarning` and `EmptyDirWarning` categories.  No cache-internal
+  file or schema name is part of this contract.
+
+<!-- specs/03_v22_public_semantics.md -->
+# DiskCache v22 public-semantics clarification
+
+This document supplements the base specification and the consolidated final
+clarifications.  Every rule below is part of the public behavior boundary.  It
+does not prescribe a database schema, file layout, private helper, or test
+implementation.
+
+## Ordered lifetime and cleanup
+
+- Updating a live mapping key preserves its insertion position.  Once an
+  entry is logically expired, writing that key again creates a new insertion
+  and places it at the end.  Observing an expired entry as missing through the
+  public read path also performs its lazy cleanup, so a later `expire()` does
+  not count that already-observed entry again.
+- With an eviction policy other than `none` and a positive `cull_limit`, a
+  successful `set`, `add`, or `push` performs the documented bounded automatic
+  culling step.  Explicit `cull()` remains available for complete convergence.
+
+## Numeric and statistics projections
+
+- `Cache.incr` and `Cache.decr` change only the numeric value of an existing,
+  unexpired entry.  They preserve its expiration timestamp, tag, insertion
+  position, and queue projection.  `FanoutCache.incr` and
+  `FanoutCache.decr` preserve the same metadata and projections through the
+  routed facade.
+- Hit/miss statistics measure value reads, not structural inspection.  In
+  particular, membership checks and queue `peek` operations do not increment
+  either count.
+
+## Queue validation and empty results
+
+- The `side` argument accepted by `peek` and `pull` is either `"front"` or
+  `"back"`.  Any other value raises `KeyError` without changing queue state.
+- With no explicit default, an empty Cache queue returns `(None, None)` from
+  `peek` and `pull`.  Metadata flags wrap that logical queue result in the same
+  nested shape used for non-empty queues; for example, requesting both fields
+  returns `((None, None), None, None)`.  `Index` queue helpers inherit these
+  empty/default contracts.
+
+## Named Fanout views and JSON behavior
+
+- `FanoutCache.cache(name, timeout=60, disk=None, **settings)` accepts public
+  Cache settings for the named view.  `disk=None` inherits the parent Fanout
+  disk class.  Named-view settings and serialized values persist on reopen.
+- `JSONDisk` follows ordinary JSON conversion semantics.  JSON-compatible
+  mapping keys such as integers are converted as JSON specifies, and mapping
+  member order is retained through a value round trip; implementations must
+  not impose sorting that rejects otherwise valid mixed JSON object keys.
+
+## Persistent container properties
+
+- Assigning a smaller non-negative `Deque.maxlen` immediately trims durable
+  contents from the left until the new bound is satisfied.  The trimmed order
+  is visible through other facades and after reopen.
+- `Index.memoize(..., ignore=...)` and `memoize_stampede(..., ignore=...)`
+  accept both argument names and zero-based integer positional indexes.  An
+  ignored argument is excluded from public cache-key construction, so calls
+  differing only in that argument reuse one persistent result.
+
+## Recipe initialization
+
+- Constructing a `throttle` decorator with an explicit `name`, `count`, and
+  injected `time_func` initializes its shared persistent bucket at decoration
+  time as `(time_func(), count)` under that name.  Separate wrappers with the
+  same name then continue from that one bucket.
+
+<!-- specs/04_v23_protocol.md -->
+# DiskCache v23 ordered-protocol clarification
+
+- `reversed(index)` returns keys in reverse persistent insertion order, and the
+  order remains the same through a separately opened `Index` facade.
+- `Cache.peekitem` accepts `expire_time` and `tag` flags. Requested metadata
+  wraps the logical endpoint pair in the same way as queue metadata; with both
+  flags the result is `((key, value), expire_timestamp, tag)`.
+
+These are public protocol and method-return contracts. They require no
+particular database, file, or helper layout.
+
+<!-- specs/05_v24_cross_protocol.md -->
+# DiskCache v24 cross-protocol clarification
+
+This clarification defines public interactions between existing methods and
+facades.  It does not prescribe internal tables, files, shards, or helpers.
+
+## Read statistics
+
+- While Cache statistics are enabled, a successful mapping read
+  (`cache[key]`) and a successful `Cache.read(key)` are value-read hits.
+  Structural membership and queue `peek` remain non-counting observations.
+- `FanoutCache.stats()` aggregates those same mapping-read and `read()` hits
+  from the routed shards.
+
+## Persistent container projections
+
+- `Deque.fromcache(cache, ...)` adopts the supplied Cache's unprefixed queue
+  projection.  Pre-existing queue items are deque items, and later deque
+  appends remain visible through the Cache queue methods.
+- `Deque.maxlen` is configuration of a deque facade, not durable metadata.
+  Trimming changes durable contents, but reopening the directory without a
+  `maxlen` argument creates an unbounded facade over those trimmed contents.
+- Index storage is non-evicting container state.  Reducing the backing Cache
+  size limit must not silently remove Index entries; they persist until an
+  explicit Index/Cache mutation removes them.
+
+## Settings across public objects
+
+- Resetting a `disk_*` Cache setting immediately updates both the Cache's
+  public setting projection and the corresponding unprefixed attribute on its
+  associated public `Disk` object, and the value persists on reopen.
+- Fanout `size_limit` is one facade total.  Resetting it distributes that total
+  across shards; the public `FanoutCache.size_limit` remains the requested
+  total rather than multiplying it by the shard count.
+
+## Serialization strategies
+
+- `JSONDisk` applies ordinary JSON validation and conversion.  A value rejected
+  by `json.dumps` raises `TypeError` and is not silently stored through a
+  pickle fallback.
+- A supplied custom `Disk` controls Cache public key serialization through its
+  `put`/`get` protocol.  Overrides may normalize keys, and iteration returns
+  the normalized public key.
+- Fanout routing uses the supplied Disk key/hash protocol so keys that are
+  equivalent under that Disk route to the same shard and retrieve one value.
+
+## Context and memoization protocols
+
+- `FanoutCache.transact()` yields `None` as its context-manager `as` value.
+- For `Index.memoize(..., ignore=...)` and
+  `memoize_stampede(..., ignore=...)`, an integer ignore value indexes actual
+  positional call slots, including individual values captured by `*args`.
+  Calls differing only in an ignored variadic slot reuse one persistent result.
+
+<!-- specs/06_public_lifecycle_handoff.md -->
+# DiskCache public lifecycle and handoff contract
+
+This document replaces the v26, v28, and v29 addenda. It supplements the base
+specification and the v21-v24 clarifications. The rules below describe only
+observable public behavior; they do not prescribe a database schema, file
+layout, private helper, or serialized byte representation.
+
+## Logical absence and consistency checks
+
+- `Cache.check(fix=False)` reports an unrelated ordinary file anywhere below
+  the cache directory with the public `UnknownFileWarning` category. Exact
+  warning text, cache-owned filenames, and repair behavior are not prescribed.
+- Expired entries are logically absent from removal counts. An expired tagged
+  entry contributes zero to `evict(tag)`, and an expired-only cache contributes
+  zero to `clear()`.
+
+## Facade lifecycle and public options
+
+- A closed `Cache` automatically reopens for structural operations such as
+  `len(cache)` and iteration, and it remains writable afterwards.
+- `Cache.read(key, retry=True)` accepts the public retry option and returns the
+  same readable value stream as the ordinary successful read path.
+- `Cache.reset(key, value, update=False)` changes the current facade's setting
+  projection without persisting that temporary value to a newly opened facade.
+  This rule does not redefine the normal reset setter's return value.
+- Closing the public backing Cache exposed as `deque.cache` or `index.cache`
+  does not invalidate the container facade. Structural reads and later
+  mutations automatically reopen and continue to share durable state.
+- A closed `FanoutCache` likewise reopens for `len`, iteration, and later
+  routed writes on the same facade.
+
+## JSONDisk key conversion
+
+- `JSONDisk` applies ordinary JSON conversion to keys as well as values. A
+  tuple key and its equivalent JSON list denote one live key through get,
+  membership, add, metadata, iteration, and reopen. Iteration exposes the
+  normalized JSON list.
+
+## Custom Disk value and resource protocols
+
+- A public `Disk` subclass controls the `store`/`fetch` value protocol. Its
+  value field may be an ordinary persistence-compatible scalar associated
+  with an opaque custom mode; Cache must return that value through `fetch`
+  across metadata reads and reopen.
+- `FanoutCache` honors the same value protocol through routed set/get,
+  metadata, and reopen.
+- A custom `Disk` may instead manage a stored value through an external
+  resource identified by its `store` result and consumed by `fetch`. After a
+  successful public deletion, Cache delegates release of that resource to the
+  strategy's public `remove` hook. `FanoutCache` honors the same lifecycle
+  after routing the value. Exact callback counts, internal filenames, and
+  storage layout are not prescribed.
+
+## Fanout context and memoization
+
+- `FanoutCache` is a context manager. Writes made inside its context persist
+  after exit, and later operations on that same facade automatically reopen
+  it. No semantic meaning is assigned to an optional `as` binding.
+- `FanoutCache.memoize(...)` provides persistent memoization: repeated
+  equivalent calls reuse one stored result, the wrapped function exposes
+  public `__cache_key__`, and a Fanout facade reopened on the same directory
+  can read the value at that key.
+
+## Same-runtime serialization handoff
+
+DiskCache facades support standard-library `pickle` when producer and consumer
+use the same installed DiskCache implementation in one trusted Python runtime.
+This is not a cross-version or untrusted-data format.
+
+After a round trip, a reconstructed `Cache` or `FanoutCache` addresses the same
+persistent directory, reads values stored before serialization, and shares
+later public mutations with the original facade. Fanout reconstruction
+preserves the routing configuration needed to reach that logical store.
+
+A reconstructed `Deque` or `Index` likewise reads the persistent contents
+stored before serialization and shares later public mutations with the
+original facade. `Deque` also preserves its public `maxlen` configuration.
+
+No exact pickle payload, private state, connection identity, active
+transaction, context-manager return value, or compatibility across Python or
+DiskCache versions is prescribed.

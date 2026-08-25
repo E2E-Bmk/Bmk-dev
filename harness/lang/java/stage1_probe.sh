@@ -19,7 +19,13 @@
 
 set -uo pipefail
 
-ROOT="${JAVABENCH_DIR:-$(cd "$(dirname "$0")/../../../.." && pwd)/javabench}"
+# Working area for Stage-1 probing: the operator clones the upstream Java
+# repos to mine under $JAVABENCH_DIR/source-clones/, and probe worktrees and
+# reports are written under $JAVABENCH_DIR/probe/. Defaults to an in-repo,
+# git-ignored directory so a fresh clone needs no sibling checkout; set
+# JAVABENCH_DIR to point at an existing area.
+BMK="$(cd "$(dirname "$0")/../../.." && pwd)"
+ROOT="${JAVABENCH_DIR:-$BMK/dev/javabench}"
 REPO=${1:?usage: java_stage1_probe.sh <repo> <tag> <module|.> [extra mvn args]}
 TAG=${2:?missing tag}
 MODULE=${3:?missing module (use . for single-module)}

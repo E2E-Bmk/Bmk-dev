@@ -21,7 +21,6 @@ CMD="${2:?usage: sigfix_probe.sh <task_id> stage|build|score|diff}"
 SRC_RUN="${3:-qwen3.8-max}"
 
 BMK="$(cd "$(dirname "$0")/../../.." && pwd)"
-S2R="${SPEC2REPO_DIR:-$BMK/../spec2repo}"
 W="$BMK/wip/rust/$ID"
 AGENT_WS="$W/eval/runs/$SRC_RUN/$ID/workspace"
 SIGFIX_WS="$W/eval/runs/sigfix/$ID/workspace"
@@ -76,7 +75,9 @@ score)
     cp -r "$W/oracle" "$W/eval/oracle/$ID"
     rm -rf "$W/eval/oracle/$ID/target" "$W/eval/oracle/$ID/gates"
     mkdir -p "$W/eval/runs/sigfix"
-    cd "$S2R"
+    # Score with the in-tree harness. evaluate.py adds the repo root to
+    # sys.path from its own location, so cwd only needs to be this repo.
+    cd "$BMK"
     # evaluate.py validates --model against the registered model config even
     # under --score-only, and "sigfix" is not a registered model. The run is
     # identified by its output directory instead, so result.json carries

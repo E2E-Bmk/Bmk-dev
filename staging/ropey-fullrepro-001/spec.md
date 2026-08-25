@@ -76,7 +76,7 @@ assert_eq!(rope.len_lines(), 3); // "One morning\n", "the cat sat\n", ""
 let line_start = rope.line_to_char(1);
 rope.remove(line_start + 4..line_start + 7);
 rope.insert(line_start + 4, "heron");
-assert_eq!(rope.line(1).as_str(), Some("the heron sat\n"));
+assert_eq!(rope.line(1), "the heron sat\n");
 
 // Save through any std::io::Write sink.
 let mut out: Vec<u8> = Vec::new();
@@ -243,7 +243,9 @@ above `len_lines()`. A one-past-the-end index to `chunk_at_byte` and
 `chunk_at_char` returns the last chunk. Every chunk of a non-empty rope is non-empty; a
 multi-byte char is never split across a chunk boundary, and a CRLF pair is
 never split across a chunk boundary. The concatenation of all chunks in
-order equals the content exactly. The fallible twins are `get_chunk_at_byte`,
+order equals the content exactly. Empty content yields no chunks from the
+chunk iterator, and its `chunk_at_*` accessors return an empty chunk with
+zero start coordinates. The fallible twins are `get_chunk_at_byte`,
 `get_chunk_at_char`, and `get_chunk_at_line_break` on `Rope` (returning
 `Option`), and `try_chunk_at_byte`, `get_chunk_at_char`, and
 `get_chunk_at_line_break` on `RopeSlice` (the byte form returns
@@ -366,8 +368,9 @@ bound, with `get_bytes_at`, `get_chars_at`, and `get_lines_at` returning
 positioned at the chunk containing the given position plus that chunk's
 start coordinates, under the same index rules as `chunk_at_*`; when the
 input index is one-past-the-end, the iterator is positioned past the last
-chunk (its `next()` returns `None`) and the returned coordinates are the
-content's total lengths. Their fallible twins are `get_chunks_at_byte`,
+chunk (its `next()` returns `None`), the returned byte and char
+coordinates equal the total lengths, and the returned line coordinate is
+the last line index. Their fallible twins are `get_chunks_at_byte`,
 `get_chunks_at_char`, and `get_chunks_at_line_break`.
 
 **Bidirectional movement.** Every iterator has `prev()`, which moves one

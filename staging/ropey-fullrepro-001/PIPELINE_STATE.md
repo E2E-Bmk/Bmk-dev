@@ -11,7 +11,7 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
@@ -20,7 +20,7 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] audit upstream test imports against spec surface; rewrite or drop undeclared-surface asserts (doc(hidden) items: MAX_BYTES/MIN_BYTES/MAX_CHILDREN/MIN_CHILDREN, Lines::from_str_pt, assert_integrity/assert_invariants, RopeBuilder::_append_chunk/_finish_no_fix)
+- [ ] (next stage) S4_SETUP: build task environment from repo_commit and run scorer end-to-end
 
 ---
 
@@ -33,6 +33,10 @@ todo:
 | 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_CHECK | self-check: fixed Debug over-promise (chunk-layout dependent), chunk_at_line_break index rule, line accessor bound; leakage word "judgements" reworded; no can/may/should |
 | 4 | 2026-08-25 | S2_SPEC_CHECK | S2_SPEC_DONE | spec passes SPEC_STANDARD phrasing/structure; doc(hidden) surface excluded; features pinned (default unicode_lines+simd) |
 | 5 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin oracle: ~334 inline unit tests + tests/ dir; drop MIN/MAX_BYTES-dependent, proptest, doc-hidden users |
+| 6 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit done: hidden-surface/randomized/private-module upstream tests excluded; decision generated-only (repetitive indexed variants consolidated, fresh fixtures for anti-memorization) |
+| 7 | 2026-08-25 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md landed: per-file upstream disposition table; 2 spec_gap patches routed (empty-content chunks; end-position chunk-iterator line coord) |
+| 8 | 2026-08-25 | S3B_TRIGGER | S3_ORACLE_MERGE | oracle assembled: workspace + atomic(58) + integration(33 in 5 modules), depends_on.json, Cargo.lock (registry ropey 1.6.1, smallvec 1.15.2, str_indices 0.4.4 — no pins needed on rustc 1.83) |
+| 9 | 2026-08-25 | S3_ORACLE_MERGE | S3_DONE | reference 91/91 both patched-path and registry-lock runs (reference_score.json); spec_test_map.md (generated_only header), kept lists, taxonomy.jsonl, task.json written; lint fresh: LINT_PASS |
 
 ---
 

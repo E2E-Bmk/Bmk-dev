@@ -55,3 +55,4 @@ rhai, comfy-table, toml-rs (toml/toml_edit/taplo), cargo-generate, gitoxide
 | 1 | evalexpr-fullrepro-001 | ISibboI/evalexpr @ 92d99f4 (v13.1.0) | S3_DONE | 56 tests (29 atomic / 27 integration incl. 5 generated); reference 56/56; LINT_PASS |
 | 2 | config-rs-fullrepro-001 | rust-cli/config-rs @ 532ab4d (v0.15.11) | S3_DONE | 82 tests (39 atomic / 43 integration incl. 14 generated); reference 82/82; LINT_PASS; Cargo.lock pins indexmap 2.7.1 / hashbrown 0.15.5 for rustc 1.83 |
 | 3 | similar-fullrepro-001 | mitsuhiko/similar @ 28c146b (v2.7.0) | S3_DONE | 91 tests (64 atomic / 27 integration; 33 upstream-derived, 58 generated); reference 91/91; LINT_PASS; Cargo.lock pins unicode-segmentation 1.12.0 for rustc 1.83 |
+| 4 | ropey-fullrepro-001 | cessen/ropey @ d41ee24 (v1.6.1) | S3_DONE | 91 tests (58 atomic / 33 integration; generated-only, upstream as checklist); reference 91/91 (patched path + registry lock); LINT_PASS; no dependency pins needed |

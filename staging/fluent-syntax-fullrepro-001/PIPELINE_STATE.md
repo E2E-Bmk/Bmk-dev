@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,8 +20,8 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] draft spec.md (6-layer) from docs.rs 0.12.0 module/item docs + FTL syntax semantics within scope: parse/parse_runtime, full public AST, junk recovery + ParserError, serializer (+ Options), unicode unescaping; scope out serde/json features, the Slice trait's implementation obligations beyond &str and String, fixture tooling
-- [ ] probe pinned checkout for: multiline dedent rules, continuation vs new entry boundaries, escape handling in TextElement vs StringLiteral, junk span boundaries, serializer canonical forms (blank lines, comment attachment, junk with_junk toggle), parse vs parse_runtime comment differences, CRLF
+- [ ] inventory upstream test files (external tests/ + in-crate) and audit import paths / feature requirements
+- [ ] classify: retainable as-is vs rewrite vs discard; land filter/rewrite_audit.md
 
 ## History
 
@@ -29,6 +29,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (3900 LOC; FTL grammar reimplementation with parse/parse_runtime/serializer/unescape projections over one documented AST; builds on cargo 1.83, MSRV 1.64, deps memchr+thiserror) |
 | 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec drafting |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 landed; three probe rounds fixed: dedent arithmetic (deeper-line excess, blank-line \n elements incl. beyond-common spaces, placeable-line indent dropped, zero-column `{` continues while zero-column text breaks), LF-vs-CRLF element split, malformed-comment asymmetry (junk in parse, silent skip in parse_runtime), term.attr selector-legal/placeable-illegal, named-arg literal restriction, junk spans absorb trailing blanks, free comments blank-line framed, unescape U+FFFD rules; rustdoc `##`-escape trap identified (doc `####` is really `###`) — resource marker is `###`; all spec examples probe-verified |
+| 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
 
 ---
 

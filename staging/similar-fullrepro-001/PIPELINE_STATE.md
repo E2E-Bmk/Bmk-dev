@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S1_SELECTED
-stage:      1
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,7 +20,7 @@ updated:    2026-08-25
 ```
 
 todo:
-- [x] 在 CANDIDATES.md 追加 SELECTED 行
+- [ ] audit upstream test imports against spec surface; rewrite or drop undeclared-surface asserts
 
 ---
 
@@ -29,6 +29,10 @@ todo:
 | # | date | from | to | note |
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (diff engine, ~5009 LOC, 50 test fns, 7 public projections of one op stream; pinned 2.7.0 edition-2018 for rustc 1.83, 3.x needs 1.85) |
+| 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | spec.md drafted from docs.rs 2.7.0 + README (6-layer structure): algorithms/hooks, op streams, grouping/similarity, text diffing, unified output, inline emphasis, utils/remap |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_CHECK | self-check: modal phrasing fixed (2 `can` clauses), no leakage words in body, Non-Goals phrasing conforms, API catalog Name/Kind/Role only |
+| 4 | 2026-08-25 | S2_SPEC_CHECK | S2_SPEC_DONE | spec passes phrasing/structure rules of docs/SPEC_STANDARD.md; features scoped text+unicode+inline; bytes/serde/wasm scoped out |
+| 5 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin oracle: inline unit tests in src/, must be lifted onto public surface only |
 
 ---
 

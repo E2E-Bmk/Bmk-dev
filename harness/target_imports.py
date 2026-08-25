@@ -115,3 +115,28 @@ def _merge_typescript_registrations() -> None:
 
 
 _merge_typescript_registrations()
+
+# Java tasks keep their roots in java_target_imports.json, following the rust and
+# typescript lanes. The value is a Maven artifactId, not a Java package: the
+# provenance audit matches it against `dependency:list` output, where the artifact
+# is what appears. Registering `org.markline` instead of `markline-core` resolves
+# no dependency, and because an unmapped task fails the lint outright, that error
+# reads as a missing registration rather than a wrong one.
+def _merge_java_registrations() -> None:
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).with_name("java_target_imports.json")
+    if not path.exists():
+        return
+    try:
+        extra = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    for task_id, roots in extra.items():
+        if isinstance(roots, str):
+            roots = [roots]
+        TARGET_IMPORTS.setdefault(task_id, list(roots))
+
+
+_merge_java_registrations()

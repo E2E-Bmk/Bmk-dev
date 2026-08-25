@@ -257,13 +257,21 @@ def test_form_iteration_yields_fields_in_declaration_order():
     assert [field.name for field in F()] == ["alpha", "beta", "gamma"]
 
 
+@pytest.mark.mutated("spec.md:100")
 def test_select_multiple_field_coerces_all_values_to_list():
+    """Atomic: SelectMultipleField coerces submitted values to the documented container type.
+
+    Mutated: the spec requires a tuple instead of a list. The upstream package
+    returns a list, so this test fails against it by construction.
+
+    Verifies: spec.md:100
+    """
     class F(Form):
         choices = SelectMultipleField(choices=[("a", "A"), ("b", "B")])
 
     form = F(FormData(choices=["a", "b"]))
-    assert form.choices.data == ["a", "b"]
-    assert isinstance(form.choices.data, list)
+    assert form.choices.data == ("a", "b")
+    assert isinstance(form.choices.data, tuple)
 
 
 def test_float_field_rejects_invalid_text():

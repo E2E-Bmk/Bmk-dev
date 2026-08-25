@@ -109,5 +109,17 @@
   "integration_gap": null,
   "oracle_cleanup_date": "2026-07-17",
   "oracle_cleanup_removed": 0,
-  "taxonomy_unit": "base_test_functions"
+  "taxonomy_unit": "base_test_functions",
+  "mutation": {
+    "variant_of": "doit-taskrunner-fullrepro-002",
+    "clauses": ["spec.md:207-210"],
+    "tests": [
+      "test_atomic::test_python_action_returning_false_reports_task_failure",
+      "test_atomic::test_python_action_exception_reports_task_error",
+      "test_atomic::test_command_action_nonzero_exit_reports_failure",
+      "test_atomic::test_command_exit_above_125_reports_error_not_failure",
+      "test_integration::test_continue_runs_independent_task_after_failure"
+    ],
+    "upstream_expected_failures": 5
+  }
 }

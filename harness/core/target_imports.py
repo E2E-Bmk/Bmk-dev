@@ -45,6 +45,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "dvc-fullrepro-001": ["dvc"],
     "dynaconf-settings-fullrepro-001": ["dynaconf"],
     "fsspec-filesystem-fullrepro-001": ["fsspec"],
+    "glom-data-transform-fullrepro-001": ["glom"],
     "griffe-apimodel-fullrepro-001": ["griffe"],
     "h2-protocol-fullrepro-001": ["h2"],
     "halodb-fullrepro-001": ["com.oath.halodb"],
@@ -84,6 +85,9 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "sqlalchemy-fullrepro-001": ["sqlalchemy"],
     "starlette-asgi-fullrepro-001": ["starlette"],
     "structlog-event-context-fullrepro-001": ["structlog"],
+    "tortoise-orm-fullrepro-001": ["tortoise"],
+    "glom-data-transform-fullrepro-001": ["glom"],
+    "configobj-config-parser-fullrepro-001": ["configobj"],
     "tox-envrunner-fullrepro-001": ["tox"],
     "traitlets-core-fullrepro-001": ["traitlets"],
     "transitions-state-machine-fullrepro-001": ["transitions"],
@@ -93,6 +97,29 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "wtforms-form-lifecycle-fullrepro-001": ["wtforms"],
 }
 
+
+# Rust tasks are registered in lang/rust/target_imports.json, which the scorer and
+# verify_rust_task.sh already read. The lint used to consult this module only, so a
+# rust task could hold a LINT_PASS artifact that no longer reproduces. Merging the
+# JSON here keeps one source of truth per language instead of two that drift.
+def _merge_rust_registrations() -> None:
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "lang" / "rust" / "target_imports.json"
+    if not path.exists():
+        return
+    try:
+        extra = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    for task_id, roots in extra.items():
+        if isinstance(roots, str):
+            roots = [roots]
+        TARGET_IMPORTS.setdefault(task_id, list(roots))
+
+
+_merge_rust_registrations()
 
 # The TypeScript lane keeps its import roots in lang/typescript/target_imports.json for
 # the same reason the Rust lane does: the scorer and the lint must agree on one

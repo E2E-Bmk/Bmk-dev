@@ -200,7 +200,7 @@ def test_cvi6_package_mode_config_reflects_packaging(tmp_path):
     assert result.returncode == 0, result.stdout + result.stderr
     found_pkg = False
     for line in result.stdout.splitlines():
-        if "PKG=" in line:
+        if line.startswith("PKG="):
             assert "ABSENT" not in line
             found_pkg = True
             break
@@ -278,7 +278,7 @@ def test_cvi9_unused_key_visible_in_config(tmp_path):
         commands = [["python", "-c", "print('ok')"]]
         """,
     )
-    result = run_tox(tmp_path, "config")
+    result = run_tox(tmp_path, "config", "--core")
     assert result.returncode == 0, result.stdout + result.stderr
     combined = result.stdout + result.stderr
     assert "stale_setting" in combined
@@ -514,6 +514,8 @@ def test_seam_fail_fast_stops_scheduling(tmp_path):
         tmp_path,
         """
         env_list = ["fail_first", "pass_second"]
+
+        [env_run_base]
         fail_fast = true
 
         [env.fail_first]

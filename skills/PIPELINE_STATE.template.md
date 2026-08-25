@@ -326,6 +326,29 @@ exit_artifact: judge/diagnosis_report.md
 → RETIRED           (不可修复, terminal)
 ```
 
+### S5_MUTATE
+```
+entry_requires: verify_task.py 输出 STATIC_VALID 且 baseline reference 门禁 100%
+todo:
+  - [ ] 按 spec-mutator 的五条准则选定变异目标，先写 mutation/record.md
+  - [ ] spec 与 oracle 同步改（spec 原地重写子句，oracle 只改断言值，测试名不变）
+  - [ ] 变异测试三处登记一致：测试内 `// Mutated: <clause>` 注释、task.json.mutation、record.md
+  - [ ] Gate M1：打过 patch 的 reference 跑满 oracle，0 失败
+  - [ ] Gate M2：撤掉 patch 后恰好只失败被标记的那些测试
+exit_artifact: mutation/record.md、mutation/reference_patch.*、两份门禁日志
+→ S5_MUTATE_DONE    (M1 与 M2 均通过)
+→ S5_MUTATE         (loop: M2 显示无分叉; mutate_iter += 1; mutate_iter > 3 → 上报)
+```
+
+### S5_MUTATE_DONE
+```
+todo:
+  - [ ] 变异后的 packet 复跑 verify_task.py → STATIC_VALID
+  - [ ] oracle 改过，必须复跑 oracle_import_lint.py 并落盘（QUALIFIED 的时间戳前置条件）
+  - [ ] 按 spec-mutator Step 5/6 做配对评分，在 mutation.tests 上分别读 recall_rate 与 spec_rate
+→ QUALIFIED
+```
+
 ### QUALIFIED（terminal）
 ```
 todo:

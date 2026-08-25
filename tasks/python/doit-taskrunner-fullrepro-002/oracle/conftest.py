@@ -1,14 +1,29 @@
 """Shared helpers for doit-taskrunner-fullrepro-002 oracle tests."""
 import os
+import shutil
 import subprocess
 import sys
 import textwrap
 from pathlib import Path
 
+import pytest
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "mutated(clause_id): asserts behavior that diverges from the upstream package",
+    )
+
 
 def write_dodo(tmp_path, source):
     dodo = tmp_path / "dodo.py"
     dodo.write_text(textwrap.dedent(source), encoding="utf-8")
+    # Drop any cached bytecode for the previous dodo.py. CPython validates a
+    # cached .pyc against (source mtime in whole seconds, source size), so two
+    # rewrites of the same size within the same second would silently reuse the
+    # stale bytecode and hide the new task definitions.
+    shutil.rmtree(tmp_path / "__pycache__", ignore_errors=True)
     return dodo
 
 

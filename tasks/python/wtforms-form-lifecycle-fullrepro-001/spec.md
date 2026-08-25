@@ -97,7 +97,7 @@ This section defines selection fields, suggestion lists, and composite field str
 
 **Choice types.** `SelectChoice` must default a missing label to value. `Choice` must be the choice-iteration value. An unsupported choice tuple length must raise `ValueError` when normalized.
 
-**SelectField.** `SelectField` must coerce input, expose selected `Choice` values through `SelectField.iter_choices()`, and reject a value outside `choices` when choice validation is enabled. Coercion failure must be a processing error; invalid membership must be a validation error; missing choices with enabled validation must raise `TypeError`. When `validate_choice=False` is set, the field must accept a coercible non-member without raising a membership error. `SelectMultipleField` must coerce all submitted values to a list and reject every invalid selection when membership validation is enabled. `RadioField` must retain `SelectField` data and validation while iterating individual option fields.
+**SelectField.** `SelectField` must coerce input, expose selected `Choice` values through `SelectField.iter_choices()`, and reject a value outside `choices` when choice validation is enabled. Coercion failure must be a processing error; invalid membership must be a validation error; missing choices with enabled validation must raise `TypeError`. When `validate_choice=False` is set, the field must accept a coercible non-member without raising a membership error. `SelectMultipleField` must coerce all submitted values to a tuple and reject every invalid selection when membership validation is enabled. `RadioField` must retain `SelectField` data and validation while iterating individual option fields.
 
 **Choice callbacks.** Choice callbacks must run once per processing cycle. A `(form, field)` callback must receive the bound form and field after processing; a no-argument callback must receive no arguments. A callback exception must propagate.
 
@@ -282,7 +282,7 @@ from wtforms.meta import DefaultMeta
 | `WeekField` | class | Field parsing year-week to Monday date |
 | `DateTimeLocalField` | class | Datetime field with optional timezone attachment |
 | `SelectField` | class | Single-selection choice field with coercion and validation |
-| `SelectMultipleField` | class | Multi-selection choice field coercing to a list |
+| `SelectMultipleField` | class | Multi-selection choice field coercing to a tuple |
 | `RadioField` | class | Radio-button choice field iterating individual options |
 | `SelectFieldBase` | class | Base class for choice-based fields |
 | `Choice` | namedtuple | Choice-iteration value with value, label, selected, and render_kw |

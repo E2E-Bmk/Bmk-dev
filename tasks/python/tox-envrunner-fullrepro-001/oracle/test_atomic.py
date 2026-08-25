@@ -266,7 +266,11 @@ def test_toml_product_generates_environments(tmp_path):
     result = run_tox(tmp_path, "list", "--no-desc")
     assert result.returncode == 0
     lines = result.stdout.strip().splitlines()
-    expected = {"3.11-unit", "3.11-lint", "3.12-unit", "3.12-lint"}
+    expected = {
+        "3.11-unit", "3.11-lint",
+        "3.12-unit", "3.12-lint",
+        "3.13-unit", "3.13-lint",
+    }
     assert set(lines) == expected
 
 

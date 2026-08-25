@@ -489,3 +489,21 @@ If oracle is Track-B-only (no upstream tests survived), mark `filter/oracle_sour
 **depends_on annotation:** During oracle merge, annotate each integration test with `@pytest.mark.depends_on(...)` listing the atomic test functions it logically depends on. This enables the harness to compute `adjusted_gap` (cascade-filtered integration gap). Target ≥ 50% annotation coverage; 100% is ideal.
 
 ---
+
+## Mutation readiness (mandatory)
+
+The spec's INTERNAL header names a `mutation_target`. The oracle must be built so that
+target is assertable by a contained, assertion-only mutation later:
+
+- at least **two individual test functions** must each assert **one specific value** of the
+  target clause (an enum variant, a constant, a returned code);
+- those tests must not obtain that value through a parametrised array of classifications,
+  because flipping a category then means editing setup, which Step 2b of `spec-mutator`
+  forbids;
+- they must not assert it through a round-trip identity property (write-then-read equals
+  input), because a mutation breaks the property rather than moving a value;
+- they must not consume the same traversal order that some other kept test also consumes as
+  an input, or the mutation propagates beyond its clause and fails M2 containment.
+
+Record in `filter_notes.md` which tests are the designated mutation witnesses. A task whose
+oracle has no such pair cannot pass Stage 5 without being rebuilt. See AGENTS.md Rule 6a.

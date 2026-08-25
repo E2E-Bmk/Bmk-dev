@@ -49,7 +49,7 @@ Before starting any pipeline stage, read the specialist skill named for that sta
 - Stage 2 must read `Bmk-dev/skills/spec-writer/SKILL.md`.
 - Stage 3 must read `Bmk-dev/skills/test-filter/SKILL.md`.
 - Stage 4 must give the candidate agent only the public packet/run prompt; do not give it workflow skills, source repositories, tests, score reports, or previous attempts. Run Stage 4 evaluation on Linux or WSL — not native Windows.
-- Stage 5 must read `Bmk-dev/skills/task-judge/SKILL.md`.
+- the mutation controls must read `Bmk-dev/skills/task-judge/SKILL.md`.
 
 When delegating a stage or stage audit to a subagent, instruct the subagent to read the same stage skill before inspecting task artifacts. The delegation prompt must name the exact `Bmk-dev/skills/{skill-name}/SKILL.md` path to read first.
 
@@ -332,6 +332,19 @@ Before accepting any verdict, verify diagnosis report structural validity:
 8. `task.json.source_meta` is populated (github_stars, pypi_monthly_downloads, loc, first_release)
 9. If `filter_notes.md` has `scope_plan != N/A`: verify actual oracle size ≤ `expected_oracle_max` and tests cover stated `target_subdomain`
 10. Run `python harness/core/validate_ledger.py {task_id}` — task must appear as PASS (warnings acceptable, failures block graduation). This runs all static gates defined in `docs/QUALITY_GATE.md` via `harness/core/verify_task.py`.
+11. **All four required controls qualified in one step**, per
+    `spec2repo-gate-calibration/references/qualification-and-freeze.md`:
+    - **M1 patched reference** — the reference implementation is the patched upstream, so
+      the ordinary reference gate at 100% satisfies this;
+    - **M2 clean upstream** — pristine upstream mounted, exactly the preregistered mutation
+      set fails and the native set passes;
+    - **behaviour-empty control** — signature-preserving stub, every root reaches call
+      phase, zero passes;
+    - **broad incomplete controls** — at least two signature-preserving profiles that
+      collapse different architectural ideas, with distinct preregistered blast radii.
+    `task.json` carries the `mutation` block (`clauses`, `families`, `tests`) and each
+    mutated oracle test carries a `// MUTATED: <clause-ref>` marker. There is no separate
+    the mutation controls — see AGENTS.md Rule 6a.
 
 **Graduation procedure** (how to produce `tasks/{language}/{task_id}/` from `wip/{language}/{task_id}/`):
 1. Copy `spec_vN.md` → `tasks/{language}/{id}/spec.md`, stripping the `<!-- INTERNAL ... -->` header block
@@ -345,6 +358,14 @@ Before accepting any verdict, verify diagnosis report structural validity:
    labels it guessed for new tests from their names — that split is a filtering
    judgement, and only labels already present are carried over
 6. Run `python harness/core/verify_task.py {task_id}` — must output `STATIC_VALID`
+7. **`ROOT-MAP.json` exists and passes the design audit** — preregistered before the spec
+   was written, one row per root with `id / layer / mutation / family / depends_on`, and
+   `spec2repo-gate-calibration/scripts/audit_gate_design.py ROOT-MAP.json` reports no
+   violation (mutation union 60-75%, no family above ~25% of mutation votes).
+8. **The spec describes the mutated system, not the upstream one.** Mutation is applied once,
+   here, as product design — there is no later mutation stage. The INTERNAL header records
+   which families diverge and why the upstream form is the intuitive guess. See AGENTS.md
+   Rule 6a.
 
 Leave `wip/{language}/{task_id}/` in place: `kept_nodeids.txt`, `taxonomy.jsonl` and
 `spec_test_map.md` stay there as the audit trail and are not copied into the

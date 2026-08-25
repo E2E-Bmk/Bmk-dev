@@ -144,7 +144,7 @@ Each rule detects a specific security-relevant pattern in Python source and repo
 
 ### Blacklisted calls
 
-Blacklist call matches must use HIGH confidence and the severity below.
+Blacklist call matches must use HIGH confidence and the severity below. Because the blacklist rules share a single check, every match must report `blacklist` as its `test_name` while retaining its own `test_id` such as `B301`.
 
 | ID | Required qualified-call family | Severity | CWE |
 |---|---|---|---:|
@@ -167,7 +167,7 @@ B324 must report HIGH/HIGH CWE-327 for `hashlib` MD4, MD5, SHA, or SHA1 construc
 
 ### Blacklisted imports
 
-Blacklist import matches must use HIGH confidence and must match direct imports, from-imports, and equivalent built-in import calls.
+Blacklist import matches must use HIGH confidence and must match direct imports, from-imports, and equivalent built-in import calls. They share the same check as blacklist calls, so every match must report `blacklist` as its `test_name` while retaining its own `test_id` such as `B403`.
 
 | ID | Required imported family | Severity | CWE |
 |---|---|---|---:|

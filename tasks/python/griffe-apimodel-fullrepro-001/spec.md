@@ -97,7 +97,7 @@ When source is unavailable and `allow_inspection` is false, loading must raise `
 
 `GriffeLoader` accepts the same extension, search-path, parser, collection, inspection, and source-storage configuration. Reusing one loader must reuse its `modules_collection`; objects loaded by separate calls through that loader must be addressable through the same collection, which permits aliases to resolve across loaded packages.
 
-`visit(module_name, filepath, code, ...)` must statically analyze the supplied code and return a `Module` whose name, members, line data, docstrings, imports, exports, and annotations reflect that code. `inspect(module_name, ...)` must import and inspect the runtime module and return a `Module` with `analysis == "dynamic"`.
+`visit(module_name, filepath, code, *, extensions=None, docstring_parser=None, ...)` must statically analyze the supplied code and return a `Module` whose name, members, line data, docstrings, imports, exports, and annotations reflect that code; the module name, file path, and code are positional, and the analysis options are keyword arguments with the same meaning they have for `load`. `inspect(module_name, ...)` must import and inspect the runtime module and return a `Module` with `analysis == "dynamic"`.
 
 ## Graph Models And Navigation
 
@@ -119,7 +119,7 @@ The graph model represents Python code as a navigable tree of typed objects with
 
 ## Alias Resolution
 
-An `Alias` retains its own `name`, parent, import line information, and `target_path`. Before resolution, `resolved` must be false. When the target is available in the shared modules collection, accessing target-backed public metadata or calling `resolve_target()` must resolve the alias and set `resolved` to true.
+An `Alias` retains its own `name`, parent, import line information, and `target_path`; its constructor accepts the alias name and the target path as positional arguments, as in `Alias(name, target_path)`. Before resolution, `resolved` must be false. A module inserted into a `ModulesCollection` resolves its aliases through that collection, which is therefore the shared lookup space for every module it holds. When the target is available in the shared modules collection, accessing target-backed public metadata or calling `resolve_target()` must resolve the alias and set `resolved` to true.
 
 The alias `path` must remain the dotted location where the alias appears. Its `canonical_path` must be the final target's defining path after successful resolution. The `target` property must return the next target object, while `final_target` must follow an alias chain to the final non-alias object.
 
@@ -151,7 +151,7 @@ Every retained graph model must provide `as_dict`. `Object` and `Alias` must pro
 
 `from_json` and `json_decoder` must reconstruct retained model objects, parameters, type parameters, aliases, annotations, docstrings, and nested members from valid Griffe JSON. A reconstructed graph must support normal item navigation, kind checks, parameter lookup, alias resolution when its targets are present, docstring access, and breakage detection.
 
-Serializing multiple packages through `dump` must produce a JSON object whose keys are package names and whose values are serialized top-level modules. Writing to one output stream or file must produce that combined object. When the output string contains a `{package}` placeholder, one file per package must be written with the placeholder replaced by the package name.
+Serializing multiple packages through `dump(packages, *, output=..., search_paths=..., extensions=..., full=...)` must produce a JSON object whose keys are package names and whose values are serialized top-level modules; the package names are supplied positionally and the output target, search paths, extensions, and serialization depth are keyword arguments. Writing to one output stream or file must produce that combined object. When the output string contains a `{package}` placeholder, one file per package must be written with the placeholder replaced by the package name, and each of those files must contain that package's serialized module alone rather than the wrapping name-to-module map.
 
 ## API Change Detection
 
@@ -170,7 +170,7 @@ The comparison must report these library-specific incompatibilities when they af
 - changing the value of a public attribute;
 - removing a base from a public class.
 
-Removing or changing a non-public object must not produce an API breakage. Return-type and attribute-type compatibility checks are not required even though their breakage classes remain importable.
+Removing or changing a non-public object must not produce an API breakage. The comparison resolves member names through `all_members`, so a member that moves to a resolvable parent class is still reachable in the new version and must not be reported as a removal. Return-type and attribute-type compatibility checks are not required even though their breakage classes remain importable.
 
 The `Breakage.kind` value and concrete breakage class must agree. `ExplanationStyle.ONE_LINE`, `VERBOSE`, `MARKDOWN`, `GITHUB`, and `AZURE_DEVOPS` must select the documented output family. Exact wording, ANSI coloring, file formatting, and whitespace are not part of this contract; the explanation must identify the affected public path and the kind of incompatibility.
 
@@ -182,7 +182,7 @@ An extension is an `Extension` subclass whose documented hook methods receive mo
 
 Graph mutations made by load hooks must be visible when `load` returns. If an extension inserts, removes, relabels, or updates an object through public graph operations, navigation and later serialization must reflect that mutation.
 
-`DataclassesExtension` must identify supported dataclasses during loading and expose their generated constructor parameters through the class model. `UnpackTypedDictExtension` must expand an unpacked typed-dictionary keyword parameter into the represented keyword parameters when sufficient static information is present. Unsupported or unresolved inputs must leave the graph usable rather than fabricating members.
+`DataclassesExtension` must identify supported dataclasses during loading and expose their generated constructor parameters through the class model. It does so by inserting a synthesized `__init__` function as a member of the class, reachable through `members` and item access like any declared member. Its parameters follow the stdlib `dataclasses` rules: a field declared with `field(init=False)` and a field annotated as a `ClassVar` are excluded, while `field(kw_only=True)`, `@dataclass(kw_only=True)`, and the `KW_ONLY` sentinel — which applies to every field declared after it — make the corresponding parameters keyword-only. `UnpackTypedDictExtension` must expand an unpacked typed-dictionary keyword parameter into the represented keyword parameters when sufficient static information is present. Unsupported or unresolved inputs must leave the graph usable rather than fabricating members.
 
 ## State Model
 

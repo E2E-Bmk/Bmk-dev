@@ -122,6 +122,7 @@ def test_python_action_receives_declared_dependencies_and_targets(tmp_path):
 # Python action return value semantics
 # ---------------------------------------------------------------------------
 
+@pytest.mark.mutated("spec.md:207-210")
 def test_python_action_returning_false_reports_task_failure(tmp_path):
     write_dodo(
         tmp_path,
@@ -133,9 +134,10 @@ def test_python_action_returning_false_reports_task_failure(tmp_path):
 
     proc = run_doit(tmp_path, "fail", check=False)
 
-    assert proc.returncode == 1
+    assert proc.returncode == 2
 
 
+@pytest.mark.mutated("spec.md:207-210")
 def test_python_action_exception_reports_task_error(tmp_path):
     write_dodo(
         tmp_path,
@@ -150,7 +152,7 @@ def test_python_action_exception_reports_task_error(tmp_path):
 
     proc = run_doit(tmp_path, "error", check=False)
 
-    assert proc.returncode == 2
+    assert proc.returncode == 1
 
 
 def test_python_action_returning_dict_succeeds(tmp_path):
@@ -252,6 +254,7 @@ def test_list_command_action_without_shell_accepts_pathlike_arguments(tmp_path):
     assert (tmp_path / "listed.txt").read_text(encoding="utf-8") == "listed"
 
 
+@pytest.mark.mutated("spec.md:207-210")
 def test_command_action_nonzero_exit_reports_failure(tmp_path):
     write_dodo(
         tmp_path,
@@ -265,9 +268,10 @@ def test_command_action_nonzero_exit_reports_failure(tmp_path):
 
     proc = run_doit(tmp_path, "badcmd", check=False)
 
-    assert proc.returncode == 1
+    assert proc.returncode == 2
 
 
+@pytest.mark.mutated("spec.md:207-210")
 def test_command_exit_above_125_reports_error_not_failure(tmp_path):
     write_dodo(
         tmp_path,
@@ -281,7 +285,7 @@ def test_command_exit_above_125_reports_error_not_failure(tmp_path):
 
     proc = run_doit(tmp_path, "highexit", check=False)
 
-    assert proc.returncode == 2
+    assert proc.returncode == 1
 
 
 # ---------------------------------------------------------------------------

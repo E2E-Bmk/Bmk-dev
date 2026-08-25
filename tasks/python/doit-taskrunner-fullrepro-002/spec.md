@@ -205,8 +205,8 @@ doit [run] [<options>] [<task|target> <task_options>]* [<variables>]
 `run` is the default command, so `doit` and `doit run` execute the same operation. Command result codes are:
 
 - `0`: all selected work completed successfully.
-- `1`: at least one task failed.
-- `2`: an error occurred while executing a task.
+- `1`: an error occurred while executing a task.
+- `2`: at least one task failed.
 - `3`: an error happened before task execution started; reporters are not used for this case.
 
 Global task loading options include `-f/--file` for a dodo file, `-d/--dir` for execution directory, and `-k/--seek-file` to search parent folders for the dodo file. `DOIT_FILE` and `DOIT_SEEK_FILE` can provide the matching file and seek-file options.
@@ -365,7 +365,7 @@ from doit.exceptions import TaskFailed, TaskError
 
 ### CLI Entry Points
 
-The installed `doit` console command and `python -m doit` are both supported. A successful command returns exit code `0`; task failures return `1`, task execution errors return `2`, and ordinary command/configuration errors reported through `DoitMain.run` return `3`.
+The installed `doit` console command and `python -m doit` are both supported. A successful command returns exit code `0`; task execution errors return `1`, task failures return `2`, and ordinary command/configuration errors reported through `DoitMain.run` return `3`.
 
 ## Appendix A: Environment
 

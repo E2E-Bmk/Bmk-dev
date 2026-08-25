@@ -75,6 +75,7 @@ def test_module_task_loader_list_and_run_share_task_graph(tmp_path, capsys):
     """Seam: state consistency — projections agree across API boundaries."""
     from doit.cmd_base import ModuleTaskLoader
     from doit.doit_cmd import DoitMain
+    from doit.globals import Globals
 
     def write_marker(targets):
         Path(targets[0]).write_text("shared", encoding="utf-8")
@@ -92,6 +93,9 @@ def test_module_task_loader_list_and_run_share_task_graph(tmp_path, capsys):
         os.chdir(tmp_path)
         list_result = DoitMain(ModuleTaskLoader(namespace)).run(["list"])
         listed = capsys.readouterr().out.split()
+        # `list` leaves the dependency DB open; release the exclusive dbm lock
+        # before the second in-process run reopens the same .doit.db.
+        Globals.dep_manager.close()
         run_result = DoitMain(ModuleTaskLoader(namespace)).run(["run", "build"])
     finally:
         os.chdir(cwd)
@@ -633,6 +637,7 @@ def test_always_execute_forces_rerun_even_when_up_to_date(tmp_path):
 
 
 @depends_on("test_atomic::test_python_action_returning_false_reports_task_failure")
+@pytest.mark.mutated("spec.md:207-210")
 def test_continue_runs_independent_task_after_failure(tmp_path):
     """Seam: error propagation — inner failure surfaces correctly to the caller."""
     write_dodo(
@@ -650,7 +655,7 @@ def test_continue_runs_independent_task_after_failure(tmp_path):
 
     proc = run_doit(tmp_path, "run", "--continue", "fail", "other", check=False)
 
-    assert proc.returncode == 1
+    assert proc.returncode == 2
     assert (tmp_path / "other.txt").read_text(encoding="utf-8") == "ran"
 
 

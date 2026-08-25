@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,7 +20,9 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] draft spec.md (6-layer) from docs.rs 0.8.3 within scope_plan: containers (Graph/StableGraph/GraphMap) with index/removal contract, Direction, traversal visitors (Bfs/Dfs/DfsPostOrder/Topo), bounded algo set (connectivity/cycles/toposort/SCC/condensation/shortest paths/MST), transforms (map/filter_map/retain/reverse/from_edges/from_elements/extend_with_edges), visit adapters used by the algo set; scope out matrix/csr/adj/acyclic/graph6/dot/iso/matching/flows/serde/rayon
+- [ ] inventory upstream test functions (tests/*.rs external + in-crate mods) within scope
+- [ ] per-file import/scope audit: which files import only in-scope public API
+- [ ] write filter/rewrite_audit.md with per-file disposition before any oracle work
 
 ---
 
@@ -29,6 +31,9 @@ todo:
 | # | date | from | to | note |
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (27183 src LOC with scope_plan; six projections of one adjacency store; petgraph-specific index contracts; builds on 1.83 with indexmap =2.7.1 pin) |
+| 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec drafting from docs.rs 0.8.3 within scope_plan |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec.md v1: 6-layer, 5 behavior sections (construction/mutation, indices+adjacency, stable+keyed, visitors+adapters, analysis, pathfinding+MST), state model, error table, 8 CVIs, import surface + API catalog; all contracts verified by probe against pinned 0.8.3 |
+| 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
 
 ---
 

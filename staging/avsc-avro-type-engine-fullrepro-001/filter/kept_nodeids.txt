@@ -1,0 +1,99 @@
+atomic::type construction::the eight primitive names compile to types with matching typeName
+atomic::type construction::isType recognizes types and filters by typeName prefix
+atomic::type construction::record types expose typeName, name, and typed fields
+atomic::type construction::field lookup returns declared metadata and defaults
+atomic::type construction::declared defaults let validation accept omitted fields
+atomic::type construction::recordConstructor builds declaration-order instances
+atomic::type construction::field defaults must validate against the field type
+atomic::type construction::a record schema without a name compiles with name undefined
+atomic::type construction::omitRecordMethods strips generated prototype methods
+atomic::type construction::enums expose symbols and accept exactly those strings
+atomic::type construction::enum symbols must be valid identifiers
+atomic::type construction::fixeds expose size and accept only exact-length buffers
+atomic::type construction::array and map types validate homogeneous containers
+atomic::type construction::duplicate branches and directly nested unions raise
+atomic::type construction::unwrapped unions hold bare branch values
+atomic::type construction::wrapped unions hold single-key branch objects with unwrap
+atomic::type construction::the default union mode wraps only ambiguous numeric unions
+atomic::type construction::names qualify through namespaces, dots, and the namespace option
+atomic::type construction::nested named types inherit the enclosing namespace unless dotted
+atomic::type construction::a shared registry reuses compiled named types by reference
+atomic::type construction::referencing an undefined type name raises
+atomic::type construction::recursive references compile and validate
+atomic::type construction::logical types wrap the underlying codec
+atomic::type construction::unregistered logicalType attributes are ignored
+atomic::validation and value algebra::isValid answers without throwing on foreign shapes
+atomic::validation and value algebra::int accepts exactly signed 32-bit integers
+atomic::validation and value algebra::long, float, and double numeric domains
+atomic::validation and value algebra::bytes, string, and null value domains
+atomic::validation and value algebra::records validate declared fields and ignore extras by default
+atomic::validation and value algebra::noUndeclaredFields rejects undeclared properties
+atomic::validation and value algebra::errorHook reports each mismatch with its path
+atomic::validation and value algebra::clone deep-copies valid values and rejects invalid ones
+atomic::validation and value algebra::coerceBuffers converts JSON buffer shapes during clone
+atomic::validation and value algebra::clone drops undeclared properties in every mode
+atomic::validation and value algebra::compare follows Avro order with field order attributes
+atomic::validation and value algebra::compareBuffers agrees with compare
+atomic::validation and value algebra::random produces values the type validates
+atomic::validation and value algebra::wrap boxes values in their branch shape
+atomic::binary encoding::toBuffer, toString, and clone raise on invalid values
+atomic::binary encoding::fromBuffer raises on truncated and trailing bytes
+atomic::binary encoding::binary round trips return equal constructor instances
+atomic::binary encoding::ints and longs use zigzag varints
+atomic::binary encoding::strings and bytes are length-prefixed and UTF-8
+atomic::binary encoding::float, double, boolean, and null encodings
+atomic::binary encoding::enums encode indices and fixeds copy raw bytes
+atomic::binary encoding::arrays and maps encode counted blocks with terminators
+atomic::binary encoding::unions encode a branch tag before the branch value
+atomic::binary encoding::record fields encode in declaration order without markers
+atomic::binary encoding::float narrows doubles to single precision
+atomic::JSON codec and schema projection::toString and fromString round-trip record values
+atomic::JSON codec and schema projection::union values serialize as branch-keyed JSON in every mode
+atomic::JSON codec and schema projection::schema output is canonical unless attributes are exported
+atomic::JSON codec and schema projection::noDeref and toJSON projections
+atomic::JSON codec and schema projection::toString without a value prints the schema with names dereferenced once
+atomic::JSON codec and schema projection::fingerprints digest the canonical schema
+atomic::JSON codec and schema projection::equals compares canonical schemas
+atomic::schema evolution::primitive promotions resolve and demotions raise
+atomic::schema evolution::string and bytes promote to each other
+atomic::schema evolution::containers and fixeds resolve elementwise
+atomic::schema evolution::enum evolution honors reader defaults
+atomic::schema evolution::record evolution fills defaults and follows aliases
+atomic::schema evolution::unresolvable schemas raise at resolver creation
+atomic::schema evolution::reader unions absorb writer non-unions
+atomic::schema evolution::reader non-unions require every writer branch to resolve
+atomic::schema evolution::resolver decoding reorders fields and skips writer extras
+atomic::schema evolution::resolvers bind to their creating instance
+atomic::type inference::forValue infers primitive types
+atomic::type inference::forValue infers containers and anonymous records
+atomic::type inference::forTypes widens numbers and unions incompatibles
+atomic::IDL parsing::readSchema produces forSchema-ready shapes
+atomic::IDL parsing::readProtocol parses protocols with messages
+atomic::IDL parsing::malformed IDL raises
+integration::cross-view invariants::codec agreement holds for accepted and rejected values
+integration::cross-view invariants::complex schemas round-trip through schema output
+integration::cross-view invariants::an evolution chain carries data across three versions
+integration::cross-view invariants::independently compiled equal types exchange binary data
+integration::cross-view invariants::sorting by compare matches sorting by encoded buffers
+integration::cross-view invariants::inference closes over its inputs
+integration::cross-view invariants::IDL-compiled types behave like hand-written schemas
+integration::cross-view invariants::shared registries expose one instance across schemas
+integration::cross-view invariants::wrapped and unwrapped unions share the wire format
+integration::cross-view invariants::logical types project through validation, codecs, and evolution
+integration::cross-view invariants::composite records encode their parts in sequence
+integration::cross-view invariants::recursive types round-trip through binary and JSON
+integration::cross-view invariants::resolver output stays within the reader's value domain
+integration::cross-view invariants::JSON-transported buffers re-enter the binary codec
+integration::cross-view invariants::validation hooks and strict mode compose across nesting
+integration::cross-view invariants::canonical projection ignores decoration attributes
+integration::cross-view invariants::inferred writers feed declared readers
+integration::cross-view invariants::protocol types compile into working codecs
+integration::cross-view invariants::both codecs agree across a composite document
+integration::cross-view invariants::random values traverse the full pipeline
+integration::cross-view invariants::fingerprints distinguish and identify schema versions
+integration::end-to-end schema sessions::publish and evolve a message schema across a registry
+integration::end-to-end schema sessions::an IDL protocol drives a binary message exchange
+integration::end-to-end schema sessions::infer, refine, and evolve a log schema from samples
+integration::end-to-end schema sessions::timestamps flow through a logical type end to end
+integration::end-to-end schema sessions::a document store reads every version it ever wrote
+integration::end-to-end schema sessions::a wrapped-union envelope routes typed payloads

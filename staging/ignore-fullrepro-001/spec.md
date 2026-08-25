@@ -1,7 +1,10 @@
 <!-- INTERNAL
 task_id: ignore-fullrepro-001
 spec_version: v1
-delta: initial version
+delta: initial version; two pre-oracle corrections verified against the
+pinned reference: add_def parses by segment count (a colon inside a glob
+is an error), and the blanket unmatched-file Ignore requires at least one
+positive selection (negations alone leave unmatched files at None)
 source_boundary: docs.rs/ignore 0.4.23 (crate root, gitignore, overrides, types, walk module and item docs), git-scm.com gitignore format description, ripgrep GUIDE section on automatic filtering; reference behavior observed by running the pinned checkout (probe binary, two rounds)
 -->
 
@@ -218,27 +221,34 @@ accepts a type name and one glob and returns a unit result; the name must
 consist only of Unicode letters and numbers and must not be the reserved
 word `all`, otherwise `add` returns an error. Repeated `add` calls with the
 same name accumulate globs under one definition. `add_def` accepts a
-string-form definition in one of two formats: `{name}:{glob}` (everything
-after the first `:` is a single glob, commas included), or
-`{name}:include:{comma-separated names}` which defines a composite whose
-globs are those of the named existing definitions. `definitions` (on both
-builder and built matcher) returns the sorted list of `FileTypeDef` values;
-each exposes `name` and `globs`.
+string-form definition, split on `:` into segments, in one of two shapes:
+exactly two segments `{name}:{glob}` (the glob may contain commas, but a
+glob containing a further `:` cannot be expressed this way), or exactly
+three segments `{name}:include:{comma-separated names}` which defines a
+composite whose globs are those of the named existing definitions. Any
+other segment count, a middle segment other than `include`, an empty name
+or glob, or an include list naming an undefined type returns `Err(Error)`.
+`definitions` (on both builder and built matcher) returns the sorted list
+of `FileTypeDef` values; each exposes `name` and `globs`.
 
 **Selection.** `select` marks a named type (or `all`, meaning every defined
 type) as selected; `negate` marks a name (or `all`) as negated; `clear`
-accepts a name and removes its selections. `build` returns a `Types`
-matcher, or an error when a selected or negated name has no definition.
+accepts a name and removes that type's definition (marks already made are
+unaffected, so a mark naming a cleared type fails the build). `build`
+returns a `Types` matcher, or an error when a selected or negated name has
+no definition at build time.
 `Types::empty` returns a matcher with no definitions and no selections;
 `len` counts selections and `is_empty` reports zero selections.
 
 **Matching.** `matched` accepts a path and `is_dir` flag. With no
 selections at all, every query returns `None`. Directories always return
 `None`. A file matching a negated type's glob returns `Ignore`; a file
-matching a selected type's glob returns `Whitelist`; a file matching
-neither returns `Ignore` when at least one selection exists. The payload
-`Glob` of a decisive match exposes `file_type_def`, the `FileTypeDef` that
-owns the matched glob (absent for the blanket unmatched-file verdict).
+matching a selected type's glob returns `Whitelist`. A file matching
+neither returns `Ignore` when at least one type is positively selected;
+when only negations are present, an unmatched file returns `None`. The
+payload `Glob` of a decisive match exposes `file_type_def`, the
+`FileTypeDef` that owns the matched glob (absent for the blanket
+unmatched-file verdict).
 
 ## Directory Walking
 
@@ -283,11 +293,18 @@ Within each per-directory source, files in deeper directories outrank
 files in shallower ones, and within one file the last matching pattern
 wins. A whitelist rule in a higher-ranking source (for example `!b.log` in
 `.ignore`) re-includes a path that a lower-ranking source (`*.log` in
-`.gitignore`) ignores. File-type filters apply to files only, after the
-ignore decision. A whitelist rule cannot rescue a file inside an ignored
-directory: the walker never descends into a directory whose verdict is
-`Ignore`, even though a pure matcher query for the file alone reports
-`Whitelist`.
+`.gitignore`) ignores.
+
+An installed override with at least one glob is consulted first, and a
+decisive override verdict — whitelist or ignore — is final: no ignore file
+and no type filter is consulted for that path. When the override has no
+opinion (or none is installed), the ignore-file stack decides; an ignore
+verdict is final, a whitelist verdict is remembered. The type filter,
+applying to files only, is consulted last: its ignore verdict drops the
+file even when an ignore-file whitelist re-included it. A whitelist rule
+cannot rescue a file inside an ignored directory: the walker never
+descends into a directory whose verdict is `Ignore`, even though a pure
+matcher query for the file alone reports `Whitelist`.
 
 **Toggles.** Each toggle accepts a boolean and returns the builder for
 chaining. `hidden` (default enabled) skips hidden entries; disabling it
@@ -373,7 +390,7 @@ non-`None` verdict wins.
 | `add_line`/`add` (overrides) with an invalid glob | returns `Err(Error)` |
 | `GitignoreBuilder::add` / `add_ignore` with an unreadable file | returns `Some(Error)` |
 | `TypesBuilder::add`/`add_def` with a non-alphanumeric name or the name `all` | returns `Err(Error)` |
-| `TypesBuilder::build` with a selected or negated name that was never defined | returns `Err(Error)` |
+| `TypesBuilder::build` with a selected or negated name that has no definition at build time (never added, or removed with `clear`) | returns `Err(Error)` |
 | Walking a nonexistent root | yields exactly one `Err` item; `is_io()` is true |
 | Unreadable directory during a walk | yields an `Err` item for it; the walk continues |
 

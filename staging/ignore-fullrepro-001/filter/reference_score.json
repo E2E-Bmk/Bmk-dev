@@ -1,0 +1,17 @@
+{
+  "task_id": "ignore-fullrepro-001",
+  "reference_repo": "BurntSushi/ripgrep (crates/ignore)",
+  "reference_commit": "ac02f54c892cc22cf32344600360a911537b2a27",
+  "method": "cargo nextest run on the oracle workspace, twice: (1) with [patch.crates-io] ignore = { path = <reference clone at pinned commit, crates/ignore> } appended, mirroring harness/runners/rust.py setup; (2) unpatched with the shipped Cargo.lock resolving ignore 0.4.23 from the registry. 106/106 both runs. ignore pinned =0.4.23 and globset pinned =0.4.15 in the lock (0.4.33/0.4.20 require Rust 1.88, above the cargo 1.83 toolchain); remaining transitive deps resolve cleanly.",
+  "toolchain": "cargo 1.83 + cargo-nextest (see Appendix A)",
+  "total": 106,
+  "passed": 106,
+  "failed": 0,
+  "skipped": 0,
+  "pass_rate": 1.0,
+  "stats": {
+    "atomic": 75,
+    "integration": 31
+  },
+  "date": "2026-08-25"
+}

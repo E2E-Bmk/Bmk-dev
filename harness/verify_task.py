@@ -24,10 +24,12 @@ try:
     from harness.oracle_import_lint import allowed_from_spec, imports_from_ast
     from harness.target_imports import TARGET_IMPORTS
     from harness.depends_on import _parse_depends_on
+    from harness.runners import get_runner
 except ModuleNotFoundError:  # Direct execution from the repository root.
     from oracle_import_lint import allowed_from_spec, imports_from_ast
     from target_imports import TARGET_IMPORTS
     from depends_on import _parse_depends_on
+    from runners import get_runner
 
 try:
     from analysis.annotate_assertions import annotate_file as _annotate_assertions
@@ -100,13 +102,7 @@ def check_task(task_id: str) -> list[str]:
     oracle_dir = task_dir / "oracle"
     errors: list[str] = []
     warnings: list[str] = []
-    required = [
-        task_dir / "spec.md",
-        task_dir / "task.json",
-        oracle_dir / "test_atomic.py",
-        oracle_dir / "test_integration.py",
-        oracle_dir / "requirements.txt",
-    ]
+    required = [task_dir / "spec.md", task_dir / "task.json", oracle_dir / "requirements.txt"]
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
     if missing:
         return ["missing files: " + ", ".join(missing)]
@@ -126,12 +122,40 @@ def check_task(task_id: str) -> list[str]:
         data = json.loads((task_dir / "task.json").read_text(encoding="utf-8-sig"))
     except json.JSONDecodeError as exc:
         return errors + [f"invalid task.json: {exc}"]
+    language = str(data.get("language", "python")).lower()
+    if language == "java":
+        required = [
+            oracle_dir / "pom.xml",
+            oracle_dir / "src" / "test" / "java" / "atomic",
+            oracle_dir / "src" / "test" / "java" / "integration",
+        ]
+    else:
+        required = [oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"]
+    missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
+    if missing:
+        return errors + ["missing files: " + ", ".join(missing)]
     if data.get("instance_id") != task_id:
         errors.append("task.json instance_id does not match directory")
     strict_assertion_gate = isinstance(data.get("validation"), dict)
 
-    atomic = test_count(oracle_dir / "test_atomic.py")
-    integration = test_count(oracle_dir / "test_integration.py")
+    if language == "java":
+        runner = get_runner(language)
+        atomic_ids = runner.discover(oracle_dir, "atomic")
+        integration_ids = runner.discover(oracle_dir, "integration")
+        atomic = len(atomic_ids)
+        integration = len(integration_ids)
+        atomic_names = {test_id.rpartition("::")[2] for test_id in atomic_ids}
+        integration_names = {test_id.rpartition("::")[2] for test_id in integration_ids}
+        expected_keys = {*atomic_ids, *integration_ids}
+    else:
+        atomic = test_count(oracle_dir / "test_atomic.py")
+        integration = test_count(oracle_dir / "test_integration.py")
+        atomic_names = test_names(oracle_dir / "test_atomic.py")
+        integration_names = test_names(oracle_dir / "test_integration.py")
+        expected_keys = {
+            *(f"test_atomic::{name}" for name in atomic_names),
+            *(f"test_integration::{name}" for name in integration_names),
+        }
     if atomic < ATOMIC_TEST_MIN or integration < INTEGRATION_TEST_MIN:
         errors.append(f"layer floor failed: atomic={atomic}, integration={integration}")
     stats = data.get("stats", {})
@@ -149,20 +173,16 @@ def check_task(task_id: str) -> list[str]:
         errors.append(f"scoreable case floor failed: {oracle_count}")
 
     taxonomy = data.get("taxonomy", {})
-    atomic_names = test_names(oracle_dir / "test_atomic.py")
-    integration_names = test_names(oracle_dir / "test_integration.py")
-    expected_keys = {
-        *(f"test_atomic::{name}" for name in atomic_names),
-        *(f"test_integration::{name}" for name in integration_names),
-    }
     if set(taxonomy) != expected_keys:
         errors.append("taxonomy keys do not match the physical test functions")
-    if any(taxonomy.get(f"test_atomic::{name}") != "atomic" for name in atomic_names):
+    atomic_keys = atomic_ids if language == "java" else [f"test_atomic::{name}" for name in atomic_names]
+    integration_keys = integration_ids if language == "java" else [f"test_integration::{name}" for name in integration_names]
+    if any(taxonomy.get(key) != "atomic" for key in atomic_keys):
         errors.append("an atomic-file test has a non-atomic taxonomy layer")
     allowed_integration = {"integration", "system_e2e"}
     if any(
-        taxonomy.get(f"test_integration::{name}") not in allowed_integration
-        for name in integration_names
+        taxonomy.get(key) not in allowed_integration
+        for key in integration_keys
     ):
         errors.append("an integration-file test has an invalid taxonomy layer")
     base_layers = {
@@ -177,7 +197,11 @@ def check_task(task_id: str) -> list[str]:
     if any(base_layers[layer] > score_layers[layer] for layer in base_layers):
         errors.append("taxonomy base-function counts exceed scoreable layer counts")
 
-    dependency_map = _depends_on_map(oracle_dir / "test_integration.py")
+    dependency_map = (
+        get_runner(language).dependencies(oracle_dir)
+        if language == "java"
+        else _depends_on_map(oracle_dir / "test_integration.py")
+    )
     dependency_coverage = len(dependency_map) / max(integration, 1)
     if dependency_coverage < DEPENDS_ON_COVERAGE_MIN:
         errors.append(
@@ -196,23 +220,24 @@ def check_task(task_id: str) -> list[str]:
             + ", ".join(sorted(unknown_dependencies))
         )
 
-    section, _ = allowed_from_spec(task_dir / "spec.md")
-    targets = set(TARGET_IMPORTS.get(task_id, []))
-    for module, lineno in imports_from_ast(oracle_dir / "test_atomic.py"):
-        if module.split(".", 1)[0] not in targets:
-            continue
-        if not re.search(rf"(?<![\w.]){re.escape(module)}(?!\w)", section):
-            errors.append(f"atomic import not promised by the spec public surface: {module}:{lineno}")
+    if language != "java":
+        section, _ = allowed_from_spec(task_dir / "spec.md")
+        targets = set(TARGET_IMPORTS.get(task_id, []))
+        for module, lineno in imports_from_ast(oracle_dir / "test_atomic.py"):
+            if module.split(".", 1)[0] not in targets:
+                continue
+            if not re.search(rf"(?<![\w.]){re.escape(module)}(?!\w)", section):
+                errors.append(f"atomic import not promised by the spec public surface: {module}:{lineno}")
 
     # Assertion-composition gate: the atomic layer must mostly verify produced
     # values, not merely correct rejection, or the Integration Gap numerator
     # inherits a systematic bias (failure_path tests are dummy-passable).
-    annotations = _annotate_assertions(oracle_dir / "test_atomic.py")
+    annotations = {} if language == "java" else _annotate_assertions(oracle_dir / "test_atomic.py")
     external_assert_helpers = {
         "assert_nonzero": "failure_path",
         "assert_raises": "failure_path",
     }
-    source = (oracle_dir / "test_atomic.py").read_text(
+    source = "" if language == "java" else (oracle_dir / "test_atomic.py").read_text(
         encoding="utf-8-sig", errors="replace"
     )
     for helper_name, kind in external_assert_helpers.items():
@@ -238,12 +263,13 @@ def check_task(task_id: str) -> list[str]:
             target.append("atomic tests without any check: " + ", ".join(sorted(no_check)))
 
     # Gate 3f: duplicate top-level imports that shadow each other (warning-only)
-    for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
-        _check_duplicate_imports(test_file, warnings)
+    if language != "java":
+        for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
+            _check_duplicate_imports(test_file, warnings)
 
-    # Gate 3g: fixture files referenced via Path(__file__).parent must exist
-    for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
-        _check_fixture_references(test_file, oracle_dir, errors)
+        # Gate 3g: fixture files referenced via Path(__file__).parent must exist
+        for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
+            _check_fixture_references(test_file, oracle_dir, errors)
 
     return errors, warnings
 

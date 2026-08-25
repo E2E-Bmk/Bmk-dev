@@ -1,0 +1,450 @@
+{
+  "instance_id": "cargo-generate-fullrepro-001",
+  "task_id": "cargo-generate-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "cargo-generate/cargo-generate",
+  "repo_commit": "86688a8fa1462fe1bb9049d865d46dbd670d8fd0",
+  "language": "rust",
+  "target_crates": [
+    "cargo-generate"
+  ],
+  "spec_version": "v1",
+  "labels": [
+    "rust",
+    "cli-tool",
+    "template-generator",
+    "mixed-upstream-oracle"
+  ],
+  "source_meta": {
+    "loc": 8901,
+    "version": "0.23.14"
+  },
+  "weaknesses": [
+    {
+      "dimension": "atomic-behavior",
+      "description": "Placeholder, include/exclude, name-substitution, and rendering details diverge from the contract (array defaults, empty choices, prompt order, include precedence, unknown-variable handling, snake-case project name, genignore removal, crate_type bin, environment values).",
+      "affected_tests": 17,
+      "layer": "system_e2e"
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "Hook phases and conditionals, git branch/tag/favorite-subfolder workflows, and Cargo workspace member insertion are partially implemented and fail end-to-end.",
+      "affected_tests": 9,
+      "layer": "system_e2e"
+    },
+    {
+      "dimension": "error-semantics",
+      "description": "CLI argument-conflict rejections missing: list-favorites conflicts, quiet requires continue-on-error, silent requires name.",
+      "affected_tests": 3,
+      "layer": "atomic"
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "VCS value parsing is case-sensitive and the default crate_type for a library GenerateArgs differs from the contract.",
+      "affected_tests": 3,
+      "layer": "atomic"
+    }
+  ],
+  "integration_gap": {
+    "atomic_rate": 0.806,
+    "integration_e2e_rate": 0.651,
+    "rate_gap": 0.155,
+    "true_gap_events": [
+      {
+        "failed_test": "integration::it_substitutes_authors_and_username",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_keeps_snake_case_projectname",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_removes_files_listed_in_genignore",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_respects_template_branch_name",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::template_path_reports_explicit_git_source",
+          "atomic::cli_parses_git_branch_flag",
+          "atomic::cli_parses_git_tag_flag"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_provides_crate_type_bin",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_binary_crate_type_flag"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_skips_substitution_for_unknown_variables_in_cargo_toml",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_can_conditionally_include_files2",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_supports_conditions_with_creepy_shit_inside",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::favorite_with_git_becomes_subfolder",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_list_favorites_mode",
+          "atomic::template_path_reports_explicit_favorite_source",
+          "atomic::template_path_reports_explicit_git_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_accepts_individual_template_values_from_environment",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_collects_multiple_define_values",
+          "atomic::cli_parses_template_values_file_alias"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_allows_a_git_tag_to_be_specified",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::template_path_reports_explicit_git_source",
+          "atomic::cli_parses_git_branch_flag",
+          "atomic::cli_parses_git_tag_flag"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_removes_hook_files_from_output_without_touching_cwd",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_destination_flag",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_runs_all_hook_types",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::can_change_variables_from_pre_hook",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::init_hook_can_change_project_name_but_keeps_cli_name_for_destination",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_destination_flag",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::init_hook_can_change_project_name_but_keeps_init_destination",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_destination_flag",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::rhai_filter_invokes_rhai_script",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_only_processes_include_files_in_config",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::generate_args_default_does_not_force_vcs"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_doesnt_process_excluded_files_in_config",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::generate_args_default_does_not_force_vcs"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_doesnt_process_excluded_files_in_templated_paths",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_destination_flag",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_warns_on_include_and_exclude_in_config",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::generate_args_default_does_not_force_vcs"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::vsc_none_can_be_specified_in_the_template",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_prompts_for_placeholders_in_the_config_file_defined_order",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_collects_multiple_define_values",
+          "atomic::cli_parses_template_values_file_alias",
+          "atomic::generate_args_default_does_not_force_vcs"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_accepts_empty_multi_choices",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_renders_arrays_as_list",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      },
+      {
+        "failed_test": "integration::it_should_add_a_new_project_to_the_workspace_members",
+        "layer": "system_e2e",
+        "depended_atomic_tests": [
+          "atomic::cli_parses_generate_with_path_and_name",
+          "atomic::template_path_reports_explicit_path_source"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "atomic-behavior"
+      }
+    ]
+  },
+  "oracle": {
+    "target_crates": [
+      "cargo-generate"
+    ],
+    "source": "mixed_upstream_and_generated",
+    "scorer_isolation": "Rust scorer appends [patch.crates-io] cargo-generate = { path = <solution-dir> } to the oracle workspace and validates cargo metadata provenance.",
+    "count": 117,
+    "count_unit": "base_test_functions",
+    "base_function_count": 117
+  },
+  "taxonomy": {
+    "atomic::generate_args_default_does_not_force_vcs": "atomic",
+    "atomic::cli_collects_multiple_define_values": "atomic",
+    "atomic::cli_parses_destination_flag": "atomic",
+    "atomic::cli_parses_binary_crate_type_flag": "atomic",
+    "atomic::cli_parses_generate_alias": "atomic",
+    "atomic::cli_parses_generate_with_path_and_name": "atomic",
+    "atomic::cli_parses_git_branch_flag": "atomic",
+    "atomic::cli_parses_git_revision_flag": "atomic",
+    "atomic::cli_parses_git_tag_flag": "atomic",
+    "atomic::cli_parses_library_crate_type_flag": "atomic",
+    "atomic::cli_parses_list_favorites_mode": "atomic",
+    "atomic::cli_parses_allow_commands_flag": "atomic",
+    "atomic::cli_parses_template_values_file_alias": "atomic",
+    "atomic::cli_rejects_list_favorites_with_generation_name": "atomic",
+    "atomic::cli_rejects_quiet_without_continue_on_error": "atomic",
+    "atomic::cli_rejects_silent_without_name": "atomic",
+    "atomic::cli_rejects_simultaneous_lib_and_bin": "atomic",
+    "atomic::cli_rejects_simultaneous_path_and_git": "atomic",
+    "atomic::cli_rejects_simultaneous_quiet_and_verbose": "atomic",
+    "atomic::generate_args_default_does_not_select_optional_modes": "atomic",
+    "atomic::generate_args_default_selects_library_crate_type": "atomic",
+    "atomic::template_path_reports_auto_path_source": "atomic",
+    "atomic::template_path_reports_explicit_favorite_source": "atomic",
+    "atomic::template_path_reports_explicit_git_source": "atomic",
+    "atomic::template_path_reports_explicit_path_source": "atomic",
+    "atomic::template_path_uses_auto_path_as_subfolder_with_explicit_git": "atomic",
+    "atomic::template_path_uses_positional_subfolder_for_auto_source": "atomic",
+    "atomic::cli_leaves_vcs_unset_without_vcs_flag": "atomic",
+    "atomic::cli_parses_vcs_git_case_insensitively": "atomic",
+    "atomic::cli_rejects_unknown_vcs_values": "atomic",
+    "atomic::cli_parses_vcs_none_case_insensitively": "atomic",
+    "integration::a_template_can_specify_to_be_generated_into_cwd": "system_e2e",
+    "integration::can_change_variables_from_pre_hook": "system_e2e",
+    "integration::cli_value_overrides_others": "system_e2e",
+    "integration::cli_values_are_checked_via_regex": "system_e2e",
+    "integration::date_works": "system_e2e",
+    "integration::favorite_can_specify_to_be_generated_into_cwd": "system_e2e",
+    "integration::favorite_subfolder_must_be_valid": "system_e2e",
+    "integration::favorite_with_git_becomes_subfolder": "system_e2e",
+    "integration::favorite_with_subfolder": "system_e2e",
+    "integration::favorites_can_use_default_values": "system_e2e",
+    "integration::favorites_default_value_can_be_overridden_by_environment": "system_e2e",
+    "integration::init_hook_can_change_project_name_but_keeps_cli_name_for_destination": "system_e2e",
+    "integration::init_hook_can_change_project_name_but_keeps_init_destination": "system_e2e",
+    "integration::init_hook_can_set_project_name": "system_e2e",
+    "integration::it_accepts_default_template_values": "system_e2e",
+    "integration::it_accepts_empty_define_variables": "system_e2e",
+    "integration::it_accepts_empty_multi_choices": "system_e2e",
+    "integration::it_accepts_individual_template_values_from_environment": "system_e2e",
+    "integration::it_accepts_individual_template_values_via_flag": "system_e2e",
+    "integration::it_accepts_template_values_file_from_environment": "system_e2e",
+    "integration::it_accepts_template_values_file_via_flag": "system_e2e",
+    "integration::it_accepts_values_via_long_option": "system_e2e",
+    "integration::it_accepts_values_via_short_option": "system_e2e",
+    "integration::it_allows_a_git_branch_to_be_specified": "system_e2e",
+    "integration::it_allows_a_git_revision_to_be_specified": "system_e2e",
+    "integration::it_allows_a_git_tag_to_be_specified": "system_e2e",
+    "integration::it_allows_generate_call_with_public_args_and_returns_the_generated_path": "system_e2e",
+    "integration::it_allows_relative_paths": "system_e2e",
+    "integration::it_allows_user_defined_projectname_when_passing_force_flag": "system_e2e",
+    "integration::it_applies_filters": "system_e2e",
+    "integration::it_can_ask_placeholders_in_multiple_levels": "system_e2e",
+    "integration::it_can_conditionally_include_files2": "system_e2e",
+    "integration::it_can_generate_at_given_path": "system_e2e",
+    "integration::it_can_generate_inside_existing_repository": "system_e2e",
+    "integration::it_can_generate_into_cwd": "system_e2e",
+    "integration::it_can_generate_into_existing_git_dir": "system_e2e",
+    "integration::it_can_overwrite_files": "system_e2e",
+    "integration::it_can_use_a_plain_folder": "system_e2e",
+    "integration::it_can_use_a_specified_path": "system_e2e",
+    "integration::it_can_use_favorites": "system_e2e",
+    "integration::it_does_not_overwrite_existing_files": "system_e2e",
+    "integration::it_doesnt_process_excluded_files_in_config": "system_e2e",
+    "integration::it_doesnt_process_excluded_files_in_templated_paths": "system_e2e",
+    "integration::it_errors_on_invalid_template": "system_e2e",
+    "integration::it_fails_for_arrays_without_defaults_in_silent_mode": "system_e2e",
+    "integration::it_fails_on_invalid_multi_choices": "system_e2e",
+    "integration::it_fails_to_prompt_for_system_commands_in_silent_mode": "system_e2e",
+    "integration::it_fails_when_a_system_command_returns_non_zero_exit_code": "system_e2e",
+    "integration::it_fails_when_it_cant_execute_system_command": "system_e2e",
+    "integration::it_ignore_tags_inside_raw_block": "system_e2e",
+    "integration::it_keeps_snake_case_projectname": "system_e2e",
+    "integration::it_loads_a_submodule": "system_e2e",
+    "integration::it_only_processes_include_files_in_config": "system_e2e",
+    "integration::it_processes_dot_github_directory_files": "system_e2e",
+    "integration::it_prompts_for_placeholders_in_the_config_file_defined_order": "system_e2e",
+    "integration::it_provides_crate_type_bin": "system_e2e",
+    "integration::it_provides_crate_type_lib": "system_e2e",
+    "integration::it_quiet_suprresses_warning": "system_e2e",
+    "integration::it_removes_files_listed_in_genignore": "system_e2e",
+    "integration::it_removes_git_history": "system_e2e",
+    "integration::it_removes_git_history_also_on_local_templates": "system_e2e",
+    "integration::it_removes_hook_files_from_output_without_touching_cwd": "system_e2e",
+    "integration::it_renders_arrays_as_list": "system_e2e",
+    "integration::it_respects_template_branch_name": "system_e2e",
+    "integration::it_runs_all_hook_types": "system_e2e",
+    "integration::it_runs_system_commands": "system_e2e",
+    "integration::it_should_add_a_new_project_to_the_workspace_members": "system_e2e",
+    "integration::it_should_init_an_empty_git_repo_even_when_starting_from_a_repo_when_forced": "system_e2e",
+    "integration::it_should_skip_workspace_when_no_workspace_flag_is_set": "system_e2e",
+    "integration::it_skips_substitution_for_random_garbage_in_cargo_toml": "system_e2e",
+    "integration::it_skips_substitution_for_unknown_variables_in_cargo_toml": "system_e2e",
+    "integration::it_substitutes_authors_and_username": "system_e2e",
+    "integration::it_substitutes_cratename_in_a_rust_file": "system_e2e",
+    "integration::it_substitutes_date": "system_e2e",
+    "integration::it_substitutes_filename": "system_e2e",
+    "integration::it_substitutes_os_arch": "system_e2e",
+    "integration::it_substitutes_projectname_in_cargo_toml": "system_e2e",
+    "integration::it_supports_conditions_with_creepy_shit_inside": "system_e2e",
+    "integration::it_uses_array_defaults_in_silent_mode": "system_e2e",
+    "integration::it_uses_the_default_subtemplate_in_silent_mode": "system_e2e",
+    "integration::it_uses_vsc_none_to_avoid_initializing_repository": "system_e2e",
+    "integration::it_warns_on_include_and_exclude_in_config": "system_e2e",
+    "integration::list_favorites_prints_matching_names_in_sorted_order": "system_e2e",
+    "integration::rhai_filter_invokes_rhai_script": "system_e2e",
+    "integration::short_commands_work": "system_e2e",
+    "integration::vsc_none_can_be_specified_in_the_template": "system_e2e"
+  },
+  "taxonomy_unit": "base_test_functions",
+  "stats": {
+    "atomic": 31,
+    "integration": 0,
+    "system_e2e": 86
+  }
+}

@@ -41,6 +41,35 @@ A failure on a test that violates either condition is a **verifier failure**, no
 
 All three must pass for any results to be considered valid.
 
+### Java branch (authoritative override)
+
+When `task.json.language` is `java`, use the Docker-only report produced by
+`harness/score_java.py` and replace Python-specific preflight and environment
+instructions in this skill as follows:
+
+- Before reading score values, copy these fields verbatim into the diagnosis
+  report under `Preflight output`: `provenance.coordinate`,
+  `provenance.resolved_path`, `provenance.candidate_sha256`,
+  `provenance.resolved_sha256`, and `provenance.status`.
+- The run is valid only when `provenance.status == "passed"`, both hashes are
+  non-empty and equal, the coordinate matches `task.json.maven_coordinates`,
+  and `valid == true`. This JAR/Maven evidence replaces the Python `__file__`
+  probe, including for candidates scoring at least 95%.
+- Forbidden installation means resolving the target coordinate from any source
+  other than the candidate artifact installed into the run-local Maven
+  repository. Oracle compilation must not replace that artifact; the scorer's
+  before/after SHA-256 and offline provenance checks are authoritative.
+- Solvability uses the same scorer with `--reference`, the exact pinned
+  `repo_commit`, a fresh on-disk `LINT_PASS`, and a 100% pass rate. Maven or
+  Docker dependency failures are environment failures, not model failures.
+- Java collection and taxonomy evidence comes from `JavaRunner`, and logical
+  dependency coverage comes from method Javadocs containing `Depends-On:`.
+  Python `Path(__file__)`, pytest-plugin, and `@pytest.mark.depends_on`
+  instructions do not apply.
+
+The remaining anti-cheat, fairness, coverage, diagnosis, and verdict rules are
+language-independent.
+
 ### 0. Role Boundary
 
 The judge reads artifacts and produces verdicts. The judge does not modify oracle files, add test cases, or strengthen kept_nodeids.txt. Any gap found during judging must be returned to test-filter via `filter_correction_request.md` (filter_iter + 1). Adding a test case to the oracle and then judging against it in the same pass is invalid.

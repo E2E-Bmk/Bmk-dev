@@ -1,0 +1,23 @@
+[workspace]
+members = ["atomic", "integration"]
+resolver = "2"
+
+# The oracle ships without [patch.crates-io]: the runner appends it, pointing
+# toml/toml_edit/toml_datetime/serde_spanned at the candidate workspace
+# (member-manifest patches are ignored by cargo, so the patch lives on this
+# root manifest).
+[workspace.dependencies]
+# `version = "*"` so the patched workspace versions (toml 1.1.4+spec-1.1.0)
+# satisfy the requirement; features mirror the eval build (spec line 396):
+# toml = std+serde+parse+display+preserve_order, toml_edit = parse+display+serde.
+# toml_datetime/serde_spanned are direct deps (spec Import Surface imports
+# serde_spanned::Spanned; Appendix A delivers all four crates): direct deps
+# force the patched candidate crates into the graph instead of registry copies.
+# serde features required by oracle usage (derive(Deserialize) on Spanned
+# fields; struct literals + derive(Serialize) on Datetime/Date).
+toml = { version = "*", features = ["preserve_order"] }
+toml_edit = { version = "*", features = ["serde"] }
+toml_datetime = { version = "*", features = ["serde"] }
+serde_spanned = { version = "*", features = ["serde"] }
+serde = { version = "1.0.136", features = ["derive"] }
+serde_json = "1.0.45"

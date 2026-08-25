@@ -1,6 +1,6 @@
 ---
 name: test-filter
-description: "Filter and classify a Python test suite for SWE-E2E benchmark scoring. Use when processing a raw test collection to produce a filtered subset with atomic/integration/system_e2e taxonomy and spec-test coverage map. Covers Step 3 (hard filtering + classification) and Step 3.5 (spec_test_map.md + coverage gate) of the benchmark pipeline."
+description: "Filter and classify a Python or Java test suite for SWE-E2E benchmark scoring. Use when processing a raw test collection to produce a filtered subset with atomic/integration/system_e2e taxonomy and spec-test coverage map. Covers Step 3 (hard filtering + classification) and Step 3.5 (spec_test_map.md + coverage gate) of the benchmark pipeline."
 ---
 
 # Test Filter
@@ -14,6 +14,60 @@ description: "Filter and classify a Python test suite for SWE-E2E benchmark scor
 **Exit each sub-state:** After completing a sub-state's todo list, set `state` to the next state per Catalogue, reset `todo` to that state's catalogue todo, append History row. Do not skip sub-states.
 
 **Exit (loop):** When looping back (e.g. `S3_REFERENCE_RUN → S3_ORACLE_MERGE`), set `state` to loop target, reset `todo`, increment `filter_iter`, append History row.
+
+---
+
+## Java branch (authoritative override)
+
+When `task.json.language` is `java`, the behavioral filtering rules and count
+gates in this skill still apply, but the following replaces every Python-only
+pytest, coverage.py, filename, and dependency instruction below.
+
+- Treat public Java packages, public types, and public members named by the
+  spec as the import surface. Rewritten upstream tests and generated tests are
+  `.java` sources; do not create `rewritten_upstream_tests.py` or
+  `generated_tests.py`.
+- Keep the construction oracle under
+  `wip/{task}/filter/src/test/java/{atomic,integration,support}` with a Maven
+  `pom.xml`. The graduated layout is:
+
+  ```text
+  oracle/
+  |-- pom.xml
+  |-- requirements.txt
+  `-- src/test/java/
+      |-- atomic/*.java
+      |-- integration/*.java
+      `-- support/*.java
+  ```
+
+  Java dependencies and plugins belong in `pom.xml`; `requirements.txt` is a
+  required packet marker. The target dependency uses `${candidate.version}`.
+- Discover the fixed denominator with `JavaRunner.discover()` before compiling
+  the candidate. Java taxonomy keys are `atomic::Class::method` and
+  `integration::Class::method`; parameterized invocations collapse to their
+  base method through `JavaRunner.function_of()`.
+- Collection safety means the oracle Maven project completes `test-compile`
+  against the pinned reference and `JavaRunner.discover()` returns the same
+  non-zero denominator recorded in `taxonomy.jsonl`.
+- The dummy gate is a real Docker scoring run of `harness/score_java.py`
+  against a minimal Maven candidate at the declared coordinate. Discard every
+  test it passes; collection/build failures must be diagnosed and must not be
+  counted as dummy passes.
+- Track B measures Java reference coverage with JaCoCo. Run the filtered tests
+  against the pinned reference, generate `target/site/jacoco/jacoco.xml`, and
+  write uncovered methods/branches with source context to
+  `filter/coverage_gaps.txt`. The Python `format_coverage.py` command does not
+  apply.
+- Generated Java tests cite clauses in the nearest method Javadoc, for example
+  `Verifies: ABC-API-001`. Integration methods declare logical dependencies in
+  the same Javadoc as `Depends-On: atomicMethodA, atomicMethodB`; this replaces
+  `@pytest.mark.depends_on` and must cover at least 50% of integration methods.
+- Run `oracle_import_lint.py` after every Java oracle change and write its full
+  output to `filter/lint_result.txt`. Then run `score_java.py --reference`; the
+  reference gate is exactly 100%, not merely 95%.
+
+All later Python examples remain authoritative only when `language=python`.
 
 ---
 

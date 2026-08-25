@@ -298,10 +298,11 @@ a mapper selected by `type:"name"` tags; `TypeMapper(reflectType, mapper)`
 attaches a mapper to every value of a Go type. `DecodeContext` exposes the
 `Value` being decoded and `Scan`, the token scanner; a mapper consumes its
 input by calling `PopValue(context)` for a token or `PopValueInto(context,
-&target)` to decode a token into a Go value. A negative number following a
-short numeric flag is not consumed as its value; the error suggests the
-attached form, e.g. `--num: expected int value but got "-5" (short flag);
-perhaps try --num="-5"?`.
+&target)` to decode a token into a Go value. A hyphen-prefixed token (such
+as a negative number) following any flag is scanned as a flag rather than
+consumed as the detached value; the resulting error suggests the attached
+form, e.g. `--num: expected int value but got "-5" (short flag); perhaps
+try --num="-5"?` — the attached form `--num=-5` decodes normally.
 
 **Enums.** A value with an `enum:"a,b,c"` tag accepts exactly the listed
 alternatives. A flag violation fails with `--enum must be one of "a","b",
@@ -428,9 +429,10 @@ from the same nodes that drive parsing.
 
 **Default layout.** `--help` prints to stdout and terminates with exit
 status 0. The first line is `Usage: ` followed by the full command path
-with positional placeholders — required positionals in angle brackets
-(`<arg>`), optional ones in square brackets (`[<arg>]`) — and a trailing
-`[flags]` marker when at least one non-help flag is visible. The
+with required flags rendered inline (`--req=STRING`), positional
+placeholders — required positionals in angle brackets (`<arg>`), optional
+ones in square brackets (`[<arg>]`) — and a trailing `[flags]` marker when
+at least one non-help, non-required flag is visible. The
 application description (from the `Description` option) follows as a
 paragraph. A `Flags:` section lists each visible flag with aligned
 columns: short form (`-h, `) when present, long form with a value
@@ -499,8 +501,9 @@ Every `Node` carries `Type` (one of the `NodeType` constants
 Node queries: `Summary()` renders the node with placeholders and a
 `[flags]` marker (`sub <arg> [flags]`); `Path()` renders the command path
 below the application (`sub`); `FullPath()` prepends the application name
-(`app sub`); `Depth()` counts command ancestors; `Leaf()` reports whether
-the node has no child commands. A `Flag` embeds a `*Value` and adds
+(`app sub`); `Depth()` counts command ancestors below the application
+root, so a first-level command reports 0; `Leaf()` reports whether the
+node has no child commands. A `Flag` embeds a `*Value` and adds
 `Short`, `PlaceHolder`, `Envs`, `Aliases`, `Group`, `Xor`, `And`,
 `Hidden`, and `Negated`. A `Value` carries `Name`, `Help`, `Default`,
 `HasDefault`, `Enum`, `Required`, `Set` (whether any source set it),
@@ -571,7 +574,7 @@ consistently in every projection.
 | Enum violation (positional) | parse error `<mode> must be one of "fast","slow" but got "wrong"` |
 | Malformed int / float / duration | parse error naming the flag, expected type, and offending text (shapes in Value Mapping) |
 | Bool flag given a detached value | parse error `unexpected argument true` |
-| Negative number after short flag | parse error suggesting the attached form (`perhaps try --num="-5"?`) |
+| Hyphen-prefixed detached value (e.g. negative number) | parse error suggesting the attached form (`perhaps try --num="-5"?`) |
 | Run with no method in hierarchy | `no Run() method found in hierarchy of cmd` |
 | Run with no selection | `no command selected` |
 | Missing binding for Run parameter | error naming the type, position, signature, and `use kong.Bind(...)` remedy |

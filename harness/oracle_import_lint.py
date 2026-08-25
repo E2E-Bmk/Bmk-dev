@@ -24,6 +24,7 @@ reconstruction, so reporting it produces noise that buries the real signal.
 from __future__ import annotations
 
 import ast
+import json
 import re
 import sys
 from pathlib import Path
@@ -87,13 +88,16 @@ def oracle_dir(task_id: str) -> Path:
     """
     candidates = (
         ROOT / "wip" / task_id / "filter",
+        ROOT / "staging" / task_id / "oracle",
         ROOT / "tasks" / task_id / "oracle",
         ROOT / "oracle" / task_id,
     )
     for candidate in candidates:
-        if (candidate / "test_atomic.py").is_file() or (
-            candidate / "src" / "test" / "java" / "atomic"
-        ).is_dir():
+        if (
+            (candidate / "test_atomic.py").is_file()
+            or (candidate / "src" / "test" / "java" / "atomic").is_dir()
+            or (candidate / "atomic" / "Cargo.toml").is_file()
+        ):
             return candidate
     for candidate in candidates:
         if candidate.is_dir():
@@ -376,6 +380,82 @@ def java_builder_member_declared(symbol: str, spec_text: str) -> bool:
     return bool(components) and all(declared(component) for component in components)
 
 
+RUST_PATH_KEYWORDS = {"self", "super", "crate"}
+
+
+def rust_target_roots(task_id: str) -> set[str]:
+    """Target crate roots for a Rust task, read from its task.json.
+
+    Rust tasks are not listed in ``TARGET_IMPORTS`` (that mapping mirrors the
+    Python scoring sandbox); the crate names under reconstruction live in
+    ``task.json.target_crates``. Both the crates.io spelling and the code-level
+    spelling (hyphens become underscores in ``use`` paths) are accepted roots.
+    """
+    for base in (ROOT / "staging" / task_id, ROOT / "tasks" / task_id):
+        manifest = base / "task.json"
+        if not manifest.is_file():
+            continue
+        try:
+            data = json.loads(manifest.read_text(encoding="utf-8-sig"))
+        except ValueError:
+            continue
+        if str(data.get("language", "")).lower() != "rust":
+            continue
+        crates = (
+            data.get("target_crates")
+            or data.get("oracle", {}).get("target_crates")
+            or []
+        )
+        roots: set[str] = set()
+        for crate in crates:
+            roots.add(str(crate))
+            roots.add(str(crate).replace("-", "_"))
+        return roots
+    return set()
+
+
+def rust_target_symbols(path: Path, target_roots: set[str]) -> list[tuple[str, int]]:
+    """Names a Rust test source reaches through a target crate root.
+
+    Two shapes are collected: ``use root::...`` declarations (including brace
+    groups; ``as`` alias names are ignored while the original names are kept)
+    and inline qualified paths ``root::seg::Name``. Every path segment is a
+    symbol the spec must declare. ``*`` globs, path keywords and
+    single-character names are skipped. Symbols reached through a method call
+    on an already-obtained value are not visible to this lint; the fairness
+    audit for those stays a review gate, as it does for Java receivers of
+    non-target type.
+    """
+    text = path.read_text(encoding="utf-8-sig", errors="replace")
+    # Line comments are stripped in place (newlines kept) so commented-out
+    # code does not produce violations and line numbers stay accurate.
+    clean = re.sub(r"//[^\n]*", "", text)
+    found: list[tuple[str, int]] = []
+
+    for match in re.finditer(r"\buse\s+([^;]+);", clean):
+        clause = match.group(1)
+        lineno = clean.count("\n", 0, match.start()) + 1
+        root_match = re.match(r"\s*(?:::)?\s*([A-Za-z_]\w*)\s*::", clause)
+        if not root_match or root_match.group(1) not in target_roots:
+            continue
+        rest = clause[root_match.end():]
+        rest = re.sub(r"\bas\s+[A-Za-z_]\w*", "", rest)
+        for ident in re.findall(r"[A-Za-z_]\w*", rest):
+            if ident in RUST_PATH_KEYWORDS or len(ident) < 2:
+                continue
+            found.append((ident, lineno))
+
+    for match in re.finditer(r"\b([A-Za-z_]\w*)((?:\s*::\s*[A-Za-z_]\w*)+)", clean):
+        if match.group(1) not in target_roots:
+            continue
+        lineno = clean.count("\n", 0, match.start()) + 1
+        for ident in re.findall(r"[A-Za-z_]\w*", match.group(2)):
+            if ident in RUST_PATH_KEYWORDS or len(ident) < 2:
+                continue
+            found.append((ident, lineno))
+    return found
+
+
 def main(argv: list[str]) -> int:
     if len(argv) != 3:
         print("usage: python oracle_import_lint.py <task_id> <spec_md_path>", file=sys.stderr)
@@ -390,21 +470,31 @@ def main(argv: list[str]) -> int:
         print(f"[spec] found in {spec_path}::0")
         return 1
 
-    # An unmapped task has no target roots, so every import is skipped and the
-    # lint would print LINT_PASS without having checked anything. Fail instead.
-    if task_id not in TARGET_IMPORTS:
-        print("LINT_FAIL")
-        print(f"[target-imports] missing [harness/target_imports.py]::0 task={task_id}")
-        return 1
-
     section, _scripts = allowed_from_spec(spec_path)
     selected_oracle = oracle_dir(task_id)
     atomic_path = selected_oracle / "test_atomic.py"
     java_atomic_dir = selected_oracle / "src" / "test" / "java" / "atomic"
     java_source_root = selected_oracle / "src" / "test" / "java"
-    target_roots = set(TARGET_IMPORTS[task_id])
+    rust_atomic_manifest = selected_oracle / "atomic" / "Cargo.toml"
+    rust_roots = rust_target_roots(task_id) if rust_atomic_manifest.is_file() else set()
+
+    # An unmapped task has no target roots, so every import is skipped and the
+    # lint would print LINT_PASS without having checked anything. Fail instead.
+    if task_id not in TARGET_IMPORTS and not rust_roots:
+        print("LINT_FAIL")
+        print(f"[target-imports] missing [harness/target_imports.py]::0 task={task_id}")
+        return 1
+
+    target_roots = set(TARGET_IMPORTS.get(task_id, [])) or rust_roots
     violations: list[tuple[str, Path, int]] = []
-    if atomic_path.exists():
+    if rust_atomic_manifest.is_file():
+        atomic_sources = [
+            source
+            for suite in ("atomic", "integration")
+            for source in sorted((selected_oracle / suite).rglob("*.rs"))
+            if "target" not in source.relative_to(selected_oracle).parts
+        ]
+    elif atomic_path.exists():
         atomic_sources = [atomic_path]
     elif java_atomic_dir.is_dir():
         atomic_sources = sorted(java_source_root.rglob("*.java"))
@@ -412,6 +502,50 @@ def main(argv: list[str]) -> int:
         print("LINT_FAIL")
         print(f"[oracle] missing [{atomic_path}] or [{java_atomic_dir}]::0")
         return 1
+
+    if rust_atomic_manifest.is_file():
+        spec_text = spec_path.read_text(encoding="utf-8-sig", errors="replace")
+        spec_words = set(re.findall(r"[A-Za-z_]\w+", spec_text))
+        roots_used: set[tuple[str, Path, int]] = set()
+        for source_path in atomic_sources:
+            clean = re.sub(
+                r"//[^\n]*",
+                "",
+                source_path.read_text(encoding="utf-8-sig", errors="replace"),
+            )
+            for match in re.finditer(r"\b([A-Za-z_]\w*)\s*::", clean):
+                if match.group(1) in target_roots:
+                    roots_used.add(
+                        (match.group(1), source_path, clean.count("\n", 0, match.start()) + 1)
+                    )
+                    break
+            for symbol, lineno in rust_target_symbols(source_path, target_roots):
+                if symbol in spec_words:
+                    continue
+                violations.append((symbol, source_path, lineno))
+        # Module level for Rust: each crate root the tests reach must be
+        # named by the spec's public surface section.
+        for root, source_path, lineno in sorted(roots_used):
+            spellings = {root, root.replace("_", "-")}
+            if not any(
+                re.search(rf"(?<![\w-]){re.escape(name)}(?![\w-])", section)
+                for name in spellings
+            ):
+                violations.append((root, source_path, lineno))
+
+        if violations:
+            print("LINT_FAIL")
+            for package, path, lineno in sorted(
+                set(violations), key=lambda item: (item[0], str(item[1]), item[2])
+            ):
+                try:
+                    display = path.relative_to(ROOT)
+                except ValueError:
+                    display = path
+                print(f"[{package}] found in [{display}]::{lineno}")
+            return 1
+        print("LINT_PASS")
+        return 0
     for source_path in atomic_sources:
         for module, lineno in imports_from_ast(source_path):
             if not any(

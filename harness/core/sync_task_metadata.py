@@ -91,7 +91,9 @@ def synchronized_metadata(task_id: str) -> dict:
     data = json.loads(task_path.read_text(encoding="utf-8-sig"))
     previous = data.get("taxonomy", {})
     data["instance_id"] = task_id
-    data.setdefault("status", "STATICALLY_VALIDATED")
+    # No default is written for `pipeline_note`. The old line here defaulted it
+    # to "STATICALLY_VALIDATED", which asserted a gate outcome without running
+    # the gate; that verdict now comes from verdict.json.
     data.setdefault("language", "python")
 
     taxonomy: dict[str, str] = {}

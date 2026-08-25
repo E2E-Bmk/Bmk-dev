@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Machine-written verdicts: one ``verdict.json`` beside every packet.
 
-``task.json`` accreted 73 distinct keys across 97 packets, and its ``status``
-field mixed pipeline position (``S2_SPEC``, ``REOPENED_S3``) with conclusions
-(``QUALIFIED``, ``REJECTED_E1``), so no reader could tell a decision from a
-waypoint. Worse, the same measurement was recorded under different names:
+``task.json`` accreted 73 distinct keys across 97 packets, and the field now
+called ``pipeline_note`` used to be called ``status`` while mixing pipeline
+position (``S2_SPEC``, ``REOPENED_S3``) with conclusions (``QUALIFIED``,
+``REJECTED_E1``), so no reader could tell a decision from a waypoint. Worse, the same measurement was recorded under different names:
 ``reference_pass_rate`` in 56 packets, ``reference_score`` in 35,
 ``reference.pass_rate`` in 2.
 
@@ -149,11 +149,12 @@ def build(task_id: str) -> dict:
         "evidence": evidence,
         "evidence_pending": pending,
     }
-    # The old `status` is kept as provenance, not as a decision: values like
-    # REVALIDATION-REQUIRED record where the packet sat in the pipeline, which
-    # the static tier does not express and which would otherwise be dropped.
-    if "status" in task:
-        verdict["prior_status"] = task["status"]
+    # Provenance, not a decision. Values like REVALIDATION-REQUIRED record where
+    # the packet sat in the pipeline, which the static tier does not express.
+    # The field was called `status`, which is why it kept being read as a
+    # verdict; under its own name it can be carried without being mistaken.
+    if "pipeline_note" in task:
+        verdict["pipeline_note"] = task["pipeline_note"]
     return verdict
 
 

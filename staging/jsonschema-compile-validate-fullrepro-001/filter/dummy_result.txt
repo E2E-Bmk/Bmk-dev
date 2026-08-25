@@ -1,0 +1,28 @@
+Dummy gate — jsonschema-compile-validate-fullrepro-001 (2026-08-25)
+
+Method: adversarial stub module at github.com/santhosh-tekuri/jsonschema/v6
+(full exported surface used by the oracle; all operations succeed with
+zero-value results; DUMMY_REJECT=1 flips Validate to always return an empty
+*ValidationError). Wired with go mod edit -replace, run with go test -count=1.
+This is strictly stronger than the empty-package dummy required by Gate 6:
+the stub also implements Compile location echo, FlagOutput JSON shape, and
+FileLoader.ToFile prefix stripping.
+
+Variant accept-all: 1 pass / 79
+  --- PASS: TestFileLoaderToFileConvertsURL
+Variant reject-all: 2 passes / 79
+  --- PASS: TestFileLoaderToFileConvertsURL
+  --- PASS: TestFlagOutputCarriesValidityOnly
+
+Disposition: both passing tests assert exact produced values (ToFile path
+string; FlagOutput JSON bytes) that the adversarial stub implements
+correctly on purpose; an empty stub returning zero values fails both. 2/79
+= 2.5% <= 10% Gate 6 threshold; kept.
+
+Earlier iteration: 6 tests passed the adversarial variants
+(TestCompiledSchemaExposesLocationAndDraft, TestNonBooleanSchemaHasNilBoolField,
+TestRefTransparencyAgreesWithDirectCompile, TestCustomLoaderEquivalentToAddResource,
+TestFlagOutputCarriesValidityOnly, TestFileLoaderToFileConvertsURL).
+Fixes: absence-only test deleted (merged into the Location/Draft test);
+consistency-only tests gained ground-truth accept AND reject assertions;
+accept-only tests gained rejection contrasts. Rerun shows the counts above.

@@ -39,7 +39,10 @@ copy under `wip/_tools/harness/`, with the following entries appended to its
 the packets graduate):
 
 ```python
-# to be filled in as tasks are selected
+"jsonschema-compile-validate-fullrepro-001": [
+    "github.com/santhosh-tekuri/jsonschema/v6",
+    "github.com/santhosh-tekuri/jsonschema/v6/kind",
+],
 ```
 
 Reference runs execute `go test -json ./...` per suite against the pinned
@@ -51,8 +54,10 @@ upstream version wired in with `go mod edit -replace`, mirroring
 
 | # | task_id | repo | state | oracle (atomic+integration) | reference | notes |
 |---|---------|------|-------|-----------------------------|-----------|-------|
+| 1 | jsonschema-compile-validate-fullrepro-001 | santhosh-tekuri/jsonschema @ v6.0.3 | S3_DONE | 79 (52+27) | 79/79 | Track B (upstream = data-driven suite runners); dummy 2/79=2.5% |
 
 ## Candidate selection log (CANDIDATES.md rows deferred; write scope is staging/ only)
 
 | repo | status | metric | detail |
 |------|--------|--------|--------|
+| santhosh-tekuri/jsonschema | SELECTED | ~5.4k LOC core, 27 upstream test funcs + 4700 suite cases | JSON Schema 2020-12/draft-7 engine: lazy ref graphs, rational-number equality, output projections; Track B |

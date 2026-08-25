@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::cross-projection consistency::one entry's data agrees across reads, observers, cache queries, and pair listings": [
+      "atomic::query observers::subscribing triggers a fetch and delivers the success result",
+      "atomic::direct cache reads and writes::getQueriesData returns key/data pairs for every match",
+      "atomic::client and cache fundamentals::a cache entry exposes queryKey, queryHash, and state"
+    ],
+    "integration::cross-projection consistency::hash-equal keys address one entry, one fetch, and one query object": [
+      "atomic::client and cache fundamentals::hashKey is deterministic and insensitive to property order",
+      "atomic::fetching and query state::concurrent fetches for one key share a single queryFn invocation"
+    ],
+    "integration::cross-projection consistency::invalidateQueries touches exactly the entries matchQuery selects": [
+      "atomic::query filters and bulk operations::matchQuery makes the same decision as the cache",
+      "atomic::query filters and bulk operations::invalidation marks entries and makes them match stale filters"
+    ],
+    "integration::cross-projection consistency::removeQueries with a predicate deletes exactly the matchQuery set": [
+      "atomic::query filters and bulk operations::predicate filters receive the query object",
+      "atomic::query filters and bulk operations::removeQueries deletes matching entries outright"
+    ],
+    "integration::cross-projection consistency::the event stream journals what other projections observe": [
+      "atomic::query filters and bulk operations::the cache event stream reports added, updated, and removed",
+      "atomic::direct cache reads and writes::setQueryData accepts a plain value or a functional updater"
+    ],
+    "integration::cross-projection consistency::observer flags track entry state through a fetch lifecycle": [
+      "atomic::query observers::derived booleans agree with the underlying state",
+      "atomic::query observers::subscribing triggers a fetch and delivers the success result"
+    ],
+    "integration::cross-projection consistency::after clear every projection reports emptiness": [
+      "atomic::client and cache fundamentals::clear empties both caches",
+      "atomic::serialization and managers::dehydrate includes only successful queries by default"
+    ],
+    "integration::observers with bulk operations and direct writes::invalidateQueries refetches the actively observed entry": [
+      "atomic::query filters and bulk operations::invalidation marks entries and makes them match stale filters",
+      "atomic::query observers::subscribing triggers a fetch and delivers the success result"
+    ],
+    "integration::observers with bulk operations and direct writes::refetchType none marks an observed entry stale without fetching": [
+      "atomic::query filters and bulk operations::invalidation marks entries and makes them match stale filters",
+      "atomic::query filters and bulk operations::refetchQueries refetches matches regardless of staleness"
+    ],
+    "integration::observers with bulk operations and direct writes::a direct write is pushed to a subscribed observer immediately": [
+      "atomic::direct cache reads and writes::setQueryData accepts a plain value or a functional updater",
+      "atomic::query observers::subscribing triggers a fetch and delivers the success result"
+    ],
+    "integration::observers with bulk operations and direct writes::a select observer re-derives its view from raw cache writes": [
+      "atomic::query observers::select transforms the result while the cache keeps raw data",
+      "atomic::direct cache reads and writes::setQueryData accepts a plain value or a functional updater"
+    ],
+    "integration::observers with bulk operations and direct writes::placeholder data is observer-local and absent from cache projections": [
+      "atomic::query observers::placeholderData shows immediately and never enters the cache",
+      "atomic::direct cache reads and writes::reads distinguish absent keys from present ones"
+    ],
+    "integration::observers with bulk operations and direct writes::cancelQueries settles an observed fetch back to idle without error": [
+      "atomic::fetching and query state::cancelQueries aborts the signal and rejects with CancelledError",
+      "atomic::query observers::subscribing triggers a fetch and delivers the success result"
+    ],
+    "integration::observers with bulk operations and direct writes::retry progress is visible through observer failure fields": [
+      "atomic::fetching and query state::retry: 2 makes exactly three attempts and counts the failures",
+      "atomic::query observers::failure results expose failureCount and failureReason"
+    ],
+    "integration::observers with bulk operations and direct writes::resetQueries reverts and refetches an actively observed entry": [
+      "atomic::query filters and bulk operations::resetQueries returns an inactive entry to its pristine state",
+      "atomic::direct cache reads and writes::setQueryData accepts a plain value or a functional updater"
+    ],
+    "integration::observers with bulk operations and direct writes::an observer fetch and an imperative fetch share one invocation": [
+      "atomic::fetching and query state::concurrent fetches for one key share a single queryFn invocation",
+      "atomic::query observers::subscribing triggers a fetch and delivers the success result"
+    ],
+    "integration::observers with bulk operations and direct writes::a direct write refreshes staleness for later fetches": [
+      "atomic::fetching and query state::cached data within staleTime is served without invoking queryFn",
+      "atomic::direct cache reads and writes::direct writes count as successful data updates"
+    ],
+    "integration::observers with bulk operations and direct writes::activity counters partition concurrent queries and mutations": [
+      "atomic::direct cache reads and writes::isFetching counts in-flight fetches and returns to zero",
+      "atomic::mutations::isMutating counts running mutations and filters by key"
+    ],
+    "integration::observers with bulk operations and direct writes::per-key defaults drive observers that carry only a key": [
+      "atomic::client and cache fundamentals::setQueryDefaults supplies a queryFn to key-only fetches",
+      "atomic::query observers::subscribing triggers a fetch and delivers the success result"
+    ],
+    "integration::observers with bulk operations and direct writes::mutation success handlers can write query state other views observe": [
+      "atomic::mutations::a successful mutation runs its lifecycle in order with context",
+      "atomic::direct cache reads and writes::setQueryData accepts a plain value or a functional updater"
+    ],
+    "integration::observers with bulk operations and direct writes::the mutation cache indexes concurrent keyed runs": [
+      "atomic::mutations::the mutation cache records runs and answers find queries",
+      "atomic::mutations::isMutating counts running mutations and filters by key"
+    ],
+    "integration::observers with bulk operations and direct writes::maxPages window slides while the cache read stays aligned": [
+      "atomic::infinite queries::maxPages keeps a sliding window with aligned pageParams",
+      "atomic::infinite queries::fetchNextPage appends the next page while one exists"
+    ],
+    "integration::end to end workflows::a dehydrated cache round-trips into a fresh client with staleness intact": [
+      "atomic::serialization and managers::dehydrate includes only successful queries by default",
+      "atomic::serialization and managers::hydrate merges entries preserving data and timestamps",
+      "atomic::fetching and query state::cached data within staleTime is served without invoking queryFn"
+    ],
+    "integration::end to end workflows::keepPreviousData bridges a paged browse while both entries stay cached": [
+      "atomic::query observers::keepPreviousData carries prior data across a key change",
+      "atomic::query observers::placeholderData shows immediately and never enters the cache"
+    ],
+    "integration::end to end workflows::an infinite browse pages forward to exhaustion with consistent views": [
+      "atomic::infinite queries::fetchInfiniteQuery resolves parallel pages and pageParams arrays",
+      "atomic::infinite queries::fetchNextPage appends the next page while one exists",
+      "atomic::infinite queries::an undefined next param ends paging without growth"
+    ],
+    "integration::end to end workflows::an optimistic update is rolled back through the mutation context on failure": [
+      "atomic::mutations::a failing mutation rejects and reports through onError then onSettled",
+      "atomic::mutations::a successful mutation runs its lifecycle in order with context",
+      "atomic::direct cache reads and writes::setQueryData accepts a plain value or a functional updater"
+    ],
+    "integration::end to end workflows::an abandoned entry is garbage collected and journaled as removed": [
+      "atomic::fetching and query state::an unused entry is collected after its gcTime",
+      "atomic::query filters and bulk operations::the cache event stream reports added, updated, and removed"
+    ],
+    "integration::end to end workflows::a full invalidate cycle refreshes data and clears staleness everywhere": [
+      "atomic::query filters and bulk operations::invalidation marks entries and makes them match stale filters",
+      "atomic::query filters and bulk operations::the cache event stream reports added, updated, and removed",
+      "atomic::query observers::subscribing triggers a fetch and delivers the success result"
+    ]
+  }
+}

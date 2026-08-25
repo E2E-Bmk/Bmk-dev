@@ -1,0 +1,98 @@
+atomic::client and cache fundamentals::a client exposes the caches it was constructed with
+atomic::client and cache fundamentals::defaultOptions.queries are merged into every fetch
+atomic::client and cache fundamentals::clear empties both caches
+atomic::client and cache fundamentals::hashKey is deterministic and insensitive to property order
+atomic::client and cache fundamentals::partialMatchKey implements deep-prefix matching
+atomic::client and cache fundamentals::a cache entry exposes queryKey, queryHash, and state
+atomic::client and cache fundamentals::state fields reflect a successful fetch
+atomic::client and cache fundamentals::setQueryDefaults supplies a queryFn to key-only fetches
+atomic::client and cache fundamentals::setMutationDefaults lets mutate run with only a mutationKey
+atomic::fetching and query state::fetchQuery resolves with the queryFn's value
+atomic::fetching and query state::the queryFn context carries client, queryKey, meta, and signal
+atomic::fetching and query state::a failing fetch rejects with the error and records error state
+atomic::fetching and query state::cached data within staleTime is served without invoking queryFn
+atomic::fetching and query state::with the default staleTime of zero a repeat fetch refetches
+atomic::fetching and query state::ensureQueryData fetches only when no fresh data exists
+atomic::fetching and query state::prefetchQuery resolves undefined on success and on failure
+atomic::fetching and query state::concurrent fetches for one key share a single queryFn invocation
+atomic::fetching and query state::retry: 2 makes exactly three attempts and counts the failures
+atomic::fetching and query state::the default retry count in this environment is zero
+atomic::fetching and query state::cancelQueries aborts the signal and rejects with CancelledError
+atomic::fetching and query state::an unused entry is collected after its gcTime
+atomic::direct cache reads and writes::reads distinguish absent keys from present ones
+atomic::direct cache reads and writes::setQueryData accepts a plain value or a functional updater
+atomic::direct cache reads and writes::an updater returning undefined skips the write
+atomic::direct cache reads and writes::direct writes count as successful data updates
+atomic::direct cache reads and writes::getQueriesData returns key/data pairs for every match
+atomic::direct cache reads and writes::setQueriesData applies one updater to every match
+atomic::direct cache reads and writes::isFetching counts in-flight fetches and returns to zero
+atomic::query filters and bulk operations::queryKey filters prefix-match and exact filters hash-match
+atomic::query filters and bulk operations::type filters split entries by observer activity
+atomic::query filters and bulk operations::invalidation marks entries and makes them match stale filters
+atomic::query filters and bulk operations::fetchStatus filters select by fetching activity
+atomic::query filters and bulk operations::predicate filters receive the query object
+atomic::query filters and bulk operations::matchQuery makes the same decision as the cache
+atomic::query filters and bulk operations::find is exact by default while findAll prefix-matches
+atomic::query filters and bulk operations::refetchQueries refetches matches regardless of staleness
+atomic::query filters and bulk operations::removeQueries deletes matching entries outright
+atomic::query filters and bulk operations::resetQueries returns an inactive entry to its pristine state
+atomic::query filters and bulk operations::the cache event stream reports added, updated, and removed
+atomic::query observers::subscribing triggers a fetch and delivers the success result
+atomic::query observers::getCurrentResult reads the latest result synchronously
+atomic::query observers::derived booleans agree with the underlying state
+atomic::query observers::failure results expose failureCount and failureReason
+atomic::query observers::select transforms the result while the cache keeps raw data
+atomic::query observers::initialData seeds the cache and starts the observer at success
+atomic::query observers::placeholderData shows immediately and never enters the cache
+atomic::query observers::keepPreviousData carries prior data across a key change
+atomic::query observers::enabled: false suppresses fetching while refetch still works
+atomic::query observers::a deep-equal refetch keeps the previous data identity
+atomic::query observers::unchanged sub-trees keep their identity through a partial change
+atomic::query observers::replaceEqualDeep shares every deep-equal sub-tree
+atomic::query observers::skipToken marks the query unrunnable
+atomic::query observers::setOptions re-targets the observer to another key
+atomic::infinite queries::fetchInfiniteQuery resolves parallel pages and pageParams arrays
+atomic::infinite queries::fetchNextPage appends the next page while one exists
+atomic::infinite queries::an undefined next param ends paging without growth
+atomic::infinite queries::fetchPreviousPage prepends the page and its parameter
+atomic::infinite queries::maxPages keeps a sliding window with aligned pageParams
+atomic::mutations::a successful mutation runs its lifecycle in order with context
+atomic::mutations::a failing mutation rejects and reports through onError then onSettled
+atomic::mutations::getCurrentResult reports the run and reset returns to idle
+atomic::mutations::mutation retry re-invokes the function and counts failures
+atomic::mutations::the mutation cache records runs and answers find queries
+atomic::mutations::isMutating counts running mutations and filters by key
+atomic::serialization and managers::dehydrate includes only successful queries by default
+atomic::serialization and managers::a shouldDehydrateQuery predicate replaces the default
+atomic::serialization and managers::hydrate merges entries preserving data and timestamps
+atomic::serialization and managers::scheduled callbacks are deferred and run in submission order
+atomic::serialization and managers::focusManager reports and forces the focus flag
+atomic::serialization and managers::onlineManager reports and sets the online flag
+integration::cross-projection consistency::one entry's data agrees across reads, observers, cache queries, and pair listings
+integration::cross-projection consistency::hash-equal keys address one entry, one fetch, and one query object
+integration::cross-projection consistency::invalidateQueries touches exactly the entries matchQuery selects
+integration::cross-projection consistency::removeQueries with a predicate deletes exactly the matchQuery set
+integration::cross-projection consistency::the event stream journals what other projections observe
+integration::cross-projection consistency::observer flags track entry state through a fetch lifecycle
+integration::cross-projection consistency::after clear every projection reports emptiness
+integration::observers with bulk operations and direct writes::invalidateQueries refetches the actively observed entry
+integration::observers with bulk operations and direct writes::refetchType none marks an observed entry stale without fetching
+integration::observers with bulk operations and direct writes::a direct write is pushed to a subscribed observer immediately
+integration::observers with bulk operations and direct writes::a select observer re-derives its view from raw cache writes
+integration::observers with bulk operations and direct writes::placeholder data is observer-local and absent from cache projections
+integration::observers with bulk operations and direct writes::cancelQueries settles an observed fetch back to idle without error
+integration::observers with bulk operations and direct writes::retry progress is visible through observer failure fields
+integration::observers with bulk operations and direct writes::resetQueries reverts and refetches an actively observed entry
+integration::observers with bulk operations and direct writes::an observer fetch and an imperative fetch share one invocation
+integration::observers with bulk operations and direct writes::a direct write refreshes staleness for later fetches
+integration::observers with bulk operations and direct writes::activity counters partition concurrent queries and mutations
+integration::observers with bulk operations and direct writes::per-key defaults drive observers that carry only a key
+integration::observers with bulk operations and direct writes::mutation success handlers can write query state other views observe
+integration::observers with bulk operations and direct writes::the mutation cache indexes concurrent keyed runs
+integration::observers with bulk operations and direct writes::maxPages window slides while the cache read stays aligned
+integration::end to end workflows::a dehydrated cache round-trips into a fresh client with staleness intact
+integration::end to end workflows::keepPreviousData bridges a paged browse while both entries stay cached
+integration::end to end workflows::an infinite browse pages forward to exhaustion with consistent views
+integration::end to end workflows::an optimistic update is rolled back through the mutation context on failure
+integration::end to end workflows::an abandoned entry is garbage collected and journaled as removed
+integration::end to end workflows::a full invalidate cycle refreshes data and clears staleness everywhere

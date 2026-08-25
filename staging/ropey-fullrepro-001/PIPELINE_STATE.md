@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S1_SELECTED
-stage:      1
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,7 +20,7 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] hand off to spec-writer: inventory public surface from docs.rs 1.6.1, draft 6-layer spec
+- [ ] audit upstream test imports against spec surface; rewrite or drop undeclared-surface asserts (doc(hidden) items: MAX_BYTES/MIN_BYTES/MAX_CHILDREN/MIN_CHILDREN, Lines::from_str_pt, assert_integrity/assert_invariants, RopeBuilder::_append_chunk/_finish_no_fix)
 
 ---
 
@@ -29,6 +29,10 @@ todo:
 | # | date | from | to | note |
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (rope engine, 8328 non-test LOC, ~415 test fns scoped to expected_oracle_max=110, 8 public projections of one tree; v1.6.1 MSRV 1.65 builds on rustc 1.83) |
+| 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | spec.md drafted from docs.rs 1.6.1 + crate root docs (6-layer): construction/io, metrics+conversions, reading, editing, slicing, line semantics, iterators, cmp/ord/hash |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_CHECK | self-check: fixed Debug over-promise (chunk-layout dependent), chunk_at_line_break index rule, line accessor bound; leakage word "judgements" reworded; no can/may/should |
+| 4 | 2026-08-25 | S2_SPEC_CHECK | S2_SPEC_DONE | spec passes SPEC_STANDARD phrasing/structure; doc(hidden) surface excluded; features pinned (default unicode_lines+simd) |
+| 5 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin oracle: ~334 inline unit tests + tests/ dir; drop MIN/MAX_BYTES-dependent, proptest, doc-hidden users |
 
 ---
 

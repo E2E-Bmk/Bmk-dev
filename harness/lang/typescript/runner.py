@@ -20,26 +20,15 @@ import shlex
 from pathlib import Path
 from typing import Iterator, Optional
 
-try:
-    from harness.runners.base import (
-        Batch,
-        Env,
-        Runner,
-        Step,
-        TestId,
-        depends_on_above,
-        nested_names,
-    )
-except ImportError:  # direct execution of a harness script
-    from runners.base import (
-        Batch,
-        Env,
-        Runner,
-        Step,
-        TestId,
-        depends_on_above,
-        nested_names,
-    )
+from harness.runners.base import (
+    Batch,
+    Env,
+    Runner,
+    Step,
+    TestId,
+    depends_on_above,
+    nested_names,
+)
 
 # `it("name")`, `test("name")`, and the `.each` / `.only` / `.skip` variants.
 _TEST_CALL = re.compile(

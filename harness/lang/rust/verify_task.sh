@@ -2,19 +2,19 @@
 # verify_rust_task.sh — Pre-graduation and post-graduation checker for Rust tasks.
 # Usage: verify_rust_task.sh <task_id> [--stage]
 #
-# Without --stage: runs verify_task.py on tasks/<id>/ (post-graduation)
-# With --stage: stages wip/<id>/ into a temp dir, runs all checks
+# Without --stage: runs verify_task.py on tasks/rust/<id>/ (post-graduation)
+# With --stage: stages wip/rust/<id>/ into a temp dir, runs all checks
 
 set -euo pipefail
 
 TASK_ID="${1:?usage: verify_rust_task.sh <task_id> [--stage]}"
 STAGE="${2:-}"
 
-BMK_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+BMK_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
 HARNESS_DIR="$BMK_DIR/../spec2repo/harness"
-WIP_DIR="$BMK_DIR/wip/$TASK_ID"
-TASKS_DIR="$BMK_DIR/tasks/$TASK_ID"
-TARGET_IMPORTS="$BMK_DIR/harness/rust_target_imports.json"
+WIP_DIR="$BMK_DIR/wip/rust/$TASK_ID"
+TASKS_DIR="$BMK_DIR/tasks/rust/$TASK_ID"
+TARGET_IMPORTS="$BMK_DIR/harness/lang/rust/target_imports.json"
 
 export SPEC2REPO_TARGET_IMPORTS="$TARGET_IMPORTS"
 
@@ -24,7 +24,7 @@ fail() { echo "  FAIL: $*"; errors=$((errors + 1)); }
 pass() { echo "  PASS: $*"; }
 
 if [ "$STAGE" = "--stage" ]; then
-    echo "=== Staging wip/$TASK_ID ==="
+    echo "=== Staging wip/rust/$TASK_ID ==="
     STAGING=$(mktemp -d)
     TASK_STAGED="$STAGING/$TASK_ID"
     mkdir -p "$TASK_STAGED"
@@ -64,13 +64,13 @@ sys.stdout.write(text)
 else
     CHECK_DIR="$TASKS_DIR"
     if [ ! -d "$CHECK_DIR" ]; then
-        echo "FAIL: tasks/$TASK_ID/ does not exist. Use --stage for wip tasks."
+        echo "FAIL: tasks/rust/$TASK_ID/ does not exist. Use --stage for wip tasks."
         exit 1
     fi
     # verify_task.py resolves tasks/<id> against the spec2repo repo root unless a
     # pool is named. Without this every Bmk-dev task reports STATIC_INVALID for
     # missing spec.md/task.json that are in fact present.
-    export SPEC2REPO_TASKS_DIR="$BMK_DIR/tasks"
+    export SPEC2REPO_TASKS_DIR="$BMK_DIR/tasks/rust"
 fi
 
 echo ""
@@ -320,7 +320,7 @@ PYSC
         AUDIT_MODE="structural only (score ${SCORE_PCT}% < 50)"
     fi
     set +e
-    AUDIT=$(python3 "$BMK_DIR/dev/skills/spec2repo-gate-calibration/scripts/audit_gate_design.py" \
+    AUDIT=$(python3 "$BMK_DIR/skills/spec2repo-gate-calibration/scripts/audit_gate_design.py" \
               "$ROOTMAP" $AUDIT_ARGS 2>&1)
     AUDIT_RC=$?
     set -e

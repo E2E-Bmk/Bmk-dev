@@ -28,13 +28,17 @@ import re
 import sys
 from pathlib import Path
 
-try:
-    from harness.target_imports import TARGET_IMPORTS
-except ModuleNotFoundError:  # Direct execution: python harness/oracle_import_lint.py
-    from target_imports import TARGET_IMPORTS
+# Direct execution puts this file's own directory on the import path rather than
+# the repository root, so the absolute `harness.` imports below would not
+# resolve. Adding the root keeps the script form and the module form equivalent.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from harness.core import layout
+from harness.core.target_imports import TARGET_IMPORTS
 
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = layout.ROOT
 
 
 def public_surface(text: str) -> str:
@@ -81,14 +85,22 @@ def oracle_dir(task_id: str) -> Path:
     """Locate the oracle directory, supporting both repository layouts.
 
     Bmk-dev nests the oracle inside the task packet; a task still under
-    construction keeps it in ``wip/{task}/filter``; the release repo keeps a
+    construction keeps it in its bench's ``filter/``; the release repo keeps a
     flat ``oracle/{task}`` tree. Checking all three lets the same lint run on
-    either side without a path flag.
+    either side without a path flag. The first two are resolved through
+    ``layout`` because both trees are bucketed by language, so neither can be
+    formed by joining the task id onto a root.
     """
-    candidates = (
-        ROOT / "wip" / task_id / "filter",
-        ROOT / "tasks" / task_id / "oracle",
-        ROOT / "oracle" / task_id,
+    bench = layout.existing_bench_dir(task_id)
+    packet = layout.oracle_dir(task_id)
+    candidates = tuple(
+        path
+        for path in (
+            None if bench is None else bench / "filter",
+            packet,
+            ROOT / "oracle" / task_id,
+        )
+        if path is not None
     )
     for candidate in candidates:
         if (candidate / "test_atomic.py").is_file() or (
@@ -98,7 +110,9 @@ def oracle_dir(task_id: str) -> Path:
     for candidate in candidates:
         if candidate.is_dir():
             return candidate
-    return ROOT / "tasks" / task_id / "oracle"
+    # Nothing exists yet. Naming the packet's oracle is the most useful report;
+    # with no packet there is no language to name, so the flat shape is returned.
+    return packet if packet is not None else ROOT / "oracle" / task_id
 
 
 def imports_from_ast(path: Path) -> list[tuple[str, int]]:

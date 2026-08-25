@@ -12,10 +12,7 @@ import shlex
 from pathlib import Path
 from typing import Iterator, Optional
 
-try:
-    from harness.runners.base import Batch, Env, Runner, Step, TestId
-except ImportError:  # direct execution of a harness script
-    from runners.base import Batch, Env, Runner, Step, TestId
+from harness.runners.base import Batch, Env, Runner, Step, TestId
 
 PIP = "pip install --no-cache-dir"
 

@@ -24,13 +24,17 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-try:
-    from harness.verify_task import check_task
-except ModuleNotFoundError:  # Direct execution from the repository root.
-    from verify_task import check_task
+# Direct execution puts this file's own directory on the import path rather than
+# the repository root, so the absolute `harness.` imports below would not
+# resolve. Adding the root keeps the script form and the module form equivalent.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from harness.core import layout
+from harness.core.verify_task import check_task
 
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = layout.ROOT
 ALLOWED_STATUSES = {"SELECTED", "RETIRED", "QUALIFIED", "REOPENED", "SUPERSEDED"}
 TASK_ID_RE = re.compile(r"(?:task[=\s]+`?|`)([a-z0-9_]+(?:-[a-z0-9_]+)*-fullrepro-\d+)`?")
 
@@ -74,11 +78,7 @@ def ledger_warnings() -> list[str]:
 
     # A task ID named anywhere in a row must exist on disk. The reverse does not
     # hold: most rows identify their repository, not their task.
-    task_dirs = (
-        {path.name for path in (ROOT / "tasks").iterdir() if path.is_dir()}
-        if (ROOT / "tasks").is_dir()
-        else set()
-    )
+    task_dirs = set(layout.task_ids())
     for row in rows:
         blob = " ".join(row.values())
         status = row.get("status", "").strip()
@@ -96,6 +96,14 @@ def ledger_warnings() -> list[str]:
     # statuses are normal: SELECTED then RETIRED, or SELECTED then QUALIFIED
     # then REOPENED. Only a genuine contradiction is worth reporting -- a repo
     # recorded as both finished and abandoned.
+    # A packet outside the language buckets is invisible to every per-language
+    # tool and to the loop in main(), so a silent skip would read as a pass.
+    for path in layout.strays():
+        warnings.append(
+            f"{path.relative_to(ROOT)}: outside the language buckets, so no "
+            "per-language tool sees it"
+        )
+
     for repo, statuses in sorted(by_repo.items()):
         if "QUALIFIED" in statuses and "RETIRED" in statuses:
             warnings.append(
@@ -107,11 +115,7 @@ def ledger_warnings() -> list[str]:
 
 def main() -> int:
     argv = sys.argv[1:]
-    tasks_dir = ROOT / "tasks"
-    if argv:
-        selected = argv
-    else:
-        selected = sorted(path.name for path in tasks_dir.iterdir() if path.is_dir())
+    selected = argv or layout.task_ids()
 
     failures = 0
     total_warnings = 0

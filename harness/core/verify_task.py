@@ -25,23 +25,21 @@ import re
 import sys
 from pathlib import Path
 
-try:
-    from harness.oracle_import_lint import allowed_from_spec, imports_from_ast
-    from harness.target_imports import TARGET_IMPORTS
-    from harness.runners import get_runner
-except ModuleNotFoundError:  # Direct execution from the repository root.
-    from oracle_import_lint import allowed_from_spec, imports_from_ast
-    from target_imports import TARGET_IMPORTS
-    from runners import get_runner
+# Direct execution puts this file's own directory on the import path rather than
+# the repository root, so the absolute `harness.` imports below would not
+# resolve. Adding the root keeps the script form and the module form equivalent.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-try:
-    from analysis.annotate_assertions import annotate_file as _annotate_assertions
-except ModuleNotFoundError:
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-    from analysis.annotate_assertions import annotate_file as _annotate_assertions
+from harness.core import layout
+from harness.core.oracle_import_lint import allowed_from_spec, imports_from_ast
+from harness.core.target_imports import TARGET_IMPORTS
+from harness.runners import get_runner
+
+from analysis.annotate_assertions import annotate_file as _annotate_assertions
 
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = layout.ROOT
 REQUIRED_HEADINGS = {
     "overview": ("product overview",),
     "scope": ("scope", "non-goals"),
@@ -82,7 +80,9 @@ FORBIDDEN_BODY_TERMS = (
 
 
 def check_task(task_id: str) -> list[str]:
-    task_dir = ROOT / "tasks" / task_id
+    task_dir = layout.task_dir(task_id)
+    if task_dir is None:
+        return [f"no packet under tasks/<language>/{task_id}"]
     oracle_dir = task_dir / "oracle"
     errors: list[str] = []
     warnings: list[str] = []
@@ -107,6 +107,15 @@ def check_task(task_id: str) -> list[str]:
     except json.JSONDecodeError as exc:
         return errors + [f"invalid task.json: {exc}"]
     language = str(data.get("language", "python")).lower()
+    # The bucket is what every per-language tool dispatches on, so a packet whose
+    # `task.json` names a different language is measured by one toolchain and
+    # filed under another.
+    filed_under = layout.language_of(task_id)
+    if filed_under is not None and language != filed_under:
+        errors.append(
+            f"task.json language {language!r} but the packet is filed under "
+            f"tasks/{filed_under}/"
+        )
     try:
         runner = get_runner(language)
     except (KeyError, ValueError) as exc:

@@ -12,8 +12,10 @@ import re
 import subprocess
 import sys
 
-BMK = "/root/research/Bmk-dev"
-WIP = os.path.join(BMK, "wip")
+BMK = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__)))))
+# This is a per-language tool, so it reads the Rust bucket rather than all of wip/.
+WIP = os.path.join(BMK, "wip", "rust")
 
 SECTIONS = {
     "overview": ["product overview"],

@@ -20,10 +20,7 @@ import shlex
 from pathlib import Path
 from typing import Iterator, Optional
 
-try:
-    from harness.runners.base import Batch, Env, Runner, Step, TestId, nested_names
-except ImportError:  # direct execution of a harness script
-    from runners.base import Batch, Env, Runner, Step, TestId, nested_names
+from harness.runners.base import Batch, Env, Runner, Step, TestId, nested_names
 
 _TEST_FN = re.compile(r"#\[(?:test|tokio::test)[^\]]*\]\s*(?:async\s+)?fn\s+(\w+)")
 _MOD_DECL = re.compile(r"\bmod\s+(\w+)\s*\{")

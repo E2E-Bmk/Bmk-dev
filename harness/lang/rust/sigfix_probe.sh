@@ -22,7 +22,7 @@ SRC_RUN="${3:-qwen3.8-max}"
 
 BMK=/root/research/Bmk-dev
 S2R=/root/research/spec2repo
-W="$BMK/wip/$ID"
+W="$BMK/wip/rust/$ID"
 AGENT_WS="$W/eval/runs/$SRC_RUN/$ID/workspace"
 SIGFIX_WS="$W/eval/runs/sigfix/$ID/workspace"
 
@@ -38,7 +38,7 @@ stage)
     ;;
 
 build)
-    # Mirror what runners/rust.py does: candidate crate + oracle workspace,
+    # Mirror what harness/lang/rust/runner.py does: candidate crate + oracle workspace,
     # with [patch.crates-io] redirecting the target crate at the candidate.
     rm -rf "$W/eval/oracle/$ID"
     mkdir -p "$W/eval/oracle"

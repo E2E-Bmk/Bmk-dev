@@ -25,29 +25,41 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+import sys
 from collections import Counter
 from pathlib import Path
 
-try:
-    from harness.runners import get_runner
-except ModuleNotFoundError:
-    from runners import get_runner
+# Direct execution puts this file's own directory on the import path rather than
+# the repository root, so the absolute `harness.` imports below would not
+# resolve. Adding the root keeps the script form and the module form equivalent.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from harness.core import layout
+from harness.runners import get_runner
 
 
-ROOT = Path(__file__).resolve().parent.parent
 SYSTEM_E2E_HINTS = ("cross_view", "representative", "workflow", "end_to_end")
 
 
+def packet_dir(task_id: str) -> Path:
+    """The packet, or a hard stop: metadata cannot be synchronised without one."""
+    path = layout.task_dir(task_id)
+    if path is None:
+        raise SystemExit(f"no packet under tasks/<language>/ for {task_id}")
+    return path
+
+
 def oracle_dir(task_id: str) -> Path:
-    return ROOT / "tasks" / task_id / "oracle"
+    return packet_dir(task_id) / "oracle"
 
 
 def task_ids() -> list[str]:
+    """Every task whose packet carries a suite this script can enumerate."""
     return sorted(
-        path.name
-        for path in (ROOT / "tasks").iterdir()
-        if path.is_dir()
-        and (path / "task.json").exists()
+        task_id
+        for task_id, path in layout.task_dirs().items()
+        if (path / "task.json").exists()
         and (
             (
                 (path / "oracle" / "test_atomic.py").exists()
@@ -75,7 +87,7 @@ def inferred_integration_layer(name: str) -> str:
 
 
 def synchronized_metadata(task_id: str) -> dict:
-    task_path = ROOT / "tasks" / task_id / "task.json"
+    task_path = packet_dir(task_id) / "task.json"
     data = json.loads(task_path.read_text(encoding="utf-8-sig"))
     previous = data.get("taxonomy", {})
     data["instance_id"] = task_id
@@ -142,7 +154,7 @@ def main() -> int:
 
     stale: list[str] = []
     for task_id in selected:
-        path = ROOT / "tasks" / task_id / "task.json"
+        path = packet_dir(task_id) / "task.json"
         raw = path.read_bytes()
         current = json.loads(raw.decode("utf-8-sig"))
         expected = synchronized_metadata(task_id)

@@ -18,10 +18,7 @@ import shlex
 from pathlib import Path
 from typing import Iterator, Optional
 
-try:
-    from harness.runners.base import Batch, Env, Runner, Step, TestId
-except ImportError:  # direct execution of a harness script
-    from runners.base import Batch, Env, Runner, Step, TestId
+from harness.runners.base import Batch, Env, Runner, Step, TestId
 
 #: `func TestXxx(t *testing.T)` at the top level of a file.
 _TEST_FUNC = re.compile(r"^func\s+(Test\w*)\s*\(\s*\w+\s+\*testing\.[TB]\s*\)", re.M)

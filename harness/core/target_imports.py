@@ -101,7 +101,7 @@ def _merge_typescript_registrations() -> None:
     import json
     from pathlib import Path
 
-    path = Path(__file__).with_name("typescript_target_imports.json")
+    path = Path(__file__).resolve().parents[1] / "lang" / "typescript" / "target_imports.json"
     if not path.exists():
         return
     try:
@@ -126,7 +126,7 @@ def _merge_java_registrations() -> None:
     import json
     from pathlib import Path
 
-    path = Path(__file__).with_name("java_target_imports.json")
+    path = Path(__file__).resolve().parents[1] / "lang" / "java" / "target_imports.json"
     if not path.exists():
         return
     try:

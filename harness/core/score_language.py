@@ -27,10 +27,13 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-try:
-    from harness.runners import Env, get_runner
-except ModuleNotFoundError:  # Direct execution: python harness/score_language.py
-    from runners import Env, get_runner
+# Direct execution puts this file's own directory on the import path rather than
+# the repository root, so the absolute `harness.` imports below would not
+# resolve. Adding the root keeps the script form and the module form equivalent.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from harness.runners import Env, get_runner
 
 
 def json_safe(value: Any) -> Any:

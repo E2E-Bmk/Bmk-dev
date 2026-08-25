@@ -1,0 +1,17 @@
+{
+  "task_id": "textwrap-fullrepro-001",
+  "reference_repo": "mgeisler/textwrap",
+  "reference_commit": "4770e55af425a0cffb9ad8496599d2a1a4f5ed14",
+  "method": "cargo nextest run on the oracle workspace, twice: (1) with [patch.crates-io] textwrap = { path = <reference clone at pinned commit> } appended, mirroring harness/runners/rust.py setup; (2) unpatched with the shipped Cargo.lock resolving textwrap 0.16.2 from the registry. 111/111 both runs. smawk pinned =0.3.2 in the lock (0.3.3 requires edition2024, unavailable on cargo 1.83); unicode-linebreak 0.1.5 and unicode-width 0.2.2 resolve cleanly.",
+  "toolchain": "cargo 1.83 + cargo-nextest (see Appendix A)",
+  "total": 111,
+  "passed": 111,
+  "failed": 0,
+  "skipped": 0,
+  "pass_rate": 1.0,
+  "stats": {
+    "atomic": 79,
+    "integration": 32
+  },
+  "date": "2026-08-25"
+}

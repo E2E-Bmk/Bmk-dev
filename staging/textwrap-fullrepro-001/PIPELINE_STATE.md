@@ -11,16 +11,20 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
+oracle_count: 111
+functions_in_scope: 137
+functions_kept: 0
+functions_excluded: 137
 updated:    2026-08-25
 ```
 
 todo:
-- [ ] audit upstream tests (src #[cfg(test)] mods + tests/) for public-surface vs private/internal reliance; classify per file; decide keep vs generated-only
+- [x] Stage 3 complete: oracle 111 tests (79 atomic / 32 integration), reference 111/111 both paths, LINT_PASS fresh
 
 ---
 
@@ -32,6 +36,10 @@ todo:
 | 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec: probed reference (defaults, indent-on-empty-line, CR passthrough, fill_inplace last-space rule, Cow borrowing, wrap_columns arithmetic, penalty model) |
 | 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec.md v1: 6 behavior sections (wrap/fill, config, refill/indent, columns, text model, algorithms), 8 invariants, error table; 25 checks + style gate pass; smawk pinned =0.3.2 for toolchain 1.83 (noted for lock) |
 | 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
+| 5 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit done: 127/137 upstream fns are in-crate #[cfg(test)] mods (structurally unavailable); tests/indent.rs public but memorization-prone; version-numbers.rs excluded; decision generated-only |
+| 6 | 2026-08-25 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md landed: per-file disposition; fresh vocabularies; dummy-passable patterns avoided (catch_unwind with positive check for zero-column panic) |
+| 7 | 2026-08-25 | S3B_TRIGGER | S3_ORACLE_MERGE | oracle assembled: workspace + atomic(79) + integration(32 in 5 modules: pipeline/fill_refill/indent_dedent/columns_layout/consistency), depends_on.json 32/32, Cargo.lock (registry textwrap 0.16.2; smawk pinned =0.3.2 for cargo 1.83) |
+| 8 | 2026-08-25 | S3_ORACLE_MERGE | S3_DONE | reference 111/111 patched path AND registry-lock path (reference_score.json); 2 fixture fixes during dev: wrap fast-path bypasses Custom algorithm on fitting lines (re-fixtured below width); upstream wrap_columns debug-panics on overflowing cell with break_words=false (re-fixtured to algorithm pass-through); spec_test_map.md, taxonomy.jsonl, task.json written; lint fresh: LINT_PASS (negative control LINT_FAIL confirms sensitivity) |
 
 ---
 

@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,7 +20,9 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] draft spec.md (6-layer) from docs.rs 0.4.23 + gitignore format semantics within scope_plan: Gitignore/GitignoreBuilder, Override, Types (custom defs), WalkBuilder serial+parallel core toggles, DirEntry/Match/Error; scope out symlinks/same_file_system/stdout filtering/global git config/default type table
+- [ ] inventory upstream test functions within scope
+- [ ] per-file import/scope audit
+- [ ] write filter/rewrite_audit.md with per-file disposition before any oracle work
 
 ---
 
@@ -30,6 +32,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (4808 non-test LOC; precedence rule engine projected through matcher queries and real walks; builds on cargo 1.83) |
 | 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec drafting |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec.md v1: 6-layer, 5 behavior sections (pattern matching, overrides, types, walking, parallel walking), state model, error table, 8 CVIs; dialect+precedence contracts verified by two probe rounds against pinned 0.4.23 |
+| 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
 
 ---
 

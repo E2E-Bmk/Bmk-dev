@@ -1,0 +1,78 @@
+{"taxonomy_key": "atomic::create yields an empty instance with zero count", "layer": "atomic"}
+{"taxonomy_key": "atomic::create rejects an unknown schema type string", "layer": "atomic"}
+{"taxonomy_key": "atomic::insert returns a generated string id when the document has none", "layer": "atomic"}
+{"taxonomy_key": "atomic::insert uses the document id property as the stored id", "layer": "atomic"}
+{"taxonomy_key": "atomic::insertMultiple returns the assigned ids in document order", "layer": "atomic"}
+{"taxonomy_key": "atomic::insert rejects a document whose value contradicts the schema type", "layer": "atomic"}
+{"taxonomy_key": "atomic::insert rejects a duplicate document id", "layer": "atomic"}
+{"taxonomy_key": "atomic::documents keep omitted schema fields absent and extra fields verbatim", "layer": "atomic"}
+{"taxonomy_key": "atomic::count reflects the number of stored documents", "layer": "atomic"}
+{"taxonomy_key": "atomic::getByID returns undefined for an unknown id", "layer": "atomic"}
+{"taxonomy_key": "atomic::remove returns true for a present id and decrements count", "layer": "atomic"}
+{"taxonomy_key": "atomic::remove returns false for a missing id and leaves the store unchanged", "layer": "atomic"}
+{"taxonomy_key": "atomic::removeMultiple returns the number of documents actually removed", "layer": "atomic"}
+{"taxonomy_key": "atomic::update replaces the stored document and returns the new id", "layer": "atomic"}
+{"taxonomy_key": "atomic::updateMultiple replaces several documents and returns the new ids", "layer": "atomic"}
+{"taxonomy_key": "atomic::upsert inserts a new document when the id is absent", "layer": "atomic"}
+{"taxonomy_key": "atomic::upsert replaces an existing document without changing the count", "layer": "atomic"}
+{"taxonomy_key": "atomic::upsertMultiple mixes inserts and replacements and returns the ids", "layer": "atomic"}
+{"taxonomy_key": "atomic::search result carries hits with id score and document plus count and elapsed", "layer": "atomic"}
+{"taxonomy_key": "atomic::term matching is case-insensitive", "layer": "atomic"}
+{"taxonomy_key": "atomic::a query token matches indexed tokens by prefix", "layer": "atomic"}
+{"taxonomy_key": "atomic::omitting the term matches every stored document", "layer": "atomic"}
+{"taxonomy_key": "atomic::properties restricts full-text matching to the named string properties", "layer": "atomic"}
+{"taxonomy_key": "atomic::searching an unknown property raises UNKNOWN_INDEX", "layer": "atomic"}
+{"taxonomy_key": "atomic::exact matching excludes prefix-only matches", "layer": "atomic"}
+{"taxonomy_key": "atomic::exact matching suppresses tolerance", "layer": "atomic"}
+{"taxonomy_key": "atomic::tolerance admits tokens within the edit distance", "layer": "atomic"}
+{"taxonomy_key": "atomic::a misspelled token without tolerance matches nothing", "layer": "atomic"}
+{"taxonomy_key": "atomic::threshold zero returns only documents matching every token", "layer": "atomic"}
+{"taxonomy_key": "atomic::default threshold returns documents matching any token", "layer": "atomic"}
+{"taxonomy_key": "atomic::limit and offset slice ranked hits while count stays total", "layer": "atomic"}
+{"taxonomy_key": "atomic::preflight reports the matched count with empty hits", "layer": "atomic"}
+{"taxonomy_key": "atomic::number filters support comparison operators", "layer": "atomic"}
+{"taxonomy_key": "atomic::number between filter is inclusive on both ends", "layer": "atomic"}
+{"taxonomy_key": "atomic::boolean filters accept a direct boolean value", "layer": "atomic"}
+{"taxonomy_key": "atomic::enum filters support eq in and nin operators", "layer": "atomic"}
+{"taxonomy_key": "atomic::string filters match whole tokens without prefix expansion", "layer": "atomic"}
+{"taxonomy_key": "atomic::string array filters match documents containing the element", "layer": "atomic"}
+{"taxonomy_key": "atomic::nested dot path properties participate in filters", "layer": "atomic"}
+{"taxonomy_key": "atomic::filtering on an unknown property raises UNKNOWN_FILTER_PROPERTY", "layer": "atomic"}
+{"taxonomy_key": "atomic::enum facets report distinct value buckets and their count", "layer": "atomic"}
+{"taxonomy_key": "atomic::boolean facets bucket documents under true and false string keys", "layer": "atomic"}
+{"taxonomy_key": "atomic::string array facets count documents per distinct element", "layer": "atomic"}
+{"taxonomy_key": "atomic::number facets bucket matched documents into inclusive ranges", "layer": "atomic"}
+{"taxonomy_key": "atomic::string facets honor sort and limit options", "layer": "atomic"}
+{"taxonomy_key": "atomic::sortBy orders hits by a number property in both directions", "layer": "atomic"}
+{"taxonomy_key": "atomic::sortBy orders hits by a nested dot path property", "layer": "atomic"}
+{"taxonomy_key": "atomic::sortBy accepts a comparator over id score document triples", "layer": "atomic"}
+{"taxonomy_key": "atomic::groupBy partitions matched documents and bounds results per group", "layer": "atomic"}
+{"taxonomy_key": "atomic::groupBy rejects enum properties", "layer": "atomic"}
+{"taxonomy_key": "atomic::distinctOn keeps the first hit per distinct value while count stays total", "layer": "atomic"}
+{"taxonomy_key": "atomic::save returns a JSON-serializable snapshot", "layer": "atomic"}
+{"taxonomy_key": "integration::an inserted document is visible across count getByID search facets and groups", "layer": "integration"}
+{"taxonomy_key": "integration::a removed document disappears from every projection simultaneously", "layer": "integration"}
+{"taxonomy_key": "integration::count stays the unsliced total across limit offset preflight and distinct", "layer": "integration"}
+{"taxonomy_key": "integration::hit documents deep-equal getByID lookups", "layer": "integration"}
+{"taxonomy_key": "integration::facet bucket totals equal the matched documents carrying the property", "layer": "integration"}
+{"taxonomy_key": "integration::update redirects full-text matching filters and facets to the new content", "layer": "integration"}
+{"taxonomy_key": "integration::save and load preserve count lookups and ranked order", "layer": "system_e2e"}
+{"taxonomy_key": "integration::documents inserted after load join restored ones in results", "layer": "system_e2e"}
+{"taxonomy_key": "integration::groupBy places every matched document in exactly one group", "layer": "integration"}
+{"taxonomy_key": "integration::term and where filters combine conjunctively", "layer": "integration"}
+{"taxonomy_key": "integration::multiple where clauses form a conjunction", "layer": "integration"}
+{"taxonomy_key": "integration::facets aggregate only over filtered matches", "layer": "integration"}
+{"taxonomy_key": "integration::boost reorders title and body matches without changing the match set", "layer": "integration"}
+{"taxonomy_key": "integration::threshold composes with filters", "layer": "integration"}
+{"taxonomy_key": "integration::sortBy with distinctOn keeps the first sorted hit per distinct value", "layer": "integration"}
+{"taxonomy_key": "integration::offset windows partition the sorted hit sequence", "layer": "integration"}
+{"taxonomy_key": "integration::insertMultiple and repeated insert produce equivalent projections", "layer": "integration"}
+{"taxonomy_key": "integration::a failed search leaves the instance usable", "layer": "integration"}
+{"taxonomy_key": "integration::a rejected insert leaves all projections unchanged", "layer": "integration"}
+{"taxonomy_key": "integration::upsert replacement makes stale content unmatchable", "layer": "integration"}
+{"taxonomy_key": "integration::removeMultiple recomputes facets and groups", "layer": "integration"}
+{"taxonomy_key": "integration::nested dot path agrees across where facets and sortBy", "layer": "integration"}
+{"taxonomy_key": "integration::a loaded instance accepts update and remove like a native one", "layer": "system_e2e"}
+{"taxonomy_key": "integration::distinct results survive a save load round trip", "layer": "integration"}
+{"taxonomy_key": "integration::multi-token queries rank documents matching more tokens first", "layer": "integration"}
+{"taxonomy_key": "integration::exact and threshold compose on the same query", "layer": "integration"}

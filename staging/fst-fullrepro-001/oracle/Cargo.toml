@@ -1,0 +1,11 @@
+[workspace]
+members = ["atomic", "integration"]
+resolver = "2"
+
+# The oracle ships without [patch.crates-io]: the runner appends it, pointing
+# fst at the candidate workspace (member-manifest patches are ignored by
+# cargo, so the patch lives on this root manifest).
+[workspace.dependencies]
+# `version = "*"` so the patched workspace version satisfies the requirement.
+# Default features per the spec's Appendix A (no optional feature required).
+fst = { version = "*" }

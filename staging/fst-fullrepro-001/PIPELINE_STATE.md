@@ -11,7 +11,7 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
@@ -20,7 +20,7 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] audit upstream test imports against spec surface; excluded surface: Node/Transition/CompiledAddr, search_with_state/StreamWithState, get_key_into, map_data, new_type/fst_type, quickcheck properties
+- [ ] (next stage) S4_SETUP: build task environment from repo_commit and run scorer end-to-end
 
 ---
 
@@ -33,6 +33,11 @@ todo:
 | 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_CHECK | self-check: no modal verbs, no leakage words; Non-Goals phrasing conforms; API catalog Name/Kind/Role only; scoped-out surface excluded from Import Surface |
 | 4 | 2026-08-25 | S2_SPEC_CHECK | S2_SPEC_DONE | spec passes SPEC_STANDARD phrasing/structure; no features required; WrongType documented as reserved |
 | 5 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin oracle: tests/test.rs public-path tests keepable; raw/tests.rs mixes private helpers — per-function extraction |
+| 6 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_IMPORT_AUDIT | spec_gap fix from probe: key-only duplicate insertion (SetBuilder/raw add/Set::from_iter) is a silent no-op, not DuplicateKey; value-carrying insertion errors. Ordering contract + error table corrected |
+| 7 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit done: raw/tests.rs + ops/node/registry tests use private fixtures/internals; tests/test.rs has 2 levenshtein (scoped out) + 8 rewritable behaviors; decision generated-only (keepable core < floor) |
+| 8 | 2026-08-25 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md landed: per-file upstream disposition; fresh vocabularies for anti-memorization; dummy-passable tests reworked (catch_unwind sub-underflow; VERSION value test dropped) |
+| 9 | 2026-08-25 | S3B_TRIGGER | S3_ORACLE_MERGE | oracle assembled: workspace + atomic(68) + integration(37 in 5 modules: build_paths/search/lattice/images/cross_view), depends_on.json, Cargo.lock (registry fst 0.4.7, zero transitive deps) |
+| 10 | 2026-08-25 | S3_ORACLE_MERGE | S3_DONE | reference 105/105 patched-path run (reference_score.json); spec_test_map.md (generated_only header), kept lists, taxonomy.jsonl, task.json written; lint fresh: LINT_PASS |
 
 ---
 

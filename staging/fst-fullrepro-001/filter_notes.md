@@ -25,8 +25,9 @@ scope_plan: N/A (6425 LOC, <300 test fns; levenshtein feature and fst-bin/regex 
 Difficulty shapes (candidate-selector heuristic): equivalence judgement
 (automaton Complement/Intersection/Union agreement with brute-force set
 algebra); reimplementation of a format rule (byte-lexicographic key order
-enforced at build time with typed errors; last-duplicate-wins for map
-inserts across unioned streams via IndexedValue); integration spanning ≥3
+enforced at build time with typed errors — key-only repeats are silent
+no-ops while value-carrying repeats reject; per-input provenance across
+unioned streams via IndexedValue); integration spanning ≥3
 projections (build → range stream → automaton filter → set-op lattice on
 the same image). Typical usage composes builder + container + streamer
 (+ automaton), ≥3 cooperating objects.

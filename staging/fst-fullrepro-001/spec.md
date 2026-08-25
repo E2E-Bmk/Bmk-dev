@@ -142,13 +142,17 @@ contract every construction path enforces. A container's key set is fixed at
 build time; there is no post-build mutation.
 
 **Ordering contract.** Keys are byte strings. Every construction path
-requires keys to arrive in strictly ascending byte-lexicographic order.
-When a key arrives that is less than the previously accepted key, the
-operation fails with the out-of-order error carrying both the previous and
-offending keys; when it equals the previously accepted key, set and raw
-insertion fail with the duplicate-key error carrying the key. `Map` and
-`raw::Fst` associate each accepted key with a `u64` value supplied at
-insertion; values carry no ordering constraint.
+requires keys to arrive in ascending byte-lexicographic order. When a key
+arrives that is less than the previously accepted key, the operation fails
+with the out-of-order error carrying both the previous and offending keys.
+When it equals the previously accepted key, the outcome depends on whether
+the insertion carries a value: key-only insertion (`SetBuilder::insert`,
+`raw::Builder::add`, `Set::from_iter`) treats the repeat as a no-op and
+succeeds, leaving one copy of the key in the container; value-carrying
+insertion (`MapBuilder::insert`, `raw::Builder::insert`, `Map::from_iter`)
+fails with the duplicate-key error carrying the key. `Map` and `raw::Fst`
+associate each accepted key with a `u64` value supplied at insertion;
+values carry no ordering constraint.
 
 **One-shot construction.** `Set::from_iter` accepts an iterator of
 byte-string-convertible items and returns a memory-backed `Set`.
@@ -369,7 +373,7 @@ for writer failures; both variants implement `From` conversion into
 | `Format` | `size` (usize field) | opening bytes that are not a finished image |
 | `ChecksumMismatch` | `expected`, `got` (u32 fields) | `verify()` on a corrupted image |
 | `ChecksumMissing` | none | `verify()` on an image without a checksum |
-| `DuplicateKey` | `got` (byte vector field) | inserting a key equal to the previously accepted key |
+| `DuplicateKey` | `got` (byte vector field) | value-carrying insertion of a key equal to the previously accepted key |
 | `OutOfOrder` | `previous`, `got` (byte vector fields) | inserting a key smaller than the previously accepted key |
 | `WrongType` | `expected`, `got` (u64 fields) | reserved for callers layering their own container types; never produced by the operations in this document |
 | `FromUtf8` | wrapped `std::string::FromUtf8Error` | collecting keys as `String`s when a key is not valid UTF-8 |

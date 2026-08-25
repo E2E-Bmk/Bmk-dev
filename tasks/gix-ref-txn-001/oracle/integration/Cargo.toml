@@ -1,0 +1,19 @@
+[package]
+name = "integration"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+doctest = false
+test = true
+
+[dependencies]
+common = { path = "../common" }
+gix-ref = { workspace = true }
+gix-hash = { workspace = true }
+gix-object = { workspace = true }
+gix-actor = { workspace = true }
+gix-lock = { workspace = true }
+tempfile = { workspace = true }

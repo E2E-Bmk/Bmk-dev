@@ -1,0 +1,75 @@
+# Oracle workspace for the `gix-ref` two-phase-transaction / reference-log carve.
+#
+# Three members, in the layout `RustRunner` expects:
+#
+#   common/       fixtures, helpers and the object-database stand-in;
+#                 declares no `#[test]`, so it is invisible to discovery
+#   atomic/       one documented behavior per test; in-memory or over a bare
+#                 temporary git directory
+#   integration/  behaviors that need a scripted repository, chain two
+#                 transactions, or cross the loose/packed boundary
+#
+# The package names `atomic` and `integration` are load-bearing.
+# `RustRunner._reported_to_id` takes the suite name from the leading crate
+# segment of nextest's reported name (`{crate}::{binary}$path`), so a member
+# named anything else produces ids the harness cannot match against `discover`.
+#
+# `[patch.crates-io]` is deliberately absent. `RustRunner.setup` appends
+#
+#     [patch.crates-io]
+#     gix-ref = { path = "/eval/workspace" }
+#
+# to this file at run time, and cargo rejects a manifest with two sections of
+# the same name. The `gix-ref` entry below already points at the candidate, so
+# the appended patch is a no-op that keeps `provenance()` honest either way.
+#
+# `resolver = "2"`, not `"3"`. Resolver 3 is MSRV-aware: it consults the
+# `rust-version` of every package in the graph when picking dependency
+# versions. The candidate writes its own `rust-version`, so under resolver 3 a
+# candidate could steer which releases of `gix-object`, `gix-hash` and
+# `gix-actor` the *oracle* compiles against. The oracle's dependency resolution
+# must not be reachable from the artifact under test.
+
+[workspace]
+members = ["common", "atomic", "integration"]
+resolver = "2"
+
+[workspace.dependencies]
+# The crate under specification. `features = ["sha1"]` because Appendix A
+# states that `sha1` is the feature under test and that `gix-hash` has no
+# default hash -- with neither `sha1` nor `sha256` enabled its `Kind` enum has
+# zero variants and nothing downstream compiles.
+gix-ref = { path = "/eval/workspace", features = ["sha1"] }
+
+# Appendix A's own version floors, so the oracle and the candidate resolve to
+# one instance of each. A mismatch here is not a test failure but a
+# type-identity compile error at every call site that passes a `gix_hash::Kind`
+# or a `&dyn gix_object::Find` across the boundary -- and in Rust a compile
+# error is whole-binary, which zeroes an entire layer.
+gix-hash = { version = "0.26.0", features = ["sha1"] }
+gix-object = "0.63.0"
+
+# Appendix A row 8. Needed on the oracle side for two things the API Catalog
+# puts in `gix-ref`'s own signatures: `gix_actor::Signature`, which
+# `Transaction::commit` takes, and `gix_actor::SignatureRef`, which
+# `log::LineRef::signature` hands back. `gix_actor` re-exports `gix-date` as
+# `gix_actor::date`, so `date::Time` and `date::parse_header` are reachable
+# without adding a thirteenth crate that Appendix A does not list.
+gix-actor = "0.41.2"
+
+# Appendix A row 9. Not optional: `Transaction::prepare` takes two
+# `gix_lock::acquire::Fail` arguments in the API Catalog's own signature, and
+# `gix-ref` does not re-export the type, so every caller -- oracle included --
+# names it through `gix-lock` directly. Nothing in the oracle reaches past that
+# enum into lock file format, syscall order or retry timing; that side is
+# delegated and the carve brief puts it out of bounds.
+gix-lock = "24.0.0"
+
+# NO `gix-odb`. The peel-side sibling carve uses a real object database; this
+# carve does not get one. `common::Mem` (a `HashMap` behind
+# `impl gix_object::Find`) supplies every object the packed-refs peel path
+# needs, in 12 lines, with no crate outside Appendix A.
+
+# Fixture scaffolding: temporary directories for writable repositories and for
+# the bare git directories the atomic suite builds by hand.
+tempfile = "3"

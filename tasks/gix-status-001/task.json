@@ -1,0 +1,163 @@
+{
+  "instance_id": "gix-status-001",
+  "status": "QUALIFIED",
+  "repo": "GitoxideLabs/gitoxide",
+  "repo_commit": "227619ad",
+  "repo_subdir": "gix-status",
+  "spec_version": "v1",
+  "language": "rust",
+  "oracle": {
+    "test_files": [
+      "oracle/atomic/src/lib.rs",
+      "oracle/integration/src/lib.rs"
+    ],
+    "support_files": [
+      "oracle/Cargo.toml",
+      "oracle/atomic/Cargo.toml",
+      "oracle/integration/Cargo.toml",
+      "oracle/common/Cargo.toml",
+      "oracle/common/src/lib.rs"
+    ],
+    "count": 64,
+    "count_unit": "test_functions",
+    "atomic_count": 39,
+    "integration_count": 25,
+    "system_e2e_count": 0,
+    "scorer_isolation": {
+      "method": "cargo-patch-crates-io",
+      "target_modules": [
+        "gix-status"
+      ],
+      "note": "RustRunner.setup appends [patch.crates-io] gix-status = { path = \"/eval/workspace\" } to oracle/Cargo.toml, so the oracle links the candidate crate and never the published release."
+    },
+    "runner_contract": {
+      "package_names": [
+        "atomic",
+        "integration"
+      ],
+      "depends_on_annotation": "every integration test carries a // DependsOn: comment (floor 50%)."
+    }
+  },
+  "taxonomy": {
+    "atomic::a_clean_tracked_file_produces_no_status": "atomic",
+    "atomic::changed_content_is_reported_as_a_modification": "atomic",
+    "atomic::a_content_comparison_that_reads_the_file_counts_its_bytes": "atomic",
+    "atomic::fast_eq_reports_a_size_difference_without_reading_the_file": "atomic",
+    "atomic::a_missing_worktree_file_is_reported_as_removed": "atomic",
+    "atomic::a_directory_in_place_of_a_file_is_reported_as_removed": "atomic",
+    "atomic::a_path_reached_through_a_symlink_is_reported_as_removed": "atomic",
+    "atomic::a_symlink_in_place_of_a_file_is_reported_as_a_type_change": "atomic",
+    "atomic::a_skip_worktree_entry_is_never_visited": "atomic",
+    "atomic::an_intent_to_add_entry_is_reported_without_a_content_comparison": "atomic",
+    "atomic::identical_content_behind_a_stale_stat_asks_for_an_index_update": "atomic",
+    "atomic::a_flipped_executable_bit_is_a_modification_without_a_content_change": "atomic",
+    "atomic::a_racy_entry_whose_content_changed_is_reported_and_counted": "atomic",
+    "atomic::a_fresh_index_timestamp_makes_the_same_entry_clean": "atomic",
+    "atomic::an_interrupt_stops_the_walk_without_making_it_an_error": "atomic",
+    "atomic::a_pathspec_prefix_skips_entries_before_the_pathspec_is_consulted": "atomic",
+    "atomic::an_exclude_pathspec_skips_an_entry_the_prefix_admitted": "atomic",
+    "atomic::pathspecs_without_a_common_prefix_skip_nothing_by_prefix": "atomic",
+    "atomic::skipped_sums_the_three_skip_counters": "atomic",
+    "atomic::a_base_stage_on_its_own_is_both_deleted": "atomic",
+    "atomic::an_ours_stage_on_its_own_is_added_by_us": "atomic",
+    "atomic::a_base_and_an_ours_stage_are_deleted_by_them": "atomic",
+    "atomic::a_theirs_stage_on_its_own_is_added_by_them": "atomic",
+    "atomic::a_base_and_a_theirs_stage_are_deleted_by_us": "atomic",
+    "atomic::an_ours_and_a_theirs_stage_are_both_added": "atomic",
+    "atomic::all_three_stages_are_both_modified": "atomic",
+    "atomic::a_conflict_carries_the_index_entry_of_every_stage_present": "atomic",
+    "atomic::try_from_entry_summarizes_the_stages_it_consumes": "atomic",
+    "atomic::try_from_entry_declines_an_unconflicted_entry": "atomic",
+    "atomic::a_multi_stage_conflict_counts_as_one_processed_entry": "atomic",
+    "atomic::hash_eq_reports_the_object_id_of_the_worktree_content": "atomic",
+    "atomic::a_submodule_entry_is_delegated_and_its_answer_is_reported": "atomic",
+    "atomic::a_submodule_delegate_that_reports_nothing_produces_no_status": "atomic",
+    "atomic::verified_path_returns_the_absolute_path_of_an_existing_file": "atomic",
+    "atomic::verified_path_refuses_to_step_through_a_symlink": "atomic",
+    "atomic::verified_path_reports_a_missing_path_as_not_found": "atomic",
+    "atomic::verified_path_allow_nonexisting_accepts_a_path_that_does_not_exist": "atomic",
+    "atomic::verified_path_allow_nonexisting_still_refuses_a_symlinked_component": "atomic",
+    "atomic::symlink_check_exposes_the_working_tree_root": "atomic",
+    "integration::a_mixed_index_reports_every_entry_once_and_accounts_for_all_of_them": "integration",
+    "integration::the_thread_limit_never_changes_what_is_reported": "integration",
+    "integration::a_conflict_does_not_disturb_the_entries_around_it": "integration",
+    "integration::applying_every_needs_update_stat_makes_the_next_run_silent": "integration",
+    "integration::zeroing_the_recorded_size_keeps_a_racy_modification_visible": "integration",
+    "integration::a_pathspec_changes_which_entries_are_seen_and_not_what_is_said_about_them": "integration",
+    "integration::a_run_leaves_the_working_tree_the_index_and_the_database_alone": "integration",
+    "integration::without_a_dirwalk_or_rewrites_the_renames_entry_point_is_the_plain_scan": "integration",
+    "integration::a_directory_walk_adds_untracked_files_to_the_tracked_report": "integration",
+    "integration::rewrite_tracking_replaces_a_removal_and_an_addition_with_one_rename": "integration",
+    "integration::an_all_clean_index_produces_an_empty_report_and_zero_updates": "integration",
+    "integration::stat_accurate_entries_are_never_read_from_disk": "integration",
+    "integration::multiple_conflict_shapes_coexist_in_one_run": "integration",
+    "integration::hash_eq_reports_every_changed_file_in_one_pass": "integration",
+    "integration::a_submodule_and_a_file_change_are_reported_independently": "integration",
+    "integration::a_delegate_switch_changes_the_output_type_but_not_which_paths_are_seen": "integration",
+    "integration::an_executable_bit_change_and_a_content_change_are_independent_axes": "integration",
+    "integration::racy_clean_count_matches_the_number_of_entries_that_were_racy": "integration",
+    "integration::an_intent_to_add_entry_has_its_own_summary_in_the_renames_report": "integration",
+    "integration::a_type_change_in_the_renames_report_carries_the_type_change_summary": "integration",
+    "integration::sorting_by_path_interleaves_tracked_and_untracked_entries": "integration",
+    "integration::without_sorting_tracked_entries_are_not_deferred_past_walk_entries": "integration",
+    "integration::a_needs_update_entry_has_no_summary_in_the_renames_report": "integration",
+    "integration::a_conflict_in_the_renames_report_carries_the_conflict_summary": "integration",
+    "integration::the_dirwalk_outcome_reports_its_own_counts_beside_the_tracked_outcome": "integration"
+  },
+  "taxonomy_unit": "test_functions",
+  "stats": {
+    "atomic": 39,
+    "integration": 25,
+    "system_e2e": 0
+  },
+  "source_meta": {
+    "crate_name": "gix-status",
+    "version": "0.24.0",
+    "edition": "2021",
+    "src_loc": 2907
+  },
+  "integration_gap": {
+    "rate_gap": 20.5,
+    "adjusted_gap": null,
+    "atomic_rate": 20.5,
+    "integration_rate": 0.0,
+    "gap_confidence": "low (cascade risk)",
+    "measurement": "sigfix probe (sigfix) over the qwen3.8-max run; the raw agent run does not compile against the oracle, which makes it inadmissible as a product failure rather than a 0% score."
+  },
+  "weaknesses": [
+    "Mechanism 9. Both crate-root entry points were delivered as modules rather than functions, so the whole oracle workspace failed to compile and the raw run scored nothing. The rate recorded here comes from a signature-only probe.",
+    "The two stubbed entry points are the only way into the integration layer, so the integration rate is 0/25 by construction and the raw gap understates how much of the integration behaviour was actually attempted."
+  ],
+  "labels": [
+    "rust",
+    "git",
+    "worktree-status",
+    "rename-detection"
+  ],
+  "mutation": {
+    "variant_of": "gix-status-001",
+    "clauses": [
+      "GIXSTATUS-CONFLICT-SWAP-001"
+    ],
+    "tests": [
+      "atomic::an_ours_and_a_theirs_stage_are_both_added",
+      "atomic::all_three_stages_are_both_modified",
+      "atomic::try_from_entry_summarizes_the_stages_it_consumes",
+      "integration::multiple_conflict_shapes_coexist_in_one_run",
+      "integration::a_conflict_does_not_disturb_the_entries_around_it"
+    ],
+    "upstream_expected_failures": 5,
+    "direction": "Upstream maps the conflict stage-set {2,3} to BothAdded and {1,2,3} to BothModified \u2014 the intuitive git-conflict-stage semantics (stage 1=base, 2=ours, 3=theirs). The mutation swaps these two both-* variants, which only the spec table discloses; a delivery that recalled gix-status fails the four marked assertions, one that followed the mutated table passes them.",
+    "families": [
+      "GIXSTATUS-CONFLICT-SWAP-001"
+    ]
+  },
+  "controls": {
+    "m1_reference": "64/64",
+    "m2_clean_upstream": "exactly 5 preregistered roots fail",
+    "behaviour_empty": "64 run, 0 passed",
+    "broad_a": "9 roots (conflict-summary collapsed)",
+    "broad_b": "10 roots (group-accounting collapsed)",
+    "blast_radii_distinct": true
+  }
+}

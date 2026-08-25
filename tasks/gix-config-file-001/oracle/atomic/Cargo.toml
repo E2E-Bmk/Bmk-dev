@@ -1,0 +1,28 @@
+# Atomic suite: one documented behavior per test, a single call into the
+# declared surface followed by an assertion on what came back.
+#
+# The package name is the suite name; nextest reports `atomic::atomic$<fn>` and
+# `RustRunner._reported_to_id` folds that to the id `atomic::<fn>`.
+
+[package]
+name = "atomic"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+doctest = false
+
+[dependencies]
+gix-config.workspace = true
+bstr.workspace = true
+
+# `gix_sec::Trust` is named in four declared signatures -- the `Metadata.trust`
+# field, `Metadata::with`, `SectionMut::set_trust` and the `Metadata` literal
+# the section-metadata tests build -- so the oracle has to be able to spell the
+# type. Pinned to Appendix A's floor so oracle and candidate resolve to one
+# instance: two `gix-sec` releases in the graph make every `Trust` a distinct
+# type and turn each of those call sites into a compile error.
+gix-sec.workspace = true
+
+common = { path = "../common" }

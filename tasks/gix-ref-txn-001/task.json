@@ -1,0 +1,228 @@
+{
+  "instance_id": "gix-ref-txn-001",
+  "status": "QUALIFIED",
+  "repo": "GitoxideLabs/gitoxide",
+  "repo_commit": "227619ad",
+  "repo_subdir": "gix-ref",
+  "spec_version": "v1",
+  "language": "rust",
+  "oracle": {
+    "test_files": [
+      "oracle/atomic/src/lib.rs",
+      "oracle/integration/src/lib.rs"
+    ],
+    "support_files": [
+      "oracle/Cargo.toml",
+      "oracle/atomic/Cargo.toml",
+      "oracle/common/Cargo.toml",
+      "oracle/common/src/lib.rs",
+      "oracle/common/src/scripts.rs",
+      "oracle/integration/Cargo.toml"
+    ],
+    "count": 85,
+    "count_unit": "test_functions",
+    "atomic_count": 46,
+    "integration_count": 39,
+    "system_e2e_count": 0,
+    "scorer_isolation": {
+      "method": "cargo-patch-crates-io",
+      "target_modules": [
+        "gix-ref"
+      ],
+      "note": "RustRunner.setup appends [patch.crates-io] gix-ref = { path = \"/eval/workspace\" } to oracle/Cargo.toml at run time. The oracle ships WITHOUT a [patch.crates-io] section."
+    },
+    "runner_contract": {
+      "package_names": [
+        "atomic",
+        "integration"
+      ],
+      "depends_on_annotation": "39/39 integration tests carry a // DependsOn: comment, giving 100% coverage (floor 50%)."
+    }
+  },
+  "taxonomy": {
+    "atomic::assure_one_name_has_one_edit_accepts_unique_names": "atomic",
+    "atomic::assure_one_name_has_one_edit_reports_the_duplicate_name": "atomic",
+    "atomic::pre_process_rejects_a_duplicate_introduced_by_a_split": "atomic",
+    "atomic::splits_are_skipped_for_non_symbolic_refs_and_clear_the_deref_flag": "atomic",
+    "atomic::splitting_an_empty_edit_list_is_ok": "atomic",
+    "atomic::splitting_a_symbolic_cycle_stops_after_five_rounds": "atomic",
+    "atomic::symbolic_refs_are_split_into_referents_recursively": "atomic",
+    "atomic::change_reports_its_new_and_previous_values": "atomic",
+    "atomic::log_change_default_logs_the_reference_without_forcing": "atomic",
+    "atomic::log_line_round_trips_through_write_to": "atomic",
+    "atomic::log_line_parse_keeps_angle_brackets_in_the_message": "atomic",
+    "atomic::log_line_write_to_rejects_a_message_with_a_newline": "atomic",
+    "atomic::reverse_log_iteration_rejects_a_zero_sized_buffer": "atomic",
+    "atomic::reverse_log_iteration_yields_a_single_line_with_or_without_trailing_newline": "atomic",
+    "atomic::reverse_log_iteration_yields_two_lines_newest_first": "atomic",
+    "atomic::reverse_log_iteration_numbers_a_malformed_line_from_the_end": "atomic",
+    "atomic::implicit_rollback_removes_intermediate_directories": "atomic",
+    "atomic::explicit_rollback_removes_intermediate_directories": "atomic",
+    "atomic::cancellation_after_preparation_leaves_no_change": "atomic",
+    "atomic::a_reference_can_be_created_where_an_empty_directory_is_in_the_way": "atomic",
+    "atomic::a_reference_cannot_be_committed_where_a_non_empty_directory_is_in_the_way": "atomic",
+    "atomic::must_exist_on_a_missing_reference_fails_preparation": "atomic",
+    "atomic::must_exist_and_match_on_a_missing_reference_reports_the_supplied_target": "atomic",
+    "atomic::must_exist_and_match_deleting_a_missing_reference_fails": "atomic",
+    "atomic::must_exist_and_match_deletes_a_reference_that_holds_the_named_value": "atomic",
+    "atomic::namespaced_edits_are_not_observable_in_the_returned_edits": "atomic",
+    "atomic::windows_device_names_are_rejected_when_protection_is_enabled": "atomic",
+    "atomic::windows_device_names_are_accepted_when_protection_is_disabled": "atomic",
+    "atomic::the_windows_device_name_check_runs_before_lock_acquisition": "atomic",
+    "atomic::a_lock_failure_on_a_referent_is_attributed_to_the_symbolic_reference": "atomic",
+    "atomic::delete_a_reference_which_is_gone_succeeds": "atomic",
+    "atomic::delete_a_reference_which_is_gone_but_must_exist_fails": "atomic",
+    "atomic::delete_a_broken_reference_that_must_exist_fails": "atomic",
+    "atomic::delete_a_broken_reference_may_be_deleted_even_in_deref_mode": "atomic",
+    "atomic::non_existing_can_be_deleted_with_the_existing_must_match_constraint": "atomic",
+    "atomic::deleting_with_a_must_not_exist_expectation_panics": "atomic",
+    "atomic::committing_without_a_signature_succeeds_when_no_reflog_is_written": "atomic",
+    "atomic::committing_without_a_signature_fails_when_a_reflog_must_be_written": "atomic",
+    "atomic::an_appended_entry_with_an_empty_message_ends_without_a_tab": "atomic",
+    "atomic::symbolic_head_created_then_referent_updated_with_normal_reflog": "atomic",
+    "atomic::symbolic_head_created_then_referent_updated_with_reflog_disabled": "atomic",
+    "atomic::symbolic_head_created_then_referent_updated_with_reflog_always": "atomic",
+    "atomic::a_symbolic_reference_gets_a_reflog_when_an_object_is_the_expected_previous_value": "atomic",
+    "atomic::conflicting_creation_of_names_differing_only_in_case": "atomic",
+    "atomic::non_conflicting_concurrent_transactions_both_commit": "atomic",
+    "atomic::an_ongoing_packed_transaction_forces_a_packed_refs_lock_elsewhere": "atomic",
+    "integration::reflog_iteration_returns_none_for_a_missing_name_and_for_a_directory": "integration",
+    "integration::reflog_iteration_yields_every_entry_of_head_and_of_main": "integration",
+    "integration::reverse_reflog_iteration_yields_every_entry_of_head_and_of_main": "integration",
+    "integration::forward_log_iteration_reads_the_oldest_entry_first": "integration",
+    "integration::forward_log_iteration_continues_after_a_broken_line": "integration",
+    "integration::reverse_log_iteration_reports_a_line_that_does_not_fit_and_then_stops": "integration",
+    "integration::reverse_log_iteration_reads_a_realistic_log_completely_at_every_buffer_size": "integration",
+    "integration::entries_read_from_a_repository_render_back_to_the_bytes_they_were_read_from": "integration",
+    "integration::an_update_whose_expected_value_does_not_match_is_refused": "integration",
+    "integration::the_existing_must_match_constraint_creates_a_reference_that_is_not_there_yet": "integration",
+    "integration::the_existing_must_match_constraint_still_refuses_a_mismatch": "integration",
+    "integration::must_not_exist_is_refused_when_the_reference_is_already_there": "integration",
+    "integration::must_exist_accepts_whatever_value_is_there_and_appends_a_log_entry": "integration",
+    "integration::must_not_exist_tolerates_a_reference_that_already_holds_the_new_value": "integration",
+    "integration::updating_the_referent_directly_leaves_heads_own_log_alone": "integration",
+    "integration::deleting_a_symbolic_reference_without_deref_takes_its_log_and_leaves_the_referent": "integration",
+    "integration::a_deletion_with_a_mismatching_expectation_is_attributed_to_the_referent": "integration",
+    "integration::deleting_only_the_log_of_a_symbolic_reference_keeps_the_referents_log": "integration",
+    "integration::deleting_the_log_of_a_symbolic_reference_with_deref_takes_both_logs": "integration",
+    "integration::renaming_a_reference_below_itself_is_reported_as_a_path_collision": "integration",
+    "integration::a_log_only_deletion_removes_the_log_when_writing_logs_is_enabled": "integration",
+    "integration::a_log_only_deletion_removes_the_log_when_writing_logs_is_disabled": "integration",
+    "integration::a_packed_record_supplies_the_previous_value_while_the_update_goes_loose": "integration",
+    "integration::deleting_a_packed_only_reference_removes_its_record": "integration",
+    "integration::deleting_a_loose_reference_that_shadows_an_outdated_record_clears_both": "integration",
+    "integration::deleting_every_record_removes_the_packed_file_under_a_must_exist_constraint": "integration",
+    "integration::deleting_every_record_removes_the_packed_file_under_a_may_exist_constraint": "integration",
+    "integration::packing_in_prune_mode_removes_the_loose_sources_and_writes_the_documented_file": "integration",
+    "integration::packing_in_leave_mode_keeps_the_loose_references_and_refreshes_the_record": "integration",
+    "integration::a_deletion_in_a_packing_transaction_removes_the_record": "integration",
+    "integration::object_references_are_packed_while_symbolic_ones_stay_loose": "integration",
+    "integration::an_ongoing_transaction_forces_a_packed_refs_lock_once_a_packed_file_exists": "integration",
+    "integration::writing_a_symbolic_target_over_a_packed_reference_creates_a_loose_overlay": "integration",
+    "integration::deleting_a_loose_overlay_and_the_records_beneath_empties_the_store": "integration",
+    "integration::logs_are_created_automatically_only_for_the_documented_categories": "integration",
+    "integration::forcing_a_log_creates_one_for_a_category_that_would_not_get_one": "integration",
+    "integration::the_always_write_mode_creates_a_log_without_being_asked": "integration",
+    "integration::the_disabled_write_mode_creates_no_log_even_when_one_is_forced": "integration",
+    "integration::each_log_entry_records_the_value_the_previous_entry_left_behind": "integration"
+  },
+  "taxonomy_unit": "test_functions",
+  "stats": {
+    "atomic": 46,
+    "integration": 39,
+    "system_e2e": 0
+  },
+  "source_meta": {
+    "crate_name": "gix-ref",
+    "version": "0.66.0",
+    "edition": "2024",
+    "src_loc": 4624,
+    "src_loc_note": "Full crate. In-scope for this carve: 1731 lines (transaction + reflog modules)."
+  },
+  "weaknesses": [
+    "Mechanism 9. All 46 atomic and 39 integration tests share two compilation units; a single signature divergence zeros an entire layer.",
+    "Probe score 41.2% is an upper bound from a sigfix probe (naming fixes applied); the genuine agent score is 0% due to TryFrom lifetime errors.",
+    "D10: 16 clauses.md entries are truncated at source newlines. Carried forward as non-blocking.",
+    "D11: api_surface.md line 134 incorrectly notes follow is not called by the oracle. Carried forward as non-blocking.",
+    "Score straddles the admission ceiling across attempts: 41.2% then 51.8% for the same model and spec. Any conclusion drawn from one probe on this task is inside run-to-run variance.",
+    "Score spread across three attempts is 40.0%-51.8% (mean 44.3%). The task sits below the ceiling on the distribution, but a single probe on it can land either side."
+  ],
+  "integration_gap": {
+    "measurement": "three sigfix probes over three independent qwen3.8-max attempts on the same spec.",
+    "samples": [
+      {
+        "run": "_probe_sigfix",
+        "date": "2026-08-22",
+        "score_pct": 41.2,
+        "atomic": "26/46",
+        "integration": "9/39",
+        "rate_gap": 33.4,
+        "adjusted_gap": 61.9
+      },
+      {
+        "run": "sigfix.sample2",
+        "date": "2026-08-23",
+        "score_pct": 51.8,
+        "atomic": "32/46",
+        "integration": "12/39",
+        "rate_gap": 38.8,
+        "adjusted_gap": null
+      },
+      {
+        "run": "sigfix",
+        "date": "2026-08-23",
+        "score_pct": 40.0,
+        "atomic": "26/46",
+        "integration": "8/39",
+        "rate_gap": 36.0,
+        "adjusted_gap": 73.7
+      }
+    ],
+    "score_mean_pct": 44.3,
+    "score_median_pct": 41.2,
+    "samples_below_ceiling": "2 of 3",
+    "rate_gap": 36.0,
+    "adjusted_gap": 73.7,
+    "atomic_rate": 56.5,
+    "integration_rate": 20.5,
+    "gap_confidence": "high",
+    "note": "Samples 41.2%, 51.8%, 40.0%; mean 44.3%, median 41.2%. Two of three sit below the 50% ceiling and the second is the outlier. Admitted on the resampled distribution rather than on any single draw. Anyone re-reading this task should know the spread is about 12 points wide."
+  },
+  "mutation": {
+    "clauses": [
+      "GIXREF-NEWPREV-001"
+    ],
+    "families": [
+      "GIXREF-NEWPREV-001"
+    ],
+    "tests": [
+      "atomic::an_appended_entry_with_an_empty_message_ends_without_a_tab",
+      "atomic::log_change_default_logs_the_reference_without_forcing",
+      "atomic::symbolic_head_created_then_referent_updated_with_normal_reflog",
+      "atomic::symbolic_head_created_then_referent_updated_with_reflog_always",
+      "integration::each_log_entry_records_the_value_the_previous_entry_left_behind",
+      "integration::forcing_a_log_creates_one_for_a_category_that_would_not_get_one"
+    ],
+    "upstream_expected_failures": 6,
+    "direction": "Upstream records the NULL object id in the previous field of a created reference's first reflog entry \u2014 git's own convention and the guessable form. The mutated system records the new id there instead."
+  },
+  "controls": {
+    "m1_reference": "85/85",
+    "m2_clean_upstream": "exactly 6 preregistered roots fail",
+    "behaviour_empty": "85 run, 0 passed",
+    "broad_a": "7 roots (reflog-writing owner collapsed)",
+    "broad_b": "6 roots (autocreate owner collapsed)",
+    "blast_radii_distinct": true
+  },
+  "score_distribution": {
+    "samples_pct": [
+      41.2,
+      51.8,
+      40.0
+    ],
+    "median_pct": 41.2,
+    "mean_pct": 44.3,
+    "below_ceiling": "2 of 3",
+    "note": "Characterised by the median per AGENTS.md Rule 9. The 51.8% draw is the outlier; the spread is about 12 points wide and anyone re-reading this task should know that."
+  }
+}

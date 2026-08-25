@@ -1,0 +1,21 @@
+[package]
+name = "common"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# No `#[test]` lives in this crate, so nothing here is ever reported to the
+# harness. `test = false` keeps nextest from producing an empty test binary for
+# it, which would otherwise show up as a third suite with zero cases.
+[lib]
+path = "src/lib.rs"
+doctest = false
+test = false
+
+[dependencies]
+gix-ref = { workspace = true }
+gix-hash = { workspace = true }
+gix-object = { workspace = true }
+gix-actor = { workspace = true }
+gix-lock = { workspace = true }
+tempfile = { workspace = true }

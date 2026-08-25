@@ -1,0 +1,74 @@
+# Oracle workspace for the `gix-config` File carve (`gix-config-file-001`).
+#
+# Three members, in the layout `harness/runners/rust.py` expects:
+#
+#   common/       shared helpers, no `#[test]`, invisible to discovery
+#   atomic/       one documented behavior per test, single API call -> assert
+#   integration/  multi-step workflows: parse -> mutate -> serialize -> re-parse
+#
+# The package names `atomic` and `integration` are load-bearing.
+# `RustRunner._reported_to_id` takes the suite name from the leading crate
+# segment of nextest's reported name (`{crate}::{binary}${path}`), so a member
+# named anything else produces ids the harness cannot match against `discover`.
+#
+# `[patch.crates-io]` is deliberately absent. `RustRunner.setup` appends
+#
+#     [patch.crates-io]
+#     gix-config = { path = "/eval/workspace" }
+#
+# to this file at run time, and cargo rejects a manifest carrying two sections
+# of the same name. The `gix-config` entry below already points at the
+# candidate, so the appended patch is a no-op that keeps `provenance()` honest.
+#
+# `resolver = "2"`, not `"3"`. Resolver 3 is MSRV-aware: it consults the
+# `rust-version` of every package in the graph when picking dependency
+# versions. The candidate writes its own `rust-version`, so under resolver 3 a
+# candidate could steer which releases of `gix-config-value`, `gix-sec` and
+# `gix-features` the *oracle* compiles against. The oracle's dependency
+# resolution must not be reachable from the artifact under test.
+
+[workspace]
+members = ["common", "atomic", "integration"]
+resolver = "2"
+
+[workspace.dependencies]
+# The crate under specification.
+#
+# No `features = [...]`: Appendix A states that no cargo feature may be
+# declared that would pull in reference-name parsing, glob matching or an
+# object-hash crate, and the specification declares no feature of its own.
+gix-config = { path = "/eval/workspace" }
+
+# Appendix A's own version floors for the three dependency crates whose types
+# cross the public boundary, so the oracle and the candidate resolve to one
+# instance of each. A mismatch here is not a test failure but a type-identity
+# compile error at every call site that names a `gix_sec::Trust`, a
+# `gix_config_value::integer::Suffix` or a `gix_features::threading::OwnShared`
+# -- and in Rust a compile error is whole-binary, which zeroes an entire layer.
+#
+#   gix-sec           `Metadata::trust` and `SectionMut::set_trust`
+#   gix-config-value  `Boolean`, `Color`, `Integer`, `Path`, `value::Error`
+#   bstr              `BStr` / `BString`, the byte-string currency of the API
+gix-sec = "0.14.2"
+gix-config-value = "0.19.1"
+bstr = { version = "1.12.0", default-features = false, features = ["std"] }
+
+# Deliberately absent from this table, and worth recording:
+#
+#   gix-testtools -- upstream's carve tests reach for `fixture_path` in
+#     `tests/config/file/mod.rs`. Every test that did is discarded (see
+#     filter/import_audit.md); no oracle test reads a file from disk.
+#
+#   insta -- upstream renders five assertions as inline snapshots. All five are
+#     rewritten as explicit `assert_eq!` (filter/rewrite_audit.md 2), because
+#     Appendix B states that assessment consults no snapshot files.
+#
+#   gix-features -- `OwnShared` appears in the declared signatures of
+#     `File::new`, `File::set_meta`, `File::meta_owned` and `Section::new`, but
+#     always behind `impl Into<OwnShared<Metadata>>`, which a plain `Metadata`
+#     satisfies. `meta_owned()`'s return value is only ever compared through
+#     `Deref`, so the type is never named and no dependency is needed.
+#
+#   gix-path -- only reachable behind `Source::storage_location`, which the
+#     oracle drives through the injected `env_var` closure and never through a
+#     path type it names itself.

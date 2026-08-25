@@ -1,0 +1,35 @@
+# Atomic suite.
+#
+# The package name is `atomic` because `RustRunner._reported_to_id` derives the
+# suite from the leading crate segment of nextest's reported name. Renaming this
+# package renames every test id the harness is looking for.
+#
+# Tests live in `src/lib.rs`, not in `tests/`: `discover` reads
+# `atomic/src/lib.rs` on the host, and a `tests/` directory would be invisible
+# to it while still running under nextest, which makes the reported set larger
+# than the eligible set.
+#
+# Nothing here names `gix_status::index_as_worktree_with_renames`. That module's
+# signatures mention nine foreign types, and one wrong name among them is a
+# compile error -- which in Rust takes the whole binary, and with it every score
+# in this suite. The renames surface is exercised from `integration` only.
+
+[package]
+name = "atomic"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+doctest = false
+
+[dependencies]
+common = { path = "../common" }
+gix-status.workspace = true
+gix-index.workspace = true
+gix-object.workspace = true
+gix-hash.workspace = true
+gix-fs.workspace = true
+bstr.workspace = true
+filetime.workspace = true
+tempfile.workspace = true

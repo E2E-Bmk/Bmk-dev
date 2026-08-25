@@ -1,0 +1,37 @@
+# Shared support crate for both suites.
+#
+# It declares no test attribute, so `RustRunner.discover` never sees it and
+# nextest never runs it. Carried as one path dependency rather than duplicated
+# per suite because the helpers hand out `gix_config::File` values that both
+# suites consume: a single crate instance keeps that type identical.
+
+[package]
+name = "common"
+version = "0.1.0"
+# Edition 2021, not the 2024 the crate under specification uses. An oracle is
+# not obliged to share the candidate's edition -- editions are per-crate -- and
+# 2021 keeps the oracle compiling on any toolchain from 1.56 onward instead of
+# inheriting Appendix A's 1.85 floor. Nothing here needs a 2024 feature.
+edition = "2021"
+publish = false
+
+[lib]
+doctest = false
+
+[dependencies]
+gix-config.workspace = true
+bstr.workspace = true
+
+# Deliberately absent, and worth recording because upstream's own carve tests
+# depend on it:
+#
+#   gix-testtools -- `tests/config/file/mod.rs` calls `fixture_path` to load
+#     `repo-config.crlf` and the two fuzz corpora from disk. Those four tests
+#     are discarded (filter/import_audit.md); every fixture in this crate is an
+#     inline string literal, so no oracle test touches the filesystem and none
+#     can fail for a reason that belongs to the harness rather than the
+#     candidate.
+#
+#   insta -- upstream renders five assertions as inline snapshots. All five are
+#     rewritten as explicit `assert_eq!` against the literal text upstream's
+#     snapshot recorded, so assessment never consults a `.snap` file.

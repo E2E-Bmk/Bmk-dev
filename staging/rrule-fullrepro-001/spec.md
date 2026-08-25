@@ -144,7 +144,8 @@ The constructor `NWeekday::new` accepts an optional 16-bit ordinal and a
 `Weekday`: with no ordinal it returns the `Every` form, with an ordinal it
 returns the `Nth` form. `NWeekday` values display as the two-letter RFC
 code preceded by the ordinal for the `Nth` form (`MO`, `2TU`, `-1SU`), and
-parse from the same notation.
+parse from the same notation. `Frequency`, `NWeekday`, and `Weekday`
+values are copyable and comparable for equality.
 
 **The rule builder.** `RRule` is parameterized by a validation stage; the
 two stage markers `Unvalidated` and `Validated` are public types. A fresh

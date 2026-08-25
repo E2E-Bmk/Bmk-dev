@@ -1,0 +1,17 @@
+{
+  "task_id": "rrule-fullrepro-001",
+  "reference_repo": "fmeringdal/rust-rrule (rrule)",
+  "reference_commit": "1c3420e356e4a89b1e10ff4ea1ab9cf6da42c3ab",
+  "method": "cargo test on the oracle workspace, twice: (1) with [patch.crates-io] rrule = { path = <reference clone at pinned commit, rrule> } appended, mirroring harness/runners/rust.py setup; (2) unpatched with the shipped Cargo.lock resolving rrule 0.14.0 (the pinned release) from the registry. 97/97 both runs; cargo-nextest list confirms the same 97 test IDs. The lock resolves cleanly on cargo 1.83 with chrono 0.4.45 and chrono-tz 0.10.4; no manual pins were needed.",
+  "toolchain": "cargo 1.83 + cargo-nextest (see Appendix A)",
+  "total": 97,
+  "passed": 97,
+  "failed": 0,
+  "skipped": 0,
+  "pass_rate": 1.0,
+  "stats": {
+    "atomic": 64,
+    "integration": 33
+  },
+  "date": "2026-08-25"
+}

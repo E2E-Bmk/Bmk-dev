@@ -1,0 +1,90 @@
+{"taxonomy_key": "atomic::dates and constants::datetime builds a Date carrying the given UTC calendar components", "layer": "atomic"}
+{"taxonomy_key": "atomic::dates and constants::Frequency is a numeric enum from YEARLY=0 to SECONDLY=6 with reverse lookup", "layer": "atomic"}
+{"taxonomy_key": "atomic::dates and constants::RRule mirrors the frequency values and lists FREQUENCIES in value order", "layer": "atomic"}
+{"taxonomy_key": "atomic::dates and constants::ALL_WEEKDAYS lists the two-letter tokens Monday-first", "layer": "atomic"}
+{"taxonomy_key": "atomic::dates and constants::weekday constants use Monday=0 numbering and stringify as tokens", "layer": "atomic"}
+{"taxonomy_key": "atomic::dates and constants::getJsWeekday converts to JavaScript Sunday=0 numbering", "layer": "atomic"}
+{"taxonomy_key": "atomic::dates and constants::Weekday.fromStr parses tokens and equals compares weekday and ordinal", "layer": "atomic"}
+{"taxonomy_key": "atomic::weekday ordinals::nth produces an ordinal weekday with signed token rendering", "layer": "atomic"}
+{"taxonomy_key": "atomic::weekday ordinals::equals distinguishes ordinal from plain weekdays", "layer": "atomic"}
+{"taxonomy_key": "atomic::weekday ordinals::a zero ordinal is rejected", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::origOptions echoes exactly the caller-supplied options", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::options fills every recognized key with defaults", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::freq defaults to YEARLY when omitted", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::byweekday accepts Weekday, integer and token forms and normalizes to numbers", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::ordinal weekday entries split into bynweekday pairs", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::bymonthday splits positive and negative values", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::a yearly rule derives month and month-day from its start date", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::monthly and weekly rules derive their missing date-level constraint from dtstart", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::time-of-day components derive from dtstart for daily and coarser rules", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::wkst normalizes Weekday to its number and keeps integers", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::an invalid dtstart is rejected at construction", "layer": "atomic"}
+{"taxonomy_key": "atomic::construction and normalization::clone returns an equivalent independent rule", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::all returns the full ascending occurrence list", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::all stops at the first occurrence for which the iterator returns false", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::between excludes both endpoints by default", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::between includes endpoint occurrences when inc is true", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::an inverted between window yields an empty array", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::before returns the latest occurrence strictly before, or at with inc", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::after returns the earliest occurrence strictly after, or at with inc", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::before and after return null when nothing qualifies", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::count returns the total number of occurrences", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::non-Date arguments to windowed queries are rejected", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::a frequency outside the enumeration is rejected at construction", "layer": "atomic"}
+{"taxonomy_key": "atomic::occurrence enumeration::a zero bysetpos is rejected at construction", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::interval strides whole frequency periods", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::finer-grained by-rules multiply occurrences within each period", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::negative bymonthday counts back from the end of the month", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::byyearday supports negative indices and honors leap years", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::byweekno selects ISO week numbers", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::a positive ordinal weekday picks the n-th matching weekday of the month", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::a negative ordinal weekday counts from the end of a bymonth-constrained year", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::bysetpos -1 selects the last candidate of each period", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::bysetpos mixes positions from both ends of the candidate list", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::hourly and secondly frequencies stride at their own granularity", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::an occurrence equal to until is included and nothing after it", "layer": "atomic"}
+{"taxonomy_key": "atomic::expansion arithmetic::a monthly rule pinned to the 31st skips shorter months", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::toString emits DTSTART and only caller-supplied rule properties", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::explicitly supplied default values still serialize", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::ordinal weekdays, negative month days and numeric wkst serialize as tokens", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::optionsToString serializes an options object directly", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::a rule constructed without dtstart emits no DTSTART line", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::parseString reads a bare property list into partial options", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::parseString reads DTSTART and RRULE lines and date-only UNTIL as UTC midnight", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::unknown properties and malformed timestamps are rejected", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::rrulestr picks RRule or RRuleSet from the input shape", "layer": "atomic"}
+{"taxonomy_key": "atomic::string primitives::rrulestr merges its dtstart option into rules lacking DTSTART", "layer": "atomic"}
+{"taxonomy_key": "atomic::natural language primitives::toText renders frequency, weekday list and count", "layer": "atomic"}
+{"taxonomy_key": "atomic::natural language primitives::toText covers interval, month-day, week-number and until families", "layer": "atomic"}
+{"taxonomy_key": "atomic::natural language primitives::parseText maps a phrase to partial options and null when uninterpretable", "layer": "atomic"}
+{"taxonomy_key": "atomic::natural language primitives::fromText builds a weekday rule from a phrase", "layer": "atomic"}
+{"taxonomy_key": "atomic::recurrence set primitives::accessors reflect added sources", "layer": "atomic"}
+{"taxonomy_key": "atomic::recurrence set primitives::wrongly typed sources are rejected", "layer": "atomic"}
+{"taxonomy_key": "atomic::recurrence set primitives::a dates-only set enumerates in ascending order", "layer": "atomic"}
+{"taxonomy_key": "atomic::recurrence set primitives::valueOf lists the iCalendar lines of every source", "layer": "atomic"}
+{"taxonomy_key": "integration::string round trips::fromString(toString) reproduces the occurrence sequence of a weekday rule", "layer": "integration"}
+{"taxonomy_key": "integration::string round trips::fromString(toString) survives ordinal weekdays and set positions", "layer": "integration"}
+{"taxonomy_key": "integration::string round trips::optionsToString(parseString(s)) reproduces a bare rule string", "layer": "integration"}
+{"taxonomy_key": "integration::string round trips::a parsed rule enumerates directly from its string definition", "layer": "integration"}
+{"taxonomy_key": "integration::string round trips::an until-bounded rule keeps its inclusive bound across the string view", "layer": "integration"}
+{"taxonomy_key": "integration::string round trips::derived dtstart defaults survive the string view without being serialized", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view consistency::wkst changes the emitted sequence of a biweekly multi-weekday rule", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view consistency::windowed queries agree with the full expansion", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view consistency::origOptions and options never disagree on caller-supplied values", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view consistency::clone preserves every projection of a rule", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view consistency::unbounded rules stream through the iterator callback", "layer": "integration"}
+{"taxonomy_key": "integration::text round trips::a fully convertible rule survives toText/parseText with the same recurrence", "layer": "integration"}
+{"taxonomy_key": "integration::text round trips::fromText(toText) preserves the recurrence properties of an interval rule", "layer": "integration"}
+{"taxonomy_key": "integration::text round trips::a phrase-driven rule enumerates and serializes consistently", "layer": "integration"}
+{"taxonomy_key": "integration::recurrence sets::a set merges rule occurrences with rdates and drops exdates", "layer": "integration"}
+{"taxonomy_key": "integration::recurrence sets::an exclusion rule removes every instant it generates", "layer": "integration"}
+{"taxonomy_key": "integration::recurrence sets::duplicate instants from different sources appear once", "layer": "integration"}
+{"taxonomy_key": "integration::recurrence sets::windowed queries on a set follow single-rule inclusivity semantics", "layer": "integration"}
+{"taxonomy_key": "integration::recurrence sets::count on a set equals the merged sequence length", "layer": "integration"}
+{"taxonomy_key": "integration::recurrence sets::set clones are independent of later mutation", "layer": "integration"}
+{"taxonomy_key": "integration::recurrence sets::rrulestr rebuilds a set from its own toString including exclusion rules", "layer": "integration"}
+{"taxonomy_key": "integration::recurrence sets::a multi-line recurrence text parses to the same merged stream it serializes", "layer": "integration"}
+{"taxonomy_key": "integration::end-to-end workflows::build, persist, restore and query a rule across every view", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a quarterly schedule set merges weekly and month-end rules and round-trips", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a phrase becomes a persisted schedule whose restored form matches all views", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::exception management workflow: cancel and reschedule occurrences, then persist", "layer": "system_e2e"}

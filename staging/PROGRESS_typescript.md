@@ -22,6 +22,7 @@ oclif-core, tinybase, typedoc, unstorage, wireit).
 | # | task_id | repo | status | oracle (a/i/e2e) | reference | dummy | notes |
 |---|---------|------|--------|------------------|-----------|-------|-------|
 | 1 | orama-search-engine-fullrepro-001 | oramasearch/orama (@orama/orama@3.1.18) | S3_DONE (packet committed) | 78 (52/23/3) | 78/78 local vitest | 0/78 | full-text engine; filters/facets/groups/sort/persistence |
+| 2 | rrule-recurrence-engine-fullrepro-001 | jkbrzt/rrule (rrule@2.8.1) | S3_DONE (packet committed) | 90 (64/22/4) | 90/90 local vitest | 0/90 | RFC 5545 recurrence engine; expansion/string/text/set projections; 3 spec claims corrected from reference execution |
 
 ## Rejected candidates (hard gates)
 

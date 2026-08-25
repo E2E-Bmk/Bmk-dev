@@ -11,17 +11,19 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3B_TRIGGER
 stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
+functions_in_scope: 18
 updated:    2026-08-25
 ```
 
 todo:
-- [ ] inventory upstream test files (external tests/ + in-crate) and audit import paths / feature requirements
-- [ ] classify: retainable as-is vs rewrite vs discard; land filter/rewrite_audit.md
+- [ ] generate oracle test crates (atomic + integration) from spec, fresh fixtures, probe-verified assertions
+- [ ] run against pinned reference (path-patched + registry lock), require 100%
+- [ ] write spec_test_map.md, taxonomy.jsonl, kept_nodeids.txt, depends_on.json, task.json; run lint
 
 ## History
 
@@ -31,6 +33,8 @@ todo:
 | 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec drafting |
 | 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 landed; three probe rounds fixed: dedent arithmetic (deeper-line excess, blank-line \n elements incl. beyond-common spaces, placeable-line indent dropped, zero-column `{` continues while zero-column text breaks), LF-vs-CRLF element split, malformed-comment asymmetry (junk in parse, silent skip in parse_runtime), term.attr selector-legal/placeable-illegal, named-arg literal restriction, junk spans absorb trailing blanks, free comments blank-line framed, unescape U+FFFD rules; rustdoc `##`-escape trap identified (doc `####` is really `###`) — resource marker is `###`; all spec examples probe-verified |
 | 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
+| 5 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit done: 18 upstream fns — parser fixtures serde/json-gated + snapshot corpus, serializer fixtures glob+corpus, in-crate serializer tests private TextWriter/impl blocks, unicode test public but memorization-prone; decision generated-only |
+| 6 | 2026-08-25 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md landed: per-file disposition; fresh harbor/orbital vocabulary replaces hello-world/foo-bar corpus; dummy-passable patterns avoided (error tests paired with recovered-tree positives; pattern assertions on full element vectors) |
 
 ---
 

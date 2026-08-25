@@ -21,9 +21,25 @@ from pathlib import Path
 from typing import Iterator, Optional
 
 try:
-    from harness.runners.base import Batch, Env, Runner, Step, TestId, nested_names
+    from harness.runners.base import (
+        Batch,
+        Env,
+        Runner,
+        Step,
+        TestId,
+        depends_on_above,
+        nested_names,
+    )
 except ImportError:  # direct execution of a harness script
-    from runners.base import Batch, Env, Runner, Step, TestId, nested_names
+    from runners.base import (
+        Batch,
+        Env,
+        Runner,
+        Step,
+        TestId,
+        depends_on_above,
+        nested_names,
+    )
 
 # `it("name")`, `test("name")`, and the `.each` / `.only` / `.skip` variants.
 _TEST_CALL = re.compile(
@@ -69,6 +85,34 @@ class TypeScriptRunner(Runner):
         )
         return ["::".join([suite, *chain]) for chain in chains]
 
+    def dependencies(self, oracle_host: Path) -> dict[str, list[str]]:
+        """`// DependsOn:` comments above each integration test's call.
+
+        A key is the test's own title, not its describe chain: that is the leaf
+        of the `{suite}::{chain}::{title}` id `discover` builds, and the leaf is
+        what both the sandbox and `verify_task` index the relation by. Values
+        are atomic titles read the same way.
+
+        The title is passed through `function_of` first. A `.each` test's source
+        title is `handles factor %i` while the run reports `handles factor 0`,
+        and the folded form is the one the outcome map is keyed by -- an
+        unfolded key would name a function that never appears in the results.
+
+        Read from source on the host, like `discover`, so the candidate cannot
+        influence the eligible set.
+        """
+        directory = oracle_host / "integration"
+        if not directory.is_dir():
+            return {}
+        result: dict[str, list[str]] = {}
+        for source in sorted(directory.rglob("*.test.ts")):
+            text = source.read_text(encoding="utf-8-sig", errors="replace")
+            for match in _TEST_CALL.finditer(text):
+                names = depends_on_above(text, match.start())
+                if names:
+                    result[self.function_of(match.group(2))] = names
+        return result
+
     # ── container preparation ─────────────────────────────────────────────
 
     def setup(self, env: Env) -> Iterator[Step]:
@@ -90,6 +134,17 @@ class TypeScriptRunner(Runner):
             capture=True,
         )
 
+        # The oracle's own dependencies must be installed BEFORE the candidate
+        # is linked in. `npm install --no-save` deliberately leaves the
+        # candidate out of package.json, so a bare `npm install` afterwards
+        # sees it as extraneous and prunes it -- the oracle then fails to
+        # resolve the package under test at all. Order is load-bearing here.
+        yield Step(
+            f"cd {env.oracle} && npm install --no-audit --no-fund 2>&1",
+            timeout=900,
+            capture=True,
+        )
+
         for module in env.target_modules:
             yield Step(
                 f"cd {env.oracle} && npm install --no-save "
@@ -97,12 +152,6 @@ class TypeScriptRunner(Runner):
                 timeout=600,
                 capture=True,
             )
-
-        yield Step(
-            f"cd {env.oracle} && npm install --no-audit --no-fund 2>&1",
-            timeout=900,
-            capture=True,
-        )
 
     # ── execution ─────────────────────────────────────────────────────────
 

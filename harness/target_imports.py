@@ -92,3 +92,26 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "whoosh-index-search-fullrepro-001": ["whoosh"],
     "wtforms-form-lifecycle-fullrepro-001": ["wtforms"],
 }
+
+
+# The TypeScript lane keeps its import roots in typescript_target_imports.json for
+# the same reason the Rust lane does: the scorer and the lint must agree on one
+# source per language rather than drift apart.
+def _merge_typescript_registrations() -> None:
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).with_name("typescript_target_imports.json")
+    if not path.exists():
+        return
+    try:
+        extra = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    for task_id, roots in extra.items():
+        if isinstance(roots, str):
+            roots = [roots]
+        TARGET_IMPORTS.setdefault(task_id, list(roots))
+
+
+_merge_typescript_registrations()

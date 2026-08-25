@@ -5,8 +5,13 @@ Ported from the release repo's `harness/verify_task.py`. Two differences:
 
 * the oracle is read from `tasks/{id}/oracle/` (Bmk-dev nests the oracle inside
   the task packet) rather than a top-level `oracle/{id}/`;
-* `TARGET_IMPORTS` and the `depends_on` parser come from their own modules here,
-  because the construction side does not carry the scoring sandbox.
+* `TARGET_IMPORTS` comes from its own module here, because the construction side
+  does not carry the scoring sandbox.
+
+Test enumeration, the `depends_on` relation and the layer counts all come from
+the task's per-language runner, so a task in any registered language is measured
+by the same gates rather than only Python and Java. The checks below the language
+guard read Python source and have no equivalent elsewhere yet.
 
 Every check derives from the physical oracle files, so no separate bookkeeping
 file has to be kept in step with them.
@@ -23,12 +28,10 @@ from pathlib import Path
 try:
     from harness.oracle_import_lint import allowed_from_spec, imports_from_ast
     from harness.target_imports import TARGET_IMPORTS
-    from harness.depends_on import _parse_depends_on
     from harness.runners import get_runner
 except ModuleNotFoundError:  # Direct execution from the repository root.
     from oracle_import_lint import allowed_from_spec, imports_from_ast
     from target_imports import TARGET_IMPORTS
-    from depends_on import _parse_depends_on
     from runners import get_runner
 
 try:
@@ -78,31 +81,12 @@ FORBIDDEN_BODY_TERMS = (
 )
 
 
-def test_count(path: Path) -> int:
-    tree = ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
-    return sum(
-        isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-        and node.name.startswith("test_")
-        for node in ast.walk(tree)
-    )
-
-
-def test_names(path: Path) -> set[str]:
-    tree = ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
-    return {
-        node.name
-        for node in ast.walk(tree)
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-        and node.name.startswith("test_")
-    }
-
-
 def check_task(task_id: str) -> list[str]:
     task_dir = ROOT / "tasks" / task_id
     oracle_dir = task_dir / "oracle"
     errors: list[str] = []
     warnings: list[str] = []
-    required = [task_dir / "spec.md", task_dir / "task.json", oracle_dir / "requirements.txt"]
+    required = [task_dir / "spec.md", task_dir / "task.json"]
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
     if missing:
         return ["missing files: " + ", ".join(missing)]
@@ -123,39 +107,31 @@ def check_task(task_id: str) -> list[str]:
     except json.JSONDecodeError as exc:
         return errors + [f"invalid task.json: {exc}"]
     language = str(data.get("language", "python")).lower()
-    if language == "java":
-        required = [
-            oracle_dir / "pom.xml",
-            oracle_dir / "src" / "test" / "java" / "atomic",
-            oracle_dir / "src" / "test" / "java" / "integration",
-        ]
-    else:
-        required = [oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"]
-    missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
-    if missing:
-        return errors + ["missing files: " + ", ".join(missing)]
+    try:
+        runner = get_runner(language)
+    except (KeyError, ValueError) as exc:
+        return errors + [f"no runner for language {language!r}: {exc}"]
     if data.get("instance_id") != task_id:
         errors.append("task.json instance_id does not match directory")
     strict_assertion_gate = isinstance(data.get("validation"), dict)
 
-    if language == "java":
-        runner = get_runner(language)
-        atomic_ids = runner.discover(oracle_dir, "atomic")
-        integration_ids = runner.discover(oracle_dir, "integration")
-        atomic = len(atomic_ids)
-        integration = len(integration_ids)
-        atomic_names = {test_id.rpartition("::")[2] for test_id in atomic_ids}
-        integration_names = {test_id.rpartition("::")[2] for test_id in integration_ids}
-        expected_keys = {*atomic_ids, *integration_ids}
-    else:
-        atomic = test_count(oracle_dir / "test_atomic.py")
-        integration = test_count(oracle_dir / "test_integration.py")
-        atomic_names = test_names(oracle_dir / "test_atomic.py")
-        integration_names = test_names(oracle_dir / "test_integration.py")
-        expected_keys = {
-            *(f"test_atomic::{name}" for name in atomic_names),
-            *(f"test_integration::{name}" for name in integration_names),
-        }
+    # A suite the runner enumerates as empty is either absent or unreadable.
+    # Either way its denominator is zero, which is the defect worth reporting;
+    # naming the expected file here would re-introduce the Python assumption.
+    atomic_ids = runner.discover(oracle_dir, "atomic")
+    integration_ids = runner.discover(oracle_dir, "integration")
+    for suite, found in (("atomic", atomic_ids), ("integration", integration_ids)):
+        if not found:
+            errors.append(
+                f"{suite} suite enumerates no tests under tasks/{task_id}/oracle"
+            )
+    if errors and not (atomic_ids or integration_ids):
+        return errors, warnings
+
+    # Counted from what the runner enumerated, so the number is the scoring
+    # denominator itself rather than a second parse that could disagree with it.
+    atomic = len({runner.function_of(test) for test in atomic_ids})
+    integration = len({runner.function_of(test) for test in integration_ids})
     if atomic < ATOMIC_TEST_MIN or integration < INTEGRATION_TEST_MIN:
         errors.append(f"layer floor failed: atomic={atomic}, integration={integration}")
     stats = data.get("stats", {})
@@ -172,11 +148,26 @@ def check_task(task_id: str) -> list[str]:
     if oracle_count < TOTAL_TEST_MIN:
         errors.append(f"scoreable case floor failed: {oracle_count}")
 
+    # Taxonomy keys are `{suite}::{leaf}`. `function_of` keeps a class path
+    # (`test_atomic::TestLRI.test_x`) because that is the form `score.tests`
+    # uses, while task.json stores the leaf alone (`test_atomic::test_x`) --
+    # several tasks group their atomic tests in classes. Comparing the two forms
+    # directly reports every one of those tasks as broken, so the leaf is taken
+    # from the key rather than assumed to be all of it.
     taxonomy = data.get("taxonomy", {})
+
+    def _leaf_keys(ids: list[str]) -> set[str]:
+        out = set()
+        for test in ids:
+            suite, _, rest = runner.function_of(test).partition("::")
+            out.add(f"{suite}::{rest.rsplit('.', 1)[-1]}" if rest else suite)
+        return out
+
+    atomic_keys = _leaf_keys(atomic_ids)
+    integration_keys = _leaf_keys(integration_ids)
+    expected_keys = atomic_keys | integration_keys
     if set(taxonomy) != expected_keys:
         errors.append("taxonomy keys do not match the physical test functions")
-    atomic_keys = atomic_ids if language == "java" else [f"test_atomic::{name}" for name in atomic_names]
-    integration_keys = integration_ids if language == "java" else [f"test_integration::{name}" for name in integration_names]
     if any(taxonomy.get(key) != "atomic" for key in atomic_keys):
         errors.append("an atomic-file test has a non-atomic taxonomy layer")
     allowed_integration = {"integration", "system_e2e"}
@@ -197,11 +188,7 @@ def check_task(task_id: str) -> list[str]:
     if any(base_layers[layer] > score_layers[layer] for layer in base_layers):
         errors.append("taxonomy base-function counts exceed scoreable layer counts")
 
-    dependency_map = (
-        get_runner(language).dependencies(oracle_dir)
-        if language == "java"
-        else _depends_on_map(oracle_dir / "test_integration.py")
-    )
+    dependency_map = runner.dependencies(oracle_dir)
     dependency_coverage = len(dependency_map) / max(integration, 1)
     if dependency_coverage < DEPENDS_ON_COVERAGE_MIN:
         errors.append(
@@ -213,31 +200,55 @@ def check_task(task_id: str) -> list[str]:
         for dependencies in dependency_map.values()
         for dependency in dependencies
     }
-    unknown_dependencies = referenced_atomic - atomic_names
+    # `depends_on` names a bare function while a taxonomy key carries the whole
+    # nesting chain the runner emits. Compare leaves so a rename cannot slip
+    # through as a match at some intermediate depth.
+    atomic_leaves = {key.rsplit("::", 1)[-1] for key in atomic_keys}
+    unknown_dependencies = referenced_atomic - atomic_leaves
     if unknown_dependencies:
         errors.append(
             "depends_on references unknown atomic tests: "
             + ", ".join(sorted(unknown_dependencies))
         )
 
-    if language != "java":
-        section, _ = allowed_from_spec(task_dir / "spec.md")
-        targets = set(TARGET_IMPORTS.get(task_id, []))
-        for module, lineno in imports_from_ast(oracle_dir / "test_atomic.py"):
-            if module.split(".", 1)[0] not in targets:
-                continue
-            if not re.search(rf"(?<![\w.]){re.escape(module)}(?!\w)", section):
-                errors.append(f"atomic import not promised by the spec public surface: {module}:{lineno}")
+    targets = set(TARGET_IMPORTS.get(task_id, []))
+    if not targets:
+        # Without a registered import root the scoring sandbox cannot audit
+        # provenance, so it aborts before running the oracle and the task yields
+        # no score at all -- not a zero, an absent measurement. The import check
+        # below would also pass vacuously, since an empty target set skips every
+        # import. Checked for every language, not just Python: provenance
+        # auditing lives in the sandbox rather than in the runner.
+        errors.append(
+            f"no TARGET_IMPORTS entry for {task_id}: "
+            "scoring will abort before running the oracle"
+        )
+
+    # Everything below reads Python source. A non-Python task has no equivalent
+    # yet, and running these against its oracle would report a defect that is
+    # only this checker's Python assumption.
+    if language != "python":
+        return errors, warnings
+
+    if not (oracle_dir / "requirements.txt").exists():
+        errors.append(f"missing files: tasks/{task_id}/oracle/requirements.txt")
+
+    section, _ = allowed_from_spec(task_dir / "spec.md")
+    for module, lineno in imports_from_ast(oracle_dir / "test_atomic.py"):
+        if module.split(".", 1)[0] not in targets:
+            continue
+        if not re.search(rf"(?<![\w.]){re.escape(module)}(?!\w)", section):
+            errors.append(f"atomic import not promised by the spec public surface: {module}:{lineno}")
 
     # Assertion-composition gate: the atomic layer must mostly verify produced
     # values, not merely correct rejection, or the Integration Gap numerator
     # inherits a systematic bias (failure_path tests are dummy-passable).
-    annotations = {} if language == "java" else _annotate_assertions(oracle_dir / "test_atomic.py")
+    annotations = _annotate_assertions(oracle_dir / "test_atomic.py")
     external_assert_helpers = {
         "assert_nonzero": "failure_path",
         "assert_raises": "failure_path",
     }
-    source = "" if language == "java" else (oracle_dir / "test_atomic.py").read_text(
+    source = (oracle_dir / "test_atomic.py").read_text(
         encoding="utf-8-sig", errors="replace"
     )
     for helper_name, kind in external_assert_helpers.items():
@@ -263,19 +274,14 @@ def check_task(task_id: str) -> list[str]:
             target.append("atomic tests without any check: " + ", ".join(sorted(no_check)))
 
     # Gate 3f: duplicate top-level imports that shadow each other (warning-only)
-    if language != "java":
-        for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
-            _check_duplicate_imports(test_file, warnings)
+    for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
+        _check_duplicate_imports(test_file, warnings)
 
-        # Gate 3g: fixture files referenced via Path(__file__).parent must exist
-        for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
-            _check_fixture_references(test_file, oracle_dir, errors)
+    # Gate 3g: fixture files referenced via Path(__file__).parent must exist
+    for test_file in (oracle_dir / "test_atomic.py", oracle_dir / "test_integration.py"):
+        _check_fixture_references(test_file, oracle_dir, errors)
 
     return errors, warnings
-
-
-def _depends_on_map(path: Path) -> dict[str, list[str]]:
-    return _parse_depends_on(path)
 
 
 def _test_at_line(path: Path, line: int) -> str | None:

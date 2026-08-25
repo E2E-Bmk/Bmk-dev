@@ -1,6 +1,6 @@
 # SpecBench — 任务构建工作台
 
-从真实开源 Python 库出发，构建"按行为规格重建完整项目"的评测任务。
+从真实开源库（Python / Java / Rust / TypeScript）出发，构建"按行为规格重建完整项目"的评测任务。
 
 ## 快速开始
 
@@ -11,23 +11,24 @@
 ## 目录结构
 
 ```
-├── tasks/{language}/{task-id}/              # 已合格的 benchmark 任务
+├── tasks/{lang}/{task-id}/       # 已合格的 benchmark 任务（python/java/rust/typescript）
 │   ├── spec.md                   # 行为规格（模型唯一输入）
 │   ├── task.json                 # 元数据（taxonomy、scorer 参数、得分）
-│   ├── spec_test_map.md          # 测试↔spec 映射（审计用）
-│   └── oracle/
-│       ├── test_atomic.py        # 原子层测试
-│       └── test_integration.py   # 集成+端到端测试
+│   ├── oracle/                   # 原子层 + 集成层测试
+│   └── verdict.json              # 门禁裁定
 │
-├── harness/                      # 评分脚本
-│   ├── score_pytest_original.py  # pytest runner + 隔离
-│   ├── run.py                    # cleanroom 执行入口
-│   └── verify_task.py            # task 完整性校验
+├── harness/                      # 合成 / 验证 / 校验的全部脚本
+│   ├── core/                     #   verify_task.py 校验、run.py 执行、verdict.py 裁定
+│   ├── lang/{lang}/              #   语言特定 runner 与评分器
+│   ├── runners/                  #   语言 runner 接口
+│   ├── sandbox.py                #   Docker 评分沙箱（网络隔离、可复现）
+│   └── evaluate.py               #   评测入口（--score-only 只校验；带 agent 需 LLM key）
 │
-├── scripts/                      # 辅助工具
+├── agents/                       # agent 适配器（mini-swe-agent）
+├── docker/                       # 镜像与 build_images.py
 ├── skills/                       # 流水线各阶段 SKILL 定义
-│
-├── docs/REPO_STATUS.md                # 认领参考
+├── docs/                         # SPEC_STANDARD.md / QUALITY_GATE.md / REPO_STATUS.md
+├── requirements.txt              # 宿主侧依赖（含 mini-swe-agent）
 ├── CANDIDATES.md                 # 候选库选择
 └── AGENTS.md
 ```
@@ -52,6 +53,14 @@
   "candidate_score": { "passed": 58, "total": 64 }
 }
 ```
+
+## 运行要求（自包含）
+
+克隆后只要机器能构建 Docker，即可完成合成 / 验证 / 校验全流程。
+
+- **验证**：`python harness/core/verify_task.py <task-id>` — 纯 Python，检查 task 结构与 spec-oracle 对齐，无需 Docker。
+- **校验（评分）**：`python harness/evaluate.py --score-only --model <name> --tasks <id>` — 在 Docker 沙箱内跑 oracle 测试，网络隔离、可复现。首次运行前 `python docker/build_images.py` 构建镜像。
+- **agent 评测**（可选）：同一入口去掉 `--score-only`，用 mini-swe-agent 让模型按 spec 重建仓库。需 `pip install -r requirements.txt` 并配置对应模型的 API key（见 `agents/config.json`）。
 
 ## 流水线
 

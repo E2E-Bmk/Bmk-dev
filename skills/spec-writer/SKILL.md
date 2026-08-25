@@ -174,7 +174,7 @@ is indistinguishable from success when the goal is to drive pass rates down.
 
 ## Required Structure
 
-The authoritative structure definition is in `Spec2Repo/docs/SPEC_STANDARD.md`. This section is a summary.
+The authoritative structure definition is in `docs/SPEC_STANDARD.md`. This section is a summary.
 
 Every spec file has two parts. Only the body is sent to the candidate.
 
@@ -421,7 +421,7 @@ All twenty-seven must pass (26 and 27 apply only to `go` / `rust` / `java`). 27 
 ## Style Gate
 
 **Style gate (mandatory before proceeding to Stage 3):**
-- Spec must follow the 6-layer structure defined in `Spec2Repo/docs/SPEC_STANDARD.md`
+- Spec must follow the 6-layer structure defined in `docs/SPEC_STANDARD.md`
 - Behavior sections must be organized by concept/workflow, NOT by module/class hierarchy
 - Behavior sections must have narrative flow: concept → normal path → parameters → boundaries
 - No continuous signature code blocks exceeding 10 lines

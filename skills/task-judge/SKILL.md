@@ -25,7 +25,7 @@ description: "Judge whether a SWE-E2E benchmark task and evaluation run are vali
 
 > **Every test in the scoring set must be spec-driven and behavioral. Apply this before reading any score.**
 
-**Quality Gate reference:** The comprehensive quality standard for all benchmark tasks is defined in `Spec2Repo/docs/QUALITY_GATE.md`. The spec structure authority is `Spec2Repo/docs/SPEC_STANDARD.md` which defines the 6-layer structure (Context → Orientation → Behavior → Contract → Reference → Meta), information depth rules, and spec-oracle alignment protocol. The judge must verify that the task satisfies all automated gates and the spec standard before issuing QUALIFIED. The key gates are: file completeness (Gate 1), spec structure and content rules (Gate 2, per SPEC_STANDARD), oracle test composition (Gate 3), metadata consistency (Gate 4), and reference validation (Gate 5).
+**Quality Gate reference:** The comprehensive quality standard for all benchmark tasks is defined in `docs/QUALITY_GATE.md`. The spec structure authority is `docs/SPEC_STANDARD.md` which defines the 6-layer structure (Context → Orientation → Behavior → Contract → Reference → Meta), information depth rules, and spec-oracle alignment protocol. The judge must verify that the task satisfies all automated gates and the spec standard before issuing QUALIFIED. The key gates are: file completeness (Gate 1), spec structure and content rules (Gate 2, per SPEC_STANDARD), oracle test composition (Gate 3), metadata consistency (Gate 4), and reference validation (Gate 5).
 
 **Spec-driven**: the test traces to a spec section; its expected outcome is derivable from the spec alone.
 

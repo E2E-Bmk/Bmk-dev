@@ -182,7 +182,7 @@ Process each test nodeid one at a time. Write its row in `spec_test_map.md` befo
 
 If you are about to score, run tests, or move to the next stage without a complete `spec_test_map.md`, stop: the filtering is not done. A complete map is the only evidence that filtering happened.
 
-For every `covered` row, the `spec_section` value must match a heading that actually exists in `spec_vN.md`. The spec now uses a 6-layer structure (see `Spec2Repo/docs/SPEC_STANDARD.md`): Context (Product Overview, Non-Goals), Orientation (Representative Workflows), Behavior (domain sections), Contract (State Model, Error Semantics, Cross-View Invariants), Reference (Public Interface), Meta (Appendix A/B). Verify the heading exists before writing the row. A `spec_section` cell that cannot be matched to a real spec heading means Q2 was not properly applied — reclassify the row.
+For every `covered` row, the `spec_section` value must match a heading that actually exists in `spec_vN.md`. The spec now uses a 6-layer structure (see `docs/SPEC_STANDARD.md`): Context (Product Overview, Non-Goals), Orientation (Representative Workflows), Behavior (domain sections), Contract (State Model, Error Semantics, Cross-View Invariants), Reference (Public Interface), Meta (Appendix A/B). Verify the heading exists before writing the row. A `spec_section` cell that cannot be matched to a real spec heading means Q2 was not properly applied — reclassify the row.
 
 Produced during filtering, not after.
 

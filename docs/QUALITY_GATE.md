@@ -92,7 +92,7 @@ does not need that, and a second copy on this side drifted from the first
 ## Gate 1 — Spec Structure
 
 `spec.md` MUST contain these `##`-level sections. The authority for the section
-set is the six-layer structure in `Spec2Repo/docs/SPEC_STANDARD.md`; the aliases
+set is the six-layer structure in `docs/SPEC_STANDARD.md`; the aliases
 column lists the pre-restructure names that `harness/core/verify_task.py` still
 accepts, so a spec written before the SDD rewrite is not reported as broken.
 New specs use the current name.

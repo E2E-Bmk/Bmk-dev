@@ -1,0 +1,19 @@
+ARG BASE_IMAGE=spec2repo-base:latest
+FROM ${BASE_IMAGE}
+
+# Task runtime environment for the AGENT container.
+# Installs the same third-party packages the scoring container will have
+# (the task's oracle requirements), then removes any distribution that
+# provides the target import names (the package the agent must implement).
+# This makes the spec's Environment section, the agent container, and the
+# scoring container agree on one package set.
+
+ARG STRIP_ARGS
+COPY requirements.txt /tmp/agent-requirements.txt
+COPY uninstall_targets.py /tmp/uninstall_targets.py
+
+RUN pip install --no-cache-dir -r /tmp/agent-requirements.txt && \
+    python /tmp/uninstall_targets.py ${STRIP_ARGS} && \
+    rm /tmp/agent-requirements.txt /tmp/uninstall_targets.py
+
+WORKDIR /workspace

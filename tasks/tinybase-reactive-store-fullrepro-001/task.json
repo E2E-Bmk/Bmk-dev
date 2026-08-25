@@ -112,5 +112,36 @@
     "atomic": 38,
     "integration": 21,
     "system_e2e": 4
-  }
+  },
+  "candidate_evaluation": {
+    "model": "codex-gpt5",
+    "run_dir": "candidate-runs/codex-gpt5-tinybase-reactive-store-specv1-20260823-01",
+    "runner": "TypeScriptRunner / Vitest JSON scorer",
+    "platform": "Linux-5.15.0-25-generic-x86_64-with-glibc2.35",
+    "passed": 30,
+    "failed": 33,
+    "total": 63,
+    "pass_rate": 0.4761904762,
+    "collection_passed": true,
+    "valid": true,
+    "per_layer": {
+      "atomic": {"passed": 22, "failed": 16, "total": 38, "pass_rate": 0.5789473684},
+      "integration": {"passed": 6, "failed": 15, "total": 21, "pass_rate": 0.2857142857},
+      "system_e2e": {"passed": 2, "failed": 2, "total": 4, "pass_rate": 0.5}
+    }
+  },
+  "candidate_score": 0.4761904762,
+  "candidate_score_valid": true,
+  "integration_gap": {
+    "atomic_rate": 0.5789473684,
+    "integration_e2e_rate": 0.32,
+    "rate_gap": 0.2589473684,
+    "adjusted_gap": 0.2932330827,
+    "dependency_eligible_tests": 14,
+    "true_gap_event_count": 10
+  },
+  "labels": ["discriminating", "composition-signal"],
+  "caveats": [
+    "The archived run label is codex-gpt5 rather than gpt-5.5; its score is retained with the original model label instead of being relabeled."
+  ]
 }

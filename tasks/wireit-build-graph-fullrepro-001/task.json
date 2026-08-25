@@ -145,5 +145,39 @@
   "repo": "google/wireit",
   "repo_commit": "e82171c914dcf4ffd1e7a6c52b300a1d6df62f0a",
   "source_path": "wip/typescript-candidates/wireit",
-  "spec_version": "v2"
+  "spec_version": "v2",
+  "candidate_evaluation": {
+    "model": "gpt-5.5",
+    "run_dir": "candidate-runs/gpt55-wireit-build-graph-specv2-20260823-03",
+    "runner": "manual TypeScript node:test scorer",
+    "platform": "Linux-5.15.0-25-generic-x86_64-with-glibc2.35",
+    "passed": 71,
+    "failed": 6,
+    "timeout": 6,
+    "total": 83,
+    "pass_rate": 0.8554216867,
+    "collection_passed": true,
+    "provenance_status": "candidate symlink and WIREIT_BIN isolation verified",
+    "valid": true,
+    "per_layer": {
+      "atomic": {"passed": 31, "failed": 1, "timeout": 1, "total": 33, "pass_rate": 0.9393939394},
+      "integration": {"passed": 40, "failed": 5, "timeout": 3, "total": 48, "pass_rate": 0.8333333333},
+      "system_e2e": {"passed": 0, "failed": 0, "timeout": 2, "total": 2, "pass_rate": 0.0}
+    }
+  },
+  "candidate_score": 0.8554216867,
+  "candidate_score_valid": true,
+  "integration_gap": {
+    "atomic_rate": 0.9393939394,
+    "integration_e2e_rate": 0.8,
+    "rate_gap": 0.1393939394,
+    "adjusted_gap": null,
+    "dependency_eligible_tests": 0,
+    "true_gap_event_count": 0
+  },
+  "labels": ["high-pass-rate", "timeout-caveat"],
+  "caveats": [
+    "Six tests timed out and count as non-passing in the fixed 83-test denominator.",
+    "This archived run used the manual TypeScript node:test scorer rather than the unified TypeScriptRunner, so cross-task comparisons carry a runner caveat."
+  ]
 }

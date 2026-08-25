@@ -138,5 +138,36 @@
   "repo": "changesets/changesets",
   "repo_commit": "bed458124f623463c581521ab56d040eba2a8b20",
   "source_path": "wip/typescript-candidates/changesets",
-  "spec_version": "v1"
+  "spec_version": "v1",
+  "candidate_evaluation": {
+    "model": "gpt-5.5",
+    "run_dir": "candidate-runs/gpt55-changesets-release-graph-specv1-20260823-clean-06",
+    "runner": "TypeScriptRunner / Vitest JSON scorer",
+    "platform": "Linux-5.15.0-25-generic-x86_64-with-glibc2.35",
+    "passed": 59,
+    "failed": 10,
+    "total": 69,
+    "pass_rate": 0.8550724638,
+    "collection_passed": true,
+    "provenance_status": "passed",
+    "valid": true,
+    "per_layer": {
+      "atomic": {"passed": 35, "failed": 7, "total": 42, "pass_rate": 0.8333333333},
+      "integration": {"passed": 20, "failed": 2, "total": 22, "pass_rate": 0.9090909091},
+      "system_e2e": {"passed": 4, "failed": 1, "total": 5, "pass_rate": 0.8}
+    }
+  },
+  "candidate_score": 0.8550724638,
+  "candidate_score_valid": true,
+  "integration_gap": {
+    "atomic_rate": 0.8333333333,
+    "integration_e2e_rate": 0.8888888889,
+    "rate_gap": -0.0555555556,
+    "adjusted_gap": null,
+    "true_gap_event_count": 0
+  },
+  "labels": ["high-pass-rate"],
+  "caveats": [
+    "The GPT-5.5 candidate passed 59/69, above the preferred calibration range; this is recorded post hoc and the oracle was not changed to target a score."
+  ]
 }

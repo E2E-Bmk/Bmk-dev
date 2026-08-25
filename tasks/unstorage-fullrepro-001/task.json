@@ -118,5 +118,39 @@
     "atomic": 30,
     "integration": 38,
     "system_e2e": 0
-  }
+  },
+  "candidate_evaluation": {
+    "model": "codex",
+    "run_dir": "candidate-runs/codex-unstorage-fullrepro-001-specv1-20260823-01",
+    "runner": "TypeScriptRunner / Vitest JSON scorer",
+    "platform": "Linux-5.15.0-25-generic-x86_64-with-glibc2.35",
+    "passed": 38,
+    "failed": 26,
+    "not_collected": 4,
+    "total": 68,
+    "pass_rate": 0.5588235294,
+    "collection_passed": false,
+    "provenance_status": "passed by direct candidate import probe",
+    "valid": true,
+    "per_layer": {
+      "atomic": {"passed": 23, "failed": 7, "total": 30, "pass_rate": 0.7666666667},
+      "integration": {"passed": 15, "failed": 19, "not_collected": 4, "total": 38, "pass_rate": 0.3947368421},
+      "system_e2e": {"passed": 0, "failed": 0, "total": 0, "pass_rate": 0.0}
+    }
+  },
+  "candidate_score": 0.5588235294,
+  "candidate_score_valid": true,
+  "integration_gap": {
+    "atomic_rate": 0.7666666667,
+    "integration_e2e_rate": 0.3947368421,
+    "rate_gap": 0.3719298246,
+    "adjusted_gap": 0.3719298246,
+    "dependency_eligible_tests": 38,
+    "true_gap_event_count": 23
+  },
+  "labels": ["discriminating", "composition-signal", "partial-collection"],
+  "caveats": [
+    "Four integration tests were not collected and therefore count as non-passing in the fixed 68-test denominator; the score remains admissible but carries a collection caveat.",
+    "The archived model label is codex rather than gpt-5.5 and is preserved verbatim."
+  ]
 }

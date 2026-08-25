@@ -271,3 +271,32 @@ A bench keeps four things in version control and nothing else: `BENCH.md`
 and `runs/index.jsonl`. Everything else under `wip/` is ignored, because the
 directory holds roughly 28G of build output; `.gitignore` allows those four rather
 than trying to enumerate what to exclude.
+
+## 13. A task is its spec, its tests, and their map — the rest is derived
+
+An authoritative task carries three things that matter: the spec (`spec.md`), the
+tests (`oracle/**`, whatever runner shape they take), and the map that ties spec
+clauses to those tests. When importing or refreshing an authoritative dataset,
+these three are copied verbatim and checked by sha256; nothing about them is
+re-authored. Match your effort to what can change a candidate's verdict — spec,
+tests, map — and stop there.
+
+Everything else is metadata or scaffolding, and is either derived or replaceable:
+`task.json` fields, tier labels, `verdict.json`, and scores. A score is not stored
+authority. It is produced by running the task's own scorer in Docker: a
+frozen-gate oracle ships `run_root.py`, `score_gate.py` and `SCORER-CONFIG.json`
+and runs standalone, so the number is recomputed, never carried. A score copied
+from a pre-evolution version of the task is stale — drop it rather than preserve
+it.
+
+The map lives with the oracle. A frozen-gate oracle carries `ROOT-MAP.json`
+(schema `spec2repo.root-map.v3`, with family / tier / mutation / depends_on); a
+repo-pytest oracle carries the mapping in its test docstrings or a single
+`oracle/spec_test_map.md`. A stale top-level `spec_test_map.md` that points at
+tests which no longer exist is worse than no map at all — a wrong map misdirects,
+so delete it rather than leave it.
+
+Do not adapt the harness to a self-contained oracle. `harness/core/verify_task.py`
+exists to run a task's tests in Docker; when the oracle already runs standalone,
+re-shaping `task.json` to satisfy the verifier, or normalising every oracle to one
+layout, buys nothing for benchmark validity and is not worth the time.

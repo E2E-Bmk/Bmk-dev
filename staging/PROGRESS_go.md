@@ -71,6 +71,20 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | go-chi/chi | REJECTED | router pkg 1785 LOC < 3000 | middleware/ is an unrelated utility collection; core alone under gate |
 | casbin/casbin | RETIRED (duplicate) | full S3_DONE packet built (84 tests, ref 84/84, dummy 6.0%) then withdrawn | `origin/go-tasks-20260821` already ships QUALIFIED `tasks/casbin-policy-enforcement-fullrepro-001` (same repo, same instance_id); packet removed in this branch to honour the no-duplicates rule |
 | beevik/etree | REJECTED | source 2097 LOC < 3000 (etree.go 1225 + helpers.go 409 + path.go 463) | XML tree + path queries; fails LOC hard gate |
+| go-ini/ini | REJECTED | 2361 LOC < 3000 | INI engine; fails LOC hard gate |
+| PuerkitoBio/goquery | REJECTED | 1588 LOC < 3000 | selector matching lives in cascadia dep; goquery alone is a thin traversal layer |
+| go-viper/mapstructure | REJECTED | 2018 LOC < 3000 | decode-rules engine; fails LOC hard gate |
+| teambition/rrule-go | REJECTED | 1473 LOC < 3000; RFC 5545 closed standard | dateutil.rrule is a high-saturation pattern |
+| spf13/viper | REJECTED | 2280 LOC < 3000 | precedence logic thin; real work delegated to deps (mapstructure/cast/afero) |
+| tidwall/buntdb | REJECTED | 1691 LOC < 3000; single-file library | also shape-overlaps nutsdb task on go branch |
+| google/go-jsonnet | REJECTED | LOC dominated by generated stdast (~200k); heavy build | interpreter core viable but generated-code accounting and build weight make it a poor fit |
+| alecthomas/participle | SELECTED | 6759 LOC, 146 test funcs | parser-builder: struct-tag grammar mini-language, lexer defs, EBNF projection; Track TBD |
+| goccy/go-yaml | QUEUED (candidate) | 13130 LOC, 143 test funcs | YAML engine: decode/encode, PathString queries, anchors, source-annotated errors |
+| alecthomas/kong | QUEUED (candidate) | 5629 LOC, 300 test funcs | CLI grammar engine: struct-tag DSL, parse+help+defaults+validation projections |
+| antchfx/xpath | QUEUED (candidate) | 4032 LOC, 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator |
+| zclconf/go-cty | QUEUED (candidate) | 13657 LOC, 165 test funcs | value/type system: conversions, unification, functions, json/msgpack round trips |
+| mvdan/sh | QUEUED (candidate) | 16185 LOC, 105 test funcs | shell syntax engine: parse/print round trip, positions, quoting rules |
+| ohler55/ojg | QUEUED (candidate) | 30855 LOC, 835 test funcs | JSONPath (jp) + parser (oj) engines over native Go data |
 
 ## Dedup register (Go repos already taken on `origin/go-tasks-20260821`)
 

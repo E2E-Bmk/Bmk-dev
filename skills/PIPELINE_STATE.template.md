@@ -46,8 +46,8 @@ todo:
 `filter/lint_result.txt` 由下列命令产生，输出整体重定向，不要只记结论：
 
 ```bash
-python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
-  > wip/<task>/filter/lint_result.txt 2>&1
+python harness/core/oracle_import_lint.py <task_id> tasks/<language>/<task_id>/spec.md \
+  > wip/<language>/<task>/filter/lint_result.txt 2>&1
 ```
 
 **为什么这条要落盘而不是"检查过了"就行。** httpcore 通过了 judging，其 oracle 有
@@ -67,7 +67,7 @@ python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
 - `S3A_*`：处理并重写 Java 测试源；construction oracle 位于
   `filter/src/test/java/{atomic,integration,support}`，依赖写入 `filter/pom.xml`。
 - `S3A_DUMMY` / `S3B_DUMMY`：用最小 Maven candidate 调用
-  `harness/score_java.py` 做真实 Docker dummy run；不得用 pytest。
+  `harness/lang/java/score_java.py` 做真实 Docker dummy run；不得用 pytest。
 - `S3B_COVERAGE`：对 pinned reference 运行 JaCoCo，生成
   `target/site/jacoco/jacoco.xml`，再把未覆盖 method/branch 及源码上下文写入
   `filter/coverage_gaps.txt`；不运行 Python `coverage --branch` 或
@@ -77,7 +77,7 @@ python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
   `atomic::Class::method` / `integration::Class::method`；integration 方法用 Javadoc
   `Depends-On: atomicMethodA, atomicMethodB` 建立依赖。
 - `S3_REFERENCE_RUN`：先确保 `filter/lint_result.txt` 首行为 `LINT_PASS` 且新于所有
-  oracle `.java`，再用 `harness/score_java.py --reference` 运行 pinned reference；
+  oracle `.java`，再用 `harness/lang/java/score_java.py --reference` 运行 pinned reference；
   必须 100%。
 - `S4_SETUP`：cleanroom 的 `program_file` 是 `pom.xml`，评分只能走 Docker Java
   scorer。
@@ -87,7 +87,7 @@ python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
 - `QUALIFIED`：复制 `spec.md`、`task.json`、`oracle/pom.xml`、
   `oracle/requirements.txt` 和
   `oracle/src/test/java/{atomic,integration,support}`；运行 metadata sync 后执行
-  `python harness/verify_task.py {task_id}`，必须输出 `STATIC_VALID`。
+  `python harness/core/verify_task.py {task_id}`，必须输出 `STATIC_VALID`。
 
 ---
 
@@ -95,7 +95,7 @@ python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
 
 ### S1_SCREENING
 ```
-entry_requires: wip/{task}/ 目录已创建
+entry_requires: wip/{language}/{task}/ 目录已创建
 todo:
   - [ ] 执行 import pre-screen: grep -rn "from <pkg>\._\|import <pkg>\._" tests/
   - [ ] 填写 filter_notes.md 必填字段:
@@ -306,7 +306,7 @@ todo:
 ```
 todo:
   - [ ] 复跑符号声明 lint 并落盘（judging 期间改过 oracle 时必须重跑）:
-        `python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md > wip/<task>/filter/lint_result.txt 2>&1`
+        `python harness/core/oracle_import_lint.py <task_id> tasks/<language>/<task_id>/spec.md > wip/<language>/<task>/filter/lint_result.txt 2>&1`
   - [ ] Anti-cheat preflight: `python -c "import <pkg>; print(<pkg>.__file__)"`，结果写入报告
   - [ ] Solvability: reference 跑 oracle，要求 ≥ 95%
   - [ ] Fairness Gate A: spec_section spot-check（covered 行 → 验证 spec heading 存在）
@@ -330,12 +330,12 @@ exit_artifact: judge/diagnosis_report.md
 ```
 todo:
   - [ ] 执行 Graduation procedure（见 task-synthesizer SKILL）:
-        1. spec_vN.md → tasks/{id}/spec.md（剥离 INTERNAL header）
+        1. spec_vN.md → tasks/{language}/{id}/spec.md（剥离 INTERNAL header）
         2. 按 taxonomy 拆分测试 → oracle/test_atomic.py + oracle/test_integration.py
         3. 提取测试依赖 → oracle/requirements.txt
         4. 生成 task.json（含 taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap）
         5. 复制 kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md
-        6. 运行 harness/verify_task.py {task_id} → 必须输出 QUALIFIED_VALID
+        6. 运行 harness/core/verify_task.py {task_id} → 必须输出 QUALIFIED_VALID
   - [ ] 在 CANDIDATES.md 追加 QUALIFIED 行
 ```
 

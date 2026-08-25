@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Static checks for one task packet.
 
-Ported from the release repo's `harness/verify_task.py`. Two differences:
+Ported from the release repo's `harness/core/verify_task.py`. Two differences:
 
 * the oracle is read from `tasks/{id}/oracle/` (Bmk-dev nests the oracle inside
   the task packet) rather than a top-level `oracle/{id}/`;
@@ -341,7 +341,7 @@ def _check_fixture_references(path: Path, oracle_dir: Path, errors: list[str]) -
 
 def main(argv: list[str]) -> int:
     if len(argv) != 2:
-        print("usage: python harness/verify_task.py <task_id>", file=sys.stderr)
+        print("usage: python harness/core/verify_task.py <task_id>", file=sys.stderr)
         return 2
     result = check_task(argv[1])
     errors, warnings = result if isinstance(result, tuple) else (result, [])

@@ -14,8 +14,8 @@ prompt and instruct it to read the skill before inspecting artifacts.
 ## 2. Every oracle change requires a fresh lint result on disk
 
 ```bash
-python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
-  > wip/<task>/filter/lint_result.txt 2>&1
+python harness/core/oracle_import_lint.py <task_id> tasks/<language>/<task_id>/spec.md \
+  > wip/<language>/<task>/filter/lint_result.txt 2>&1
 ```
 
 First line must read `LINT_PASS`. This is a state transition requirement, not a
@@ -70,7 +70,7 @@ exists to remove, so its absence is a release blocker. `task.json` must carry a 
 (`clauses`, `families`, `tests`), `ROOT-MAP.json` must exist and pass
 `spec2repo-gate-calibration/scripts/audit_gate_design.py`, and the clean-upstream (M2)
 control log must show exactly the preregistered mutation set failing. `check 9` of
-`harness/verify_rust_task.sh` enforces this.
+`harness/lang/rust/verify_task.sh` enforces this.
 
 ### 6a. Mutation is part of the spec, not a later stage
 

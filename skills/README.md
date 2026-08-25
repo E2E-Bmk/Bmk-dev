@@ -73,5 +73,5 @@ Each skill should live at `skills/{skill-name}/SKILL.md` and include:
 - one short example from an actual task build.
 
 Do not promote a speculative process into `skills/`. Keep early experiments in
-`docs/` or `wip/{task}/filter_notes.md` until the workflow has survived at
+`docs/` or `wip/{language}/{task}/filter_notes.md` until the workflow has survived at
 least one concrete task.

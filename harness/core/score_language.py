@@ -403,7 +403,7 @@ def main() -> int:
     if language != "rust":
         raise SystemExit(
             f"score_language.py currently automates Rust scoring; use "
-            f"harness/score_pytest_original.py for language={language!r}"
+            f"harness/lang/python/score_pytest_original.py for language={language!r}"
         )
     if not target_modules(task_data, args.solution_dir.resolve(), args.target_crate):
         raise SystemExit("missing target crate; set task.json target_crates or pass --target-crate")

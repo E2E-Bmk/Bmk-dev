@@ -17,7 +17,7 @@ For each test in the kept scoring suite, assign one status:
 
 ## Artifact
 
-Create `wip/{task}/spec_test_map.md`:
+Create `wip/{language}/{task}/spec_test_map.md`:
 
 ```markdown
 | test_node_id | spec_section | status | notes |

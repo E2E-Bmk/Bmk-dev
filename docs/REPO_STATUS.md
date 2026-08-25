@@ -10,8 +10,8 @@
 
 > 表头说明：`Lang` 取 `task.json` 的 `language` 字段，评分沙箱据此选择测试运行器。
 > `Atomic`/`Integ` 是 oracle 文件里实际的测试函数数（`ast` 计数，非 `task.json` 自述）。
-> `Lint` 是 `harness/oracle_import_lint.py` 的结果 —— 它检查 oracle 是否断言了 spec
-> 从未声明的符号。`Static` 是 `harness/verify_task.py` 的结果：章节完整性、层底线、
+> `Lint` 是 `harness/core/oracle_import_lint.py` 的结果 —— 它检查 oracle 是否断言了 spec
+> 从未声明的符号。`Static` 是 `harness/core/verify_task.py` 的结果：章节完整性、层底线、
 > 断言构成、metadata 与物理文件一致性、`depends_on` 覆盖率、fixture 完整性。
 > `Status` 取 `task.json`，是流水线状态而非静态校验结论 —— 两者互相独立。
 
@@ -102,9 +102,9 @@ test-filter 与 spec-writer 的职责，不在台账维护范围内。
 
 ## 进行中（wip/ 中）
 
-`wip/{task}/` 是构建过程的工作区，不进版本库（见 `.gitignore`），所以 clone 出来看不到
+`wip/{language}/{task}/` 是构建过程的工作区，不进版本库（见 `.gitignore`），所以 clone 出来看不到
 它。`kept_nodeids.txt`、`taxonomy.jsonl`、`spec_test_map.md` 留在那里作为过滤的审计追踪，
-毕业时不复制进 `tasks/{id}/`。认领任务前先跟负责人确认在建 task，本表只反映已毕业的。
+毕业时不复制进 `tasks/{language}/{id}/`。认领任务前先跟负责人确认在建 task，本表只反映已毕业的。
 
 ---
 
@@ -112,12 +112,12 @@ test-filter 与 spec-writer 的职责，不在台账维护范围内。
 
 - Spec 标准：`Spec2Repo/docs/SPEC_STANDARD.md`（6 层结构）
 - Oracle 标准：`docs/ORACLE_STANDARD.md`（A≥30, I≥25, T≥60, depends_on≥50%）
-- 静态门禁：`docs/QUALITY_GATE.md`，由 `harness/verify_task.py` 实施
+- 静态门禁：`docs/QUALITY_GATE.md`，由 `harness/core/verify_task.py` 实施
 - 验收清单：`docs/ACCEPTANCE_CHECKLIST.md`
 
 ## 重新生成本表
 
 ```bash
-python harness/validate_ledger.py            # 全部 task 的静态校验 + 台账交叉检查
-python harness/sync_task_metadata.py --all --check   # 检查 task.json 是否与 oracle 文件漂移
+python harness/core/validate_ledger.py            # 全部 task 的静态校验 + 台账交叉检查
+python harness/core/sync_task_metadata.py --all --check   # 检查 task.json 是否与 oracle 文件漂移
 ```

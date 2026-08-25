@@ -408,7 +408,7 @@ def main(argv: list[str]) -> int:
     # lint would print LINT_PASS without having checked anything. Fail instead.
     if task_id not in TARGET_IMPORTS:
         print("LINT_FAIL")
-        print(f"[target-imports] missing [harness/target_imports.py]::0 task={task_id}")
+        print(f"[target-imports] missing [harness/core/target_imports.py]::0 task={task_id}")
         return 1
 
     section, _scripts = allowed_from_spec(spec_path)

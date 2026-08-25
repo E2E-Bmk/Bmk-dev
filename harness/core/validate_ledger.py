@@ -13,8 +13,8 @@ The authoritative per-task checks live in `verify_task.check_task`, which
 derives everything from the physical oracle files. That makes this script the
 static gate `docs/QUALITY_GATE.md` and the task-judge Gate E describe.
 
-    python harness/validate_ledger.py            # all tasks
-    python harness/validate_ledger.py <task_id>  # one task
+    python harness/core/validate_ledger.py            # all tasks
+    python harness/core/validate_ledger.py <task_id>  # one task
 """
 
 from __future__ import annotations

@@ -12,12 +12,12 @@ during filtering and cannot be recovered from a test name. Only tests absent
 from the previous taxonomy get a name-based guess, which the operator should
 review.
 
-Mirrors `harness/sync_task_metadata.py` in the release repo, minus the
+Mirrors `harness/core/sync_task_metadata.py` in the release repo, minus the
 release-inventory outputs (metadata.csv, README table), and reads the oracle
 from `tasks/{id}/oracle/` rather than a top-level `oracle/{id}/`.
 
-    python harness/sync_task_metadata.py --all           # rewrite
-    python harness/sync_task_metadata.py --all --check    # report drift only
+    python harness/core/sync_task_metadata.py --all           # rewrite
+    python harness/core/sync_task_metadata.py --all --check    # report drift only
 """
 
 from __future__ import annotations

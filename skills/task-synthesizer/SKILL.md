@@ -7,9 +7,9 @@ description: "Orchestrate the full SWE-E2E benchmark task synthesis pipeline: ca
 
 ## State Machine
 
-每个任务在 `wip/{task}/PIPELINE_STATE.md` 维护一个运行中的状态机实例。
+每个任务在 `wip/{language}/{task}/PIPELINE_STATE.md` 维护一个运行中的状态机实例。
 
-**Stage 1 开始前（新任务）：** 从 `Bmk-dev/skills/PIPELINE_STATE.template.md` 复制到 `wip/{task}/PIPELINE_STATE.md`，替换 `{TASK_ID}` 和 `{DATE}`。
+**Stage 1 开始前（新任务）：** 从 `Bmk-dev/skills/PIPELINE_STATE.template.md` 复制到 `wip/{language}/{task}/PIPELINE_STATE.md`，替换 `{TASK_ID}` 和 `{DATE}`。
 
 **每次分派子 agent 前：** 读 `PIPELINE_STATE.md`，确认 `state` 与即将运行的 stage 匹配。不匹配 → 不分派，先解决状态不一致。
 
@@ -59,7 +59,7 @@ Do not use deprecated root-level SWE-E2E skills, archived v1 workflow skills, or
 
 ```
 Bmk-dev/
-|-- wip/{task-id}/               <- active synthesis work
+|-- wip/{language}/{task-id}/               <- active synthesis work
 |   |-- filter_notes.md          <- candidate-selector output
 |   |-- spec/
 |   |   |-- spec_v{N}.md
@@ -71,7 +71,7 @@ Bmk-dev/
 |   |   `-- filter_correction_request.md
 |   `-- judge/
 |       `-- diagnosis_report.md
-|-- tasks/{task-id}/             <- QUALIFIED tasks (graduated from wip/)
+|-- tasks/{language}/{task-id}/             <- QUALIFIED tasks (graduated from wip/)
 |   |-- spec.md
 |   |-- oracle/                  <- the oracle lives inside the packet; there is no top-level oracle/ tree
 |   |   |-- test_atomic.py       <- atomic layer tests
@@ -93,15 +93,15 @@ Bmk-dev/
 |-- skills/                      <- active stage SKILL.md files only
 |-- archive/deprecated-skills/   <- old workflow skills and packaged snapshots
 |-- CANDIDATES.md                <- selection + retirement log
-`-- weakness_table.md            <- DEPRECATED; weaknesses now in task.json per task
+`-- docs/weakness_table.md            <- DEPRECATED; weaknesses now in task.json per task
 ```
 
 `kept_nodeids.txt`, `taxonomy.jsonl` and `spec_test_map.md` stay in
-`wip/{task-id}/filter/` and are not copied into the graduated packet: the layer
+`wip/{language}/{task-id}/filter/` and are not copied into the graduated packet: the layer
 split is carried by which oracle file a test lives in, and `task.json.taxonomy`
 is generated from those files.
 
-All stages write to `wip/{task-id}/` under their designated subdirectory. Do not write to `tasks/` directly - only the orchestrator moves a task there upon QUALIFIED.
+All stages write to `wip/{language}/{task-id}/` under their designated subdirectory. Do not write to `tasks/` directly - only the orchestrator moves a task there upon QUALIFIED.
 
 ### Java branch (authoritative override)
 
@@ -128,7 +128,7 @@ unchanged.
   plugin dependencies live in `oracle/pom.xml`. The oracle must depend on the
   target `groupId:artifactId` through `${candidate.version}`.
 - Stage 3 writes Java test IDs as `atomic::Class::method` and
-  `integration::Class::method`. `harness/sync_task_metadata.py` derives the
+  `integration::Class::method`. `harness/core/sync_task_metadata.py` derives the
   graduated taxonomy and counts with `JavaRunner`; do not create Python test
   files for a Java task.
 - Stage 4 uses the Java scorer documented below. Do not run
@@ -215,8 +215,8 @@ Check that the actual kept oracle set matches `target_subdomain` and does not ex
 
 ```bash
 # 1. Create cleanroom workspace
-python harness/run.py \
-  --task-dir wip/{task-id}/ \
+python harness/core/run.py \
+  --task-dir wip/{language}/{task-id}/ \
   --output-root candidate-runs/ \
   --run-id {model}-{task-id}-specv{N}-{date}-{run} \
   --program-file {package_name}/__init__.py \
@@ -226,10 +226,10 @@ python harness/run.py \
 #    (agent sees only candidate-runs/{run-id}/public_packet/ and writes to solution/)
 
 # 3. Score the candidate output (MUST run on Linux/WSL)
-python harness/score_pytest_original.py \
+python harness/lang/python/score_pytest_original.py \
   --solution-dir candidate-runs/{run-id}/solution/ \
-  --nodeids wip/{task-id}/filter/kept_nodeids.txt \
-  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
+  --nodeids wip/{language}/{task-id}/filter/kept_nodeids.txt \
+  --taxonomy wip/{language}/{task-id}/filter/taxonomy.jsonl \
   --remove-path {package_name} \
   --output candidate-runs/{run-id}/score_result.json
 ```
@@ -241,10 +241,10 @@ candidate packet:
 ```bash
 docker build -t spec2repo-java:latest -f docker/Dockerfile.java docker/
 
-python harness/score_java.py \
-  --task-dir wip/{task-id}/ \
+python harness/lang/java/score_java.py \
+  --task-dir wip/{language}/{task-id}/ \
   --oracle-dir {assembled-oracle-dir}/ \
-  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
+  --taxonomy wip/{language}/{task-id}/filter/taxonomy.jsonl \
   --maven-coordinate {groupId}:{artifactId} \
   --solution-dir candidate-runs/{run-id}/solution/ \
   --run-dir candidate-runs/{run-id}/
@@ -258,14 +258,14 @@ probe runs in Docker with `--network none`.
 Run the same entrypoint against the pinned reference before Stage 4:
 
 ```bash
-python harness/score_java.py \
-  --task-dir wip/{task-id}/ \
+python harness/lang/java/score_java.py \
+  --task-dir wip/{language}/{task-id}/ \
   --oracle-dir {assembled-oracle-dir}/ \
-  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
+  --taxonomy wip/{language}/{task-id}/filter/taxonomy.jsonl \
   --maven-coordinate {groupId}:{artifactId} \
   --solution-dir repo/{repo-dir}/ \
-  --run-dir wip/{task-id}/filter/reference-run/ \
-  --json-out wip/{task-id}/filter/reference_score.json \
+  --run-dir wip/{language}/{task-id}/filter/reference-run/ \
+  --json-out wip/{language}/{task-id}/filter/reference_score.json \
   --reference
 ```
 
@@ -276,7 +276,7 @@ only at 100% and writes the Python-compatible core JSON fields (`summary`,
 artifact provenance.
 
 **Environment setup for scoring:**
-- Install test dependencies: `pip install -r wip/{task-id}/filter/oracle_requirements.txt`
+- Install test dependencies: `pip install -r wip/{language}/{task-id}/filter/oracle_requirements.txt`
 - Install candidate-declared dependencies: if `solution/requirements.txt` exists, `pip install -r solution/requirements.txt`
 - Do NOT install the target package from PyPI
 
@@ -305,7 +305,7 @@ Before accepting any verdict, verify diagnosis report structural validity:
 **QUALIFIED exit checklist (all must pass before writing QUALIFIED to PIPELINE_STATE.md):**
 
 1. CANDIDATES.md has a SELECTED row for this repo
-2. `tasks/{task_id}/` directory exists and contains:
+2. `tasks/{language}/{task_id}/` directory exists and contains:
    - `spec.md` (candidate-visible body only, internal header stripped)
    - `oracle/test_atomic.py` (all atomic-layer tests)
    - `oracle/test_integration.py` (all integration + system_e2e tests)
@@ -317,11 +317,11 @@ Before accepting any verdict, verify diagnosis report structural validity:
    or `spec_test_map.md`. Those were a second copy of what the oracle files
    already state, and they drifted: the layer split now comes from which file a
    test lives in, and `task.json.taxonomy` is generated from the files by
-   `harness/sync_task_metadata.py`. All three remain required in
-   `wip/{task_id}/filter/` as the filtering audit trail — the map is still how
+   `harness/core/sync_task_metadata.py`. All three remain required in
+   `wip/{language}/{task_id}/filter/` as the filtering audit trail — the map is still how
    filtering is done and how spec coverage is proved.
 3. `task.json.taxonomy` keys match the physical test functions, and `stats` sums
-   to `oracle.count` — run `python harness/sync_task_metadata.py {task_id} --check`,
+   to `oracle.count` — run `python harness/core/sync_task_metadata.py {task_id} --check`,
    which must report no drift
 4. `spec.md` contains none of: `task_id`, `delta:`, `source_boundary:`, `benchmark`, `oracle`, `judge`, `<!-- INTERNAL`
 4b. `spec.md` follows the 6-layer structure from `Spec2Repo/docs/SPEC_STANDARD.md`: has Specification Authority disclaimer, ≥2 behavior sections, ≥5 Cross-View Invariants, desensitized Product Overview, no stale section names
@@ -331,22 +331,22 @@ Before accepting any verdict, verify diagnosis report structural validity:
 7. `task.json` contains valid `integration_gap` object (at minimum `rate_gap`; `true_gap_events` if applicable)
 8. `task.json.source_meta` is populated (github_stars, pypi_monthly_downloads, loc, first_release)
 9. If `filter_notes.md` has `scope_plan != N/A`: verify actual oracle size ≤ `expected_oracle_max` and tests cover stated `target_subdomain`
-10. Run `python harness/validate_ledger.py {task_id}` — task must appear as PASS (warnings acceptable, failures block graduation). This runs all static gates defined in `docs/QUALITY_GATE.md` via `harness/verify_task.py`.
+10. Run `python harness/core/validate_ledger.py {task_id}` — task must appear as PASS (warnings acceptable, failures block graduation). This runs all static gates defined in `docs/QUALITY_GATE.md` via `harness/core/verify_task.py`.
 
-**Graduation procedure** (how to produce `tasks/{task_id}/` from `wip/{task_id}/`):
-1. Copy `spec_vN.md` → `tasks/{id}/spec.md`, stripping the `<!-- INTERNAL ... -->` header block
+**Graduation procedure** (how to produce `tasks/{language}/{task_id}/` from `wip/{language}/{task_id}/`):
+1. Copy `spec_vN.md` → `tasks/{language}/{id}/spec.md`, stripping the `<!-- INTERNAL ... -->` header block
 2. Split filtered tests by taxonomy into `oracle/test_atomic.py` and `oracle/test_integration.py`
 3. Extract test dependencies from upstream repo → `oracle/requirements.txt`
 4. Write the judgement-bearing fields of `task.json` by hand: `repo`, `repo_commit`,
    `language`, `spec_version`, `oracle.scorer_isolation`, `weaknesses`,
    `source_meta`, `integration_gap`, `labels`
-5. Run `python harness/sync_task_metadata.py {task_id}` to derive `taxonomy`,
+5. Run `python harness/core/sync_task_metadata.py {task_id}` to derive `taxonomy`,
    `stats` and `oracle.count` from the oracle files. Review the `system_e2e`
    labels it guessed for new tests from their names — that split is a filtering
    judgement, and only labels already present are carried over
-6. Run `python harness/verify_task.py {task_id}` — must output `STATIC_VALID`
+6. Run `python harness/core/verify_task.py {task_id}` — must output `STATIC_VALID`
 
-Leave `wip/{task_id}/` in place: `kept_nodeids.txt`, `taxonomy.jsonl` and
+Leave `wip/{language}/{task_id}/` in place: `kept_nodeids.txt`, `taxonomy.jsonl` and
 `spec_test_map.md` stay there as the audit trail and are not copied into the
 graduated packet.
 

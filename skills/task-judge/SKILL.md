@@ -7,7 +7,7 @@ description: "Judge whether a SWE-E2E benchmark task and evaluation run are vali
 
 ## State Machine Interface
 
-**Entry:** Read `wip/{task}/PIPELINE_STATE.md`. Verify `state` is `S5_JUDGE`. Verify `candidate-runs/.../score_result.json` exists — if not, set `state → S4_EVAL_RUN` and stop.
+**Entry:** Read `wip/{language}/{task}/PIPELINE_STATE.md`. Verify `state` is `S5_JUDGE`. Verify `candidate-runs/.../score_result.json` exists — if not, set `state → S4_EVAL_RUN` and stop.
 
 **Exit (QUALIFIED):** Set `state → QUALIFIED`, append History row, execute QUALIFIED terminal todo.
 
@@ -44,7 +44,7 @@ All three must pass for any results to be considered valid.
 ### Java branch (authoritative override)
 
 When `task.json.language` is `java`, use the Docker-only report produced by
-`harness/score_java.py` and replace Python-specific preflight and environment
+`harness/lang/java/score_java.py` and replace Python-specific preflight and environment
 instructions in this skill as follows:
 
 - Before reading score values, copy these fields verbatim into the diagnosis
@@ -120,7 +120,7 @@ If reference pass rate is significantly below the scoring set size:
 **Gate A0 — Symbol declaration check (automated, full coverage)**
 
 ```bash
-python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md
+python harness/core/oracle_import_lint.py <task_id> tasks/<language>/<task_id>/spec.md
 ```
 
 Must print `LINT_PASS`. A task that fails cannot be QUALIFIED regardless of score.
@@ -197,7 +197,7 @@ On a GAP verdict: issue a `filter_correction_request.md` routing back to test-fi
 
 **Gate E — Static Quality Gate**
 
-Before issuing QUALIFIED, run `python harness/validate_ledger.py {task_id}` from this repo root. The task must print `PASS` (warnings are acceptable; a `FAIL` blocks QUALIFIED). The gate delegates to `harness/verify_task.py`, which derives every check from the physical oracle files, and automates:
+Before issuing QUALIFIED, run `python harness/core/validate_ledger.py {task_id}` from this repo root. The task must print `PASS` (warnings are acceptable; a `FAIL` blocks QUALIFIED). The gate delegates to `harness/core/verify_task.py`, which derives every check from the physical oracle files, and automates:
 - Spec section completeness (six-layer structure, legacy aliases accepted) and forbidden leakage terms
 - Oracle test layer minimums (≥30 atomic, ≥25 integration, ≥60 total base functions, per `ORACLE_STANDARD.md`)
 - Assertion composition (≥60% positive in the atomic layer; zero `no_check`)
@@ -210,7 +210,7 @@ A task that fails `validate_ledger.py` cannot be QUALIFIED regardless of score.
 
 Two further checks are non-negotiable at this gate:
 
-- `python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md` prints
+- `python harness/core/oracle_import_lint.py <task_id> tasks/<language>/<task_id>/spec.md` prints
   `LINT_PASS` (same command as Gate A0; re-run it here because oracle edits made
   during judging can reintroduce an undeclared symbol);
 - the reference implementation, installed from `repo_commit`, passes the complete
@@ -413,6 +413,6 @@ Per evaluation run, a structured narrative covering:
 ]
 ```
 
-`task.json.weaknesses` is the sole authority for model failure records. Do not maintain a separate `weakness_table.md` — that file is deprecated.
+`task.json.weaknesses` is the sole authority for model failure records. Do not maintain a separate `docs/weakness_table.md` — that file is deprecated.
 
 The description should name the specific behavior gap, not just the test names. This is the material for paper discussion about model capability.

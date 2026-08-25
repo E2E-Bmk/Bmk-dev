@@ -4,14 +4,14 @@
 
 ## 快速开始
 
-1. 读 `REPO_STATUS.md` — 看哪些 repo 已完成、进行中、已退休
+1. 读 `docs/REPO_STATUS.md` — 看哪些 repo 已完成、进行中、已退休
 2. 读 `skills/task-synthesizer/SKILL.md` — 理解完整流水线
-3. 看 `tasks/httpcore-transport-fullrepro-001/` — Golden Task 示例
+3. 看 `tasks/python/httpcore-transport-fullrepro-001/` — Golden Task 示例
 
 ## 目录结构
 
 ```
-├── tasks/{task-id}/              # 已合格的 benchmark 任务
+├── tasks/{language}/{task-id}/              # 已合格的 benchmark 任务
 │   ├── spec.md                   # 行为规格（模型唯一输入）
 │   ├── task.json                 # 元数据（taxonomy、scorer 参数、得分）
 │   ├── spec_test_map.md          # 测试↔spec 映射（审计用）
@@ -27,7 +27,7 @@
 ├── scripts/                      # 辅助工具
 ├── skills/                       # 流水线各阶段 SKILL 定义
 │
-├── REPO_STATUS.md                # 认领参考
+├── docs/REPO_STATUS.md                # 认领参考
 ├── CANDIDATES.md                 # 候选库选择
 └── AGENTS.md
 ```

@@ -7,17 +7,17 @@ description: "Mutate a task's spec and oracle together so the described system d
 
 ## State Machine Interface
 
-**Entry:** Read `wip/{task}/PIPELINE_STATE.md`; `state` must be `S5_MUTATE`.
+**Entry:** Read `wip/{language}/{task}/PIPELINE_STATE.md`; `state` must be `S5_MUTATE`.
 Preconditions (both required):
 
-1. `harness/verify_task.py <task-id>` prints `STATIC_VALID`
+1. `harness/core/verify_task.py <task-id>` prints `STATIC_VALID`
 2. Baseline reference gate passes — upstream package installed, 100% of the
    oracle passing
 
 If either fails, set `state → S2_SPEC_DRAFT` and escalate.
 
 **Exit (accepted):** `mutation/record.md`, `mutation/reference_patch.py`, both
-gate logs exist, and `harness/verify_task.py <variant-id>` prints `STATIC_VALID`.
+gate logs exist, and `harness/core/verify_task.py <variant-id>` prints `STATIC_VALID`.
 Set `state → S5_MUTATE_DONE`, append History row.
 
 **Exit (loop):** Gate M2 shows no divergence — set `state → S5_MUTATE`, increment
@@ -295,7 +295,7 @@ proportions.
 ## Artifacts produced
 
 ```
-tasks/<task-id>/
+tasks/<language>/<task-id>/
 ├── mutation/
 │   ├── record.md              # Step 1e
 │   └── reference_patch.py     # Step 4a

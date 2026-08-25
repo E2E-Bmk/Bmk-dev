@@ -12,8 +12,8 @@
 
 | # | 检查项 | 判定标准 |
 |---|--------|----------|
-| 1.1 | `tasks/{id}/spec.md` 存在 | 文件存在且非空 |
-| 1.2 | `tasks/{id}/task.json` 存在 | 文件存在且能被 `json.loads` 解析 |
+| 1.1 | `tasks/{language}/{id}/spec.md` 存在 | 文件存在且非空 |
+| 1.2 | `tasks/{language}/{id}/task.json` 存在 | 文件存在且能被 `json.loads` 解析 |
 | 1.3 | `oracle/{id}/test_atomic.py` 存在 | 文件存在且能被 `ast.parse` 解析 |
 | 1.4 | `oracle/{id}/test_integration.py` 存在 | 文件存在且能被 `ast.parse` 解析 |
 | 1.5 | `oracle/{id}/requirements.txt` 存在 | 文件存在 |

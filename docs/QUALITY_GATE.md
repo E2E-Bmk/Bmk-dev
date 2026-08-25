@@ -1,7 +1,7 @@
 # Spec2Repo Task Quality Gate
 
 All tasks in the benchmark MUST pass every gate below before merge.
-`harness/validate_ledger.py` enforces the machine-checkable subset;
+`harness/core/validate_ledger.py` enforces the machine-checkable subset;
 human-review items are marked *(review)*.
 
 ---
@@ -15,11 +15,11 @@ commands elsewhere in this document.
 **Required oracle files:**
 
 ```text
-tasks/{id}/oracle/pom.xml
-tasks/{id}/oracle/requirements.txt
-tasks/{id}/oracle/src/test/java/atomic/*.java
-tasks/{id}/oracle/src/test/java/integration/*.java
-tasks/{id}/oracle/src/test/java/support/*.java    # optional
+tasks/{language}/{id}/oracle/pom.xml
+tasks/{language}/{id}/oracle/requirements.txt
+tasks/{language}/{id}/oracle/src/test/java/atomic/*.java
+tasks/{language}/{id}/oracle/src/test/java/integration/*.java
+tasks/{language}/{id}/oracle/src/test/java/support/*.java    # optional
 ```
 
 Java dependencies and plugins are declared in `oracle/pom.xml`;
@@ -40,22 +40,22 @@ apply.
 **Reference validation:** first produce a fresh lint result on disk:
 
 ```bash
-python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
-  > wip/<task>/filter/lint_result.txt 2>&1
+python harness/core/oracle_import_lint.py <task_id> tasks/<language>/<task_id>/spec.md \
+  > wip/<language>/<task>/filter/lint_result.txt 2>&1
 ```
 
 Its first line must be `LINT_PASS` and it must be newer than every selected
 oracle `.java` source. Then run the pinned reference through the Java scorer:
 
 ```bash
-python harness/score_java.py \
-  --task-dir wip/<task_id>/ \
+python harness/lang/java/score_java.py \
+  --task-dir wip/<language>/<task_id>/ \
   --oracle-dir <assembled-oracle-dir>/ \
-  --taxonomy wip/<task_id>/filter/taxonomy.jsonl \
+  --taxonomy wip/<language>/<task_id>/filter/taxonomy.jsonl \
   --maven-coordinate <groupId>:<artifactId> \
   --solution-dir repo/<reference-checkout>/ \
-  --run-dir wip/<task_id>/filter/reference-run/ \
-  --json-out wip/<task_id>/filter/reference_score.json \
+  --run-dir wip/<language>/<task_id>/filter/reference-run/ \
+  --json-out wip/<language>/<task_id>/filter/reference_score.json \
   --reference
 ```
 
@@ -71,14 +71,14 @@ provenance probes run in Docker with no network.
 
 | Required file | Purpose |
 |---------------|---------|
-| `tasks/{id}/spec.md` | Behavioral specification given to the model |
-| `tasks/{id}/task.json` | Machine-readable metadata |
-| `tasks/{id}/oracle/test_atomic.py` | Atomic-layer oracle tests |
-| `tasks/{id}/oracle/test_integration.py` | Integration-layer oracle tests |
-| `tasks/{id}/oracle/requirements.txt` | Third-party dependencies for scoring |
+| `tasks/{language}/{id}/spec.md` | Behavioral specification given to the model |
+| `tasks/{language}/{id}/task.json` | Machine-readable metadata |
+| `tasks/{language}/{id}/oracle/test_atomic.py` | Atomic-layer oracle tests |
+| `tasks/{language}/{id}/oracle/test_integration.py` | Integration-layer oracle tests |
+| `tasks/{language}/{id}/oracle/requirements.txt` | Third-party dependencies for scoring |
 
 All fixture files referenced by tests (e.g. TOML data files, sample configs)
-MUST also be present under `tasks/{id}/oracle/`.
+MUST also be present under `tasks/{language}/{id}/oracle/`.
 
 The oracle lives inside the task packet so that each task is self-contained and
 there is one copy of every test. The release repo uses a separate top-level
@@ -93,7 +93,7 @@ does not need that, and a second copy on this side drifted from the first
 
 `spec.md` MUST contain these `##`-level sections. The authority for the section
 set is the six-layer structure in `Spec2Repo/docs/SPEC_STANDARD.md`; the aliases
-column lists the pre-restructure names that `harness/verify_task.py` still
+column lists the pre-restructure names that `harness/core/verify_task.py` still
 accepts, so a spec written before the SDD rewrite is not reported as broken.
 New specs use the current name.
 
@@ -272,7 +272,7 @@ behavior).
 
 | Gate | Enforced by | When |
 |------|-------------|------|
-| 0–4 | `harness/validate_ledger.py` | Every PR, CI |
+| 0–4 | `harness/core/validate_ledger.py` | Every PR, CI |
 | 2b,2c,2e,3c,3d,3e,3h | Human review | Every PR touching spec/oracle |
 | 5 | Docker CI job | Every PR touching oracle |
 | 6 | Manual spot-check | New tasks, major oracle changes |

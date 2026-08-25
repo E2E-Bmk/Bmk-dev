@@ -7,7 +7,7 @@ description: "Filter and classify a Python or Java test suite for SWE-E2E benchm
 
 ## State Machine Interface
 
-**Entry:** Read `wip/{task}/PIPELINE_STATE.md`. Verify `state` is one of the S3 states. Do not begin work until state is confirmed. If `filter_iter > 2`, stop and escalate.
+**Entry:** Read `wip/{language}/{task}/PIPELINE_STATE.md`. Verify `state` is one of the S3 states. Do not begin work until state is confirmed. If `filter_iter > 2`, stop and escalate.
 
 **Forbidden transition (hard gate):** `S3B_TRIGGER` requires `filter/rewrite_audit.md` to exist. If it does not exist, set `state → S3A_REWRITE` and complete that state before proceeding. Never jump from any S3A state directly to `S3B_TRIGGER` without this file.
 
@@ -28,7 +28,7 @@ pytest, coverage.py, filename, and dependency instruction below.
   `.java` sources; do not create `rewritten_upstream_tests.py` or
   `generated_tests.py`.
 - Keep the construction oracle under
-  `wip/{task}/filter/src/test/java/{atomic,integration,support}` with a Maven
+  `wip/{language}/{task}/filter/src/test/java/{atomic,integration,support}` with a Maven
   `pom.xml`. The graduated layout is:
 
   ```text
@@ -50,7 +50,7 @@ pytest, coverage.py, filename, and dependency instruction below.
 - Collection safety means the oracle Maven project completes `test-compile`
   against the pinned reference and `JavaRunner.discover()` returns the same
   non-zero denominator recorded in `taxonomy.jsonl`.
-- The dummy gate is a real Docker scoring run of `harness/score_java.py`
+- The dummy gate is a real Docker scoring run of `harness/lang/java/score_java.py`
   against a minimal Maven candidate at the declared coordinate. Discard every
   test it passes; collection/build failures must be diagnosed and must not be
   counted as dummy passes.
@@ -90,7 +90,7 @@ A test passes if and only if it can be mapped to a specific point in the spec - 
 **Q2 strict enforcement, symbol level (automated, not sampled):** every symbol a test reads off the target package must appear somewhere in the spec text. Run, and require `LINT_PASS`:
 
 ```bash
-python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md
+python harness/core/oracle_import_lint.py <task_id> tasks/<language>/<task_id>/spec.md
 ```
 
 The lint checks two levels: module level (imports name a module the Installable Surface mentions) and symbol level (`pkg.Name` attribute reads and `from pkg import Name`). Module level alone is not sufficient. `httpcore` shipped with eight atomic tests asserting an upstream exception tree — `NetworkError`, `TimeoutException`, `ProtocolError` and four `*Timeout` subclasses — none of which the spec declares; the spec declares four public exceptions. `import httpcore` is legitimate, so a module level check passes while the assertions require reproducing upstream's internal class tree.
@@ -264,7 +264,7 @@ When a large share of nodeids come from parametrized expansion of few functions,
 {"taxonomy_key": "test_baz::test_workflow", "layer": "system_e2e"}
 ```
 
-### Oracle File Layout (tasks/{task-id}/oracle/)
+### Oracle File Layout (tasks/{language}/{task-id}/oracle/)
 
 When a task graduates to `tasks/`, its oracle directory must contain exactly two test files split by taxonomy layer:
 
@@ -288,7 +288,7 @@ oracle/
 
 **Dependency extraction (required before leaving Stage 3):** Extract test runtime dependencies from the upstream repository's `pyproject.toml` (test extras or dev dependencies). Write these to `oracle/requirements.txt`, excluding the target package itself (that's what the candidate implements). If the upstream repo has no explicit test extras, inspect test file imports for third-party packages and list them manually.
 
-**Preservation rule:** do not delete the `wip/{task}/` directory after a task reaches QUALIFIED. The wip directory is the audit trail. Its removal makes evaluation scores permanently unverifiable.
+**Preservation rule:** do not delete the `wip/{language}/{task}/` directory after a task reaches QUALIFIED. The wip directory is the audit trail. Its removal makes evaluation scores permanently unverifiable.
 
 Key generation algorithm: strip parameter suffixes (e.g. `[case0]`), replace the file path with its stem, and for nested nodeid parts after the file (class name, method name) join them with `.` — e.g. `tests/test_req.py::TestParsing::test_valid` → `test_req.TestParsing.test_valid`.
 

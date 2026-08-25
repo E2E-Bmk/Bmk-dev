@@ -7,7 +7,7 @@ description: "Select a repository as a SWE-E2E benchmark task candidate, in any 
 
 ## State Machine Interface
 
-**Entry:** Read `wip/{task}/PIPELINE_STATE.md`. Verify `state` is `S1_SCREENING`. If absent, copy from `Bmk-dev/skills/PIPELINE_STATE.template.md` to `wip/{task}/PIPELINE_STATE.md` and replace `{TASK_ID}` and `{DATE}`.
+**Entry:** Read `wip/{language}/{task}/PIPELINE_STATE.md`. Verify `state` is `S1_SCREENING`. If absent, copy from `Bmk-dev/skills/PIPELINE_STATE.template.md` to `wip/{language}/{task}/PIPELINE_STATE.md` and replace `{TASK_ID}` and `{DATE}`.
 
 **Exit (keep):** Set `state → S1_SELECTED`, update `todo` to S1_SELECTED catalogue todo, append History row.
 
@@ -112,7 +112,7 @@ If > 30% of test files have module-level private imports **or** undocumented car
 
 ## Gate 1: Evidence Record
 
-Create `wip/{task}/filter_notes.md` with:
+Create `wip/{language}/{task}/filter_notes.md` with:
 
 ```
 repo: {name}

@@ -1,10 +1,3 @@
-<!-- INTERNAL
-task_id: avsc-avro-type-engine-fullrepro-001
-spec_version: v1
-delta: initial draft
-source_boundary: avsc@5.7.9 npm package (executed via probes, wip/probe/avsc a1-a4), github.com/mtth/avsc wiki API reference and README, Apache Avro specification (binary encoding, schema resolution, IDL); every asserted behavior observed by executing the pinned release
--->
-
 # avsc Specification
 
 > **Specification Authority**: This document is the sole source of truth.

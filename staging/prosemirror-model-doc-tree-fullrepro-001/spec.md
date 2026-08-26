@@ -1,10 +1,3 @@
-<!-- INTERNAL
-task_id: prosemirror-model-doc-tree-fullrepro-001
-spec_version: v1
-delta: initial draft
-source_boundary: prosemirror-model@1.25.11 npm package (executed via probes, wip/probe/pm), prosemirror.net reference manual #model section and guide (document, schema, content expressions, slices, indexing); every asserted behavior observed by executing the pinned release
--->
-
 # prosemirror-model Specification
 
 > **Specification Authority**: This document is the sole source of truth.

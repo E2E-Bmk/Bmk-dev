@@ -1,0 +1,29 @@
+{
+  "instance_id": "mvdansh-shell-syntax-fullrepro-001",
+  "reference": {
+    "repo": "mvdan/sh",
+    "commit": "2f3f5e36d9b0f8f14c998d50aa20a28832205ae8",
+    "tag": "v3.13.1",
+    "wiring": "go mod edit -replace mvdan.cc/sh/v3 => <pinned checkout>"
+  },
+  "run": {
+    "date": "2026-08-26",
+    "command": "go test -count=1 -json ./...",
+    "go_version": "go1.25.0",
+    "passed": 170,
+    "failed": 0,
+    "total": 170,
+    "pass_rate": 1.0
+  },
+  "by_suite": {
+    "atomic": {
+      "passed": 144,
+      "failed": 0
+    },
+    "integration": {
+      "passed": 26,
+      "failed": 0
+    }
+  },
+  "note": "also verified against the published proxy module v3.13.1 with no replace directive"
+}

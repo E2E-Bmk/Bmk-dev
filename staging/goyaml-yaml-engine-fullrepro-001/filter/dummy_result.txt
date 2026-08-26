@@ -1,0 +1,26 @@
+DUMMY GATE — goyaml-yaml-engine-fullrepro-001 (2026-08-25)
+
+Stub: adversarial module at same import path (github.com/goccy/go-yaml plus
+ast/parser/lexer/token subpackages), wired via go mod edit -replace. Two
+modes toggled by GOYAML_STUB_REJECT:
+  accept-all — every function returns zero values / nil errors
+  reject-all — every function returns a stub failure error
+
+Each of the 134 kept tests run individually (go test -run '^Name$' -count=1).
+
+  mode=accept  passed=1  total=134  (0.7%)
+  mode=reject  passed=1  total=134  (0.7%)
+
+Sole passer in both modes: atomic::TestExportedConstants — passes because the
+stub declares the spec's exported constants with the spec-mandated values;
+this is a legitimate pass (the constants ARE the behaviour under test), not a
+vacuity defect. Kept.
+
+History: initial accept-all sweep had a second passer,
+integration::TestCommentRoundTripValueEquality, which passed vacuously when
+all decodes produced nil. Fixed by adding a non-vacuity guard asserting the
+round-tripped value is a 2-entry MapSlice carrying the source data; the test
+now fails in both stub modes and still passes 100% against the pinned
+reference.
+
+Gate threshold: <=10% pass rate required. Result: 0.7% — PASS.

@@ -1,0 +1,28 @@
+Dummy gate — participle-grammar-parser-fullrepro-001 (2026-08-25)
+
+Stub: adversarial Go module at module path github.com/alecthomas/participle/v2
+(packages participle + lexer), providing the full spec-declared API surface.
+Two variants toggled by a package flag:
+
+- accept-all: Build/MustBuild return working parsers; every Parse* returns a
+  zero-value AST with a nil error; lexers produce empty token streams; String()
+  returns ""; error helpers return empty messages.
+- reject-all: every Parse*/Lex/Upgrade/ConsumeAll returns a generic
+  "parse failed"/"lex failed" error carrying no position and no message
+  fragments.
+
+Wiring: go mod edit -replace github.com/alecthomas/participle/v2 => <stub>;
+go test -count=1 -vet=off ./... over the full oracle (104 base tests).
+
+Results:
+- accept-all variant: 5 / 104 passed = 4.8%
+  (TestMustBuildReturnsWorkingParser, TestEBNFCaptureMarkersInvisible,
+   TestCaptureMarkerDoesNotChangeAcceptance,
+   TestEntryPointsProduceIdenticalResults,
+   TestCaptureNeutralityAcrossProjections — all consistency/acceptance-shape
+   assertions that any uniform implementation satisfies)
+- reject-all variant: 4 / 104 passed = 3.8%
+  (TestEBNFCaptureMarkersInvisible, TestCaptureMarkerDoesNotChangeAcceptance,
+   TestEntryPointsProduceIdenticalErrors, TestCaptureNeutralityAcrossProjections)
+
+Worst case 5/104 = 4.8% <= 10% — dummy gate PASS.

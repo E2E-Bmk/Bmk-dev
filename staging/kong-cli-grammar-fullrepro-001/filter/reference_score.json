@@ -1,0 +1,29 @@
+{
+  "instance_id": "kong-cli-grammar-fullrepro-001",
+  "reference": {
+    "repo": "alecthomas/kong",
+    "commit": "0678fd30af8be8bae6dc9f9c6f143cc549450be2",
+    "tag": "v1.16.1",
+    "wiring": "go mod edit -replace github.com/alecthomas/kong => <pinned checkout>"
+  },
+  "run": {
+    "date": "2026-08-25",
+    "command": "go test -count=1 -json ./...",
+    "go_version": "go1.22.2",
+    "passed": 149,
+    "failed": 0,
+    "total": 149,
+    "pass_rate": 1.0
+  },
+  "by_suite": {
+    "atomic": {
+      "passed": 116,
+      "failed": 0
+    },
+    "integration": {
+      "passed": 33,
+      "failed": 0
+    }
+  },
+  "note": "also verified against the published proxy module v1.16.1 with no replace directive"
+}

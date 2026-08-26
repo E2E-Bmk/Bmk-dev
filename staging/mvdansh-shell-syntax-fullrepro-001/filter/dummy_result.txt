@@ -1,0 +1,43 @@
+DUMMY GATE — mvdansh-shell-syntax-fullrepro-001 (2026-08-26)
+
+Stub: adversarial module at the same import path (mvdan.cc/sh/v3,
+packages syntax and syntax/typedjson), wired via go mod edit -replace.
+Two modes toggled by SH_STUB_REJECT:
+  accept-all — every function returns zero values / nil errors (Parse
+               yields an empty *File, Print writes nothing, Walk visits
+               nothing, Quote returns "")
+  reject-all — every fallible function returns a stub failure error
+               (ParseError-typed where the real API returns one)
+
+Each of the 170 kept tests run individually (go test -run '^Name$'
+-count=1). Runner: wip/dummy/run_dummy_mvdansh.sh.
+
+  mode=accept  passed=1  total=170  (0.6%)
+  mode=reject  passed=3  total=170  (1.8%)
+
+Passers and why they are kept:
+
+- atomic::TestZeroLinePosInvalid (both modes) — asserts that the zero
+  Pos value reports invalid with zero accessors; a stub whose Pos
+  methods all return zero values necessarily satisfies it. Inherent to
+  the assertion kind (zero-value contract). Its companion
+  TestNewPosAccessors fails against the stub in both modes.
+- atomic::TestBashRejectsResumeKorn, atomic::TestBashRejectsAtTest
+  (reject mode only) — failure_path tests asserting that Bash rejects
+  the mksh `;|` case operator and the Bats `@test` declaration. The
+  actual error texts (`` `|` can only immediately follow a statement ``,
+  `` `}` can only be used to close a block ``) are not declared in the
+  spec, so per the no-spec-widening rule the tests assert only that an
+  error occurs, which a reject-all stub necessarily satisfies. Reported
+  here; kept.
+
+Earlier iteration: a first accept-mode run surfaced vacuous passes in
+eight integration tests (empty stub trees satisfied loop-shaped
+assertions). Fixed by spec-grounded non-vacuity guards: mustParse now
+requires at least one statement, checkFixpoint requires non-empty
+newline-terminated output, collectNodes requires >= 3 visited nodes,
+the JSON round trip requires the `"Type":"File"` tag, Simplify sources
+were switched to ones the spec's rules actually change, and
+TestEmptyInput/TestEncodeOmitsZeroFields gained positive assertions
+(File.Name recording, Type/Stmts key presence). Reference re-verified
+at 170/170 after each change.

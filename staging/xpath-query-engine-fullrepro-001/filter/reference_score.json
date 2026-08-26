@@ -1,0 +1,29 @@
+{
+  "instance_id": "xpath-query-engine-fullrepro-001",
+  "reference": {
+    "repo": "antchfx/xpath",
+    "commit": "d666d4b6f3b570811b144144414971401472b83c",
+    "tag": "v1.3.8",
+    "wiring": "require github.com/antchfx/xpath v1.3.8 (published module); also verified with go mod edit -replace github.com/antchfx/xpath => <pinned source copy>"
+  },
+  "run": {
+    "date": "2026-08-26",
+    "command": "go test -count=1 -json ./...",
+    "go_version": "go1.25.0",
+    "passed": 160,
+    "failed": 0,
+    "total": 160,
+    "pass_rate": 1.0
+  },
+  "by_suite": {
+    "atomic": {
+      "passed": 132,
+      "failed": 0
+    },
+    "integration": {
+      "passed": 28,
+      "failed": 0
+    }
+  },
+  "note": "tag v1.3.8 resolves to the pinned commit; both wirings pass 160/160"
+}

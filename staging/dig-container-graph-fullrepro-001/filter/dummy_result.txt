@@ -1,0 +1,36 @@
+Dummy gate — dig-container-graph-fullrepro-001 (2026-08-25)
+
+Method: adversarial stub module at go.uber.org/dig (full exported surface the
+oracle uses: Container/Scope with Provide/Invoke/Decorate/Scope/String, In/Out,
+all options, Error/PanicError, RootCause/IsCycleDetected/IsIn/IsOut,
+Visualize/VisualizeError). Accept-all variant: every operation reports
+success; Invoke calls the function with zero-value arguments and recovers any
+panic into a generic error (no test-binary aborts). DUMMY_REJECT=1 flips every
+operation to return a generic error without calling anything. Wired with
+go mod edit -replace, run with go test -count=1 -json ./....
+
+Variant accept-all: 4 passes / 99
+  atomic::TestOptionalMissingYieldsZeroValue
+  atomic::TestEmptyGroupYieldsEmptySlice
+  atomic::TestInvokeZeroArgFunctionRuns
+  atomic::TestInvokedFunctionErrorReturnedUnchanged
+Variant reject-all: 1 pass / 99
+  atomic::TestIsCycleDetectedFalseForOtherErrors
+
+Disposition: the accept-all passes assert exactly the zero-value /
+call-through behaviors an accept-all container implements by construction
+(optional-missing zero value, empty-group empty slice, zero-dependency call,
+invoked-error pass-through); each fails the reject-all variant, so no test is
+free under both. The reject-all pass is a negative-predicate guard
+(IsCycleDetected must be false on non-cycle errors) whose positive twins
+(TestProvideCycleRejectedByDefault, TestDeferredCycleFailsEveryInvoke) fail
+both variants. Worst-case union 5/99 = 5.1% <= 10% Gate 6 threshold; kept.
+
+Iteration note: the first accept-all run aborted both test binaries — the
+stub's zero-value Invoke made three tests dereference nil in the test body
+(TestExportedRegistrationVisibleEverywhere,
+TestDecoratorSeesSameBaseInstanceAsAncestor, TestApplicationAssemblyWorkflow)
+and the stub itself let invoked-function panics escape. Fixes: stub recovers
+panics into errors; the three tests gained nil guards that fail gracefully
+instead of panicking. Rerun shows the counts above with all 99 tests
+reporting.

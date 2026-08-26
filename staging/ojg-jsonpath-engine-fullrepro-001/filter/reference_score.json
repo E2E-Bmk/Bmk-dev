@@ -1,0 +1,29 @@
+{
+  "instance_id": "ojg-jsonpath-engine-fullrepro-001",
+  "reference": {
+    "repo": "ohler55/ojg",
+    "commit": "fc5d690db5103e00c48f56b37544bd22ba0d77b9",
+    "tag": "v1.28.5",
+    "wiring": "require github.com/ohler55/ojg v1.28.5 (published module); also verified with go mod edit -replace github.com/ohler55/ojg => <pinned source clone at the tag>"
+  },
+  "run": {
+    "date": "2026-08-26",
+    "command": "go test -count=1 -json ./...",
+    "go_version": "go1.22.2",
+    "passed": 153,
+    "failed": 0,
+    "total": 153,
+    "pass_rate": 1.0
+  },
+  "by_suite": {
+    "atomic": {
+      "passed": 131,
+      "failed": 0
+    },
+    "integration": {
+      "passed": 22,
+      "failed": 0
+    }
+  },
+  "note": "tag v1.28.5 resolves to the pinned commit; both wirings pass 153/153"
+}

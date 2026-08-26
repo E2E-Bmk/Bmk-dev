@@ -13,7 +13,9 @@
     "rust",
     "scripting-engine",
     "generated-only-oracle",
-    "grain"
+    "grain",
+    "qualified-release-with-audit",
+    "composition-signal"
   ],
   "source_meta": {
     "github_stars": 5609,
@@ -23,22 +25,22 @@
   },
   "weaknesses": [
     {
-      "dimension": "api-surface",
-      "description": "The candidate crate does not compile against the specified public Rust API surface: method signatures, generic arity, exported error variants, Module sharing, native function registration, and Grain Program/Sidecar accessors diverge from the contract.",
-      "affected_tests": 75,
-      "layer": "atomic+integration"
+      "dimension": "atomic-behavior",
+      "description": "The assisted candidate still mishandles direct engine result conversion, parser error fidelity, custom type display metadata, and Grain residual artifact refusal.",
+      "affected_tests": 6,
+      "layer": "atomic"
     },
     {
-      "dimension": "workflow-completeness",
-      "description": "Because the public API surface is incomplete, all end-to-end script evaluation, Scope/Module state, native function, and Grain bytecode workflows fail before execution.",
-      "affected_tests": 38,
+      "dimension": "cross-view-consistency",
+      "description": "The assisted candidate fails composed module/runtime/Grain workflows: static and nested module visibility, resolver-backed imports, self-contained AST retention, custom type metadata through artifacts, sidecar fault trace attachment, and public runtime error-family preservation.",
+      "affected_tests": 14,
       "layer": "integration"
     }
   ],
   "integration_gap": {
-    "atomic_rate": 0.0,
-    "integration_e2e_rate": 0.0,
-    "rate_gap": 0.0,
+    "atomic_rate": 0.8378378378378378,
+    "integration_e2e_rate": 0.631578947368421,
+    "rate_gap": 0.20625889046941682,
     "true_gap_events": []
   },
   "oracle": {

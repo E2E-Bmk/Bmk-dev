@@ -98,6 +98,10 @@ def oracle_dir(task_id: str) -> Path:
         for path in (
             None if bench is None else bench / "filter",
             packet,
+            # Stage 1-3 packets under construction live in `staging/{task}/`
+            # before graduation; the lint must reach them so LINT_PASS
+            # artifacts can be produced against the packet actually shipped.
+            ROOT / "staging" / task_id / "oracle",
             ROOT / "oracle" / task_id,
         )
         if path is not None

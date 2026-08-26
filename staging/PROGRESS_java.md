@@ -56,3 +56,4 @@ prior research: spring-coupled tests).
 | 2 | jsoup-fullrepro-001 | jhy/jsoup | S3_DONE (Docker gates PENDING) | 106 tests (73 atomic / 33 integration); local mvn reference 106/106; LINT_PASS; verify_task STATIC_VALID |
 | 3 | snakeyaml-engine-fullrepro-001 | snakeyaml/snakeyaml-engine | S3_DONE (Docker gates PENDING) | 93 tests (66 atomic / 27 integration); local mvn reference 93/93; LINT_PASS; verify_task STATIC_VALID |
 | 4 | jsonpath-fullrepro-001 | json-path/JsonPath | S3_DONE (Docker gates PENDING) | 116 tests (85 atomic / 31 integration); local mvn reference 116/116; LINT_PASS; verify_task STATIC_VALID |
+| 5 | threeten-extra-fullrepro-001 | ThreeTen/threeten-extra | S3_DONE (Docker gates PENDING) | 139 tests (114 atomic / 25 integration); local mvn reference 139/139; LINT_PASS; verify_task STATIC_VALID |

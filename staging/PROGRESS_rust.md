@@ -66,3 +66,13 @@ rhai, comfy-table, toml-rs (toml/toml_edit/taplo), cargo-generate, gitoxide
 | 12 | rust-decimal-fullrepro-001 | paupino/rust-decimal @ c7efe16 (1.42.1) | S3_DONE | 119 tests (93 atomic / 26 integration; generated-only, upstream as checklist); reference 119/119 (patched + registry lock); LINT_PASS; lock pins proc-macro-crate 3.2.0 / toml_edit 0.22.24 / toml_datetime 0.6.9 / indexmap 2.7.1 / hashbrown 0.15.5 / uuid 1.11.0 (edition2024 boundary) |
 | 13 | governor-fullrepro-001 | boinkor-net/governor @ e850a9d (v0.9.0) | S3_DONE | 68 tests (55 atomic / 13 integration; generated-only, upstream as checklist); reference 68/68 (patched + registry lock); LINT_PASS; lock pins governor 0.9.0 + hashbrown 0.15.5 |
 | 14 | rstar-fullrepro-001 | georust/rstar @ c8c5bf9 (rstar 0.12.2) | S3_DONE | 91 tests (76 atomic / 15 integration; generated-only, upstream inline #[cfg(test)] modules as checklist); reference 91/91 (patched + registry lock); LINT_PASS; lock pins rstar 0.12.2 (fresh resolve picks 0.13.0 requiring rust 1.85 > toolchain 1.83) |
+| 15 | indexmap-fullrepro-001 | indexmap-rs/indexmap @ 42e57a3 (indexmap 2.7.1) | S3_DONE | 121 tests (106 atomic / 15 integration; generated-only, upstream inline #[cfg(test)] modules + quickcheck harness as checklist); reference 121/121 (patched + registry lock); LINT_PASS; lock pins indexmap 2.7.1 + hashbrown 0.15.5 (fresh resolve picks 2.14.0 requiring rust 1.85 > toolchain 1.83) |
+
+## Final status
+
+Quota met: 15 of 15 packets complete through S3_DONE on this branch, each
+satisfying Definition A (spec.md, oracle workspace with lockfile and
+depends_on.json, full filter artifact set with fresh LINT_PASS, task.json
+language=rust, PIPELINE_STATE.md, filter_notes.md) with the pinned
+reference implementation passing 100% of its oracle in both the
+path-patched and registry-lock modes.

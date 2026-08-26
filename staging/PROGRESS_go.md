@@ -3,6 +3,13 @@
 Branch: `cursor/8-26-50tasks-go-a9d6`. Deliverable: 10 Go task packets at Stage 3
 completion (S3_DONE), each under `staging/{task_id}/`.
 
+**Batch status: COMPLETE — 10/10 packets at S3_DONE.** Every packet carries a
+100% reference score at its pinned version, a LINT_PASS newer than every oracle
+test file, and per-test dummy-gate evidence with worst case <= 5.1% (seven of
+ten at 0.0-0.7%). Totals: 1,267 oracle tests (956 atomic + 311 integration)
+across ten repositories, all Track B (generated_only) after upstream suites
+failed the import/rewrite audit in each case.
+
 ## Packet layout (Definition A)
 
 ```

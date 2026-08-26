@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,9 +20,8 @@ updated:    2026-08-26
 ```
 
 todo:
-- [ ] 阅读 spec-writer SKILL.md 后起草 spec v1（6 层结构）
-- [ ] probe 验证所有不确定行为
-- [ ] 通过 25 项 validation checks + style gate
+- [ ] 对每个 test 文件执行 import 分类（见 test-filter SKILL.md 表格）
+- [ ] 标注每个文件的 import 类型
 
 ## History
 
@@ -30,6 +29,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-26 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (3687 LOC; GCRA rate-decision rule engine — one theoretical-arrival-time value per limiter projected through quota construction, direct/keyed decisions, NotUntil wait math, middleware snapshots, deterministic fake clock; v0.9.0 edition 2018 builds on scorer cargo 1.83; async/jitter surfaces scoped out) |
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended; begin spec drafting |
+| 3 | 2026-08-26 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 landed; two probe rounds pinned: quota nanosecond-truncation laws (per_second(3) → 333333333ns, full-burst 999999999ns), decision laws (burst budget, exact-boundary conformance, batch weight math, capacity carrier value), NotUntil absolute-instant projection with pre-advanced clocks, wait_time_from zero clamping, snapshot rbc countdown/regain/idle-reset, quota round trips, retention threshold (equality evicts), store parity, FakeRelativeClock shared clones, Display strings; 25 validation checks + style gate pass |
+| 4 | 2026-08-26 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
 
 ---
 

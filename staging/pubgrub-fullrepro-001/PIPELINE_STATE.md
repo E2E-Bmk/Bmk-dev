@@ -11,7 +11,7 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
@@ -21,9 +21,9 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] audit upstream tests: imports, feature gates, fixture styles
-- [ ] write filter/rewrite_audit.md with per-file disposition
-- [ ] decide kept_upstream vs generated_only
+- [x] generate oracle test crates (atomic + integration) from spec, fresh universes, probe-verified assertions
+- [x] run against pinned reference (path-patched + registry lock), require 100%
+- [x] write spec_test_map.md, taxonomy.jsonl, kept_nodeids.txt, depends_on.json, task.json; run lint
 
 ## History
 
@@ -33,6 +33,9 @@ todo:
 | 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec drafting |
 | 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 landed; three probe rounds fixed: Ranges display grammar (nine segment forms, ∅/*/" | "), touching-segment union merge vs discrete-gap retention, from_iter normalization skipping invalid pairs, simplify's three fixed rules, offline provider strategy (highest contained version; no-match packages outrank all; conflicts then fewest-candidates), unavailability message string, deterministic solving incl. cycles/self-deps/backtracking, unknown-root NoVersions tree, collapse merge sides, all External sentence forms, format_terms five shapes with pos/neg normalization, Because/And-because chaining with " ({n})" refs and blank-line separation, all PubGrubError and VersionParseError Display strings; 25 validation checks + style gate pass |
 | 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
+| 5 | 2026-08-25 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit done: examples.rs memorization-prone dart-doc scenarios + env_logger carrier; tests.rs intents re-expressible; proptest.rs needs proptest+varisat; in-crate tests private; version-ranges tests out of crate; decision generated-only |
+| 6 | 2026-08-25 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md landed: per-file disposition, fresh harbor/expedition vocabulary, dummy-gate pairing policy, no should_panic |
+| 7 | 2026-08-25 | S3B_TRIGGER | S3_DONE | oracle generated: 56 atomic + 27 integration = 83 fns; two extra probe rounds pinned report/tree exact values (branching refs + blank line, collapse folds, custom-formatter callbacks, prioritize cache, conflict stats, Unavailable metadata); reference 83/83 on path-patch AND registry lock (pubgrub 0.3.0, cargo 1.83; lock pins version-ranges 0.1.1/indexmap 2.7.1/hashbrown 0.15.5 below edition2024); warning-free build; spec_test_map/taxonomy/kept_nodeids/depends_on/task.json/reference_score landed; lint LINT_PASS (negative-tested) |
 
 ---
 

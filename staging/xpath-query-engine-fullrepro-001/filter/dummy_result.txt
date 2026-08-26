@@ -1,0 +1,35 @@
+# Dummy gate — xpath-query-engine-fullrepro-001
+
+Adversarial stub module at github.com/antchfx/xpath (source:
+wip/dummy/xpath-stub, wired with go mod edit -replace into a copy of the
+oracle), runner wip/dummy/run_dummy_xpath.sh. Every oracle test executed
+individually (go test -run '^Name$' -count=1) in both stub modes. The stub
+compiles cleanly against the oracle (go build ./... OK) — zero passes are
+assertion failures, not collection errors; spot checks confirmed
+assertion-level failures (compile_test.go:24 select-nothing,
+errors_test.go:13 message mismatch).
+
+Stub behavior:
+- accept mode (default): Compile/CompileWithNS return a non-nil expression
+  and nil error for every input, MustCompile echoes, String returns the
+  source, Select/Evaluate yield an empty iterator / nil.
+- reject mode (XPATH_STUB_MODE=reject): Compile/CompileWithNS return a
+  non-nil "stub: expression rejected" error for every input, String
+  returns the empty string.
+
+Results:
+
+  mode=accept  passed=0 total=160  (0.0%)
+  mode=reject  passed=0 total=160  (0.0%)
+
+Worst case 0.0% <= 10% gate. Non-vacuity design notes: every
+empty-result/false/error-only assertion carries a positive guard in the
+same test (in-range positions, non-empty selects, exact error texts from
+Error Semantics, compile guards next to arity failures); the three tests
+that would have passed the accept stub in a first structural audit
+(TestCompileValidExpression, TestStringReturnsExactSource,
+TestNodeTypeConstantOrder — pure String echo / constant order) were
+strengthened with engine-behavior anchors before the recorded runs.
+
+Date: 2026-08-26. Reference re-verified 160/160 after the strengthening
+edits (see reference_score.json).

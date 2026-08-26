@@ -69,6 +69,9 @@ the packets graduate):
     "mvdan.cc/sh/v3/syntax",
     "mvdan.cc/sh/v3/syntax/typedjson",
 ],
+"xpath-query-engine-fullrepro-001": [
+    "github.com/antchfx/xpath",
+],
 ```
 
 Lint caveat for `/vN` module paths: `go_target_symbols` derives the package
@@ -95,6 +98,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | 6 | goyaml-yaml-engine-fullrepro-001 | goccy/go-yaml @ v1.19.2 | S3_DONE | 134 (97+37) | 134/134 | Track B (upstream mega-tables import internal/errors; path/lexer suites golden-bound); dummy worst-case 1/134=0.7% after non-vacuity fix (initial 2/134, one vacuous all-nil round-trip passer); 3 spec_error fixes during ref run (validator FieldError-slice annotation, trailing-newline Origin loss, ReplaceWithReader comment drop) |
 | 7 | kong-cli-grammar-fullrepro-001 | alecthomas/kong @ v1.16.1 | S3_DONE | 149 (116+33) | 149/149 | Track B (upstream bound to alecthomas/assert+repr; Signature/tag-internal/wrap-golden suites out of scope); dummy accept 0/149, reject 1/149=0.7% (Must-panics failure_path, inherent); spec corrections during ref run (hyphen-prefixed detached values, required flags in usage line, Depth semantics) |
 | 8 | mvdansh-shell-syntax-fullrepro-001 | mvdan/sh @ v3.13.1 | S3_DONE | 170 (144+26) | 170/170 | Track B (upstream 10/12 files in-package white-box AST-literal mega-tables); dummy accept 1/170=0.6% (zero-Pos contract, inherent), reject 3/170=1.8% (+2 variant-gating failure_path, error texts not spec-declared); spec corrections from generation probes (CVI 1 scoped to layout options — SingleLine output can fail to reparse; CVI 8 → minify fixpoint; typedjson decode registry — Stmt/Redirect/Assign/Comment encode-only; heredoc statement-End vs later same-line redirect) |
+| 9 | xpath-query-engine-fullrepro-001 | antchfx/xpath @ v1.3.8 | S3_DONE | 160 (132+28) | 160/160 | Track B (upstream 9/10 files in-package white-box: unexported query/iterator interfaces + shared TNode fixture-runner layer); dummy accept 0/160, reject 0/160 after strengthening 3 String()-echo/constant-integer tests with behavioural anchors; spec corrections from probes (NodeNavigator thirteen methods; non-standard `not()` — string/number arguments return false regardless of value); upstream panic zones excluded from scope (mixed boolean comparisons, substring NaN bounds, reverse-axis position()) |
 
 ## Candidate selection log (CANDIDATES.md rows deferred; write scope is staging/ only)
 
@@ -117,7 +121,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | alecthomas/participle | SELECTED | 6759 LOC, 146 test funcs | parser-builder: struct-tag grammar mini-language, lexer defs, EBNF projection; Track B |
 | goccy/go-yaml | SELECTED | 13130 LOC, 140 black-box test funcs | YAML engine: decode/encode, PathString queries, anchors, source-annotated errors, lexer/parser projections; Track B |
 | alecthomas/kong | SELECTED | 6332 LOC @ v1.16.1, 290 test funcs | CLI grammar engine: struct-tag DSL, parse+help+model+resolution+execution projections; Track B |
-| antchfx/xpath | QUEUED (candidate) | 4032 LOC, 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator |
+| antchfx/xpath | SELECTED | 4729 LOC (4729 in scope), 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator: compile/select/evaluate projections, namespace dual-mode matching; Track B |
 | zclconf/go-cty | SELECTED | 13657 LOC, 165 test funcs | value/type system: conversions, unification, refinements/marks, json/msgpack round trips; Track B |
 | mvdan/sh | SELECTED | 16185 LOC (9123 in scope), 105 test funcs | shell syntax engine: parse/print round trip, positions, quoting, typed JSON; Track B |
 | ohler55/ojg | QUEUED (candidate) | 30855 LOC, 835 test funcs | JSONPath (jp) + parser (oj) engines over native Go data |

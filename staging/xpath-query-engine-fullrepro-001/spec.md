@@ -412,8 +412,10 @@ apply to the set's first node and return the empty string on an empty
 set, and called without arguments they apply to the context node.
 
 **Boolean functions.** `true()` and `false()` return the constants.
-`not(x)` returns the negated boolean conversion of its argument.
-`boolean(x)` applies the boolean conversion.
+`not(x)` returns the negation of a boolean argument and, for a node-set
+argument, true exactly when the set is empty; for a string or number
+argument `not` returns false regardless of the value. `boolean(x)`
+applies the boolean conversion.
 
 **Numeric functions.** `number(x)` applies the number conversion.
 `floor(x)` and `ceiling(x)` round down and up respectively. `round(x)`

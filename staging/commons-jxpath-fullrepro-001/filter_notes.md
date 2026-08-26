@@ -18,3 +18,4 @@ risks: dormant project (docs old but complete); XPath 1.0 core is a public stand
 scope_plan: target_subdomain=JXPathContext over beans/maps/collections/DOM + pointers + write/create + variables (no JDOM, no servlet, no XML namespaces beyond defaults), expected_oracle_max=100
 difficulty_shapes: rule reimplementation (path grammar over object models); canonical-form equivalence (Pointer.asPath); >=3 cooperating objects (context, pointer, variables, functions)
 oracle_plan: Track B generated-only Maven oracle (upstream suite used as a behavior checklist only), mirroring the shipped wip/java fullrepro packets.
+mutation_witnesses: canonicalFormsPerModel + rootMapEntryCanonicalForm (each pins one specific canonical asPath string — the map-entry attribute form — assertable by a contained assertion-only flip); oneBasedIndexing + arithmeticIndexPredicate (each pins the 1-based index base as a specific selected value, not via round-trip or parametrised arrays)

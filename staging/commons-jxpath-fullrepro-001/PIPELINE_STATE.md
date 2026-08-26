@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3_DONE
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,9 +20,14 @@ updated:    2026-08-26
 ```
 
 todo:
-- [ ] 整理 public surface（public packages / types / members；Java override：不读 __init__.py）
-- [ ] 逐项过 Q1/Q2 判断
-- [ ] 写 spec.md 草稿（含 internal header，6-layer 结构）
+- [x] spec.md（6-layer 结构，internal header 独立文件）
+- [x] oracle 构建（generated-only，128 tests：101 atomic + 27 integration）
+- [x] 本地参考运行 128/128 pass（filter/local_reference_run.txt）
+- [x] oracle_import_lint → LINT_PASS（filter/lint_result.txt）
+- [x] stage-3 artifacts（kept_nodeids / taxonomy / spec_test_map / task.json）
+- [x] verify_task → STATIC_VALID
+- [ ] Docker dummy gate（PENDING — Docker unavailable）
+- [ ] Docker reference run 100%（PENDING — Docker unavailable）
 
 ---
 
@@ -32,6 +37,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-26 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (28515 non-blank main LOC, 332 upstream test methods) |
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended |
+| 3 | 2026-08-26 | S2_SPEC_DRAFT | S3_ORACLE_BUILD | spec.md drafted after 6 probe rounds vs pinned 1.4.0 (result typing, model mapping rules, canonical asPath forms, factory contract, leniency matrix, function replacement); scope per filter_notes (no JDOM/servlet/namespaces/id-key/locale) |
+| 4 | 2026-08-26 | S3_ORACLE_BUILD | S3_DONE | 128/128 pass locally vs pinned 1.4.0 (two spec_errors found by reference run — attribute-access form is not a filter; bean pointer reads are not re-read-live — corrected per reference execution, probe 8); LINT_PASS; spec_test_map 0 unmapped; depends_on 27/27; verify_task STATIC_VALID; Docker gates PENDING |
 
 ---
 

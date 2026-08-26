@@ -54,3 +54,4 @@ prior research: spring-coupled tests).
 |---|---------|------|-------|-------|
 | 1 | javapoet-fullrepro-001 | square/javapoet | S3_DONE (Docker gates PENDING) | 91 tests (61 atomic / 30 integration); local mvn reference 91/91; LINT_PASS; verify_task STATIC_VALID |
 | 2 | jsoup-fullrepro-001 | jhy/jsoup | S3_DONE (Docker gates PENDING) | 106 tests (73 atomic / 33 integration); local mvn reference 106/106; LINT_PASS; verify_task STATIC_VALID |
+| 3 | snakeyaml-engine-fullrepro-001 | snakeyaml/snakeyaml-engine | S3_DONE (Docker gates PENDING) | 93 tests (66 atomic / 27 integration); local mvn reference 93/93; LINT_PASS; verify_task STATIC_VALID |

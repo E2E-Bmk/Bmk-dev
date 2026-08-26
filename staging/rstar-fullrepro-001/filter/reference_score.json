@@ -1,0 +1,25 @@
+{
+  "task_id": "rstar-fullrepro-001",
+  "reference": "georust/rstar @ c8c5bf9e41468281d030869d409e3f67f1aaf5b7 (rstar 0.12.2)",
+  "runs": [
+    {
+      "mode": "path_patch",
+      "detail": "[patch.crates-io] rstar = { path = <pinned checkout>/rstar } appended to oracle workspace manifest; builds and resolves cleanly under cargo 1.83",
+      "runner": "cargo nextest run",
+      "total": 91,
+      "passed": 91,
+      "failed": 0
+    },
+    {
+      "mode": "registry_lock",
+      "detail": "no patch; lockfile pins rstar 0.12.2 from crates.io (cargo update -p rstar --precise 0.12.2 — a fresh resolve picks 0.13.0 whose rust-version 1.85 exceeds the cargo 1.83 toolchain); this lock ships as oracle/Cargo.lock",
+      "runner": "cargo nextest run",
+      "total": 91,
+      "passed": 91,
+      "failed": 0
+    }
+  ],
+  "pass_rate": 1.0,
+  "toolchain": "cargo 1.83.0",
+  "date": "2026-08-26"
+}

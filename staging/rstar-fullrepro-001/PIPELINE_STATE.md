@@ -11,18 +11,21 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
+functions_in_scope: 49
+functions_kept: 0
+oracle_count: 91
 updated:    2026-08-26
 ```
 
 todo:
-- [ ] audit upstream test imports; write rewrite_audit.md (generated_only expected: upstream tests are seeded-random proptest-style loops)
-- [ ] build generated oracle (atomic + integration workspaces), taxonomy, kept_nodeids
-- [ ] reference run 100% (path patch + registry lock), lint LINT_PASS, spec_test_map, reference_score.json
+- [x] audit upstream test imports; rewrite_audit.md written (generated_only: inline #[cfg(test)] modules, crate-internal seeded-random utilities)
+- [x] generated oracle built (76 atomic + 15 integration), taxonomy, kept_nodeids, depends_on.json
+- [x] reference run 100% both modes (path patch 91/91, registry lock 91/91), LINT_PASS, spec_test_map, reference_score.json
 
 ## History
 
@@ -32,6 +35,10 @@ todo:
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended; begin spec drafting |
 | 3 | 2026-08-26 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 complete: 8 behavior sections + contract layer, all values probe-pinned over three probe rounds (AABB algebra, construction-path equivalence up to tie order, one-of-many removal, drain laziness, parameter panics, primitives forwarding); style gate + validation checks pass |
 | 4 | 2026-08-26 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin test filtering (upstream tests are seeded-random `proptest`-style loops with internal APIs — expect generated_only) |
+| 5 | 2026-08-26 | S3A_IMPORT_AUDIT | S3A_REWRITE | rewrite_audit.md complete: all 49 upstream #[test] fns are inline #[cfg(test)] modules importing crate::test_utilities (Hc128Rng seeded-random brute-force comparisons) or internal paths — 0 keepable, generated_only |
+| 6 | 2026-08-26 | S3A_REWRITE | S3_ORACLE_MERGE | Track B oracle generated: 91 tests (76 atomic across aabb/construction/queries/neighbors/mutation/primitives/inspection, 15 integration workflows across mapping/collision/editing/custom); spec_test_map 91/91 covered; depends_on.json 15/15 integration annotated |
+| 7 | 2026-08-26 | S3_ORACLE_MERGE | S3_REFERENCE_RUN | path-patch run 91/91, registry-lock run 91/91 (Cargo.lock pins rstar 0.12.2 — fresh resolve picks 0.13.0 requiring rust 1.85 > toolchain 1.83); reference_score.json written |
+| 8 | 2026-08-26 | S3_REFERENCE_RUN | S3_DONE | oracle_import_lint.py → LINT_PASS (fresh, newer than all oracle test files); task.json S3_DONE (91 base fns: 76 atomic / 15 integration, positive share 93% atomic) |
 
 ---
 

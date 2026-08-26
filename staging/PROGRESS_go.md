@@ -124,7 +124,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | antchfx/xpath | SELECTED | 4729 LOC (4729 in scope), 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator: compile/select/evaluate projections, namespace dual-mode matching; Track B |
 | zclconf/go-cty | SELECTED | 13657 LOC, 165 test funcs | value/type system: conversions, unification, refinements/marks, json/msgpack round trips; Track B |
 | mvdan/sh | SELECTED | 16185 LOC (9123 in scope), 105 test funcs | shell syntax engine: parse/print round trip, positions, quoting, typed JSON; Track B |
-| ohler55/ojg | QUEUED (candidate) | 30855 LOC, 835 test funcs | JSONPath (jp) + parser (oj) engines over native Go data |
+| ohler55/ojg | SELECTED | 10916 LOC in scope (jp pkg; module ~31k), 159 test funcs | JSONPath dialect engine: path parse/build/normalize + get/set/del/modify/walk/match projections over native Go data; scope_plan jp-only, max 170; Track B expected |
 
 ## Dedup register (Go repos already taken on `origin/go-tasks-20260821`)
 

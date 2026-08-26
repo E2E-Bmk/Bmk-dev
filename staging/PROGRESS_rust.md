@@ -1,0 +1,78 @@
+# Rust Stage 1–3 packet production — progress
+
+Worker branch: `cursor/8-26-50tasks-rust-a9d6`. Quota: 15 ACCEPTABLE Rust
+Stage 1–3 task packets under `staging/{task_id}/`.
+
+## Deliverable definition (Definition A)
+
+Each packet contains:
+
+- `spec.md` — candidate-visible 6-layer spec (internal header included in the
+  staging copy; stripped only when a packet graduates).
+- `oracle/` — Rust oracle workspace in the style of the existing Rust tasks
+  under `tasks/` (rhai / comfy-table / toml / cargo-generate):
+  `Cargo.toml` (workspace) + `Cargo.lock` + `atomic/` crate + `integration/`
+  crate + `depends_on.json`, runnable by `harness/runners/rust.py` and
+  `harness/score_language.py`.
+- `filter/spec_test_map.md`, `filter/kept_nodeids.txt`, `filter/taxonomy.jsonl`,
+  `filter/rewrite_audit.md`, `filter/lint_result.txt` (first line `LINT_PASS`,
+  newer than every oracle test file), `filter/reference_score.json` (pinned
+  reference at 100%).
+- `task.json` with `language: "rust"`, `target_crates`, taxonomy, stats.
+- `PIPELINE_STATE.md` (state machine instance, through `S3_DONE`).
+- `filter_notes.md` (Stage 1 screening evidence).
+
+`oracle/requirements.txt` is not part of the Rust convention: none of the four
+merged Rust tasks under `tasks/` carries one, so it is omitted here.
+
+## Infrastructure notes
+
+- `harness/oracle_import_lint.py` gained a Rust branch: target roots come from
+  `task.json.target_crates` (staging or tasks layout), every `use root::...`
+  and inline `root::seg::Name` path in the oracle sources must name symbols
+  the spec text declares, and each reached crate root must appear in the
+  spec's Public Interface section. Verified against the merged Rust tasks:
+  comfy-table passes; toml reports one genuine undeclared symbol
+  (`from_iter`), confirming the check is not vacuous.
+- Reference runs use `harness/score_language.py` with the pinned upstream
+  checkout as `--solution-dir`; upstream checkouts live outside the repo tree
+  (`/tmp/refs/`).
+- Rust dummy-gate note: a stub crate whose public functions all
+  `unimplemented!()` panics on first call, so any test that calls the target
+  crate and asserts a produced value fails against it. The per-task filter
+  notes record the static audit that every kept test calls the target crate
+  and no `#[should_panic]` tests are kept.
+
+## Repo bans (dupes of prior task sources on any branch)
+
+rhai, comfy-table, toml-rs (toml/toml_edit/taplo), cargo-generate, gitoxide
+(all gix-*), fjall/lsm-tree, sanakirja, guppy, egglog, pest.
+
+## Task ledger
+
+| # | task_id | repo | state | notes |
+|---|---------|------|-------|-------|
+| 1 | evalexpr-fullrepro-001 | ISibboI/evalexpr @ 92d99f4 (v13.1.0) | S3_DONE | 56 tests (29 atomic / 27 integration incl. 5 generated); reference 56/56; LINT_PASS |
+| 2 | config-rs-fullrepro-001 | rust-cli/config-rs @ 532ab4d (v0.15.11) | S3_DONE | 82 tests (39 atomic / 43 integration incl. 14 generated); reference 82/82; LINT_PASS; Cargo.lock pins indexmap 2.7.1 / hashbrown 0.15.5 for rustc 1.83 |
+| 3 | similar-fullrepro-001 | mitsuhiko/similar @ 28c146b (v2.7.0) | S3_DONE | 91 tests (64 atomic / 27 integration; 33 upstream-derived, 58 generated); reference 91/91; LINT_PASS; Cargo.lock pins unicode-segmentation 1.12.0 for rustc 1.83 |
+| 4 | ropey-fullrepro-001 | cessen/ropey @ d41ee24 (v1.6.1) | S3_DONE | 91 tests (58 atomic / 33 integration; generated-only, upstream as checklist); reference 91/91 (patched path + registry lock); LINT_PASS; no dependency pins needed |
+| 5 | fst-fullrepro-001 | BurntSushi/fst @ 5907b47 (v0.4.7) | S3_DONE | 105 tests (68 atomic / 37 integration; generated-only, upstream as checklist); reference 105/105; LINT_PASS; zero transitive deps |
+| 6 | textwrap-fullrepro-001 | mgeisler/textwrap @ 4770e55 (v0.16.2) | S3_DONE | 111 tests (79 atomic / 32 integration; generated-only, upstream as checklist); reference 111/111 (patched + registry lock); LINT_PASS; smawk pinned =0.3.2 for cargo 1.83 |
+| 7 | petgraph-fullrepro-001 | petgraph/petgraph @ 1629035 (v0.8.3) | S3_DONE | 129 tests (95 atomic / 34 integration; generated-only, upstream as checklist); reference 129/129 (patched + registry lock); LINT_PASS; indexmap pinned =2.7.1 for cargo 1.83 |
+| 8 | ignore-fullrepro-001 | BurntSushi/ripgrep (crates/ignore) @ ac02f54 (ignore-0.4.23) | S3_DONE | 106 tests (75 atomic / 31 integration; generated-only, upstream as checklist); reference 106/106 (patched + registry lock); LINT_PASS; ignore =0.4.23 + globset =0.4.15 pinned for cargo 1.83 |
+| 9 | rrule-fullrepro-001 | fmeringdal/rust-rrule @ 1c3420e (v0.14.0) | S3_DONE | 97 tests (64 atomic / 33 integration; generated-only, upstream as checklist); reference 97/97 (patched + registry lock); LINT_PASS; no pins needed (rrule 0.14.0 + chrono 0.4.45 + chrono-tz 0.10.4 resolve on cargo 1.83) |
+| 10 | fluent-syntax-fullrepro-001 | projectfluent/fluent-rs (fluent-syntax) @ f22da4e (fluent-syntax@0.12.0) | S3_DONE | 98 tests (71 atomic / 27 integration; generated-only, upstream fixtures as checklist); reference 98/98 (patched + registry lock); LINT_PASS; no pins needed (memchr 2.8.3 + thiserror 2.0.20 on cargo 1.83) |
+| 11 | pubgrub-fullrepro-001 | pubgrub-rs/pubgrub @ 086d70b (v0.3.0) | S3_DONE | 83 tests (56 atomic / 27 integration; generated-only, fresh harbor/expedition universes); reference 83/83 (patched + registry lock); LINT_PASS; lock pins version-ranges 0.1.1 + indexmap 2.7.1 + hashbrown 0.15.5 (edition2024 boundary on cargo 1.83) |
+| 12 | rust-decimal-fullrepro-001 | paupino/rust-decimal @ c7efe16 (1.42.1) | S3_DONE | 119 tests (93 atomic / 26 integration; generated-only, upstream as checklist); reference 119/119 (patched + registry lock); LINT_PASS; lock pins proc-macro-crate 3.2.0 / toml_edit 0.22.24 / toml_datetime 0.6.9 / indexmap 2.7.1 / hashbrown 0.15.5 / uuid 1.11.0 (edition2024 boundary) |
+| 13 | governor-fullrepro-001 | boinkor-net/governor @ e850a9d (v0.9.0) | S3_DONE | 68 tests (55 atomic / 13 integration; generated-only, upstream as checklist); reference 68/68 (patched + registry lock); LINT_PASS; lock pins governor 0.9.0 + hashbrown 0.15.5 |
+| 14 | rstar-fullrepro-001 | georust/rstar @ c8c5bf9 (rstar 0.12.2) | S3_DONE | 91 tests (76 atomic / 15 integration; generated-only, upstream inline #[cfg(test)] modules as checklist); reference 91/91 (patched + registry lock); LINT_PASS; lock pins rstar 0.12.2 (fresh resolve picks 0.13.0 requiring rust 1.85 > toolchain 1.83) |
+| 15 | indexmap-fullrepro-001 | indexmap-rs/indexmap @ 42e57a3 (indexmap 2.7.1) | S3_DONE | 121 tests (106 atomic / 15 integration; generated-only, upstream inline #[cfg(test)] modules + quickcheck harness as checklist); reference 121/121 (patched + registry lock); LINT_PASS; lock pins indexmap 2.7.1 + hashbrown 0.15.5 (fresh resolve picks 2.14.0 requiring rust 1.85 > toolchain 1.83) |
+
+## Final status
+
+Quota met: 15 of 15 packets complete through S3_DONE on this branch, each
+satisfying Definition A (spec.md, oracle workspace with lockfile and
+depends_on.json, full filter artifact set with fresh LINT_PASS, task.json
+language=rust, PIPELINE_STATE.md, filter_notes.md) with the pinned
+reference implementation passing 100% of its oracle in both the
+path-patched and registry-lock modes.

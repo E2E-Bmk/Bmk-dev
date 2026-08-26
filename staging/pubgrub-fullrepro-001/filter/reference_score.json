@@ -1,0 +1,25 @@
+{
+  "task_id": "pubgrub-fullrepro-001",
+  "reference": "pubgrub-rs/pubgrub @ 086d70bb1940c52d344332de4fdbfccf44151b4b (tag v0.3.0)",
+  "runs": [
+    {
+      "mode": "path_patch",
+      "detail": "[patch.crates-io] pubgrub = { path = <pinned checkout> } appended to oracle workspace manifest",
+      "runner": "cargo nextest run (also cargo test --workspace)",
+      "total": 83,
+      "passed": 83,
+      "failed": 0
+    },
+    {
+      "mode": "registry_lock",
+      "detail": "no patch; lockfile resolves pubgrub 0.3.0 from crates.io with version-ranges 0.1.1, indexmap 2.7.1, hashbrown 0.15.5 pinned below the edition2024 boundary for cargo 1.83; this lock ships as oracle/Cargo.lock",
+      "runner": "cargo nextest run",
+      "total": 83,
+      "passed": 83,
+      "failed": 0
+    }
+  ],
+  "pass_rate": 1.0,
+  "toolchain": "cargo 1.83.0",
+  "date": "2026-08-25"
+}

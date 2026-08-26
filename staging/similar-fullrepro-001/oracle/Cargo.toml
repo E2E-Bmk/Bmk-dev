@@ -1,0 +1,12 @@
+[workspace]
+members = ["atomic", "integration"]
+resolver = "2"
+
+# The oracle ships without [patch.crates-io]: the runner appends it, pointing
+# similar at the candidate workspace (member-manifest patches are ignored by
+# cargo, so the patch lives on this root manifest).
+[workspace.dependencies]
+# `version = "*"` so the patched workspace version satisfies the requirement.
+# Feature scope follows the spec: text (default) + unicode + inline;
+# bytes/serde/wasm32_web_time are out of scope.
+similar = { version = "*", features = ["unicode", "inline"] }

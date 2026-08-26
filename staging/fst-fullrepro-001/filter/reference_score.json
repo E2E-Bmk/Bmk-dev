@@ -1,0 +1,17 @@
+{
+  "task_id": "fst-fullrepro-001",
+  "reference_repo": "BurntSushi/fst",
+  "reference_commit": "5907b47c6d84cebe154a5a63e8e8991124b0292e",
+  "method": "cargo nextest run on the oracle workspace, twice: (1) with [patch.crates-io] fst = { path = <reference clone at pinned commit> } appended, mirroring harness/runners/rust.py setup; (2) unpatched with the shipped Cargo.lock resolving fst 0.4.7 from the registry. 105/105 both runs; fst has zero dependencies so no transitive pins.",
+  "toolchain": "cargo 1.83 + cargo-nextest (see Appendix A)",
+  "total": 105,
+  "passed": 105,
+  "failed": 0,
+  "skipped": 0,
+  "pass_rate": 1.0,
+  "stats": {
+    "atomic": 68,
+    "integration": 37
+  },
+  "date": "2026-08-25"
+}

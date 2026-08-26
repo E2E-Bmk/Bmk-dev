@@ -1,0 +1,104 @@
+{"taxonomy_key": "atomic::producing state::produce returns the next state and never mutates the base", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::a recipe that changes nothing returns the base by reference", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::changed branches are new objects while untouched branches keep identity", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::primitive and null bases pass through the producer", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::producing over a non-draftable object base throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::produced results are deeply frozen by default and reject strict-mode mutation", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::a pre-frozen base is a legal input", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::nested reads inside a recipe are drafts and mutations are visible immediately", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::a draft that escapes its recipe is revoked", "layer": "atomic"}
+{"taxonomy_key": "atomic::producing state::nested produce composes with the outer draft", "layer": "atomic"}
+{"taxonomy_key": "atomic::recipe return rules::returning undefined finalizes the draft", "layer": "atomic"}
+{"taxonomy_key": "atomic::recipe return rules::returning a fresh value replaces the state", "layer": "atomic"}
+{"taxonomy_key": "atomic::recipe return rules::returning the modified draft itself is allowed", "layer": "atomic"}
+{"taxonomy_key": "atomic::recipe return rules::modifying the draft and returning a new value throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::recipe return rules::returning a promise while modifying the draft throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::recipe return rules::returning nothing produces undefined", "layer": "atomic"}
+{"taxonomy_key": "atomic::curried producers::currying returns a reusable producer that forwards extra arguments", "layer": "atomic"}
+{"taxonomy_key": "atomic::curried producers::a curried producer with a default state uses it for an undefined base", "layer": "atomic"}
+{"taxonomy_key": "atomic::curried producers::an explicit base overrides the curried default", "layer": "atomic"}
+{"taxonomy_key": "atomic::curried producers::curried produceWithPatches returns the state-and-patches triple", "layer": "atomic"}
+{"taxonomy_key": "atomic::manual draft lifecycle::createDraft opens a live draft that records mutations", "layer": "atomic"}
+{"taxonomy_key": "atomic::manual draft lifecycle::finishDraft finalizes with produce identity, sharing, and freezing rules", "layer": "atomic"}
+{"taxonomy_key": "atomic::manual draft lifecycle::finishDraft reports patches through its listener", "layer": "atomic"}
+{"taxonomy_key": "atomic::manual draft lifecycle::a finished draft is revoked", "layer": "atomic"}
+{"taxonomy_key": "atomic::manual draft lifecycle::createDraft and finishDraft reject invalid arguments", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and originals::current returns an unfrozen finalized snapshot of the draft so far", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and originals::a snapshot is decoupled from later draft mutations", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and originals::current on a non-draft throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and originals::original returns the underlying base with reference identity", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and originals::original on a non-draft throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and originals::symbol-keyed children stay drafts in snapshots unless strict iteration is on", "layer": "atomic"}
+{"taxonomy_key": "atomic::draftability and freezing::isDraftable accepts plain objects, arrays, maps, sets, and null-prototype objects", "layer": "atomic"}
+{"taxonomy_key": "atomic::draftability and freezing::the immerable marker makes class instances draftable with prototypes preserved", "layer": "atomic"}
+{"taxonomy_key": "atomic::draftability and freezing::marking the prototype works the same as marking the class", "layer": "atomic"}
+{"taxonomy_key": "atomic::draftability and freezing::an unmarked class instance is not draftable", "layer": "atomic"}
+{"taxonomy_key": "atomic::draftability and freezing::freeze is shallow by default and deep on request", "layer": "atomic"}
+{"taxonomy_key": "atomic::draftability and freezing::cast helpers return their argument unchanged", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch records::object mutations record add, replace, and remove operations", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch records::array appends record add patches at the new indices", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch records::array length truncation records remove patches for dropped indices", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch records::splice records patches that round-trip", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch records::replacing the whole state records one empty-path replace patch", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch records::producing undefined via nothing records an empty-path replace with undefined", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch records::the patch listener of produce sees the same streams as produceWithPatches", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch records::a production that changes nothing emits empty patch streams", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch application::applyPatches builds a new frozen state and leaves the base untouched", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch application::add on an array index inserts and the dash index appends", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch application::an empty-path replace substitutes the whole state", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch application::removing a missing key is a no-op", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch application::an unresolvable path throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch application::an unsupported op throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::patch application::applying patches to a live draft mutates it in place and returns it", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::map drafts support reads, writes, deletes, and clear while the base stays intact", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::map get returns drafts so nested mutation is recorded", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::finalized maps preserve insertion order and are instances of Map", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::a finalized frozen map rejects mutation", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::map and set productions that change nothing return the base", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::set drafts record membership changes without touching the base", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::iterating a set draft yields drafts whose mutations are recorded", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::map patches are keyed by map key and round-trip", "layer": "atomic"}
+{"taxonomy_key": "atomic::map and set drafts::current and original work on map drafts", "layer": "atomic"}
+{"taxonomy_key": "atomic::array methods plugin::search callbacks receive stored values, not fresh drafts", "layer": "atomic"}
+{"taxonomy_key": "atomic::array methods plugin::find returns a draft whose mutation is recorded", "layer": "atomic"}
+{"taxonomy_key": "atomic::array methods plugin::filter and slice return arrays of drafts", "layer": "atomic"}
+{"taxonomy_key": "atomic::array methods plugin::concat and flat return non-draft structures", "layer": "atomic"}
+{"taxonomy_key": "atomic::array methods plugin::primitive-returning methods yield ordinary values", "layer": "atomic"}
+{"taxonomy_key": "atomic::array methods plugin::mutating methods behave like the standard implementations", "layer": "atomic"}
+{"taxonomy_key": "atomic::configuration::setAutoFreeze disables freezing of later productions", "layer": "atomic"}
+{"taxonomy_key": "atomic::configuration::loose copying drops non-enumerable own properties and flattens getters", "layer": "atomic"}
+{"taxonomy_key": "atomic::configuration::strict copying preserves non-enumerable own properties", "layer": "atomic"}
+{"taxonomy_key": "atomic::configuration::class_only strict copying applies to marked classes but not plain objects", "layer": "atomic"}
+{"taxonomy_key": "atomic::configuration::an Immer instance isolates autoFreeze from the package-level engine", "layer": "atomic"}
+{"taxonomy_key": "atomic::configuration::an Immer instance exposes the full production surface with its own config", "layer": "atomic"}
+{"taxonomy_key": "atomic::plugin gating::produceWithPatches throws before the patches plugin is loaded", "layer": "atomic"}
+{"taxonomy_key": "atomic::plugin gating::applyPatches throws before the patches plugin is loaded", "layer": "atomic"}
+{"taxonomy_key": "atomic::plugin gating::a patch listener on produce throws before the patches plugin is loaded", "layer": "atomic"}
+{"taxonomy_key": "atomic::plugin gating::producing over a Map throws before the map-set plugin is loaded", "layer": "atomic"}
+{"taxonomy_key": "atomic::plugin gating::producing over a Set throws before the map-set plugin is loaded", "layer": "atomic"}
+{"taxonomy_key": "atomic::plugin gating::without the array-methods plugin search callbacks receive drafts", "layer": "atomic"}
+{"taxonomy_key": "integration::plugin gating across projections::every patch and container entry point gates on its plugin uniformly", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::a store evolves through produce steps with sharing preserved at every step", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::inverse patches implement undo and forward patches implement redo", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::patch replay composes with an open manual draft", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::curried producers drive a reducer loop", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::a marked class graph produces new instances with prototypes and patches intact", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::nested containers draft through map values into sets", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::array-method mutations are recorded as patches that replay", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::a nested produce precomputes a branch that outer patches capture", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::producing nothing round-trips through patches on optional state", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::class_only strict copying differentiates classes from plain objects in one tree", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::manual drafts and producers work independently over one base", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::a patch log replays onto a diverged base when its paths still resolve", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::primitive set membership flows through snapshots and patches", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::a marked class with container fields drafts through both plugins", "layer": "integration"}
+{"taxonomy_key": "integration::immutable update workflows::map productions share untouched values by reference", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::patches and inverse patches round-trip one mixed production", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::mid-recipe snapshots equal the eventual finalization", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::no effective change means base identity and empty patches in every projection", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::listener streams equal the produceWithPatches triple for a complex change set", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::freezing follows the finalizing engine's configuration in all projections", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::no live drafts leak into results, snapshots, or patch values", "layer": "integration"}
+{"taxonomy_key": "integration::end to end::a document editing session with staged patches, undo, and redo", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end to end::a mixed-container store replays its full patch log onto the original base", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end to end::two engines process one base with configuration-scoped results that interoperate", "layer": "system_e2e"}

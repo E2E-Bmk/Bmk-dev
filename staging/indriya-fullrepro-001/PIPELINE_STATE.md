@@ -11,18 +11,21 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
-spec_iter:  0
+state:      S3_DONE
+stage:      3
+spec_iter:  1
 filter_iter: 0
 eval_iter:  0
 updated:    2026-08-26
 ```
 
 todo:
-- [ ] 整理 public surface（public packages / types / members；Java override：不读 __init__.py）
-- [ ] 逐项过 Q1/Q2 判断
-- [ ] 写 spec.md 草稿（含 internal header，6-layer 结构）
+- [x] spec.md v2（probe-driven；两处 clause 收紧）
+- [x] oracle 106 tests（80 atomic / 26 integration），mvn -o test 全绿
+- [x] filter artifacts（spec_test_map / kept_nodeids / taxonomy / rewrite_audit / lint_result=LINT_PASS）
+- [x] verify_task STATIC_VALID
+- [ ] Docker dummy gate（PENDING — no Docker on this VM）
+- [ ] Docker reference run（PENDING — no Docker on this VM）
 
 ---
 
@@ -32,6 +35,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-26 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (18581 non-blank main LOC, 928 upstream test methods) |
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended |
+| 3 | 2026-08-26 | S2_SPEC_DRAFT | S3_ORACLE_BUILD | spec.md drafted after 2 probe rounds (construction/arithmetic/units/conversion/comparison/scales/format) |
+| 4 | 2026-08-26 | S3_ORACLE_BUILD | S3_DONE | 106 tests (80 atomic / 26 integration) green vs pinned 2.2; probes 3–5 pinned exact renderings + entry-point divergence; spec v2 tightened 2 clauses (same-unit division cancellation, unit round-trip scope); lint LINT_PASS; verify STATIC_VALID; Docker gates PENDING |
 
 ---
 

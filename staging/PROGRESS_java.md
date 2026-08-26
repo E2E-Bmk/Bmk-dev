@@ -61,3 +61,4 @@ prior research: spring-coupled tests).
 | 7 | jgrapht-core-fullrepro-001 | jgrapht/jgrapht | S3_DONE (Docker gates PENDING) | 97 tests (71 atomic / 26 integration); local mvn reference 97/97; LINT_PASS; verify_task STATIC_VALID |
 | 8 | commons-jexl3-fullrepro-001 | apache/commons-jexl | S3_DONE (Docker gates PENDING) | 87 tests (60 atomic / 27 integration); local mvn reference 87/87; LINT_PASS; verify_task STATIC_VALID |
 | 9 | commons-jxpath-fullrepro-001 | apache/commons-jxpath | S3_DONE (Docker gates PENDING) | 128 tests (101 atomic / 27 integration); local mvn reference 128/128; LINT_PASS; verify_task STATIC_VALID |
+| 10 | indriya-fullrepro-001 | unitsofmeasurement/indriya | S3_DONE (Docker gates PENDING) | 106 tests (80 atomic / 26 integration); local mvn reference 106/106; LINT_PASS; verify_task STATIC_VALID |

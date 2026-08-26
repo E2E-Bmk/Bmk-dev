@@ -1,0 +1,104 @@
+{"taxonomy_key": "atomic::expression compilation and errors::jsonata compiles a reusable expression object without evaluating it", "layer": "atomic"}
+{"taxonomy_key": "atomic::expression compilation and errors::an unclosed group throws S0203 with position and (end) token", "layer": "atomic"}
+{"taxonomy_key": "atomic::expression compilation and errors::dangling dots and stray operator characters are syntax errors", "layer": "atomic"}
+{"taxonomy_key": "atomic::expression compilation and errors::no ** power operator and no infix ^ outside sort", "layer": "atomic"}
+{"taxonomy_key": "atomic::expression compilation and errors::evaluate returns a promise and empty selections resolve undefined", "layer": "atomic"}
+{"taxonomy_key": "atomic::expression compilation and errors::runtime failures reject with code, position, and token but no Error prototype", "layer": "atomic"}
+{"taxonomy_key": "atomic::expression compilation and errors::ast exposes path steps and binary operator structure", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::name steps select fields and singleton sequences collapse to the bare value", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::selecting a missing field resolves undefined, not null", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::steps over arrays map and flatten one level", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::the [] suffix keeps array form for single-item results", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::numeric predicates select by position, zero-based and negative from the end", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::boolean predicates filter with sequence-rule results", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::wildcard * selects all field values of the context object", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::descendant ** selects values at any depth", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::$ is the current context and $$ is always the root input", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::parenthesized step expressions map over the context sequence", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::the parent operator % reaches the enclosing object", "layer": "atomic"}
+{"taxonomy_key": "atomic::path navigation and sequences::#$var binds zero-based position and @$var binds the context item", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::arithmetic follows conventional precedence with % and unary minus", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::arithmetic on a defined non-number rejects T2001, on undefined resolves undefined", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::order comparisons work on two numbers or two strings and reject mixed types", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::= and != are deep structural equality and mixed types compare unequal", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::in tests array membership by primitive value only", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::range expressions expand inclusive integer sequences inside array constructors", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::& concatenates the string forms of both operands", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::and/or apply effective-boolean coercion to their operands", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::conditionals return undefined when a false test has no else branch", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::?: defaults on falsy values while ?? defaults only on undefined", "layer": "atomic"}
+{"taxonomy_key": "atomic::operators::~> chains pass the left value as first argument, composing left to right", "layer": "atomic"}
+{"taxonomy_key": "atomic::constructors and reshaping::array constructors preserve nesting and object keys may be computed", "layer": "atomic"}
+{"taxonomy_key": "atomic::constructors and reshaping::a duplicate key inside one object constructor rejects D1009", "layer": "atomic"}
+{"taxonomy_key": "atomic::constructors and reshaping::grouping aggregates values sharing a key with singletons kept bare", "layer": "atomic"}
+{"taxonomy_key": "atomic::constructors and reshaping::two grouping pairs producing the same key reject D1009", "layer": "atomic"}
+{"taxonomy_key": "atomic::constructors and reshaping::^ sorts ascending by default with > descending and later terms breaking ties", "layer": "atomic"}
+{"taxonomy_key": "atomic::constructors and reshaping::sorting mixed-type term values rejects T2007", "layer": "atomic"}
+{"taxonomy_key": "atomic::constructors and reshaping::the transform operator merges updates into matched objects on a deep copy", "layer": "atomic"}
+{"taxonomy_key": "atomic::constructors and reshaping::transform deletions strip listed names from matched objects", "layer": "atomic"}
+{"taxonomy_key": "atomic::variables, blocks, and functions:::= binds a value and a block returns its last statement", "layer": "atomic"}
+{"taxonomy_key": "atomic::variables, blocks, and functions::blocks form child scopes so inner rebinding stays local", "layer": "atomic"}
+{"taxonomy_key": "atomic::variables, blocks, and functions::unbound variables read as undefined but calling a non-function rejects T1006", "layer": "atomic"}
+{"taxonomy_key": "atomic::variables, blocks, and functions::lambdas apply, recurse through their binding, and close over scope", "layer": "atomic"}
+{"taxonomy_key": "atomic::variables, blocks, and functions::higher-order library functions pass value and index to lambdas", "layer": "atomic"}
+{"taxonomy_key": "atomic::variables, blocks, and functions::lambda signatures validate argument types and reject T0410 at the function name", "layer": "atomic"}
+{"taxonomy_key": "atomic::variables, blocks, and functions::built-in functions enforce their signatures the same way", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::$string renders JSON text for structures and 15-digit decimals for numbers", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::$length counts characters and $substring supports negative starts", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::$substringBefore/After split at the first separator occurrence", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::case mapping, whitespace trimming, and two-sided padding", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::$contains, $split, and $join accept strings or regexes", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::$match returns match records with index and captured groups", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::$replace supports group references, replacement functions, and limits", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::base64 and URL-component codecs round-trip text", "layer": "atomic"}
+{"taxonomy_key": "atomic::string functions::$eval evaluates a JSONata source string against an optional context", "layer": "atomic"}
+{"taxonomy_key": "atomic::numeric and aggregation functions::$number converts numeric strings, hex, and booleans and rejects D3030 otherwise", "layer": "atomic"}
+{"taxonomy_key": "atomic::numeric and aggregation functions::$abs, $floor, $ceil, and half-to-even $round with precision", "layer": "atomic"}
+{"taxonomy_key": "atomic::numeric and aggregation functions::$power and $sqrt compute, $sqrt of a negative rejects D3060, $random stays in [0,1)", "layer": "atomic"}
+{"taxonomy_key": "atomic::numeric and aggregation functions::number formatting pictures, radix formatting, and word-form integers", "layer": "atomic"}
+{"taxonomy_key": "atomic::numeric and aggregation functions::aggregators reduce numeric arrays and treat a bare number as its own aggregate", "layer": "atomic"}
+{"taxonomy_key": "atomic::numeric and aggregation functions::$count reports array length, 1 for a bare value, and 0 for no value", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$append concatenates, treating non-arrays as singletons", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$sort defaults ascending with an optional out-of-order comparator", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$reverse, $distinct with deep equality, and $zip stopping at the shortest input", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$filter, $reduce with optional init, and $single's unique-match contract", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$each maps entries to values and $sift filters entries by predicate", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$keys unions over arrays, $lookup gathers across arrays, $merge lets later keys win", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$type names the seven value kinds", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$exists distinguishes null from absence and $boolean applies effective-boolean rules", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::null is a value: equal to itself, storable, and never equal to absence", "layer": "atomic"}
+{"taxonomy_key": "atomic::array and object functions::$error rejects D3137 and $assert rejects D3141 only on a false condition", "layer": "atomic"}
+{"taxonomy_key": "atomic::date and time::$fromMillis renders ISO UTC by default and honors pictures with timezones", "layer": "atomic"}
+{"taxonomy_key": "atomic::date and time::$toMillis parses ISO or picture-described text and rejects D3110 otherwise", "layer": "atomic"}
+{"taxonomy_key": "atomic::date and time::$now and $millis observe the same instant within one evaluation", "layer": "atomic"}
+{"taxonomy_key": "atomic::bindings and host integration::the bindings argument of evaluate provides per-call variables", "layer": "atomic"}
+{"taxonomy_key": "atomic::bindings and host integration::assign persists bindings across evaluations of the same expression", "layer": "atomic"}
+{"taxonomy_key": "atomic::bindings and host integration::evaluate-time bindings take precedence over assigned bindings", "layer": "atomic"}
+{"taxonomy_key": "atomic::bindings and host integration::registerFunction binds host functions and enforces their signatures", "layer": "atomic"}
+{"taxonomy_key": "atomic::bindings and host integration::promise-returning host functions are awaited before use", "layer": "atomic"}
+{"taxonomy_key": "atomic::bindings and host integration::host functions see the evaluation timestamp and input through this", "layer": "atomic"}
+{"taxonomy_key": "integration::query and transformation workflows::an order analytics report groups line revenue per sku and counts group sizes", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::a discount pipeline transforms the catalog copy and leaves the source untouched", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::a registered scoring function drives predicates and descending sort end to end", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::recursive lambdas fold a tree with existence guards and aggregation", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::a slug pipeline chains case mapping, splitting, and joining", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::a regex replacement function converts and re-renders numbers in place", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::datetime values survive picture-driven round trips", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::a paginated projection combines positional binds, predicates, and sequence rules", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::parent references feed a grouping that indexes products by order", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::dynamically composed sources evaluate through $eval", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::async and sync host functions combine with library calls in one expression", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::one compiled expression serves many inputs while call bindings stay per-call", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::a configuration is filtered, remapped, and merged through object combinators", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::a sorted distinct union of arrays reproduces an integer range", "layer": "integration"}
+{"taxonomy_key": "integration::query and transformation workflows::guarded defaults keep a report total while assertions reject bad documents", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::sequence rules hold identically across paths, predicates, and library filters", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::descendant projections agree with explicit paths under aggregation", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::every subsystem reports failures as code, position, and token triples", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::one effective-boolean rule governs conditionals, and, ?:, and $boolean", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::names bound via :=, assign, and evaluate bindings are indistinguishable at lookup", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::structural equality agrees between = and $distinct while in stays primitive", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::chaining through ~> matches direct application for library functions", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::ast structure describes exactly what evaluation executes", "layer": "integration"}
+{"taxonomy_key": "integration::end to end::an invoice document is aggregated, grouped, ranked, and rendered in one pass", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end to end::a full enrichment pipeline transforms, regroups, formats, and stamps a document", "layer": "system_e2e"}

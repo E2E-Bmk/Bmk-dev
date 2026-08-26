@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::query and transformation workflows::an order analytics report groups line revenue per sku and counts group sizes": [
+      "atomic::constructors and reshaping::grouping aggregates values sharing a key with singletons kept bare",
+      "atomic::path navigation and sequences::parenthesized step expressions map over the context sequence",
+      "atomic::numeric and aggregation functions::aggregators reduce numeric arrays and treat a bare number as its own aggregate",
+      "atomic::numeric and aggregation functions::$count reports array length, 1 for a bare value, and 0 for no value"
+    ],
+    "integration::query and transformation workflows::a discount pipeline transforms the catalog copy and leaves the source untouched": [
+      "atomic::constructors and reshaping::the transform operator merges updates into matched objects on a deep copy",
+      "atomic::variables, blocks, and functions:::= binds a value and a block returns its last statement",
+      "atomic::numeric and aggregation functions::aggregators reduce numeric arrays and treat a bare number as its own aggregate"
+    ],
+    "integration::query and transformation workflows::a registered scoring function drives predicates and descending sort end to end": [
+      "atomic::bindings and host integration::registerFunction binds host functions and enforces their signatures",
+      "atomic::path navigation and sequences::boolean predicates filter with sequence-rule results",
+      "atomic::constructors and reshaping::^ sorts ascending by default with > descending and later terms breaking ties"
+    ],
+    "integration::query and transformation workflows::recursive lambdas fold a tree with existence guards and aggregation": [
+      "atomic::variables, blocks, and functions::lambdas apply, recurse through their binding, and close over scope",
+      "atomic::array and object functions::$exists distinguishes null from absence and $boolean applies effective-boolean rules",
+      "atomic::variables, blocks, and functions::higher-order library functions pass value and index to lambdas",
+      "atomic::operators::conditionals return undefined when a false test has no else branch"
+    ],
+    "integration::query and transformation workflows::a slug pipeline chains case mapping, splitting, and joining": [
+      "atomic::operators::~> chains pass the left value as first argument, composing left to right",
+      "atomic::string functions::case mapping, whitespace trimming, and two-sided padding",
+      "atomic::string functions::$contains, $split, and $join accept strings or regexes"
+    ],
+    "integration::query and transformation workflows::a regex replacement function converts and re-renders numbers in place": [
+      "atomic::string functions::$replace supports group references, replacement functions, and limits",
+      "atomic::numeric and aggregation functions::$number converts numeric strings, hex, and booleans and rejects D3030 otherwise",
+      "atomic::string functions::$string renders JSON text for structures and 15-digit decimals for numbers"
+    ],
+    "integration::query and transformation workflows::datetime values survive picture-driven round trips": [
+      "atomic::date and time::$fromMillis renders ISO UTC by default and honors pictures with timezones",
+      "atomic::date and time::$toMillis parses ISO or picture-described text and rejects D3110 otherwise"
+    ],
+    "integration::query and transformation workflows::a paginated projection combines positional binds, predicates, and sequence rules": [
+      "atomic::path navigation and sequences::#$var binds zero-based position and @$var binds the context item",
+      "atomic::path navigation and sequences::boolean predicates filter with sequence-rule results",
+      "atomic::variables, blocks, and functions:::= binds a value and a block returns its last statement"
+    ],
+    "integration::query and transformation workflows::parent references feed a grouping that indexes products by order": [
+      "atomic::path navigation and sequences::the parent operator % reaches the enclosing object",
+      "atomic::constructors and reshaping::grouping aggregates values sharing a key with singletons kept bare",
+      "atomic::constructors and reshaping::array constructors preserve nesting and object keys may be computed"
+    ],
+    "integration::query and transformation workflows::dynamically composed sources evaluate through $eval": [
+      "atomic::string functions::$eval evaluates a JSONata source string against an optional context",
+      "atomic::operators::& concatenates the string forms of both operands",
+      "atomic::operators::range expressions expand inclusive integer sequences inside array constructors",
+      "atomic::numeric and aggregation functions::$count reports array length, 1 for a bare value, and 0 for no value"
+    ],
+    "integration::query and transformation workflows::async and sync host functions combine with library calls in one expression": [
+      "atomic::bindings and host integration::promise-returning host functions are awaited before use",
+      "atomic::bindings and host integration::registerFunction binds host functions and enforces their signatures",
+      "atomic::operators::arithmetic follows conventional precedence with % and unary minus"
+    ],
+    "integration::query and transformation workflows::one compiled expression serves many inputs while call bindings stay per-call": [
+      "atomic::expression compilation and errors::jsonata compiles a reusable expression object without evaluating it",
+      "atomic::bindings and host integration::assign persists bindings across evaluations of the same expression",
+      "atomic::bindings and host integration::evaluate-time bindings take precedence over assigned bindings",
+      "atomic::bindings and host integration::the bindings argument of evaluate provides per-call variables"
+    ],
+    "integration::query and transformation workflows::a configuration is filtered, remapped, and merged through object combinators": [
+      "atomic::array and object functions::$each maps entries to values and $sift filters entries by predicate",
+      "atomic::array and object functions::$keys unions over arrays, $lookup gathers across arrays, $merge lets later keys win",
+      "atomic::constructors and reshaping::array constructors preserve nesting and object keys may be computed"
+    ],
+    "integration::query and transformation workflows::a sorted distinct union of arrays reproduces an integer range": [
+      "atomic::array and object functions::$append concatenates, treating non-arrays as singletons",
+      "atomic::array and object functions::$sort defaults ascending with an optional out-of-order comparator",
+      "atomic::array and object functions::$reverse, $distinct with deep equality, and $zip stopping at the shortest input",
+      "atomic::operators::range expressions expand inclusive integer sequences inside array constructors"
+    ],
+    "integration::query and transformation workflows::guarded defaults keep a report total while assertions reject bad documents": [
+      "atomic::operators::?: defaults on falsy values while ?? defaults only on undefined",
+      "atomic::array and object functions::$error rejects D3137 and $assert rejects D3141 only on a false condition",
+      "atomic::array and object functions::$exists distinguishes null from absence and $boolean applies effective-boolean rules"
+    ],
+    "integration::cross-view invariants::sequence rules hold identically across paths, predicates, and library filters": [
+      "atomic::path navigation and sequences::boolean predicates filter with sequence-rule results",
+      "atomic::array and object functions::$filter, $reduce with optional init, and $single's unique-match contract",
+      "atomic::path navigation and sequences::the [] suffix keeps array form for single-item results"
+    ],
+    "integration::cross-view invariants::descendant projections agree with explicit paths under aggregation": [
+      "atomic::path navigation and sequences::descendant ** selects values at any depth",
+      "atomic::path navigation and sequences::steps over arrays map and flatten one level",
+      "atomic::numeric and aggregation functions::aggregators reduce numeric arrays and treat a bare number as its own aggregate"
+    ],
+    "integration::cross-view invariants::every subsystem reports failures as code, position, and token triples": [
+      "atomic::expression compilation and errors::an unclosed group throws S0203 with position and (end) token",
+      "atomic::expression compilation and errors::runtime failures reject with code, position, and token but no Error prototype",
+      "atomic::numeric and aggregation functions::$number converts numeric strings, hex, and booleans and rejects D3030 otherwise",
+      "atomic::date and time::$toMillis parses ISO or picture-described text and rejects D3110 otherwise"
+    ],
+    "integration::cross-view invariants::one effective-boolean rule governs conditionals, and, ?:, and $boolean": [
+      "atomic::operators::and/or apply effective-boolean coercion to their operands",
+      "atomic::operators::conditionals return undefined when a false test has no else branch",
+      "atomic::operators::?: defaults on falsy values while ?? defaults only on undefined",
+      "atomic::array and object functions::$exists distinguishes null from absence and $boolean applies effective-boolean rules"
+    ],
+    "integration::cross-view invariants::names bound via :=, assign, and evaluate bindings are indistinguishable at lookup": [
+      "atomic::variables, blocks, and functions:::= binds a value and a block returns its last statement",
+      "atomic::bindings and host integration::assign persists bindings across evaluations of the same expression",
+      "atomic::bindings and host integration::the bindings argument of evaluate provides per-call variables",
+      "atomic::bindings and host integration::evaluate-time bindings take precedence over assigned bindings"
+    ],
+    "integration::cross-view invariants::structural equality agrees between = and $distinct while in stays primitive": [
+      "atomic::operators::= and != are deep structural equality and mixed types compare unequal",
+      "atomic::array and object functions::$reverse, $distinct with deep equality, and $zip stopping at the shortest input",
+      "atomic::operators::in tests array membership by primitive value only"
+    ],
+    "integration::cross-view invariants::chaining through ~> matches direct application for library functions": [
+      "atomic::operators::~> chains pass the left value as first argument, composing left to right",
+      "atomic::string functions::$length counts characters and $substring supports negative starts",
+      "atomic::numeric and aggregation functions::$abs, $floor, $ceil, and half-to-even $round with precision"
+    ],
+    "integration::cross-view invariants::ast structure describes exactly what evaluation executes": [
+      "atomic::expression compilation and errors::ast exposes path steps and binary operator structure",
+      "atomic::path navigation and sequences::name steps select fields and singleton sequences collapse to the bare value",
+      "atomic::operators::arithmetic follows conventional precedence with % and unary minus"
+    ],
+    "integration::end to end::an invoice document is aggregated, grouped, ranked, and rendered in one pass": [
+      "atomic::constructors and reshaping::grouping aggregates values sharing a key with singletons kept bare",
+      "atomic::constructors and reshaping::^ sorts ascending by default with > descending and later terms breaking ties",
+      "atomic::numeric and aggregation functions::number formatting pictures, radix formatting, and word-form integers",
+      "atomic::numeric and aggregation functions::aggregators reduce numeric arrays and treat a bare number as its own aggregate"
+    ],
+    "integration::end to end::a full enrichment pipeline transforms, regroups, formats, and stamps a document": [
+      "atomic::constructors and reshaping::the transform operator merges updates into matched objects on a deep copy",
+      "atomic::constructors and reshaping::grouping aggregates values sharing a key with singletons kept bare",
+      "atomic::date and time::$now and $millis observe the same instant within one evaluation",
+      "atomic::bindings and host integration::the bindings argument of evaluate provides per-call variables"
+    ]
+  }
+}

@@ -11,7 +11,7 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
@@ -20,8 +20,7 @@ updated:    2026-08-26
 ```
 
 todo:
-- [ ] 对每个 test 文件执行 import 分类（见 test-filter SKILL.md 表格）
-- [ ] 标注每个文件的 import 类型
+- [x] Stage 3 complete: oracle merged, lint LINT_PASS, reference 119/119
 
 ## History
 
@@ -31,6 +30,9 @@ todo:
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended; begin spec drafting |
 | 3 | 2026-08-26 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 landed; three probe rounds pinned: FromStr midpoint-away rounding at digit 29 vs from_str_exact Underflow, scientific handling in FromStr + from_scientific(_lossy), radix parsing (integers only in spec; fractional radix quirk deliberately excluded), add/sub max-scale law with banker's reduction on overflow (MAX+0.4 vs MAX+0.5 panic boundary), mul scale-sum with banker's cut, div value-contract with unspecified trailing-zero scale, rescale midpoint-away vs round_dp banker's divergence, round_sf Option semantics, Display precision truncation+padding, LowerExp/UpperExp forms, serialize 16-byte layout, from_f64 vs from_f64_retain dual forms, Error variants + typed Display strings + panic table; 25 validation checks + style gate pass |
 | 4 | 2026-08-26 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
+| 5 | 2026-08-26 | S3A_IMPORT_AUDIT | S3A_REWRITE | import audit: single public-API upstream file unusable as carrier (feature-gated fns, macros helper module, direct num_traits::Inv/Signed imports, verbatim operand tables); in-src str.rs tests drive private parser; decision generated_only, rewrite_audit.md landed |
+| 6 | 2026-08-26 | S3A_REWRITE | S3_ORACLE_MERGE | 119 generated tests landed (93 atomic across 6 behavior families, 26 integration flows in 4 modules); three oracle-phase probe rounds (Signed-on-zero follows sign flag, array_string renders unsigned magnitude — spec corrected, format-precision truncation) |
+| 7 | 2026-08-26 | S3_ORACLE_MERGE | S3_DONE | reference 119/119 on path_patch AND registry_lock (cargo nextest + cargo test); lint LINT_PASS; kept_nodeids/taxonomy/spec_test_map/depends_on/task.json landed; shipped Cargo.lock pins rust_decimal 1.42.1 + transitives below edition2024 boundary |
 
 ---
 

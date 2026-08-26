@@ -205,8 +205,11 @@ still fails with `ScaleExceedsMaximumPrecision`.
 digits, and — when the scale is nonzero — a `.` followed by exactly `scale`
 fractional digits, preserving trailing zeros: parsing `"1.50"` and printing
 it yields `"1.50"`. `Debug` output equals `Display` output. `to_string` and
-`Display` agree, and `array_string` returns a stack-allocated value whose
-`as_ref()` string equals `to_string()`. WHEN a format precision is supplied
+`Display` agree. `array_string` returns a stack-allocated value whose
+`as_ref()` string renders the unsigned magnitude only: it equals
+`to_string()` for non-negative values and omits the leading `-` for
+negative ones (`array_string` of `-0.007` is `"0.007"`). WHEN a format
+precision is supplied
 THEN the fractional part is truncated toward zero to that many digits if the
 stored scale is larger (`{:.1}` of `1.29` is `1.2`, `{:.0}` of `1.99` is `1`)
 and padded with trailing zeros if the stored scale is smaller (`{:.4}` of

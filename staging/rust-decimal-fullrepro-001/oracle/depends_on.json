@@ -1,0 +1,152 @@
+{
+  "integration::billing::generated_invoice_scale_flow": [
+    "atomic::generated_mul_scale_sum",
+    "atomic::generated_add_sub_scale_law",
+    "atomic::generated_round_dp_bankers",
+    "atomic::generated_display_precision_truncates"
+  ],
+  "integration::billing::generated_tax_ladder_with_strategies": [
+    "atomic::generated_mul_scale_sum",
+    "atomic::generated_strategy_matrix_below_midpoint",
+    "atomic::generated_round_dp_bankers",
+    "atomic::generated_to_float"
+  ],
+  "integration::billing::generated_ledger_sum_then_split": [
+    "atomic::generated_sum_product_aggregation",
+    "atomic::generated_div_inexact_rounds_at_final_digit",
+    "atomic::generated_round_dp_bankers",
+    "atomic::generated_image_accessors"
+  ],
+  "integration::billing::generated_running_balance_with_checked_guards": [
+    "atomic::generated_checked_family_matches_operators",
+    "atomic::generated_zero_divisor_paths",
+    "atomic::generated_round_sf_basic",
+    "atomic::generated_zero_and_integer_predicates"
+  ],
+  "integration::billing::generated_unit_price_backout_via_rem": [
+    "atomic::generated_rem_sign_and_scale",
+    "atomic::generated_div_exact_values",
+    "atomic::generated_to_integer_truncates_toward_zero"
+  ],
+  "integration::billing::generated_percentage_change_report": [
+    "atomic::generated_div_exact_values",
+    "atomic::generated_normalize_strips_trailing_zeros",
+    "atomic::generated_display_precision_pads",
+    "atomic::generated_to_float"
+  ],
+  "integration::canonical::generated_aggregation_canonical_form": [
+    "atomic::generated_sum_product_aggregation",
+    "atomic::generated_normalize_strips_trailing_zeros",
+    "atomic::generated_serialize_deserialize_round_trip",
+    "atomic::generated_hash_agrees_with_eq"
+  ],
+  "integration::canonical::generated_scale_representations_one_bucket": [
+    "atomic::generated_hash_agrees_with_eq",
+    "atomic::generated_equality_across_scales",
+    "atomic::generated_div_exact_values"
+  ],
+  "integration::canonical::generated_negative_zero_pipeline": [
+    "atomic::generated_negative_zero_renders_sign",
+    "atomic::generated_serialize_byte_layout",
+    "atomic::generated_normalize_zero_canonical"
+  ],
+  "integration::canonical::generated_sort_stability_across_scales": [
+    "atomic::generated_ordering_total_numeric",
+    "atomic::generated_equality_across_scales",
+    "atomic::generated_min_max_by_value",
+    "atomic::generated_add_sub_scale_law"
+  ],
+  "integration::canonical::generated_display_distinguishes_what_eq_conflates": [
+    "atomic::generated_equality_across_scales",
+    "atomic::generated_image_accessors",
+    "atomic::generated_normalize_strips_trailing_zeros",
+    "atomic::generated_display_trailing_zeros"
+  ],
+  "integration::canonical::generated_byte_image_survives_arithmetic_identity": [
+    "atomic::generated_serialize_deserialize_round_trip",
+    "atomic::generated_add_sub_scale_law",
+    "atomic::generated_sign_mutators_abs_signum"
+  ],
+  "integration::precision::generated_exact_vs_rounding_parse_pipeline": [
+    "atomic::generated_fromstr_29digit_rounding_away",
+    "atomic::generated_from_str_exact_paths",
+    "atomic::generated_add_sub_scale_law",
+    "atomic::generated_round_dp_bankers"
+  ],
+  "integration::precision::generated_smallest_positive_unit_flow": [
+    "atomic::generated_from_str_exact_paths",
+    "atomic::generated_div_bankers_ties_at_cut",
+    "atomic::generated_mul_bankers_at_representational_cut",
+    "atomic::generated_lowerexp_forms"
+  ],
+  "integration::precision::generated_max_boundary_saturation_chain": [
+    "atomic::generated_max_boundary_add",
+    "atomic::generated_checked_family_matches_operators",
+    "atomic::generated_saturating_family",
+    "atomic::generated_domain_bounds_render"
+  ],
+  "integration::precision::generated_division_precision_then_reround": [
+    "atomic::generated_div_inexact_rounds_at_final_digit",
+    "atomic::generated_mul_bankers_at_representational_cut",
+    "atomic::generated_round_sf_basic",
+    "atomic::generated_round_dp_bankers"
+  ],
+  "integration::precision::generated_scale_28_arithmetic_rounds_to_fit": [
+    "atomic::generated_add_overflow_rescales_bankers",
+    "atomic::generated_add_keeps_exact_when_it_fits",
+    "atomic::generated_max_boundary_add"
+  ],
+  "integration::precision::generated_sf_rounding_versus_dp_on_same_value": [
+    "atomic::generated_round_sf_basic",
+    "atomic::generated_round_dp_bankers",
+    "atomic::generated_div_inexact_rounds_at_final_digit",
+    "atomic::generated_trunc_and_fract"
+  ],
+  "integration::precision::generated_rescale_headroom_walk": [
+    "atomic::generated_rescale_pads_zeros_up",
+    "atomic::generated_rescale_clamps_at_mantissa_headroom",
+    "atomic::generated_rescale_down_rounds_midpoint_away"
+  ],
+  "integration::conversion_flow::generated_float_ingest_two_modes_diverge": [
+    "atomic::generated_from_float_shortest_rendering",
+    "atomic::generated_from_float_retain_binary_expansion",
+    "atomic::generated_add_sub_scale_law",
+    "atomic::generated_to_float"
+  ],
+  "integration::conversion_flow::generated_scientific_ingest_to_fixed_report": [
+    "atomic::generated_from_scientific_paths",
+    "atomic::generated_mul_scale_sum",
+    "atomic::generated_normalize_strips_trailing_zeros",
+    "atomic::generated_lowerexp_forms"
+  ],
+  "integration::conversion_flow::generated_parse_compute_render_exp_round_trip": [
+    "atomic::generated_lowerexp_forms",
+    "atomic::generated_from_scientific_paths",
+    "atomic::generated_from_scientific_errors",
+    "atomic::generated_div_exact_values"
+  ],
+  "integration::conversion_flow::generated_integer_export_after_arithmetic": [
+    "atomic::generated_to_integer_truncates_toward_zero",
+    "atomic::generated_to_integer_out_of_range",
+    "atomic::generated_try_from_decimal_matches_trait",
+    "atomic::generated_floor_ceil"
+  ],
+  "integration::conversion_flow::generated_radix_ingest_arithmetic_export": [
+    "atomic::generated_from_str_radix_integers",
+    "atomic::generated_from_str_radix_errors",
+    "atomic::generated_mul_scale_sum",
+    "atomic::generated_to_integer_truncates_toward_zero"
+  ],
+  "integration::conversion_flow::generated_hash_map_keyed_accumulation": [
+    "atomic::generated_hash_agrees_with_eq",
+    "atomic::generated_assign_operator_chain",
+    "atomic::generated_sum_product_aggregation",
+    "atomic::generated_to_float"
+  ],
+  "integration::conversion_flow::generated_underscore_ledger_parse_and_fold": [
+    "atomic::generated_fromstr_underscores",
+    "atomic::generated_tryfrom_str_matches_fromstr",
+    "atomic::generated_from_str_exact_paths",
+    "atomic::generated_serialize_byte_layout"
+  ]
+}

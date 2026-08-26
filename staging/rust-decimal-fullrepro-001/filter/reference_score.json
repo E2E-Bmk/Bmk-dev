@@ -1,0 +1,25 @@
+{
+  "task_id": "rust-decimal-fullrepro-001",
+  "reference": "paupino/rust-decimal @ c7efe1690bd8e460731ff97a7c4941ecffc8751b (tag 1.42.1)",
+  "runs": [
+    {
+      "mode": "path_patch",
+      "detail": "[patch.crates-io] rust_decimal = { path = <pinned checkout> } appended to oracle workspace manifest; proc-macro-crate 3.2.0, toml_edit 0.22.24, toml_datetime 0.6.9, indexmap 2.7.1, hashbrown 0.15.5, uuid 1.11.0 pinned below the edition2024 boundary for cargo 1.83",
+      "runner": "cargo nextest run (also cargo test --workspace: 93+26 pass)",
+      "total": 119,
+      "passed": 119,
+      "failed": 0
+    },
+    {
+      "mode": "registry_lock",
+      "detail": "no patch; lockfile resolves rust_decimal 1.42.1 from crates.io with the same transitive pins; this lock ships as oracle/Cargo.lock",
+      "runner": "cargo nextest run",
+      "total": 119,
+      "passed": 119,
+      "failed": 0
+    }
+  ],
+  "pass_rate": 1.0,
+  "toolchain": "cargo 1.83.0",
+  "date": "2026-08-26"
+}

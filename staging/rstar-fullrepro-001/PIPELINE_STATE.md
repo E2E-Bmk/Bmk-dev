@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,8 +20,9 @@ updated:    2026-08-26
 ```
 
 todo:
-- [ ] probe rounds pin exact envelope/query/mutation values on the pinned reference
-- [ ] draft 6-layer spec per SPEC_STANDARD.md; style gate + validation checks
+- [ ] audit upstream test imports; write rewrite_audit.md (generated_only expected: upstream tests are seeded-random proptest-style loops)
+- [ ] build generated oracle (atomic + integration workspaces), taxonomy, kept_nodeids
+- [ ] reference run 100% (path patch + registry lock), lint LINT_PASS, spec_test_map, reference_score.json
 
 ## History
 
@@ -29,6 +30,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-26 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (4560 src LOC; R*-tree spatial index — one object multiset projected through population/envelope/metric/mutation/construction views; v0.12.2 manifest commit c8c5bf9, edition 2018, MSRV 1.63 builds on scorer cargo 1.83; v0.13.0 rejected for MSRV 1.85) |
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended; begin spec drafting |
+| 3 | 2026-08-26 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 complete: 8 behavior sections + contract layer, all values probe-pinned over three probe rounds (AABB algebra, construction-path equivalence up to tie order, one-of-many removal, drain laziness, parameter panics, primitives forwarding); style gate + validation checks pass |
+| 4 | 2026-08-26 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin test filtering (upstream tests are seeded-random `proptest`-style loops with internal APIs — expect generated_only) |
 
 ---
 

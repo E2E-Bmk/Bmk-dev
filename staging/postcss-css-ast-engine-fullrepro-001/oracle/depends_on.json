@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::round trips::a complex stylesheet survives parse, JSON, and revival byte for byte": [
+      "atomic::parsing and input::parse returns a Root and reproduces the input byte for byte",
+      "atomic::cloning and json::toJSON produces plain data with a root-level inputs array",
+      "atomic::cloning and json::fromJSON revives nodes that print identically with working sources"
+    ],
+    "integration::round trips::read-only traversal never changes the printed output": [
+      "atomic::parsing and input::parse returns a Root and reproduces the input byte for byte",
+      "atomic::traversal and mutation::walk visits every descendant depth-first in document order"
+    ],
+    "integration::round trips::a revived tree accepts further edits and reprints correctly": [
+      "atomic::cloning and json::fromJSON revives nodes that print identically with working sources",
+      "atomic::building trees::append accepts strings, arrays, and nodes and returns the container"
+    ],
+    "integration::cross-view consistency::pipeline css equals the final tree's own print after mutations": [
+      "atomic::lazy result lifecycle::synchronous reads run the pipeline and sync/async return the Result",
+      "atomic::results, warnings, and messages::result exposes css, content alias, root, opts, processor, toString"
+    ],
+    "integration::cross-view consistency::warning positions agree with the anchor node's own projections": [
+      "atomic::results, warnings, and messages::node.warn anchors a Warning with positions narrowed by word",
+      "atomic::positions and error construction::positionBy resolves word, index, and default positions",
+      "atomic::positions and error construction::rangeBy covers a word exactly or the whole node"
+    ],
+    "integration::cross-view consistency::every walked node agrees on root, parent, and index": [
+      "atomic::traversal and mutation::walk visits every descendant depth-first in document order",
+      "atomic::traversal and mutation::structural reads: first, last, index, next, prev, root"
+    ],
+    "integration::cross-view consistency::positions project consistently across start, positionBy, and fromOffset": [
+      "atomic::parsing and input::source positions carry 1-based line and column and 0-based offsets",
+      "atomic::positions and error construction::positionBy resolves word, index, and default positions",
+      "atomic::positions and error construction::fromOffset converts offsets to line and col"
+    ],
+    "integration::cross-view consistency::editing one declaration keeps sibling raws and selector caches verbatim": [
+      "atomic::node model and raws::raws capture the exact formatting fragments",
+      "atomic::node model and raws::a commented selector is cached as raw plus cleaned value"
+    ],
+    "integration::cross-view consistency::clones stay equivalent while originals move on": [
+      "atomic::cloning and json::clone returns a detached deep copy applying overrides",
+      "atomic::cloning and json::a clone of an unmodified node prints identically"
+    ],
+    "integration::cross-view consistency::one run delivers every node of the final tree including inserted ones": [
+      "atomic::visitor events::Once fires before per-node events, exits after children, OnceExit last",
+      "atomic::visitor events::nodes inserted during the run are visited"
+    ],
+    "integration::pipeline workflows::plugins visit each node in registration order": [
+      "atomic::processor construction::the default export builds a Processor from plugins or arrays",
+      "atomic::visitor events::Once fires before per-node events, exits after children, OnceExit last"
+    ],
+    "integration::pipeline workflows::an async pipeline mutates, warns, and resolves coherently": [
+      "atomic::lazy result lifecycle::an asynchronous plugin forbids synchronous access but awaits fine",
+      "atomic::results, warnings, and messages::warnings returns exactly the messages typed warning"
+    ],
+    "integration::pipeline workflows::creator, prepare, and plain object plugins compose in one processor": [
+      "atomic::processor construction::a creator function with postcss=true is invoked without arguments",
+      "atomic::processor construction::prepare returns listeners scoped to the run",
+      "atomic::visitor events::keyed Declaration listeners fire alongside the star listener"
+    ],
+    "integration::pipeline workflows::a plugin error rejects the awaited pipeline with plugin identity": [
+      "atomic::visitor events::a node error thrown inside a listener carries the plugin name",
+      "atomic::positions and error construction::node.error returns a positioned CssSyntaxError without throwing"
+    ],
+    "integration::pipeline workflows::the fast path and a plugin run agree on printed css for valid input": [
+      "atomic::lazy result lifecycle::the plugin-free fast path returns input text without parsing",
+      "atomic::lazy result lifecycle::the plugin-free fast path still resolves to a full Result"
+    ],
+    "integration::editing workflows::nodes move between trees keeping their original source input": [
+      "atomic::building trees::inserting a node owned by another tree removes it there first",
+      "atomic::parsing and input::all nodes of one tree share the same Input carrying the css text"
+    ],
+    "integration::editing workflows::a walk-driven rewrite touches only matched declarations": [
+      "atomic::traversal and mutation::typed walks visit their node type anywhere in the subtree",
+      "atomic::traversal and mutation::string filters match exactly and regexps are tested"
+    ],
+    "integration::editing workflows::unwrapping an at-rule with replaceWith preserves children order": [
+      "atomic::traversal and mutation::replaceWith substitutes nodes and descriptors in place",
+      "atomic::traversal and mutation::remove, removeChild, and removeAll detach nodes"
+    ],
+    "integration::editing workflows::factories, insertion, and formatting inheritance build one stylesheet": [
+      "atomic::building trees::factories build detached typed nodes",
+      "atomic::stringification::insertion into a parsed tree inherits indentation and semicolon style"
+    ],
+    "integration::editing workflows::selector rewrites and structural inserts compose": [
+      "atomic::values and selectors::selectors splits on commas with trimming",
+      "atomic::values and selectors::assigning selectors reuses the existing separator style",
+      "atomic::building trees::insertBefore and insertAfter splice relative to a child or index"
+    ],
+    "integration::editing workflows::a document collects parsed roots and prints their concatenation": [
+      "atomic::stringification::a document concatenates its roots and reparents them",
+      "atomic::parsing and input::parse returns a Root and reproduces the input byte for byte"
+    ],
+    "integration::editing workflows::each-driven pruning with mixed removals prints the survivors": [
+      "atomic::traversal and mutation::each keeps visiting after inserts and removals during iteration",
+      "atomic::traversal and mutation::remove, removeChild, and removeAll detach nodes"
+    ],
+    "integration::system workflows::a lint-and-fix session: warnings, fixes, and coherent output": [
+      "atomic::results, warnings, and messages::node.warn anchors a Warning with positions narrowed by word",
+      "atomic::visitor events::keyed Declaration listeners fire alongside the star listener",
+      "atomic::lazy result lifecycle::awaiting a processed run resolves to a Result"
+    ],
+    "integration::system workflows::a refactor session: move, clone, edit, and serialize one stylesheet": [
+      "atomic::cloning and json::cloneBefore and cloneAfter insert the copy and return it",
+      "atomic::building trees::inserting a node owned by another tree removes it there first",
+      "atomic::cloning and json::toJSON produces plain data with a root-level inputs array"
+    ],
+    "integration::system workflows::a scratch build processed end to end through a processor": [
+      "atomic::building trees::factories build detached typed nodes",
+      "atomic::stringification::constructed children indent four spaces and separate with semicolons",
+      "atomic::lazy result lifecycle::awaiting a processed run resolves to a Result"
+    ],
+    "integration::system workflows::an error recovery session: diagnose a broken file, fix it, process it": [
+      "atomic::parse errors::unclosed block",
+      "atomic::parse errors::error anatomy: message combines identifier, position, and reason",
+      "atomic::lazy result lifecycle::the plugin-free fast path returns input text without parsing"
+    ],
+    "integration::system workflows::a multi-file session: one document aggregates independently parsed sheets": [
+      "atomic::stringification::a document concatenates its roots and reparents them",
+      "atomic::parsing and input::the from option records the absolute file path"
+    ]
+  }
+}

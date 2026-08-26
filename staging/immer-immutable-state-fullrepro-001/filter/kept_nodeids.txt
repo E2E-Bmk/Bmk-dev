@@ -1,0 +1,104 @@
+atomic::producing state::produce returns the next state and never mutates the base
+atomic::producing state::a recipe that changes nothing returns the base by reference
+atomic::producing state::changed branches are new objects while untouched branches keep identity
+atomic::producing state::primitive and null bases pass through the producer
+atomic::producing state::producing over a non-draftable object base throws
+atomic::producing state::produced results are deeply frozen by default and reject strict-mode mutation
+atomic::producing state::a pre-frozen base is a legal input
+atomic::producing state::nested reads inside a recipe are drafts and mutations are visible immediately
+atomic::producing state::a draft that escapes its recipe is revoked
+atomic::producing state::nested produce composes with the outer draft
+atomic::recipe return rules::returning undefined finalizes the draft
+atomic::recipe return rules::returning a fresh value replaces the state
+atomic::recipe return rules::returning the modified draft itself is allowed
+atomic::recipe return rules::modifying the draft and returning a new value throws
+atomic::recipe return rules::returning a promise while modifying the draft throws
+atomic::recipe return rules::returning nothing produces undefined
+atomic::curried producers::currying returns a reusable producer that forwards extra arguments
+atomic::curried producers::a curried producer with a default state uses it for an undefined base
+atomic::curried producers::an explicit base overrides the curried default
+atomic::curried producers::curried produceWithPatches returns the state-and-patches triple
+atomic::manual draft lifecycle::createDraft opens a live draft that records mutations
+atomic::manual draft lifecycle::finishDraft finalizes with produce identity, sharing, and freezing rules
+atomic::manual draft lifecycle::finishDraft reports patches through its listener
+atomic::manual draft lifecycle::a finished draft is revoked
+atomic::manual draft lifecycle::createDraft and finishDraft reject invalid arguments
+atomic::snapshots and originals::current returns an unfrozen finalized snapshot of the draft so far
+atomic::snapshots and originals::a snapshot is decoupled from later draft mutations
+atomic::snapshots and originals::current on a non-draft throws
+atomic::snapshots and originals::original returns the underlying base with reference identity
+atomic::snapshots and originals::original on a non-draft throws
+atomic::snapshots and originals::symbol-keyed children stay drafts in snapshots unless strict iteration is on
+atomic::draftability and freezing::isDraftable accepts plain objects, arrays, maps, sets, and null-prototype objects
+atomic::draftability and freezing::the immerable marker makes class instances draftable with prototypes preserved
+atomic::draftability and freezing::marking the prototype works the same as marking the class
+atomic::draftability and freezing::an unmarked class instance is not draftable
+atomic::draftability and freezing::freeze is shallow by default and deep on request
+atomic::draftability and freezing::cast helpers return their argument unchanged
+atomic::patch records::object mutations record add, replace, and remove operations
+atomic::patch records::array appends record add patches at the new indices
+atomic::patch records::array length truncation records remove patches for dropped indices
+atomic::patch records::splice records patches that round-trip
+atomic::patch records::replacing the whole state records one empty-path replace patch
+atomic::patch records::producing undefined via nothing records an empty-path replace with undefined
+atomic::patch records::the patch listener of produce sees the same streams as produceWithPatches
+atomic::patch records::a production that changes nothing emits empty patch streams
+atomic::patch application::applyPatches builds a new frozen state and leaves the base untouched
+atomic::patch application::add on an array index inserts and the dash index appends
+atomic::patch application::an empty-path replace substitutes the whole state
+atomic::patch application::removing a missing key is a no-op
+atomic::patch application::an unresolvable path throws
+atomic::patch application::an unsupported op throws
+atomic::patch application::applying patches to a live draft mutates it in place and returns it
+atomic::map and set drafts::map drafts support reads, writes, deletes, and clear while the base stays intact
+atomic::map and set drafts::map get returns drafts so nested mutation is recorded
+atomic::map and set drafts::finalized maps preserve insertion order and are instances of Map
+atomic::map and set drafts::a finalized frozen map rejects mutation
+atomic::map and set drafts::map and set productions that change nothing return the base
+atomic::map and set drafts::set drafts record membership changes without touching the base
+atomic::map and set drafts::iterating a set draft yields drafts whose mutations are recorded
+atomic::map and set drafts::map patches are keyed by map key and round-trip
+atomic::map and set drafts::current and original work on map drafts
+atomic::array methods plugin::search callbacks receive stored values, not fresh drafts
+atomic::array methods plugin::find returns a draft whose mutation is recorded
+atomic::array methods plugin::filter and slice return arrays of drafts
+atomic::array methods plugin::concat and flat return non-draft structures
+atomic::array methods plugin::primitive-returning methods yield ordinary values
+atomic::array methods plugin::mutating methods behave like the standard implementations
+atomic::configuration::setAutoFreeze disables freezing of later productions
+atomic::configuration::loose copying drops non-enumerable own properties and flattens getters
+atomic::configuration::strict copying preserves non-enumerable own properties
+atomic::configuration::class_only strict copying applies to marked classes but not plain objects
+atomic::configuration::an Immer instance isolates autoFreeze from the package-level engine
+atomic::configuration::an Immer instance exposes the full production surface with its own config
+atomic::plugin gating::produceWithPatches throws before the patches plugin is loaded
+atomic::plugin gating::applyPatches throws before the patches plugin is loaded
+atomic::plugin gating::a patch listener on produce throws before the patches plugin is loaded
+atomic::plugin gating::producing over a Map throws before the map-set plugin is loaded
+atomic::plugin gating::producing over a Set throws before the map-set plugin is loaded
+atomic::plugin gating::without the array-methods plugin search callbacks receive drafts
+integration::plugin gating across projections::every patch and container entry point gates on its plugin uniformly
+integration::immutable update workflows::a store evolves through produce steps with sharing preserved at every step
+integration::immutable update workflows::inverse patches implement undo and forward patches implement redo
+integration::immutable update workflows::patch replay composes with an open manual draft
+integration::immutable update workflows::curried producers drive a reducer loop
+integration::immutable update workflows::a marked class graph produces new instances with prototypes and patches intact
+integration::immutable update workflows::nested containers draft through map values into sets
+integration::immutable update workflows::array-method mutations are recorded as patches that replay
+integration::immutable update workflows::a nested produce precomputes a branch that outer patches capture
+integration::immutable update workflows::producing nothing round-trips through patches on optional state
+integration::immutable update workflows::class_only strict copying differentiates classes from plain objects in one tree
+integration::immutable update workflows::manual drafts and producers work independently over one base
+integration::immutable update workflows::a patch log replays onto a diverged base when its paths still resolve
+integration::immutable update workflows::primitive set membership flows through snapshots and patches
+integration::immutable update workflows::a marked class with container fields drafts through both plugins
+integration::immutable update workflows::map productions share untouched values by reference
+integration::cross-view invariants::patches and inverse patches round-trip one mixed production
+integration::cross-view invariants::mid-recipe snapshots equal the eventual finalization
+integration::cross-view invariants::no effective change means base identity and empty patches in every projection
+integration::cross-view invariants::listener streams equal the produceWithPatches triple for a complex change set
+integration::cross-view invariants::freezing follows the finalizing engine's configuration in all projections
+integration::cross-view invariants::no live drafts leak into results, snapshots, or patch values
+integration::end to end::a document editing session with staged patches, undo, and redo
+integration::end to end::a mixed-container store replays its full patch log onto the original base
+integration::end to end::two engines process one base with configuration-scoped results that interoperate

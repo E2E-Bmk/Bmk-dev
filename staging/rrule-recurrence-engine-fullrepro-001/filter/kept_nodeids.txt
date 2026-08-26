@@ -1,0 +1,90 @@
+atomic::dates and constants::datetime builds a Date carrying the given UTC calendar components
+atomic::dates and constants::Frequency is a numeric enum from YEARLY=0 to SECONDLY=6 with reverse lookup
+atomic::dates and constants::RRule mirrors the frequency values and lists FREQUENCIES in value order
+atomic::dates and constants::ALL_WEEKDAYS lists the two-letter tokens Monday-first
+atomic::dates and constants::weekday constants use Monday=0 numbering and stringify as tokens
+atomic::dates and constants::getJsWeekday converts to JavaScript Sunday=0 numbering
+atomic::dates and constants::Weekday.fromStr parses tokens and equals compares weekday and ordinal
+atomic::weekday ordinals::nth produces an ordinal weekday with signed token rendering
+atomic::weekday ordinals::equals distinguishes ordinal from plain weekdays
+atomic::weekday ordinals::a zero ordinal is rejected
+atomic::construction and normalization::origOptions echoes exactly the caller-supplied options
+atomic::construction and normalization::options fills every recognized key with defaults
+atomic::construction and normalization::freq defaults to YEARLY when omitted
+atomic::construction and normalization::byweekday accepts Weekday, integer and token forms and normalizes to numbers
+atomic::construction and normalization::ordinal weekday entries split into bynweekday pairs
+atomic::construction and normalization::bymonthday splits positive and negative values
+atomic::construction and normalization::a yearly rule derives month and month-day from its start date
+atomic::construction and normalization::monthly and weekly rules derive their missing date-level constraint from dtstart
+atomic::construction and normalization::time-of-day components derive from dtstart for daily and coarser rules
+atomic::construction and normalization::wkst normalizes Weekday to its number and keeps integers
+atomic::construction and normalization::an invalid dtstart is rejected at construction
+atomic::construction and normalization::clone returns an equivalent independent rule
+atomic::occurrence enumeration::all returns the full ascending occurrence list
+atomic::occurrence enumeration::all stops at the first occurrence for which the iterator returns false
+atomic::occurrence enumeration::between excludes both endpoints by default
+atomic::occurrence enumeration::between includes endpoint occurrences when inc is true
+atomic::occurrence enumeration::an inverted between window yields an empty array
+atomic::occurrence enumeration::before returns the latest occurrence strictly before, or at with inc
+atomic::occurrence enumeration::after returns the earliest occurrence strictly after, or at with inc
+atomic::occurrence enumeration::before and after return null when nothing qualifies
+atomic::occurrence enumeration::count returns the total number of occurrences
+atomic::occurrence enumeration::non-Date arguments to windowed queries are rejected
+atomic::occurrence enumeration::a frequency outside the enumeration is rejected at construction
+atomic::occurrence enumeration::a zero bysetpos is rejected at construction
+atomic::expansion arithmetic::interval strides whole frequency periods
+atomic::expansion arithmetic::finer-grained by-rules multiply occurrences within each period
+atomic::expansion arithmetic::negative bymonthday counts back from the end of the month
+atomic::expansion arithmetic::byyearday supports negative indices and honors leap years
+atomic::expansion arithmetic::byweekno selects ISO week numbers
+atomic::expansion arithmetic::a positive ordinal weekday picks the n-th matching weekday of the month
+atomic::expansion arithmetic::a negative ordinal weekday counts from the end of a bymonth-constrained year
+atomic::expansion arithmetic::bysetpos -1 selects the last candidate of each period
+atomic::expansion arithmetic::bysetpos mixes positions from both ends of the candidate list
+atomic::expansion arithmetic::hourly and secondly frequencies stride at their own granularity
+atomic::expansion arithmetic::an occurrence equal to until is included and nothing after it
+atomic::expansion arithmetic::a monthly rule pinned to the 31st skips shorter months
+atomic::string primitives::toString emits DTSTART and only caller-supplied rule properties
+atomic::string primitives::explicitly supplied default values still serialize
+atomic::string primitives::ordinal weekdays, negative month days and numeric wkst serialize as tokens
+atomic::string primitives::optionsToString serializes an options object directly
+atomic::string primitives::a rule constructed without dtstart emits no DTSTART line
+atomic::string primitives::parseString reads a bare property list into partial options
+atomic::string primitives::parseString reads DTSTART and RRULE lines and date-only UNTIL as UTC midnight
+atomic::string primitives::unknown properties and malformed timestamps are rejected
+atomic::string primitives::rrulestr picks RRule or RRuleSet from the input shape
+atomic::string primitives::rrulestr merges its dtstart option into rules lacking DTSTART
+atomic::natural language primitives::toText renders frequency, weekday list and count
+atomic::natural language primitives::toText covers interval, month-day, week-number and until families
+atomic::natural language primitives::parseText maps a phrase to partial options and null when uninterpretable
+atomic::natural language primitives::fromText builds a weekday rule from a phrase
+atomic::recurrence set primitives::accessors reflect added sources
+atomic::recurrence set primitives::wrongly typed sources are rejected
+atomic::recurrence set primitives::a dates-only set enumerates in ascending order
+atomic::recurrence set primitives::valueOf lists the iCalendar lines of every source
+integration::string round trips::fromString(toString) reproduces the occurrence sequence of a weekday rule
+integration::string round trips::fromString(toString) survives ordinal weekdays and set positions
+integration::string round trips::optionsToString(parseString(s)) reproduces a bare rule string
+integration::string round trips::a parsed rule enumerates directly from its string definition
+integration::string round trips::an until-bounded rule keeps its inclusive bound across the string view
+integration::string round trips::derived dtstart defaults survive the string view without being serialized
+integration::cross-view consistency::wkst changes the emitted sequence of a biweekly multi-weekday rule
+integration::cross-view consistency::windowed queries agree with the full expansion
+integration::cross-view consistency::origOptions and options never disagree on caller-supplied values
+integration::cross-view consistency::clone preserves every projection of a rule
+integration::cross-view consistency::unbounded rules stream through the iterator callback
+integration::text round trips::a fully convertible rule survives toText/parseText with the same recurrence
+integration::text round trips::fromText(toText) preserves the recurrence properties of an interval rule
+integration::text round trips::a phrase-driven rule enumerates and serializes consistently
+integration::recurrence sets::a set merges rule occurrences with rdates and drops exdates
+integration::recurrence sets::an exclusion rule removes every instant it generates
+integration::recurrence sets::duplicate instants from different sources appear once
+integration::recurrence sets::windowed queries on a set follow single-rule inclusivity semantics
+integration::recurrence sets::count on a set equals the merged sequence length
+integration::recurrence sets::set clones are independent of later mutation
+integration::recurrence sets::rrulestr rebuilds a set from its own toString including exclusion rules
+integration::recurrence sets::a multi-line recurrence text parses to the same merged stream it serializes
+integration::end-to-end workflows::build, persist, restore and query a rule across every view
+integration::end-to-end workflows::a quarterly schedule set merges weekly and month-end rules and round-trips
+integration::end-to-end workflows::a phrase becomes a persisted schedule whose restored form matches all views
+integration::end-to-end workflows::exception management workflow: cancel and reschedule occurrences, then persist

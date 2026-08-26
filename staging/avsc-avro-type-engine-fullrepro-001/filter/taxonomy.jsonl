@@ -1,0 +1,99 @@
+{"taxonomy_key": "atomic::type construction::the eight primitive names compile to types with matching typeName", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::isType recognizes types and filters by typeName prefix", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::record types expose typeName, name, and typed fields", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::field lookup returns declared metadata and defaults", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::declared defaults let validation accept omitted fields", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::recordConstructor builds declaration-order instances", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::field defaults must validate against the field type", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::a record schema without a name compiles with name undefined", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::omitRecordMethods strips generated prototype methods", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::enums expose symbols and accept exactly those strings", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::enum symbols must be valid identifiers", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::fixeds expose size and accept only exact-length buffers", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::array and map types validate homogeneous containers", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::duplicate branches and directly nested unions raise", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::unwrapped unions hold bare branch values", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::wrapped unions hold single-key branch objects with unwrap", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::the default union mode wraps only ambiguous numeric unions", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::names qualify through namespaces, dots, and the namespace option", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::nested named types inherit the enclosing namespace unless dotted", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::a shared registry reuses compiled named types by reference", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::referencing an undefined type name raises", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::recursive references compile and validate", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::logical types wrap the underlying codec", "layer": "atomic"}
+{"taxonomy_key": "atomic::type construction::unregistered logicalType attributes are ignored", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::isValid answers without throwing on foreign shapes", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::int accepts exactly signed 32-bit integers", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::long, float, and double numeric domains", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::bytes, string, and null value domains", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::records validate declared fields and ignore extras by default", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::noUndeclaredFields rejects undeclared properties", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::errorHook reports each mismatch with its path", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::clone deep-copies valid values and rejects invalid ones", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::coerceBuffers converts JSON buffer shapes during clone", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::clone drops undeclared properties in every mode", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::compare follows Avro order with field order attributes", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::compareBuffers agrees with compare", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::random produces values the type validates", "layer": "atomic"}
+{"taxonomy_key": "atomic::validation and value algebra::wrap boxes values in their branch shape", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::toBuffer, toString, and clone raise on invalid values", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::fromBuffer raises on truncated and trailing bytes", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::binary round trips return equal constructor instances", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::ints and longs use zigzag varints", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::strings and bytes are length-prefixed and UTF-8", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::float, double, boolean, and null encodings", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::enums encode indices and fixeds copy raw bytes", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::arrays and maps encode counted blocks with terminators", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::unions encode a branch tag before the branch value", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::record fields encode in declaration order without markers", "layer": "atomic"}
+{"taxonomy_key": "atomic::binary encoding::float narrows doubles to single precision", "layer": "atomic"}
+{"taxonomy_key": "atomic::JSON codec and schema projection::toString and fromString round-trip record values", "layer": "atomic"}
+{"taxonomy_key": "atomic::JSON codec and schema projection::union values serialize as branch-keyed JSON in every mode", "layer": "atomic"}
+{"taxonomy_key": "atomic::JSON codec and schema projection::schema output is canonical unless attributes are exported", "layer": "atomic"}
+{"taxonomy_key": "atomic::JSON codec and schema projection::noDeref and toJSON projections", "layer": "atomic"}
+{"taxonomy_key": "atomic::JSON codec and schema projection::toString without a value prints the schema with names dereferenced once", "layer": "atomic"}
+{"taxonomy_key": "atomic::JSON codec and schema projection::fingerprints digest the canonical schema", "layer": "atomic"}
+{"taxonomy_key": "atomic::JSON codec and schema projection::equals compares canonical schemas", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::primitive promotions resolve and demotions raise", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::string and bytes promote to each other", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::containers and fixeds resolve elementwise", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::enum evolution honors reader defaults", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::record evolution fills defaults and follows aliases", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::unresolvable schemas raise at resolver creation", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::reader unions absorb writer non-unions", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::reader non-unions require every writer branch to resolve", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::resolver decoding reorders fields and skips writer extras", "layer": "atomic"}
+{"taxonomy_key": "atomic::schema evolution::resolvers bind to their creating instance", "layer": "atomic"}
+{"taxonomy_key": "atomic::type inference::forValue infers primitive types", "layer": "atomic"}
+{"taxonomy_key": "atomic::type inference::forValue infers containers and anonymous records", "layer": "atomic"}
+{"taxonomy_key": "atomic::type inference::forTypes widens numbers and unions incompatibles", "layer": "atomic"}
+{"taxonomy_key": "atomic::IDL parsing::readSchema produces forSchema-ready shapes", "layer": "atomic"}
+{"taxonomy_key": "atomic::IDL parsing::readProtocol parses protocols with messages", "layer": "atomic"}
+{"taxonomy_key": "atomic::IDL parsing::malformed IDL raises", "layer": "atomic"}
+{"taxonomy_key": "integration::cross-view invariants::codec agreement holds for accepted and rejected values", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::complex schemas round-trip through schema output", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::an evolution chain carries data across three versions", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::independently compiled equal types exchange binary data", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::sorting by compare matches sorting by encoded buffers", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::inference closes over its inputs", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::IDL-compiled types behave like hand-written schemas", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::shared registries expose one instance across schemas", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::wrapped and unwrapped unions share the wire format", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::logical types project through validation, codecs, and evolution", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::composite records encode their parts in sequence", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::recursive types round-trip through binary and JSON", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::resolver output stays within the reader's value domain", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::JSON-transported buffers re-enter the binary codec", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::validation hooks and strict mode compose across nesting", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::canonical projection ignores decoration attributes", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::inferred writers feed declared readers", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::protocol types compile into working codecs", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::both codecs agree across a composite document", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::random values traverse the full pipeline", "layer": "integration"}
+{"taxonomy_key": "integration::cross-view invariants::fingerprints distinguish and identify schema versions", "layer": "integration"}
+{"taxonomy_key": "integration::end-to-end schema sessions::publish and evolve a message schema across a registry", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end schema sessions::an IDL protocol drives a binary message exchange", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end schema sessions::infer, refine, and evolve a log schema from samples", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end schema sessions::timestamps flow through a logical type end to end", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end schema sessions::a document store reads every version it ever wrote", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end schema sessions::a wrapped-union envelope routes typed payloads", "layer": "system_e2e"}

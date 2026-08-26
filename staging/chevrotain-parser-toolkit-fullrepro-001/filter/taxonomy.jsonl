@@ -1,0 +1,98 @@
+{"taxonomy_key": "atomic::token definitions::createToken returns a token type usable by a lexer", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::a literal string pattern matches verbatim text", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::tokenMatcher honors the token's own type and transitive categories", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::a token type in several categories matches each of them", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::a Lexer.NA token type is never produced from text", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::tokenLabel falls back to the name and tokenName returns the name", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::createTokenInstance builds a token with the eight explicit fields", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::earlier token types win at the same offset regardless of match length", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::longer_alt yields the longer alternative when it matches more text", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::an array of longer_alt candidates is honored", "layer": "atomic"}
+{"taxonomy_key": "atomic::token definitions::end-of-input recognition errors carry an EOF token with empty image", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::tokenize returns tokens with inclusive offsets and one-based positions", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::line and column advance across newlines under full tracking", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::onlyStart tracking populates only the start fields", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::onlyOffset tracking populates only startOffset among positions", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::SKIPPED matches appear in neither tokens nor groups", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::a string group diverts matches out of the main token stream", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::declared group keys are present even when nothing matched", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::an unmatchable character produces a structured error and lexing continues", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::consecutive unmatchable characters merge into one error with their length", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::push_mode and pop_mode drive a mode stack", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::a token type outside the active mode does not match", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::tokenize accepts an initial mode name", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::a custom pattern function matches text and returns null for no match", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::a custom pattern's payload lands on the emitted token", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::a global-flag pattern makes the Lexer constructor throw", "layer": "atomic"}
+{"taxonomy_key": "atomic::tokenization::deferDefinitionErrorsHandling collects problems instead of throwing", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::a rule invocation returns a CstNode named after the rule", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::tokens key under their token type name and subrules under the rule name", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::a LABEL replaces the default child key", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::repeated occurrences merge into one key in input order", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::keys for untaken options are absent from children", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::MANY parses zero and several repetitions", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::MANY_SEP consumes separators between repetitions", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::AT_LEAST_ONE_SEP accepts one element and rejects zero", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::OR applies the first alternative whose lookahead matches", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::a GATE excludes its alternative while false", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::EMPTY_ALT supplies an always-applicable default branch", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::the default lookahead distinguishes alternatives needing three tokens", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::arguments flow to rules through direct invocation and SUBRULE ARGS", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::assigning input resets accumulated errors", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::a parser is reusable across independent inputs", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar definition and cst::full node location tracking spans the first through last token", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar validation::a duplicate rule name fails self-analysis with an aggregate error", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar validation::left recursion fails self-analysis", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar validation::alternatives sharing a full lookahead prefix fail as ambiguous", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar validation::the same grammar constructs when maxLookahead suffices", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar validation::skipValidations skips ambiguity analysis but not duplicate rules", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar validation::consuming a token type outside the vocabulary surfaces at parse time", "layer": "atomic"}
+{"taxonomy_key": "atomic::cst visitors::a visitor dispatches by rule name and returns method results", "layer": "atomic"}
+{"taxonomy_key": "atomic::cst visitors::visit on an array dispatches to the first element", "layer": "atomic"}
+{"taxonomy_key": "atomic::cst visitors::validateVisitor rejects a plain-base visitor missing rule methods", "layer": "atomic"}
+{"taxonomy_key": "atomic::cst visitors::a defaults-based visitor accepts a method subset", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::a wrong token at CONSUME records a MismatchedTokenException with context", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::no viable OR alternative records a NoViableAltException", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::leftover input records NotAllInputParsed and keeps the prefix CST", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::an empty mandatory repetition records an EarlyExitException", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::isRecognitionException separates recognition errors from other values", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::without recovery a failing rule chain returns undefined", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::recovery inserts a missing token flagged isInsertedInRecovery", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::recovery deletes an unexpected extra token and completes the parse", "layer": "atomic"}
+{"taxonomy_key": "atomic::errors and recovery::re-synchronization collects skipped tokens into resyncedTokens", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar introspection::getGAstProductions maps each rule name to a Rule instance", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar introspection::terminals and non-terminals reference their definitions by identity", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar introspection::alternations hold one Alternative node per branch", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar introspection::separator repetitions expose their separator token type", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar introspection::serialized rules carry type, name and nested definitions", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar introspection::serializeGrammar agrees with the parser's serialized productions", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar introspection::GAstVisitor dispatches once per node kind without recursing", "layer": "atomic"}
+{"taxonomy_key": "atomic::grammar introspection::generateCstDts declares node and children types per rule", "layer": "atomic"}
+{"taxonomy_key": "atomic::embedded actions::embedded rules return computed values instead of CST nodes", "layer": "atomic"}
+{"taxonomy_key": "atomic::embedded actions::CONSUME returns the matched token inside embedded rules", "layer": "atomic"}
+{"taxonomy_key": "atomic::embedded actions::embedded parsing failures record the same recognition errors", "layer": "atomic"}
+{"taxonomy_key": "integration::lexer to parser pipelines::a parser consuming a category accepts every concrete member", "layer": "integration"}
+{"taxonomy_key": "integration::lexer to parser pipelines::skipped and grouped content flows around the parser untouched", "layer": "integration"}
+{"taxonomy_key": "integration::lexer to parser pipelines::a keyword with longer_alt parses cleanly next to identifiers", "layer": "integration"}
+{"taxonomy_key": "integration::lexer to parser pipelines::mode-switched tokens parse into one CST across mode boundaries", "layer": "integration"}
+{"taxonomy_key": "integration::lexer to parser pipelines::custom pattern payloads survive into CST tokens", "layer": "integration"}
+{"taxonomy_key": "integration::lexer to parser pipelines::lexer groups, errors and tokens partition one noisy input", "layer": "integration"}
+{"taxonomy_key": "integration::recovery and error projections::the same fault yields undefined strictly and a repaired CST tolerantly", "layer": "integration"}
+{"taxonomy_key": "integration::recovery and error projections::error context names the rule stack outermost first at the failure point", "layer": "integration"}
+{"taxonomy_key": "integration::recovery and error projections::a prefix CST plus NotAllInputParsed still projects consistent tokens", "layer": "integration"}
+{"taxonomy_key": "integration::recovery and error projections::recovery mixes insertion and re-sync across several statements", "layer": "integration"}
+{"taxonomy_key": "integration::grammar data agreement::every grammar terminal is a vocabulary token type by identity", "layer": "integration"}
+{"taxonomy_key": "integration::grammar data agreement::serialized productions agree with live ones and name callable rules", "layer": "integration"}
+{"taxonomy_key": "integration::grammar data agreement::observed CST keys all appear in the generated declaration text", "layer": "integration"}
+{"taxonomy_key": "integration::grammar data agreement::optionality in declarations mirrors actual absence across parses", "layer": "integration"}
+{"taxonomy_key": "integration::grammar data agreement::one grammar drives identical repeated parses and stable introspection", "layer": "integration"}
+{"taxonomy_key": "integration::grammar data agreement::token offsets and images agree across lexer, CST and locations", "layer": "integration"}
+{"taxonomy_key": "integration::computed views::an embedded-actions parser and a CST visitor compute the same value", "layer": "integration"}
+{"taxonomy_key": "integration::computed views::visitor parameters thread through nested visits", "layer": "integration"}
+{"taxonomy_key": "integration::computed views::gated alternatives steer the same rule differently per invocation", "layer": "integration"}
+{"taxonomy_key": "integration::computed views::an embedded parser aggregates values from labeled subrules", "layer": "integration"}
+{"taxonomy_key": "integration::computed views::a failing embedded parse reports errors while a fresh input computes again", "layer": "integration"}
+{"taxonomy_key": "integration::end-to-end workflows::a manifest language runs from tokens through CST, visitor and introspection", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::an editor-style pass collects every fault yet renders a usable tree", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a calculator ships twice: embedded values and visited CST stay in lockstep", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::grammar-as-data: one definition audited through every projection", "layer": "system_e2e"}

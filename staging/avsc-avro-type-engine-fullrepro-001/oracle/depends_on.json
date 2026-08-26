@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::cross-view invariants::codec agreement holds for accepted and rejected values": [
+      "atomic::binary encoding::binary round trips return equal constructor instances",
+      "atomic::JSON codec and schema projection::toString and fromString round-trip record values",
+      "atomic::binary encoding::toBuffer, toString, and clone raise on invalid values"
+    ],
+    "integration::cross-view invariants::complex schemas round-trip through schema output": [
+      "atomic::JSON codec and schema projection::schema output is canonical unless attributes are exported",
+      "atomic::JSON codec and schema projection::fingerprints digest the canonical schema",
+      "atomic::JSON codec and schema projection::equals compares canonical schemas"
+    ],
+    "integration::cross-view invariants::an evolution chain carries data across three versions": [
+      "atomic::schema evolution::record evolution fills defaults and follows aliases",
+      "atomic::schema evolution::primitive promotions resolve and demotions raise"
+    ],
+    "integration::cross-view invariants::independently compiled equal types exchange binary data": [
+      "atomic::binary encoding::binary round trips return equal constructor instances",
+      "atomic::JSON codec and schema projection::equals compares canonical schemas"
+    ],
+    "integration::cross-view invariants::sorting by compare matches sorting by encoded buffers": [
+      "atomic::validation and value algebra::compare follows Avro order with field order attributes",
+      "atomic::validation and value algebra::compareBuffers agrees with compare"
+    ],
+    "integration::cross-view invariants::inference closes over its inputs": [
+      "atomic::type inference::forValue infers primitive types",
+      "atomic::type inference::forValue infers containers and anonymous records",
+      "atomic::type inference::forTypes widens numbers and unions incompatibles"
+    ],
+    "integration::cross-view invariants::IDL-compiled types behave like hand-written schemas": [
+      "atomic::IDL parsing::readSchema produces forSchema-ready shapes",
+      "atomic::JSON codec and schema projection::fingerprints digest the canonical schema",
+      "atomic::binary encoding::binary round trips return equal constructor instances"
+    ],
+    "integration::cross-view invariants::shared registries expose one instance across schemas": [
+      "atomic::type construction::a shared registry reuses compiled named types by reference",
+      "atomic::binary encoding::enums encode indices and fixeds copy raw bytes"
+    ],
+    "integration::cross-view invariants::wrapped and unwrapped unions share the wire format": [
+      "atomic::type construction::unwrapped unions hold bare branch values",
+      "atomic::type construction::wrapped unions hold single-key branch objects with unwrap",
+      "atomic::binary encoding::unions encode a branch tag before the branch value"
+    ],
+    "integration::cross-view invariants::logical types project through validation, codecs, and evolution": [
+      "atomic::type construction::logical types wrap the underlying codec",
+      "atomic::schema evolution::primitive promotions resolve and demotions raise",
+      "atomic::JSON codec and schema projection::toString and fromString round-trip record values"
+    ],
+    "integration::cross-view invariants::composite records encode their parts in sequence": [
+      "atomic::binary encoding::record fields encode in declaration order without markers",
+      "atomic::binary encoding::enums encode indices and fixeds copy raw bytes",
+      "atomic::binary encoding::arrays and maps encode counted blocks with terminators"
+    ],
+    "integration::cross-view invariants::recursive types round-trip through binary and JSON": [
+      "atomic::type construction::recursive references compile and validate",
+      "atomic::binary encoding::binary round trips return equal constructor instances",
+      "atomic::JSON codec and schema projection::union values serialize as branch-keyed JSON in every mode"
+    ],
+    "integration::cross-view invariants::resolver output stays within the reader's value domain": [
+      "atomic::schema evolution::primitive promotions resolve and demotions raise",
+      "atomic::schema evolution::string and bytes promote to each other",
+      "atomic::schema evolution::record evolution fills defaults and follows aliases"
+    ],
+    "integration::cross-view invariants::JSON-transported buffers re-enter the binary codec": [
+      "atomic::validation and value algebra::coerceBuffers converts JSON buffer shapes during clone",
+      "atomic::binary encoding::strings and bytes are length-prefixed and UTF-8"
+    ],
+    "integration::cross-view invariants::validation hooks and strict mode compose across nesting": [
+      "atomic::validation and value algebra::errorHook reports each mismatch with its path",
+      "atomic::validation and value algebra::noUndeclaredFields rejects undeclared properties"
+    ],
+    "integration::cross-view invariants::canonical projection ignores decoration attributes": [
+      "atomic::JSON codec and schema projection::schema output is canonical unless attributes are exported",
+      "atomic::JSON codec and schema projection::fingerprints digest the canonical schema",
+      "atomic::JSON codec and schema projection::equals compares canonical schemas"
+    ],
+    "integration::cross-view invariants::inferred writers feed declared readers": [
+      "atomic::type inference::forValue infers containers and anonymous records",
+      "atomic::schema evolution::record evolution fills defaults and follows aliases"
+    ],
+    "integration::cross-view invariants::protocol types compile into working codecs": [
+      "atomic::IDL parsing::readProtocol parses protocols with messages",
+      "atomic::binary encoding::binary round trips return equal constructor instances"
+    ],
+    "integration::cross-view invariants::both codecs agree across a composite document": [
+      "atomic::JSON codec and schema projection::toString and fromString round-trip record values",
+      "atomic::binary encoding::binary round trips return equal constructor instances"
+    ],
+    "integration::cross-view invariants::random values traverse the full pipeline": [
+      "atomic::validation and value algebra::random produces values the type validates",
+      "atomic::binary encoding::binary round trips return equal constructor instances",
+      "atomic::JSON codec and schema projection::toString and fromString round-trip record values"
+    ],
+    "integration::cross-view invariants::fingerprints distinguish and identify schema versions": [
+      "atomic::JSON codec and schema projection::fingerprints digest the canonical schema",
+      "atomic::JSON codec and schema projection::schema output is canonical unless attributes are exported"
+    ],
+    "integration::end-to-end schema sessions::publish and evolve a message schema across a registry": [
+      "atomic::type construction::a shared registry reuses compiled named types by reference",
+      "atomic::schema evolution::record evolution fills defaults and follows aliases",
+      "atomic::JSON codec and schema projection::toString and fromString round-trip record values",
+      "atomic::JSON codec and schema projection::fingerprints digest the canonical schema"
+    ],
+    "integration::end-to-end schema sessions::an IDL protocol drives a binary message exchange": [
+      "atomic::IDL parsing::readProtocol parses protocols with messages",
+      "atomic::JSON codec and schema projection::equals compares canonical schemas",
+      "atomic::binary encoding::binary round trips return equal constructor instances"
+    ],
+    "integration::end-to-end schema sessions::infer, refine, and evolve a log schema from samples": [
+      "atomic::type inference::forValue infers containers and anonymous records",
+      "atomic::type inference::forTypes widens numbers and unions incompatibles",
+      "atomic::schema evolution::record evolution fills defaults and follows aliases",
+      "atomic::validation and value algebra::compareBuffers agrees with compare"
+    ],
+    "integration::end-to-end schema sessions::timestamps flow through a logical type end to end": [
+      "atomic::type construction::logical types wrap the underlying codec",
+      "atomic::JSON codec and schema projection::schema output is canonical unless attributes are exported",
+      "atomic::schema evolution::primitive promotions resolve and demotions raise"
+    ],
+    "integration::end-to-end schema sessions::a document store reads every version it ever wrote": [
+      "atomic::schema evolution::record evolution fills defaults and follows aliases",
+      "atomic::schema evolution::primitive promotions resolve and demotions raise",
+      "atomic::JSON codec and schema projection::fingerprints digest the canonical schema"
+    ],
+    "integration::end-to-end schema sessions::a wrapped-union envelope routes typed payloads": [
+      "atomic::type construction::wrapped unions hold single-key branch objects with unwrap",
+      "atomic::binary encoding::unions encode a branch tag before the branch value",
+      "atomic::JSON codec and schema projection::union values serialize as branch-keyed JSON in every mode"
+    ]
+  }
+}

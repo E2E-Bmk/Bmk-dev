@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::string round trips::fromString(toString) reproduces the occurrence sequence of a weekday rule": [
+      "atomic::string primitives::toString emits DTSTART and only caller-supplied rule properties",
+      "atomic::string primitives::parseString reads DTSTART and RRULE lines and date-only UNTIL as UTC midnight",
+      "atomic::construction and normalization::byweekday accepts Weekday, integer and token forms and normalizes to numbers"
+    ],
+    "integration::string round trips::fromString(toString) survives ordinal weekdays and set positions": [
+      "atomic::string primitives::ordinal weekdays, negative month days and numeric wkst serialize as tokens",
+      "atomic::expansion arithmetic::bysetpos -1 selects the last candidate of each period"
+    ],
+    "integration::string round trips::optionsToString(parseString(s)) reproduces a bare rule string": [
+      "atomic::string primitives::optionsToString serializes an options object directly",
+      "atomic::string primitives::parseString reads a bare property list into partial options"
+    ],
+    "integration::string round trips::a parsed rule enumerates directly from its string definition": [
+      "atomic::string primitives::parseString reads DTSTART and RRULE lines and date-only UNTIL as UTC midnight",
+      "atomic::expansion arithmetic::a positive ordinal weekday picks the n-th matching weekday of the month"
+    ],
+    "integration::string round trips::an until-bounded rule keeps its inclusive bound across the string view": [
+      "atomic::expansion arithmetic::an occurrence equal to until is included and nothing after it",
+      "atomic::string primitives::toString emits DTSTART and only caller-supplied rule properties"
+    ],
+    "integration::string round trips::derived dtstart defaults survive the string view without being serialized": [
+      "atomic::construction and normalization::a yearly rule derives month and month-day from its start date",
+      "atomic::string primitives::toString emits DTSTART and only caller-supplied rule properties"
+    ],
+    "integration::cross-view consistency::wkst changes the emitted sequence of a biweekly multi-weekday rule": [
+      "atomic::construction and normalization::wkst normalizes Weekday to its number and keeps integers",
+      "atomic::expansion arithmetic::interval strides whole frequency periods"
+    ],
+    "integration::cross-view consistency::windowed queries agree with the full expansion": [
+      "atomic::occurrence enumeration::between excludes both endpoints by default",
+      "atomic::occurrence enumeration::before returns the latest occurrence strictly before, or at with inc",
+      "atomic::occurrence enumeration::count returns the total number of occurrences",
+      "atomic::expansion arithmetic::negative bymonthday counts back from the end of the month"
+    ],
+    "integration::cross-view consistency::origOptions and options never disagree on caller-supplied values": [
+      "atomic::construction and normalization::origOptions echoes exactly the caller-supplied options",
+      "atomic::construction and normalization::options fills every recognized key with defaults",
+      "atomic::construction and normalization::monthly and weekly rules derive their missing date-level constraint from dtstart"
+    ],
+    "integration::cross-view consistency::clone preserves every projection of a rule": [
+      "atomic::construction and normalization::clone returns an equivalent independent rule",
+      "atomic::natural language primitives::toText renders frequency, weekday list and count"
+    ],
+    "integration::cross-view consistency::unbounded rules stream through the iterator callback": [
+      "atomic::occurrence enumeration::all stops at the first occurrence for which the iterator returns false"
+    ],
+    "integration::text round trips::a fully convertible rule survives toText/parseText with the same recurrence": [
+      "atomic::natural language primitives::toText renders frequency, weekday list and count",
+      "atomic::natural language primitives::parseText maps a phrase to partial options and null when uninterpretable"
+    ],
+    "integration::text round trips::fromText(toText) preserves the recurrence properties of an interval rule": [
+      "atomic::natural language primitives::toText covers interval, month-day, week-number and until families",
+      "atomic::natural language primitives::fromText builds a weekday rule from a phrase"
+    ],
+    "integration::text round trips::a phrase-driven rule enumerates and serializes consistently": [
+      "atomic::natural language primitives::parseText maps a phrase to partial options and null when uninterpretable",
+      "atomic::expansion arithmetic::interval strides whole frequency periods",
+      "atomic::string primitives::toString emits DTSTART and only caller-supplied rule properties"
+    ],
+    "integration::recurrence sets::a set merges rule occurrences with rdates and drops exdates": [
+      "atomic::recurrence set primitives::accessors reflect added sources",
+      "atomic::occurrence enumeration::all returns the full ascending occurrence list"
+    ],
+    "integration::recurrence sets::an exclusion rule removes every instant it generates": [
+      "atomic::recurrence set primitives::accessors reflect added sources",
+      "atomic::expansion arithmetic::interval strides whole frequency periods"
+    ],
+    "integration::recurrence sets::duplicate instants from different sources appear once": [
+      "atomic::recurrence set primitives::a dates-only set enumerates in ascending order",
+      "atomic::occurrence enumeration::all returns the full ascending occurrence list"
+    ],
+    "integration::recurrence sets::windowed queries on a set follow single-rule inclusivity semantics": [
+      "atomic::occurrence enumeration::between excludes both endpoints by default",
+      "atomic::occurrence enumeration::before returns the latest occurrence strictly before, or at with inc",
+      "atomic::occurrence enumeration::after returns the earliest occurrence strictly after, or at with inc"
+    ],
+    "integration::recurrence sets::count on a set equals the merged sequence length": [
+      "atomic::occurrence enumeration::count returns the total number of occurrences",
+      "atomic::recurrence set primitives::accessors reflect added sources"
+    ],
+    "integration::recurrence sets::set clones are independent of later mutation": [
+      "atomic::recurrence set primitives::a dates-only set enumerates in ascending order"
+    ],
+    "integration::recurrence sets::rrulestr rebuilds a set from its own toString including exclusion rules": [
+      "atomic::recurrence set primitives::valueOf lists the iCalendar lines of every source",
+      "atomic::string primitives::rrulestr picks RRule or RRuleSet from the input shape"
+    ],
+    "integration::recurrence sets::a multi-line recurrence text parses to the same merged stream it serializes": [
+      "atomic::string primitives::rrulestr picks RRule or RRuleSet from the input shape",
+      "atomic::recurrence set primitives::valueOf lists the iCalendar lines of every source"
+    ],
+    "integration::end-to-end workflows::build, persist, restore and query a rule across every view": [
+      "atomic::occurrence enumeration::count returns the total number of occurrences",
+      "atomic::string primitives::toString emits DTSTART and only caller-supplied rule properties",
+      "atomic::occurrence enumeration::between excludes both endpoints by default",
+      "atomic::natural language primitives::toText renders frequency, weekday list and count"
+    ],
+    "integration::end-to-end workflows::a quarterly schedule set merges weekly and month-end rules and round-trips": [
+      "atomic::expansion arithmetic::bysetpos -1 selects the last candidate of each period",
+      "atomic::recurrence set primitives::accessors reflect added sources",
+      "atomic::string primitives::rrulestr picks RRule or RRuleSet from the input shape",
+      "atomic::expansion arithmetic::an occurrence equal to until is included and nothing after it"
+    ],
+    "integration::end-to-end workflows::a phrase becomes a persisted schedule whose restored form matches all views": [
+      "atomic::natural language primitives::parseText maps a phrase to partial options and null when uninterpretable",
+      "atomic::string primitives::toString emits DTSTART and only caller-supplied rule properties",
+      "atomic::occurrence enumeration::after returns the earliest occurrence strictly after, or at with inc"
+    ],
+    "integration::end-to-end workflows::exception management workflow: cancel and reschedule occurrences, then persist": [
+      "atomic::recurrence set primitives::accessors reflect added sources",
+      "atomic::recurrence set primitives::valueOf lists the iCalendar lines of every source",
+      "atomic::occurrence enumeration::count returns the total number of occurrences"
+    ]
+  }
+}

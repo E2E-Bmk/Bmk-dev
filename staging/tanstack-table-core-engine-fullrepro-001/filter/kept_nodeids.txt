@@ -1,0 +1,137 @@
+atomic::construction and composition::constructTable projects the data array through the core row model
+atomic::construction and composition::an unregistered feature contributes no state slice and no setter
+atomic::construction and composition::a registered feature contributes its state slice and setter
+atomic::construction and composition::a pipeline stage without its factory passes the previous stage through
+atomic::construction and composition::stockFeatures spreads into tableFeatures and registers stock features
+atomic::construction and composition::tableOptions returns the options object it receives
+atomic::construction and composition::setOptions with a new data array re-derives the row models
+atomic::construction and composition::initialState values overlay the feature defaults
+atomic::construction and composition::functionalUpdate applies an updater function or returns the plain value
+atomic::construction and composition::isFunction accepts callables and rejects plain values
+atomic::construction and composition::flattenBy flattens a forest depth-first through the children accessor
+atomic::construction and composition::getInitialTableState merges feature defaults with the supplied overrides
+atomic::construction and composition::getRowId customizes row identity
+atomic::construction and composition::renderValue substitutes renderFallbackValue for undefined cell values
+atomic::state and reactivity::registered slices expose their documented defaults
+atomic::state and reactivity::there is no getState method; the snapshot lives on the store
+atomic::state and reactivity::setters accept a plain value or an updater of the previous value
+atomic::state and reactivity::the store snapshot agrees with every per-key atom
+atomic::state and reactivity::store.subscribe observes state transitions
+atomic::state and reactivity::reset with no argument restores the initialState value
+atomic::state and reactivity::reset with true restores the feature default
+atomic::state and reactivity::a controlled slice overrides the internally stored value
+atomic::state and reactivity::a controlled key holding undefined falls back to the initialState value
+atomic::state and reactivity::projections reflect a setter transition on the next read
+atomic::columns and the column tree::an explicit id wins over the accessor-derived id
+atomic::columns and the column tree::a dotted accessorKey derives an underscore id and traverses nested records
+atomic::columns and the column tree::a dotted accessorKey does not consult a literal dotted property
+atomic::columns and the column tree::a string header serves as the column id when no accessor id exists
+atomic::columns and the column tree::a definition that resolves no id throws when the column tree materializes
+atomic::columns and the column tree::an accessorFn without an explicit id throws when the column tree materializes
+atomic::columns and the column tree::an accessorFn column computes values through the function
+atomic::columns and the column tree::a display column produces cells but no values
+atomic::columns and the column tree::a columns array creates a group column with child columns
+atomic::columns and the column tree::createColumnHelper builds accessor, display, and group definitions
+atomic::columns and the column tree::defaultColumn merges under each definition property by property
+atomic::columns and the column tree::all, flat, and leaf column views expose the tree at different depths
+atomic::columns and the column tree::getColumn returns undefined for an unknown id
+atomic::rows and cells::default row ids are index-based and children join with a dot
+atomic::rows and cells::rows expose index, depth, original, subRows, and getParentRow
+atomic::rows and cells::getRow resolves a known id and throws for an unknown id
+atomic::rows and cells::getRow with true reaches rows excluded by later stages
+atomic::rows and cells::getValue caches the first read for the life of the row
+atomic::rows and cells::getValue returns undefined for an unknown column id
+atomic::rows and cells::getUniqueValues returns the value array used for faceting
+atomic::rows and cells::cells join a row and a leaf column with a composite id
+atomic::headers and footer groups::a flat column list produces a single header group
+atomic::headers and footer groups::nested definitions produce one group per depth with spans and placeholders
+atomic::headers and footer groups::colSpan values in every group sum to the visible leaf count
+atomic::headers and footer groups::flat and leaf header views expose the matrix without grouping
+atomic::headers and footer groups::footer groups mirror the header matrix in reverse order
+atomic::headers and footer groups::subHeaders link a group header to the headers beneath it
+atomic::row model pipeline::each pre-model accessor returns the previous stage's output
+atomic::row model pipeline::getRowModel returns the final registered stage
+atomic::row model pipeline::a manual stage option makes that stage pass through
+atomic::row model pipeline::row models expose rows, flatRows, and rowsById
+atomic::row model pipeline::the core model resolves sub-rows through getSubRows
+atomic::row sorting::setSorting orders rows ascending and descending
+atomic::row sorting::later sorting entries break ties left by earlier ones
+atomic::row sorting::toggleSorting cycles a text column through asc, desc, unsorted
+atomic::row sorting::an explicit desc argument forces the direction
+atomic::row sorting::numeric columns and sortDescFirst columns start their cycle descending
+atomic::row sorting::clearSorting removes only that column's entry
+atomic::row sorting::getIsSorted and getSortIndex report per-column sort status
+atomic::row sorting::an inline comparator sorts through the function directly
+atomic::row sorting::a custom registry entry is reachable by name
+atomic::row sorting::an unregistered sort name falls back to the basic comparator
+atomic::row sorting::the sortFns registry bundles the six built-ins as individual exports
+atomic::row sorting::auto resolution picks datetime ordering for Date columns
+atomic::row sorting::auto resolution orders mixed alphanumeric strings numerically
+atomic::column and global filtering::a string column filters by case-insensitive substring by default
+atomic::column and global filtering::a number column filters by inclusive range with open bounds by default
+atomic::column and global filtering::named registry filters apply their documented predicate
+atomic::column and global filtering::an inline predicate receives row, column id, and filter value
+atomic::column and global filtering::an unknown column id or unregistered name leaves rows unfiltered
+atomic::column and global filtering::per-column filter accessors upsert and report the entry
+atomic::column and global filtering::global filtering keeps rows where any filterable column matches
+atomic::column and global filtering::enableGlobalFilter false excludes a column from global matching
+atomic::column and global filtering::a display column never participates in global filtering
+atomic::row pagination::the default page holds the first ten rows
+atomic::row pagination::page count and row count derive from the pre-paginated model
+atomic::row pagination::navigation methods step, jump to first, and jump to last
+atomic::row pagination::setPageSize applies the size and resets the index
+atomic::row pagination::setPageIndex clamps at zero, and above only with a supplied pageCount
+atomic::row pagination::page options and can-navigate flags follow the page window
+atomic::column visibility and ordering::false in columnVisibility hides; absent ids stay visible
+atomic::column visibility and ordering::toggleVisibility flips one column; toggleAllColumnsVisible writes all
+atomic::column visibility and ordering::visible cells track visible leaf columns
+atomic::column visibility and ordering::columnOrder lists ids first; unlisted columns keep definition order
+atomic::column pinning::setColumnPinning assigns start and end regions
+atomic::column pinning::column.pin moves between regions and false unpins
+atomic::column pinning::getIsPinned, getPinnedIndex, and getIsSomeColumnsPinned report regions
+atomic::column pinning::pinning never changes visible leaf membership
+atomic::row selection::toggleSelected marks a row in the rowSelection slice
+atomic::row selection::all-rows and some-rows flags follow the selected set
+atomic::row selection::toggleAllRowsSelected selects everything and no argument flips
+atomic::row selection::getSelectedRowModel returns exactly the selected rows
+atomic::row expanding::toggleExpanded surfaces a row's children in the expanded model
+atomic::row expanding::collapsed descendants stay reachable through flatRows
+atomic::row expanding::toggleAllRowsExpanded writes the literal true and expands every level
+atomic::row expanding::a leaf row cannot expand; getIsExpanded is true under the literal true
+atomic::grouping and aggregation::grouping folds rows into one group row per distinct value
+atomic::grouping and aggregation::two-level grouping appends deeper ids with the > separator
+atomic::grouping and aggregation::group rows expose grouping metadata and leaf rows
+atomic::grouping and aggregation::a named aggregation summarizes group values
+atomic::grouping and aggregation::auto aggregation resolves numeric columns to sum when registered
+atomic::grouping and aggregation::without a registered aggregation the aggregated value is undefined
+atomic::grouping and aggregation::an inline aggregation definition object applies directly
+atomic::grouping and aggregation::the aggregationFns registry bundles the eleven built-ins
+atomic::grouping and aggregation::cells report grouped, aggregated, and placeholder roles
+atomic::column faceting::faceted unique values map each distinct value to its count
+atomic::column faceting::faceted min-max returns the value bounds
+atomic::column faceting::a column's faceted model ignores its own filter but applies others
+integration::pipeline integration::filtering, sorting, and pagination compose in pipeline order
+integration::pipeline integration::every pre-model equals the previous stage output across an active pipeline
+integration::pipeline integration::state transitions stay consistent across store, atoms, and projections
+integration::pipeline integration::grouping and sorting interact: groups sort by aggregated values
+integration::pipeline integration::expanding grouped rows surfaces leaf rows through pagination
+integration::cross-view consistency::hiding a column updates leaf views, cells, and header spans together
+integration::cross-view consistency::pinning regions partition the visible leaves under visibility changes
+integration::cross-view consistency::selection membership survives filtering; the filtered variant intersects
+integration::cross-view consistency::group leaf rows partition the filtered set and aggregate consistently
+integration::cross-view consistency::page arithmetic tracks the filtered row count
+integration::cross-view consistency::facets react to other columns' filters but not their own
+integration::state workflows::controlled and uncontrolled slices coexist
+integration::state workflows::initialState seeds several slices and resets return to it
+integration::state workflows::one subscriber observes transitions from several features
+integration::state workflows::swapping data through setOptions preserves active state
+integration::state workflows::custom row ids key selection and expansion state
+integration::feature workflows::global and column filters intersect before sorting applies
+integration::feature workflows::a registry extension, ordering, and visibility compose on one table
+integration::feature workflows::the column helper drives a grouped table end to end
+integration::feature workflows::row lookup stays coherent across pipeline stages
+integration::feature workflows::sort auto-inference picks distinct comparators per column type
+integration::system workflows::a full dashboard session: filter, group, aggregate, expand, select, paginate
+integration::system workflows::an inventory browser: controlled sorting, faceted narrowing, and resets
+integration::system workflows::a tree explorer: custom ids, expansion, visibility, and header integrity
+integration::system workflows::a search screen: global filter, column order, pinning, and page walk

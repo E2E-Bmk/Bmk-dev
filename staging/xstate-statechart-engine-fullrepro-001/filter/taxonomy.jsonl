@@ -1,0 +1,96 @@
+{"taxonomy_key": "atomic::machine definitions::a machine interprets from a plain configuration object", "layer": "atomic"}
+{"taxonomy_key": "atomic::machine definitions::named guards resolve from the second createMachine argument", "layer": "atomic"}
+{"taxonomy_key": "atomic::machine definitions::provide returns a machine with overriding implementations", "layer": "atomic"}
+{"taxonomy_key": "atomic::machine definitions::setup binds named actions and guards with params", "layer": "atomic"}
+{"taxonomy_key": "atomic::machine definitions::an invalid transition target throws at machine creation", "layer": "atomic"}
+{"taxonomy_key": "atomic::machine definitions::a compound state without an initial key throws at machine creation", "layer": "atomic"}
+{"taxonomy_key": "atomic::machine definitions::a context factory receives the actor input", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::send transitions and updates the snapshot", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::event payload properties reach guards and actions", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::events with no matching transition are ignored", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::stop freezes the actor with a stopped status", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::matches accepts full and partial state values", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::can reports whether an event would select a transition", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::hasTag reflects tags of active states", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::matchesState tests refinement of plain state values", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::a top-level leaf renders a string value and a compound renders an object", "layer": "atomic"}
+{"taxonomy_key": "atomic::actor lifecycle and snapshots::each step returns a fresh snapshot object", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::an exact descriptor matches its event type", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::descriptor specificity ranks exact over partial wildcard over star", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::candidates evaluate in document order with guard fall-through", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::an active child transition overrides the ancestor for the same event", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::an ancestor handles events no descendant handles", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::a bare string target names a sibling state", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::a dot-prefixed target names a child of the source", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::a hash-prefixed target resolves by absolute id", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::a targetless transition runs actions without changing state", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::a self-targeting transition does not re-enter by default", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::reenter true forces exit and re-entry of the source", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::always transitions resolve immediately on entry", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::raise enqueues an internal event processed before external events", "layer": "atomic"}
+{"taxonomy_key": "atomic::transition selection::multiple raised events process in first-in first-out order", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and context::actions run as exit then transition then entry", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and context::start runs entry actions from the machine node inward", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and context::assign accepts property updaters and plain values", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and context::assign accepts a single function returning partial context", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and context::sequential assigns each see the previous result", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and context::an exit assign is visible to transition and entry actions", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and context::entry actions observe the event that caused the entry", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and context::raised event payloads reach the triggered transition", "layer": "atomic"}
+{"taxonomy_key": "atomic::guards::an inline guard blocks the transition when false", "layer": "atomic"}
+{"taxonomy_key": "atomic::guards::guards read the event payload", "layer": "atomic"}
+{"taxonomy_key": "atomic::guards::and or and not combine guards", "layer": "atomic"}
+{"taxonomy_key": "atomic::guards::stateIn gates a transition on another parallel region", "layer": "atomic"}
+{"taxonomy_key": "atomic::guards::stateIn accepts an absolute id string", "layer": "atomic"}
+{"taxonomy_key": "atomic::guards::can returns false when every candidate is guarded off", "layer": "atomic"}
+{"taxonomy_key": "atomic::hierarchy parallel and history::entering a compound state descends through initial defaults", "layer": "atomic"}
+{"taxonomy_key": "atomic::hierarchy parallel and history::matches accepts every prefix of the active path", "layer": "atomic"}
+{"taxonomy_key": "atomic::hierarchy parallel and history::a parallel state activates every region", "layer": "atomic"}
+{"taxonomy_key": "atomic::hierarchy parallel and history::a finished region keeps its final key while others continue", "layer": "atomic"}
+{"taxonomy_key": "atomic::hierarchy parallel and history::shallow history re-enters the remembered child through its initial defaults", "layer": "atomic"}
+{"taxonomy_key": "atomic::hierarchy parallel and history::deep history restores the remembered leaf configuration", "layer": "atomic"}
+{"taxonomy_key": "atomic::hierarchy parallel and history::history without a stored configuration enters the default initial path", "layer": "atomic"}
+{"taxonomy_key": "atomic::hierarchy parallel and history::history memory updates on every parent exit", "layer": "atomic"}
+{"taxonomy_key": "atomic::final states and output::a top-level final state completes the machine", "layer": "atomic"}
+{"taxonomy_key": "atomic::final states and output::a compound onDone fires when its child reaches final", "layer": "atomic"}
+{"taxonomy_key": "atomic::final states and output::a parallel onDone fires only when every region is final", "layer": "atomic"}
+{"taxonomy_key": "atomic::final states and output::a final state's output reaches onDone as event.output", "layer": "atomic"}
+{"taxonomy_key": "atomic::final states and output::machine output maps the completion event and defaults to undefined", "layer": "atomic"}
+{"taxonomy_key": "atomic::final states and output::toPromise resolves with the snapshot output at completion", "layer": "atomic"}
+{"taxonomy_key": "atomic::timed transitions::an after transition fires at its threshold and not before", "layer": "atomic"}
+{"taxonomy_key": "atomic::timed transitions::delays accumulate across several increments", "layer": "atomic"}
+{"taxonomy_key": "atomic::timed transitions::exiting a state cancels its pending timer", "layer": "atomic"}
+{"taxonomy_key": "atomic::timed transitions::re-entering a state re-arms its timer from zero", "layer": "atomic"}
+{"taxonomy_key": "atomic::timed transitions::one large increment advances a delayed chain by a single step", "layer": "atomic"}
+{"taxonomy_key": "atomic::pure stepping and persistence::getInitialSnapshot resolves the initial configuration and context", "layer": "atomic"}
+{"taxonomy_key": "atomic::pure stepping and persistence::getInitialSnapshot passes input to the context factory", "layer": "atomic"}
+{"taxonomy_key": "atomic::pure stepping and persistence::getNextSnapshot returns the successor without mutating its input", "layer": "atomic"}
+{"taxonomy_key": "atomic::pure stepping and persistence::pure steps apply assigns but never run side-effecting actions", "layer": "atomic"}
+{"taxonomy_key": "atomic::pure stepping and persistence::pure steps process raised events and always transitions to quiescence", "layer": "atomic"}
+{"taxonomy_key": "atomic::pure stepping and persistence::stepping a done snapshot keeps it done and unchanged", "layer": "atomic"}
+{"taxonomy_key": "atomic::pure stepping and persistence::a persisted snapshot restores value and context in a new actor", "layer": "atomic"}
+{"taxonomy_key": "integration::cross-projection invariants::actor interpretation and pure stepping agree over a mixed event sequence", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection invariants::a false can implies the event leaves value and context unchanged", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection invariants::matches agrees with matchesState across a nested run", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection invariants::a resumed actor continues exactly like the original", "layer": "integration"}
+{"taxonomy_key": "integration::guarded routing workflows::a triage machine routes by combinator guards over payload and context", "layer": "integration"}
+{"taxonomy_key": "integration::guarded routing workflows::provide swaps a named guard without touching the source machine", "layer": "integration"}
+{"taxonomy_key": "integration::guarded routing workflows::wildcard descriptors and child precedence route a hierarchical dispatcher", "layer": "integration"}
+{"taxonomy_key": "integration::guarded routing workflows::raised events cascade through guards to a quiescent state", "layer": "integration"}
+{"taxonomy_key": "integration::parallel coordination::stateIn gates one region on another across a workflow", "layer": "integration"}
+{"taxonomy_key": "integration::parallel coordination::regions finish independently and onDone fires only at full completion", "layer": "integration"}
+{"taxonomy_key": "integration::parallel coordination::independent timers in parallel regions fire from one simulated clock", "layer": "integration"}
+{"taxonomy_key": "integration::history workflows::shallow and deep history nodes in one parent restore different depths", "layer": "integration"}
+{"taxonomy_key": "integration::history workflows::deep history memory survives a persistence round trip", "layer": "integration"}
+{"taxonomy_key": "integration::timed workflows::a reenter self-transition re-arms the timer while a plain one does not", "layer": "integration"}
+{"taxonomy_key": "integration::timed workflows::an escalation ladder climbs one rung per accumulated threshold", "layer": "integration"}
+{"taxonomy_key": "integration::completion pipelines::final output routes through guarded onDone into machine output", "layer": "integration"}
+{"taxonomy_key": "integration::completion pipelines::toPromise observes a completion driven by raised events", "layer": "integration"}
+{"taxonomy_key": "integration::completion pipelines::input shapes context and the completion output derives from it", "layer": "integration"}
+{"taxonomy_key": "integration::pure stepping pipelines::a pure fold reaches done with computed output", "layer": "integration"}
+{"taxonomy_key": "integration::pure stepping pipelines::pure steps replay a raise pipeline applying assigns but no effects", "layer": "integration"}
+{"taxonomy_key": "integration::persistence workflows::a restored snapshot answers tags, can and matches like the original", "layer": "integration"}
+{"taxonomy_key": "integration::end-to-end workflows::an order fulfilment machine runs from input to completion across every projection", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a batch pipeline persists mid-flight and finishes on a simulated clock", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a launch checklist coordinates parallel regions, timers and completion output", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::pure stepping replays an actor's full run to an identical terminal snapshot", "layer": "system_e2e"}

@@ -1,0 +1,116 @@
+{"taxonomy_key":"atomic::update exchange::a full update replays the document on a fresh replica","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::encoding against a state vector yields only the missing changes","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::encodeStateVector returns a binary version descriptor","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::applying the same update twice has no second effect","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::a malformed update payload throws","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::mergeUpdates combines payloads into one equivalent update","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::encodeStateVectorFromUpdate matches the source document's state vector","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::diffUpdate extracts the changes a state vector is missing","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::the v2 encoding replays identically","layer":"atomic"}
+{"taxonomy_key":"atomic::update exchange::format conversions preserve replay in both directions","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::observe fires once per transaction with the event and transaction","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::unobserve stops event delivery","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::map events report add, update, and delete actions with old values","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::key records describe the net transaction effect from its start state","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::keysChanged names the affected keys","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::array events expose a retain/insert/delete delta","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::text events carry string inserts with attributes","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::reading changes or delta after the handler returns throws","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::a directly observed type reports itself with an empty path","layer":"atomic"}
+{"taxonomy_key":"atomic::events and observation::transactions report origin and local for local edits","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::canUndo and canRedo reflect stack availability","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::undo reverts and redo restores content","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::clear empties both stacks","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::captureTimeout zero keeps each transaction as its own entry","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::rapid edits merge into a single entry by default","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::stopCapturing starts a fresh entry","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::trackedOrigins limits tracking to the listed origins","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::by default only untagged transactions are tracked","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::a new tracked edit clears the redo stack","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::undoing map changes restores previous values","layer":"atomic"}
+{"taxonomy_key":"atomic::undo and redo::multi-scope managers revert entries across their types","layer":"atomic"}
+{"taxonomy_key":"atomic::snapshots::snapshots encode, decode, and compare by version","layer":"atomic"}
+{"taxonomy_key":"atomic::snapshots::createDocFromSnapshot restores the captured content","layer":"atomic"}
+{"taxonomy_key":"atomic::snapshots::restoring from a gc-enabled document throws","layer":"atomic"}
+{"taxonomy_key":"atomic::snapshots::snapshotContainsUpdate distinguishes covered from uncovered updates","layer":"atomic"}
+{"taxonomy_key":"atomic::relative positions::a position resolves to its index and anchored type","layer":"atomic"}
+{"taxonomy_key":"atomic::relative positions::left-associated positions resolve at the same static index","layer":"atomic"}
+{"taxonomy_key":"atomic::relative positions::JSON round trips compare equal","layer":"atomic"}
+{"taxonomy_key":"atomic::relative positions::binary round trips resolve to the same absolute position","layer":"atomic"}
+{"taxonomy_key":"atomic::relative positions::resolving against an unrelated replica returns null","layer":"atomic"}
+{"taxonomy_key":"atomic::relative positions::a position whose anchor was deleted collapses to the removal point","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::clientID is numeric and differs between instances","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::guid option is honored and defaults to a string","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::root accessors create on first access and cache the instance","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::re-declaring a root name with a different type throws","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::transact returns the callback's return value","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::a transaction batches mutations into one update event","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::nested transact calls flatten into the outer transaction","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::a transaction without effective change emits no update event","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::destroy emits the destroy event and flags the doc","layer":"atomic"}
+{"taxonomy_key":"atomic::documents::off unregisters and once fires a single time","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::set returns the value and get reads it back","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::has, delete, and size track current entries","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::clear removes every entry","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::null values are preserved and distinct from absence","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::iterators visit every current entry exactly once","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::forEach passes value, key, and the map","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::toJSON converts nested shared types recursively","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::clone returns an unintegrated copy with the same entries","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::the constructor seeds entries from an iterable","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::pre-integration mutations become observable after insertion","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::inserting an integrated type at a second location throws","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::storing a function throws","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::plain objects and arrays replicate as plain deep-equal values","layer":"atomic"}
+{"taxonomy_key":"atomic::shared maps::Uint8Array values replicate with identical bytes","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::insert, push, and unshift place items in order","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::delete removes one item by default and a count when given","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::get and length address current items","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::slice returns end-exclusive plain-array copies","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::insert past the end throws","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::delete past the end throws","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::toArray and toJSON convert content, toJSON recursing into shared types","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::map, forEach, and iteration walk items in index order","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::Array.from seeds a standalone array","layer":"atomic"}
+{"taxonomy_key":"atomic::shared arrays::nested standalone types integrate through array insertion","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::insert places text at a character index","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::insert beyond the current length appends at the end","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::delete removes a range and clamps past the end","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::format applies attributes visible in toDelta","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::formatting with a null value removes the attribute","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::insert accepts attributes for the inserted run","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::embeds occupy one length unit and are skipped by toString","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::toJSON returns the same string as toString","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::adjacent runs with identical formatting merge into one op","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::applyDelta inserts plain and formatted runs","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::applyDelta retain and delete edit existing content","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::applyDelta retain with attributes formats the retained range","layer":"atomic"}
+{"taxonomy_key":"atomic::shared text::a seeded standalone text materializes on integration","layer":"atomic"}
+{"taxonomy_key":"integration::replica convergence::bidirectional update exchange converges text replicas","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::concurrent same-position text inserts stay intact and converge","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::concurrent map writes converge on one of the written values","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::concurrent array insertions preserve every item exactly once","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::an update with missing dependencies is buffered until they arrive","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::shuffled and duplicated update sets converge to the same content","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::state-vector diff exchange syncs two diverged replicas minimally","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::merge and diff over per-transaction updates equal direct replay","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::v1 and v2 histories replay to identical replicas","layer":"integration"}
+{"taxonomy_key":"integration::replica convergence::per-transaction update events replayed in order rebuild the peer","layer":"integration"}
+{"taxonomy_key":"integration::events across replicas and nesting::remote transactions fire observers with local false and the applyUpdate origin","layer":"integration"}
+{"taxonomy_key":"integration::events across replicas and nesting::observeDeep reports paths across map and array nesting","layer":"integration"}
+{"taxonomy_key":"integration::events across replicas and nesting::unobserveDeep stops nested delivery","layer":"integration"}
+{"taxonomy_key":"integration::events across replicas and nesting::an array event delta replayed over the pre-state yields the post-state","layer":"integration"}
+{"taxonomy_key":"integration::events across replicas and nesting::map key records agree with pre- and post-transaction values","layer":"integration"}
+{"taxonomy_key":"integration::events across replicas and nesting::nested standalone types replicate wholesale through one update","layer":"integration"}
+{"taxonomy_key":"integration::events across replicas and nesting::formatting applied on one replica appears in the peer's delta view","layer":"integration"}
+{"taxonomy_key":"integration::undo, snapshots, and positions across documents::undo reverts local content while preserving interleaved remote content","layer":"integration"}
+{"taxonomy_key":"integration::undo, snapshots, and positions across documents::undone state propagates to peers like any other edit","layer":"integration"}
+{"taxonomy_key":"integration::undo, snapshots, and positions across documents::tracked origins separate user edits from provider updates","layer":"integration"}
+{"taxonomy_key":"integration::undo, snapshots, and positions across documents::stack item meta persists from added to popped for cursor restoration","layer":"integration"}
+{"taxonomy_key":"integration::undo, snapshots, and positions across documents::snapshot restoration reproduces the version while history moves on","layer":"integration"}
+{"taxonomy_key":"integration::undo, snapshots, and positions across documents::relative positions track their character across remote edits and codecs","layer":"integration"}
+{"taxonomy_key":"integration::undo, snapshots, and positions across documents::map undo interleaved with remote updates keeps remote keys","layer":"integration"}
+{"taxonomy_key":"integration::collaborative sessions end to end::two clients edit, sync, and undo with cursors surviving","layer":"system_e2e"}
+{"taxonomy_key":"integration::collaborative sessions end to end::offline client catches up through a merging relay","layer":"system_e2e"}
+{"taxonomy_key":"integration::collaborative sessions end to end::a versioned document restores an old release while editing continues","layer":"system_e2e"}
+{"taxonomy_key":"integration::collaborative sessions end to end::a shared board converges across three replicas with deep observers","layer":"system_e2e"}

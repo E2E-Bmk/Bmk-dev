@@ -1,0 +1,78 @@
+atomic::create yields an empty instance with zero count
+atomic::create rejects an unknown schema type string
+atomic::insert returns a generated string id when the document has none
+atomic::insert uses the document id property as the stored id
+atomic::insertMultiple returns the assigned ids in document order
+atomic::insert rejects a document whose value contradicts the schema type
+atomic::insert rejects a duplicate document id
+atomic::documents keep omitted schema fields absent and extra fields verbatim
+atomic::count reflects the number of stored documents
+atomic::getByID returns undefined for an unknown id
+atomic::remove returns true for a present id and decrements count
+atomic::remove returns false for a missing id and leaves the store unchanged
+atomic::removeMultiple returns the number of documents actually removed
+atomic::update replaces the stored document and returns the new id
+atomic::updateMultiple replaces several documents and returns the new ids
+atomic::upsert inserts a new document when the id is absent
+atomic::upsert replaces an existing document without changing the count
+atomic::upsertMultiple mixes inserts and replacements and returns the ids
+atomic::search result carries hits with id score and document plus count and elapsed
+atomic::term matching is case-insensitive
+atomic::a query token matches indexed tokens by prefix
+atomic::omitting the term matches every stored document
+atomic::properties restricts full-text matching to the named string properties
+atomic::searching an unknown property raises UNKNOWN_INDEX
+atomic::exact matching excludes prefix-only matches
+atomic::exact matching suppresses tolerance
+atomic::tolerance admits tokens within the edit distance
+atomic::a misspelled token without tolerance matches nothing
+atomic::threshold zero returns only documents matching every token
+atomic::default threshold returns documents matching any token
+atomic::limit and offset slice ranked hits while count stays total
+atomic::preflight reports the matched count with empty hits
+atomic::number filters support comparison operators
+atomic::number between filter is inclusive on both ends
+atomic::boolean filters accept a direct boolean value
+atomic::enum filters support eq in and nin operators
+atomic::string filters match whole tokens without prefix expansion
+atomic::string array filters match documents containing the element
+atomic::nested dot path properties participate in filters
+atomic::filtering on an unknown property raises UNKNOWN_FILTER_PROPERTY
+atomic::enum facets report distinct value buckets and their count
+atomic::boolean facets bucket documents under true and false string keys
+atomic::string array facets count documents per distinct element
+atomic::number facets bucket matched documents into inclusive ranges
+atomic::string facets honor sort and limit options
+atomic::sortBy orders hits by a number property in both directions
+atomic::sortBy orders hits by a nested dot path property
+atomic::sortBy accepts a comparator over id score document triples
+atomic::groupBy partitions matched documents and bounds results per group
+atomic::groupBy rejects enum properties
+atomic::distinctOn keeps the first hit per distinct value while count stays total
+atomic::save returns a JSON-serializable snapshot
+integration::an inserted document is visible across count getByID search facets and groups
+integration::a removed document disappears from every projection simultaneously
+integration::count stays the unsliced total across limit offset preflight and distinct
+integration::hit documents deep-equal getByID lookups
+integration::facet bucket totals equal the matched documents carrying the property
+integration::update redirects full-text matching filters and facets to the new content
+integration::save and load preserve count lookups and ranked order
+integration::documents inserted after load join restored ones in results
+integration::groupBy places every matched document in exactly one group
+integration::term and where filters combine conjunctively
+integration::multiple where clauses form a conjunction
+integration::facets aggregate only over filtered matches
+integration::boost reorders title and body matches without changing the match set
+integration::threshold composes with filters
+integration::sortBy with distinctOn keeps the first sorted hit per distinct value
+integration::offset windows partition the sorted hit sequence
+integration::insertMultiple and repeated insert produce equivalent projections
+integration::a failed search leaves the instance usable
+integration::a rejected insert leaves all projections unchanged
+integration::upsert replacement makes stale content unmatchable
+integration::removeMultiple recomputes facets and groups
+integration::nested dot path agrees across where facets and sortBy
+integration::a loaded instance accepts update and remove like a native one
+integration::distinct results survive a save load round trip
+integration::multi-token queries rank documents matching more tokens first
+integration::exact and threshold compose on the same query

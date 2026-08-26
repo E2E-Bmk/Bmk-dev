@@ -1,0 +1,137 @@
+{"taxonomy_key":"atomic::construction and composition::constructTable projects the data array through the core row model","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::an unregistered feature contributes no state slice and no setter","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::a registered feature contributes its state slice and setter","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::a pipeline stage without its factory passes the previous stage through","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::stockFeatures spreads into tableFeatures and registers stock features","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::tableOptions returns the options object it receives","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::setOptions with a new data array re-derives the row models","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::initialState values overlay the feature defaults","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::functionalUpdate applies an updater function or returns the plain value","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::isFunction accepts callables and rejects plain values","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::flattenBy flattens a forest depth-first through the children accessor","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::getInitialTableState merges feature defaults with the supplied overrides","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::getRowId customizes row identity","layer":"atomic"}
+{"taxonomy_key":"atomic::construction and composition::renderValue substitutes renderFallbackValue for undefined cell values","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::registered slices expose their documented defaults","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::there is no getState method; the snapshot lives on the store","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::setters accept a plain value or an updater of the previous value","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::the store snapshot agrees with every per-key atom","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::store.subscribe observes state transitions","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::reset with no argument restores the initialState value","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::reset with true restores the feature default","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::a controlled slice overrides the internally stored value","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::a controlled key holding undefined falls back to the initialState value","layer":"atomic"}
+{"taxonomy_key":"atomic::state and reactivity::projections reflect a setter transition on the next read","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::an explicit id wins over the accessor-derived id","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::a dotted accessorKey derives an underscore id and traverses nested records","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::a dotted accessorKey does not consult a literal dotted property","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::a string header serves as the column id when no accessor id exists","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::a definition that resolves no id throws when the column tree materializes","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::an accessorFn without an explicit id throws when the column tree materializes","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::an accessorFn column computes values through the function","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::a display column produces cells but no values","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::a columns array creates a group column with child columns","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::createColumnHelper builds accessor, display, and group definitions","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::defaultColumn merges under each definition property by property","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::all, flat, and leaf column views expose the tree at different depths","layer":"atomic"}
+{"taxonomy_key":"atomic::columns and the column tree::getColumn returns undefined for an unknown id","layer":"atomic"}
+{"taxonomy_key":"atomic::rows and cells::default row ids are index-based and children join with a dot","layer":"atomic"}
+{"taxonomy_key":"atomic::rows and cells::rows expose index, depth, original, subRows, and getParentRow","layer":"atomic"}
+{"taxonomy_key":"atomic::rows and cells::getRow resolves a known id and throws for an unknown id","layer":"atomic"}
+{"taxonomy_key":"atomic::rows and cells::getRow with true reaches rows excluded by later stages","layer":"atomic"}
+{"taxonomy_key":"atomic::rows and cells::getValue caches the first read for the life of the row","layer":"atomic"}
+{"taxonomy_key":"atomic::rows and cells::getValue returns undefined for an unknown column id","layer":"atomic"}
+{"taxonomy_key":"atomic::rows and cells::getUniqueValues returns the value array used for faceting","layer":"atomic"}
+{"taxonomy_key":"atomic::rows and cells::cells join a row and a leaf column with a composite id","layer":"atomic"}
+{"taxonomy_key":"atomic::headers and footer groups::a flat column list produces a single header group","layer":"atomic"}
+{"taxonomy_key":"atomic::headers and footer groups::nested definitions produce one group per depth with spans and placeholders","layer":"atomic"}
+{"taxonomy_key":"atomic::headers and footer groups::colSpan values in every group sum to the visible leaf count","layer":"atomic"}
+{"taxonomy_key":"atomic::headers and footer groups::flat and leaf header views expose the matrix without grouping","layer":"atomic"}
+{"taxonomy_key":"atomic::headers and footer groups::footer groups mirror the header matrix in reverse order","layer":"atomic"}
+{"taxonomy_key":"atomic::headers and footer groups::subHeaders link a group header to the headers beneath it","layer":"atomic"}
+{"taxonomy_key":"atomic::row model pipeline::each pre-model accessor returns the previous stage's output","layer":"atomic"}
+{"taxonomy_key":"atomic::row model pipeline::getRowModel returns the final registered stage","layer":"atomic"}
+{"taxonomy_key":"atomic::row model pipeline::a manual stage option makes that stage pass through","layer":"atomic"}
+{"taxonomy_key":"atomic::row model pipeline::row models expose rows, flatRows, and rowsById","layer":"atomic"}
+{"taxonomy_key":"atomic::row model pipeline::the core model resolves sub-rows through getSubRows","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::setSorting orders rows ascending and descending","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::later sorting entries break ties left by earlier ones","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::toggleSorting cycles a text column through asc, desc, unsorted","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::an explicit desc argument forces the direction","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::numeric columns and sortDescFirst columns start their cycle descending","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::clearSorting removes only that column's entry","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::getIsSorted and getSortIndex report per-column sort status","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::an inline comparator sorts through the function directly","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::a custom registry entry is reachable by name","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::an unregistered sort name falls back to the basic comparator","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::the sortFns registry bundles the six built-ins as individual exports","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::auto resolution picks datetime ordering for Date columns","layer":"atomic"}
+{"taxonomy_key":"atomic::row sorting::auto resolution orders mixed alphanumeric strings numerically","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::a string column filters by case-insensitive substring by default","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::a number column filters by inclusive range with open bounds by default","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::named registry filters apply their documented predicate","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::an inline predicate receives row, column id, and filter value","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::an unknown column id or unregistered name leaves rows unfiltered","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::per-column filter accessors upsert and report the entry","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::global filtering keeps rows where any filterable column matches","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::enableGlobalFilter false excludes a column from global matching","layer":"atomic"}
+{"taxonomy_key":"atomic::column and global filtering::a display column never participates in global filtering","layer":"atomic"}
+{"taxonomy_key":"atomic::row pagination::the default page holds the first ten rows","layer":"atomic"}
+{"taxonomy_key":"atomic::row pagination::page count and row count derive from the pre-paginated model","layer":"atomic"}
+{"taxonomy_key":"atomic::row pagination::navigation methods step, jump to first, and jump to last","layer":"atomic"}
+{"taxonomy_key":"atomic::row pagination::setPageSize applies the size and resets the index","layer":"atomic"}
+{"taxonomy_key":"atomic::row pagination::setPageIndex clamps at zero, and above only with a supplied pageCount","layer":"atomic"}
+{"taxonomy_key":"atomic::row pagination::page options and can-navigate flags follow the page window","layer":"atomic"}
+{"taxonomy_key":"atomic::column visibility and ordering::false in columnVisibility hides; absent ids stay visible","layer":"atomic"}
+{"taxonomy_key":"atomic::column visibility and ordering::toggleVisibility flips one column; toggleAllColumnsVisible writes all","layer":"atomic"}
+{"taxonomy_key":"atomic::column visibility and ordering::visible cells track visible leaf columns","layer":"atomic"}
+{"taxonomy_key":"atomic::column visibility and ordering::columnOrder lists ids first; unlisted columns keep definition order","layer":"atomic"}
+{"taxonomy_key":"atomic::column pinning::setColumnPinning assigns start and end regions","layer":"atomic"}
+{"taxonomy_key":"atomic::column pinning::column.pin moves between regions and false unpins","layer":"atomic"}
+{"taxonomy_key":"atomic::column pinning::getIsPinned, getPinnedIndex, and getIsSomeColumnsPinned report regions","layer":"atomic"}
+{"taxonomy_key":"atomic::column pinning::pinning never changes visible leaf membership","layer":"atomic"}
+{"taxonomy_key":"atomic::row selection::toggleSelected marks a row in the rowSelection slice","layer":"atomic"}
+{"taxonomy_key":"atomic::row selection::all-rows and some-rows flags follow the selected set","layer":"atomic"}
+{"taxonomy_key":"atomic::row selection::toggleAllRowsSelected selects everything and no argument flips","layer":"atomic"}
+{"taxonomy_key":"atomic::row selection::getSelectedRowModel returns exactly the selected rows","layer":"atomic"}
+{"taxonomy_key":"atomic::row expanding::toggleExpanded surfaces a row's children in the expanded model","layer":"atomic"}
+{"taxonomy_key":"atomic::row expanding::collapsed descendants stay reachable through flatRows","layer":"atomic"}
+{"taxonomy_key":"atomic::row expanding::toggleAllRowsExpanded writes the literal true and expands every level","layer":"atomic"}
+{"taxonomy_key":"atomic::row expanding::a leaf row cannot expand; getIsExpanded is true under the literal true","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::grouping folds rows into one group row per distinct value","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::two-level grouping appends deeper ids with the > separator","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::group rows expose grouping metadata and leaf rows","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::a named aggregation summarizes group values","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::auto aggregation resolves numeric columns to sum when registered","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::without a registered aggregation the aggregated value is undefined","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::an inline aggregation definition object applies directly","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::the aggregationFns registry bundles the eleven built-ins","layer":"atomic"}
+{"taxonomy_key":"atomic::grouping and aggregation::cells report grouped, aggregated, and placeholder roles","layer":"atomic"}
+{"taxonomy_key":"atomic::column faceting::faceted unique values map each distinct value to its count","layer":"atomic"}
+{"taxonomy_key":"atomic::column faceting::faceted min-max returns the value bounds","layer":"atomic"}
+{"taxonomy_key":"atomic::column faceting::a column's faceted model ignores its own filter but applies others","layer":"atomic"}
+{"taxonomy_key":"integration::pipeline integration::filtering, sorting, and pagination compose in pipeline order","layer":"integration"}
+{"taxonomy_key":"integration::pipeline integration::every pre-model equals the previous stage output across an active pipeline","layer":"integration"}
+{"taxonomy_key":"integration::pipeline integration::state transitions stay consistent across store, atoms, and projections","layer":"integration"}
+{"taxonomy_key":"integration::pipeline integration::grouping and sorting interact: groups sort by aggregated values","layer":"integration"}
+{"taxonomy_key":"integration::pipeline integration::expanding grouped rows surfaces leaf rows through pagination","layer":"integration"}
+{"taxonomy_key":"integration::cross-view consistency::hiding a column updates leaf views, cells, and header spans together","layer":"integration"}
+{"taxonomy_key":"integration::cross-view consistency::pinning regions partition the visible leaves under visibility changes","layer":"integration"}
+{"taxonomy_key":"integration::cross-view consistency::selection membership survives filtering; the filtered variant intersects","layer":"integration"}
+{"taxonomy_key":"integration::cross-view consistency::group leaf rows partition the filtered set and aggregate consistently","layer":"integration"}
+{"taxonomy_key":"integration::cross-view consistency::page arithmetic tracks the filtered row count","layer":"integration"}
+{"taxonomy_key":"integration::cross-view consistency::facets react to other columns' filters but not their own","layer":"integration"}
+{"taxonomy_key":"integration::state workflows::controlled and uncontrolled slices coexist","layer":"integration"}
+{"taxonomy_key":"integration::state workflows::initialState seeds several slices and resets return to it","layer":"integration"}
+{"taxonomy_key":"integration::state workflows::one subscriber observes transitions from several features","layer":"integration"}
+{"taxonomy_key":"integration::state workflows::swapping data through setOptions preserves active state","layer":"integration"}
+{"taxonomy_key":"integration::state workflows::custom row ids key selection and expansion state","layer":"integration"}
+{"taxonomy_key":"integration::feature workflows::global and column filters intersect before sorting applies","layer":"integration"}
+{"taxonomy_key":"integration::feature workflows::a registry extension, ordering, and visibility compose on one table","layer":"integration"}
+{"taxonomy_key":"integration::feature workflows::the column helper drives a grouped table end to end","layer":"integration"}
+{"taxonomy_key":"integration::feature workflows::row lookup stays coherent across pipeline stages","layer":"integration"}
+{"taxonomy_key":"integration::feature workflows::sort auto-inference picks distinct comparators per column type","layer":"integration"}
+{"taxonomy_key":"integration::system workflows::a full dashboard session: filter, group, aggregate, expand, select, paginate","layer":"system_e2e"}
+{"taxonomy_key":"integration::system workflows::an inventory browser: controlled sorting, faceted narrowing, and resets","layer":"system_e2e"}
+{"taxonomy_key":"integration::system workflows::a tree explorer: custom ids, expansion, visibility, and header integrity","layer":"system_e2e"}
+{"taxonomy_key":"integration::system workflows::a search screen: global filter, column order, pinning, and page walk","layer":"system_e2e"}

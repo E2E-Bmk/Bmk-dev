@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::snapshot agreement::a tree built by operations snapshots and restores faithfully": [
+      "atomic::files and directories::writeFileSync stores strings readable back through either encoding form",
+      "atomic::files and directories::recursive mkdir returns the full target path or undefined when present",
+      "atomic::volumes and snapshots::toJSON flattens files, marks empty dirs null, and filters by subtree"
+    ],
+    "integration::snapshot agreement::every toJSON path reads back exactly and every plain file appears": [
+      "atomic::volumes and snapshots::fromJSON materializes files, parents, and Buffer contents",
+      "atomic::volumes and snapshots::toJSON flattens files, marks empty dirs null, and filters by subtree"
+    ],
+    "integration::snapshot agreement::restoring a snapshot flattens links into independent plain files": [
+      "atomic::volumes and snapshots::symbolic links are absent from toJSON while hard links appear per name",
+      "atomic::links and path resolution::hard links share identity and content in both directions"
+    ],
+    "integration::snapshot agreement::nested and flat construction of the same tree agree in every view": [
+      "atomic::volumes and snapshots::fromNestedJSON treats inner objects as directories",
+      "atomic::files and directories::readdirSync lists entry names lexicographically sorted"
+    ],
+    "integration::cross-projection content agreement::bytes written through one projection are identical through all readers": [
+      "atomic::callbacks, promises, and streams::write streams persist on finish and read streams honor encoding",
+      "atomic::file descriptors::readSync copies bytes at an absolute position and reports the count",
+      "atomic::callbacks, promises, and streams::the promises API mirrors operations and rejection codes"
+    ],
+    "integration::cross-projection content agreement::positional descriptor patches are seen by snapshot, promise and stat views": [
+      "atomic::file descriptors::writeSync reports bytes written and overwrites at a position",
+      "atomic::volumes and snapshots::toJSON flattens files, marks empty dirs null, and filters by subtree"
+    ],
+    "integration::cross-projection content agreement::truncate, append and descriptor writes keep sizes consistent everywhere": [
+      "atomic::files and directories::truncateSync shrinks and zero-extends file content",
+      "atomic::metadata and permissions::size tracks writes, appends and truncation",
+      "atomic::file descriptors::flag a appends every write at the end"
+    ],
+    "integration::cross-projection content agreement::piping a read stream into a write stream copies a file": [
+      "atomic::callbacks, promises, and streams::write streams persist on finish and read streams honor encoding"
+    ],
+    "integration::cross-projection content agreement::one file written by wrapper, promise and callback stays coherent": [
+      "atomic::volumes and snapshots::createFsFromVolume wraps an existing volume in both directions",
+      "atomic::callbacks, promises, and streams::callback writes and mkdirs mutate the tree",
+      "atomic::callbacks, promises, and streams::the promises API mirrors operations and rejection codes"
+    ],
+    "integration::directory and metadata agreement::readdir names, dirents and lstat predicates agree": [
+      "atomic::files and directories::withFileTypes returns Dirent objects with parent paths and predicates",
+      "atomic::links and path resolution::statSync follows links while lstatSync reports the link node"
+    ],
+    "integration::directory and metadata agreement::hard-linked names agree across stats, reads and listings": [
+      "atomic::links and path resolution::hard links share identity and content in both directions",
+      "atomic::metadata and permissions::stats expose size, kind predicates, identity and timestamps"
+    ],
+    "integration::directory and metadata agreement::a rename is observed atomically by every projection": [
+      "atomic::files and directories::renameSync moves a directory subtree and preserves node identity",
+      "atomic::volumes and snapshots::toJSON flattens files, marks empty dirs null, and filters by subtree"
+    ],
+    "integration::directory and metadata agreement::permission changes gate every read projection consistently": [
+      "atomic::metadata and permissions::chmod feeds accessSync capability checks",
+      "atomic::metadata and permissions::reading a mode-denied file raises EACCES",
+      "atomic::callbacks, promises, and streams::callbacks deliver values on success and codes on failure"
+    ],
+    "integration::directory and metadata agreement::sync, callback and promise forms report the same missing-path code": [
+      "atomic::callbacks, promises, and streams::callbacks deliver values on success and codes on failure",
+      "atomic::callbacks, promises, and streams::the promises API mirrors operations and rejection codes"
+    ],
+    "integration::links across projections::writes through a directory symlink land in the real tree": [
+      "atomic::links and path resolution::links resolve at intermediate path components",
+      "atomic::volumes and snapshots::symbolic links are absent from toJSON while hard links appear per name"
+    ],
+    "integration::links across projections::a dangling link joins the tree when its target arrives via promises": [
+      "atomic::links and path resolution::a dangling link hides from exists until its target appears",
+      "atomic::callbacks, promises, and streams::the promises API mirrors operations and rejection codes"
+    ],
+    "integration::links across projections::hardlink content flows both ways across sync and promise writers": [
+      "atomic::links and path resolution::hard links share identity and content in both directions",
+      "atomic::file descriptors::writeSync reports bytes written and overwrites at a position"
+    ],
+    "integration::instances and isolation::memfs pairs, wrappers and the default volume stay independent": [
+      "atomic::volumes and snapshots::memfs() returns a seeded fs and vol pair",
+      "atomic::volumes and snapshots::createFsFromVolume wraps an existing volume in both directions",
+      "atomic::volumes and snapshots::distinct volumes share no state"
+    ],
+    "integration::instances and isolation::a deep copy between volumes via snapshot has independent state": [
+      "atomic::volumes and snapshots::fromJSON materializes files, parents, and Buffer contents",
+      "atomic::files and directories::appendFileSync appends to existing files and creates missing ones"
+    ],
+    "integration::instances and isolation::cp recursive inside one volume then divergence leaves the copy alone": [
+      "atomic::files and directories::cpSync recursive performs a deep copy of a tree",
+      "atomic::files and directories::rmSync with recursive removes a whole subtree"
+    ],
+    "integration::instances and isolation::mkdtemp workspaces live a full create-use-destroy cycle": [
+      "atomic::files and directories::mkdtempSync appends six alphanumeric characters to the prefix",
+      "atomic::files and directories::rmSync with recursive removes a whole subtree"
+    ],
+    "integration::instances and isolation::mixed failure codes surface correctly across one populated tree": [
+      "atomic::files and directories::non-recursive mkdir rejects missing parents and existing targets",
+      "atomic::files and directories::unlinkSync removes files but rejects directories with EPERM",
+      "atomic::files and directories::rmdirSync removes empty directories only"
+    ],
+    "integration::end-to-end workflows::a project scaffold is built, linked, verified and snapshotted": [
+      "atomic::files and directories::recursive readdir returns descendant paths relative to the directory",
+      "atomic::links and path resolution::realpathSync follows chains of links transitively",
+      "atomic::links and path resolution::hard links share identity and content in both directions",
+      "atomic::volumes and snapshots::symbolic links are absent from toJSON while hard links appear per name"
+    ],
+    "integration::end-to-end workflows::an editor session mixes descriptors, promises, truncation and streams": [
+      "atomic::file descriptors::writeSync reports bytes written and overwrites at a position",
+      "atomic::file descriptors::ftruncateSync truncates through the descriptor",
+      "atomic::callbacks, promises, and streams::write streams persist on finish and read streams honor encoding"
+    ],
+    "integration::end-to-end workflows::a backup is exported, reorganized in a second volume and verified": [
+      "atomic::volumes and snapshots::instance fromJSON resolves relative keys against the cwd argument",
+      "atomic::volumes and snapshots::toJSON flattens files, marks empty dirs null, and filters by subtree",
+      "atomic::files and directories::renameSync moves a directory subtree and preserves node identity"
+    ],
+    "integration::end-to-end workflows::a content pipeline decodes, guards and republishes across projections": [
+      "atomic::files and directories::writeFileSync decodes string data through the encoding option",
+      "atomic::files and directories::copyFileSync copies content into a default-mode node and honors COPYFILE_EXCL",
+      "atomic::metadata and permissions::reading a mode-denied file raises EACCES"
+    ]
+  }
+}

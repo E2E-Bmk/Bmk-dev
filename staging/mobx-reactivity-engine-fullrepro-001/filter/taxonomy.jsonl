@@ -1,0 +1,100 @@
+{"taxonomy_key": "atomic::observable state::a plain object converts to a new observable proxy reference", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::arrays convert to observable arrays that are still real arrays", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::maps and sets convert without being instanceof the built-ins", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::primitives convert to boxed observables", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::explicit factory forms and collection constructors agree with the predicates", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::conversion is deep by default", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::deep false keeps stored values unconverted", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::a box tracks reads and an equals comparer suppresses equal sets", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::adding a property by assignment is an observable structure change", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::the delete keyword removes a property reactively", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::a same-value write does not propagate", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::JSON serialization matches the plain counterpart", "layer": "atomic"}
+{"taxonomy_key": "atomic::observable state::isObservableProp distinguishes observable members from plain ones", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::makeObservable wires fields, getters and methods per the annotation map", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::observableRef tracks reassignment only and never converts the value", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::observableShallow converts one level only", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::observableStruct suppresses structurally equal reassignment", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::makeAutoObservable infers members and honors false overrides", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::makeAutoObservable rejects classes with a superclass", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::actionBound methods survive detachment while plain action methods do not", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::a getter in an observable literal becomes computed", "layer": "atomic"}
+{"taxonomy_key": "atomic::class annotations::annotating a missing field or re-annotating an annotated member throws", "layer": "atomic"}
+{"taxonomy_key": "atomic::derived values::a computed is lazy until first read", "layer": "atomic"}
+{"taxonomy_key": "atomic::derived values::while observed a computed caches between dependency changes", "layer": "atomic"}
+{"taxonomy_key": "atomic::derived values::while unobserved a computed evaluates on every read", "layer": "atomic"}
+{"taxonomy_key": "atomic::derived values::a computed equals option cuts off propagation", "layer": "atomic"}
+{"taxonomy_key": "atomic::derived values::the four comparers implement their documented equality", "layer": "atomic"}
+{"taxonomy_key": "atomic::derived values::computedStruct compares results structurally in a class", "layer": "atomic"}
+{"taxonomy_key": "atomic::derived values::a computed cycle raises an error at read", "layer": "atomic"}
+{"taxonomy_key": "atomic::derived values::untracked reads do not create dependencies", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::autorun runs immediately exactly once", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::autorun re-runs on tracked changes and ignores untracked properties", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::autorun re-records dependencies from scratch on each run", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::a disposed autorun never runs again", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::reaction skips the initial run and passes new and old values", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::fireImmediately runs the effect once with undefined as the previous value", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::the reaction handle disposes from inside the effect", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::a reaction equals option compares expression results", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::when runs its effect exactly once and then disposes", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::the when promise resolves when the predicate turns true", "layer": "atomic"}
+{"taxonomy_key": "atomic::effects::cancelling a when promise rejects with WHEN_CANCELLED", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and batching::an action batches several writes into one effect run", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and batching::unbatched writes propagate at each statement", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and batching::runInAction executes immediately, batches and returns the result", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and batching::transaction batches without marking the function as an action", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and batching::nested actions flush once at the outermost end", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and batching::a net-reverted change suppresses reactions but re-runs autorun", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and batching::isAction distinguishes wrapped functions and names them", "layer": "atomic"}
+{"taxonomy_key": "atomic::actions and batching::an enforceActions violation warns and still applies the write", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::array index writes and length are tracked", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::out-of-bounds reads return undefined and writes extend the array", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::array search results are tracked", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::replace, remove, clear and splice return their documented values", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::map reads and size are tracked with Map semantics", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::map merge, replace and toJSON operate on entries", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::a has reader re-runs when the missing key appears", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::map iteration readers re-run on structural change", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::sets track membership and re-adding a present element is not a change", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::the generic collection API operates uniformly on objects", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::the generic collection API reaches arrays and maps too", "layer": "atomic"}
+{"taxonomy_key": "atomic::collections::a keys reader tracks structure changes", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::object observers see update, add and remove events with their fields", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::array observers see update and splice events", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::map observers see add, update and delete events", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::set observers see add and delete events", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::box observers see update events", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::a property observer fires only for its property", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::an interceptor veto leaves no trace", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::an interceptor rewrite stores the rewritten value", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutation events and interception::a whole-object interceptor vetoes property additions", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and introspection::toJS produces deep plain data including built-in Map and Set", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and introspection::the predicate family classifies each kind and never throws on plain input", "layer": "atomic"}
+{"taxonomy_key": "atomic::snapshots and introspection::isObservableProp and isComputedProp classify annotated members", "layer": "atomic"}
+{"taxonomy_key": "atomic::observability lifecycle::hooks fire on every observer-count transition", "layer": "atomic"}
+{"taxonomy_key": "atomic::observability lifecycle::computed suspension is visible through its dependency's hooks", "layer": "atomic"}
+{"taxonomy_key": "integration::cross-projection agreement::one mutation is reflected identically in every projection", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection agreement::a comparer-equal write is invisible in every projection", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection agreement::a vetoed map addition never reaches computeds, effects or snapshots", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection agreement::computed evaluation counts follow observation state and batching", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection agreement::nested actions flush once through a computed into a reaction", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection agreement::toJS snapshots serialize identically to the live store", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection agreement::disposal is total and the lifecycle hooks witness the release", "layer": "integration"}
+{"taxonomy_key": "integration::annotated store workflows::an explicit class store routes actions through computeds into reactions", "layer": "integration"}
+{"taxonomy_key": "integration::annotated store workflows::an inferred store keeps working through a detached bound action", "layer": "integration"}
+{"taxonomy_key": "integration::annotated store workflows::class property interception rewrites and audits through observe", "layer": "integration"}
+{"taxonomy_key": "integration::annotated store workflows::a structural computed in the middle of a chain cuts propagation", "layer": "integration"}
+{"taxonomy_key": "integration::collection workflows::a map catalog stays consistent across merge, replace, events and effects", "layer": "integration"}
+{"taxonomy_key": "integration::collection workflows::an array pipeline aggregates through computed while events audit each step", "layer": "integration"}
+{"taxonomy_key": "integration::collection workflows::when observes a threshold crossed by a batched action", "layer": "integration"}
+{"taxonomy_key": "integration::collection workflows::deep stores react to nested mutation while shallow stores do not", "layer": "integration"}
+{"taxonomy_key": "integration::collection workflows::dynamic object shape flows through the generic API and the event stream", "layer": "integration"}
+{"taxonomy_key": "integration::collection workflows::same-value writes across containers emit no events and no runs", "layer": "integration"}
+{"taxonomy_key": "integration::tracking control workflows::untracked sections keep reaction expressions selective", "layer": "integration"}
+{"taxonomy_key": "integration::tracking control workflows::enforceActions observed only warns for writes to observed state", "layer": "integration"}
+{"taxonomy_key": "integration::tracking control workflows::a self-disposing reaction stops mid-stream while observers keep auditing", "layer": "integration"}
+{"taxonomy_key": "integration::tracking control workflows::a structurally compared box coordinates events and lifecycle hooks", "layer": "integration"}
+{"taxonomy_key": "integration::end-to-end workflows::an inventory store lifecycle keeps every projection in agreement", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a guarded ledger enforces rules through interception while a promise watches the balance", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a catalog sync propagates one source of truth across map, set and array views", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end-to-end workflows::a demand-driven cache suspends and resumes across observation cycles", "layer": "system_e2e"}

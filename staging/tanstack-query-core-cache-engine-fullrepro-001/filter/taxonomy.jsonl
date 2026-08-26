@@ -1,0 +1,98 @@
+{"taxonomy_key": "atomic::client and cache fundamentals::a client exposes the caches it was constructed with", "layer": "atomic"}
+{"taxonomy_key": "atomic::client and cache fundamentals::defaultOptions.queries are merged into every fetch", "layer": "atomic"}
+{"taxonomy_key": "atomic::client and cache fundamentals::clear empties both caches", "layer": "atomic"}
+{"taxonomy_key": "atomic::client and cache fundamentals::hashKey is deterministic and insensitive to property order", "layer": "atomic"}
+{"taxonomy_key": "atomic::client and cache fundamentals::partialMatchKey implements deep-prefix matching", "layer": "atomic"}
+{"taxonomy_key": "atomic::client and cache fundamentals::a cache entry exposes queryKey, queryHash, and state", "layer": "atomic"}
+{"taxonomy_key": "atomic::client and cache fundamentals::state fields reflect a successful fetch", "layer": "atomic"}
+{"taxonomy_key": "atomic::client and cache fundamentals::setQueryDefaults supplies a queryFn to key-only fetches", "layer": "atomic"}
+{"taxonomy_key": "atomic::client and cache fundamentals::setMutationDefaults lets mutate run with only a mutationKey", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::fetchQuery resolves with the queryFn's value", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::the queryFn context carries client, queryKey, meta, and signal", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::a failing fetch rejects with the error and records error state", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::cached data within staleTime is served without invoking queryFn", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::with the default staleTime of zero a repeat fetch refetches", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::ensureQueryData fetches only when no fresh data exists", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::prefetchQuery resolves undefined on success and on failure", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::concurrent fetches for one key share a single queryFn invocation", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::retry: 2 makes exactly three attempts and counts the failures", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::the default retry count in this environment is zero", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::cancelQueries aborts the signal and rejects with CancelledError", "layer": "atomic"}
+{"taxonomy_key": "atomic::fetching and query state::an unused entry is collected after its gcTime", "layer": "atomic"}
+{"taxonomy_key": "atomic::direct cache reads and writes::reads distinguish absent keys from present ones", "layer": "atomic"}
+{"taxonomy_key": "atomic::direct cache reads and writes::setQueryData accepts a plain value or a functional updater", "layer": "atomic"}
+{"taxonomy_key": "atomic::direct cache reads and writes::an updater returning undefined skips the write", "layer": "atomic"}
+{"taxonomy_key": "atomic::direct cache reads and writes::direct writes count as successful data updates", "layer": "atomic"}
+{"taxonomy_key": "atomic::direct cache reads and writes::getQueriesData returns key/data pairs for every match", "layer": "atomic"}
+{"taxonomy_key": "atomic::direct cache reads and writes::setQueriesData applies one updater to every match", "layer": "atomic"}
+{"taxonomy_key": "atomic::direct cache reads and writes::isFetching counts in-flight fetches and returns to zero", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::queryKey filters prefix-match and exact filters hash-match", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::type filters split entries by observer activity", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::invalidation marks entries and makes them match stale filters", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::fetchStatus filters select by fetching activity", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::predicate filters receive the query object", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::matchQuery makes the same decision as the cache", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::find is exact by default while findAll prefix-matches", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::refetchQueries refetches matches regardless of staleness", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::removeQueries deletes matching entries outright", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::resetQueries returns an inactive entry to its pristine state", "layer": "atomic"}
+{"taxonomy_key": "atomic::query filters and bulk operations::the cache event stream reports added, updated, and removed", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::subscribing triggers a fetch and delivers the success result", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::getCurrentResult reads the latest result synchronously", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::derived booleans agree with the underlying state", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::failure results expose failureCount and failureReason", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::select transforms the result while the cache keeps raw data", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::initialData seeds the cache and starts the observer at success", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::placeholderData shows immediately and never enters the cache", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::keepPreviousData carries prior data across a key change", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::enabled: false suppresses fetching while refetch still works", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::a deep-equal refetch keeps the previous data identity", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::unchanged sub-trees keep their identity through a partial change", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::replaceEqualDeep shares every deep-equal sub-tree", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::skipToken marks the query unrunnable", "layer": "atomic"}
+{"taxonomy_key": "atomic::query observers::setOptions re-targets the observer to another key", "layer": "atomic"}
+{"taxonomy_key": "atomic::infinite queries::fetchInfiniteQuery resolves parallel pages and pageParams arrays", "layer": "atomic"}
+{"taxonomy_key": "atomic::infinite queries::fetchNextPage appends the next page while one exists", "layer": "atomic"}
+{"taxonomy_key": "atomic::infinite queries::an undefined next param ends paging without growth", "layer": "atomic"}
+{"taxonomy_key": "atomic::infinite queries::fetchPreviousPage prepends the page and its parameter", "layer": "atomic"}
+{"taxonomy_key": "atomic::infinite queries::maxPages keeps a sliding window with aligned pageParams", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::a successful mutation runs its lifecycle in order with context", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::a failing mutation rejects and reports through onError then onSettled", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::getCurrentResult reports the run and reset returns to idle", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::mutation retry re-invokes the function and counts failures", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::the mutation cache records runs and answers find queries", "layer": "atomic"}
+{"taxonomy_key": "atomic::mutations::isMutating counts running mutations and filters by key", "layer": "atomic"}
+{"taxonomy_key": "atomic::serialization and managers::dehydrate includes only successful queries by default", "layer": "atomic"}
+{"taxonomy_key": "atomic::serialization and managers::a shouldDehydrateQuery predicate replaces the default", "layer": "atomic"}
+{"taxonomy_key": "atomic::serialization and managers::hydrate merges entries preserving data and timestamps", "layer": "atomic"}
+{"taxonomy_key": "atomic::serialization and managers::scheduled callbacks are deferred and run in submission order", "layer": "atomic"}
+{"taxonomy_key": "atomic::serialization and managers::focusManager reports and forces the focus flag", "layer": "atomic"}
+{"taxonomy_key": "atomic::serialization and managers::onlineManager reports and sets the online flag", "layer": "atomic"}
+{"taxonomy_key": "integration::cross-projection consistency::one entry's data agrees across reads, observers, cache queries, and pair listings", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection consistency::hash-equal keys address one entry, one fetch, and one query object", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection consistency::invalidateQueries touches exactly the entries matchQuery selects", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection consistency::removeQueries with a predicate deletes exactly the matchQuery set", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection consistency::the event stream journals what other projections observe", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection consistency::observer flags track entry state through a fetch lifecycle", "layer": "integration"}
+{"taxonomy_key": "integration::cross-projection consistency::after clear every projection reports emptiness", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::invalidateQueries refetches the actively observed entry", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::refetchType none marks an observed entry stale without fetching", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::a direct write is pushed to a subscribed observer immediately", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::a select observer re-derives its view from raw cache writes", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::placeholder data is observer-local and absent from cache projections", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::cancelQueries settles an observed fetch back to idle without error", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::retry progress is visible through observer failure fields", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::resetQueries reverts and refetches an actively observed entry", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::an observer fetch and an imperative fetch share one invocation", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::a direct write refreshes staleness for later fetches", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::activity counters partition concurrent queries and mutations", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::per-key defaults drive observers that carry only a key", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::mutation success handlers can write query state other views observe", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::the mutation cache indexes concurrent keyed runs", "layer": "integration"}
+{"taxonomy_key": "integration::observers with bulk operations and direct writes::maxPages window slides while the cache read stays aligned", "layer": "integration"}
+{"taxonomy_key": "integration::end to end workflows::a dehydrated cache round-trips into a fresh client with staleness intact", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end to end workflows::keepPreviousData bridges a paged browse while both entries stay cached", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end to end workflows::an infinite browse pages forward to exhaustion with consistent views", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end to end workflows::an optimistic update is rolled back through the mutation context on failure", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end to end workflows::an abandoned entry is garbage collected and journaled as removed", "layer": "system_e2e"}
+{"taxonomy_key": "integration::end to end workflows::a full invalidate cycle refreshes data and clears staleness everywhere", "layer": "system_e2e"}

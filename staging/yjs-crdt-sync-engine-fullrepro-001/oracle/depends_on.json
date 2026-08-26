@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::replica convergence::bidirectional update exchange converges text replicas": [
+      "atomic::shared text::insert places text at a character index",
+      "atomic::update exchange::a full update replays the document on a fresh replica",
+      "atomic::update exchange::applying the same update twice has no second effect"
+    ],
+    "integration::replica convergence::concurrent same-position text inserts stay intact and converge": [
+      "atomic::shared text::insert places text at a character index",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::replica convergence::concurrent map writes converge on one of the written values": [
+      "atomic::shared maps::set returns the value and get reads it back",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::replica convergence::concurrent array insertions preserve every item exactly once": [
+      "atomic::shared arrays::insert, push, and unshift place items in order",
+      "atomic::shared arrays::toArray and toJSON convert content, toJSON recursing into shared types",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::replica convergence::an update with missing dependencies is buffered until they arrive": [
+      "atomic::update exchange::encoding against a state vector yields only the missing changes",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::replica convergence::shuffled and duplicated update sets converge to the same content": [
+      "atomic::documents::a transaction batches mutations into one update event",
+      "atomic::update exchange::applying the same update twice has no second effect",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::replica convergence::state-vector diff exchange syncs two diverged replicas minimally": [
+      "atomic::update exchange::encodeStateVector returns a binary version descriptor",
+      "atomic::update exchange::encoding against a state vector yields only the missing changes",
+      "atomic::shared maps::toJSON converts nested shared types recursively"
+    ],
+    "integration::replica convergence::merge and diff over per-transaction updates equal direct replay": [
+      "atomic::update exchange::mergeUpdates combines payloads into one equivalent update",
+      "atomic::update exchange::diffUpdate extracts the changes a state vector is missing",
+      "atomic::update exchange::encodeStateVectorFromUpdate matches the source document's state vector"
+    ],
+    "integration::replica convergence::v1 and v2 histories replay to identical replicas": [
+      "atomic::update exchange::the v2 encoding replays identically",
+      "atomic::update exchange::format conversions preserve replay in both directions",
+      "atomic::shared text::format applies attributes visible in toDelta"
+    ],
+    "integration::replica convergence::per-transaction update events replayed in order rebuild the peer": [
+      "atomic::documents::a transaction batches mutations into one update event",
+      "atomic::update exchange::a full update replays the document on a fresh replica",
+      "atomic::shared arrays::insert, push, and unshift place items in order"
+    ],
+    "integration::events across replicas and nesting::remote transactions fire observers with local false and the applyUpdate origin": [
+      "atomic::events and observation::observe fires once per transaction with the event and transaction",
+      "atomic::events and observation::transactions report origin and local for local edits",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::events across replicas and nesting::observeDeep reports paths across map and array nesting": [
+      "atomic::events and observation::a directly observed type reports itself with an empty path",
+      "atomic::shared maps::pre-integration mutations become observable after insertion",
+      "atomic::shared arrays::nested standalone types integrate through array insertion"
+    ],
+    "integration::events across replicas and nesting::unobserveDeep stops nested delivery": [
+      "atomic::events and observation::unobserve stops event delivery",
+      "atomic::shared maps::pre-integration mutations become observable after insertion"
+    ],
+    "integration::events across replicas and nesting::an array event delta replayed over the pre-state yields the post-state": [
+      "atomic::events and observation::array events expose a retain/insert/delete delta",
+      "atomic::shared arrays::delete removes one item by default and a count when given",
+      "atomic::shared arrays::insert, push, and unshift place items in order"
+    ],
+    "integration::events across replicas and nesting::map key records agree with pre- and post-transaction values": [
+      "atomic::events and observation::map events report add, update, and delete actions with old values",
+      "atomic::events and observation::key records describe the net transaction effect from its start state",
+      "atomic::shared maps::toJSON converts nested shared types recursively"
+    ],
+    "integration::events across replicas and nesting::nested standalone types replicate wholesale through one update": [
+      "atomic::shared maps::pre-integration mutations become observable after insertion",
+      "atomic::shared text::a seeded standalone text materializes on integration",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::events across replicas and nesting::formatting applied on one replica appears in the peer's delta view": [
+      "atomic::shared text::format applies attributes visible in toDelta",
+      "atomic::update exchange::encoding against a state vector yields only the missing changes"
+    ],
+    "integration::undo, snapshots, and positions across documents::undo reverts local content while preserving interleaved remote content": [
+      "atomic::undo and redo::undo reverts and redo restores content",
+      "atomic::undo and redo::by default only untagged transactions are tracked",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::undo, snapshots, and positions across documents::undone state propagates to peers like any other edit": [
+      "atomic::undo and redo::stopCapturing starts a fresh entry",
+      "atomic::undo and redo::undo reverts and redo restores content",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::undo, snapshots, and positions across documents::tracked origins separate user edits from provider updates": [
+      "atomic::undo and redo::trackedOrigins limits tracking to the listed origins",
+      "atomic::undo and redo::undoing map changes restores previous values",
+      "atomic::documents::transact returns the callback's return value"
+    ],
+    "integration::undo, snapshots, and positions across documents::stack item meta persists from added to popped for cursor restoration": [
+      "atomic::undo and redo::captureTimeout zero keeps each transaction as its own entry",
+      "atomic::relative positions::a position resolves to its index and anchored type"
+    ],
+    "integration::undo, snapshots, and positions across documents::snapshot restoration reproduces the version while history moves on": [
+      "atomic::snapshots::snapshots encode, decode, and compare by version",
+      "atomic::snapshots::createDocFromSnapshot restores the captured content",
+      "atomic::snapshots::snapshotContainsUpdate distinguishes covered from uncovered updates"
+    ],
+    "integration::undo, snapshots, and positions across documents::relative positions track their character across remote edits and codecs": [
+      "atomic::relative positions::a position resolves to its index and anchored type",
+      "atomic::relative positions::JSON round trips compare equal",
+      "atomic::relative positions::binary round trips resolve to the same absolute position",
+      "atomic::update exchange::encoding against a state vector yields only the missing changes"
+    ],
+    "integration::undo, snapshots, and positions across documents::map undo interleaved with remote updates keeps remote keys": [
+      "atomic::undo and redo::undoing map changes restores previous values",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::collaborative sessions end to end::two clients edit, sync, and undo with cursors surviving": [
+      "atomic::shared text::insert places text at a character index",
+      "atomic::undo and redo::undo reverts and redo restores content",
+      "atomic::relative positions::a position resolves to its index and anchored type",
+      "atomic::update exchange::a full update replays the document on a fresh replica"
+    ],
+    "integration::collaborative sessions end to end::offline client catches up through a merging relay": [
+      "atomic::update exchange::mergeUpdates combines payloads into one equivalent update",
+      "atomic::update exchange::diffUpdate extracts the changes a state vector is missing",
+      "atomic::update exchange::encodeStateVector returns a binary version descriptor",
+      "atomic::documents::a transaction batches mutations into one update event"
+    ],
+    "integration::collaborative sessions end to end::a versioned document restores an old release while editing continues": [
+      "atomic::snapshots::snapshots encode, decode, and compare by version",
+      "atomic::snapshots::createDocFromSnapshot restores the captured content",
+      "atomic::snapshots::snapshotContainsUpdate distinguishes covered from uncovered updates",
+      "atomic::shared text::delete removes a range and clamps past the end"
+    ],
+    "integration::collaborative sessions end to end::a shared board converges across three replicas with deep observers": [
+      "atomic::shared maps::pre-integration mutations become observable after insertion",
+      "atomic::shared arrays::nested standalone types integrate through array insertion",
+      "atomic::update exchange::encoding against a state vector yields only the missing changes",
+      "atomic::events and observation::a directly observed type reports itself with an empty path"
+    ]
+  }
+}

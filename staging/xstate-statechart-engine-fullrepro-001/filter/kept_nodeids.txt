@@ -1,0 +1,96 @@
+atomic::machine definitions::a machine interprets from a plain configuration object
+atomic::machine definitions::named guards resolve from the second createMachine argument
+atomic::machine definitions::provide returns a machine with overriding implementations
+atomic::machine definitions::setup binds named actions and guards with params
+atomic::machine definitions::an invalid transition target throws at machine creation
+atomic::machine definitions::a compound state without an initial key throws at machine creation
+atomic::machine definitions::a context factory receives the actor input
+atomic::actor lifecycle and snapshots::send transitions and updates the snapshot
+atomic::actor lifecycle and snapshots::event payload properties reach guards and actions
+atomic::actor lifecycle and snapshots::events with no matching transition are ignored
+atomic::actor lifecycle and snapshots::stop freezes the actor with a stopped status
+atomic::actor lifecycle and snapshots::matches accepts full and partial state values
+atomic::actor lifecycle and snapshots::can reports whether an event would select a transition
+atomic::actor lifecycle and snapshots::hasTag reflects tags of active states
+atomic::actor lifecycle and snapshots::matchesState tests refinement of plain state values
+atomic::actor lifecycle and snapshots::a top-level leaf renders a string value and a compound renders an object
+atomic::actor lifecycle and snapshots::each step returns a fresh snapshot object
+atomic::transition selection::an exact descriptor matches its event type
+atomic::transition selection::descriptor specificity ranks exact over partial wildcard over star
+atomic::transition selection::candidates evaluate in document order with guard fall-through
+atomic::transition selection::an active child transition overrides the ancestor for the same event
+atomic::transition selection::an ancestor handles events no descendant handles
+atomic::transition selection::a bare string target names a sibling state
+atomic::transition selection::a dot-prefixed target names a child of the source
+atomic::transition selection::a hash-prefixed target resolves by absolute id
+atomic::transition selection::a targetless transition runs actions without changing state
+atomic::transition selection::a self-targeting transition does not re-enter by default
+atomic::transition selection::reenter true forces exit and re-entry of the source
+atomic::transition selection::always transitions resolve immediately on entry
+atomic::transition selection::raise enqueues an internal event processed before external events
+atomic::transition selection::multiple raised events process in first-in first-out order
+atomic::actions and context::actions run as exit then transition then entry
+atomic::actions and context::start runs entry actions from the machine node inward
+atomic::actions and context::assign accepts property updaters and plain values
+atomic::actions and context::assign accepts a single function returning partial context
+atomic::actions and context::sequential assigns each see the previous result
+atomic::actions and context::an exit assign is visible to transition and entry actions
+atomic::actions and context::entry actions observe the event that caused the entry
+atomic::actions and context::raised event payloads reach the triggered transition
+atomic::guards::an inline guard blocks the transition when false
+atomic::guards::guards read the event payload
+atomic::guards::and or and not combine guards
+atomic::guards::stateIn gates a transition on another parallel region
+atomic::guards::stateIn accepts an absolute id string
+atomic::guards::can returns false when every candidate is guarded off
+atomic::hierarchy parallel and history::entering a compound state descends through initial defaults
+atomic::hierarchy parallel and history::matches accepts every prefix of the active path
+atomic::hierarchy parallel and history::a parallel state activates every region
+atomic::hierarchy parallel and history::a finished region keeps its final key while others continue
+atomic::hierarchy parallel and history::shallow history re-enters the remembered child through its initial defaults
+atomic::hierarchy parallel and history::deep history restores the remembered leaf configuration
+atomic::hierarchy parallel and history::history without a stored configuration enters the default initial path
+atomic::hierarchy parallel and history::history memory updates on every parent exit
+atomic::final states and output::a top-level final state completes the machine
+atomic::final states and output::a compound onDone fires when its child reaches final
+atomic::final states and output::a parallel onDone fires only when every region is final
+atomic::final states and output::a final state's output reaches onDone as event.output
+atomic::final states and output::machine output maps the completion event and defaults to undefined
+atomic::final states and output::toPromise resolves with the snapshot output at completion
+atomic::timed transitions::an after transition fires at its threshold and not before
+atomic::timed transitions::delays accumulate across several increments
+atomic::timed transitions::exiting a state cancels its pending timer
+atomic::timed transitions::re-entering a state re-arms its timer from zero
+atomic::timed transitions::one large increment advances a delayed chain by a single step
+atomic::pure stepping and persistence::getInitialSnapshot resolves the initial configuration and context
+atomic::pure stepping and persistence::getInitialSnapshot passes input to the context factory
+atomic::pure stepping and persistence::getNextSnapshot returns the successor without mutating its input
+atomic::pure stepping and persistence::pure steps apply assigns but never run side-effecting actions
+atomic::pure stepping and persistence::pure steps process raised events and always transitions to quiescence
+atomic::pure stepping and persistence::stepping a done snapshot keeps it done and unchanged
+atomic::pure stepping and persistence::a persisted snapshot restores value and context in a new actor
+integration::cross-projection invariants::actor interpretation and pure stepping agree over a mixed event sequence
+integration::cross-projection invariants::a false can implies the event leaves value and context unchanged
+integration::cross-projection invariants::matches agrees with matchesState across a nested run
+integration::cross-projection invariants::a resumed actor continues exactly like the original
+integration::guarded routing workflows::a triage machine routes by combinator guards over payload and context
+integration::guarded routing workflows::provide swaps a named guard without touching the source machine
+integration::guarded routing workflows::wildcard descriptors and child precedence route a hierarchical dispatcher
+integration::guarded routing workflows::raised events cascade through guards to a quiescent state
+integration::parallel coordination::stateIn gates one region on another across a workflow
+integration::parallel coordination::regions finish independently and onDone fires only at full completion
+integration::parallel coordination::independent timers in parallel regions fire from one simulated clock
+integration::history workflows::shallow and deep history nodes in one parent restore different depths
+integration::history workflows::deep history memory survives a persistence round trip
+integration::timed workflows::a reenter self-transition re-arms the timer while a plain one does not
+integration::timed workflows::an escalation ladder climbs one rung per accumulated threshold
+integration::completion pipelines::final output routes through guarded onDone into machine output
+integration::completion pipelines::toPromise observes a completion driven by raised events
+integration::completion pipelines::input shapes context and the completion output derives from it
+integration::pure stepping pipelines::a pure fold reaches done with computed output
+integration::pure stepping pipelines::pure steps replay a raise pipeline applying assigns but no effects
+integration::persistence workflows::a restored snapshot answers tags, can and matches like the original
+integration::end-to-end workflows::an order fulfilment machine runs from input to completion across every projection
+integration::end-to-end workflows::a batch pipeline persists mid-flight and finishes on a simulated clock
+integration::end-to-end workflows::a launch checklist coordinates parallel regions, timers and completion output
+integration::end-to-end workflows::pure stepping replays an actor's full run to an identical terminal snapshot

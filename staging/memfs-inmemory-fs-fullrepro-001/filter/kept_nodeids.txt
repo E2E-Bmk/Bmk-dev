@@ -1,0 +1,99 @@
+atomic::volumes and snapshots::a new volume is empty apart from the root directory
+atomic::volumes and snapshots::fromJSON materializes files, parents, and Buffer contents
+atomic::volumes and snapshots::a null value in fromJSON creates an empty directory
+atomic::volumes and snapshots::instance fromJSON resolves relative keys against the cwd argument
+atomic::volumes and snapshots::fromNestedJSON treats inner objects as directories
+atomic::volumes and snapshots::toJSON flattens files, marks empty dirs null, and filters by subtree
+atomic::volumes and snapshots::reset discards every node
+atomic::volumes and snapshots::the default volume backs the fs export and top-level named exports
+atomic::volumes and snapshots::memfs() returns a seeded fs and vol pair
+atomic::volumes and snapshots::createFsFromVolume wraps an existing volume in both directions
+atomic::volumes and snapshots::distinct volumes share no state
+atomic::volumes and snapshots::symbolic links are absent from toJSON while hard links appear per name
+atomic::files and directories::writeFileSync stores strings readable back through either encoding form
+atomic::files and directories::readFileSync without encoding returns a Buffer
+atomic::files and directories::writeFileSync decodes string data through the encoding option
+atomic::files and directories::writeFileSync with flag a appends instead of replacing
+atomic::files and directories::appendFileSync appends to existing files and creates missing ones
+atomic::files and directories::writes reject missing parents and file path components
+atomic::files and directories::reading a directory as a file raises EISDIR
+atomic::files and directories::non-recursive mkdir rejects missing parents and existing targets
+atomic::files and directories::recursive mkdir returns the full target path or undefined when present
+atomic::files and directories::mkdtempSync appends six alphanumeric characters to the prefix
+atomic::files and directories::readdirSync lists entry names lexicographically sorted
+atomic::files and directories::withFileTypes returns Dirent objects with parent paths and predicates
+atomic::files and directories::recursive readdir returns descendant paths relative to the directory
+atomic::files and directories::readdirSync rejects files with ENOTDIR and missing paths with ENOENT
+atomic::files and directories::unlinkSync removes files but rejects directories with EPERM
+atomic::files and directories::rmdirSync removes empty directories only
+atomic::files and directories::rmSync with recursive removes a whole subtree
+atomic::files and directories::rmSync guards: missing path, force, and directory without recursive
+atomic::files and directories::renameSync replaces destinations and rejects missing endpoints
+atomic::files and directories::renameSync moves a directory subtree and preserves node identity
+atomic::files and directories::copyFileSync copies content into a default-mode node and honors COPYFILE_EXCL
+atomic::files and directories::cpSync recursive performs a deep copy of a tree
+atomic::files and directories::cpSync guards: directory without recursive and errorOnExist
+atomic::files and directories::truncateSync shrinks and zero-extends file content
+atomic::files and directories::existence checks report booleans and access raises ENOENT when missing
+atomic::metadata and permissions::stats expose size, kind predicates, identity and timestamps
+atomic::metadata and permissions::fstatSync reports on an open descriptor
+atomic::metadata and permissions::stat options: bigint fields and throwIfNoEntry
+atomic::metadata and permissions::size tracks writes, appends and truncation
+atomic::metadata and permissions::created nodes carry the default permission bits
+atomic::metadata and permissions::explicit mode options are honored on creation
+atomic::metadata and permissions::chmod feeds accessSync capability checks
+atomic::metadata and permissions::reading a mode-denied file raises EACCES
+atomic::metadata and permissions::utimesSync and futimesSync store the given times
+atomic::links and path resolution::symlinkSync stores a target returned verbatim by readlinkSync
+atomic::links and path resolution::links resolve at intermediate path components
+atomic::links and path resolution::statSync follows links while lstatSync reports the link node
+atomic::links and path resolution::realpathSync follows chains of links transitively
+atomic::links and path resolution::readlinkSync on a regular file raises EINVAL
+atomic::links and path resolution::a dangling link hides from exists until its target appears
+atomic::links and path resolution::unlinking a symlink leaves its target intact
+atomic::links and path resolution::hard links share identity and content in both directions
+atomic::links and path resolution::linkSync rejects an existing destination and a missing source
+atomic::file descriptors::openSync returns distinct numeric descriptors
+atomic::file descriptors::open flag guards: r and r+ need the file, wx refuses it, w truncates
+atomic::file descriptors::flag a appends every write at the end
+atomic::file descriptors::readSync copies bytes at an absolute position and reports the count
+atomic::file descriptors::null-position reads advance the descriptor position sequentially
+atomic::file descriptors::writeSync reports bytes written and overwrites at a position
+atomic::file descriptors::ftruncateSync truncates through the descriptor
+atomic::file descriptors::descriptor writes are immediately visible to path reads
+atomic::file descriptors::stale descriptors raise EBADF everywhere
+atomic::callbacks, promises, and streams::callbacks deliver values on success and codes on failure
+atomic::callbacks, promises, and streams::callback writes and mkdirs mutate the tree
+atomic::callbacks, promises, and streams::exists delivers a single boolean to its callback
+atomic::callbacks, promises, and streams::the promises API mirrors operations and rejection codes
+atomic::callbacks, promises, and streams::a FileHandle reads, stats and closes
+atomic::callbacks, promises, and streams::FileHandle writes report bytesWritten and store the bytes
+atomic::callbacks, promises, and streams::write streams persist on finish and read streams honor encoding
+atomic::callbacks, promises, and streams::a read stream for a missing path emits ENOENT
+atomic::error object shape::failures carry code and path properties
+integration::snapshot agreement::a tree built by operations snapshots and restores faithfully
+integration::snapshot agreement::every toJSON path reads back exactly and every plain file appears
+integration::snapshot agreement::restoring a snapshot flattens links into independent plain files
+integration::snapshot agreement::nested and flat construction of the same tree agree in every view
+integration::cross-projection content agreement::bytes written through one projection are identical through all readers
+integration::cross-projection content agreement::positional descriptor patches are seen by snapshot, promise and stat views
+integration::cross-projection content agreement::truncate, append and descriptor writes keep sizes consistent everywhere
+integration::cross-projection content agreement::piping a read stream into a write stream copies a file
+integration::cross-projection content agreement::one file written by wrapper, promise and callback stays coherent
+integration::directory and metadata agreement::readdir names, dirents and lstat predicates agree
+integration::directory and metadata agreement::hard-linked names agree across stats, reads and listings
+integration::directory and metadata agreement::a rename is observed atomically by every projection
+integration::directory and metadata agreement::permission changes gate every read projection consistently
+integration::directory and metadata agreement::sync, callback and promise forms report the same missing-path code
+integration::links across projections::writes through a directory symlink land in the real tree
+integration::links across projections::a dangling link joins the tree when its target arrives via promises
+integration::links across projections::hardlink content flows both ways across sync and promise writers
+integration::instances and isolation::memfs pairs, wrappers and the default volume stay independent
+integration::instances and isolation::a deep copy between volumes via snapshot has independent state
+integration::instances and isolation::cp recursive inside one volume then divergence leaves the copy alone
+integration::instances and isolation::mkdtemp workspaces live a full create-use-destroy cycle
+integration::instances and isolation::mixed failure codes surface correctly across one populated tree
+integration::end-to-end workflows::a project scaffold is built, linked, verified and snapshotted
+integration::end-to-end workflows::an editor session mixes descriptors, promises, truncation and streams
+integration::end-to-end workflows::a backup is exported, reorganized in a second volume and verified
+integration::end-to-end workflows::a content pipeline decodes, guards and republishes across projections

@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::an inserted document is visible across count getByID search facets and groups": [
+      "atomic::insert uses the document id property as the stored id",
+      "atomic::count reflects the number of stored documents",
+      "atomic::enum facets report distinct value buckets and their count"
+    ],
+    "integration::a removed document disappears from every projection simultaneously": [
+      "atomic::remove returns true for a present id and decrements count",
+      "atomic::enum facets report distinct value buckets and their count",
+      "atomic::groupBy partitions matched documents and bounds results per group"
+    ],
+    "integration::count stays the unsliced total across limit offset preflight and distinct": [
+      "atomic::omitting the term matches every stored document",
+      "atomic::limit and offset slice ranked hits while count stays total",
+      "atomic::preflight reports the matched count with empty hits",
+      "atomic::distinctOn keeps the first hit per distinct value while count stays total"
+    ],
+    "integration::hit documents deep-equal getByID lookups": [
+      "atomic::search result carries hits with id score and document plus count and elapsed",
+      "atomic::getByID returns undefined for an unknown id"
+    ],
+    "integration::facet bucket totals equal the matched documents carrying the property": [
+      "atomic::enum facets report distinct value buckets and their count",
+      "atomic::boolean facets bucket documents under true and false string keys"
+    ],
+    "integration::update redirects full-text matching filters and facets to the new content": [
+      "atomic::update replaces the stored document and returns the new id",
+      "atomic::number filters support comparison operators",
+      "atomic::boolean facets bucket documents under true and false string keys"
+    ],
+    "integration::save and load preserve count lookups and ranked order": [
+      "atomic::save returns a JSON-serializable snapshot",
+      "atomic::count reflects the number of stored documents",
+      "atomic::term matching is case-insensitive"
+    ],
+    "integration::documents inserted after load join restored ones in results": [
+      "atomic::save returns a JSON-serializable snapshot",
+      "atomic::insert uses the document id property as the stored id",
+      "atomic::enum facets report distinct value buckets and their count"
+    ],
+    "integration::groupBy places every matched document in exactly one group": [
+      "atomic::groupBy partitions matched documents and bounds results per group"
+    ],
+    "integration::term and where filters combine conjunctively": [
+      "atomic::term matching is case-insensitive",
+      "atomic::boolean filters accept a direct boolean value"
+    ],
+    "integration::multiple where clauses form a conjunction": [
+      "atomic::boolean filters accept a direct boolean value",
+      "atomic::number filters support comparison operators"
+    ],
+    "integration::facets aggregate only over filtered matches": [
+      "atomic::enum filters support eq in and nin operators",
+      "atomic::boolean facets bucket documents under true and false string keys"
+    ],
+    "integration::boost reorders title and body matches without changing the match set": [
+      "atomic::search result carries hits with id score and document plus count and elapsed",
+      "atomic::a query token matches indexed tokens by prefix"
+    ],
+    "integration::threshold composes with filters": [
+      "atomic::threshold zero returns only documents matching every token",
+      "atomic::enum filters support eq in and nin operators"
+    ],
+    "integration::sortBy with distinctOn keeps the first sorted hit per distinct value": [
+      "atomic::sortBy orders hits by a number property in both directions",
+      "atomic::distinctOn keeps the first hit per distinct value while count stays total"
+    ],
+    "integration::offset windows partition the sorted hit sequence": [
+      "atomic::sortBy orders hits by a number property in both directions",
+      "atomic::limit and offset slice ranked hits while count stays total"
+    ],
+    "integration::insertMultiple and repeated insert produce equivalent projections": [
+      "atomic::insertMultiple returns the assigned ids in document order",
+      "atomic::insert uses the document id property as the stored id"
+    ],
+    "integration::a failed search leaves the instance usable": [
+      "atomic::filtering on an unknown property raises UNKNOWN_FILTER_PROPERTY",
+      "atomic::count reflects the number of stored documents"
+    ],
+    "integration::a rejected insert leaves all projections unchanged": [
+      "atomic::insert rejects a document whose value contradicts the schema type",
+      "atomic::count reflects the number of stored documents"
+    ],
+    "integration::upsert replacement makes stale content unmatchable": [
+      "atomic::upsert replaces an existing document without changing the count",
+      "atomic::term matching is case-insensitive"
+    ],
+    "integration::removeMultiple recomputes facets and groups": [
+      "atomic::removeMultiple returns the number of documents actually removed",
+      "atomic::enum facets report distinct value buckets and their count",
+      "atomic::groupBy partitions matched documents and bounds results per group"
+    ],
+    "integration::nested dot path agrees across where facets and sortBy": [
+      "atomic::nested dot path properties participate in filters",
+      "atomic::number facets bucket matched documents into inclusive ranges",
+      "atomic::sortBy orders hits by a number property in both directions"
+    ],
+    "integration::a loaded instance accepts update and remove like a native one": [
+      "atomic::save returns a JSON-serializable snapshot",
+      "atomic::update replaces the stored document and returns the new id",
+      "atomic::remove returns true for a present id and decrements count"
+    ],
+    "integration::distinct results survive a save load round trip": [
+      "atomic::save returns a JSON-serializable snapshot",
+      "atomic::distinctOn keeps the first hit per distinct value while count stays total"
+    ],
+    "integration::multi-token queries rank documents matching more tokens first": [
+      "atomic::default threshold returns documents matching any token",
+      "atomic::search result carries hits with id score and document plus count and elapsed"
+    ],
+    "integration::exact and threshold compose on the same query": [
+      "atomic::exact matching excludes prefix-only matches",
+      "atomic::threshold zero returns only documents matching every token"
+    ]
+  }
+}

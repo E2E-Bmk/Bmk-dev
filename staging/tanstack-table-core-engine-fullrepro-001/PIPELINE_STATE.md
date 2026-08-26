@@ -1,17 +1,16 @@
 # PIPELINE STATE — tanstack-table-core-engine-fullrepro-001
 
-state:      S3B_GENERATE
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
 language:   typescript
+functions_in_scope: 0 (Track A empty: all 63 upstream files import '../../../../src' and/or internal '../../../../src/static-functions' plus tests/fixtures + tests/helpers)
+functions_kept: 137 (112 atomic / 21 integration / 4 system_e2e)
+functions_excluded: 0 (Track A)
+oracle_count: 137
 updated:    2026-08-26
-
-todo:
-- [ ] Generate oracle tests from reference observation (execute 9.1.2, assert observed values)
-- [ ] Fill spec_test_map rows per test as generated
-- [ ] Per-section minimums + global floor (>=60; target ~115)
 
 ## History
 
@@ -25,3 +24,6 @@ todo:
 | 6 | 2026-08-26 | S3A_IMPORT_AUDIT | S3A_REWRITE | audit: all 63 upstream .test.ts files import '../../../../src' and/or '../../../../src/static-functions' plus tests/fixtures + tests/helpers; zero files import the published package; static-functions subpath not present in published exports map as a public API surface for tests |
 | 7 | 2026-08-26 | S3A_REWRITE | S3B_TRIGGER | rewrite_audit.md written: 63/63 files discarded (100% > 50% early trigger); rewrite impossible without reproducing upstream's internal static-function architecture, which Q1 forbids |
 | 8 | 2026-08-26 | S3B_TRIGGER | S3B_GENERATE | coverage step adapted for TS precedent (no Python coverage harness for vitest here): generation targets derived from spec section quota table + probe evidence instead of coverage_gaps.txt, matching immer/yjs precedent |
+| 9 | 2026-08-26 | S3B_GENERATE | S3B_REFERENCE | generated 137 tests (112 atomic / 21 integration / 4 system_e2e) across 4 vitest files; pinned release passes 137/137 local vitest; tsc --noEmit clean; 2 spec claims corrected from execution (no-id column error is lazy at column-tree materialization, not at constructTable; getSelectedRowModel is core-model based with getFilteredSelectedRowModel carrying the filtered intersection) plus 2 expected-value fixes observed from the reference (stable group sort tie order, facet min-max under other-column filters) |
+| 10 | 2026-08-26 | S3B_REFERENCE | S3B_DUMMY | inert stub (no-throw construction, empty row models, no-op setters, empty store/atoms, undefined getters; covers root + store-reactivity-bindings subpath) fails 137/137; 5 tests strengthened with concrete assertions after early stub runs exposed vacuous passes (enableGlobalFilter exclusion, pinning membership, footer mirror, colSpan sums, some-rows flag) |
+| 11 | 2026-08-26 | S3B_DUMMY | S3_DONE | lint LINT_PASS (fresh, newer than all oracle files); static verify STATIC_VALID; artifacts written (kept_nodeids 137, taxonomy, spec_test_map 137 covered, reference_score 137/137, depends_on 25/25); atomic positive share 97%, zero no_check; one Appendix B sentence rephrased to drop a candidate-visible term; packet staged |

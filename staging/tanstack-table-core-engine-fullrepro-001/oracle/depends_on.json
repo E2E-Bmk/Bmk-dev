@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "depends_on": {
+    "integration::pipeline integration::filtering, sorting, and pagination compose in pipeline order": [
+      "atomic::column and global filtering::a string column filters by case-insensitive substring by default",
+      "atomic::row sorting::setSorting orders rows ascending and descending",
+      "atomic::row pagination::the default page holds the first ten rows",
+      "atomic::row model pipeline::getRowModel returns the final registered stage"
+    ],
+    "integration::pipeline integration::every pre-model equals the previous stage output across an active pipeline": [
+      "atomic::row model pipeline::each pre-model accessor returns the previous stage's output",
+      "atomic::row model pipeline::row models expose rows, flatRows, and rowsById"
+    ],
+    "integration::pipeline integration::state transitions stay consistent across store, atoms, and projections": [
+      "atomic::state and reactivity::the store snapshot agrees with every per-key atom",
+      "atomic::state and reactivity::projections reflect a setter transition on the next read",
+      "atomic::state and reactivity::store.subscribe observes state transitions"
+    ],
+    "integration::pipeline integration::grouping and sorting interact: groups sort by aggregated values": [
+      "atomic::grouping and aggregation::grouping folds rows into one group row per distinct value",
+      "atomic::grouping and aggregation::a named aggregation summarizes group values",
+      "atomic::row sorting::setSorting orders rows ascending and descending"
+    ],
+    "integration::pipeline integration::expanding grouped rows surfaces leaf rows through pagination": [
+      "atomic::grouping and aggregation::group rows expose grouping metadata and leaf rows",
+      "atomic::row expanding::toggleExpanded surfaces a row's children in the expanded model",
+      "atomic::row pagination::page count and row count derive from the pre-paginated model"
+    ],
+    "integration::cross-view consistency::hiding a column updates leaf views, cells, and header spans together": [
+      "atomic::column visibility and ordering::false in columnVisibility hides; absent ids stay visible",
+      "atomic::column visibility and ordering::visible cells track visible leaf columns",
+      "atomic::headers and footer groups::colSpan values in every group sum to the visible leaf count"
+    ],
+    "integration::cross-view consistency::pinning regions partition the visible leaves under visibility changes": [
+      "atomic::column pinning::setColumnPinning assigns start and end regions",
+      "atomic::column pinning::pinning never changes visible leaf membership",
+      "atomic::column visibility and ordering::toggleVisibility flips one column; toggleAllColumnsVisible writes all"
+    ],
+    "integration::cross-view consistency::selection membership survives filtering; the filtered variant intersects": [
+      "atomic::row selection::toggleAllRowsSelected selects everything and no argument flips",
+      "atomic::row selection::getSelectedRowModel returns exactly the selected rows",
+      "atomic::column and global filtering::a string column filters by case-insensitive substring by default"
+    ],
+    "integration::cross-view consistency::group leaf rows partition the filtered set and aggregate consistently": [
+      "atomic::grouping and aggregation::group rows expose grouping metadata and leaf rows",
+      "atomic::grouping and aggregation::auto aggregation resolves numeric columns to sum when registered",
+      "atomic::column and global filtering::a number column filters by inclusive range with open bounds by default"
+    ],
+    "integration::cross-view consistency::page arithmetic tracks the filtered row count": [
+      "atomic::row pagination::page count and row count derive from the pre-paginated model",
+      "atomic::row pagination::page options and can-navigate flags follow the page window",
+      "atomic::column and global filtering::per-column filter accessors upsert and report the entry"
+    ],
+    "integration::cross-view consistency::facets react to other columns' filters but not their own": [
+      "atomic::column faceting::a column's faceted model ignores its own filter but applies others",
+      "atomic::column faceting::faceted unique values map each distinct value to its count",
+      "atomic::column faceting::faceted min-max returns the value bounds"
+    ],
+    "integration::state workflows::controlled and uncontrolled slices coexist": [
+      "atomic::state and reactivity::a controlled slice overrides the internally stored value",
+      "atomic::state and reactivity::setters accept a plain value or an updater of the previous value"
+    ],
+    "integration::state workflows::initialState seeds several slices and resets return to it": [
+      "atomic::construction and composition::initialState values overlay the feature defaults",
+      "atomic::state and reactivity::reset with no argument restores the initialState value",
+      "atomic::state and reactivity::reset with true restores the feature default"
+    ],
+    "integration::state workflows::one subscriber observes transitions from several features": [
+      "atomic::state and reactivity::store.subscribe observes state transitions",
+      "atomic::state and reactivity::the store snapshot agrees with every per-key atom"
+    ],
+    "integration::state workflows::swapping data through setOptions preserves active state": [
+      "atomic::construction and composition::setOptions with a new data array re-derives the row models",
+      "atomic::state and reactivity::projections reflect a setter transition on the next read"
+    ],
+    "integration::state workflows::custom row ids key selection and expansion state": [
+      "atomic::construction and composition::getRowId customizes row identity",
+      "atomic::row selection::toggleSelected marks a row in the rowSelection slice",
+      "atomic::row expanding::toggleExpanded surfaces a row's children in the expanded model"
+    ],
+    "integration::feature workflows::global and column filters intersect before sorting applies": [
+      "atomic::column and global filtering::global filtering keeps rows where any filterable column matches",
+      "atomic::column and global filtering::a string column filters by case-insensitive substring by default",
+      "atomic::row sorting::setSorting orders rows ascending and descending"
+    ],
+    "integration::feature workflows::a registry extension, ordering, and visibility compose on one table": [
+      "atomic::row sorting::a custom registry entry is reachable by name",
+      "atomic::column visibility and ordering::columnOrder lists ids first; unlisted columns keep definition order",
+      "atomic::column visibility and ordering::false in columnVisibility hides; absent ids stay visible"
+    ],
+    "integration::feature workflows::the column helper drives a grouped table end to end": [
+      "atomic::columns and the column tree::createColumnHelper builds accessor, display, and group definitions",
+      "atomic::columns and the column tree::a columns array creates a group column with child columns",
+      "atomic::headers and footer groups::nested definitions produce one group per depth with spans and placeholders"
+    ],
+    "integration::feature workflows::row lookup stays coherent across pipeline stages": [
+      "atomic::rows and cells::getRow resolves a known id and throws for an unknown id",
+      "atomic::grouping and aggregation::two-level grouping appends deeper ids with the > separator",
+      "atomic::grouping and aggregation::group rows expose grouping metadata and leaf rows"
+    ],
+    "integration::feature workflows::sort auto-inference picks distinct comparators per column type": [
+      "atomic::row sorting::auto resolution picks datetime ordering for Date columns",
+      "atomic::row sorting::auto resolution orders mixed alphanumeric strings numerically",
+      "atomic::row sorting::numeric columns and sortDescFirst columns start their cycle descending"
+    ],
+    "integration::system workflows::a full dashboard session: filter, group, aggregate, expand, select, paginate": [
+      "atomic::column and global filtering::a string column filters by case-insensitive substring by default",
+      "atomic::grouping and aggregation::a named aggregation summarizes group values",
+      "atomic::row expanding::toggleExpanded surfaces a row's children in the expanded model",
+      "atomic::row selection::toggleSelected marks a row in the rowSelection slice",
+      "atomic::row pagination::navigation methods step, jump to first, and jump to last"
+    ],
+    "integration::system workflows::an inventory browser: controlled sorting, faceted narrowing, and resets": [
+      "atomic::state and reactivity::a controlled slice overrides the internally stored value",
+      "atomic::column faceting::a column's faceted model ignores its own filter but applies others",
+      "atomic::state and reactivity::reset with no argument restores the initialState value"
+    ],
+    "integration::system workflows::a tree explorer: custom ids, expansion, visibility, and header integrity": [
+      "atomic::construction and composition::getRowId customizes row identity",
+      "atomic::row expanding::collapsed descendants stay reachable through flatRows",
+      "atomic::headers and footer groups::colSpan values in every group sum to the visible leaf count"
+    ],
+    "integration::system workflows::a search screen: global filter, column order, pinning, and page walk": [
+      "atomic::column and global filtering::global filtering keeps rows where any filterable column matches",
+      "atomic::column visibility and ordering::columnOrder lists ids first; unlisted columns keep definition order",
+      "atomic::column pinning::setColumnPinning assigns start and end regions",
+      "atomic::row pagination::page options and can-navigate flags follow the page window"
+    ]
+  }
+}

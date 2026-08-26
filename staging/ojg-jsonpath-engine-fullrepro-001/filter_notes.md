@@ -83,6 +83,24 @@ int64/float64/string/bool/nil vocabulary instead), and descent
 Get-order on slice-only data (observed deepest-first but stated
 unspecified alongside all descent ordering).
 
+Stage 3 generation probes added three entries to this exclusion list
+and two spec corrections. Excluded: root-anchored operands built with
+the `Get` equation constructor (`jp.Get(jp.R()...)`) render identically
+to parsed `$`-references but evaluate to nothing in the pinned
+reference — the workflow checks use `MustParseEquation`, whose
+converted filters do resolve root references, and the constructor
+corner stays out of both spec and oracle. Also excluded: the rendering
+of `!` applied to a parenthesized group followed by more operators —
+the pinned reference folds the trailing operators into the negated
+group (`!(A) && B` renders `!(A && B)`), so the spec scopes the
+parenthesization guarantee to binary-operator nesting and declares the
+negated-group rendering unspecified; no oracle test enters that zone. Corrected in the spec (spec_iter 1): a final descent
+`Set` creates the named key in every map the descent visits rather than
+writing only to existing keys, and CVI 6 is scoped to targets without
+negative index fragments because PathMatch — as the spec itself states —
+never matches a negative target index against the non-negative indexes
+Locate emits.
+
 Difficulty shapes exhibited (selection rationale, not a checklist):
 reimplementation of a format rule (dialect parser + normalized-form printer
 with two bracket styles); an equivalence judgement (PathMatch pattern-vs-path

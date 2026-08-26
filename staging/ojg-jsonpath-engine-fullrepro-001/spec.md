@@ -384,8 +384,10 @@ call.
 one pair of outer parentheses — `Eq(Get(jp.A().C("x")), ConstInt(3))`
 renders `(@.x == 3)` — except that `Length`, `Count`, `Match`, and
 `Search` render as bare function calls such as `count(@.l)` and
-`match(@.s, '^a')`. Nested groupings render parentheses exactly where
-precedence requires them. Numbers render minimally: `ConstFloat(2.0)`
+`match(@.s, '^a')`. Nested groupings of the binary operators render
+parentheses where precedence requires them; the rendering of a
+predicate that applies `!` to a parenthesized group followed by further
+operators is unspecified. Numbers render minimally: `ConstFloat(2.0)`
 renders `(2)`. `ConstNil` renders `null`, `ConstNothing` renders
 `Nothing`, and `ConstRegex` renders the `/pattern/` form.
 
@@ -420,8 +422,9 @@ nil element returns the follow-nil error while leaving the created
 containers in place. Wildcard, union, filter, slice, and descent
 fragments in a non-final position write through every element they
 select. As the final fragment, wildcard and union store at each
-selected existing location, and a descent stores at every existing
-matching key without creating any. Set returns an error when the
+selected existing location, and a descent stores the value at the named
+key in every map the descent visits — the data root, nested maps, and
+maps inside slices — creating the key where it is missing. Set returns an error when the
 expression is empty or ends in a root, filter, or slice fragment, and
 when a step lands on a scalar (the follow errors of Error Semantics
 name the kind of value that blocked the step and the normalized path
@@ -574,8 +577,10 @@ error-returning form returns.
    multiset of `Get` results.
 6. Every path reported by the package-level `Walk` must, when evaluated
    against the walked data, return exactly the value the callback
-   received, and every path returned by `Locate` for an expression must
-   satisfy `PathMatch` with that expression as the target.
+   received, and every path returned by `Locate` for a target without
+   negative index fragments must satisfy `PathMatch` with that
+   expression as the target (a negative target index cannot match the
+   non-negative indexes of normalized paths, per PathMatch).
 7. After a `Set(data, v)` that returns nil on a rooted normal path,
    `Get(data)` on that path must return exactly `[v]`; after a `Del` or
    `Remove` of a map-child path that returns nil, `Has(data)` on that

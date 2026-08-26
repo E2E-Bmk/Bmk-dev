@@ -1,0 +1,37 @@
+# Dummy gate — ojg-jsonpath-engine-fullrepro-001
+
+Adversarial stub module at github.com/ohler55/ojg providing package jp
+(source: wip/dummy/ojg-stub, wired with go mod edit -replace into a copy
+of the oracle), runner wip/dummy/run_dummy_ojg.sh. Every oracle test
+executed individually (go test -run '^Name$' -count=1) in both stub
+modes. The stub compiles cleanly against the oracle (go vet ./... exit
+0) — zero passes are assertion failures, not collection errors.
+
+Stub behavior:
+- accept mode (default): Parse/ParseString return a non-nil expression
+  and nil error for every input, String echoes the parsed source (built
+  expressions render empty), Get/First/Locate return nothing, Has and
+  Script.Match return false, every mutation is a silent nil-error no-op,
+  PathMatch returns true.
+- reject mode (OJG_STUB_MODE=reject): every parse, constructor, and
+  mutation returns a non-nil "stub: expression rejected" error (Must-
+  forms panic with it), PathMatch returns false.
+
+Results:
+
+  mode=accept  passed=0 total=153  (0.0%)
+  mode=reject  passed=0 total=153  (0.0%)
+
+Worst case 0.0% <= 10% gate. Non-vacuity design notes: the CVI checks
+that compare one view against another (Get vs Locate, Has vs Get,
+parsed vs built carriers, dual-form reparse) all carry concrete anchors
+— expected result counts, expected canonical strings, or expected value
+multisets — so a stub that returns empty from every view cannot satisfy
+both the anchor and the agreement. Two tests found vacuous during this
+gate were strengthened before the final run: TestBuiltEqualsParsed
+(String round trip of an empty echo) now asserts the built form text
+and the selected values, and TestNewSliceUnset (iteration over an empty
+Slice) now asserts the three start/end/step parts exist. Set/Del/Remove
+checks assert presence before mutation and absence after, so nil-error
+no-ops fail; error-path tests assert exact spec-declared texts, so the
+generic stub error fails them in reject mode.

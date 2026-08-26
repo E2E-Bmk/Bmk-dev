@@ -72,6 +72,9 @@ the packets graduate):
 "xpath-query-engine-fullrepro-001": [
     "github.com/antchfx/xpath",
 ],
+"ojg-jsonpath-engine-fullrepro-001": [
+    "github.com/ohler55/ojg/jp",
+],
 ```
 
 Lint caveat for `/vN` module paths: `go_target_symbols` derives the package
@@ -80,6 +83,16 @@ and unaliased imports silently skip the symbol check. Oracles for such modules
 use an explicit import alias (`participle "github.com/alecthomas/participle/v2"`);
 the participle packet's symbol check was verified live by injecting an
 undeclared symbol (LINT_FAIL observed) before recording the final LINT_PASS.
+
+Lint caveat for single-letter Go names (ojg's builder shorthands `A`..`X`):
+`spec_words` extraction requires two or more characters, so a single-letter
+exported name could never pass the symbol check even when the spec declares
+it. The Go branch of the lint extension now accepts a single-letter symbol
+exactly when the spec declares that letter as a code token (inside a fenced
+block or a backticked span, with fences cut out before span parsing so ```
+fences cannot shift backtick pairing). Undeclared single letters still fail
+(verified live: injected `jp.Q` -> LINT_FAIL); all nine earlier task packets
+re-linted LINT_PASS after the tool change.
 
 Reference runs execute `go test -json ./...` per suite against the pinned
 upstream version wired in with `go mod edit -replace`, mirroring
@@ -99,6 +112,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | 7 | kong-cli-grammar-fullrepro-001 | alecthomas/kong @ v1.16.1 | S3_DONE | 149 (116+33) | 149/149 | Track B (upstream bound to alecthomas/assert+repr; Signature/tag-internal/wrap-golden suites out of scope); dummy accept 0/149, reject 1/149=0.7% (Must-panics failure_path, inherent); spec corrections during ref run (hyphen-prefixed detached values, required flags in usage line, Depth semantics) |
 | 8 | mvdansh-shell-syntax-fullrepro-001 | mvdan/sh @ v3.13.1 | S3_DONE | 170 (144+26) | 170/170 | Track B (upstream 10/12 files in-package white-box AST-literal mega-tables); dummy accept 1/170=0.6% (zero-Pos contract, inherent), reject 3/170=1.8% (+2 variant-gating failure_path, error texts not spec-declared); spec corrections from generation probes (CVI 1 scoped to layout options — SingleLine output can fail to reparse; CVI 8 → minify fixpoint; typedjson decode registry — Stmt/Redirect/Assign/Comment encode-only; heredoc statement-End vs later same-line redirect) |
 | 9 | xpath-query-engine-fullrepro-001 | antchfx/xpath @ v1.3.8 | S3_DONE | 160 (132+28) | 160/160 | Track B (upstream 9/10 files in-package white-box: unexported query/iterator interfaces + shared TNode fixture-runner layer); dummy accept 0/160, reject 0/160 after strengthening 3 String()-echo/constant-integer tests with behavioural anchors; spec corrections from probes (NodeNavigator thirteen methods; non-standard `not()` — string/number arguments return false regardless of value); upstream panic zones excluded from scope (mixed boolean comparisons, substring NaN bounds, reverse-axis position()) |
+| 10 | ojg-jsonpath-engine-fullrepro-001 | ohler55/ojg @ v1.28.5 | S3_DONE | 153 (131+22) | 153/153 | Track B (all 19 upstream files import out-of-scope siblings: tt asserts + oj/sen/pretty goldens + gen/alt variants); dummy accept 0/153, reject 0/153 after anchoring 1 echo round-trip vacuity (TestBuiltEqualsParsed) + NewSlice empty-iteration; spec corrections from generation probes (descent-last Set creates keys in every visited map; CVI 6 scoped to non-negative-index targets per own PathMatch rule; equation parenthesization guarantee scoped to binary nesting — reference folds operators into negated groups); built root-anchored Get operands excluded (parsed equations resolve $-refs, constructor-built do not); tag 4 days pre-packet |
 
 ## Candidate selection log (CANDIDATES.md rows deferred; write scope is staging/ only)
 
@@ -124,7 +138,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | antchfx/xpath | SELECTED | 4729 LOC (4729 in scope), 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator: compile/select/evaluate projections, namespace dual-mode matching; Track B |
 | zclconf/go-cty | SELECTED | 13657 LOC, 165 test funcs | value/type system: conversions, unification, refinements/marks, json/msgpack round trips; Track B |
 | mvdan/sh | SELECTED | 16185 LOC (9123 in scope), 105 test funcs | shell syntax engine: parse/print round trip, positions, quoting, typed JSON; Track B |
-| ohler55/ojg | SELECTED | 10916 LOC in scope (jp pkg; module ~31k), 159 test funcs | JSONPath dialect engine: path parse/build/normalize + get/set/del/modify/walk/match projections over native Go data; scope_plan jp-only, max 170; Track B expected |
+| ohler55/ojg | SELECTED | 10916 LOC in scope (jp pkg; module ~31k), 159 test funcs | JSONPath dialect engine: path parse/build/normalize + get/set/del/modify/walk/match projections over native Go data; scope_plan jp-only, max 170; Track B confirmed |
 
 ## Dedup register (Go repos already taken on `origin/go-tasks-20260821`)
 

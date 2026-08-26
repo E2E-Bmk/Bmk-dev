@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3_DONE
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,9 +20,15 @@ updated:    2026-08-26
 ```
 
 todo:
-- [ ] 整理 public surface（public packages / types / members；Java override：不读 __init__.py）
-- [ ] 逐项过 Q1/Q2 判断
-- [ ] 写 spec.md 草稿（含 internal header，6-layer 结构）
+- [x] spec.md（6-layer，internal header 拆到 spec_internal.md；scope=parse+DOM+select+clean+serialize，无 Connection）
+- [x] oracle/ Maven packet（pom.xml + 73 atomic + 33 integration + support）
+- [x] 本地 reference run 100%（106/106，`filter/local_reference_run.txt`）
+- [x] `filter/lint_result.txt` 首行 LINT_PASS
+- [x] `filter/spec_test_map.md` + `kept_nodeids.txt` + `taxonomy.jsonl` + `rewrite_audit.md`
+- [x] task.json（language=java，stats 73/33/0，taxonomy 106 keys）
+- [x] `verify_task.py` → STATIC_VALID
+- [ ] Docker dummy gate（PENDING — Docker unavailable）
+- [ ] Docker reference gate（PENDING — Docker unavailable）
 
 ---
 
@@ -32,6 +38,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-26 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (21869 non-blank main LOC, 1263 upstream test methods) |
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended |
+| 3 | 2026-08-26 | S2_SPEC_DRAFT | S3_ORACLE | spec.md written from six probe rounds against the pinned 1.18.3 artifact; internal header in spec_internal.md |
+| 4 | 2026-08-26 | S3_ORACLE | S3_DONE | generated-only oracle 106 tests (73 atomic / 33 integration); local mvn reference 106/106 first run; LINT_PASS; STATIC_VALID; Docker gates PENDING |
 
 ---
 

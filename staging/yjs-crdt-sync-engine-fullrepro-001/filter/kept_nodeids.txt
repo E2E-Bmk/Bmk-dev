@@ -1,0 +1,116 @@
+atomic::update exchange::a full update replays the document on a fresh replica
+atomic::update exchange::encoding against a state vector yields only the missing changes
+atomic::update exchange::encodeStateVector returns a binary version descriptor
+atomic::update exchange::applying the same update twice has no second effect
+atomic::update exchange::a malformed update payload throws
+atomic::update exchange::mergeUpdates combines payloads into one equivalent update
+atomic::update exchange::encodeStateVectorFromUpdate matches the source document's state vector
+atomic::update exchange::diffUpdate extracts the changes a state vector is missing
+atomic::update exchange::the v2 encoding replays identically
+atomic::update exchange::format conversions preserve replay in both directions
+atomic::events and observation::observe fires once per transaction with the event and transaction
+atomic::events and observation::unobserve stops event delivery
+atomic::events and observation::map events report add, update, and delete actions with old values
+atomic::events and observation::key records describe the net transaction effect from its start state
+atomic::events and observation::keysChanged names the affected keys
+atomic::events and observation::array events expose a retain/insert/delete delta
+atomic::events and observation::text events carry string inserts with attributes
+atomic::events and observation::reading changes or delta after the handler returns throws
+atomic::events and observation::a directly observed type reports itself with an empty path
+atomic::events and observation::transactions report origin and local for local edits
+atomic::undo and redo::canUndo and canRedo reflect stack availability
+atomic::undo and redo::undo reverts and redo restores content
+atomic::undo and redo::clear empties both stacks
+atomic::undo and redo::captureTimeout zero keeps each transaction as its own entry
+atomic::undo and redo::rapid edits merge into a single entry by default
+atomic::undo and redo::stopCapturing starts a fresh entry
+atomic::undo and redo::trackedOrigins limits tracking to the listed origins
+atomic::undo and redo::by default only untagged transactions are tracked
+atomic::undo and redo::a new tracked edit clears the redo stack
+atomic::undo and redo::undoing map changes restores previous values
+atomic::undo and redo::multi-scope managers revert entries across their types
+atomic::snapshots::snapshots encode, decode, and compare by version
+atomic::snapshots::createDocFromSnapshot restores the captured content
+atomic::snapshots::restoring from a gc-enabled document throws
+atomic::snapshots::snapshotContainsUpdate distinguishes covered from uncovered updates
+atomic::relative positions::a position resolves to its index and anchored type
+atomic::relative positions::left-associated positions resolve at the same static index
+atomic::relative positions::JSON round trips compare equal
+atomic::relative positions::binary round trips resolve to the same absolute position
+atomic::relative positions::resolving against an unrelated replica returns null
+atomic::relative positions::a position whose anchor was deleted collapses to the removal point
+atomic::documents::clientID is numeric and differs between instances
+atomic::documents::guid option is honored and defaults to a string
+atomic::documents::root accessors create on first access and cache the instance
+atomic::documents::re-declaring a root name with a different type throws
+atomic::documents::transact returns the callback's return value
+atomic::documents::a transaction batches mutations into one update event
+atomic::documents::nested transact calls flatten into the outer transaction
+atomic::documents::a transaction without effective change emits no update event
+atomic::documents::destroy emits the destroy event and flags the doc
+atomic::documents::off unregisters and once fires a single time
+atomic::shared maps::set returns the value and get reads it back
+atomic::shared maps::has, delete, and size track current entries
+atomic::shared maps::clear removes every entry
+atomic::shared maps::null values are preserved and distinct from absence
+atomic::shared maps::iterators visit every current entry exactly once
+atomic::shared maps::forEach passes value, key, and the map
+atomic::shared maps::toJSON converts nested shared types recursively
+atomic::shared maps::clone returns an unintegrated copy with the same entries
+atomic::shared maps::the constructor seeds entries from an iterable
+atomic::shared maps::pre-integration mutations become observable after insertion
+atomic::shared maps::inserting an integrated type at a second location throws
+atomic::shared maps::storing a function throws
+atomic::shared maps::plain objects and arrays replicate as plain deep-equal values
+atomic::shared maps::Uint8Array values replicate with identical bytes
+atomic::shared arrays::insert, push, and unshift place items in order
+atomic::shared arrays::delete removes one item by default and a count when given
+atomic::shared arrays::get and length address current items
+atomic::shared arrays::slice returns end-exclusive plain-array copies
+atomic::shared arrays::insert past the end throws
+atomic::shared arrays::delete past the end throws
+atomic::shared arrays::toArray and toJSON convert content, toJSON recursing into shared types
+atomic::shared arrays::map, forEach, and iteration walk items in index order
+atomic::shared arrays::Array.from seeds a standalone array
+atomic::shared arrays::nested standalone types integrate through array insertion
+atomic::shared text::insert places text at a character index
+atomic::shared text::insert beyond the current length appends at the end
+atomic::shared text::delete removes a range and clamps past the end
+atomic::shared text::format applies attributes visible in toDelta
+atomic::shared text::formatting with a null value removes the attribute
+atomic::shared text::insert accepts attributes for the inserted run
+atomic::shared text::embeds occupy one length unit and are skipped by toString
+atomic::shared text::toJSON returns the same string as toString
+atomic::shared text::adjacent runs with identical formatting merge into one op
+atomic::shared text::applyDelta inserts plain and formatted runs
+atomic::shared text::applyDelta retain and delete edit existing content
+atomic::shared text::applyDelta retain with attributes formats the retained range
+atomic::shared text::a seeded standalone text materializes on integration
+integration::replica convergence::bidirectional update exchange converges text replicas
+integration::replica convergence::concurrent same-position text inserts stay intact and converge
+integration::replica convergence::concurrent map writes converge on one of the written values
+integration::replica convergence::concurrent array insertions preserve every item exactly once
+integration::replica convergence::an update with missing dependencies is buffered until they arrive
+integration::replica convergence::shuffled and duplicated update sets converge to the same content
+integration::replica convergence::state-vector diff exchange syncs two diverged replicas minimally
+integration::replica convergence::merge and diff over per-transaction updates equal direct replay
+integration::replica convergence::v1 and v2 histories replay to identical replicas
+integration::replica convergence::per-transaction update events replayed in order rebuild the peer
+integration::events across replicas and nesting::remote transactions fire observers with local false and the applyUpdate origin
+integration::events across replicas and nesting::observeDeep reports paths across map and array nesting
+integration::events across replicas and nesting::unobserveDeep stops nested delivery
+integration::events across replicas and nesting::an array event delta replayed over the pre-state yields the post-state
+integration::events across replicas and nesting::map key records agree with pre- and post-transaction values
+integration::events across replicas and nesting::nested standalone types replicate wholesale through one update
+integration::events across replicas and nesting::formatting applied on one replica appears in the peer's delta view
+integration::undo, snapshots, and positions across documents::undo reverts local content while preserving interleaved remote content
+integration::undo, snapshots, and positions across documents::undone state propagates to peers like any other edit
+integration::undo, snapshots, and positions across documents::tracked origins separate user edits from provider updates
+integration::undo, snapshots, and positions across documents::stack item meta persists from added to popped for cursor restoration
+integration::undo, snapshots, and positions across documents::snapshot restoration reproduces the version while history moves on
+integration::undo, snapshots, and positions across documents::relative positions track their character across remote edits and codecs
+integration::undo, snapshots, and positions across documents::map undo interleaved with remote updates keeps remote keys
+integration::collaborative sessions end to end::two clients edit, sync, and undo with cursors surviving
+integration::collaborative sessions end to end::offline client catches up through a merging relay
+integration::collaborative sessions end to end::a versioned document restores an old release while editing continues
+integration::collaborative sessions end to end::a shared board converges across three replicas with deep observers

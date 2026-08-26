@@ -11,7 +11,7 @@
 ## Current
 
 ```
-state:      S3A_IMPORT_AUDIT
+state:      S3_DONE
 stage:      3
 spec_iter:  0
 filter_iter: 0
@@ -20,8 +20,8 @@ updated:    2026-08-26
 ```
 
 todo:
-- [ ] 对每个 test 文件执行 import 分类（见 test-filter SKILL.md 表格）
-- [ ] 标注每个文件的 import 类型
+- [x] Stage 3 complete: oracle merged, lint LINT_PASS, reference 68/68
+- [ ] hand off to Stage 4 (evaluation) when the pipeline picks this task up
 
 ## History
 
@@ -31,6 +31,9 @@ todo:
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended; begin spec drafting |
 | 3 | 2026-08-26 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 landed; two probe rounds pinned: quota nanosecond-truncation laws (per_second(3) → 333333333ns, full-burst 999999999ns), decision laws (burst budget, exact-boundary conformance, batch weight math, capacity carrier value), NotUntil absolute-instant projection with pre-advanced clocks, wait_time_from zero clamping, snapshot rbc countdown/regain/idle-reset, quota round trips, retention threshold (equality evicts), store parity, FakeRelativeClock shared clones, Display strings; 25 validation checks + style gate pass |
 | 4 | 2026-08-26 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
+| 5 | 2026-08-26 | S3A_IMPORT_AUDIT | S3A_REWRITE | rewrite_audit.md landed: generated_only; 51 upstream fns audited — deterministic FakeRelativeClock intents (direct/keyed/middleware/hashers) re-expressed with fresh vocabulary; crossbeam-thread, memory-leak, proptest and async future/sink/stream files discarded; in-src gcra/nanos unit tests re-expressed through public surface |
+| 6 | 2026-08-26 | S3A_REWRITE | S3_ORACLE_MERGE | oracle generated: 55 atomic + 13 integration = 68 fns across quota arithmetic, decision laws (boundary/batch/denial-statelessness), NotUntil math, keyed retention thresholds, both store families, custom hashers, clocks/Nanos/Reference, snapshot middleware, custom middleware; warning-free build |
+| 7 | 2026-08-26 | S3_ORACLE_MERGE | S3_DONE | reference 68/68 on path_patch (pinned e850a9d) AND registry_lock (governor 0.9.0 from crates.io, shipped Cargo.lock); lint LINT_PASS (rust import audit, negative-tested: private `governor::gcra` import fails compile); kept_nodeids/taxonomy/spec_test_map/depends_on/task.json/reference_score landed |
 
 ---
 

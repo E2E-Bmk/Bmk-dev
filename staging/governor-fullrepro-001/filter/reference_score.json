@@ -1,0 +1,25 @@
+{
+  "task_id": "governor-fullrepro-001",
+  "reference": "boinkor-net/governor @ e850a9d7ec3840fce5f15c0909ab844332944560 (tag v0.9.0)",
+  "runs": [
+    {
+      "mode": "path_patch",
+      "detail": "[patch.crates-io] governor = { path = <pinned checkout>/governor } appended to oracle workspace manifest; lockfile resolves cleanly under cargo 1.83 (wasm-only wasip2/wit-bindgen entries are never built on linux)",
+      "runner": "cargo nextest run",
+      "total": 68,
+      "passed": 68,
+      "failed": 0
+    },
+    {
+      "mode": "registry_lock",
+      "detail": "no patch; lockfile pins governor 0.9.0 from crates.io (cargo update -p governor --precise 0.9.0, hashbrown 0.15.5); this lock ships as oracle/Cargo.lock",
+      "runner": "cargo nextest run",
+      "total": 68,
+      "passed": 68,
+      "failed": 0
+    }
+  ],
+  "pass_rate": 1.0,
+  "toolchain": "cargo 1.83.0",
+  "date": "2026-08-26"
+}

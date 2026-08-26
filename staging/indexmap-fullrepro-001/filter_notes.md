@@ -2,15 +2,18 @@
 
 repo: indexmap-rs/indexmap
 source_path: https://github.com/indexmap-rs/indexmap (local pin /tmp/refs/indexmap)
-commit: 1818d4140d86aeef18c515f1b060a3fa68da2708 (tag 2.9.0, released 2025-04-04)
+commit: 42e57a395b939292c08d32a317bae7bec3b7b5d8 (tag 2.7.1, released
+  2025-01-19; chosen over 2.9.0 to keep the surface free of the
+  get_disjoint_mut family and the *_with_default! macros, and to match the
+  indexmap 2.7.1 pin already used transitively by prior packets)
 language: rust
-src_loc: 11897 total under src/ (core surface ~9.4k after excluding the
-  optional-dependency adapters rayon/{map,set}.rs, serde.rs, serde_seq.rs,
-  borsh.rs, arbitrary.rs and the inline tests.rs modules)
-test_functions: 102 (48 inline in src/map/tests.rs, 30 inline in
-  src/set/tests.rs, ~18 quickcheck properties in tests/quick.rs, 4 small
-  external files: tests/tests.rs, tests/equivalent_trait.rs,
-  tests/macros_full_path.rs)
+src_loc: 8085 core (src/ excluding the optional-dependency adapters
+  rayon/{map,set}.rs, serde.rs, serde_seq.rs, borsh.rs, arbitrary.rs and the
+  inline tests.rs modules)
+test_functions: 72 (35 inline in src/map/tests.rs, 30 inline in
+  src/set/tests.rs, quickcheck harness in tests/quick.rs (~20 properties in
+  one macro-driven #[test] block), 6 across tests/tests.rs,
+  tests/equivalent_trait.rs, tests/macros_full_path.rs)
 test_files: src/map/tests.rs, src/set/tests.rs, tests/{quick,tests,
   equivalent_trait,macros_full_path}.rs
 dominant_test_styles: inline unit tests over crate internals (use super::*),
@@ -49,7 +52,7 @@ test_import_audit: HIGH_RISK for direct reuse — the two dominant test modules
 docs_test_alignment: aligned — docs.rs states per-method order semantics
   (which operations preserve order, which perturb it and how) and the tests
   exercise exactly those observable sequences.
-contamination_note: indexmap@2.9.0, released 2025-04-04; widely-known API
+contamination_note: indexmap@2.7.1, released 2025-01-19; widely-known API
   relative to training cutoff (before/unknown). Same contamination posture as
   petgraph/rust-decimal in this packet series: the assessed surface is exact
   order/index bookkeeping laws, not API recall.

@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,8 +20,9 @@ updated:    2026-08-26
 ```
 
 todo:
-- [ ] probe rounds pin exact order/index bookkeeping values on the pinned reference
-- [ ] draft 6-layer spec per SPEC_STANDARD.md; style gate + validation checks
+- [ ] audit upstream test imports; write rewrite_audit.md (generated_only expected: inline #[cfg(test)] modules + quickcheck harness)
+- [ ] build generated oracle (atomic + integration workspaces), taxonomy, kept_nodeids
+- [ ] reference run 100% (path patch + registry lock), lint LINT_PASS, spec_test_map, reference_score.json
 
 ## History
 
@@ -29,6 +30,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-26 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (order-preserving map/set as rule engine over one entry sequence + hash index, six public projections; 2.9.0 @ 1818d41, MSRV 1.63 fits cargo 1.83; inline upstream tests → generated_only expected) |
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended; begin probe rounds + spec drafting |
+| 3 | 2026-08-26 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 complete: 9 behavior sections + contract layer, all values probe-pinned over three probe rounds (swap/shift laws, insert_before/shift_insert boundaries, splice collision law, set identity laws, algebra order, slice value semantics, panic table); style gate + validation checks pass |
+| 4 | 2026-08-26 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | begin test filtering (upstream tests are inline #[cfg(test)] modules + quickcheck harness — expect generated_only) |
 
 ---
 

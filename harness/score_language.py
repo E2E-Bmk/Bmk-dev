@@ -324,6 +324,21 @@ def score_rust(
 
     atomic = runner.discover(oracle_host, "atomic")
     integration = runner.discover(oracle_host, "integration")
+    # Local order checks (spec2repo qualification-and-freeze protocol): the same
+    # frozen candidate scored in different execution orders. Each test runs in
+    # its own nextest process, so order modes are a robustness check, not a
+    # correction. The permutation is fixed (deterministic), not random.
+    order = getattr(args, "order", "natural") or "natural"
+    if order == "reverse":
+        atomic, integration = list(reversed(atomic)), list(reversed(integration))
+    elif order == "fixed-permuted":
+        def _permuted(ids: list[str]) -> list[str]:
+            half = (len(ids) + 1) // 2
+            out = [v for pair in zip(ids[half:], ids[:half]) for v in pair]
+            if len(ids) % 2:
+                out.append(ids[-1])
+            return out
+        atomic, integration = _permuted(atomic), _permuted(integration)
     setup_records, setup_ok = run_setup(runner, env, run_dir)
     provenance = run_provenance(runner, env, run_dir, workspace) if setup_ok else {}
 
@@ -390,6 +405,9 @@ def main() -> int:
     parser.add_argument("--target-crate", action="append", default=[])
     parser.add_argument("--timeout", type=int, default=120)
     parser.add_argument("--batch-size", type=int, default=20)
+    parser.add_argument("--order", choices=["natural", "reverse", "fixed-permuted"],
+                        default="natural",
+                        help="local score-order check of the same frozen candidate (natural is the default discovery order)")
     args = parser.parse_args()
 
     task_dir = args.task_dir.resolve()

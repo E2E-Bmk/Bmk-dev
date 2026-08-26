@@ -5,6 +5,11 @@ description: "Mutate a task's spec and oracle together so the described system d
 
 # Spec Mutator
 
+Current support: this mutation workflow is Python-only. Do not run S5_MUTATE on
+Rust tasks until the paired reference gates are rewritten to use Cargo
+`[patch.crates-io]`, `cargo nextest`, and cargo metadata provenance instead of
+`reference_patch.py` and pytest markers.
+
 ## State Machine Interface
 
 **Entry:** Read `wip/{task}/PIPELINE_STATE.md`; `state` must be `S5_MUTATE`.

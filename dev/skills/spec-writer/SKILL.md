@@ -1,6 +1,6 @@
 ---
 name: spec-writer
-description: "Write a behavioral specification (public packet) for a SWE-E2E reconstruction benchmark task. Use when drafting, iterating, or judging a spec for a candidate Python library before candidate evaluation. The spec describes the public API behavioral contract — what the library promises to callers. Source code may be read freely; the constraint is public intent (exported surface, user-facing docstrings, examples), not documentation coverage."
+description: "Write a behavioral specification (public packet) for a SWE-E2E reconstruction benchmark task. Use when drafting, iterating, or judging a spec for a candidate library before candidate evaluation. The spec describes the public API behavioral contract — what the library promises to callers. Source code may be read freely; the constraint is public intent (exported surface, user-facing docstrings, examples), not documentation coverage."
 ---
 
 # Spec Writer
@@ -83,8 +83,8 @@ These two purposes are structurally separate: the spec body is natural library d
 
 Read source code and public documentation together to map the public API surface:
 
-1. Source code: `__init__.py`, `__all__`, public class/function signatures, docstrings
-2. PyPI page or GitHub README — product overview and install
+1. Source code: language-native public surface (`__init__.py`/`__all__` for Python, `lib.rs` public re-exports and `pub` items for Rust), public class/function/type signatures, docstrings or rustdoc
+2. Package registry page or GitHub README — product overview and install (`PyPI`, `crates.io`, npm, etc.)
 3. Official docs site — getting started, API reference, CLI reference, examples/cookbook
 4. `--help` output for each CLI subcommand
 
@@ -92,7 +92,7 @@ Record the exact sources consulted in the internal header (`source_boundary`) �
 
 **Reading workflow — do not begin writing the spec until these steps are complete:**
 
-1. Read `__init__.py` and `__all__`. Produce a **public API surface list**: every exported name, with file path. This list is your working set. If this list is empty, you have not done the reading — stop.
+1. Read the language-native public entry point (`__init__.py` and `__all__` for Python; crate root `lib.rs`, public re-exports, and rustdoc-visible `pub` items for Rust). Produce a **public API surface list**: every exported name, with file path. This list is your working set. If this list is empty, you have not done the reading — stop.
 2. Read docs body (not just headings): scan for `from pkg.module import Name` patterns, NamedTuple class names in return value examples, exception classes users catch or compare.
 3. For each item on the surface list, answer Q1 then Q2 **individually**, one item at a time, before moving to the next. Do not batch-decide multiple items.
 4. Write spec sections only after the full surface list has been processed.
@@ -105,7 +105,7 @@ Items in these categories belong in the spec **only when they pass Q2** — i.e.
 
 - All public import paths and names: functions, classes, exceptions, namedtuples — including re-exports that appear in the public API surface even when they look like module-level aliases
 - Scan docs body (not just headings): `from pkg.module import Name` patterns in code examples, NamedTuple class names in return value reprs, exception classes users are expected to catch or compare
-- Function parameter contracts: parameter names, general types, and defaults — expressed in natural language prose rather than Python signature syntax. Parameter names are public API vocabulary and must be stated; type annotations (`str | None`, `Literal[...]`) and exact Python defaults should be converted to behavioral descriptions ("an optional string", "defaults to `True`").
+- Function parameter contracts: parameter names, general types, and defaults — expressed in natural language prose rather than language syntax. Parameter names are public API vocabulary and must be stated; type annotations (`str | None`, `Literal[...]`) and exact defaults should be converted to behavioral descriptions ("an optional string", "defaults to `True`"). For Rust, public argument and return types may be named as API vocabulary, but do not paste full `pub fn ...` declarations into the catalog.
 - Documented namespaces, engines, and data models a first-day engineer must know (e.g. Jinja2 syntax and `{{ cookiecutter.name }}` namespace)
 - Special user-visible context keys (e.g. `_copy_without_render`, `_extensions`, `__prompts__`) when they appear in official docs
 - Error semantics: which trigger condition -> which exception class — when the exception type is library-specific or non-obvious
@@ -130,7 +130,7 @@ Items in these categories belong in the spec **only when they pass Q2** — i.e.
 - Private names (`_name`, `__name`) and names absent from the public export surface
 - Internal implementation details of public classes (field names, internal maps, singleton structure) that are not part of the API contract
 - Escape-hatch language: `Most`, `generally`, `typically`, `in most cases`, `usually` when describing API support scope — these allow a candidate to skip a behavior and still satisfy the spec wording. State the exact scope of support explicitly.
-- Complete Python-syntax function/constructor signatures with type annotations and default values in inline backticks (e.g., `Class(param: Type, param2: Type = default)`). Instead, express parameter names, types, and defaults in natural language prose: "A `Class` accepts a `param` (Type) and an optional `param2` (Type, defaults to `default`)." Public API names (class names, method names, parameter names) ARE contractual and must be preserved — the prohibition is on Python syntax, not on the information.
+- Complete language-syntax function/constructor signatures with type annotations and default values in inline backticks (e.g., `Class(param: Type, param2: Type = default)` or `pub fn parse(input: &str) -> Result<T, E>`). Instead, express parameter names, types, and defaults in natural language prose: "A `Class` accepts a `param` (Type) and an optional `param2` (Type, defaults to `default`)." Public API names (class names, method names, parameter names, Rust type names and variants) ARE contractual and must be preserved — the prohibition is on syntax blocks, not on the information.
 
 ## Required Structure
 
@@ -216,19 +216,19 @@ lookup index: behaviour belongs in the behaviour sections, not here.
 - Start with functionality, not identity
 
 **Environment appendix (required in all specs):**
-Lists the exact third-party packages preinstalled in the working environment (from `oracle/requirements.txt`, minus the target package), plus the dependency-declaration policy:
+Lists the exact language/runtime and third-party dependencies preinstalled or vendored in the working environment, plus the dependency-declaration policy. For Python, the source is `oracle/requirements.txt` minus the target package. For Rust, the source is the oracle Cargo workspace manifests and lockfile; list the Rust toolchain, required cargo subcommands such as `cargo-nextest`, and every non-target crate the oracle depends on.
 
 ```
 ## Appendix A: Environment
 
-The working environment runs Python 3.11 on Linux without network access.
-The following third-party packages are preinstalled and importable:
-{explicit package list}. The assessment environment provides the same
-interpreter and package set.
+The working environment runs {language/runtime version} on Linux without network access.
+The following third-party dependencies are preinstalled or available from the
+oracle manifest lockfile: {explicit dependency list}. The assessment environment
+provides the same runtime and dependency set.
 
-The project must declare its packaging metadata in a standard
-`pyproject.toml` (or `setup.py`) at the project root so the package
-can be installed with pip.
+The project must declare its packaging metadata in the language-standard
+manifest at the project root so the package can be installed by the scorer
+(`pyproject.toml` or `setup.py` for Python; `Cargo.toml` for Rust).
 ```
 
 Never write "may use any third-party packages available on PyPI" — an open-ended promise the working environment cannot honor turns dependency choice into a gamble.
@@ -289,14 +289,14 @@ A behavior section that is a bare bullet list with no opening sentence and no bo
 
 - Use `must`, `returns`, `raises` — never `can`, `may`, `might`, `should`.
 - Use `WHEN ... THEN ... must ...` for conditional behaviors.
-- Parameters appear inline in behavioral prose: "The `backend` parameter accepts `\"sqlite\"`, `\"memory\"`, or a `BaseCache` instance." Never as Python signatures.
+- Parameters appear inline in behavioral prose: "The `backend` parameter accepts `\"sqlite\"`, `\"memory\"`, or a `BaseCache` instance." Never as full language signatures.
 
 ### API Catalog Format
 
 API Catalog **must** be a `Name | Kind | Role` table. Each row is one public symbol.
 
 **Forbidden in API Catalog:**
-- Python function signatures with type annotations
+- Complete function signatures with type annotations
 - Parameter lists, default values, or return types
 - Anything other than Name, Kind (class/function/constant/exception), and a one-sentence Role
 
@@ -360,7 +360,7 @@ Spec and test-filter are linked: spec describes what must be implemented; test-f
 17. Does every NEW or MODIFIED behavioral clause fit one of the five EARS templates, carry a clause ID in the sidecar, and pass Q3 (upstream-doc ceiling, 1:N support, rule-not-instance)?<-
 18. **Oracle-consistency check:** for every CLI flag, keyword argument, file-layout convention, or output format that oracle tests exercise through a shared helper/fixture, does the spec state it (or is it Q2-derivable)?<-
 19. **Blind-review gate:** reading only the spec diff, would a reviewer accept it as a normal open-source documentation PR (organized by concept, no test-shaped sentences)?<-
-20. Does Public Interface > API Catalog contain NO Python signatures (no type annotations, no defaults)? Only Name | Kind | Role table entries?<-
+20. Does Public Interface > API Catalog contain NO complete implementation signatures (no parameter lists, type annotations, or defaults)? Only Name | Kind | Role table entries?<-
 
 **Phrasing hard checks (from Phrasing Rules section):**
 21. Does every Non-Goals bullet begin with "This specification does not require" or "This specification does not define"? Zero tolerance for "outside this design" anywhere in the spec.<-
@@ -379,9 +379,9 @@ All twenty-five must pass. Any failure -> patch and re-judge.
 - Behavior sections must have narrative flow: concept → normal path → parameters → boundaries
 - No continuous signature code blocks exceeding 10 lines
 - Public Interface > Import Surface contains only import statement code blocks (no prose signatures)
-- Public Interface > API Catalog contains only Name | Kind | Role table entries (no Python signatures)
+- Public Interface > API Catalog contains only Name | Kind | Role table entries (no complete implementation signatures)
 - No leakage words: benchmark, oracle, judge, task_id, candidate-visible, scorer
-- No inline backtick signatures with Python type annotations (`: Type`, `= default`, `|` unions). Express API parameter contracts in natural language prose within behavior sections. Usage examples in fenced code blocks are exempt.
+- No inline backtick signatures with language type syntax (`: Type`, `= default`, `|` unions, `pub fn ... -> ...`). Express API parameter contracts in natural language prose within behavior sections. Usage examples in fenced code blocks are exempt.
 - Specification Authority disclaimer must be present after the title
 - Product Overview must be desensitized (no brand/author/GitHub names)
 - Failure: return to spec-writer for revision

@@ -9,7 +9,7 @@
 
 在写 spec 之前，先明确一条客观判据：
 
-> **"一个只有 pip install 和 Python REPL 的开发者，不看源码，能不能发现这个信息？"**
+> **"一个只有语言包管理器安装命令和 REPL/文档工具的开发者，不看源码，能不能发现这个信息？"**
 >
 > 能发现 → 属于公开 API，应写入 spec
 > 不能发现 → 属于实现细节，不应写入 spec
@@ -21,14 +21,14 @@
 
 | 信息类型            | 确定方法                             | 进 spec       |
 | --------------- | -------------------------------- | ------------ |
-| 模块路径            | `import X.Y` 成功                  | ✅            |
-| 类/函数名           | `dir(module)` 非下划线               | ✅            |
-| 方法/属性名          | `dir(class)` 非下划线                | ✅            |
-| 参数名             | `inspect.signature()` 或 `help()` | ✅ 在行为描述中按需提及 |
+| 模块/包/crate 路径   | Python `import X.Y` 成功；Rust `crate::path` 在 rustdoc 中公开 | ✅            |
+| 类/函数/类型名        | Python `dir(module)` 非下划线；Rust `pub` item 出现在 rustdoc | ✅            |
+| 方法/属性/字段名       | Python `dir(class)` 非下划线；Rust `pub` method/field/variant | ✅            |
+| 参数名             | Python `inspect.signature()` 或 `help()`；Rust rustdoc/API docs | ✅ 在行为描述中按需提及 |
 | 参数值域            | 运行代码可观测                          | ✅ 列出合法取值     |
 | 返回值的公开属性/key    | 运行代码 + `dir()`                   | ✅            |
 | 错误条件 + 异常类型     | 运行代码可触发                          | ✅            |
-| 参数类型注解          | 需看源码或 type stub                  | ❌            |
+| 参数类型注解          | Python 需看源码或 type stub；Rust 类型是公开签名的一部分但不写成完整签名 | 按语言处理 |
 | 参数默认值           | 需看源码或 `inspect`                  | ❌            |
 | 内部算法/数据结构       | 需看源码                             | ❌            |
 | 私有方法/属性（`_xxx`） | 下划线开头                            | ❌            |
@@ -362,21 +362,27 @@ CachedSession 接受 backend 参数，可以是 "memory", "sqlite",
 
 | 项目     | 说明                         |
 | ------ | -------------------------- |
-| **作用** | 声明评测环境的 Python 版本、预装包、网络限制 |
+| **作用** | 声明评测环境的语言/runtime 版本、预装包/工具链、网络限制 |
 | **必需** | 是                          |
 | **写法** | 固定模板                       |
 
 
 模板：
 
-> The working environment runs Python 3.11 on Linux without network access.
-> The following third-party packages are preinstalled and importable:
-> {requirements.txt 中的包名列表}.
-> The assessment environment provides the same interpreter and package set.
+> The working environment runs {language runtime/toolchain} on Linux without
+> network access.
+> The following third-party dependencies and tools are preinstalled or available
+> from the oracle manifest/lockfile: {依赖和工具列表}.
+> The assessment environment provides the same runtime/toolchain and dependency set.
 >
 > The project must declare its packaging metadata in a standard
-> `pyproject.toml` (or `setup.py`) at the project root so the package
-> can be installed with pip.
+> language manifest at the project root so the package/crate can be installed
+> by the scorer.
+
+Rust 任务使用同一语义模板，但应写明 Rust toolchain、`cargo-nextest` 等必需工具、
+oracle Cargo manifests/lockfile 中的非目标依赖，以及项目根目录必须提供可被 Cargo
+构建的 `Cargo.toml`。目标 crate 不由环境预装，评分时由 runner 用 `[patch.crates-io]`
+指向候选 workspace。
 
 #### § Appendix B: Assessment Notes
 

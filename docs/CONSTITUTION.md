@@ -46,25 +46,29 @@ derivable by a senior engineer from what is stated (Q2). Enforcement:
 ## 3. Environment consistency (three-way contract)
 
 The spec's Environment section, the agent container, and the scoring container
-MUST agree. The single source of truth is `oracle/<id>/requirements.txt`:
+MUST agree. The single source of truth is language-specific: Python uses
+`oracle/<id>/requirements.txt`; Rust uses the oracle Cargo workspace manifests
+and lockfile plus the declared Rust toolchain:
 
 - The agent container for a task preinstalls exactly the task's oracle
-  requirements (minus the target package itself) — same wheels as scoring.
-- The spec's Environment section lists those packages explicitly. Never
-  promise "any package on PyPI" unless the harness actually installs
-  arbitrary declared dependencies at scoring time.
+  requirements/dependencies (minus the target package or crate itself) — same
+  wheels/crates/toolchain as scoring.
+- The spec's Environment section lists those packages/crates/tools explicitly.
+  Never promise "any package on PyPI/crates.io" unless the harness actually
+  installs arbitrary declared dependencies at scoring time.
 - The agent system prompt must not contradict the spec (no "stdlib only"
   claims when oracle tests import third-party packages).
 - Provenance checks must accept every installation style that makes
-  `import <pkg>` resolve to candidate code (regular, editable, `.pth`), and
-  reject only genuinely foreign origins (site-packages installs of the real
+  the target package/crate resolve to candidate code (Python regular/editable/
+  `.pth`; Rust `[patch.crates-io]` path resolution), and reject only genuinely
+  foreign origins (site-packages installs or registry crates of the real
   upstream package).
 
 ## 4. Test composition
 
 Hard gates enforced by `harness/verify_task.py`:
 
-- per layer ≥ 15 test functions; total ≥ 50
+- atomic suite ≥ 30 test functions, integration suite ≥ 25 test functions, total ≥ 60
 - atomic `positive` share ≥ 60% (new work targets ≥ 70%)
 - zero `no_check` tests in any layer
 - reference implementation passes 100% of the oracle (skips need per-test

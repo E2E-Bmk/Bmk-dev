@@ -260,7 +260,10 @@ exit_artifact: filter/spec_test_map.md（最终）
 ```
 todo:
   - [ ] 对 oracle 运行 reference 实现，要求 100% 通过
-        评分命令必须加 --remove-path <pkg>（防止系统安装包遮蔽）
+        Python 评分命令必须加 --remove-path <pkg>；Rust 评分必须通过
+        [patch.crates-io] 指向 reference/candidate workspace 并记录 cargo metadata provenance
+        Rust reference gate:
+        `python harness/score_language.py --language rust --task-dir wip/{task-id}/ --oracle-dir wip/{task-id}/filter/oracle_rust/ --solution-dir repo-pool/{crate}/ --run-dir wip/{task-id}/filter/reference_run --taxonomy wip/{task-id}/filter/taxonomy.jsonl --target-crate {crate_name} --json-out wip/{task-id}/filter/reference_score.json`
   - [ ] 记录 scorer_isolation 到 task.json（毕业时生成）
 exit_artifact: filter/reference_score.json
 → S3_DONE           (100%)
@@ -307,7 +310,8 @@ todo:
 todo:
   - [ ] 复跑符号声明 lint 并落盘（judging 期间改过 oracle 时必须重跑）:
         `python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md > wip/<task>/filter/lint_result.txt 2>&1`
-  - [ ] Anti-cheat preflight: `python -c "import <pkg>; print(<pkg>.__file__)"`，结果写入报告
+  - [ ] Anti-cheat preflight: Python 用 `python -c "import <pkg>; print(<pkg>.__file__)"`；
+        Rust 用 `cargo metadata` 输出目标 crate manifest path；结果写入报告
   - [ ] Solvability: reference 跑 oracle，要求 ≥ 95%
   - [ ] Fairness Gate A: spec_section spot-check（covered 行 → 验证 spec heading 存在）
   - [ ] Fairness Gate B: failure pattern audit（失败是行为缺口还是内部结构？）
@@ -331,11 +335,12 @@ exit_artifact: judge/diagnosis_report.md
 todo:
   - [ ] 执行 Graduation procedure（见 task-synthesizer SKILL）:
         1. spec_vN.md → tasks/{id}/spec.md（剥离 INTERNAL header）
-        2. 按 taxonomy 拆分测试 → oracle/test_atomic.py + oracle/test_integration.py
-        3. 提取测试依赖 → oracle/requirements.txt
-        4. 生成 task.json（含 taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap）
-        5. 复制 kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md
-        6. 运行 harness/verify_task.py {task_id} → 必须输出 QUALIFIED_VALID
+        2. 按 taxonomy 拆分测试 → Python: oracle/test_atomic.py + oracle/test_integration.py；
+           Rust: oracle/atomic/src/**/*.rs + oracle/integration/src/**/*.rs
+        3. 提取测试依赖 → Python: oracle/requirements.txt；Rust: oracle Cargo manifests/lockfile + depends_on.json
+        4. 生成 task.json（含 language, target_crates, taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap）
+        5. wip/filter 下保留 kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md，不复制进 tasks/
+        6. 运行 harness/verify_task.py {task_id} → 必须输出 STATIC_VALID
   - [ ] 在 CANDIDATES.md 追加 QUALIFIED 行
 ```
 

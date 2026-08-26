@@ -1,6 +1,7 @@
 # SpecBench — 任务构建工作台
 
-从真实开源 Python 库出发，构建"按行为规格重建完整项目"的评测任务。
+从真实开源库出发，构建"按行为规格重建完整项目"的评测任务。当前任务主体是
+Python，工作流也支持按同一阶段架构构建 Rust oracle。
 
 ## 快速开始
 
@@ -16,11 +17,16 @@
 │   ├── task.json                 # 元数据（taxonomy、scorer 参数、得分）
 │   ├── spec_test_map.md          # 测试↔spec 映射（审计用）
 │   └── oracle/
-│       ├── test_atomic.py        # 原子层测试
-│       └── test_integration.py   # 集成+端到端测试
+│       ├── test_atomic.py        # Python 原子层测试
+│       ├── test_integration.py   # Python 集成+端到端测试
+│       ├── Cargo.toml            # Rust oracle workspace（Rust task）
+│       ├── atomic/               # Rust 原子层 suite crate
+│       └── integration/          # Rust 集成+端到端 suite crate
 │
 ├── harness/                      # 评分脚本
-│   ├── score_pytest_original.py  # pytest runner + 隔离
+│   ├── score_pytest_original.py  # Python pytest runner + 隔离
+│   ├── score_language.py         # Rust cargo-nextest runner + Cargo provenance
+│   ├── runners/                  # Python/Go/TypeScript/Rust/Java runner contracts
 │   ├── run.py                    # cleanroom 执行入口
 │   └── verify_task.py            # task 完整性校验
 │
@@ -43,9 +49,9 @@
   "instance_id": "httpcore-transport-fullrepro-001",
   "status": "QUALIFIED",
   "oracle": {
-    "test_files": ["oracle/test_atomic.py", "oracle/test_integration.py"],
+    "test_files": ["language-specific atomic suite", "language-specific integration suite"],
     "count": 64,
-    "scorer_isolation": ["--remove-path", "httpcore"]
+    "scorer_isolation": ["language-specific candidate provenance check"]
   },
   "stats": { "atomic": 15, "integration": 35, "system_e2e": 14 },
   "reference_pass_rate": 1.0,

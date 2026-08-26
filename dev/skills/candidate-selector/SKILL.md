@@ -110,6 +110,21 @@ EOF
 
 If > 30% of test files have module-level private imports **or** undocumented carrier imports, mark `test_import_audit: HIGH_RISK`. This is the leading cause of collection errors in clean candidate environments.
 
+For Rust candidates, run the equivalent crate-surface pre-screen before writing
+`filter_notes.md`: compare tests' imports and paths against the crate root's
+public `pub`/`pub use` surface. At minimum, scan for `crate::_`, `crate::tests`,
+non-public modules, and package-private helpers used by integration tests:
+
+```bash
+rg -n "crate::(_|tests|test_|internal)|super::|self::" tests src
+rg -n "use <crate_name>::" tests benches examples src
+```
+
+If tests rely on private modules or helpers that cannot be rewritten through the
+public crate API, record `test_import_audit: HIGH_RISK`. A Rust task may proceed
+only when the retained oracle can be expressed through `target_crates` public
+exports plus oracle-owned fixtures/helpers.
+
 ## Gate 1: Evidence Record
 
 Create `wip/{task}/filter_notes.md` with:
@@ -141,9 +156,10 @@ When `scope_plan` is not N/A, the Stage 3 handoff must verify the actual kept se
 
 **source_meta collection:** When a task reaches QUALIFIED, record in task.json:
 - `source_meta.github_stars`: GitHub star count at time of qualification
-- `source_meta.pypi_monthly_downloads`: approximate PyPI downloads
+- Python: `source_meta.pypi_monthly_downloads`: approximate PyPI downloads
+- Rust: `source_meta.crates_io_monthly_downloads`: approximate crates.io downloads over the most recent 30 days. For published crates, query `https://crates.io/api/v1/crates/{crate_name}/downloads` and sum the daily download rows for the last 30 days; for non-crates.io registries use `source_meta.registry_monthly_downloads` and record the registry name.
 - `source_meta.loc`: lines of code in source package
-- `source_meta.first_release`: date of first PyPI release
+- `source_meta.first_release`: date of first PyPI/crates.io release, depending on language
 
 When a candidate is accepted, append to `CANDIDATES.md`:
 

@@ -11,7 +11,10 @@
 
 ### 文件组织
 
-每个 task 的 oracle 目录必须包含：
+每个 task 的 oracle 目录必须按 `task.json.language` 选择对应形态。工作流仍然只有
+atomic 与 integration/system_e2e 两个评分套件；变化只在语言原生文件组织。
+
+Python oracle:
 
 ```
 oracle/{task_id}/
@@ -22,10 +25,25 @@ oracle/{task_id}/
 └── fixtures/            # （可选）外部测试数据文件
 ```
 
-**conftest.py 是必需的。** 规则：
+Rust oracle:
 
-- 两个测试文件中出现的相同 helper 函数、相同 fixture、相同常量、相同 import 块，
-  必须提取到 `conftest.py`
+```
+oracle/{task_id}/
+├── Cargo.toml            # workspace 根；members = ["atomic", "integration"]
+├── atomic/
+│   ├── Cargo.toml        # package.name 必须是 atomic
+│   └── src/**/*.rs       # #[test] / 支持的 async test
+└── integration/
+    ├── Cargo.toml        # package.name 必须是 integration
+    └── src/**/*.rs       # integration + system_e2e tests
+```
+
+**共享测试支撑代码必须显式归位。** 规则：
+
+- Python 两个测试文件中出现的相同 helper 函数、相同 fixture、相同常量、相同 import 块，
+  必须提取到 `conftest.py`。
+- Rust 两个 suite crate 中出现的相同 helper、fixture builder 或常量，必须提取到一个
+  oracle-owned support crate，或在两个 suite 中局部复制；不得依赖目标 crate 的私有模块。
 - 这不是代码风格偏好，而是维护性要求——重复代码在修改 spec 时会产生
   不一致的更新风险
 
@@ -200,7 +218,7 @@ adjusted_gap     = 去级联信号，只看有资格发挥区分力的测试子�
 
 **一个 atomic 测试验证单个公共 API 入口的单个行为点。**
 
-准入条件（全部满足才能放入 `test_atomic.py`）：
+准入条件（全部满足才能放入 atomic suite）：
 
 1. 只调用一个被测公共函数/方法/类（setup 阶段的辅助调用不算）
 2. 验证的行为可以用一句话描述："当 X 时，Y 应该返回/抛出 Z"
@@ -485,22 +503,28 @@ def test_round_trip():  # ❌ 缺少 Seam 标注
 
 验证方法：
 ```bash
+# Python
 pip install {reference_package}
 pytest oracle/{task_id}/ --json-report
+
+# Rust
+# 在 oracle workspace 中用 [patch.crates-io] 指向 reference crate 后：
+cargo nextest run --no-run
+cargo nextest run --message-format libtest-json
 # 要求：passed == total
 ```
 
 如果参考实现无法通过某个测试，该测试存在以下问题之一：
 1. 测试期望值错误（以上游实际行为为准修正）
 2. 测试依赖了 spec 描述但上游未实现的行为（删除测试或修正 spec）
-3. 环境问题（修正 requirements.txt）
+3. 环境问题（修正 Python `requirements.txt` 或 Rust `Cargo.toml`/lockfile）
 
 ### Dummy Gate（下界验证）
 
-一个只有空 `__init__.py` + 公开类/函数全部 raise `NotImplementedError` 的
-空壳实现，必须通过 0% 的测试。
+一个只有语言原生最小项目骨架、公开类/函数全部返回空值或 panic/raise 的空壳实现，
+必须通过 0% 的测试。
 
-验证方法：生成 dummy 包 → pip install → pytest → 要求 passed == 0。
+验证方法：生成 dummy 包/crate → 通过语言 runner 安装或 patch 到 oracle → 运行完整 oracle → 要求 passed == 0。
 
 **如果 dummy 通过了任何测试**，该测试属于"水测试"（free point），必须修复：
 - 通常原因：测试只检查了 import 成功或 isinstance，而没有检查行为
@@ -538,10 +562,10 @@ pytest oracle/{task_id}/ --json-report
 ```
 SPEC_STANDARD.md                    ORACLE_STANDARD.md
 ─────────────────                   ──────────────────
-Behavior 章节 ──────────────────→ test_atomic.py（每章节 ≥2 个测试）
-Error Semantics ────────────────→ test_atomic.py（每行 ≥1 个测试）
-Cross-View Invariants ──────────→ test_integration.py（每条 ≥1 个测试）
-State Model ────────────────────→ test_integration.py（投影一致性验证）
+Behavior 章节 ──────────────────→ atomic suite（每章节 ≥2 个测试）
+Error Semantics ────────────────→ atomic suite（每行 ≥1 个测试）
+Cross-View Invariants ──────────→ integration suite（每条 ≥1 个测试）
+State Model ────────────────────→ integration suite（投影一致性验证）
 Representative Workflows ───────→ 不直接对应测试（仅辅助理解）
 Product Overview / Non-Goals ───→ 不对应测试
 Public Interface ───────────────→ 间接验证（import 在测试前言中）
@@ -551,12 +575,12 @@ Public Interface ───────────────→ 间接验证�
 
 在 oracle 编写完成后，逐项检查：
 
-- [ ] 每个 Behavior 章节标题在 `test_atomic.py` 中有对应测试（可通过函数名搜索）
-- [ ] 每条 CVI 在 `test_integration.py` 中有对应测试
-- [ ] Error Semantics 中每个条目有对应的 `pytest.raises` 测试
+- [ ] 每个 Behavior 章节标题在 atomic suite 中有对应测试（Python 为 `test_atomic.py`；Rust 为 `oracle/atomic/src/**/*.rs`）
+- [ ] 每条 CVI 在 integration suite 中有对应测试（Python 为 `test_integration.py`；Rust 为 `oracle/integration/src/**/*.rs`）
+- [ ] Error Semantics 中每个条目有对应的语言原生具体异常/错误测试（Python 为 `pytest.raises`；Rust 为 `Result::Err`、panic 类型或公开错误枚举/结构）
 - [ ] 每个测试 assert 使用的标识符（类名、方法名、属性名）在 spec 中出现过
 - [ ] 没有测试检查 spec 未描述的行为
-- [ ] conftest.py 消除了两个测试文件间的重复代码
+- [ ] 共享测试支撑代码已经归位（Python `conftest.py`；Rust support crate 或 suite-local duplication）
 - [ ] Reference Gate 通过（参考实现 100%）
 - [ ] Dummy Gate 通过（空壳实现 0%）
 
@@ -571,8 +595,8 @@ Public Interface ───────────────→ 间接验证�
 
 **当一个 task 的跨模型平均 gap < -5pp 时，必须执行以下审查：**
 
-1. 逐个检查 `test_atomic.py` 中的测试，确认每个测试是否满足 atomic 准入条件
-2. 逐个检查 `test_integration.py` 中的测试，确认每个测试是否真正跨越 ≥2 个 API 边界
+1. 逐个检查 atomic suite 中的测试，确认每个测试是否满足 atomic 准入条件
+2. 逐个检查 integration suite 中的测试，确认每个测试是否真正跨越 ≥2 个 API 边界
 3. 如果发现标签错误，重新归类并记录变更理由
 
 已知需要审查的 task（基于历史轨迹数据）：
@@ -614,14 +638,14 @@ Public Interface ───────────────→ 间接验证�
 
 ### 硬性门（自动化可检查）
 
-1. ✅ 文件结构完整（conftest.py + test_atomic.py + test_integration.py + requirements.txt）
+1. ✅ 文件结构完整（Python: conftest.py + test_atomic.py + test_integration.py + requirements.txt；Rust: Cargo workspace + atomic/integration suite crates）
 2. ✅ Atomic ≥ 30 个测试函数
 3. ✅ Integration ≥ 25 个测试函数
 4. ✅ 总测试数 ≥ 60
 5. ✅ Reference Gate 通过（参考实现 100%）
 6. ✅ Dummy Gate 通过（空壳实现 0%）
-7. ✅ 无 `pytest.raises(Exception)` — 异常类型必须具体
-8. ✅ conftest.py 存在且非空
+7. ✅ 错误测试使用具体错误类型/错误枚举/公开错误条件；Python 无 `pytest.raises(Exception)`
+8. ✅ 共享测试支撑代码存在且非空（Python `conftest.py`；Rust support crate 或 suite-local helper）
 9. ✅ ≥ 50% 的 integration 测试标注了 `depends_on`
 
 ### 软性门（人工审查）
@@ -633,7 +657,7 @@ Public Interface ───────────────→ 间接验证�
 14. ✅ 零个 No-check / Tautology 断言
 15. ✅ 每个 integration 测试真正跨越 ≥2 个 API 边界
 16. ✅ 每个 atomic 测试只涉及 1 个 API 入口的 1 个行为点
-17. ✅ 共享代码提取到 conftest.py，两文件间无重复 helper
+17. ✅ 共享代码提取到语言对应支撑位置（Python `conftest.py`；Rust support crate 或 suite-local helper），suite 间无不受控重复 helper
 18. ✅ Atomic 难度分布覆盖基础 / 中等 / 困难三个级别（不能全是基础级）
 19. ✅ Integration 测试 seam 分布覆盖 ≥3 种不同接缝类型
 

@@ -82,3 +82,28 @@ scope_plan: target_subdomain=syntax package + syntax/typedjson (parser,
   (commit 2f3f5e36d9b0f8f14c998d50aa20a28832205ae8).
 - interp/expand/shell/pattern/fileutil/cmd are out of scope and must not be
   referenced by spec or oracle.
+
+## Stage 3 summary (Track B)
+
+- Oracle: 144 atomic (8 suites: variants, parse, incremental, tree, pos,
+  print, util, json) + 26 integration (roundtrip, positions, json, quote,
+  errors, incremental agreement), 170 base test functions — exactly the
+  Stage 1 `expected_oracle_max`.
+- Track B trigger: 100% upstream discard (see filter/rewrite_audit.md);
+  every oracle test hand-written from the spec, validated execute-only
+  against the pinned reference.
+- Spec corrections during generation (behaviour fixes, no surface
+  widening): CVI 1 scoped to the five layout options after SingleLine
+  output was shown not to reparse (`for … & done wait`); CVI 8 restated
+  as minify-reparse + minify-fixpoint; typedjson decoding restated to
+  the actual registry (File, Word, and Command/WordPart/ArithmExpr/
+  TestExpr/Loop implementations decode; Stmt/Redirect/Assign/Comment
+  encode but fail decode with `unknown type`); heredoc statement-End
+  qualified for a later same-line redirection.
+- Gates: LINT_PASS (Go-enabled lint, task registered in TARGET_IMPORTS,
+  live-verified with an injected undeclared symbol); reference 170/170
+  against pinned checkout and against the published proxy module; dummy
+  gate accept 1/170 (0.6%), reject 3/170 (1.8%) with all passers
+  explained in filter/dummy_result.txt.
+- Scorer isolation: candidate wired via `go mod edit -replace
+  mvdan.cc/sh/v3 => <candidate>`; module-mode build, no vendoring.

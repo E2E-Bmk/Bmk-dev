@@ -65,6 +65,10 @@ the packets graduate):
 "kong-cli-grammar-fullrepro-001": [
     "github.com/alecthomas/kong",
 ],
+"mvdansh-shell-syntax-fullrepro-001": [
+    "mvdan.cc/sh/v3/syntax",
+    "mvdan.cc/sh/v3/syntax/typedjson",
+],
 ```
 
 Lint caveat for `/vN` module paths: `go_target_symbols` derives the package
@@ -90,6 +94,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | 5 | cty-value-type-system-fullrepro-001 | zclconf/go-cty @ v1.19.0 | S3_DONE | 132 (96+36) | 132/132 | Track B (upstream 81/83 in-package white-box); dummy worst-case 6/132=4.5% after strengthening pass (initial accept-stub 15.2% → negative controls + native-content assertions); module requires go >= 1.25 |
 | 6 | goyaml-yaml-engine-fullrepro-001 | goccy/go-yaml @ v1.19.2 | S3_DONE | 134 (97+37) | 134/134 | Track B (upstream mega-tables import internal/errors; path/lexer suites golden-bound); dummy worst-case 1/134=0.7% after non-vacuity fix (initial 2/134, one vacuous all-nil round-trip passer); 3 spec_error fixes during ref run (validator FieldError-slice annotation, trailing-newline Origin loss, ReplaceWithReader comment drop) |
 | 7 | kong-cli-grammar-fullrepro-001 | alecthomas/kong @ v1.16.1 | S3_DONE | 149 (116+33) | 149/149 | Track B (upstream bound to alecthomas/assert+repr; Signature/tag-internal/wrap-golden suites out of scope); dummy accept 0/149, reject 1/149=0.7% (Must-panics failure_path, inherent); spec corrections during ref run (hyphen-prefixed detached values, required flags in usage line, Depth semantics) |
+| 8 | mvdansh-shell-syntax-fullrepro-001 | mvdan/sh @ v3.13.1 | S3_DONE | 170 (144+26) | 170/170 | Track B (upstream 10/12 files in-package white-box AST-literal mega-tables); dummy accept 1/170=0.6% (zero-Pos contract, inherent), reject 3/170=1.8% (+2 variant-gating failure_path, error texts not spec-declared); spec corrections from generation probes (CVI 1 scoped to layout options — SingleLine output can fail to reparse; CVI 8 → minify fixpoint; typedjson decode registry — Stmt/Redirect/Assign/Comment encode-only; heredoc statement-End vs later same-line redirect) |
 
 ## Candidate selection log (CANDIDATES.md rows deferred; write scope is staging/ only)
 
@@ -114,7 +119,7 @@ upstream version wired in with `go mod edit -replace`, mirroring
 | alecthomas/kong | SELECTED | 6332 LOC @ v1.16.1, 290 test funcs | CLI grammar engine: struct-tag DSL, parse+help+model+resolution+execution projections; Track B |
 | antchfx/xpath | QUEUED (candidate) | 4032 LOC, 83 test funcs | XPath 1.0 engine over caller-supplied NodeNavigator |
 | zclconf/go-cty | SELECTED | 13657 LOC, 165 test funcs | value/type system: conversions, unification, refinements/marks, json/msgpack round trips; Track B |
-| mvdan/sh | QUEUED (candidate) | 16185 LOC, 105 test funcs | shell syntax engine: parse/print round trip, positions, quoting rules |
+| mvdan/sh | SELECTED | 16185 LOC (9123 in scope), 105 test funcs | shell syntax engine: parse/print round trip, positions, quoting, typed JSON; Track B |
 | ohler55/ojg | QUEUED (candidate) | 30855 LOC, 835 test funcs | JSONPath (jp) + parser (oj) engines over native Go data |
 
 ## Dedup register (Go repos already taken on `origin/go-tasks-20260821`)

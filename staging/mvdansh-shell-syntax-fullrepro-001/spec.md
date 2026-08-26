@@ -188,8 +188,12 @@ the closing delimiter line and participates in expansion: an unquoted
 delimiter yields a body with `Lit`, `ParamExp`, and other word parts, while
 a quoted delimiter (`<<'EOF'`) yields a body that is a single literal part.
 With `<<-`, leading tab characters are preserved in the body's literal
-value. The enclosing statement's `End` extends through the here-document
-body. The `<<<` operator ("here-string") sets `Word` only and leaves
+value. The here-document's own `Redirect` node always ends after the
+closing delimiter line. The enclosing statement's `End` extends through
+the here-document body when the here-document is the statement's last
+redirection; a redirection written after the here-document operator on
+the same line becomes the statement's end instead, leaving the body
+beyond the statement's extent. The `<<<` operator ("here-string") sets `Word` only and leaves
 `Hdoc` nil. If end of input arrives before the closing delimiter, then
 parsing must fail with text ``unclosed here-document `EOF` `` (the
 delimiter quoted in backquotes) and that error must report incomplete.
@@ -384,10 +388,12 @@ operators require a name on the left: `$((1 += 2))` must fail with text
 
 **Test expressions.** Inside `[[ ... ]]` (`TestClause`, Bash and mksh),
 `BinaryTest` and `UnaryTest` carry `Op`, `OpPos`, and operands, and
-`ParenTest` wraps with parentheses. `&&` binds tighter than `||`: the
-expression `a && b || c` produces a top-level `&&` node whose right
-operand holds the `||`. Unary file and string operators (`-n`, `-e`, and
-relatives) apply to word operands.
+`ParenTest` wraps with parentheses. The operators `&&` and `||` share one
+precedence level and associate to the right: `a && b || c` produces a
+top-level `&&` node whose right operand holds the `||`, and
+`a || b && c` produces a top-level `||` whose right operand holds the
+`&&`. Unary file and string operators (`-n`, `-e`, and relatives) apply
+to word operands.
 
 **Keyword and name classification.** `ValidName` reports whether a string
 is a valid shell name per POSIX: it must start with a letter or
@@ -543,9 +549,14 @@ tree, returning it as a `Node`; `DecodeOptions` carries its `Decode`
 method as the configurable form. The root object must carry `"Type"`.
 Whitespace and indentation in the input are irrelevant. If the `"Type"`
 value names no known node type, then decoding must fail with an error of
-text `unknown type: "Nope"` (the offending name quoted). A decoded tree
-is deep-equal to the tree that was encoded, positions included, and both
-print identically.
+text `unknown type: "Nope"` (the offending name quoted). The known type
+names are `File`, `Word`, and the implementations of the `Command`,
+`WordPart`, `ArithmExpr`, `TestExpr`, and `Loop` interfaces; structural
+nodes that never sit behind an interface-typed field — `Stmt`,
+`Redirect`, `Assign`, `Comment` — encode as roots but do not decode,
+failing with the same `unknown type` error for their own names. A
+decoded tree is deep-equal to the tree that was encoded, positions
+included, and both print identically.
 
 ## State Model
 
@@ -597,7 +608,9 @@ values; `QuoteError` is returned as a pointer.
 1. **Print/parse round trip**: for any tree obtained from `Parse`,
    printing it and parsing the printed text must succeed and yield a tree
    that prints byte-identically — canonical output is a fixpoint of the
-   parse-print cycle under any fixed set of printer options.
+   parse-print cycle under any fixed combination of the layout options
+   `Indent`, `BinaryNextLine`, `SwitchCaseIndent`, `SpaceRedirects`, and
+   `FunctionNextLine`, including none of them.
 2. **Position/source agreement**: for every node of a tree returned by
    `Parse`, `End()` must not be positioned before `Pos()`, both positions
    must be valid for non-empty constructs, and each position's `Line` and
@@ -605,13 +618,15 @@ values; `QuoteError` is returned as a pointer.
    the original source.
 3. **JSON round trip**: `typedjson.Decode` applied to the output of
    `typedjson.Encode` must reconstruct a tree deep-equal to the original,
-   including every position's offset, line, and column, for any node kind
-   the printer supports; printing original and reconstruction yields the
-   same bytes.
+   including every position's offset, line, and column, for any root the
+   decoder knows: `*File`, `*Word`, and the interface implementations;
+   printing original and reconstruction yields the same bytes.
 4. **Walk/tree agreement**: walking a parsed file with a function that
    always returns true must invoke the function once per node and once
    with nil per node (the counts match), and every visited node's extent
-   must lie within the file's extent.
+   must lie within the bounds of the source text — here-document bodies
+   may extend past the enclosing statement's extent, but never past the
+   source.
 5. **Quote/parse agreement**: for any string accepted by `Quote` under a
    dialect, parsing the quoted form as a shell word under that dialect
    must succeed and produce exactly one word containing no expansion
@@ -624,9 +639,9 @@ values; `QuoteError` is returned as a pointer.
 7. **Incomplete classification**: `IsIncomplete(err)` must report true
    exactly when `err` is a `ParseError` (value or pointer) whose
    `Incomplete` field is true, across all parse entry points.
-8. **Minify preserves meaning**: text printed with `Minify` enabled must
-   re-parse successfully into a tree whose default-options print equals
-   the default-options print of the original tree.
+8. **Minify reparses and stabilises**: text printed with `Minify`
+   enabled must re-parse successfully, and printing the reparsed tree
+   with `Minify` again must reproduce the minified bytes exactly.
 
 ## Public Interface
 

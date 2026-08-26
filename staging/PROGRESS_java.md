@@ -52,3 +52,4 @@ prior research: spring-coupled tests).
 
 | # | task_id | repo | state | notes |
 |---|---------|------|-------|-------|
+| 1 | javapoet-fullrepro-001 | square/javapoet | S3_DONE (Docker gates PENDING) | 91 tests (61 atomic / 30 integration); local mvn reference 91/91; LINT_PASS; verify_task STATIC_VALID |

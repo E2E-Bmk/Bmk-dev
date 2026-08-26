@@ -1,0 +1,25 @@
+{
+  "task_id": "indexmap-fullrepro-001",
+  "reference": "indexmap-rs/indexmap @ 42e57a395b939292c08d32a317bae7bec3b7b5d8 (indexmap 2.7.1)",
+  "runs": [
+    {
+      "mode": "path_patch",
+      "detail": "[patch.crates-io] indexmap = { path = <pinned checkout> } appended to oracle workspace manifest; builds and resolves cleanly under cargo 1.83",
+      "runner": "cargo nextest run",
+      "total": 121,
+      "passed": 121,
+      "failed": 0
+    },
+    {
+      "mode": "registry_lock",
+      "detail": "oracle Cargo.lock pins indexmap 2.7.1 + hashbrown 0.15.5 (a fresh resolve picks indexmap 2.14.0, which requires Rust 1.85 > toolchain 1.83); crates.io build",
+      "runner": "cargo nextest run",
+      "total": 121,
+      "passed": 121,
+      "failed": 0
+    }
+  ],
+  "atomic": {"total": 106, "passed": 106},
+  "integration": {"total": 15, "passed": 15},
+  "pass_rate": 1.0
+}

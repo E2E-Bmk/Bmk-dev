@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3_DONE
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -20,9 +20,12 @@ updated:    2026-08-26
 ```
 
 todo:
-- [ ] 整理 public surface（public packages / types / members；Java override：不读 __init__.py）
-- [ ] 逐项过 Q1/Q2 判断
-- [ ] 写 spec.md 草稿（含 internal header，6-layer 结构）
+- [x] spec.md v1（6-layer；internal header 在 spec_internal.md）
+- [x] oracle/ Maven 结构（pom.xml + atomic/integration/support）
+- [x] 116 tests（85 atomic + 31 integration）全部通过 local mvn test（见 filter/local_reference_run.txt）
+- [x] filter/: lint_result.txt = LINT_PASS、spec_test_map.md（0 unmapped）、kept_nodeids.txt、taxonomy.jsonl、rewrite_audit.md
+- [x] task.json language=java, program_file=pom.xml, oracle.count=116
+- [ ] Docker dummy gate + Docker reference run（PENDING — Docker unavailable）
 
 ---
 
@@ -32,6 +35,9 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-26 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (12231 non-blank main LOC, 593 upstream test methods) |
 | 2 | 2026-08-26 | S1_SELECTED | S2_SPEC_DRAFT | CANDIDATES.md SELECTED row appended |
+| 3 | 2026-08-26 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec.md v1: path grammar/filters/functions/contexts/compiled/writes/options/errors; probed 2.9.0 empirically (3 probe rounds) |
+| 4 | 2026-08-26 | S2_SPEC_DONE | S3_ORACLE_BUILD | generated-only oracle: 9 atomic + 3 integration files planned from spec sections |
+| 5 | 2026-08-26 | S3_ORACLE_BUILD | S3_DONE | 116/116 pass locally vs pinned 2.9.0; LINT_PASS; spec_test_map 0 unmapped; Docker gates PENDING |
 
 ---
 

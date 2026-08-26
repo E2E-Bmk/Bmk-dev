@@ -59,3 +59,4 @@ prior research: spring-coupled tests).
 | 5 | threeten-extra-fullrepro-001 | ThreeTen/threeten-extra | S3_DONE (Docker gates PENDING) | 139 tests (114 atomic / 25 integration); local mvn reference 139/139; LINT_PASS; verify_task STATIC_VALID |
 | 6 | univocity-parsers-fullrepro-001 | uniVocity/univocity-parsers | S3_DONE (Docker gates PENDING) | 90 tests (59 atomic / 31 integration); local mvn reference 90/90; LINT_PASS; verify_task STATIC_VALID |
 | 7 | jgrapht-core-fullrepro-001 | jgrapht/jgrapht | S3_DONE (Docker gates PENDING) | 97 tests (71 atomic / 26 integration); local mvn reference 97/97; LINT_PASS; verify_task STATIC_VALID |
+| 8 | commons-jexl3-fullrepro-001 | apache/commons-jexl | S3_DONE (Docker gates PENDING) | 87 tests (60 atomic / 27 integration); local mvn reference 87/87; LINT_PASS; verify_task STATIC_VALID |

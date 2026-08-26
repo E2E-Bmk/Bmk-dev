@@ -11,8 +11,8 @@
 ## Current
 
 ```
-state:      S2_SPEC_DRAFT
-stage:      2
+state:      S3A_IMPORT_AUDIT
+stage:      3
 spec_iter:  0
 filter_iter: 0
 eval_iter:  0
@@ -21,9 +21,9 @@ updated:    2026-08-25
 ```
 
 todo:
-- [ ] survey public API (docs.rs + exports) and probe reference behavior
-- [ ] draft spec.md: 6-layer structure, all behaviors probe-verified
-- [ ] declare Public Interface catalog (pubgrub re-exports only)
+- [ ] audit upstream tests: imports, feature gates, fixture styles
+- [ ] write filter/rewrite_audit.md with per-file disposition
+- [ ] decide kept_upstream vs generated_only
 
 ## History
 
@@ -31,6 +31,8 @@ todo:
 |---|------|------|----|------|
 | 1 | 2026-08-25 | S1_SCREENING | S1_SELECTED | filter_notes.md complete; decision=keep (4228 LOC; conflict-driven version solver with derivation-tree failure proofs and documented English reporting; v0.3.0 pinned — 0.3.1+ needs edition2024, scorer runs cargo 1.83) |
 | 2 | 2026-08-25 | S1_SELECTED | S2_SPEC_DRAFT | begin spec drafting |
+| 3 | 2026-08-25 | S2_SPEC_DRAFT | S2_SPEC_DONE | spec v1 landed; three probe rounds fixed: Ranges display grammar (nine segment forms, ∅/*/" | "), touching-segment union merge vs discrete-gap retention, from_iter normalization skipping invalid pairs, simplify's three fixed rules, offline provider strategy (highest contained version; no-match packages outrank all; conflicts then fewest-candidates), unavailability message string, deterministic solving incl. cycles/self-deps/backtracking, unknown-root NoVersions tree, collapse merge sides, all External sentence forms, format_terms five shapes with pos/neg normalization, Because/And-because chaining with " ({n})" refs and blank-line separation, all PubGrubError and VersionParseError Display strings; 25 validation checks + style gate pass |
+| 4 | 2026-08-25 | S2_SPEC_DONE | S3A_IMPORT_AUDIT | proceed to oracle import audit |
 
 ---
 

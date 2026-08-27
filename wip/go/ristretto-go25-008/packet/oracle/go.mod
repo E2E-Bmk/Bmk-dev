@@ -1,0 +1,20 @@
+module go25.local/ristrettov8gate
+
+go 1.24.0
+
+toolchain go1.25.0
+
+require (
+	github.com/cespare/xxhash/v2 v2.3.0
+	github.com/dgraph-io/ristretto/v2 v2.4.2
+	github.com/dgryski/go-farm v0.0.0-20240924180020-3414d57e47da
+	github.com/dustin/go-humanize v1.0.1
+	github.com/stretchr/testify v1.11.1
+	golang.org/x/sys v0.36.0
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)

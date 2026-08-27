@@ -8,6 +8,15 @@ plugin is needed. Two properties of `go test` shape this runner:
 * it compiles before running, so a candidate that does not build produces no test
   events at all. That is reported as an unusable batch rather than as failures,
   the same treatment a Python collection error receives.
+
+Two oracle shapes are supported. The historical shape puts each suite in its own
+subdirectory (`oracle/atomic/`, `oracle/integration/`) - one package per suite,
+discovery scans that subdirectory, batches cd into it. The flat shape keeps every
+test in a single package at the oracle root and declares which test belongs to
+which layer via ROOT-MAP.json: Go tests inside the same package share test
+helpers by construction, so physically splitting them would break compilation.
+Detection is by ROOT-MAP.json's presence at the oracle root; without it the
+runner falls back to the subdirectory shape.
 """
 
 from __future__ import annotations
@@ -23,9 +32,22 @@ from harness.runners.base import Batch, Env, Runner, Step, TestId
 #: `func TestXxx(t *testing.T)` at the top level of a file.
 _TEST_FUNC = re.compile(r"^func\s+(Test\w*)\s*\(\s*\w+\s+\*testing\.[TB]\s*\)", re.M)
 
+#: `module <path>` at the top level of go.mod.
+_MODULE_LINE = re.compile(r"^module\s+(\S+)", re.M)
+
 
 class GoRunner(Runner):
     language = "go"
+
+    def __init__(self) -> None:
+        # Flat-mode state is set by ``discover`` when ROOT-MAP.json is present
+        # at the oracle root and consulted by ``batch`` to decide the working
+        # directory. A runner instance is shared across tasks, so the state is
+        # reset every time ``discover`` sees a new oracle host - otherwise the
+        # second task would inherit the first task's package short name.
+        self._flat_pkg: Optional[str] = None
+        self._flat_layers: dict[str, str] = {}
+        self._flat_host: Optional[Path] = None
 
     # ── discovery ─────────────────────────────────────────────────────────
 
@@ -35,15 +57,73 @@ class GoRunner(Runner):
         Read from source with a regexp rather than asked of `go test -list`,
         because `-list` needs a successful compile and the denominator must not
         depend on whether the candidate builds.
+
+        The flat oracle shape (ROOT-MAP.json at the oracle root, all tests in a
+        single package) requires the layer split to come from ROOT-MAP rather
+        than from a directory name. Discovery for both suites reads the same
+        set of files and returns only those whose function name appears under
+        the requested layer.
         """
+        if self._enter_flat_mode(oracle_host):
+            pkg = self._flat_pkg or oracle_host.name
+            ids: list[TestId] = []
+            for source in sorted(oracle_host.glob("*_test.go")):
+                text = source.read_text(encoding="utf-8", errors="replace")
+                for name in _TEST_FUNC.findall(text):
+                    if self._flat_layers.get(name) == suite:
+                        ids.append(f"{pkg}::{name}")
+            return ids
+
         package = oracle_host / suite
         if not package.is_dir():
             return []
-        ids: list[TestId] = []
+        ids = []
         for source in sorted(package.glob("*_test.go")):
             text = source.read_text(encoding="utf-8", errors="replace")
             ids += [f"{suite}::{name}" for name in _TEST_FUNC.findall(text)]
         return ids
+
+    def _enter_flat_mode(self, oracle_host: Path) -> bool:
+        """Refresh flat-mode state for this oracle; return True when in flat mode."""
+        root_map = oracle_host / "ROOT-MAP.json"
+        gomod = oracle_host / "go.mod"
+        if not root_map.is_file() or not gomod.is_file():
+            if self._flat_host == oracle_host:
+                self._flat_pkg = None
+                self._flat_layers = {}
+                self._flat_host = None
+            return False
+        if not any(oracle_host.glob("*_test.go")):
+            return False
+        try:
+            data = json.loads(root_map.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return False
+        layers: dict[str, str] = {}
+        for root in data.get("roots", []):
+            layer = str(root.get("layer") or "").strip().lower()
+            if layer == "system":
+                # The sandbox recognises two layers; system-level checks are
+                # aggregated into integration to match how the Python and
+                # TypeScript legacy shapes fold them.
+                layer = "integration"
+            if layer not in ("atomic", "integration"):
+                continue
+            for entry in root.get("tests", []) or []:
+                if isinstance(entry, str):
+                    layers[entry] = layer
+                elif isinstance(entry, dict):
+                    name = entry.get("name") or entry.get("test")
+                    if isinstance(name, str):
+                        layers[name] = layer
+        module = ""
+        m = _MODULE_LINE.search(gomod.read_text(encoding="utf-8", errors="replace"))
+        if m:
+            module = m.group(1).rstrip("/").rsplit("/", 1)[-1]
+        self._flat_pkg = module or oracle_host.name
+        self._flat_layers = layers
+        self._flat_host = oracle_host
+        return True
 
     # ── container preparation ─────────────────────────────────────────────
 
@@ -86,9 +166,10 @@ class GoRunner(Runner):
         """
         names = "|".join(f"^{re.escape(t.split('::', 1)[-1])}$" for t in tests)
         report = f"/eval/rb_{suite}_{offset}.json"
+        workdir = "/eval/oracle" if self._flat_pkg else f"/eval/oracle/{suite}"
         return Batch(
             command=(
-                f"cd {shlex.quote(f'/eval/oracle/{suite}')} && "
+                f"cd {shlex.quote(workdir)} && "
                 f"timeout {timeout} go test -json -count=1 "
                 f"-timeout {timeout}s -run {shlex.quote(names)} ./... "
                 f"> {report} 2>&1"

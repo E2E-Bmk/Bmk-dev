@@ -1,0 +1,1256 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case": "go25-v21-containerregistry-image-graph",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerReferenceCanonicalization",
+        "TestContainerReferenceCanonicalizationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-REFERENCE-NORMALIZATION",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.TransferFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-REF-001"
+      ],
+      "native_owners": [
+        "name-reference"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerDescriptorDigestAndSize",
+        "TestContainerDescriptorDigestAndSizeBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DESCRIPTOR-INTEGRITY",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.LayerFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-DESC-001"
+      ],
+      "native_owners": [
+        "descriptor"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerLayerCompressedUncompressedIdentity",
+        "TestContainerLayerCompressedUncompressedIdentityBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-LAYER-LIFECYCLE",
+      "owners": [
+        "receipt.LayerFact",
+        "receipt.ImageFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-LAYER-001"
+      ],
+      "native_owners": [
+        "layer"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerImageManifestConfigLink",
+        "TestContainerImageManifestConfigLinkBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MANIFEST-INDEX",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.IndexFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-MANIFEST-001"
+      ],
+      "native_owners": [
+        "manifest",
+        "config"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerAppendLayerMutation",
+        "TestContainerAppendLayerMutationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MUTATE-GRAPH",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.ImageFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-MUTATE-001"
+      ],
+      "native_owners": [
+        "mutate"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerOCILayoutWriteRead",
+        "TestContainerOCILayoutWriteReadBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-LAYOUT-TARBALL",
+      "owners": [
+        "receipt.GraphReceipt",
+        "receipt.Capture",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-LAYOUT-001"
+      ],
+      "native_owners": [
+        "layout"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerRemoteGetPutContract",
+        "TestContainerRemoteGetPutContractBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-REGISTRY-TRANSPORT",
+      "owners": [
+        "receipt.TransferFact",
+        "receipt.TransferJournal",
+        "receipt.GraphReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-REMOTE-001"
+      ],
+      "native_owners": [
+        "remote-transport"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerCraneOptionApplication",
+        "TestContainerCraneOptionApplicationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-CLI-001"
+      ],
+      "native_owners": [
+        "crane"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerTagDigestReferenceIdentity",
+        "TestContainerTagDigestReferenceIdentityBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-REFERENCE-NORMALIZATION",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.TransferFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-REF-002"
+      ],
+      "native_owners": [
+        "name-reference"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerValidationRejectsBadSize",
+        "TestContainerValidationRejectsBadSizeBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DESCRIPTOR-INTEGRITY",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.LayerFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-DESC-002"
+      ],
+      "native_owners": [
+        "descriptor",
+        "validation"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerIndexPlatformSelection",
+        "TestContainerIndexPlatformSelectionBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MANIFEST-INDEX",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.IndexFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-MANIFEST-002"
+      ],
+      "native_owners": [
+        "image-index"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerTarballLayerPreservation",
+        "TestContainerTarballLayerPreservationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-LAYOUT-TARBALL",
+      "owners": [
+        "receipt.GraphReceipt",
+        "receipt.Capture",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-LAYOUT-002"
+      ],
+      "native_owners": [
+        "tarball",
+        "layer"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerEmptyImageNativeConfig",
+        "TestContainerEmptyImageNativeConfigBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "image"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-NATIVE-001"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerStaticLayerNativeReads",
+        "TestContainerStaticLayerNativeReadsBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "layer"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-NATIVE-002"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerNativeRetryStatusPolicy",
+        "TestContainerNativeRetryStatusPolicyBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "remote-transport"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-NATIVE-003"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestContainerPartialImageLazyAccessor",
+        "TestContainerPartialImageLazyAccessorBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "partial-image"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "GCR-NATIVE-004"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestContainerReferenceBuildsRegistryRequest"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-REFERENCE-NORMALIZATION",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.TransferFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A07"
+      ],
+      "seam": "canonical reference → registry URL and scope",
+      "clauses": [
+        "GCR-SEAM-001"
+      ],
+      "native_owners": [
+        "name-reference",
+        "remote-transport"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestContainerLayerDescriptorEntersManifest"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DESCRIPTOR-INTEGRITY",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.LayerFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [
+        "A02",
+        "A03",
+        "A04"
+      ],
+      "seam": "layer content → descriptor → image manifest",
+      "clauses": [
+        "GCR-SEAM-002"
+      ],
+      "native_owners": [
+        "layer",
+        "descriptor",
+        "manifest"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestContainerMutationRecomputesImageDigest"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MUTATE-GRAPH",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.ImageFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A02",
+        "A05"
+      ],
+      "seam": "graph mutation → manifest bytes → new digest",
+      "clauses": [
+        "GCR-SEAM-003"
+      ],
+      "native_owners": [
+        "mutate",
+        "manifest",
+        "descriptor"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestContainerLayoutRoundTripPreservesGraph"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-LAYOUT-TARBALL",
+      "owners": [
+        "receipt.GraphReceipt",
+        "receipt.Capture",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A04",
+        "A06"
+      ],
+      "seam": "image graph → OCI files → reloaded graph",
+      "clauses": [
+        "GCR-SEAM-004"
+      ],
+      "native_owners": [
+        "image",
+        "layout",
+        "descriptor"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestContainerIndexSelectsPlatformImage"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MANIFEST-INDEX",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.IndexFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [
+        "A04",
+        "A11"
+      ],
+      "seam": "index descriptor → platform match → child image",
+      "clauses": [
+        "GCR-SEAM-005"
+      ],
+      "native_owners": [
+        "image-index",
+        "manifest",
+        "image"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestContainerRemoteRegistryRoundTrip"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-REGISTRY-TRANSPORT",
+      "owners": [
+        "receipt.TransferFact",
+        "receipt.TransferJournal",
+        "receipt.GraphReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A04",
+        "A07"
+      ],
+      "seam": "image push → local registry → pull",
+      "clauses": [
+        "GCR-SEAM-006"
+      ],
+      "native_owners": [
+        "remote-transport",
+        "registry",
+        "image"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestContainerCraneAndLibraryMutationAgree"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A05",
+        "A08"
+      ],
+      "seam": "crane options → library mutation → image view",
+      "clauses": [
+        "GCR-SEAM-007"
+      ],
+      "native_owners": [
+        "crane",
+        "mutate",
+        "image"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestContainerValidationCrossesManifestAndLayers"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DESCRIPTOR-INTEGRITY",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.LayerFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [
+        "A02",
+        "A03",
+        "A10"
+      ],
+      "seam": "manifest graph → child layer validation",
+      "clauses": [
+        "GCR-SEAM-008"
+      ],
+      "native_owners": [
+        "validation",
+        "manifest",
+        "layer",
+        "descriptor"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestContainerTagResolutionReturnsCanonicalDigest"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-REFERENCE-NORMALIZATION",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.TransferFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [
+        "A09",
+        "A07"
+      ],
+      "seam": "tag request → remote resolve → digest reference",
+      "clauses": [
+        "GCR-SEAM-009"
+      ],
+      "native_owners": [
+        "name-reference",
+        "remote-transport",
+        "descriptor"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestContainerLazyLayerReadMemoizesIdentity"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-LAYER-LIFECYCLE",
+      "owners": [
+        "receipt.LayerFact",
+        "receipt.ImageFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Digest"
+      ],
+      "depends_on": [
+        "A03",
+        "A16"
+      ],
+      "seam": "lazy accessor → layer materialization → stable identity",
+      "clauses": [
+        "GCR-SEAM-010"
+      ],
+      "native_owners": [
+        "partial-image",
+        "layer",
+        "descriptor"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestContainerMutatedIndexPublishesChild"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MUTATE-GRAPH",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.ImageFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A05",
+        "A11"
+      ],
+      "seam": "index mutation → manifest list → child lookup",
+      "clauses": [
+        "GCR-SEAM-011"
+      ],
+      "native_owners": [
+        "mutate",
+        "image-index",
+        "manifest"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestContainerTarballToLayoutEquivalence"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-LAYOUT-TARBALL",
+      "owners": [
+        "receipt.GraphReceipt",
+        "receipt.Capture",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A06",
+        "A12"
+      ],
+      "seam": "tar stream → image graph → OCI layout",
+      "clauses": [
+        "GCR-SEAM-012"
+      ],
+      "native_owners": [
+        "tarball",
+        "layout",
+        "image"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestContainerTransportRetryPreservesRequestBody"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-REGISTRY-TRANSPORT",
+      "owners": [
+        "receipt.TransferFact",
+        "receipt.TransferJournal",
+        "receipt.GraphReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A07",
+        "A15"
+      ],
+      "seam": "retry policy → replayed request → registry receipt",
+      "clauses": [
+        "GCR-SEAM-013"
+      ],
+      "native_owners": [
+        "remote-transport",
+        "retry",
+        "registry"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestContainerCraneSaveLoadRoundTrip"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A08",
+        "A12"
+      ],
+      "seam": "CLI save artifact → load API → image graph",
+      "clauses": [
+        "GCR-SEAM-014"
+      ],
+      "native_owners": [
+        "crane",
+        "tarball",
+        "image"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestContainerDescriptorIntegrityAcrossSinks"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DESCRIPTOR-INTEGRITY",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.LayerFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [
+        "A02",
+        "A10"
+      ],
+      "seam": "one descriptor → filesystem and HTTP sinks",
+      "clauses": [
+        "GCR-SEAM-015"
+      ],
+      "native_owners": [
+        "descriptor",
+        "layout",
+        "remote-transport"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestContainerIndexManifestAndChildrenAgree"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MANIFEST-INDEX",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.IndexFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [
+        "A04",
+        "A11"
+      ],
+      "seam": "index manifest → child descriptors → image digests",
+      "clauses": [
+        "GCR-SEAM-016"
+      ],
+      "native_owners": [
+        "image-index",
+        "manifest",
+        "descriptor"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestContainerNativeEmptyImageToLayout"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "image",
+        "layout"
+      ],
+      "depends_on": [
+        "A06",
+        "A13"
+      ],
+      "seam": "empty image → native OCI layout",
+      "clauses": [
+        "GCR-SEAM-017"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestContainerNativeStaticLayerTarball"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "layer",
+        "tarball"
+      ],
+      "depends_on": [
+        "A12",
+        "A14"
+      ],
+      "seam": "static layer → tarball source/sink",
+      "clauses": [
+        "GCR-SEAM-018"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestContainerNativeRetryEventuallySucceeds"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "remote-transport",
+        "retry"
+      ],
+      "depends_on": [
+        "A07",
+        "A15"
+      ],
+      "seam": "transient local response → native retry success",
+      "clauses": [
+        "GCR-SEAM-019"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestContainerNativePartialConfigRead"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "partial-image",
+        "config"
+      ],
+      "depends_on": [
+        "A16",
+        "A04"
+      ],
+      "seam": "lazy config accessor → native config file",
+      "clauses": [
+        "GCR-SEAM-020"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestContainerNativeNameValidationBeforeHTTP"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "name-reference",
+        "remote-transport"
+      ],
+      "depends_on": [
+        "A01"
+      ],
+      "seam": "invalid reference → no request publication",
+      "clauses": [
+        "GCR-SEAM-021"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestContainerNativeManifestMediaTypeRead"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "manifest",
+        "image"
+      ],
+      "depends_on": [
+        "A04"
+      ],
+      "seam": "manifest bytes → media type observation",
+      "clauses": [
+        "GCR-SEAM-022"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestContainerNativeLayerReaderIsolation"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "layer",
+        "reader"
+      ],
+      "depends_on": [
+        "A14",
+        "A03"
+      ],
+      "seam": "independent readers → same content",
+      "clauses": [
+        "GCR-SEAM-023"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestContainerNativeRegistryHeadThenGet"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "registry",
+        "remote-transport"
+      ],
+      "depends_on": [
+        "A07",
+        "A15"
+      ],
+      "seam": "HEAD metadata → GET body observation",
+      "clauses": [
+        "GCR-SEAM-024"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestContainerMutatedImageDurableReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MUTATE-GRAPH",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.ImageFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A02",
+        "A03",
+        "A05",
+        "A06"
+      ],
+      "receipt": "After appending a layer and writing a layout, a freshly loaded image validates and reports the new manifest digest and layer exactly once.",
+      "clauses": [
+        "GCR-SYSTEM-001"
+      ],
+      "native_owners": [
+        "layer",
+        "mutate",
+        "manifest",
+        "descriptor",
+        "layout",
+        "validation"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestContainerTarballLayoutRegistryParity"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-LAYOUT-TARBALL",
+      "owners": [
+        "receipt.GraphReceipt",
+        "receipt.Capture",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A02",
+        "A06",
+        "A12"
+      ],
+      "receipt": "After tarball import, layout persistence, and local push, fresh readers from both sinks expose the same descriptor graph.",
+      "clauses": [
+        "GCR-SYSTEM-002"
+      ],
+      "native_owners": [
+        "tarball",
+        "layout",
+        "image",
+        "remote-transport",
+        "registry",
+        "descriptor"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestContainerLocalPushPullReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-REGISTRY-TRANSPORT",
+      "owners": [
+        "receipt.TransferFact",
+        "receipt.TransferJournal",
+        "receipt.GraphReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A01",
+        "A03",
+        "A07"
+      ],
+      "receipt": "After pushing to an evaluator registry, a fresh pull and server request log agree on canonical reference, digest, and transferred blobs.",
+      "clauses": [
+        "GCR-SYSTEM-003"
+      ],
+      "native_owners": [
+        "name-reference",
+        "remote-transport",
+        "registry",
+        "manifest",
+        "layer"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestContainerPlatformIndexSelectionReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MANIFEST-INDEX",
+      "owners": [
+        "receipt.ImageFact",
+        "receipt.IndexFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Validate"
+      ],
+      "depends_on": [
+        "A02",
+        "A04",
+        "A11"
+      ],
+      "receipt": "After publishing a multi-platform index, a fresh platform selection resolves the intended child and validates its manifest.",
+      "clauses": [
+        "GCR-SYSTEM-004"
+      ],
+      "native_owners": [
+        "image-index",
+        "platform-match",
+        "manifest",
+        "descriptor",
+        "image"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestContainerCraneAPIArtifactReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.GraphPlan",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Digest",
+        "receipt.GraphReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A05",
+        "A08",
+        "A12"
+      ],
+      "receipt": "After a crane mutation and save, a fresh library load observes the same labels, layers, and digest advertised by the CLI.",
+      "clauses": [
+        "GCR-SYSTEM-005"
+      ],
+      "native_owners": [
+        "crane-cli",
+        "crane-api",
+        "mutate",
+        "tarball",
+        "image"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestContainerCorruptLayerNoPublicationReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-LAYER-LIFECYCLE",
+      "owners": [
+        "receipt.LayerFact",
+        "receipt.ImageFact",
+        "receipt.GraphReceipt",
+        "receipt.GraphReceipt.Digest"
+      ],
+      "depends_on": [
+        "A02",
+        "A03",
+        "A10"
+      ],
+      "receipt": "After a corrupt blob upload attempt, a fresh registry resolve and layout scan expose no valid manifest that references the rejected layer.",
+      "clauses": [
+        "GCR-SYSTEM-006"
+      ],
+      "native_owners": [
+        "layer",
+        "descriptor",
+        "validation",
+        "remote-transport",
+        "registry"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestContainerNativeEmptyImageWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "image",
+        "config",
+        "manifest",
+        "layout",
+        "validation"
+      ],
+      "depends_on": [
+        "A04",
+        "A06",
+        "A13"
+      ],
+      "receipt": "A native empty image written to a fresh layout reloads and validates with its native config and zero added layers.",
+      "clauses": [
+        "GCR-SYSTEM-007"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestContainerNativeRetryLazyReadWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "remote-transport",
+        "retry",
+        "partial-image",
+        "layer",
+        "descriptor"
+      ],
+      "depends_on": [
+        "A03",
+        "A15",
+        "A16"
+      ],
+      "receipt": "After a local transient response, a fresh lazy image read succeeds once and repeated readers report stable descriptor identity.",
+      "clauses": [
+        "GCR-SYSTEM-008"
+      ]
+    }
+  ]
+}

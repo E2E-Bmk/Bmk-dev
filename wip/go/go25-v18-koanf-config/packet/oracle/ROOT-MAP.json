@@ -1,0 +1,1057 @@
+{
+  "schema": "spec2repo.go25.root-map.v2",
+  "instance_id": "go25-v18-koanf-config",
+  "spec_version": "v2",
+  "synthetic_variant": "koanf-generation-transactions-v2",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfGenerationAdvancesOnSemanticLoad",
+        "TestKoanfGenerationAdvancesOnSemanticLoadBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATION-CLOCK",
+      "owners": [
+        "generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-GEN-001"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfGenerationIgnoresNoopAndFailure",
+        "TestKoanfGenerationIgnoresNoopAndFailureBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATION-CLOCK",
+      "owners": [
+        "generation",
+        "error"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-GEN-002"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfSnapshotFreezesGeneration",
+        "TestKoanfSnapshotFreezesGenerationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SNAPSHOT-ISOLATION",
+      "owners": [
+        "snapshot",
+        "state"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-SNAP-001"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfSnapshotDefensiveProjection",
+        "TestKoanfSnapshotDefensiveProjectionBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SNAPSHOT-ISOLATION",
+      "owners": [
+        "snapshot",
+        "projection"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-SNAP-002"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfLoadReceiptClassifiesChanges",
+        "TestKoanfLoadReceiptClassifiesChangesBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MERGE-RECEIPT",
+      "owners": [
+        "receipt",
+        "merge"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-RECEIPT-001"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfLoadReceiptNoopAndFailure",
+        "TestKoanfLoadReceiptNoopAndFailureBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MERGE-RECEIPT",
+      "owners": [
+        "receipt",
+        "error"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-RECEIPT-002"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfReloadTransactionStagingInvisible",
+        "TestKoanfReloadTransactionStagingInvisibleBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-TRANSACTION",
+      "owners": [
+        "reload-transaction",
+        "state"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-TXN-001"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfReloadPreviewComposesChanges",
+        "TestKoanfReloadPreviewComposesChangesBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-TRANSACTION",
+      "owners": [
+        "reload-transaction",
+        "snapshot"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-TXN-002"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfReloadCommitRejectsStale",
+        "TestKoanfReloadCommitRejectsStaleBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-STALE-COMMIT",
+      "owners": [
+        "reload-transaction",
+        "generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-STALE-001"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfReloadTransactionTerminalState",
+        "TestKoanfReloadTransactionTerminalStateBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-RECOVERY",
+      "owners": [
+        "reload-transaction",
+        "error"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-RECOVERY-001"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfProjectionDigestSemanticEquivalence",
+        "TestKoanfProjectionDigestSemanticEquivalenceBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DIGEST-CONSISTENCY",
+      "owners": [
+        "digest",
+        "projection"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-DIGEST-001"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfReceiptSnapshotDigestAgreement",
+        "TestKoanfReceiptSnapshotDigestAgreementBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DIGEST-CONSISTENCY",
+      "owners": [
+        "digest",
+        "receipt",
+        "snapshot"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-DIGEST-002"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfNativeJSONSemanticRoundTrip",
+        "TestKoanfNativeJSONSemanticRoundTripBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "parser"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-NATIVE-001"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfNativeDefaultMerge",
+        "TestKoanfNativeDefaultMergeBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "merge",
+        "state"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-NATIVE-002"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfNativeTypedDecode",
+        "TestKoanfNativeTypedDecodeBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "unmarshal",
+        "typed-get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-NATIVE-003"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestKoanfNativeDeleteProjection",
+        "TestKoanfNativeDeleteProjectionBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "state",
+        "projection"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KCFG-NATIVE-004"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfGenerationAcrossOrderedProviders"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATION-CLOCK",
+      "owners": [
+        "provider",
+        "merge",
+        "generation"
+      ],
+      "depends_on": [
+        "A01",
+        "A14"
+      ],
+      "clauses": [
+        "KCFG-SEAM-001"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfSnapshotSurvivesLiveDelete"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SNAPSHOT-ISOLATION",
+      "owners": [
+        "snapshot",
+        "state",
+        "projection"
+      ],
+      "depends_on": [
+        "A03",
+        "A16"
+      ],
+      "clauses": [
+        "KCFG-SEAM-002"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfReceiptChangeSetAcrossNestedCollision"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MERGE-RECEIPT",
+      "owners": [
+        "receipt",
+        "merge",
+        "path"
+      ],
+      "depends_on": [
+        "A05",
+        "A14"
+      ],
+      "clauses": [
+        "KCFG-SEAM-003"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfTransactionLoadsFileAndOverlay"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-TRANSACTION",
+      "owners": [
+        "file-provider",
+        "parser",
+        "reload-transaction",
+        "merge"
+      ],
+      "depends_on": [
+        "A07",
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "KCFG-SEAM-004"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfConcurrentReloadDetectsStaleBase"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-STALE-COMMIT",
+      "owners": [
+        "reload-transaction",
+        "generation",
+        "state"
+      ],
+      "depends_on": [
+        "A01",
+        "A09"
+      ],
+      "clauses": [
+        "KCFG-SEAM-005"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfDigestAcrossMarshalReload"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DIGEST-CONSISTENCY",
+      "owners": [
+        "digest",
+        "parser",
+        "provider",
+        "projection"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SEAM-006"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfFailedStagedParseRetainsPreview"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-RECOVERY",
+      "owners": [
+        "reload-transaction",
+        "parser",
+        "error",
+        "snapshot"
+      ],
+      "depends_on": [
+        "A08",
+        "A10",
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SEAM-007"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfGenerationSharedBySetMergeDelete"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATION-CLOCK",
+      "owners": [
+        "generation",
+        "state",
+        "merge"
+      ],
+      "depends_on": [
+        "A01",
+        "A02",
+        "A16"
+      ],
+      "clauses": [
+        "KCFG-SEAM-008"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfSnapshotTypedAndRawAgreement"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SNAPSHOT-ISOLATION",
+      "owners": [
+        "snapshot",
+        "unmarshal",
+        "projection"
+      ],
+      "depends_on": [
+        "A03",
+        "A04",
+        "A15"
+      ],
+      "clauses": [
+        "KCFG-SEAM-009"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfReceiptSortedAcrossMultiSourceMerge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MERGE-RECEIPT",
+      "owners": [
+        "receipt",
+        "provider",
+        "merge",
+        "path"
+      ],
+      "depends_on": [
+        "A05",
+        "A14"
+      ],
+      "clauses": [
+        "KCFG-SEAM-010"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfTransactionPreviewThenCommit"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-TRANSACTION",
+      "owners": [
+        "reload-transaction",
+        "snapshot",
+        "generation",
+        "state"
+      ],
+      "depends_on": [
+        "A07",
+        "A08",
+        "A01"
+      ],
+      "clauses": [
+        "KCFG-SEAM-011"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfStaleCommitLeavesLiveReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-STALE-COMMIT",
+      "owners": [
+        "reload-transaction",
+        "generation",
+        "receipt",
+        "state"
+      ],
+      "depends_on": [
+        "A05",
+        "A09"
+      ],
+      "clauses": [
+        "KCFG-SEAM-012"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfDigestDelimiterNormalization"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DIGEST-CONSISTENCY",
+      "owners": [
+        "digest",
+        "path",
+        "projection"
+      ],
+      "depends_on": [
+        "A11",
+        "A14"
+      ],
+      "clauses": [
+        "KCFG-SEAM-013"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfAbortClosesWithoutPublication"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-RECOVERY",
+      "owners": [
+        "reload-transaction",
+        "generation",
+        "error"
+      ],
+      "depends_on": [
+        "A02",
+        "A10"
+      ],
+      "clauses": [
+        "KCFG-SEAM-014"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfWatchReloadPublishesSingleGeneration"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATION-CLOCK",
+      "owners": [
+        "watch",
+        "provider",
+        "parser",
+        "generation"
+      ],
+      "depends_on": [
+        "A01",
+        "A02",
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SEAM-015"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfSnapshotCutAndMarshalAgreement"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SNAPSHOT-ISOLATION",
+      "owners": [
+        "snapshot",
+        "projection",
+        "parser",
+        "path"
+      ],
+      "depends_on": [
+        "A03",
+        "A04",
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SEAM-016"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfReceiptNoopAfterEquivalentReload"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MERGE-RECEIPT",
+      "owners": [
+        "receipt",
+        "provider",
+        "parser",
+        "generation"
+      ],
+      "depends_on": [
+        "A02",
+        "A06",
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SEAM-017"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfNativeInvalidJSONIsAtomic"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "provider",
+        "parser",
+        "state",
+        "error"
+      ],
+      "depends_on": [
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SEAM-018"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfNativeEmptyProviderNoop"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "provider",
+        "merge",
+        "state"
+      ],
+      "depends_on": [
+        "A14"
+      ],
+      "clauses": [
+        "KCFG-SEAM-019"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfNativeIndependentInstances"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "provider",
+        "state"
+      ],
+      "depends_on": [
+        "A14"
+      ],
+      "clauses": [
+        "KCFG-SEAM-020"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfNativeDeterministicKeys"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "path",
+        "projection"
+      ],
+      "depends_on": [
+        "A16"
+      ],
+      "clauses": [
+        "KCFG-SEAM-021"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfNativeMarshalReloadEquivalence"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "parser",
+        "provider",
+        "state"
+      ],
+      "depends_on": [
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SEAM-022"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfNativeCustomProviderParser"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "provider",
+        "parser",
+        "state"
+      ],
+      "depends_on": [
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SEAM-023"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestKoanfNativeDeleteMarshalAgreement"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "state",
+        "parser",
+        "projection"
+      ],
+      "depends_on": [
+        "A13",
+        "A16"
+      ],
+      "clauses": [
+        "KCFG-SEAM-024"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestKoanfTransactionalLocalReloadReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-TRANSACTION",
+      "owners": [
+        "file-provider",
+        "parser",
+        "reload-transaction",
+        "merge",
+        "receipt",
+        "projection"
+      ],
+      "depends_on": [
+        "A05",
+        "A07",
+        "A08",
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SYSTEM-001"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestKoanfConcurrentReloadStaleClosure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-STALE-COMMIT",
+      "owners": [
+        "reload-transaction",
+        "generation",
+        "state",
+        "error",
+        "receipt"
+      ],
+      "depends_on": [
+        "A01",
+        "A09",
+        "A10"
+      ],
+      "clauses": [
+        "KCFG-SYSTEM-002"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestKoanfSnapshotDigestSourceConvergence"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-DIGEST-CONSISTENCY",
+      "owners": [
+        "file-provider",
+        "parser",
+        "provider",
+        "snapshot",
+        "digest",
+        "projection"
+      ],
+      "depends_on": [
+        "A03",
+        "A11",
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SYSTEM-003"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestKoanfFailedReloadRecoveryReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-RECOVERY",
+      "owners": [
+        "watch",
+        "file-provider",
+        "parser",
+        "reload-transaction",
+        "error",
+        "snapshot",
+        "state"
+      ],
+      "depends_on": [
+        "A08",
+        "A10",
+        "A13"
+      ],
+      "clauses": [
+        "KCFG-SYSTEM-004"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestKoanfAbortCustomMergeLeavesLiveGeneration"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RELOAD-RECOVERY",
+      "owners": [
+        "custom-provider",
+        "merge",
+        "reload-transaction",
+        "snapshot",
+        "generation",
+        "projection"
+      ],
+      "depends_on": [
+        "A01",
+        "A08",
+        "A10",
+        "A14"
+      ],
+      "clauses": [
+        "KCFG-SYSTEM-005"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestKoanfNativeFileYAMLTypedWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "file-provider",
+        "yaml-parser",
+        "state",
+        "typed-get",
+        "marshal"
+      ],
+      "depends_on": [
+        "A13",
+        "A15"
+      ],
+      "clauses": [
+        "KCFG-SYSTEM-006"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestKoanfNativeDeleteRestoreWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "state",
+        "projection",
+        "provider",
+        "merge",
+        "parser"
+      ],
+      "depends_on": [
+        "A13",
+        "A14",
+        "A16"
+      ],
+      "clauses": [
+        "KCFG-SYSTEM-007"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestKoanfNativeOrderedSourcesWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "file-provider",
+        "parser",
+        "provider",
+        "merge",
+        "unmarshal",
+        "projection"
+      ],
+      "depends_on": [
+        "A13",
+        "A14",
+        "A15"
+      ],
+      "clauses": [
+        "KCFG-SYSTEM-008"
+      ]
+    }
+  ]
+}
+

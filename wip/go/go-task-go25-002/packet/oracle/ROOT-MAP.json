@@ -1,0 +1,1016 @@
+{
+  "case": "go-task-go25-002",
+  "roots": [
+    {
+      "clauses": [
+        "RECEIPT-INCLUDE-COMPOSITION"
+      ],
+      "depends_on": [],
+      "family": "TSK-INCLUDE-NAMESPACE",
+      "id": "A01",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "include-composer",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicIncludeNamespaceReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-VARIABLE-LINEAGE"
+      ],
+      "depends_on": [],
+      "family": "TSK-VARIABLE-LINEAGE",
+      "id": "A02",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "variable-resolver",
+        "receipt-plan"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicSelectionOverrideLineage"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-VARIABLE-LINEAGE"
+      ],
+      "depends_on": [],
+      "family": "TSK-VARIABLE-LINEAGE",
+      "id": "A03",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "template-engine",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicTaskVariableSnapshot"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEPENDENCY-ORDER"
+      ],
+      "depends_on": [],
+      "family": "TSK-DEPENDENCY-SCHEDULING",
+      "id": "A04",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "dependency-graph",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicDependencyReceiptOrder"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEFER-FAILURE"
+      ],
+      "depends_on": [],
+      "family": "TSK-DEFER-FAILURE",
+      "id": "A05",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "defer-stack",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicDeferredReceiptLIFO"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-FINGERPRINT-CACHE"
+      ],
+      "depends_on": [],
+      "family": "TSK-FINGERPRINT-CACHE",
+      "id": "A06",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "fingerprint-store",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicFingerprintChangesByTask"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-FINGERPRINT-CACHE"
+      ],
+      "depends_on": [],
+      "family": "TSK-FINGERPRINT-CACHE",
+      "id": "A07",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "source-scanner",
+        "fingerprint-store"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicFingerprintChangesBySource"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-PRECONDITION-STATUS"
+      ],
+      "depends_on": [],
+      "family": "TSK-PRECONDITION-STATUS",
+      "id": "A08",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "condition-evaluator",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicPreconditionClassification"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DRY-NOPUBLISH"
+      ],
+      "depends_on": [],
+      "family": "TSK-DRYRUN-NOPUBLISH",
+      "id": "A09",
+      "layer": "atomic",
+      "mutation": true,
+      "owners": [
+        "dry-run-reporter",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicDryPlanNoWorkspaceEffect"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-DISCOVERY-REGISTRY"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A10",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "taskfile-discovery"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicNativeDefaultDiscovery"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-DISCOVERY-REGISTRY"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A11",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "taskfile-reader"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicNativeExplicitEntrypoint"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-REPORTING-PROJECTIONS"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A12",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "task-registry"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicNativeTaskNamesAliases"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-REPORTING-PROJECTIONS"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A13",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "json-projection"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicNativeTaskListJSON"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-EXECUTION-CONTEXT"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A14",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "command-runner"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicNativeVariableCommand"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-EXECUTION-MODES"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A15",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "cli-reporting"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicNativeSilentCommand"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-STATUS-FRESHNESS"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A16",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "source-status"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskAtomicNativeStatusLifecycle"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-INCLUDE-COMPOSITION"
+      ],
+      "depends_on": [
+        "A01"
+      ],
+      "family": "TSK-INCLUDE-NAMESPACE",
+      "id": "I01",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "include-composer",
+        "command-runner",
+        "workspace",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamIncludedDirectoryWorkspace"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-INCLUDE-COMPOSITION"
+      ],
+      "depends_on": [
+        "A01",
+        "A04"
+      ],
+      "family": "TSK-INCLUDE-NAMESPACE",
+      "id": "I02",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "include-composer",
+        "dependency-graph",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamFlattenedDependencyReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-INCLUDE-COMPOSITION"
+      ],
+      "depends_on": [
+        "A01"
+      ],
+      "family": "TSK-INCLUDE-NAMESPACE",
+      "id": "I03",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "taskfile-reader",
+        "task-registry",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamOptionalIncludeRootReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-VARIABLE-LINEAGE"
+      ],
+      "depends_on": [
+        "A02",
+        "A03"
+      ],
+      "family": "TSK-VARIABLE-LINEAGE",
+      "id": "I04",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "receipt-plan",
+        "template-engine",
+        "command-runner"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamPlanOverrideCommand"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-VARIABLE-LINEAGE"
+      ],
+      "depends_on": [
+        "A01",
+        "A03"
+      ],
+      "family": "TSK-VARIABLE-LINEAGE",
+      "id": "I05",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "include-composer",
+        "variable-resolver",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamIncludeVariableScope"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-VARIABLE-LINEAGE"
+      ],
+      "depends_on": [
+        "A03",
+        "A04"
+      ],
+      "family": "TSK-VARIABLE-LINEAGE",
+      "id": "I06",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "dynamic-variable-runner",
+        "dependency-graph",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamDynamicVariableDependency"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEPENDENCY-ORDER"
+      ],
+      "depends_on": [
+        "A04"
+      ],
+      "family": "TSK-DEPENDENCY-SCHEDULING",
+      "id": "I07",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "dependency-graph",
+        "workspace",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamDependencySortedReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEPENDENCY-ORDER"
+      ],
+      "depends_on": [
+        "A04"
+      ],
+      "family": "TSK-DEPENDENCY-SCHEDULING",
+      "id": "I08",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "task-scheduler",
+        "workspace",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamSharedDependencyOnce"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEPENDENCY-ORDER"
+      ],
+      "depends_on": [
+        "A02",
+        "A04"
+      ],
+      "family": "TSK-DEPENDENCY-SCHEDULING",
+      "id": "I09",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "task-scheduler",
+        "variable-resolver",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamTaskCallVariableIsolation"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEPENDENCY-ORDER"
+      ],
+      "depends_on": [
+        "A04",
+        "A08"
+      ],
+      "family": "TSK-DEPENDENCY-SCHEDULING",
+      "id": "I10",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "condition-evaluator",
+        "task-scheduler",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamStatusDependencySkip"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEFER-FAILURE"
+      ],
+      "depends_on": [
+        "A05"
+      ],
+      "family": "TSK-DEFER-FAILURE",
+      "id": "I11",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "command-runner",
+        "defer-stack",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamFailedCommandStillDefers"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEFER-FAILURE"
+      ],
+      "depends_on": [
+        "A04",
+        "A05"
+      ],
+      "family": "TSK-DEFER-FAILURE",
+      "id": "I12",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "task-scheduler",
+        "defer-stack",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamNestedDeferredReverse"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEFER-FAILURE"
+      ],
+      "depends_on": [
+        "A05"
+      ],
+      "family": "TSK-DEFER-FAILURE",
+      "id": "I13",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "command-runner",
+        "exit-status",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamIgnoredFailureContinues"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-FINGERPRINT-CACHE"
+      ],
+      "depends_on": [
+        "A06",
+        "A07"
+      ],
+      "family": "TSK-FINGERPRINT-CACHE",
+      "id": "I14",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "source-scanner",
+        "fingerprint-store",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamChecksumSkipReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-FINGERPRINT-CACHE"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "family": "TSK-FINGERPRINT-CACHE",
+      "id": "I15",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "source-status",
+        "task-scheduler",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamMissingGeneratedRerun"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-FINGERPRINT-CACHE"
+      ],
+      "depends_on": [
+        "A06"
+      ],
+      "family": "TSK-FINGERPRINT-CACHE",
+      "id": "I16",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "task-registry",
+        "fingerprint-store",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamTaskScopedFingerprint"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-PRECONDITION-STATUS"
+      ],
+      "depends_on": [
+        "A08"
+      ],
+      "family": "TSK-PRECONDITION-STATUS",
+      "id": "I17",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "condition-evaluator",
+        "command-runner",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamPreconditionBlocksEffects"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-PRECONDITION-STATUS"
+      ],
+      "depends_on": [
+        "A07",
+        "A08"
+      ],
+      "family": "TSK-PRECONDITION-STATUS",
+      "id": "I18",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "condition-evaluator",
+        "source-status",
+        "task-scheduler"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamStatusForcesRerun"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DRY-NOPUBLISH"
+      ],
+      "depends_on": [
+        "A04",
+        "A09"
+      ],
+      "family": "TSK-DRYRUN-NOPUBLISH",
+      "id": "I19",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "dependency-graph",
+        "dry-run-reporter",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamDryGraphPlanned"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DRY-NOPUBLISH"
+      ],
+      "depends_on": [
+        "A06",
+        "A09"
+      ],
+      "family": "TSK-DRYRUN-NOPUBLISH",
+      "id": "I20",
+      "layer": "integration",
+      "mutation": true,
+      "owners": [
+        "command-runner",
+        "fingerprint-store",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSeamFailureKeepsLastGoodFingerprint"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-DISCOVERY-REGISTRY",
+        "NATIVE-REPORTING-PROJECTIONS"
+      ],
+      "depends_on": [
+        "A10",
+        "A12"
+      ],
+      "family": null,
+      "id": "I21",
+      "layer": "integration",
+      "mutation": false,
+      "owners": [
+        "taskfile-discovery",
+        "task-registry",
+        "cli-reporting"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskNativeSeamDiscoveryToTextList"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-REPORTING-PROJECTIONS"
+      ],
+      "depends_on": [
+        "A12",
+        "A14"
+      ],
+      "family": null,
+      "id": "I22",
+      "layer": "integration",
+      "mutation": false,
+      "owners": [
+        "dependency-graph",
+        "command-runner",
+        "cli-reporting"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskNativeSeamSummaryDependencies"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-DISCOVERY-REGISTRY",
+        "NATIVE-EXECUTION-CONTEXT"
+      ],
+      "depends_on": [
+        "A11",
+        "A14"
+      ],
+      "family": null,
+      "id": "I23",
+      "layer": "integration",
+      "mutation": false,
+      "owners": [
+        "taskfile-discovery",
+        "command-runner",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskNativeSeamExplicitFileWorkingDir"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-REPORTING-PROJECTIONS"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "family": null,
+      "id": "I24",
+      "layer": "integration",
+      "mutation": false,
+      "owners": [
+        "task-registry",
+        "cli-reporting",
+        "json-projection"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskNativeSeamListJSONMatchesText"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-INCLUDE-COMPOSITION"
+      ],
+      "depends_on": [
+        "A01",
+        "I01",
+        "I02"
+      ],
+      "family": "TSK-INCLUDE-NAMESPACE",
+      "id": "S01",
+      "layer": "system",
+      "mutation": true,
+      "owners": [
+        "taskfile-discovery",
+        "include-composer",
+        "dependency-graph",
+        "command-runner",
+        "workspace",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSystemIncludeNamespaceFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-VARIABLE-LINEAGE"
+      ],
+      "depends_on": [
+        "A02",
+        "A03",
+        "I04",
+        "I05"
+      ],
+      "family": "TSK-VARIABLE-LINEAGE",
+      "id": "S02",
+      "layer": "system",
+      "mutation": true,
+      "owners": [
+        "include-composer",
+        "variable-resolver",
+        "template-engine",
+        "dependency-graph",
+        "command-runner",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSystemVariableLineageFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEPENDENCY-ORDER"
+      ],
+      "depends_on": [
+        "A04",
+        "I07",
+        "I08"
+      ],
+      "family": "TSK-DEPENDENCY-SCHEDULING",
+      "id": "S03",
+      "layer": "system",
+      "mutation": true,
+      "owners": [
+        "dependency-graph",
+        "task-scheduler",
+        "command-runner",
+        "exit-status",
+        "workspace",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSystemDependencyFailureFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-DEFER-FAILURE"
+      ],
+      "depends_on": [
+        "A05",
+        "I11",
+        "I12"
+      ],
+      "family": "TSK-DEFER-FAILURE",
+      "id": "S04",
+      "layer": "system",
+      "mutation": true,
+      "owners": [
+        "task-scheduler",
+        "command-runner",
+        "defer-stack",
+        "exit-status",
+        "workspace",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSystemDeferFailureFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "RECEIPT-FINGERPRINT-CACHE"
+      ],
+      "depends_on": [
+        "A06",
+        "A07",
+        "I14",
+        "I15"
+      ],
+      "family": "TSK-FINGERPRINT-CACHE",
+      "id": "S05",
+      "layer": "system",
+      "mutation": true,
+      "owners": [
+        "source-scanner",
+        "source-status",
+        "fingerprint-store",
+        "task-scheduler",
+        "workspace",
+        "receipt-coordinator"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSystemFingerprintCacheFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-DISCOVERY-REGISTRY",
+        "NATIVE-REPORTING-PROJECTIONS",
+        "NATIVE-EXECUTION-CONTEXT"
+      ],
+      "depends_on": [
+        "A10",
+        "A12",
+        "A14",
+        "I21"
+      ],
+      "family": null,
+      "id": "S06",
+      "layer": "system",
+      "mutation": false,
+      "owners": [
+        "taskfile-discovery",
+        "task-registry",
+        "cli-reporting",
+        "command-runner",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSystemNativeDiscoverListRun"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-EXECUTION-MODES",
+        "NATIVE-EXECUTION-CONTEXT"
+      ],
+      "depends_on": [
+        "A15",
+        "I22"
+      ],
+      "family": null,
+      "id": "S07",
+      "layer": "system",
+      "mutation": false,
+      "owners": [
+        "dependency-graph",
+        "dry-run-reporter",
+        "command-runner",
+        "workspace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSystemNativeDryThenRun"
+      ]
+    },
+    {
+      "clauses": [
+        "NATIVE-STATUS-FRESHNESS"
+      ],
+      "depends_on": [
+        "A16",
+        "I23"
+      ],
+      "family": null,
+      "id": "S08",
+      "layer": "system",
+      "mutation": false,
+      "owners": [
+        "source-status",
+        "task-scheduler",
+        "command-runner",
+        "exit-status"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestGoTaskSystemNativeStatusLifecycle"
+      ]
+    }
+  ],
+  "schema": "spec2repo.root-map.v1"
+}

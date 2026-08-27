@@ -1,0 +1,1046 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicAliveHigherIncarnationWinsPrimary",
+        "TestMemberlistAtomicAliveHigherIncarnationWinsEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-ALIVE-INCARNATION-EVENT",
+      "owners": [
+        "transcript.Topology.RecordAlive",
+        "transcript.AliveReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-ALIVE-A01"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicAliveEqualIncarnationMetadataRulePrimary",
+        "TestMemberlistAtomicAliveEqualIncarnationMetadataRuleEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-ALIVE-INCARNATION-EVENT",
+      "owners": [
+        "transcript.Topology.RecordAlive",
+        "transcript.AliveReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-ALIVE-A02"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicMockNetworkAddressRegistrationPrimary",
+        "TestMemberlistAtomicMockNetworkAddressRegistrationEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-MOCKNET-JOIN-MERGE",
+      "owners": [
+        "transcript.Topology.RecordJoin",
+        "transcript.MergeReceipt",
+        "transcript.TopologySnapshot"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-JOIN-A01"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicMockTransportPeerLookupPrimary",
+        "TestMemberlistAtomicMockTransportPeerLookupEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-MOCKNET-JOIN-MERGE",
+      "owners": [
+        "transcript.Topology.RecordJoin",
+        "transcript.MergeReceipt",
+        "transcript.TopologySnapshot"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-JOIN-A02"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicBroadcastRetransmitLimitPrimary",
+        "TestMemberlistAtomicBroadcastRetransmitLimitEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-NAMED-BROADCAST-SUPERSESSION",
+      "owners": [
+        "transcript.Topology.RecordBroadcast",
+        "transcript.BroadcastReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-BCAST-A01"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicNamedBroadcastInvalidatesOlderPrimary",
+        "TestMemberlistAtomicNamedBroadcastInvalidatesOlderEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-NAMED-BROADCAST-SUPERSESSION",
+      "owners": [
+        "transcript.Topology.RecordBroadcast",
+        "transcript.BroadcastReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-BCAST-A02"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicLeaveStateTransitionPrimary",
+        "TestMemberlistAtomicLeaveStateTransitionEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-LEAVE-TOMBSTONE-VISIBILITY",
+      "owners": [
+        "transcript.Topology.RecordLeave",
+        "transcript.LeaveReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-LEAVE-A01"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicLeaveTimeoutCompletionPrimary",
+        "TestMemberlistAtomicLeaveTimeoutCompletionEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-LEAVE-TOMBSTONE-VISIBILITY",
+      "owners": [
+        "transcript.Topology.RecordLeave",
+        "transcript.LeaveReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-LEAVE-A02"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicDelegateNodeMetaLimitPrimary",
+        "TestMemberlistAtomicDelegateNodeMetaLimitEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-DELEGATE-METADATA-UPDATE",
+      "owners": [
+        "transcript.Topology.RecordMetadata",
+        "transcript.MetadataReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-META-A01"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicUpdateNodeLocalMetadataPrimary",
+        "TestMemberlistAtomicUpdateNodeLocalMetadataEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-DELEGATE-METADATA-UPDATE",
+      "owners": [
+        "transcript.Topology.RecordMetadata",
+        "transcript.MetadataReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-META-A02"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicSuspicionConfirmationThresholdPrimary",
+        "TestMemberlistAtomicSuspicionConfirmationThresholdEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-SUSPICION-AWARENESS-RETRANSMIT",
+      "owners": [
+        "transcript.Topology.RecordSuspicion",
+        "transcript.SuspicionReceipt",
+        "transcript.AliveReceipt"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-SUSPECT-A01"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicKeyringPrimaryKeySelectionPrimary",
+        "TestMemberlistAtomicKeyringPrimaryKeySelectionEdge"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-KEYRING-PACKET-ACCEPTANCE",
+      "owners": [
+        "transcript.Topology.RecordKeyUse",
+        "transcript.KeyReceipt",
+        "transcript.TopologySnapshot"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-KEY-A01"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicNodeAddressStringPrimary",
+        "TestMemberlistAtomicNodeAddressStringEdge"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.Node"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-NATIVE-NODE-001"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicConfigProtocolBoundsPrimary",
+        "TestMemberlistAtomicConfigProtocolBoundsEdge"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.Config"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-NATIVE-CONFIG-001"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicChannelEventDelegateBufferPrimary",
+        "TestMemberlistAtomicChannelEventDelegateBufferEdge"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.ChannelEventDelegate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-NATIVE-EVENT-001"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestMemberlistAtomicMockTransportShutdownPrimary",
+        "TestMemberlistAtomicMockTransportShutdownEdge"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.MockTransport"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ML-NATIVE-TRANSPORT-001"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamAlivePacketToMembersViewPrimary",
+        "TestMemberlistSeamAlivePacketToMembersViewFailure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-ALIVE-INCARNATION-EVENT",
+      "owners": [
+        "transcript.Topology.RecordAlive",
+        "transcript.AliveReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A01",
+        "A02"
+      ],
+      "clauses": [
+        "ML-ALIVE-I01"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamAliveStateToUpdateEventPrimary",
+        "TestMemberlistSeamAliveStateToUpdateEventFailure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-ALIVE-INCARNATION-EVENT",
+      "owners": [
+        "transcript.Topology.RecordAlive",
+        "transcript.AliveReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A01",
+        "A02"
+      ],
+      "clauses": [
+        "ML-ALIVE-I02"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamJoinStreamToPushPullMergePrimary",
+        "TestMemberlistSeamJoinStreamToPushPullMergeFailure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-MOCKNET-JOIN-MERGE",
+      "owners": [
+        "transcript.Topology.RecordJoin",
+        "transcript.MergeReceipt",
+        "transcript.TopologySnapshot"
+      ],
+      "depends_on": [
+        "A03",
+        "A04"
+      ],
+      "clauses": [
+        "ML-JOIN-I01"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamMergeRemoteStateToMembersPrimary",
+        "TestMemberlistSeamMergeRemoteStateToMembersFailure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-MOCKNET-JOIN-MERGE",
+      "owners": [
+        "transcript.Topology.RecordJoin",
+        "transcript.MergeReceipt",
+        "transcript.TopologySnapshot"
+      ],
+      "depends_on": [
+        "A03",
+        "A04"
+      ],
+      "clauses": [
+        "ML-JOIN-I02"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamQueueSelectionToTransportPacketPrimary",
+        "TestMemberlistSeamQueueSelectionToTransportPacketFailure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-NAMED-BROADCAST-SUPERSESSION",
+      "owners": [
+        "transcript.Topology.RecordBroadcast",
+        "transcript.BroadcastReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A05",
+        "A06"
+      ],
+      "clauses": [
+        "ML-BCAST-I01"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamBroadcastCompletionToQueueRemovalPrimary",
+        "TestMemberlistSeamBroadcastCompletionToQueueRemovalFailure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-NAMED-BROADCAST-SUPERSESSION",
+      "owners": [
+        "transcript.Topology.RecordBroadcast",
+        "transcript.BroadcastReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A05",
+        "A06"
+      ],
+      "clauses": [
+        "ML-BCAST-I02"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamLeaveBroadcastToMemberStatusPrimary",
+        "TestMemberlistSeamLeaveBroadcastToMemberStatusFailure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-LEAVE-TOMBSTONE-VISIBILITY",
+      "owners": [
+        "transcript.Topology.RecordLeave",
+        "transcript.LeaveReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A07",
+        "A08"
+      ],
+      "clauses": [
+        "ML-LEAVE-I01"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamLeaveStateToDelegateEventPrimary",
+        "TestMemberlistSeamLeaveStateToDelegateEventFailure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-LEAVE-TOMBSTONE-VISIBILITY",
+      "owners": [
+        "transcript.Topology.RecordLeave",
+        "transcript.LeaveReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A07",
+        "A08"
+      ],
+      "clauses": [
+        "ML-LEAVE-I02"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamUpdateNodeToAliveBroadcastPrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-DELEGATE-METADATA-UPDATE",
+      "owners": [
+        "transcript.Topology.RecordMetadata",
+        "transcript.MetadataReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "clauses": [
+        "ML-META-I01"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamMetadataMergeToNodeViewPrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-DELEGATE-METADATA-UPDATE",
+      "owners": [
+        "transcript.Topology.RecordMetadata",
+        "transcript.MetadataReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "clauses": [
+        "ML-META-I02"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamMetadataChangeToUpdateEventPrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-DELEGATE-METADATA-UPDATE",
+      "owners": [
+        "transcript.Topology.RecordMetadata",
+        "transcript.MetadataReceipt",
+        "transcript.Generation"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "clauses": [
+        "ML-META-I03"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamFailedPingToSuspectBroadcastPrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-SUSPICION-AWARENESS-RETRANSMIT",
+      "owners": [
+        "transcript.Topology.RecordSuspicion",
+        "transcript.SuspicionReceipt",
+        "transcript.AliveReceipt"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "clauses": [
+        "ML-SUSPECT-I01"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamSuspectRefutationToAlivePrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-SUSPICION-AWARENESS-RETRANSMIT",
+      "owners": [
+        "transcript.Topology.RecordSuspicion",
+        "transcript.SuspicionReceipt",
+        "transcript.AliveReceipt"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "clauses": [
+        "ML-SUSPECT-I02"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamAwarenessScoreToProbeTimingPrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-SUSPICION-AWARENESS-RETRANSMIT",
+      "owners": [
+        "transcript.Topology.RecordSuspicion",
+        "transcript.SuspicionReceipt",
+        "transcript.AliveReceipt"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "clauses": [
+        "ML-SUSPECT-I03"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamEncryptedPacketToTransportDecodePrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-KEYRING-PACKET-ACCEPTANCE",
+      "owners": [
+        "transcript.Topology.RecordKeyUse",
+        "transcript.KeyReceipt",
+        "transcript.TopologySnapshot"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "clauses": [
+        "ML-KEY-I01"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamKeyRotationToPeerAcceptancePrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-KEYRING-PACKET-ACCEPTANCE",
+      "owners": [
+        "transcript.Topology.RecordKeyUse",
+        "transcript.KeyReceipt",
+        "transcript.TopologySnapshot"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "clauses": [
+        "ML-KEY-I02"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamUnknownKeyToNoMembershipMutationPrimary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-KEYRING-PACKET-ACCEPTANCE",
+      "owners": [
+        "transcript.Topology.RecordKeyUse",
+        "transcript.KeyReceipt",
+        "transcript.TopologySnapshot"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "clauses": [
+        "ML-KEY-I03"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamConfigToMockTransportSeamPrimary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.Config",
+        "memberlist.MockTransport"
+      ],
+      "depends_on": [
+        "A14",
+        "A16"
+      ],
+      "clauses": [
+        "ML-NATIVE-SEAM-001"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamChannelDelegateToMembersSeamPrimary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.ChannelEventDelegate",
+        "memberlist.Memberlist"
+      ],
+      "depends_on": [
+        "A15",
+        "A13"
+      ],
+      "clauses": [
+        "ML-NATIVE-SEAM-002"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamLocalNodeToMembersSeamPrimary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.Memberlist",
+        "memberlist.Node"
+      ],
+      "depends_on": [
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "ML-NATIVE-SEAM-003"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamTransportShutdownToMemberlistSeamPrimary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.MockTransport",
+        "memberlist.Memberlist"
+      ],
+      "depends_on": [
+        "A16",
+        "A13"
+      ],
+      "clauses": [
+        "ML-NATIVE-SEAM-004"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamConflictDelegateToJoinSeamPrimary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.ConflictDelegate",
+        "memberlist.Memberlist"
+      ],
+      "depends_on": [
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "ML-NATIVE-SEAM-005"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamMergeDelegateToCreateSeamPrimary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.MergeDelegate",
+        "memberlist.Memberlist"
+      ],
+      "depends_on": [
+        "A14",
+        "A15"
+      ],
+      "clauses": [
+        "ML-NATIVE-SEAM-006"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestMemberlistSeamAliveDelegateToNodeViewSeamPrimary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.AliveDelegate",
+        "memberlist.Node"
+      ],
+      "depends_on": [
+        "A13",
+        "A15"
+      ],
+      "clauses": [
+        "ML-NATIVE-SEAM-007"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestMemberlistE2EFreshAliveMembershipReceiptFreshReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-ALIVE-INCARNATION-EVENT",
+      "owners": [
+        "transcript.Topology.RecordAlive",
+        "transcript.AliveReceipt",
+        "transcript.Generation",
+        "transcript.Topology"
+      ],
+      "depends_on": [
+        "A01",
+        "A02",
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "ML-ALIVE-S01"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestMemberlistE2EFreshMockNetworkJoinReceiptFreshReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-MOCKNET-JOIN-MERGE",
+      "owners": [
+        "transcript.Topology.RecordJoin",
+        "transcript.MergeReceipt",
+        "transcript.TopologySnapshot",
+        "transcript.Topology"
+      ],
+      "depends_on": [
+        "A03",
+        "A04",
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "ML-JOIN-S01"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestMemberlistE2EFreshLatestNamedBroadcastReceiptFreshReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-NAMED-BROADCAST-SUPERSESSION",
+      "owners": [
+        "transcript.Topology.RecordBroadcast",
+        "transcript.BroadcastReceipt",
+        "transcript.Generation",
+        "transcript.Topology"
+      ],
+      "depends_on": [
+        "A05",
+        "A06",
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "ML-BCAST-S01"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestMemberlistE2EFreshLeaveTombstoneReceiptFreshReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-LEAVE-TOMBSTONE-VISIBILITY",
+      "owners": [
+        "transcript.Topology.RecordLeave",
+        "transcript.LeaveReceipt",
+        "transcript.Generation",
+        "transcript.Topology"
+      ],
+      "depends_on": [
+        "A07",
+        "A08",
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "ML-LEAVE-S01"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestMemberlistE2EFreshMetadataUpdateReceiptFreshReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "ML-DELEGATE-METADATA-UPDATE",
+      "owners": [
+        "transcript.Topology.RecordMetadata",
+        "transcript.MetadataReceipt",
+        "transcript.Generation",
+        "transcript.Topology"
+      ],
+      "depends_on": [
+        "A09",
+        "A10",
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "ML-META-S01"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestMemberlistE2ENativeMockClusterJoinLeaveFreshReceipt"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.MockNetwork",
+        "memberlist.MockTransport",
+        "memberlist.Memberlist",
+        "memberlist.ChannelEventDelegate"
+      ],
+      "depends_on": [
+        "A13",
+        "A14",
+        "A15",
+        "A16"
+      ],
+      "clauses": [
+        "ML-NATIVE-SYS-001"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestMemberlistE2ENativeDelegateMergedMembershipFreshReceipt"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.Memberlist",
+        "memberlist.Delegate",
+        "memberlist.Node",
+        "memberlist.MockTransport"
+      ],
+      "depends_on": [
+        "A13",
+        "A14",
+        "A15",
+        "A16"
+      ],
+      "clauses": [
+        "ML-NATIVE-SYS-002"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestMemberlistE2ENativeConflictRejectedClusterFreshReceipt"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "memberlist.Memberlist",
+        "memberlist.ConflictDelegate",
+        "memberlist.MockTransport",
+        "memberlist.EventDelegate"
+      ],
+      "depends_on": [
+        "A13",
+        "A14",
+        "A15",
+        "A16"
+      ],
+      "clauses": [
+        "ML-NATIVE-SYS-003"
+      ]
+    }
+  ]
+}

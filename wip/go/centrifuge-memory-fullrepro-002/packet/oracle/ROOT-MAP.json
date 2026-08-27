@@ -1,0 +1,1270 @@
+{
+  "schema": "spec2repo.go-root-map.v2",
+  "case": "centrifuge-memory-fullrepro-002",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A01DisconnectProjection"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Disconnect"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A01"
+      ],
+      "native_owners": [
+        "centrifuge.Disconnect"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A02ErrorProjection"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Error"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A02"
+      ],
+      "native_owners": [
+        "centrifuge.Error"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A03StreamPositionValue"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.StreamPosition"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A03"
+      ],
+      "native_owners": [
+        "centrifuge.StreamPosition"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A04PublicationContainer"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Publication",
+        "centrifuge.ClientInfo"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A04"
+      ],
+      "native_owners": [
+        "centrifuge.Publication",
+        "centrifuge.ClientInfo"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A05MemoryPresenceLifecycle"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.MemoryPresenceManager"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A05"
+      ],
+      "native_owners": [
+        "centrifuge.MemoryPresenceManager"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A06MemoryBrokerRetainsPublication"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.MemoryBroker",
+        "centrifuge.Publication"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A06"
+      ],
+      "native_owners": [
+        "centrifuge.MemoryBroker",
+        "centrifuge.Publication"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A07FreshHubIsEmpty"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Hub"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A07"
+      ],
+      "native_owners": [
+        "centrifuge.Hub"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A08RejectsEmptySelectedChannel"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-ADMISSION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A08"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A09RejectsDuplicateSelectedChannel"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-ADMISSION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A09"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A10RejectsInvalidHistoryLimit"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-ADMISSION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A10"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A11CanonicalizesExplicitChannelOrder"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-DISCOVERY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A11"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A12DiscoversRetainedChannel"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-DISCOVERY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A12"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A13PositionOnlyHistoryView"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-HISTORY-PROJECTION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A13"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A14BoundsRetainedView"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-HISTORY-PROJECTION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A14"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A15OwnsPublicationProjection"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-OWNERSHIP",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A15"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestCentrifugeV2A16HonorsCancelledContext"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-LIFECYCLE-ATOMICITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemorySnapshotRequest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "CF-MS-A16"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I01NodePublishFeedsHistory"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker"
+      ],
+      "depends_on": [
+        "A06"
+      ],
+      "clauses": [
+        "CF-MS-I01"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I02HistorySinceSelectsSuffix"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Node",
+        "centrifuge.HistoryResult"
+      ],
+      "depends_on": [
+        "A03"
+      ],
+      "clauses": [
+        "CF-MS-I02"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.HistoryResult"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I03PresenceAndStatsAgree"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryPresenceManager"
+      ],
+      "depends_on": [
+        "A05"
+      ],
+      "clauses": [
+        "CF-MS-I03"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryPresenceManager"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I04ConnectAddsHubMembership"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Client",
+        "centrifuge.Hub",
+        "centrifuge.Transport"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "clauses": [
+        "CF-MS-I04"
+      ],
+      "native_owners": [
+        "centrifuge.Client",
+        "centrifuge.Hub",
+        "centrifuge.Transport"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I05SubscribeAddsHubChannel"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Client",
+        "centrifuge.Hub"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "clauses": [
+        "CF-MS-I05"
+      ],
+      "native_owners": [
+        "centrifuge.Client",
+        "centrifuge.Hub"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I06UnsubscribePreservesSibling"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Client",
+        "centrifuge.Hub"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "clauses": [
+        "CF-MS-I06"
+      ],
+      "native_owners": [
+        "centrifuge.Client",
+        "centrifuge.Hub"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I07DisconnectClosesTransportAndHub"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "CF-NATIVE-BASELINE",
+      "owners": [
+        "centrifuge.Client",
+        "centrifuge.Hub",
+        "centrifuge.Transport"
+      ],
+      "depends_on": [
+        "A01"
+      ],
+      "clauses": [
+        "CF-MS-I07"
+      ],
+      "native_owners": [
+        "centrifuge.Client",
+        "centrifuge.Hub",
+        "centrifuge.Transport"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I08CapturesContinuousRecoverySuffix"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-RECOVERY-CONTINUITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A13",
+        "A14"
+      ],
+      "clauses": [
+        "CF-MS-I08"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I09CapturesCurrentPositionAsEmptySuffix"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-RECOVERY-CONTINUITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A13"
+      ],
+      "clauses": [
+        "CF-MS-I09"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I10MarksEpochMismatchUnrecoverable"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-RECOVERY-CONTINUITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A13"
+      ],
+      "clauses": [
+        "CF-MS-I10"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I11DetectsTrimmedRecoveryGap"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-RECOVERY-CONTINUITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A14"
+      ],
+      "clauses": [
+        "CF-MS-I11"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I12TracksHistoryRemovalGeneration"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-RECOVERY-CONTINUITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "clauses": [
+        "CF-MS-I12"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I13CanonicalizesMultiChannelState"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-DISCOVERY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A11"
+      ],
+      "clauses": [
+        "CF-MS-I13"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I14DiscoversUnionOfRuntimeViews"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-DISCOVERY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A12"
+      ],
+      "clauses": [
+        "CF-MS-I14"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I15SortsSubscriberIdentities"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-MEMBERSHIP-RECONCILIATION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A11"
+      ],
+      "clauses": [
+        "CF-MS-I15"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I16FiltersClientChannelsBySelection"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-MEMBERSHIP-RECONCILIATION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A11"
+      ],
+      "clauses": [
+        "CF-MS-I16"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I17SortsPresenceIdentities"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-OWNERSHIP",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A12"
+      ],
+      "clauses": [
+        "CF-MS-I17"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I18OwnsPresenceProjection"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-OWNERSHIP",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A15"
+      ],
+      "clauses": [
+        "CF-MS-I18"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I19ReconcilesSubscriberAndPresence"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-MEMBERSHIP-RECONCILIATION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A12"
+      ],
+      "clauses": [
+        "CF-MS-I19"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I20ReportsOrphanPresence"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-MEMBERSHIP-RECONCILIATION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A12"
+      ],
+      "clauses": [
+        "CF-MS-I20"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I21ReflectsUnsubscribeCleanup"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-MEMBERSHIP-RECONCILIATION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A11"
+      ],
+      "clauses": [
+        "CF-MS-I21"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I22ReflectsDisconnectCleanup"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-MEMBERSHIP-RECONCILIATION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A11"
+      ],
+      "clauses": [
+        "CF-MS-I22"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I23PreservesIdempotentPublishResult"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-HISTORY-PROJECTION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A14",
+        "A15"
+      ],
+      "clauses": [
+        "CF-MS-I23"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestCentrifugeV2I24RejectsUnselectedRecoveryChannel"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-ADMISSION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot"
+      ],
+      "depends_on": [
+        "A08",
+        "A09"
+      ],
+      "clauses": [
+        "CF-MS-I24"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestCentrifugeV2S01LivePublishSessionView"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-LIFECYCLE-ATOMICITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot",
+        "centrifuge.MemoryRecoverySnapshot"
+      ],
+      "depends_on": [
+        "I01",
+        "I15",
+        "I19"
+      ],
+      "clauses": [
+        "CF-MS-S01"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestCentrifugeV2S02TwoClientSharedUserView"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-MEMBERSHIP-RECONCILIATION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot",
+        "centrifuge.MemoryRecoverySnapshot"
+      ],
+      "depends_on": [
+        "I15",
+        "I17",
+        "I19"
+      ],
+      "clauses": [
+        "CF-MS-S02"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestCentrifugeV2S03PartialUnsubscribeWorkflow"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-MEMBERSHIP-RECONCILIATION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot",
+        "centrifuge.MemoryRecoverySnapshot"
+      ],
+      "depends_on": [
+        "I16",
+        "I21",
+        "I23"
+      ],
+      "clauses": [
+        "CF-MS-S03"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestCentrifugeV2S04TrimmedWindowRecoveryBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-RECOVERY-CONTINUITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot",
+        "centrifuge.MemoryRecoverySnapshot"
+      ],
+      "depends_on": [
+        "I08",
+        "I11"
+      ],
+      "clauses": [
+        "CF-MS-S04"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestCentrifugeV2S05HistoryResetStartsFreshGeneration"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-HISTORY-PROJECTION",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot",
+        "centrifuge.MemoryRecoverySnapshot"
+      ],
+      "depends_on": [
+        "I12",
+        "I23"
+      ],
+      "clauses": [
+        "CF-MS-S05"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestCentrifugeV2S06SnapshotGenerationOwnsPriorState"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-SNAPSHOT-OWNERSHIP",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot",
+        "centrifuge.MemoryRecoverySnapshot"
+      ],
+      "depends_on": [
+        "I18",
+        "I21"
+      ],
+      "clauses": [
+        "CF-MS-S06"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestCentrifugeV2S07CancellationLeavesRuntimeUntouched"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-LIFECYCLE-ATOMICITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot",
+        "centrifuge.MemoryRecoverySnapshot"
+      ],
+      "depends_on": [
+        "A16",
+        "I19"
+      ],
+      "clauses": [
+        "CF-MS-S07"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestCentrifugeV2S08ShutdownRejectsNewSnapshot"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "CF-LIFECYCLE-ATOMICITY",
+      "owners": [
+        "centrifuge.Node.CaptureMemorySnapshot",
+        "centrifuge.MemoryChannelSnapshot",
+        "centrifuge.MemoryClientSnapshot",
+        "centrifuge.MemoryRecoverySnapshot"
+      ],
+      "depends_on": [
+        "A16",
+        "I22"
+      ],
+      "clauses": [
+        "CF-MS-S08"
+      ],
+      "native_owners": [
+        "centrifuge.Node",
+        "centrifuge.MemoryBroker",
+        "centrifuge.Hub",
+        "centrifuge.MemoryPresenceManager",
+        "centrifuge.Client"
+      ]
+    }
+  ]
+}

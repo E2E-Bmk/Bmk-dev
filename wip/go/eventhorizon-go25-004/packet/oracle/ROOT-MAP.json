@@ -1,0 +1,47 @@
+{
+  "schema": "spec2repo.go-root-map.v2",
+  "case": "eventhorizon-go25-004",
+  "roots": [
+    {"id":"A01","layer":"atomic","tests":["TestEventHorizonV4A01"],"package":"./...","mutation":false,"family":"NATIVE-COMPATIBILITY","owners":["memory event store","root EventStore API"],"depends_on":[]},
+    {"id":"A02","layer":"atomic","tests":["TestEventHorizonV4A02"],"package":"./...","mutation":false,"family":"NATIVE-COMPATIBILITY","owners":["EventStoreError","errors identity"],"depends_on":[]},
+    {"id":"A03","layer":"atomic","tests":["TestEventHorizonV4A03"],"package":"./...","mutation":true,"family":"RANGE-BOUNDARIES","owners":["memory stream","event-store errors"],"depends_on":["A01"]},
+    {"id":"A04","layer":"atomic","tests":["TestEventHorizonV4A04"],"package":"./...","mutation":true,"family":"RANGE-BOUNDARIES","owners":["memory stream","event-store errors"],"depends_on":["A01"]},
+    {"id":"A05","layer":"atomic","tests":["TestEventHorizonV4A05"],"package":"./...","mutation":true,"family":"RANGE-BOUNDARIES","owners":["memory stream","not-found identity"],"depends_on":["A01"]},
+    {"id":"A06","layer":"atomic","tests":["TestEventHorizonV4A06"],"package":"./...","mutation":true,"family":"RANGE-BOUNDARIES","owners":["memory stream","context lifecycle"],"depends_on":["A01"]},
+    {"id":"A07","layer":"atomic","tests":["TestEventHorizonV4A07"],"package":"./...","mutation":true,"family":"RANGE-BOUNDARIES","owners":["memory stream","event versions"],"depends_on":["A01"]},
+    {"id":"A08","layer":"atomic","tests":["TestEventHorizonV4A08"],"package":"./...","mutation":true,"family":"RANGE-BOUNDARIES","owners":["memory stream","stream head"],"depends_on":["A01"]},
+    {"id":"A09","layer":"atomic","tests":["TestEventHorizonV4A09"],"package":"./...","mutation":true,"family":"RANGE-BOUNDARIES","owners":["memory stream","event copying"],"depends_on":["A01"]},
+    {"id":"A10","layer":"atomic","tests":["TestEventHorizonV4A10"],"package":"./...","mutation":true,"family":"HISTORICAL-FOLD","owners":["aggregate factory","aggregate version"],"depends_on":["A01"]},
+    {"id":"A11","layer":"atomic","tests":["TestEventHorizonV4A11"],"package":"./...","mutation":true,"family":"HISTORICAL-FOLD","owners":["aggregate store","aggregate errors"],"depends_on":["A02"]},
+    {"id":"A12","layer":"atomic","tests":["TestEventHorizonV4A12"],"package":"./...","mutation":true,"family":"HISTORICAL-FOLD","owners":["aggregate store","stream head"],"depends_on":["A01"]},
+
+    {"id":"I01","layer":"integration","tests":["TestEventHorizonV4I01"],"package":"./...","mutation":true,"family":"HISTORICAL-FOLD","owners":["memory stream","aggregate fold"],"depends_on":["A07","A10"]},
+    {"id":"I02","layer":"integration","tests":["TestEventHorizonV4I02"],"package":"./...","mutation":true,"family":"HISTORICAL-FOLD","owners":["historical aggregate","current aggregate"],"depends_on":["A10"]},
+    {"id":"I03","layer":"integration","tests":["TestEventHorizonV4I03"],"package":"./...","mutation":true,"family":"HISTORICAL-FOLD","owners":["snapshot store","bounded stream","aggregate fold"],"depends_on":["A07","A10"]},
+    {"id":"I04","layer":"integration","tests":["TestEventHorizonV4I04"],"package":"./...","mutation":true,"family":"HISTORICAL-FOLD","owners":["snapshot store","bounded stream","aggregate fold"],"depends_on":["A07","A10"]},
+    {"id":"I05","layer":"integration","tests":["TestEventHorizonV4I05"],"package":"./...","mutation":true,"family":"HISTORICAL-FOLD","owners":["ordinary EventStore","aggregate fold"],"depends_on":["A10"]},
+
+    {"id":"I06","layer":"integration","tests":["TestEventHorizonV4I06"],"package":"./...","mutation":true,"family":"PROJECTOR-REPLAY","owners":["projector handler","memory repository"],"depends_on":["A01"]},
+    {"id":"I07","layer":"integration","tests":["TestEventHorizonV4I07"],"package":"./...","mutation":true,"family":"PROJECTOR-REPLAY","owners":["projector version policy","memory repository"],"depends_on":["I06"]},
+    {"id":"I08","layer":"integration","tests":["TestEventHorizonV4I08"],"package":"./...","mutation":true,"family":"PROJECTOR-REPLAY","owners":["projector error boundary","repository prefix"],"depends_on":["I06"]},
+    {"id":"I09","layer":"integration","tests":["TestEventHorizonV4I09"],"package":"./...","mutation":true,"family":"PROJECTOR-REPLAY","owners":["context lifecycle","repository prefix"],"depends_on":["I06"]},
+    {"id":"I10","layer":"integration","tests":["TestEventHorizonV4I10"],"package":"./...","mutation":true,"family":"PROJECTOR-REPLAY","owners":["irregular version policy","memory repository"],"depends_on":["I06"]},
+
+    {"id":"I11","layer":"integration","tests":["TestEventHorizonV4I11"],"package":"./...","mutation":true,"family":"BUS-QUIESCENCE","owners":["local bus queue","blocked handler"],"depends_on":["A01"]},
+    {"id":"I12","layer":"integration","tests":["TestEventHorizonV4I12"],"package":"./...","mutation":true,"family":"BUS-QUIESCENCE","owners":["local bus queue","handler observation"],"depends_on":["I11"]},
+    {"id":"I13","layer":"integration","tests":["TestEventHorizonV4I13"],"package":"./...","mutation":true,"family":"BUS-QUIESCENCE","owners":["independent bus queues","independent handlers"],"depends_on":["I11"]},
+    {"id":"I14","layer":"integration","tests":["TestEventHorizonV4I14"],"package":"./...","mutation":true,"family":"BUS-QUIESCENCE","owners":["handler failure","bus error stream","queue barrier"],"depends_on":["I11"]},
+    {"id":"I15","layer":"integration","tests":["TestEventHorizonV4I15"],"package":"./...","mutation":true,"family":"BUS-QUIESCENCE","owners":["context lifecycle","local bus queue"],"depends_on":["I11"]},
+    {"id":"I16","layer":"integration","tests":["TestEventHorizonV4I16"],"package":"./...","mutation":true,"family":"BUS-QUIESCENCE","owners":["empty bus group","wait lifecycle"],"depends_on":[]},
+
+    {"id":"I17","layer":"integration","tests":["TestEventHorizonV4I17"],"package":"./...","mutation":true,"family":"OUTBOX-QUIESCENCE","owners":["outbox backlog","handler observation"],"depends_on":["A01"]},
+    {"id":"I18","layer":"integration","tests":["TestEventHorizonV4I18"],"package":"./...","mutation":true,"family":"OUTBOX-QUIESCENCE","owners":["outbox matcher","empty backlog"],"depends_on":["I17"]},
+    {"id":"I19","layer":"integration","tests":["TestEventHorizonV4I19"],"package":"./...","mutation":true,"family":"OUTBOX-QUIESCENCE","owners":["failed backlog","context deadline","outbox error stream"],"depends_on":["I17"]},
+    {"id":"I20","layer":"integration","tests":["TestEventHorizonV4I20"],"package":"./...","mutation":true,"family":"OUTBOX-QUIESCENCE","owners":["per-handler backlog","stable handler","retrying handler"],"depends_on":["I17"]},
+    {"id":"I21","layer":"integration","tests":["TestEventHorizonV4I21"],"package":"./...","mutation":true,"family":"OUTBOX-QUIESCENCE","owners":["pending backlog","outbox close","wait lifecycle"],"depends_on":["I19"]},
+
+    {"id":"I22","layer":"integration","tests":["TestEventHorizonV4I22"],"package":"./...","mutation":true,"family":"CROSS-OWNER-RECOVERY","owners":["bounded stream","historical aggregate","projector repository"],"depends_on":["A07","I01","I06"]},
+    {"id":"I23","layer":"integration","tests":["TestEventHorizonV4I23"],"package":"./...","mutation":true,"family":"CROSS-OWNER-RECOVERY","owners":["event store","local bus","projector repository","fresh range read"],"depends_on":["A07","I06","I12"]},
+    {"id":"I24","layer":"integration","tests":["TestEventHorizonV4I24"],"package":"./...","mutation":true,"family":"CROSS-OWNER-RECOVERY","owners":["event store","outbox backlog","projector repository","historical aggregate"],"depends_on":["I01","I06","I17"]}
+  ]
+}

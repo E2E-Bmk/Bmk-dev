@@ -1,0 +1,1251 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case": "go25-v23-mvdan-sh-syntax-runtime",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestShellDialectParserMode",
+        "TestShellDialectParserModeBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PARSE-DIALECT",
+      "owners": [
+        "receipt.ShellPlan.SelectSource",
+        "receipt.SyntaxFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-PARSE-001"
+      ],
+      "native_owners": [
+        "syntax-parser"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestShellHeredocAndCommentParse",
+        "TestShellHeredocAndCommentParseBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PARSE-DIALECT",
+      "owners": [
+        "receipt.ShellPlan.SelectSource",
+        "receipt.SyntaxFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-PARSE-002"
+      ],
+      "native_owners": [
+        "syntax-parser"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestShellASTPositionIdentity",
+        "TestShellASTPositionIdentityBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-AST-IDENTITY",
+      "owners": [
+        "receipt.SyntaxFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Validate",
+        "receipt.ShellReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-AST-001"
+      ],
+      "native_owners": [
+        "syntax-ast"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestShellASTWalkNodeOwnership",
+        "TestShellASTWalkNodeOwnershipBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-AST-IDENTITY",
+      "owners": [
+        "receipt.SyntaxFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Validate",
+        "receipt.ShellReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-AST-002"
+      ],
+      "native_owners": [
+        "syntax-ast"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestShellPrinterStatementLayout",
+        "TestShellPrinterStatementLayoutBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PRINT-IDEMPOTENCE",
+      "owners": [
+        "receipt.FormatFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Digest",
+        "receipt.ShellReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-PRINT-001"
+      ],
+      "native_owners": [
+        "syntax-printer"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestShellPrinterMinifyPolicy",
+        "TestShellPrinterMinifyPolicyBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PRINT-IDEMPOTENCE",
+      "owners": [
+        "receipt.FormatFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Digest",
+        "receipt.ShellReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-PRINT-002"
+      ],
+      "native_owners": [
+        "syntax-printer"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestShellParameterExpansion",
+        "TestShellParameterExpansionBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-WORD-EXPANSION",
+      "owners": [
+        "receipt.ShellPlan.IncludeExpansion",
+        "receipt.ExpansionFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-EXPAND-001"
+      ],
+      "native_owners": [
+        "expand"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestShellArithmeticExpansion",
+        "TestShellArithmeticExpansionBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-WORD-EXPANSION",
+      "owners": [
+        "receipt.ShellPlan.IncludeExpansion",
+        "receipt.ExpansionFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-EXPAND-002"
+      ],
+      "native_owners": [
+        "expand"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestShellGlobPatternMatch",
+        "TestShellGlobPatternMatchBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATTERN-MATCH",
+      "owners": [
+        "receipt.ExpansionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-PATTERN-001"
+      ],
+      "native_owners": [
+        "pattern"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestShellExtendedPatternMatch",
+        "TestShellExtendedPatternMatchBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATTERN-MATCH",
+      "owners": [
+        "receipt.ExpansionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-PATTERN-002"
+      ],
+      "native_owners": [
+        "pattern"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestShellRunnerAssignmentEnvironment",
+        "TestShellRunnerAssignmentEnvironmentBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNNER-ENVIRONMENT",
+      "owners": [
+        "receipt.ExecutionFact",
+        "receipt.EffectJournal.Entries",
+        "receipt.ShellReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-RUN-001"
+      ],
+      "native_owners": [
+        "runner",
+        "environment"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestShellRedirectionFileEffect",
+        "TestShellRedirectionFileEffectBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FILESYSTEM-EFFECT",
+      "owners": [
+        "receipt.EffectFact",
+        "receipt.EffectJournal",
+        "receipt.EffectJournal.Record",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-FS-001"
+      ],
+      "native_owners": [
+        "runner",
+        "filesystem"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestShellNativeExitStatus",
+        "TestShellNativeExitStatusBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runner"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-NATIVE-001"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestShellNativeCommandSubstitution",
+        "TestShellNativeCommandSubstitutionBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runner",
+        "stdout"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-NATIVE-002"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestShellNativeSyntaxError",
+        "TestShellNativeSyntaxErrorBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "syntax-parser",
+        "error"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-NATIVE-003"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestShellNativeReaderWriterContract",
+        "TestShellNativeReaderWriterContractBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runner",
+        "io"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "SH-NATIVE-004"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestShellParsePrintParseIdentity"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-AST-IDENTITY",
+      "owners": [
+        "receipt.SyntaxFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Validate",
+        "receipt.ShellReceipt.Digest"
+      ],
+      "depends_on": [
+        "A01",
+        "A03",
+        "A05"
+      ],
+      "seam": "parsed AST → printer → reparsed AST",
+      "clauses": [
+        "SH-SEAM-001"
+      ],
+      "native_owners": [
+        "syntax-parser",
+        "syntax-ast",
+        "syntax-printer"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestShellParsedProgramRuns"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PARSE-DIALECT",
+      "owners": [
+        "receipt.ShellPlan.SelectSource",
+        "receipt.SyntaxFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A11"
+      ],
+      "seam": "syntax.File → interpreter runner",
+      "clauses": [
+        "SH-SEAM-002"
+      ],
+      "native_owners": [
+        "syntax-parser",
+        "runner",
+        "environment"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestShellExpansionReadsRunnerEnvironment"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-WORD-EXPANSION",
+      "owners": [
+        "receipt.ShellPlan.IncludeExpansion",
+        "receipt.ExpansionFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [
+        "A07",
+        "A11"
+      ],
+      "seam": "runner variables → word expansion",
+      "clauses": [
+        "SH-SEAM-003"
+      ],
+      "native_owners": [
+        "expand",
+        "runner",
+        "environment"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestShellGlobReadsSandboxFilesystem"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATTERN-MATCH",
+      "owners": [
+        "receipt.ExpansionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A09",
+        "A12"
+      ],
+      "seam": "pattern expansion → directory observation",
+      "clauses": [
+        "SH-SEAM-004"
+      ],
+      "native_owners": [
+        "pattern",
+        "expand",
+        "filesystem"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestShellRedirectionPublishesFile"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FILESYSTEM-EFFECT",
+      "owners": [
+        "receipt.EffectFact",
+        "receipt.EffectJournal",
+        "receipt.EffectJournal.Record",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [
+        "A12",
+        "A16"
+      ],
+      "seam": "redirection node → file writer → fresh read",
+      "clauses": [
+        "SH-SEAM-005"
+      ],
+      "native_owners": [
+        "runner",
+        "filesystem",
+        "io"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestShellPipelinePropagatesEnvironment"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNNER-ENVIRONMENT",
+      "owners": [
+        "receipt.ExecutionFact",
+        "receipt.EffectJournal.Entries",
+        "receipt.ShellReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "seam": "pipeline stages → scoped variables and status",
+      "clauses": [
+        "SH-SEAM-006"
+      ],
+      "native_owners": [
+        "runner",
+        "pipeline",
+        "environment"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestShellCommandSubstitutionCapturesOutput"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNNER-ENVIRONMENT",
+      "owners": [
+        "receipt.ExecutionFact",
+        "receipt.EffectJournal.Entries",
+        "receipt.ShellReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A07",
+        "A14"
+      ],
+      "seam": "nested runner output → expansion value",
+      "clauses": [
+        "SH-SEAM-007"
+      ],
+      "native_owners": [
+        "runner",
+        "substitution",
+        "stdout"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestShellFunctionScopeRestoresVariables"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNNER-ENVIRONMENT",
+      "owners": [
+        "receipt.ExecutionFact",
+        "receipt.EffectJournal.Entries",
+        "receipt.ShellReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "seam": "function invocation → local scope → caller state",
+      "clauses": [
+        "SH-SEAM-008"
+      ],
+      "native_owners": [
+        "runner",
+        "function",
+        "environment"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestShellShfmtUsesPrinterPolicy"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.ShellPlan",
+        "receipt.ExecutionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A05"
+      ],
+      "seam": "CLI input → parser/printer → formatted stdout",
+      "clauses": [
+        "SH-SEAM-009"
+      ],
+      "native_owners": [
+        "shfmt-cli",
+        "syntax-parser",
+        "syntax-printer"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestShellGoshUsesInterpreterHandlers"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.ShellPlan",
+        "receipt.ExecutionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A11",
+        "A16"
+      ],
+      "seam": "CLI invocation → runner handlers → process result",
+      "clauses": [
+        "SH-SEAM-010"
+      ],
+      "native_owners": [
+        "gosh-cli",
+        "runner",
+        "environment"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestShellPrinterPreservesCommentsAndHeredocs"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PRINT-IDEMPOTENCE",
+      "owners": [
+        "receipt.FormatFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Digest",
+        "receipt.ShellReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A02",
+        "A05"
+      ],
+      "seam": "comment/heredoc nodes → formatted source",
+      "clauses": [
+        "SH-SEAM-011"
+      ],
+      "native_owners": [
+        "syntax-ast",
+        "syntax-printer"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestShellDiagnosticUsesASTPositions"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-AST-IDENTITY",
+      "owners": [
+        "receipt.SyntaxFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Validate",
+        "receipt.ShellReceipt.Digest"
+      ],
+      "depends_on": [
+        "A03",
+        "A15"
+      ],
+      "seam": "parse failure → source position diagnostic",
+      "clauses": [
+        "SH-SEAM-012"
+      ],
+      "native_owners": [
+        "syntax-parser",
+        "syntax-ast",
+        "error"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestShellExpandedPatternMatchesFiles"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATTERN-MATCH",
+      "owners": [
+        "receipt.ExpansionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A07",
+        "A09"
+      ],
+      "seam": "word expansion → glob matcher → path list",
+      "clauses": [
+        "SH-SEAM-013"
+      ],
+      "native_owners": [
+        "expand",
+        "pattern",
+        "filesystem"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestShellRunnerWritesThenReadsSandbox"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FILESYSTEM-EFFECT",
+      "owners": [
+        "receipt.EffectFact",
+        "receipt.EffectJournal",
+        "receipt.EffectJournal.Record",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [
+        "A12",
+        "A16"
+      ],
+      "seam": "command redirection → fresh sandbox read",
+      "clauses": [
+        "SH-SEAM-014"
+      ],
+      "native_owners": [
+        "runner",
+        "filesystem",
+        "io"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestShellShfmtDialectFlagChangesParse"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PARSE-DIALECT",
+      "owners": [
+        "receipt.ShellPlan.SelectSource",
+        "receipt.SyntaxFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A06"
+      ],
+      "seam": "dialect flag → parser mode → printer output",
+      "clauses": [
+        "SH-SEAM-015"
+      ],
+      "native_owners": [
+        "shfmt-cli",
+        "syntax-parser",
+        "syntax-printer"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestShellCLIAndAPIFormatAgree"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.ShellPlan",
+        "receipt.ExecutionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A05",
+        "A06"
+      ],
+      "seam": "same source → CLI and API formatter observations",
+      "clauses": [
+        "SH-SEAM-016"
+      ],
+      "native_owners": [
+        "shfmt-cli",
+        "syntax-parser",
+        "syntax-printer"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestShellNativeStatusReachesCaller"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runner",
+        "environment"
+      ],
+      "depends_on": [
+        "A13"
+      ],
+      "seam": "native command status → caller result",
+      "clauses": [
+        "SH-SEAM-017"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestShellNativeSubstitutionTrimsNewlines"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runner",
+        "substitution"
+      ],
+      "depends_on": [
+        "A14"
+      ],
+      "seam": "captured output → native substitution value",
+      "clauses": [
+        "SH-SEAM-018"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestShellNativeSyntaxFailureDoesNotRun"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "syntax-parser",
+        "runner",
+        "error"
+      ],
+      "depends_on": [
+        "A15",
+        "A11"
+      ],
+      "seam": "parse failure → no runner acquisition",
+      "clauses": [
+        "SH-SEAM-019"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestShellNativeIORoundTrip"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runner",
+        "io"
+      ],
+      "depends_on": [
+        "A16"
+      ],
+      "seam": "stdin → native command → stdout",
+      "clauses": [
+        "SH-SEAM-020"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestShellNativePrinterSecondPass"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "syntax-printer",
+        "syntax-parser"
+      ],
+      "depends_on": [
+        "A05"
+      ],
+      "seam": "formatted source → second native format",
+      "clauses": [
+        "SH-SEAM-021"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestShellNativeEmptyGlobBehavior"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "pattern",
+        "expand"
+      ],
+      "depends_on": [
+        "A09"
+      ],
+      "seam": "unmatched pattern → native expansion",
+      "clauses": [
+        "SH-SEAM-022"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestShellNativeEnvironmentIsolation"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runner",
+        "environment"
+      ],
+      "depends_on": [
+        "A11"
+      ],
+      "seam": "independent runners → isolated variables",
+      "clauses": [
+        "SH-SEAM-023"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestShellNativeFileDescriptorClosure"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runner",
+        "filesystem"
+      ],
+      "depends_on": [
+        "A12"
+      ],
+      "seam": "redirection completion → closed file receipt",
+      "clauses": [
+        "SH-SEAM-024"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestShellScriptExecutionFreshStateReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNNER-ENVIRONMENT",
+      "owners": [
+        "receipt.ExecutionFact",
+        "receipt.EffectJournal.Entries",
+        "receipt.ShellReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A01",
+        "A07",
+        "A11",
+        "A12"
+      ],
+      "receipt": "After executing a script, a fresh environment query, filesystem read, stdout capture, and exit result agree on the same run generation.",
+      "clauses": [
+        "SH-SYSTEM-001"
+      ],
+      "native_owners": [
+        "syntax-parser",
+        "expand",
+        "runner",
+        "environment",
+        "filesystem",
+        "io"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestShellShfmtSemanticIdentityReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PRINT-IDEMPOTENCE",
+      "owners": [
+        "receipt.FormatFact",
+        "receipt.Capture",
+        "receipt.ShellReceipt.Digest",
+        "receipt.ShellReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A03",
+        "A05"
+      ],
+      "receipt": "After shfmt, a fresh parse and API reformat preserve semantic node identity and report no second-pass change.",
+      "clauses": [
+        "SH-SYSTEM-002"
+      ],
+      "native_owners": [
+        "shfmt-cli",
+        "syntax-parser",
+        "syntax-ast",
+        "syntax-printer",
+        "formatter-api"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestShellExpansionGlobExecutionReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATTERN-MATCH",
+      "owners": [
+        "receipt.ExpansionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A07",
+        "A09",
+        "A11"
+      ],
+      "receipt": "After creating sandbox files and running an expanded glob, a fresh stdout and directory listing report the same ordered matches.",
+      "clauses": [
+        "SH-SYSTEM-003"
+      ],
+      "native_owners": [
+        "runner",
+        "environment",
+        "expand",
+        "pattern",
+        "filesystem"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestShellFunctionRedirectionIsolationReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FILESYSTEM-EFFECT",
+      "owners": [
+        "receipt.EffectFact",
+        "receipt.EffectJournal",
+        "receipt.EffectJournal.Record",
+        "receipt.ShellReceipt.Validate"
+      ],
+      "depends_on": [
+        "A02",
+        "A11",
+        "A12"
+      ],
+      "receipt": "After a function writes under local variables, fresh caller environment and file observations show isolated scope with durable output.",
+      "clauses": [
+        "SH-SYSTEM-004"
+      ],
+      "native_owners": [
+        "syntax-parser",
+        "runner",
+        "function-scope",
+        "environment",
+        "filesystem"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestShellCLIAPIFormatRunReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.ShellPlan",
+        "receipt.ExecutionFact",
+        "receipt.ShellReceipt",
+        "receipt.ShellReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A05",
+        "A11"
+      ],
+      "receipt": "After CLI and API formatting agree, a fresh gosh execution produces the same observable behavior as the original semantic tree.",
+      "clauses": [
+        "SH-SYSTEM-005"
+      ],
+      "native_owners": [
+        "shfmt-cli",
+        "formatter-api",
+        "syntax-parser",
+        "gosh-cli",
+        "runner"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestShellFailedCommandStateReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNNER-ENVIRONMENT",
+      "owners": [
+        "receipt.ExecutionFact",
+        "receipt.EffectJournal.Entries",
+        "receipt.ShellReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A11",
+        "A12",
+        "A13"
+      ],
+      "receipt": "After a failing pipeline, fresh environment and filesystem observations contain only effects acquired before the documented failure boundary.",
+      "clauses": [
+        "SH-SYSTEM-006"
+      ],
+      "native_owners": [
+        "runner",
+        "pipeline",
+        "environment",
+        "filesystem",
+        "exit-status"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestShellNativeParseRunIOWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "syntax-parser",
+        "runner",
+        "io",
+        "environment",
+        "exit-status"
+      ],
+      "depends_on": [
+        "A01",
+        "A13",
+        "A16"
+      ],
+      "receipt": "A native parsed script run with fresh I/O produces the documented stdout and exit status without external shell delegation.",
+      "clauses": [
+        "SH-SYSTEM-007"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestShellNativeSyntaxFailureNoEffects"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "syntax-parser",
+        "diagnostic",
+        "runner",
+        "filesystem",
+        "environment"
+      ],
+      "depends_on": [
+        "A11",
+        "A12",
+        "A15"
+      ],
+      "receipt": "After a syntax failure, fresh filesystem and environment observations confirm that no runner-side effect was published.",
+      "clauses": [
+        "SH-SYSTEM-008"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "instance_id": "serf-query-fullrepro-003",
+  "language": "go",
+  "schema_version": 1,
+  "dataset_id": "spec2repo-aligned-25_GO",
+  "cohort": "go25-all-statuses",
+  "version": "serf-query-v3-windows-preview",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [
+    "github.com/hashicorp/serf"
+  ],
+  "oracle": {
+    "kind": "frozen-go-gate",
+    "layout": "flat-package",
+    "test_files": [
+      "coherent_targets_atomic_roots_test.go",
+      "coherent_targets_composition_roots_test.go",
+      "coherent_targets_root_helpers_test.go",
+      "coherent_targets_smoke_test.go"
+    ],
+    "count": 64,
+    "count_unit": "test_functions",
+    "atomic_count": 32,
+    "integration_count": 32,
+    "declared_roots": {
+      "atomic": 32,
+      "integration": 24,
+      "system": 8
+    }
+  }
+}

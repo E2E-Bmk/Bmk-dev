@@ -1,0 +1,1095 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case_version": "go25-v10-v3",
+  "architecture": {
+    "independent_packages": [
+      "message/routeplan",
+      "message/pubjournal",
+      "message/settlement",
+      "message/retrylineage",
+      "message/drainbarrier",
+      "message/recovery"
+    ],
+    "upstream_hooks": [
+      "message.Message metadata/context/terminal signals",
+      "pubsub/gochannel publish-subscribe lifecycle",
+      "components/cqrs JSON marshaling and type routing"
+    ],
+    "advanced_composition_roots": [
+      "I03",
+      "I04",
+      "I09",
+      "I10",
+      "I11",
+      "I12",
+      "I14",
+      "I15",
+      "I16",
+      "I17",
+      "I18",
+      "I19",
+      "S01",
+      "S02",
+      "S03",
+      "S04",
+      "S05",
+      "S06"
+    ]
+  },
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicRouteRevisionPrimary",
+        "TestWatermillV3AtomicRouteRevisionSecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-ROUTE-REVISION",
+      "owners": [
+        "routeplan.Catalog"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A01"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicRouteCompatibilityPrimary",
+        "TestWatermillV3AtomicRouteCompatibilitySecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-ROUTE-REVISION",
+      "owners": [
+        "routeplan.Catalog"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A02"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicJournalOwnershipPrimary",
+        "TestWatermillV3AtomicJournalOwnershipSecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-PARTIAL-PUBLICATION",
+      "owners": [
+        "pubjournal.Journal"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A03"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicPartialCompensationPrimary",
+        "TestWatermillV3AtomicPartialCompensationSecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-PARTIAL-PUBLICATION",
+      "owners": [
+        "pubjournal.Journal"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A04"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicSettlementFencePrimary",
+        "TestWatermillV3AtomicSettlementFenceSecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-SETTLEMENT-INTERLEAVE",
+      "owners": [
+        "settlement.Ledger"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A05"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicRetryOrdinalPrimary",
+        "TestWatermillV3AtomicRetryOrdinalSecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CROSS-BROKER-LINEAGE",
+      "owners": [
+        "retrylineage.Index"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A06"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicCrossBrokerDedupPrimary",
+        "TestWatermillV3AtomicCrossBrokerDedupSecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CROSS-BROKER-LINEAGE",
+      "owners": [
+        "retrylineage.Index"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A07"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicDrainInflightPrimary",
+        "TestWatermillV3AtomicDrainInflightSecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-DRAIN-INFLIGHT-RACE",
+      "owners": [
+        "drainbarrier.Barrier"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A08"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestWatermillV3AtomicCheckpointMonotonicPrimary",
+        "TestWatermillV3AtomicCheckpointMonotonicSecondary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CHECKPOINT-REPLAY",
+      "owners": [
+        "recovery.Store",
+        "pubjournal.Journal"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A09"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestCoordAtomicNativeMetadataDeletePrimary",
+        "TestCoordAtomicNativeMetadataDeleteSecondary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "message.Metadata"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A10"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestCoordAtomicNativeMessageIdentityPrimary",
+        "TestCoordAtomicNativeMessageIdentitySecondary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "message.Message"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A11"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestCoordAtomicNativeCQRSStructNamePrimary",
+        "TestCoordAtomicNativeCQRSStructNameSecondary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "cqrs.StructName"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A12"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestCoordAtomicNativeMetadataClonePrimary",
+        "TestCoordAtomicNativeMetadataCloneSecondary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "message.Message"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A13"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestCoordAtomicNativeTerminalPrimary",
+        "TestCoordAtomicNativeTerminalSecondary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "message.Message"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A14"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestCoordAtomicNativeGoChannelClosePrimary",
+        "TestCoordAtomicNativeGoChannelCloseSecondary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "gochannel.GoChannel"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A15"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestCoordAtomicNativeCQRSJSONPrimary",
+        "TestCoordAtomicNativeCQRSJSONSecondary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "cqrs.JSONMarshaler"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "WM3-A16"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamRouteMetadataCQRS"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-ROUTE-REVISION",
+      "owners": [
+        "routeplan.Catalog",
+        "message.Metadata",
+        "cqrs.JSONMarshaler"
+      ],
+      "depends_on": [
+        "A01",
+        "A02"
+      ],
+      "clauses": [
+        "WM3-I01"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamPartialBlocksAck"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-PARTIAL-PUBLICATION",
+      "owners": [
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "message.Message"
+      ],
+      "depends_on": [
+        "A03",
+        "A05"
+      ],
+      "clauses": [
+        "WM3-I02"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCompensationEnablesNack"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-PARTIAL-PUBLICATION",
+      "owners": [
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "message.Message"
+      ],
+      "depends_on": [
+        "A04",
+        "A05"
+      ],
+      "clauses": [
+        "WM3-I03"
+      ],
+      "scenario_form": "partial-failure-recovery"
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamInterleavedAckNack"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-SETTLEMENT-INTERLEAVE",
+      "owners": [
+        "settlement.Ledger",
+        "pubjournal.Journal",
+        "message.Message"
+      ],
+      "depends_on": [
+        "A03",
+        "A05"
+      ],
+      "clauses": [
+        "WM3-I04"
+      ],
+      "scenario_form": "deterministic-interleaving"
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamAckSignalsMessage"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-SETTLEMENT-INTERLEAVE",
+      "owners": [
+        "settlement.Ledger",
+        "pubjournal.Journal",
+        "message.Message"
+      ],
+      "depends_on": [
+        "A05"
+      ],
+      "clauses": [
+        "WM3-I05"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamNackSignalsMessage"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-SETTLEMENT-INTERLEAVE",
+      "owners": [
+        "settlement.Ledger",
+        "pubjournal.Journal",
+        "message.Message"
+      ],
+      "depends_on": [
+        "A05"
+      ],
+      "clauses": [
+        "WM3-I06"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamBrokerMetadataReconcile"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CROSS-BROKER-LINEAGE",
+      "owners": [
+        "retrylineage.Index",
+        "routeplan.Catalog",
+        "message.Metadata"
+      ],
+      "depends_on": [
+        "A06",
+        "A07"
+      ],
+      "clauses": [
+        "WM3-I07"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamRetryUsesCurrentRoute"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CROSS-BROKER-LINEAGE",
+      "owners": [
+        "retrylineage.Index",
+        "routeplan.Catalog",
+        "message.Metadata"
+      ],
+      "depends_on": [
+        "A01",
+        "A06"
+      ],
+      "clauses": [
+        "WM3-I08"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamTwoIndexesReconcile"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CROSS-BROKER-LINEAGE",
+      "owners": [
+        "retrylineage.Index",
+        "routeplan.Catalog",
+        "message.Metadata"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "clauses": [
+        "WM3-I09"
+      ],
+      "scenario_form": "multi-instance-reconcile"
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCancelWaitsForOutput"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-DRAIN-INFLIGHT-RACE",
+      "owners": [
+        "drainbarrier.Barrier",
+        "settlement.Ledger",
+        "pubjournal.Journal"
+      ],
+      "depends_on": [
+        "A04",
+        "A08"
+      ],
+      "clauses": [
+        "WM3-I10"
+      ],
+      "scenario_form": "deterministic-interleaving"
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamSettlementBeforeOutputFinish"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-DRAIN-INFLIGHT-RACE",
+      "owners": [
+        "drainbarrier.Barrier",
+        "settlement.Ledger",
+        "pubjournal.Journal"
+      ],
+      "depends_on": [
+        "A05",
+        "A08"
+      ],
+      "clauses": [
+        "WM3-I11"
+      ],
+      "scenario_form": "deterministic-interleaving"
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamTwoDeliveryDrainInterleave"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-DRAIN-INFLIGHT-RACE",
+      "owners": [
+        "drainbarrier.Barrier",
+        "settlement.Ledger",
+        "pubjournal.Journal"
+      ],
+      "depends_on": [
+        "A08"
+      ],
+      "clauses": [
+        "WM3-I12"
+      ],
+      "scenario_form": "multi-instance-interleaving"
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCheckpointCapturesCursors"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CHECKPOINT-REPLAY",
+      "owners": [
+        "recovery.Store",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "routeplan.Catalog"
+      ],
+      "depends_on": [
+        "A09"
+      ],
+      "clauses": [
+        "WM3-I13"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCheckpointReopenReplay"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CHECKPOINT-REPLAY",
+      "owners": [
+        "recovery.Store",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "routeplan.Catalog"
+      ],
+      "depends_on": [
+        "A09"
+      ],
+      "clauses": [
+        "WM3-I14"
+      ],
+      "scenario_form": "reopen-replay"
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCheckpointRejectsStaleJournal"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CHECKPOINT-REPLAY",
+      "owners": [
+        "recovery.Store",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "routeplan.Catalog"
+      ],
+      "depends_on": [
+        "A09"
+      ],
+      "clauses": [
+        "WM3-I15"
+      ],
+      "scenario_form": "checkpoint-replay"
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCheckpointRouteReplay"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CHECKPOINT-REPLAY",
+      "owners": [
+        "recovery.Store",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "routeplan.Catalog"
+      ],
+      "depends_on": [
+        "A01",
+        "A09"
+      ],
+      "clauses": [
+        "WM3-I16"
+      ],
+      "scenario_form": "checkpoint-replay"
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCQRSRetryAfterRollback"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CQRS-RECOVERY",
+      "owners": [
+        "recovery.Store",
+        "recovery.BuildResume",
+        "routeplan.Catalog",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "retrylineage.Index",
+        "drainbarrier.Barrier",
+        "cqrs.JSONMarshaler"
+      ],
+      "depends_on": [
+        "A01",
+        "A04",
+        "A06",
+        "A09"
+      ],
+      "clauses": [
+        "WM3-I17"
+      ],
+      "scenario_form": "partial-failure-recovery"
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCQRSDeadLetterAtLimit"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CQRS-RECOVERY",
+      "owners": [
+        "recovery.Store",
+        "recovery.BuildResume",
+        "routeplan.Catalog",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "retrylineage.Index",
+        "drainbarrier.Barrier",
+        "cqrs.JSONMarshaler"
+      ],
+      "depends_on": [
+        "A01",
+        "A04",
+        "A06",
+        "A09"
+      ],
+      "clauses": [
+        "WM3-I18"
+      ],
+      "scenario_form": "partial-failure-recovery"
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestWatermillV3SeamCQRSCancelFromDrain"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CQRS-RECOVERY",
+      "owners": [
+        "recovery.Store",
+        "recovery.BuildResume",
+        "routeplan.Catalog",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "retrylineage.Index",
+        "drainbarrier.Barrier",
+        "cqrs.JSONMarshaler"
+      ],
+      "depends_on": [
+        "A04",
+        "A08",
+        "A09"
+      ],
+      "clauses": [
+        "WM3-I19"
+      ],
+      "scenario_form": "cross-view-reconcile"
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestCoordSeamNativeCQRSName"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "cqrs.JSONMarshaler",
+        "message.Message"
+      ],
+      "depends_on": [
+        "A12",
+        "A16"
+      ],
+      "clauses": [
+        "WM3-I20"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestCoordSeamNativeDuplicateHandler"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "message.Router",
+        "gochannel.GoChannel"
+      ],
+      "depends_on": [
+        "A15"
+      ],
+      "clauses": [
+        "WM3-I21"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestCoordSeamNativeMessageContext"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "message.Message",
+        "context.Context"
+      ],
+      "depends_on": [
+        "A11"
+      ],
+      "clauses": [
+        "WM3-I22"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestCoordSeamNativeCopyPayload"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "message.Message",
+        "message.Metadata"
+      ],
+      "depends_on": [
+        "A13"
+      ],
+      "clauses": [
+        "WM3-I23"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestCoordSeamNativeStructName"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "cqrs.StructName",
+        "cqrs.JSONMarshaler"
+      ],
+      "depends_on": [
+        "A12",
+        "A16"
+      ],
+      "clauses": [
+        "WM3-I24"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestWatermillV3SystemRoutePartialFailureRecoveryFreshViews"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-ROUTE-REVISION",
+      "owners": [
+        "routeplan.Catalog",
+        "message.Metadata",
+        "cqrs.JSONMarshaler",
+        "gochannel.GoChannel"
+      ],
+      "depends_on": [
+        "A01",
+        "A04",
+        "A05"
+      ],
+      "clauses": [
+        "WM3-S01"
+      ],
+      "fresh_observation": true,
+      "scenario_form": "partial-failure-recovery"
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestWatermillV3SystemInterleavedSettlementFreshViews"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-PARTIAL-PUBLICATION",
+      "owners": [
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "message.Message",
+        "gochannel.GoChannel"
+      ],
+      "depends_on": [
+        "A03",
+        "A05"
+      ],
+      "clauses": [
+        "WM3-S02"
+      ],
+      "fresh_observation": true,
+      "scenario_form": "deterministic-interleaving"
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestWatermillV3SystemRetryAcrossBrokerFreshViews"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-SETTLEMENT-INTERLEAVE",
+      "owners": [
+        "settlement.Ledger",
+        "pubjournal.Journal",
+        "message.Message",
+        "gochannel.GoChannel"
+      ],
+      "depends_on": [
+        "A01",
+        "A07"
+      ],
+      "clauses": [
+        "WM3-S03"
+      ],
+      "fresh_observation": true,
+      "scenario_form": "cross-view-reconcile"
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestWatermillV3SystemDrainCancelRaceFreshViews"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-DRAIN-INFLIGHT-RACE",
+      "owners": [
+        "drainbarrier.Barrier",
+        "settlement.Ledger",
+        "pubjournal.Journal",
+        "gochannel.GoChannel"
+      ],
+      "depends_on": [
+        "A04",
+        "A05",
+        "A08"
+      ],
+      "clauses": [
+        "WM3-S04"
+      ],
+      "fresh_observation": true,
+      "scenario_form": "deterministic-interleaving"
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestWatermillV3SystemCheckpointCQRSReplayFreshViews"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CQRS-RECOVERY",
+      "owners": [
+        "recovery.Store",
+        "recovery.BuildResume",
+        "routeplan.Catalog",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "retrylineage.Index",
+        "drainbarrier.Barrier",
+        "cqrs.JSONMarshaler"
+      ],
+      "depends_on": [
+        "A01",
+        "A04",
+        "A06",
+        "A09"
+      ],
+      "clauses": [
+        "WM3-S05"
+      ],
+      "fresh_observation": true,
+      "scenario_form": "reopen-replay"
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestWatermillV3SystemCrossViewReconcileWithoutReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "WM3-CQRS-RECOVERY",
+      "owners": [
+        "recovery.Store",
+        "recovery.BuildResume",
+        "routeplan.Catalog",
+        "pubjournal.Journal",
+        "settlement.Ledger",
+        "retrylineage.Index",
+        "drainbarrier.Barrier",
+        "cqrs.JSONMarshaler"
+      ],
+      "depends_on": [
+        "A01",
+        "A05",
+        "A07",
+        "A08",
+        "A09"
+      ],
+      "clauses": [
+        "WM3-S06"
+      ],
+      "fresh_observation": true,
+      "scenario_form": "cross-view-reconcile"
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestCoordSystemNativeRouterFreshObservation"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "message.Router",
+        "gochannel.GoChannel",
+        "message.Message",
+        "watermill.LoggerAdapter"
+      ],
+      "depends_on": [
+        "A11",
+        "A14",
+        "A15"
+      ],
+      "clauses": [
+        "WM3-S07"
+      ],
+      "fresh_observation": true
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestCoordSystemNativeCQRSFreshObservation"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "cqrs.JSONMarshaler",
+        "message.Message",
+        "message.Metadata",
+        "watermill.UUID"
+      ],
+      "depends_on": [
+        "A11",
+        "A12",
+        "A13",
+        "A16"
+      ],
+      "clauses": [
+        "WM3-S08"
+      ],
+      "fresh_observation": true
+    }
+  ]
+}

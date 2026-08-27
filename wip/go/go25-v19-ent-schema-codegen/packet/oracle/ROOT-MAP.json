@@ -1,0 +1,1257 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case": "go25-v19-ent-schema-codegen",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestEntSchemaLoaderDescriptor",
+        "TestEntSchemaLoaderDescriptorBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SCHEMA-LOAD",
+      "owners": [
+        "receipt.Plan",
+        "receipt.Plan.SelectNode",
+        "receipt.GenerationReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-LOAD-001"
+      ],
+      "native_owners": [
+        "schema-loader"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestEntFieldTypeValidation",
+        "TestEntFieldTypeValidationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FIELD-TYPE-RULES",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate",
+        "receipt.GenerationReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-FIELD-001"
+      ],
+      "native_owners": [
+        "field-type"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestEntInverseEdgeDeclaration",
+        "TestEntInverseEdgeDeclarationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-EDGE-INVERSE",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.TableFact",
+        "receipt.DriverFact",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-EDGE-001"
+      ],
+      "native_owners": [
+        "edge"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestEntCompositeIndexValidation",
+        "TestEntCompositeIndexValidationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-INDEX-CONSTRAINT",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.TableFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-INDEX-001"
+      ],
+      "native_owners": [
+        "index"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestEntGraphNodeNormalization",
+        "TestEntGraphNodeNormalizationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GRAPH-NORMALIZATION",
+      "owners": [
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Digest",
+        "receipt.GenerationReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-GRAPH-001"
+      ],
+      "native_owners": [
+        "graph"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestEntGeneratedBuilderShape",
+        "TestEntGeneratedBuilderShapeBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CODEGEN-ARTIFACT",
+      "owners": [
+        "receipt.ArtifactFact",
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-GEN-001"
+      ],
+      "native_owners": [
+        "generator"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestEntMigrationAddColumnChange",
+        "TestEntMigrationAddColumnChangeBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MIGRATION-DIFF",
+      "owners": [
+        "receipt.TableFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-MIGRATE-001"
+      ],
+      "native_owners": [
+        "migration"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestEntOptionalNillableFieldRules",
+        "TestEntOptionalNillableFieldRulesBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FIELD-TYPE-RULES",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate",
+        "receipt.GenerationReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-FIELD-002"
+      ],
+      "native_owners": [
+        "field-type"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestEntEdgeStorageKeyOwnership",
+        "TestEntEdgeStorageKeyOwnershipBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-EDGE-INVERSE",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.TableFact",
+        "receipt.DriverFact",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-EDGE-002"
+      ],
+      "native_owners": [
+        "edge"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestEntMixinFieldMerge",
+        "TestEntMixinFieldMergeBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SCHEMA-LOAD",
+      "owners": [
+        "receipt.Plan",
+        "receipt.Plan.SelectNode",
+        "receipt.GenerationReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-LOAD-002"
+      ],
+      "native_owners": [
+        "schema-loader",
+        "graph"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestEntAnnotationPropagation",
+        "TestEntAnnotationPropagationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GRAPH-NORMALIZATION",
+      "owners": [
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Digest",
+        "receipt.GenerationReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-GRAPH-002"
+      ],
+      "native_owners": [
+        "annotation",
+        "graph"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestEntCustomIDFieldOwnership",
+        "TestEntCustomIDFieldOwnershipBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FIELD-TYPE-RULES",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate",
+        "receipt.GenerationReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-FIELD-003"
+      ],
+      "native_owners": [
+        "field-type",
+        "graph"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestEntDefaultAndImmutableFields",
+        "TestEntDefaultAndImmutableFieldsBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "field"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-NATIVE-001"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestEntEnumValidatorMetadata",
+        "TestEntEnumValidatorMetadataBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "field"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-NATIVE-002"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestEntInvalidSchemaErrorBoundary",
+        "TestEntInvalidSchemaErrorBoundaryBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "schema-loader",
+        "error"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-NATIVE-003"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestEntDeterministicGraphOrdering",
+        "TestEntDeterministicGraphOrderingBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "graph"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "ENT-NATIVE-004"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestEntLoadSchemaIntoGraph"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SCHEMA-LOAD",
+      "owners": [
+        "receipt.Plan",
+        "receipt.Plan.SelectNode",
+        "receipt.GenerationReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A01",
+        "A05"
+      ],
+      "seam": "schema declarations → loader descriptors → normalized graph",
+      "clauses": [
+        "ENT-SEAM-001"
+      ],
+      "native_owners": [
+        "schema-dsl",
+        "schema-loader",
+        "graph"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestEntFieldRulesShapeGeneratedAPI"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FIELD-TYPE-RULES",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate",
+        "receipt.GenerationReceipt.Digest"
+      ],
+      "depends_on": [
+        "A02",
+        "A06",
+        "A08"
+      ],
+      "seam": "field validation → graph type → generated builder",
+      "clauses": [
+        "ENT-SEAM-002"
+      ],
+      "native_owners": [
+        "field-type",
+        "graph",
+        "generator"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestEntInverseEdgeGeneratesBothSides"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-EDGE-INVERSE",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.TableFact",
+        "receipt.DriverFact",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A03",
+        "A06"
+      ],
+      "seam": "inverse edge ownership → paired generated APIs",
+      "clauses": [
+        "ENT-SEAM-003"
+      ],
+      "native_owners": [
+        "edge",
+        "graph",
+        "generator"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestEntIndexRulesReachMigrationPlan"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-INDEX-CONSTRAINT",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.TableFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A04",
+        "A07"
+      ],
+      "seam": "index declaration → graph constraint → SQL change",
+      "clauses": [
+        "ENT-SEAM-004"
+      ],
+      "native_owners": [
+        "index",
+        "graph",
+        "migration"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestEntMixinCompositionNormalizesGraph"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GRAPH-NORMALIZATION",
+      "owners": [
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Digest",
+        "receipt.GenerationReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A05",
+        "A10"
+      ],
+      "seam": "mixin expansion → duplicate resolution → graph",
+      "clauses": [
+        "ENT-SEAM-005"
+      ],
+      "native_owners": [
+        "mixin",
+        "schema-loader",
+        "graph"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestEntGraphProducesCompilableSource"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CODEGEN-ARTIFACT",
+      "owners": [
+        "receipt.ArtifactFact",
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A05",
+        "A06"
+      ],
+      "seam": "normalized graph → generated source → compile receipt",
+      "clauses": [
+        "ENT-SEAM-006"
+      ],
+      "native_owners": [
+        "graph",
+        "generator",
+        "go-compiler"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestEntSchemaDeltaProducesMigrationDiff"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MIGRATION-DIFF",
+      "owners": [
+        "receipt.TableFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A07"
+      ],
+      "seam": "old/new schema graphs → ordered changes",
+      "clauses": [
+        "ENT-SEAM-007"
+      ],
+      "native_owners": [
+        "schema-loader",
+        "graph",
+        "migration"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestEntFieldDefaultsReachRuntimeMutation"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FIELD-TYPE-RULES",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate",
+        "receipt.GenerationReceipt.Digest"
+      ],
+      "depends_on": [
+        "A08",
+        "A13"
+      ],
+      "seam": "field metadata → generated mutation → driver spec",
+      "clauses": [
+        "ENT-SEAM-008"
+      ],
+      "native_owners": [
+        "field-type",
+        "generator",
+        "runtime-driver"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestEntEdgeStorageReachesSQLGraph"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-EDGE-INVERSE",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.TableFact",
+        "receipt.DriverFact",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A09",
+        "A06"
+      ],
+      "seam": "storage key → generated edge mutation → SQL graph spec",
+      "clauses": [
+        "ENT-SEAM-009"
+      ],
+      "native_owners": [
+        "edge",
+        "generator",
+        "runtime-driver"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestEntLoadedAnnotationsReachTemplates"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GRAPH-NORMALIZATION",
+      "owners": [
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Digest",
+        "receipt.GenerationReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A11"
+      ],
+      "seam": "annotation load → graph metadata → template output",
+      "clauses": [
+        "ENT-SEAM-010"
+      ],
+      "native_owners": [
+        "schema-loader",
+        "annotation",
+        "generator"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestEntCustomIDShapesClientAndMigration"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FIELD-TYPE-RULES",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate",
+        "receipt.GenerationReceipt.Digest"
+      ],
+      "depends_on": [
+        "A12",
+        "A06",
+        "A07"
+      ],
+      "seam": "custom ID → generated predicates → table identity",
+      "clauses": [
+        "ENT-SEAM-011"
+      ],
+      "native_owners": [
+        "field-type",
+        "generator",
+        "migration"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestEntSchemaValidationBlocksPublication"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SCHEMA-LOAD",
+      "owners": [
+        "receipt.Plan",
+        "receipt.Plan.SelectNode",
+        "receipt.GenerationReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A02",
+        "A15"
+      ],
+      "seam": "invalid schema → validation failure → no graph artifact",
+      "clauses": [
+        "ENT-SEAM-012"
+      ],
+      "native_owners": [
+        "schema-loader",
+        "graph",
+        "error"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestEntGraphOrderStabilizesGeneration"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GRAPH-NORMALIZATION",
+      "owners": [
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Digest",
+        "receipt.GenerationReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A16",
+        "A06"
+      ],
+      "seam": "deterministic graph order → semantic source stability",
+      "clauses": [
+        "ENT-SEAM-013"
+      ],
+      "native_owners": [
+        "graph",
+        "generator"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestEntEnumMetadataToRuntimeValidation"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FIELD-TYPE-RULES",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate",
+        "receipt.GenerationReceipt.Digest"
+      ],
+      "depends_on": [
+        "A14",
+        "A06"
+      ],
+      "seam": "enum descriptor → generated validator → mutation rejection",
+      "clauses": [
+        "ENT-SEAM-014"
+      ],
+      "native_owners": [
+        "field",
+        "generator",
+        "runtime-driver"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestEntMigrationDiffToSchemaApplyReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MIGRATION-DIFF",
+      "owners": [
+        "receipt.TableFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A07",
+        "A04"
+      ],
+      "seam": "change plan → fake dialect apply → inspected schema",
+      "clauses": [
+        "ENT-SEAM-015"
+      ],
+      "native_owners": [
+        "migration",
+        "runtime-driver",
+        "schema-state"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestEntDescribeAndAPIGraphAgree"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.Plan",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Digest",
+        "receipt.GenerationReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A05"
+      ],
+      "seam": "loaded graph → describe CLI and programmatic view",
+      "clauses": [
+        "ENT-SEAM-016"
+      ],
+      "native_owners": [
+        "schema-loader",
+        "graph",
+        "cli"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestEntNativeDefaultValueEmission"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "field",
+        "generator"
+      ],
+      "depends_on": [
+        "A13",
+        "A06"
+      ],
+      "seam": "native default metadata → generated mutation behavior",
+      "clauses": [
+        "ENT-SEAM-017"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestEntNativeUniqueIndexPlan"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "index",
+        "migration"
+      ],
+      "depends_on": [
+        "A04",
+        "A07"
+      ],
+      "seam": "native unique index → migration plan",
+      "clauses": [
+        "ENT-SEAM-018"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestEntNativeLoaderErrorContext"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "schema-loader",
+        "error"
+      ],
+      "depends_on": [
+        "A15",
+        "A01"
+      ],
+      "seam": "load failure → public diagnostic context",
+      "clauses": [
+        "ENT-SEAM-019"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestEntNativeGraphIterationStable"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "graph",
+        "generator"
+      ],
+      "depends_on": [
+        "A16",
+        "A05"
+      ],
+      "seam": "stable graph iteration → stable artifact set",
+      "clauses": [
+        "ENT-SEAM-020"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestEntGeneratedClientUsesFakeDriver"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "generator",
+        "runtime-driver"
+      ],
+      "depends_on": [
+        "A06",
+        "A13"
+      ],
+      "seam": "generated API → driver call observation",
+      "clauses": [
+        "ENT-SEAM-021"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestEntEdgeQueryRoundTrip"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "edge",
+        "generator",
+        "runtime-driver"
+      ],
+      "depends_on": [
+        "A03",
+        "A09"
+      ],
+      "seam": "edge declaration → query traversal → driver result",
+      "clauses": [
+        "ENT-SEAM-022"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestEntSchemaReloadProducesNewGraph"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "schema-loader",
+        "graph"
+      ],
+      "depends_on": [
+        "A01",
+        "A16"
+      ],
+      "seam": "fresh load → independently normalized graph",
+      "clauses": [
+        "ENT-SEAM-023"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestEntMigrationPlanIsNonDestructiveOnError"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "migration",
+        "schema-state",
+        "error"
+      ],
+      "depends_on": [
+        "A07",
+        "A15"
+      ],
+      "seam": "failed apply → unchanged inspected schema",
+      "clauses": [
+        "ENT-SEAM-024"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestEntSchemaToCompiledClientReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CODEGEN-ARTIFACT",
+      "owners": [
+        "receipt.ArtifactFact",
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A05",
+        "A06"
+      ],
+      "receipt": "After a schema load and generation, a fresh compile plus exported client inspection confirms the normalized fields and edges.",
+      "clauses": [
+        "ENT-SYSTEM-001"
+      ],
+      "native_owners": [
+        "schema-dsl",
+        "schema-loader",
+        "graph",
+        "generator",
+        "go-compiler"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestEntEdgeMutationDriverReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-EDGE-INVERSE",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.TableFact",
+        "receipt.DriverFact",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A03",
+        "A06",
+        "A09"
+      ],
+      "receipt": "After a generated edge mutation, a fresh fake-driver log and query observation agree on inverse ownership and storage keys.",
+      "clauses": [
+        "ENT-SYSTEM-002"
+      ],
+      "native_owners": [
+        "schema-dsl",
+        "edge",
+        "generator",
+        "runtime-client",
+        "fake-driver"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestEntSchemaEvolutionMigrationReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-MIGRATION-DIFF",
+      "owners": [
+        "receipt.TableFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.GenerationReceipt.Validate"
+      ],
+      "depends_on": [
+        "A04",
+        "A07",
+        "A12"
+      ],
+      "receipt": "After applying an old-to-new schema plan, a fresh inspector reports the intended columns, indexes, and identity without extras.",
+      "clauses": [
+        "ENT-SYSTEM-003"
+      ],
+      "native_owners": [
+        "schema-loader",
+        "graph",
+        "migration",
+        "fake-dialect",
+        "schema-inspector"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestEntMixinAnnotationGenerationReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GRAPH-NORMALIZATION",
+      "owners": [
+        "receipt.GenerationReceipt",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Digest",
+        "receipt.GenerationReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A10",
+        "A11",
+        "A06"
+      ],
+      "receipt": "After mixin and annotation expansion, a freshly compiled generated API exposes the merged behavior once per owner.",
+      "clauses": [
+        "ENT-SYSTEM-004"
+      ],
+      "native_owners": [
+        "mixin",
+        "annotation",
+        "graph",
+        "generator",
+        "compiled-api"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestEntFieldValidationRuntimeReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FIELD-TYPE-RULES",
+      "owners": [
+        "receipt.NodeFact",
+        "receipt.GenerationReceipt",
+        "receipt.GenerationReceipt.Validate",
+        "receipt.GenerationReceipt.Digest"
+      ],
+      "depends_on": [
+        "A02",
+        "A08",
+        "A14"
+      ],
+      "receipt": "After a generated mutation validates a typed field, a fresh driver receipt exists only for accepted values and preserves defaults.",
+      "clauses": [
+        "ENT-SYSTEM-005"
+      ],
+      "native_owners": [
+        "field-type",
+        "graph",
+        "generator",
+        "runtime-client",
+        "fake-driver"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestEntCLIAndAPIEvolutionReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.Plan",
+        "receipt.Capture",
+        "receipt.GenerationReceipt.Digest",
+        "receipt.GenerationReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A05",
+        "A07"
+      ],
+      "receipt": "After schema evolution, a fresh describe output, programmatic graph, and inspected migration result report the same fact set.",
+      "clauses": [
+        "ENT-SYSTEM-006"
+      ],
+      "native_owners": [
+        "schema-loader",
+        "graph",
+        "cli",
+        "migration",
+        "schema-inspector"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestEntNativeSchemaGenerateWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "schema-dsl",
+        "schema-loader",
+        "graph",
+        "generator",
+        "go-compiler"
+      ],
+      "depends_on": [
+        "A13",
+        "A16",
+        "A06"
+      ],
+      "receipt": "A native schema with defaults and enums produces a freshly compilable client whose public metadata matches the loaded graph.",
+      "clauses": [
+        "ENT-SYSTEM-007"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestEntNativeFailureRollbackWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "schema-loader",
+        "validation",
+        "migration",
+        "schema-state",
+        "error"
+      ],
+      "depends_on": [
+        "A15",
+        "A07",
+        "A16"
+      ],
+      "receipt": "After a failed invalid-schema migration attempt, a fresh graph load and schema inspection expose the last good generation only.",
+      "clauses": [
+        "ENT-SYSTEM-008"
+      ]
+    }
+  ]
+}

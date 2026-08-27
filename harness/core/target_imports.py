@@ -167,3 +167,30 @@ def _merge_java_registrations() -> None:
 
 
 _merge_java_registrations()
+
+
+# Go tasks keep their roots in lang/go/target_imports.json, following the rust,
+# typescript, and java lanes. The value is a Go module path (as it appears in
+# go.mod), which the runner writes into a `replace` directive so the oracle
+# resolves the target import to the candidate workspace rather than to a
+# published version. Registering the wrong path lets a published module answer
+# the tests and the provenance audit catches it, but registering nothing skips
+# the replace entirely and the audit has nothing to inspect.
+def _merge_go_registrations() -> None:
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "lang" / "go" / "target_imports.json"
+    if not path.exists():
+        return
+    try:
+        extra = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    for task_id, roots in extra.items():
+        if isinstance(roots, str):
+            roots = [roots]
+        TARGET_IMPORTS.setdefault(task_id, list(roots))
+
+
+_merge_go_registrations()

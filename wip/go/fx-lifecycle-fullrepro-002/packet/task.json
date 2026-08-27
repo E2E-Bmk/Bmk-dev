@@ -1,0 +1,31 @@
+{
+  "instance_id": "fx-lifecycle-fullrepro-002",
+  "language": "go",
+  "schema_version": 1,
+  "dataset_id": "spec2repo-aligned-25_GO",
+  "cohort": "go25-all-statuses",
+  "version": "fx-lifecycle-go25-v2-linux-freeze",
+  "repo": null,
+  "repo_commit": null,
+  "target_imports": [
+    "go.uber.org/fx"
+  ],
+  "oracle": {
+    "kind": "frozen-go-gate",
+    "layout": "flat-package",
+    "test_files": [
+      "helpers_test.go",
+      "test_atomic_test.go",
+      "test_composition_test.go"
+    ],
+    "count": 75,
+    "count_unit": "test_functions",
+    "atomic_count": 32,
+    "integration_count": 43,
+    "declared_roots": {
+      "atomic": 32,
+      "integration": 35,
+      "system": 8
+    }
+  }
+}

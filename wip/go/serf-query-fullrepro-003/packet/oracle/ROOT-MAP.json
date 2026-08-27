@@ -1,0 +1,1054 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case": "serf-query-fullrepro-003",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A01_AtomicAdmission",
+        "TestV3_A01_AtomicValidation"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.Query",
+        "serf.Serf.DefaultQueryParams",
+        "serf.QueryResponse.Deadline"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C01"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A02_AtomicNamedSelection",
+        "TestV3_A02_AtomicFilterEdges"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.QueryParam.FilterNodes"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C03"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A03_AtomicTagSelection",
+        "TestV3_A03_AtomicTagValidation"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.SetTags",
+        "serf.Serf.Members",
+        "serf.QueryParam.FilterTags"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C04"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A04_AtomicAckChannel",
+        "TestV3_A04_AtomicAckUniqueness"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.QueryResponse.AckCh"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C07"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A05_AtomicResponseChannel",
+        "TestV3_A05_AtomicResponseBounds"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Query.Respond",
+        "serf.QueryResponse.ResponseCh"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C06"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A06_AtomicDeadline",
+        "TestV3_A06_AtomicClosure"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.Shutdown",
+        "serf.QueryResponse.Deadline"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C09"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A07_AtomicMemberProjection",
+        "TestV3_A07_AtomicMemberTransitions"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.Members",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Join"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C11"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A08_AtomicLegacyCompatibility",
+        "TestV3_A08_AtomicOptionIsolation"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F01-COHORT-VIEW",
+      "owners": [
+        "serf.Serf.Query",
+        "serf.Serf.Members",
+        "serf.QueryParam.FilterNodes",
+        "serf.QueryParam.FilterTags"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C01"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A09_AtomicCohortAdmission",
+        "TestV3_A09_AtomicCohortEdges"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F01-COHORT-VIEW",
+      "owners": [
+        "serf.Serf.Query",
+        "serf.Serf.Members",
+        "serf.QueryParam.FilterNodes",
+        "serf.QueryParam.FilterTags"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C02"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A10_AtomicTagBoundary",
+        "TestV3_A10_AtomicTagConsistency"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F02-TAG-TRANSITION",
+      "owners": [
+        "serf.Serf.SetTags",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C04"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A11_AtomicResponseTerminal",
+        "TestV3_A11_AtomicResponseUniqueness"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F03-TARGET-OUTCOME",
+      "owners": [
+        "serf.Query.Respond",
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C06"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A12_AtomicAckTerminal",
+        "TestV3_A12_AtomicAckUniqueness"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F03-TARGET-OUTCOME",
+      "owners": [
+        "serf.Query.Respond",
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C07"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A13_AtomicGracefulLeave",
+        "TestV3_A13_AtomicLeaveBoundaries"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F04-GRACEFUL-LEAVE",
+      "owners": [
+        "serf.Serf.Leave",
+        "serf.Serf.Members",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C08"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A14_AtomicMemberLifetime",
+        "TestV3_A14_AtomicLifetimeBoundaries"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F05-MEMBER-LIFETIME",
+      "owners": [
+        "serf.Member",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C05"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A15_AtomicSnapshotBoundary",
+        "TestV3_A15_AtomicSnapshotIsolation"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F06-SNAPSHOT-REOPEN",
+      "owners": [
+        "serf.Config.SnapshotPath",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C12"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestV3_A16_AtomicCollectorCompletion",
+        "TestV3_A16_AtomicCollectorClosure"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F07-COLLECTOR-BOUNDARY",
+      "owners": [
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished",
+        "serf.QueryResponse.Close"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "C10"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I01_CompositionMembershipJoin"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.Members",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Join"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "clauses": [
+        "C11"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I02_CompositionTagUpdates"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.Members",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Join"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "clauses": [
+        "C11"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I03_CompositionLeaveTransitions"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.Members",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Join"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "clauses": [
+        "C11"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I04_CompositionSnapshotMembership"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Config.SnapshotPath",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members"
+      ],
+      "depends_on": [
+        "A07"
+      ],
+      "clauses": [
+        "C12"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I05_CompositionRelayCompatibleOutcomes"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Query.Respond",
+        "serf.QueryResponse.ResponseCh"
+      ],
+      "depends_on": [
+        "A04",
+        "A05"
+      ],
+      "clauses": [
+        "C06"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I06_CompositionCohortNodeFiltering"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F01-COHORT-VIEW",
+      "owners": [
+        "serf.Serf.Query",
+        "serf.Serf.Members",
+        "serf.QueryParam.FilterNodes",
+        "serf.QueryParam.FilterTags"
+      ],
+      "depends_on": [
+        "A02",
+        "A09"
+      ],
+      "clauses": [
+        "C02"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I07_CompositionSingleViewAdmission"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F01-COHORT-VIEW",
+      "owners": [
+        "serf.Serf.Query",
+        "serf.Serf.Members",
+        "serf.QueryParam.FilterNodes",
+        "serf.QueryParam.FilterTags"
+      ],
+      "depends_on": [
+        "A09"
+      ],
+      "clauses": [
+        "C02"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I08_CompositionCohortIntersections"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F01-COHORT-VIEW",
+      "owners": [
+        "serf.Serf.Query",
+        "serf.Serf.Members",
+        "serf.QueryParam.FilterNodes",
+        "serf.QueryParam.FilterTags"
+      ],
+      "depends_on": [
+        "A09"
+      ],
+      "clauses": [
+        "C02"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I09_CompositionNodeTagFilters"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F02-TAG-TRANSITION",
+      "owners": [
+        "serf.Serf.SetTags",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A02",
+        "A03",
+        "A10"
+      ],
+      "clauses": [
+        "C04"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I10_CompositionSetTagsBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F02-TAG-TRANSITION",
+      "owners": [
+        "serf.Serf.SetTags",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A10",
+        "I02"
+      ],
+      "clauses": [
+        "C04"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I11_CompositionWholeTagView"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F02-TAG-TRANSITION",
+      "owners": [
+        "serf.Serf.SetTags",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A10",
+        "I02"
+      ],
+      "clauses": [
+        "C04"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I12_CompositionMalformedFilters"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F02-TAG-TRANSITION",
+      "owners": [
+        "serf.Serf.SetTags",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A03",
+        "A10"
+      ],
+      "clauses": [
+        "C04"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I13_CompositionMixedTargetOutcomes"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F03-TARGET-OUTCOME",
+      "owners": [
+        "serf.Query.Respond",
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [
+        "A11",
+        "A12"
+      ],
+      "clauses": [
+        "C06"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I14_CompositionResponseCompletion"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F03-TARGET-OUTCOME",
+      "owners": [
+        "serf.Query.Respond",
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [
+        "A11",
+        "A16"
+      ],
+      "clauses": [
+        "C10"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I15_CompositionAckCompletion"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F03-TARGET-OUTCOME",
+      "owners": [
+        "serf.Query.Respond",
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [
+        "A12",
+        "A16"
+      ],
+      "clauses": [
+        "C10"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I16_CompositionGracefulCompletion"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F04-GRACEFUL-LEAVE",
+      "owners": [
+        "serf.Serf.Leave",
+        "serf.Serf.Members",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [
+        "A13",
+        "I03"
+      ],
+      "clauses": [
+        "C08"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I17_CompositionLeaveSelection"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F04-GRACEFUL-LEAVE",
+      "owners": [
+        "serf.Serf.Leave",
+        "serf.Serf.Members",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [
+        "A13",
+        "I03"
+      ],
+      "clauses": [
+        "C08"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I18_CompositionFailureBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F04-GRACEFUL-LEAVE",
+      "owners": [
+        "serf.Serf.Leave",
+        "serf.Serf.Members",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [
+        "A06",
+        "A13"
+      ],
+      "clauses": [
+        "C09"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I19_CompositionReplacementBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F05-MEMBER-LIFETIME",
+      "owners": [
+        "serf.Member",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A14",
+        "I03"
+      ],
+      "clauses": [
+        "C05"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I20_CompositionLifetimeOutcomes"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F05-MEMBER-LIFETIME",
+      "owners": [
+        "serf.Member",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A14",
+        "I05"
+      ],
+      "clauses": [
+        "C05"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I21_CompositionSameNameRestart"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F05-MEMBER-LIFETIME",
+      "owners": [
+        "serf.Member",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A14",
+        "I01"
+      ],
+      "clauses": [
+        "C05"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I22_CompositionSnapshotReopenQuery"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F06-SNAPSHOT-REOPEN",
+      "owners": [
+        "serf.Config.SnapshotPath",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A15",
+        "I04"
+      ],
+      "clauses": [
+        "C12"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I23_CompositionSnapshotCollectorIsolation"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F06-SNAPSHOT-REOPEN",
+      "owners": [
+        "serf.Config.SnapshotPath",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "A15",
+        "I04"
+      ],
+      "clauses": [
+        "C12"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestV3_I24_CompositionParallelCollectors"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F07-COLLECTOR-BOUNDARY",
+      "owners": [
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished",
+        "serf.QueryResponse.Close"
+      ],
+      "depends_on": [
+        "A08",
+        "A16"
+      ],
+      "clauses": [
+        "C10"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestV3_S01_CompositionOrdinaryLifecycle"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Serf.Members",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Join"
+      ],
+      "depends_on": [
+        "I01",
+        "I02",
+        "I03",
+        "I05"
+      ],
+      "clauses": [
+        "C11"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestV3_S02_CompositionSnapshotLifecycle"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "serf.Config.SnapshotPath",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members"
+      ],
+      "depends_on": [
+        "I01",
+        "I03",
+        "I04"
+      ],
+      "clauses": [
+        "C12"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestV3_S03_CompositionMixedGracefulOutcomes"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F04-GRACEFUL-LEAVE",
+      "owners": [
+        "serf.Serf.Leave",
+        "serf.Serf.Members",
+        "serf.QueryResponse.Finished"
+      ],
+      "depends_on": [
+        "I13",
+        "I16",
+        "I17",
+        "I18"
+      ],
+      "clauses": [
+        "C08"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestV3_S04_CompositionReplacementSystem"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F05-MEMBER-LIFETIME",
+      "owners": [
+        "serf.Member",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "I19",
+        "I20",
+        "I21"
+      ],
+      "clauses": [
+        "C05"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestV3_S05_CompositionSnapshotQuerySystem"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F06-SNAPSHOT-REOPEN",
+      "owners": [
+        "serf.Config.SnapshotPath",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "I22",
+        "I23"
+      ],
+      "clauses": [
+        "C12"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestV3_S06_CompositionSnapshotTagSystem"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F06-SNAPSHOT-REOPEN",
+      "owners": [
+        "serf.Config.SnapshotPath",
+        "serf.Serf.LocalMember",
+        "serf.Serf.Members",
+        "serf.Serf.Query"
+      ],
+      "depends_on": [
+        "I10",
+        "I21",
+        "I22"
+      ],
+      "clauses": [
+        "C12"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestV3_S07_CompositionCollectorSystem"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F07-COLLECTOR-BOUNDARY",
+      "owners": [
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished",
+        "serf.QueryResponse.Close"
+      ],
+      "depends_on": [
+        "I14",
+        "I15",
+        "I18",
+        "I24"
+      ],
+      "clauses": [
+        "C10"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestV3_S08_CompositionCompatibilitySystem"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "F07-COLLECTOR-BOUNDARY",
+      "owners": [
+        "serf.QueryResponse.ResponseCh",
+        "serf.QueryResponse.AckCh",
+        "serf.QueryResponse.Finished",
+        "serf.QueryResponse.Close"
+      ],
+      "depends_on": [
+        "A08",
+        "I24",
+        "S01"
+      ],
+      "clauses": [
+        "C01"
+      ]
+    }
+  ]
+}

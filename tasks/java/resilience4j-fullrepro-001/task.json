@@ -1,0 +1,304 @@
+{
+  "instance_id": "resilience4j-fullrepro-001",
+  "status": "QUALIFIED",
+  "judge_verdict": "QUALIFIED",
+  "repo": "resilience4j/resilience4j",
+  "repo_commit": "2f3d998c85f10b8ff88a3dca9f24bacf11c3a250",
+  "source_path": "repo/resilience4j",
+  "language": "java",
+  "package_name": "io.github.resilience4j.spring6",
+  "maven_coordinates": "io.github.resilience4j:resilience4j-spring6",
+  "primary_module": "resilience4j-spring6",
+  "program_file": "pom.xml",
+  "spec_version": "v2",
+  "oracle_version": "2026-08-26T15:31:34+08:00",
+  "scorer_isolation": "Linux Docker with Maven 3.9.12 and Temurin Java 21. The run-specific local Maven repository removes io.github.resilience4j:resilience4j-spring6 before candidate or fixed-HEAD reference installation; score-bearing batches run offline and resolve only the installed artifact at the declared coordinate, with built/resolved JAR SHA-256 equality required.",
+  "oracle": {
+    "source": "generated_only",
+    "generated_retained": 71,
+    "upstream_rewritten_retained": 0,
+    "maven_pom": "oracle/pom.xml",
+    "requirements_note": "oracle/requirements.txt is the required Java packet marker; oracle/pom.xml is authoritative for Java test dependencies.",
+    "count": 71,
+    "count_unit": "base_test_functions",
+    "base_function_count": 71,
+    "reference_score": {
+      "passed": 71,
+      "total": 71,
+      "pass_rate": 1.0,
+      "platform": "Linux x86_64 in Docker, Maven 3.9.12, Eclipse Temurin Java 21.0.10 LTS",
+      "repo_commit": "2f3d998c85f10b8ff88a3dca9f24bacf11c3a250",
+      "provenance_status": "passed",
+      "artifact_sha256": "f2ba3f67188cfe3acdf8c09211c3a544cd8b0197fe3f7fe2bedbaaac71b5ca9f",
+      "evidence": "wip/resilience4j-fullrepro-001/filter/reference_score.json"
+    },
+    "dummy_gate": "0/71 passed in Java 21 Linux Docker with valid=true and passed equal-hash provenance; evidence wip/resilience4j-fullrepro-001/filter/dummy_score.json"
+  },
+  "candidate_evaluation": {
+    "run_id": "codex-resilience4j-fullrepro-001-specv2-20260826-003",
+    "model_label": "codex",
+    "cleanroom": true,
+    "fork_turns": "none",
+    "public_packet_only": true,
+    "trace_evidence": "No complete agent trajectory/tool transcript is archived. The cleanroom manifest, prompt, public-packet hash, frozen byte-for-byte solution lineage, candidate source scan, and Maven artifact provenance are available.",
+    "fairness_filter_iter": 2,
+    "frozen_candidate_rescored": true,
+    "platform": "Linux x86_64 in Docker, Maven 3.9.12, Eclipse Temurin Java 21.0.10 LTS"
+  },
+  "candidate_score": {
+    "passed": 65,
+    "failed": 6,
+    "total": 71,
+    "pass_rate": 0.915492957746479,
+    "by_layer": {
+      "atomic": {
+        "passed": 38,
+        "failed": 0,
+        "total": 38
+      },
+      "integration": {
+        "passed": 27,
+        "failed": 6,
+        "total": 33
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "platform": "Linux x86_64 in Docker, Maven 3.9.12, Eclipse Temurin Java 21.0.10 LTS",
+    "provenance_status": "passed",
+    "artifact_sha256": "6019eba18bbe5dfeb2bc584c1b982c2ae9fa2e0bd85578450bda94053927766a",
+    "evidence": "candidate-runs/codex-resilience4j-fullrepro-001-specv2-20260826-003/score_result.json"
+  },
+  "candidate_score_valid": true,
+  "reference_score": {
+    "passed": 71,
+    "total": 71,
+    "pass_rate": 1.0
+  },
+  "integration_gap": {
+    "atomic_rate": 1.0,
+    "integration_rate": 0.8181818181818182,
+    "system_e2e_rate": 0.0,
+    "integration_e2e_rate": 0.8181818181818182,
+    "rate_gap": 0.18181818181818177,
+    "dependency_adjusted_integration_e2e_rate": 0.8181818181818182,
+    "adjusted_gap": 0.18181818181818177,
+    "dependency_eligible_tests": 33,
+    "dependency_declared_tests": 33,
+    "true_gap_event_count": 6,
+    "cascade_event_count": 5,
+    "consolidated_root_count": 3
+  },
+  "true_gap_events": [
+    {
+      "failed_test": "integration::AdapterLifecycleIntegrationTest::retryConfigurationBeanProjectsConfiguredRelativeOrder",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "retryConfiguredOrderRoundTrips",
+        "circuitBreakerConfiguredOrderRoundTrips"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "retry-spring-configuration-wiring"
+    },
+    {
+      "failed_test": "integration::AdapterLifecycleIntegrationTest::timeLimiterConfigurationBeanProjectsConfiguredRelativeOrder",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "timeLimiterConfiguredOrderRoundTrips",
+        "bulkheadConfiguredOrderRoundTrips"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "timelimiter-spring-configuration-wiring"
+    },
+    {
+      "failed_test": "integration::AdapterLifecycleIntegrationTest::retryContextManagedAspectClosePreservesInterruptAndCompletedValue",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "retryDefaultOrderIsLowestMinusFive",
+        "completionDecoratorSupportsStageFamily"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "retry-spring-configuration-wiring"
+    },
+    {
+      "failed_test": "integration::AdapterLifecycleIntegrationTest::timeLimiterContextManagedAspectClosePreservesInterruptAndCompletedValue",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "timeLimiterDefaultOrderIsLowestMinusTwo",
+        "completionDecoratorSupportsStageFamily"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "timelimiter-spring-configuration-wiring"
+    },
+    {
+      "failed_test": "integration::NameRegistryIntegrationTest::circuitBreakerSpringConfigurationExposesRegistryAndEventBuffer",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "circuitBreakerDefaultOrderIsLowestMinusFour",
+        "resolverPreservesPlainText"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "circuitbreaker-dependency-composition"
+    },
+    {
+      "failed_test": "integration::NameRegistryIntegrationTest::retrySpringConfigurationExposesRegistryAndEventBuffer",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "retryDefaultOrderIsLowestMinusFive",
+        "resolverPreservesPlainText"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "retry-spring-configuration-wiring"
+    }
+  ],
+  "labels": [
+    "generated-only-oracle",
+    "fairness-corrected",
+    "full-spec-behavior-coverage",
+    "composition-signal",
+    "spring-configuration-wiring-gap",
+    "cascade-dominated"
+  ],
+  "weaknesses": [
+    {
+      "dimension": "workflow-completeness",
+      "description": "Spring configuration classes fail to expose usable Retry and Time Limiter aspect/registry beans, and Circuit Breaker configuration does not compose the target-library dependencies required for a complete application context.",
+      "affected_tests": 6,
+      "layer": "integration"
+    }
+  ],
+  "judge": {
+    "verdict": "QUALIFIED",
+    "diagnosis_report": "wip/resilience4j-fullrepro-001/judge/diagnosis_report.md",
+    "quality_gate_report": "wip/resilience4j-fullrepro-001/judge/quality_gate_report.md",
+    "caveats": [
+      "No complete candidate trajectory/tool transcript is archived; anti-cheat review is limited to cleanroom, source-scan, frozen-lineage, and provenance evidence, with no violation found.",
+      "Five of six formal True Gap Events are cascade-dominated by missing Retry and Time Limiter Spring configuration primitives; the six failures consolidate into three root causes."
+    ]
+  },
+  "source_meta": {
+    "first_release": "2022-12-05",
+    "first_release_source": "oldest local tag containing the resilience4j-spring6 module: v2.0.1; module introduced by commit 68d01263cb5d4b9bb1145abcd1e0bef05ba48e67 on 2022-11-28",
+    "github_stars": null,
+    "github_stars_checked": "2026-08-26",
+    "github_stars_note": "An exact authoritative count was not available during local construction, so no approximate integer was invented.",
+    "github_url": "https://github.com/resilience4j/resilience4j",
+    "loc": 3505,
+    "loc_definition": "nonblank noncomment Java source lines under resilience4j-spring6/src/main/java at repo_commit; 72 production Java files",
+    "pypi_monthly_downloads": null,
+    "pypi_monthly_downloads_note": "not applicable; resilience4j-spring6 is published to Maven Central, not PyPI",
+    "package_registry": "Maven Central",
+    "maven_coordinates": "io.github.resilience4j:resilience4j-spring6",
+    "test_files": 72,
+    "test_functions": 221,
+    "test_files_note": "72 Java files under resilience4j-spring6/src/test; 54 contain executable JUnit tests and 18 are support/carrier files"
+  },
+  "implementation_size": {
+    "candidate_production_java_files": 65,
+    "upstream_production_java_files": 72,
+    "candidate_file_share": 0.9027777777777778,
+    "candidate_fewer_fraction": 0.09722222222222221
+  },
+  "stats": {
+    "atomic": 38,
+    "integration": 33,
+    "system_e2e": 0
+  },
+  "taxonomy_unit": "base_test_functions",
+  "taxonomy_source": "wip/resilience4j-fullrepro-001/filter/taxonomy.jsonl",
+  "taxonomy": {
+    "atomic::ConfigurationOrderAtomicTest::retryDefaultOrderIsLowestMinusFive": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::circuitBreakerDefaultOrderIsLowestMinusFour": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::rateLimiterDefaultOrderIsLowestMinusThree": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::timeLimiterDefaultOrderIsLowestMinusTwo": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::bulkheadDefaultOrderIsLowestMinusOne": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::timerDefaultOrderIsLowest": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::retryConfiguredOrderRoundTrips": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::circuitBreakerConfiguredOrderRoundTrips": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::rateLimiterConfiguredOrderRoundTrips": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::timeLimiterConfiguredOrderRoundTrips": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::bulkheadConfiguredOrderRoundTrips": "atomic",
+    "atomic::ConfigurationOrderAtomicTest::timerConfiguredOrderRoundTrips": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::rootProjectsDeclaringClassName": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::rootProjectsMethodName": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::rootProjectsOriginalArgumentArray": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::resolverPreservesNull": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::resolverPreservesEmptyText": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::resolverPreservesPlainText": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::resolverAppliesEmbeddedPlaceholderResolver": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::templateExpressionUsesInvocationArgument": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::rootExpressionUsesInvocationMethod": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::beanExpressionReturnsStringProjection": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::extractorFindsDirectAnnotation": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::extractorFindsSuperclassAnnotation": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::extractorPrefersDirectAnnotationOverSuperclassAnnotation": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::proxyExtractorFindsAnnotatedInterface": "atomic",
+    "atomic::ExpressionAnnotationAtomicTest::proxyExtractorReturnsNullForUnannotatedInterface": "atomic",
+    "atomic::FallbackAtomicTest::fallbackReportsOriginalReturnType": "atomic",
+    "atomic::FallbackAtomicTest::nearestExceptionOverloadWins": "atomic",
+    "atomic::FallbackAtomicTest::runtimeOverloadWinsForDifferentRuntimeSubtype": "atomic",
+    "atomic::FallbackAtomicTest::throwableOnlyFallbackReceivesOnlyFailure": "atomic",
+    "atomic::FallbackAtomicTest::argumentAwareFallbackReceivesOriginalArgument": "atomic",
+    "atomic::FallbackAtomicTest::unmatchedFailureIsRethrownByIdentity": "atomic",
+    "atomic::FallbackAtomicTest::missingFallbackNameIsRejected": "atomic",
+    "atomic::FallbackAtomicTest::incompatibleFallbackReturnTypeIsRejected": "atomic",
+    "atomic::FallbackAtomicTest::duplicateExceptionCoverageIsRejected": "atomic",
+    "atomic::FallbackAtomicTest::completionDecoratorSupportsStageFamily": "atomic",
+    "atomic::FallbackAtomicTest::defaultDecoratorSupportsOrdinaryFamily": "atomic",
+    "integration::AdapterLifecycleIntegrationTest::retryConfigurationBeanProjectsConfiguredRelativeOrder": "integration",
+    "integration::AdapterLifecycleIntegrationTest::timeLimiterConfigurationBeanProjectsConfiguredRelativeOrder": "integration",
+    "integration::AdapterLifecycleIntegrationTest::circuitBreakerExtensionAndFallbackAgreeOnMonoFamily": "integration",
+    "integration::AdapterLifecycleIntegrationTest::retryExtensionAndFallbackAgreeOnFluxFamily": "integration",
+    "integration::AdapterLifecycleIntegrationTest::rateLimiterExtensionAndFallbackAgreeOnMonoFamily": "integration",
+    "integration::AdapterLifecycleIntegrationTest::bulkheadExtensionAndFallbackAgreeOnFluxFamily": "integration",
+    "integration::AdapterLifecycleIntegrationTest::timeLimiterExtensionAndFallbackAgreeOnMonoFamily": "integration",
+    "integration::AdapterLifecycleIntegrationTest::timerExtensionAndFallbackAgreeOnFluxFamily": "integration",
+    "integration::AdapterLifecycleIntegrationTest::retryContextManagedAspectClosePreservesInterruptAndCompletedValue": "integration",
+    "integration::AdapterLifecycleIntegrationTest::timeLimiterContextManagedAspectClosePreservesInterruptAndCompletedValue": "integration",
+    "integration::AdapterLifecycleIntegrationTest::circuitBreakerExtensionHandlePreservesMonoAndValue": "integration",
+    "integration::AdapterLifecycleIntegrationTest::retryExtensionHandlePreservesFluxAndValues": "integration",
+    "integration::FallbackProjectionIntegrationTest::synchronousFallbackReturnsRecoveryWhileCircuitBreakerCountsFailure": "integration",
+    "integration::FallbackProjectionIntegrationTest::runtimeSpecificRecoveryAgreesWithRecordedPrimaryFailure": "integration",
+    "integration::FallbackProjectionIntegrationTest::throwableOnlyRecoveryDoesNotEraseComponentFailureAccounting": "integration",
+    "integration::FallbackProjectionIntegrationTest::selectedRecoveryAndFailureMetricRemainConsistentAcrossCalls": "integration",
+    "integration::FallbackProjectionIntegrationTest::exceptionalStagePreservesFamilyAndCompletesWithFallback": "integration",
+    "integration::FallbackProjectionIntegrationTest::incompleteStageRemainsIncompleteUntilTerminalFailure": "integration",
+    "integration::FallbackProjectionIntegrationTest::asynchronousFallbackFailureStaysTerminalInStageFamily": "integration",
+    "integration::FallbackProjectionIntegrationTest::reactorFailurePreservesMonoFamilyAndCompletesWithFallback": "integration",
+    "integration::FallbackProjectionIntegrationTest::defaultProjectionRethrowsUnacceptedPrimaryFailureByIdentity": "integration",
+    "integration::FallbackProjectionIntegrationTest::defaultProjectionPropagatesFallbackFailureTypeDirectly": "integration",
+    "integration::FallbackProjectionIntegrationTest::stageProjectionCarriesFallbackFailureAsTerminalCause": "integration",
+    "integration::FallbackProjectionIntegrationTest::invalidFallbackConfigurationCannotBuildProjection": "integration",
+    "integration::NameRegistryIntegrationTest::expressionNameEqualsCircuitBreakerRegistryName": "integration",
+    "integration::NameRegistryIntegrationTest::expressionNameEqualsRetryRegistryName": "integration",
+    "integration::NameRegistryIntegrationTest::expressionNameEqualsRateLimiterRegistryName": "integration",
+    "integration::NameRegistryIntegrationTest::beanExpressionNameEqualsBulkheadRegistryName": "integration",
+    "integration::NameRegistryIntegrationTest::resolvedCircuitBreakerNameUsesIndependentConfiguration": "integration",
+    "integration::NameRegistryIntegrationTest::resolvedRetryNameUsesIndependentConfiguration": "integration",
+    "integration::NameRegistryIntegrationTest::resolvedRateLimiterNameUsesIndependentConfiguration": "integration",
+    "integration::NameRegistryIntegrationTest::circuitBreakerSpringConfigurationExposesRegistryAndEventBuffer": "integration",
+    "integration::NameRegistryIntegrationTest::retrySpringConfigurationExposesRegistryAndEventBuffer": "integration"
+  },
+  "validation": {
+    "status": "QUALIFIED",
+    "preflight": "passed",
+    "reference": "71/71",
+    "dummy": "0/71",
+    "gate_a0": "LINT_PASS",
+    "gate_a": "passed",
+    "gate_b": "passed",
+    "gate_c": "passed",
+    "gate_d": "FULL",
+    "gate_f": "passed",
+    "environment": "passed: Linux Docker, Temurin Java 21.0.10, Maven 3.9.12",
+    "gate_e": "passed",
+    "gate_e_command": "python harness/validate_ledger.py resilience4j-fullrepro-001",
+    "gate_e_result": "PASS resilience4j-fullrepro-001; summary: 1/1 tasks statically valid, 0 warnings",
+    "metadata_sync_check": "summary: 0/1 tasks stale",
+    "verify_task": "STATIC_VALID",
+    "final_oracle_import_lint": "LINT_PASS"
+  }
+}

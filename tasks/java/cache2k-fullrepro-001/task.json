@@ -1,0 +1,253 @@
+{
+  "instance_id": "cache2k-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "cache2k/cache2k",
+  "repo_commit": "6cf589ea28c02ba0b49dac2b38e849238053f1bf",
+  "source_path": "repo/cache2k",
+  "language": "java",
+  "package_name": "org.cache2k.core",
+  "maven_coordinates": "org.cache2k:cache2k-core",
+  "maven_version": "2.8-SNAPSHOT",
+  "primary_module": "cache2k-core",
+  "program_file": "pom.xml",
+  "spec_version": "v2",
+  "oracle_version": "2026-08-27T15:35:28+08:00",
+  "oracle": {
+    "count": 79,
+    "count_unit": "base_test_functions",
+    "base_function_count": 79,
+    "source": "generated_only",
+    "generated_retained": 79,
+    "upstream_rewritten_retained": 0,
+    "maven_pom": "oracle/pom.xml",
+    "scorer_isolation": "Docker Java scoring uses a run-specific isolated local Maven repository with network disabled. The pinned companion org.cache2k:cache2k-api:2.8-SNAPSHOT is staged offline, while org.cache2k:cache2k-core is populated only from the candidate or exact pinned reference. JAR code-source provenance must resolve to that run-local artifact with equal non-empty before/after SHA-256 hashes, and oracle compilation must not replace it.",
+    "reference_score": {
+      "passed": 79,
+      "total": 79,
+      "pass_rate": 1.0,
+      "repo_commit": "6cf589ea28c02ba0b49dac2b38e849238053f1bf",
+      "evidence": "wip/cache2k-fullrepro-001/filter/reference_score.json"
+    },
+    "dummy_gate": "0/79 passed; valid Linux Docker provenance with equal non-empty hashes; evidence wip/cache2k-fullrepro-001/filter/dummy_score.json"
+  },
+  "candidate_evaluation": {
+    "model": "codex",
+    "run_dir": "candidate-runs/codex-cache2k-fullrepro-001-specv2-20260827-001-envretry2",
+    "runner": "harness.runners.java.JavaRunner",
+    "score_result": "candidate-runs/codex-cache2k-fullrepro-001-specv2-20260827-001-envretry2/score_result.json",
+    "score_sha256": "20db15eaf54602c286b1c5f45f165db5de5db8d745a4a2691c11915c72992100",
+    "passed": 76,
+    "failed": 3,
+    "total": 79,
+    "pass_rate": 0.9620253164556962,
+    "valid": true,
+    "admissible": true,
+    "per_layer": {
+      "atomic": {
+        "passed": 45,
+        "failed": 0,
+        "total": 45,
+        "pass_rate": 1.0
+      },
+      "integration": {
+        "passed": 31,
+        "failed": 3,
+        "total": 34,
+        "pass_rate": 0.9117647058823529
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "pass_rate": 0.0
+      }
+    }
+  },
+  "candidate_score": 0.9620253164556962,
+  "candidate_score_valid": true,
+  "reference_score": 1.0,
+  "integration_gap": {
+    "atomic_rate": 1.0,
+    "integration_e2e_rate": 0.9117647058823529,
+    "rate_gap": 0.08823529411764708,
+    "dependency_adjusted_integration_e2e_rate": 0.9117647058823529,
+    "adjusted_gap": 0.08823529411764708,
+    "dependency_eligible_tests": 34,
+    "dependency_declared_tests": 34,
+    "true_gap_event_count": 3,
+    "cascade_event_count": 0
+  },
+  "true_gap_events": [
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::expiredRetainedValueIsHiddenButPassedToAdvancedLoader",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "atomic::GeneratedAtomicOracleTest::expireAtNowMakesEntryInvisible",
+        "atomic::GeneratedAtomicOracleTest::loaderReceivesRequestedKey"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness"
+    },
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::retainedExpiredEntrySuppliesPriorContextOnReload",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "atomic::GeneratedAtomicOracleTest::expireAtNowMakesEntryInvisible",
+        "atomic::GeneratedAtomicOracleTest::reloadAllLoadsPresentKeys"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness"
+    },
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::cacheClosedListenerParticipatesInClose",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "atomic::GeneratedAtomicOracleTest::cacheCloseIsIdempotentAndObservable",
+        "atomic::GeneratedAtomicOracleTest::explicitCacheNameIsPreserved"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness"
+    }
+  ],
+  "labels": [
+    "generated-only-oracle",
+    "composition-signal",
+    "true-gap-events",
+    "configuration-binding-gap",
+    "partial-integration-cascade"
+  ],
+  "weaknesses": [
+    {
+      "dimension": "workflow-completeness",
+      "description": "AdvancedCacheLoader customization is not bound from the public builder configuration into runtime loading, so retained expired entries are neither supplied as prior context nor reloadable through the configured advanced loader.",
+      "affected_tests": 2,
+      "layer": "integration"
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "CacheClosedListener customization is not bound into the runtime close-listener collection, so graceful close completes without invoking the configured listener or awaiting its completion stage.",
+      "affected_tests": 1,
+      "layer": "integration"
+    }
+  ],
+  "judge": {
+    "verdict": "QUALIFIED",
+    "route": "QUALIFIED",
+    "instrument_valid": true,
+    "gate_a0": "PASS",
+    "gate_a": "PASS (79/79 primary authorities are exact Behavior/Contract headings)",
+    "gate_b": "PASS (three genuine behavioral true-gap failures)",
+    "gate_c": "PASS (generated-only, nine-test sample)",
+    "gate_d": "FULL",
+    "gate_e": "PASS (metadata sync has zero drift; verify_task is STATIC_VALID; validate_ledger passes with 0 warnings; fresh lint and graduated-oracle reference are valid)",
+    "gate_f": "PASS",
+    "fairness_issue": null,
+    "filter_correction_resolved": "filter_iter=1 corrected four authority-metadata rows only; executable oracle and score inputs are unchanged",
+    "diagnosis_report": "wip/cache2k-fullrepro-001/judge/diagnosis_report.md"
+  },
+  "source_meta": {
+    "first_release": "2014-03-13",
+    "first_release_version": "0.19.1",
+    "first_release_source": "Maven Central canonical repository listing for org.cache2k:cache2k-core:0.19.1 (artifact published 2014-03-13)",
+    "first_release_url": "https://repo1.maven.org/maven2/org/cache2k/cache2k-core/0.19.1/",
+    "github_stars": 742,
+    "github_stars_checked": "2026-08-27",
+    "github_stars_source": "https://github.com/cache2k/cache2k (GitHub repository page displayed 742 stars)",
+    "github_url": "https://github.com/cache2k/cache2k",
+    "loc": 10908,
+    "loc_definition": "cache2k-core nonblank noncomment Java source lines under src/main/java and src/main/java11 at repo_commit",
+    "pypi_monthly_downloads": null,
+    "pypi_monthly_downloads_note": "not applicable; cache2k-core is a Java artifact published to Maven Central, not PyPI",
+    "package_registry": "Maven Central",
+    "maven_coordinates": "org.cache2k:cache2k-core",
+    "test_files": 86,
+    "test_functions": 688
+  },
+  "stats": {
+    "atomic": 45,
+    "integration": 34,
+    "system_e2e": 0
+  },
+  "taxonomy": {
+    "atomic::GeneratedAtomicOracleTest::typedBuilderRetainsKeyAndValueTypes": "atomic",
+    "atomic::GeneratedAtomicOracleTest::unnamedCacheGetsGeneratedName": "atomic",
+    "atomic::GeneratedAtomicOracleTest::explicitCacheNameIsPreserved": "atomic",
+    "atomic::GeneratedAtomicOracleTest::duplicateActiveCacheNameIsRejected": "atomic",
+    "atomic::GeneratedAtomicOracleTest::entryCapacityBoundsRetainedSize": "atomic",
+    "atomic::GeneratedAtomicOracleTest::eternalAndExpireAfterWriteKeepFiniteDuration": "atomic",
+    "atomic::GeneratedAtomicOracleTest::managerLookupReusesOpenNamedManager": "atomic",
+    "atomic::GeneratedAtomicOracleTest::distinctManagerNamesProduceDistinctManagers": "atomic",
+    "atomic::GeneratedAtomicOracleTest::cacheCloseIsIdempotentAndObservable": "atomic",
+    "atomic::GeneratedAtomicOracleTest::ordinaryOperationAfterCloseFails": "atomic",
+    "atomic::GeneratedAtomicOracleTest::missingGetWithoutLoaderMatchesPeek": "atomic",
+    "atomic::GeneratedAtomicOracleTest::nullKeyIsRejected": "atomic",
+    "atomic::GeneratedAtomicOracleTest::nullValueIsRejectedByDefault": "atomic",
+    "atomic::GeneratedAtomicOracleTest::putMakesValueVisible": "atomic",
+    "atomic::GeneratedAtomicOracleTest::peekEntryDescribesVisibleMapping": "atomic",
+    "atomic::GeneratedAtomicOracleTest::peekDoesNotInvokeLoader": "atomic",
+    "atomic::GeneratedAtomicOracleTest::peekAndPutReturnsPreviousValue": "atomic",
+    "atomic::GeneratedAtomicOracleTest::peekAndReplaceMissingPreservesAbsence": "atomic",
+    "atomic::GeneratedAtomicOracleTest::peekAndReplaceReturnsOldValue": "atomic",
+    "atomic::GeneratedAtomicOracleTest::replaceMissingReturnsFalse": "atomic",
+    "atomic::GeneratedAtomicOracleTest::replacePresentReturnsTrue": "atomic",
+    "atomic::GeneratedAtomicOracleTest::failedCompareReplacePreservesMapping": "atomic",
+    "atomic::GeneratedAtomicOracleTest::failedCompareRemovePreservesMapping": "atomic",
+    "atomic::GeneratedAtomicOracleTest::successfulCompareRemoveDeletesMapping": "atomic",
+    "atomic::GeneratedAtomicOracleTest::peekAndRemoveReturnsRemovedValue": "atomic",
+    "atomic::GeneratedAtomicOracleTest::containsAndRemoveReportsPresence": "atomic",
+    "atomic::GeneratedAtomicOracleTest::putIfAbsentDoesNotReplace": "atomic",
+    "atomic::GeneratedAtomicOracleTest::computeIfAbsentStoresProducedValueOnce": "atomic",
+    "atomic::GeneratedAtomicOracleTest::putAllStoresEveryMapping": "atomic",
+    "atomic::GeneratedAtomicOracleTest::peekAllReturnsOnlyVisibleRequestedMappings": "atomic",
+    "atomic::GeneratedAtomicOracleTest::bulkAccessRejectsNullKey": "atomic",
+    "atomic::GeneratedAtomicOracleTest::loaderReceivesRequestedKey": "atomic",
+    "atomic::GeneratedAtomicOracleTest::loadAllWithoutLoaderFailsImmediately": "atomic",
+    "atomic::GeneratedAtomicOracleTest::reloadAllWithoutLoaderFailsImmediately": "atomic",
+    "atomic::GeneratedAtomicOracleTest::loadAllSkipsPresentKeys": "atomic",
+    "atomic::GeneratedAtomicOracleTest::reloadAllLoadsPresentKeys": "atomic",
+    "atomic::GeneratedAtomicOracleTest::writerRunsBeforeSuccessfulCommit": "atomic",
+    "atomic::GeneratedAtomicOracleTest::writerFailurePreservesPreviousValue": "atomic",
+    "atomic::GeneratedAtomicOracleTest::invokeReturnsProcessorResultAndCommits": "atomic",
+    "atomic::GeneratedAtomicOracleTest::processorFailureRollsBackMapping": "atomic",
+    "atomic::GeneratedAtomicOracleTest::finalStagedMutationDeterminesState": "atomic",
+    "atomic::GeneratedAtomicOracleTest::processorLoadWithoutLoaderFails": "atomic",
+    "atomic::GeneratedAtomicOracleTest::invokeAllReturnsSuccessfulResultPerKey": "atomic",
+    "atomic::GeneratedAtomicOracleTest::invokeAllCapturesProcessorFailure": "atomic",
+    "atomic::GeneratedAtomicOracleTest::expireAtNowMakesEntryInvisible": "atomic",
+    "integration::GeneratedIntegrationOracleTest::cachePutIsConsistentAcrossAllReadViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::cachePutAllIsConsistentAcrossReadViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::mapPutProjectsToCacheWithoutLoading": "integration",
+    "integration::GeneratedIntegrationOracleTest::mapReplaceProjectsToEntrySnapshotWithoutLoading": "integration",
+    "integration::GeneratedIntegrationOracleTest::directRemovalDisappearsFromEveryProjection": "integration",
+    "integration::GeneratedIntegrationOracleTest::mapRemovalDisappearsFromCacheAndEntryViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::loadedValueAgreesAcrossListenerEntryMapAndStatistics": "integration",
+    "integration::GeneratedIntegrationOracleTest::loadAllCommitsEachValueToEveryProjection": "integration",
+    "integration::GeneratedIntegrationOracleTest::processorCommitProjectsFinalValueAcrossViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::processorRemovalProjectsAbsenceAcrossViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::loaderFailurePreservesCauseAcrossEntryAccessAndStatistics": "integration",
+    "integration::GeneratedIntegrationOracleTest::customPropagationRetainsOriginalFailureObservation": "integration",
+    "integration::GeneratedIntegrationOracleTest::activeCacheAgreesWithManagerAndInfoViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::closedCacheDisappearsFromAllManagerLifecycleViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::clearEmptiesViewsWithoutWriterDeletes": "integration",
+    "integration::GeneratedIntegrationOracleTest::removeAllEmptiesViewsAndCallsWriterDeletePerEntry": "integration",
+    "integration::GeneratedIntegrationOracleTest::expiredRetainedValueIsHiddenButPassedToAdvancedLoader": "integration",
+    "integration::GeneratedIntegrationOracleTest::retainedExpiredEntrySuppliesPriorContextOnReload": "integration",
+    "integration::GeneratedIntegrationOracleTest::presenceAndIterationChecksAreHitMissNeutral": "integration",
+    "integration::GeneratedIntegrationOracleTest::statisticsDescribeCommittedPutGetAndMissOperations": "integration",
+    "integration::GeneratedIntegrationOracleTest::representativeReadThroughThenMapOverrideWorkflow": "integration",
+    "integration::GeneratedIntegrationOracleTest::representativeProcessorEntryAndControlWorkflow": "integration",
+    "integration::GeneratedIntegrationOracleTest::permittedNullMappingIsDistinguishedAcrossViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::bulkLoaderReceivesOutstandingSetAndCommitsResult": "integration",
+    "integration::GeneratedIntegrationOracleTest::synchronousListenersObserveCreateUpdateAndRemoveSequence": "integration",
+    "integration::GeneratedIntegrationOracleTest::asyncListenerUsesConfiguredExecutor": "integration",
+    "integration::GeneratedIntegrationOracleTest::cacheClosedListenerParticipatesInClose": "integration",
+    "integration::GeneratedIntegrationOracleTest::controlClearFutureCompletesAfterViewsAreEmpty": "integration",
+    "integration::GeneratedIntegrationOracleTest::controlCloseFutureCompletesAfterLifecycleTransition": "integration",
+    "integration::GeneratedIntegrationOracleTest::controlCapacityChangeUpdatesLimitAndBoundsSize": "integration",
+    "integration::GeneratedIntegrationOracleTest::disabledStatisticsAgreeAcrossInfoAndControlViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::managerCloseClosesOwnedCachesAndFreshLookupReopensName": "integration",
+    "integration::GeneratedIntegrationOracleTest::writerCommitIsVisibleThroughCacheAndMapViews": "integration",
+    "integration::GeneratedIntegrationOracleTest::invokeAllResultsAndCommittedMappingsAgreePerKey": "integration"
+  },
+  "taxonomy_unit": "base_test_functions"
+}

@@ -1,0 +1,318 @@
+{
+  "instance_id": "orika-fullrepro-001",
+  "status": "QUALIFIED",
+  "judge_verdict": "QUALIFIED",
+  "repo": "orika-mapper/orika",
+  "repo_url": "https://github.com/orika-mapper/orika",
+  "repo_commit": "fcf42ef3ba3c4db6b38e892d7ebd9525c74ea9ad",
+  "source_path": "repo/orika",
+  "language": "java",
+  "package_name": "ma.glasnost.orika",
+  "primary_module": "core",
+  "maven_coordinates": "ma.glasnost.orika:orika-core",
+  "program_file": "pom.xml",
+  "spec_version": "v2",
+  "oracle_version": "2026-08-26T19:12:00+08:00",
+  "oracle": {
+    "source": "upstream_plus_generated",
+    "test_files": [
+      "oracle/src/test/java/atomic/GeneratedAtomicTest.java",
+      "oracle/src/test/java/atomic/UpstreamRewrittenAtomicTest.java",
+      "oracle/src/test/java/integration/GeneratedIntegrationTest.java"
+    ],
+    "pom": "oracle/pom.xml",
+    "requirements_marker": "oracle/requirements.txt",
+    "candidate_version_property": "candidate.version",
+    "count": 77,
+    "count_unit": "base_test_functions",
+    "base_function_count": 77,
+    "upstream_rewritten_retained": 9,
+    "generated_retained": 68,
+    "positive_atomic": 29,
+    "failure_atomic": 5,
+    "no_check": 0,
+    "integration_dependency_coverage": "43/43",
+    "java_runner_discovery": {
+      "atomic": 34,
+      "integration": 43,
+      "system_e2e": 0,
+      "stable": true
+    },
+    "scorer_isolation": {
+      "type": "run_local_maven_coordinate",
+      "coordinate": "ma.glasnost.orika:orika-core",
+      "target_dependency_version": "${candidate.version}"
+    },
+    "lint": {
+      "status": "LINT_PASS",
+      "result_mtime": "2026-08-26T19:56:32.0209238+08:00",
+      "latest_java_mtime": "2026-08-26T19:13:01.0762321+08:00",
+      "fresh": true
+    },
+    "dummy_gate": {
+      "valid": true,
+      "passed": 0,
+      "total": 77,
+      "provenance_status": "passed",
+      "candidate_sha256": "386610446a72e54386d73674aba1418bb2629c2b9edd3c83602cfb82056ecc28",
+      "resolved_sha256": "386610446a72e54386d73674aba1418bb2629c2b9edd3c83602cfb82056ecc28"
+    },
+    "reference_gate": {
+      "valid": true,
+      "passed": 77,
+      "total": 77,
+      "pass_rate": 1.0,
+      "platform": "Linux",
+      "provenance_status": "passed",
+      "candidate_sha256": "37d6d70fd71031eadad544767e41d66e061c7f864b366d47ed0ad5cb922f7e6c",
+      "resolved_sha256": "37d6d70fd71031eadad544767e41d66e061c7f864b366d47ed0ad5cb922f7e6c"
+    }
+  },
+  "taxonomy": {
+    "atomic::GeneratedAtomicTest::defaultFactoryMapsMatchingBean": "atomic",
+    "atomic::GeneratedAtomicTest::disabledAutoMappingRejectsUnregisteredPair": "atomic",
+    "atomic::GeneratedAtomicTest::classMapAcceptsClassTokens": "atomic",
+    "atomic::GeneratedAtomicTest::registeredRuleBecomesActive": "atomic",
+    "atomic::GeneratedAtomicTest::bidirectionalFieldWorksBothWays": "atomic",
+    "atomic::GeneratedAtomicTest::forwardOnlyFieldDoesNotApplyInReverse": "atomic",
+    "atomic::GeneratedAtomicTest::reverseOnlyFieldAppliesFromBToA": "atomic",
+    "atomic::GeneratedAtomicTest::excludedPropertyIsNotDefaultMapped": "atomic",
+    "atomic::GeneratedAtomicTest::byDefaultKeepsExplicitRename": "atomic",
+    "atomic::GeneratedAtomicTest::missingPropertyFailsDuringConfiguration": "atomic",
+    "atomic::GeneratedAtomicTest::nestedExpressionTraversesObject": "atomic",
+    "atomic::GeneratedAtomicTest::nullOverwritesExistingValueByDefault": "atomic",
+    "atomic::GeneratedAtomicTest::classNullPolicyPreservesExistingValue": "atomic",
+    "atomic::GeneratedAtomicTest::fieldNullPolicyOverridesClassPolicy": "atomic",
+    "atomic::GeneratedAtomicTest::creationMapCopiesConfiguredProperties": "atomic",
+    "atomic::GeneratedAtomicTest::existingDestinationIsRetained": "atomic",
+    "atomic::GeneratedAtomicTest::creationMapReturnsNullForNullSource": "atomic",
+    "atomic::GeneratedAtomicTest::boundFacadeUsesRegisteredPair": "atomic",
+    "atomic::GeneratedAtomicTest::boundFacadeMapsInReverse": "atomic",
+    "atomic::GeneratedAtomicTest::listMappingMapsEveryElement": "atomic",
+    "atomic::GeneratedAtomicTest::setMappingUsesSetSemantics": "atomic",
+    "atomic::GeneratedAtomicTest::arrayMappingPreservesOrder": "atomic",
+    "atomic::GeneratedAtomicTest::collectionMappingAddsToSuppliedCollection": "atomic",
+    "atomic::GeneratedAtomicTest::customConverterHandlesCompatiblePair": "atomic",
+    "atomic::GeneratedAtomicTest::identifiedConverterCanBeRetrieved": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::nestedElements": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::map": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::testSimplePrimitiveArray": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::testSimplePrimitiveToWrapperArray": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::testArrayToList": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::testWrapperArrayToList": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::testListToArray": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::testMappingArrayOfString": "atomic",
+    "atomic::UpstreamRewrittenAtomicTest::testBidirectionalMapping": "atomic",
+    "integration::GeneratedIntegrationTest::registeredRuleGovernsUnboundAndBoundFacades": "integration",
+    "integration::GeneratedIntegrationTest::laterBoundFacadeObservesCommittedRules": "integration",
+    "integration::GeneratedIntegrationTest::bidirectionalRuleRoundTripsAcrossBoundFacade": "integration",
+    "integration::GeneratedIntegrationTest::directionalRulesRemainDirectionalAcrossViews": "integration",
+    "integration::GeneratedIntegrationTest::creationAndExistingMappingShareFieldsAndNullPolicy": "integration",
+    "integration::GeneratedIntegrationTest::customMapperRunsForCreationAndExistingDestination": "integration",
+    "integration::GeneratedIntegrationTest::directAndListElementMappingAreEquivalent": "integration",
+    "integration::GeneratedIntegrationTest::setArrayAndSuppliedCollectionUseSameElementRule": "integration",
+    "integration::GeneratedIntegrationTest::equivalentTypeTokensSelectRegisteredClassMap": "integration",
+    "integration::GeneratedIntegrationTest::equivalentTypeTokensSelectSameConverter": "integration",
+    "integration::GeneratedIntegrationTest::identifiedConverterWorksForSingleBoundAndReverseViews": "integration",
+    "integration::GeneratedIntegrationTest::identifiedConverterWorksForMultipleElementsWithoutTouchingOtherFields": "integration",
+    "integration::GeneratedIntegrationTest::objectFactoryControlsUnboundAndBoundConstruction": "integration",
+    "integration::GeneratedIntegrationTest::objectFactoryControlsMultiOccurrenceConstruction": "integration",
+    "integration::GeneratedIntegrationTest::filterDecisionMatchesCreationAndExistingMapping": "integration",
+    "integration::GeneratedIntegrationTest::filterLeavesNonApplicablePropertyTypesUnchanged": "integration",
+    "integration::GeneratedIntegrationTest::listIndexExpressionMapsSelectedValue": "integration",
+    "integration::GeneratedIntegrationTest::quotedMapKeyExpressionMapsSelectedValue": "integration",
+    "integration::GeneratedIntegrationTest::braceExpressionProjectsElementProperties": "integration",
+    "integration::GeneratedIntegrationTest::braceExpressionProjectsMapKeys": "integration",
+    "integration::GeneratedIntegrationTest::nestedBidirectionalWorkflowRoundTrips": "integration",
+    "integration::GeneratedIntegrationTest::defaultAndExcludeWorkflowCombinesSelectionRules": "integration",
+    "integration::GeneratedIntegrationTest::classNullPolicyOverridesFactoryNullPolicy": "integration",
+    "integration::GeneratedIntegrationTest::reverseFieldNullPolicyPreservesDestination": "integration",
+    "integration::GeneratedIntegrationTest::selectedDestinationConstructorReceivesMappedProperty": "integration",
+    "integration::GeneratedIntegrationTest::childMapReusesRegisteredParentRules": "integration",
+    "integration::GeneratedIntegrationTest::specificAnonymousConverterWinsOverBroaderConverter": "integration",
+    "integration::GeneratedIntegrationTest::bidirectionalConverterDispatchesBothDirections": "integration",
+    "integration::GeneratedIntegrationTest::customMapperRunsAfterOrdinaryFieldsInBothDirections": "integration",
+    "integration::GeneratedIntegrationTest::registeredCustomMapperCopiesIntoExistingDestination": "integration",
+    "integration::GeneratedIntegrationTest::concreteTypeRegistrationConstructsInterfaceDestination": "integration",
+    "integration::GeneratedIntegrationTest::converterReceivesCurrentMappingContext": "integration",
+    "integration::GeneratedIntegrationTest::genericListTokensGuideElementConversion": "integration",
+    "integration::GeneratedIntegrationTest::genericMapTokensGuideKeyAndValueConversion": "integration",
+    "integration::GeneratedIntegrationTest::automaticMappingConvertsStringAndEnumProperties": "integration",
+    "integration::GeneratedIntegrationTest::configurableMapperExposesConfiguredFacadeWorkflow": "integration",
+    "integration::GeneratedIntegrationTest::unresolvedDestinationPropertyRaisesMappingException": "integration",
+    "integration::GeneratedIntegrationTest::malformedExpressionRaisesMappingException": "integration",
+    "integration::GeneratedIntegrationTest::disabledAutoMappingRejectsUnregisteredWorkflow": "integration",
+    "integration::GeneratedIntegrationTest::missingFieldConverterRaisesMappingException": "integration",
+    "integration::GeneratedIntegrationTest::missingConstructionPathRaisesMappingException": "integration",
+    "integration::GeneratedIntegrationTest::configuredFactorySupportsConcurrentSharedUse": "integration",
+    "integration::GeneratedIntegrationTest::boundExistingDestinationRetainsIdentityAndRules": "integration"
+  },
+  "taxonomy_unit": "base_test_functions",
+  "taxonomy_source": "filter/taxonomy.jsonl",
+  "stats": {
+    "atomic": 34,
+    "integration": 43,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_evaluation": {
+    "run_id": "codex-orika-fullrepro-001-specv2-20260826-002",
+    "model_label": "codex-gpt5.6",
+    "platform": "Linux",
+    "java": "OpenJDK 17.0.18",
+    "maven": "3.9.12",
+    "cleanroom": true,
+    "public_packet_only": true,
+    "public_packet_spec_sha256": "06913748f56bbe0783ac6d30aa7f679833c59f9aa51373cdd30fb7aaa9d158e9",
+    "score_result_sha256": "201ec2c0765ebc0f38d29c14189d1a17a1cd11ba8f2b1b5f32c9b15a6cdff977",
+    "trajectory_available": false
+  },
+  "candidate_score": {
+    "valid": true,
+    "passed": 24,
+    "failed": 53,
+    "total": 77,
+    "pass_rate": 0.311688311688312,
+    "by_layer": {
+      "atomic": {"passed": 15, "failed": 19, "total": 34, "pass_rate": 0.4411764705882353},
+      "integration": {"passed": 9, "failed": 34, "total": 43, "pass_rate": 0.20930232558139536},
+      "system_e2e": {"passed": 0, "failed": 0, "total": 0, "pass_rate": null}
+    },
+    "provenance": {
+      "coordinate": "ma.glasnost.orika:orika-core",
+      "resolved_path": "/root/.m2/repository/ma/glasnost/orika/orika-core/1.6.0-SNAPSHOT/orika-core-1.6.0-SNAPSHOT.jar",
+      "candidate_sha256": "2a295a7cbd2764a2f8962f62c92ea9b268a5bc6bb6e48cd6afcc8d5f6d96d310",
+      "resolved_sha256": "2a295a7cbd2764a2f8962f62c92ea9b268a5bc6bb6e48cd6afcc8d5f6d96d310",
+      "status": "passed"
+    }
+  },
+  "integration_gap": {
+    "atomic_rate": 0.4411764705882353,
+    "integration_e2e_rate": 0.20930232558139536,
+    "rate_gap": 0.23187414500683992,
+    "eligible_non_atomic_tests": 4,
+    "conditional_non_atomic_rate": 0.75,
+    "adjusted_gap": -0.3088235294117647,
+    "dependency_declared_tests": 43,
+    "dependency_ineligible_failed_tests": 33,
+    "true_gap_events": [
+      {
+        "failed_test": "integration::GeneratedIntegrationTest::bidirectionalConverterDispatchesBothDirections",
+        "layer": "integration",
+        "depended_atomic_tests": [
+          "customConverterHandlesCompatiblePair",
+          "identifiedConverterCanBeRetrieved"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "workflow-completeness",
+        "spec_clauses": ["ORK-EXT-001", "ORK-CVT-001"]
+      }
+    ]
+  },
+  "weaknesses": [
+    {
+      "dimension": "atomic-behavior",
+      "description": "Property access does not make public fields or JavaBeans members accessible when their user-domain declaring carrier is non-public, causing 18 primitive failures and 33 dependent workflow failures.",
+      "affected_tests": 51,
+      "layer": "atomic+integration"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "A B-to-A-only field rule validates the destination-side property against the wrong source view and rejects an otherwise documented reverse mapping.",
+      "affected_tests": 1,
+      "layer": "atomic"
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "Explicit property-named constructor selection searches only public constructors and fails the documented destination-construction workflow.",
+      "affected_tests": 1,
+      "layer": "integration"
+    }
+  ],
+  "labels": [
+    "discriminating",
+    "mixed-oracle",
+    "full-normative-section-coverage",
+    "cascade-dominated",
+    "public-field-access-gap",
+    "constructor-selection-gap",
+    "single-true-gap-event"
+  ],
+  "specific_weaknesses": {
+    "root_clusters": 3,
+    "cascade_explained_failures": 51,
+    "independent_directional_failures": 1,
+    "independent_constructor_failures": 1
+  },
+  "source_meta": {
+    "ecosystem": "Maven Central",
+    "pypi_monthly_downloads": null,
+    "pypi_note": "N/A: this is a Java/Maven artifact, not a PyPI package.",
+    "github_stars": null,
+    "github_stars_note": "No authoritative exact star count was obtained in this local/offline evidence pass; no estimate was substituted.",
+    "github_stars_checked_at": "2026-08-26",
+    "loc": 15103,
+    "loc_note": "Non-blank/non-comment Java LOC in core/src/main/java excluding the documented vendored jsr166x source.",
+    "production_java_files": 164,
+    "first_release": "2012-09-15",
+    "first_release_evidence": {
+      "type": "oldest_local_release_tag",
+      "tag": "orika-parent-1.2.1",
+      "tagger_date": "2012-09-15T13:34:58+02:00",
+      "commit": "2daa7b4d213cf59cf209b678cc8067ee36b9ea05"
+    }
+  },
+  "implementation_size": {
+    "reference_production_java_files": 164,
+    "reference_nbnc_java_loc": 15103,
+    "candidate_production_java_files": 24,
+    "candidate_physical_java_lines": 245,
+    "candidate_file_share": 0.14634146341463414,
+    "candidate_file_reduction": 0.8536585365853658,
+    "note": "Candidate Java is densely formatted; physical line count is not directly comparable to upstream NBNC LOC."
+  },
+  "judge_gates": {
+    "anti_cheat": "PASS_WITH_NO_TRAJECTORY_CAVEAT",
+    "solvability": "PASS",
+    "gate_a0_symbol_lint": "PASS",
+    "gate_a_derivability": "PASS",
+    "gate_b_fairness": "PASS",
+    "gate_c_generated_only": "N/A_MIXED_ORACLE",
+    "gate_d_coverage": "FULL",
+    "gate_e_static_quality": "PASS",
+    "gate_f_spec_style": "PASS"
+  },
+  "gate_e_commands": {
+    "sync_task_metadata": "PASS: summary 0/1 tasks stale",
+    "sync_task_metadata_check": "PASS: summary 0/1 tasks stale",
+    "verify_task": "PASS: STATIC_VALID",
+    "validate_ledger": "PASS: orika-fullrepro-001; 1/1 tasks statically valid, 0 warnings",
+    "oracle_import_lint": "PASS: LINT_PASS; result newer than every graduated oracle Java source",
+    "reference_gate": "PASS: valid 77/77 with provenance passed and equal non-empty JAR hashes",
+    "dummy_gate": "PASS: valid 0/77 with provenance passed and equal non-empty JAR hashes"
+  },
+  "coverage": {
+    "direct_primary_heading_counts": {
+      "Mapping Configuration and Field Rules": 23,
+      "Object, Collection, and Generic Mapping": 18,
+      "Conversion and Extension Policies": 8,
+      "State Model": 3,
+      "Error Semantics": 10,
+      "Cross-View Invariants": 15
+    },
+    "non_normative_primary_rows": 0
+  },
+  "caveats": [
+    "The v2 run did not retain a candidate trajectory/transcript; anti-cheat judgment uses the cleanroom manifest, authored source scan, build logs, and scorer provenance.",
+    "Gate E completed against the assembled packet with STATIC_VALID and a zero-warning ledger result.",
+    "GitHub stars are null because an authoritative exact value was not obtained; no approximate value is reported.",
+    "The low integration rate is cascade-dominated: 33 failed integration methods are dependency-ineligible because lower-level public property access is broken."
+  ],
+  "routing": {
+    "pipeline_state": "QUALIFIED",
+    "next_required_action": null,
+    "terminal": true,
+    "spec_gap": null,
+    "fairness_blocker": null
+  }
+}

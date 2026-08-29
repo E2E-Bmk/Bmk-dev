@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.spec2repo.oracle</groupId>
+  <artifactId>cache2k-fullrepro-001-oracle</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <candidate.version>0.0.0-candidate</candidate.version>
+    <maven.compiler.release>11</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <junit.version>5.10.3</junit.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.cache2k</groupId>
+      <artifactId>cache2k-core</artifactId>
+      <version>${candidate.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId><version>1.7.32</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>${junit.version}</version><scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.13.0</version></plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.2</version>
+        <configuration><useModulePath>false</useModulePath><failIfNoTests>true</failIfNoTests></configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

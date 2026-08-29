@@ -1,0 +1,404 @@
+{
+  "instance_id": "sisu-project-fullrepro-001",
+  "status": "QUALIFIED",
+  "repo": "eclipse-sisu/sisu-project",
+  "repo_commit": "902e3b9c4f5c32570ccb2471dc5869746bc14a19",
+  "source_path": "repo/sisu-project",
+  "language": "java",
+  "package_name": "org.eclipse.sisu",
+  "maven_coordinates": "org.eclipse.sisu:org.eclipse.sisu.inject",
+  "primary_module": "org.eclipse.sisu.inject",
+  "program_file": "pom.xml",
+  "spec_version": "v1",
+  "oracle_version": "2026-08-29T15:00:00+08:00",
+  "oracle": {
+    "source": "generated_only",
+    "generated_retained": 100,
+    "upstream_rewritten_retained": 0,
+    "maven_pom": "oracle/pom.xml",
+    "scorer_isolation": "Docker scoring uses a run-specific isolated Maven repository. Before candidate or reference installation, org.eclipse.sisu:org.eclipse.sisu.inject is removed from that repository; the oracle resolves the target only through ${candidate.version}. Every score-bearing batch and the provenance probe run with --network none, and candidate-built/resolved JAR SHA-256 values must be non-empty and equal.",
+    "reference_score": {
+      "passed": 100,
+      "total": 100,
+      "pass_rate": 1.0,
+      "valid": true,
+      "platform": "Linux Docker on WSL2 (OpenJDK 17, Maven 3.9.12)",
+      "repo_commit": "902e3b9c4f5c32570ccb2471dc5869746bc14a19",
+      "evidence": "wip/sisu-project-fullrepro-001/judge/gate-e-reference/reference_score.json",
+      "gate_e_packet_rerun": "PASS",
+      "candidate_sha256": "91e3cac01b5af62a51c3938a4d7636f3ca578a20147e4532bdf4283ce4ec0878",
+      "resolved_sha256": "91e3cac01b5af62a51c3938a4d7636f3ca578a20147e4532bdf4283ce4ec0878"
+    },
+    "dummy_gate": "0/100 passed; valid Linux Docker provenance with equal non-empty hashes; evidence wip/sisu-project-fullrepro-001/filter/dummy_score.json",
+    "count": 100,
+    "count_unit": "base_test_functions",
+    "base_function_count": 100
+  },
+  "candidate_evaluation": {
+    "model": "codex-gpt5",
+    "run_dir": "candidate-runs/codex-gpt5-sisu-project-fullrepro-001-specv1-20260829-001",
+    "platform": "Linux on WSL2",
+    "runner": "harness.runners.java.JavaRunner",
+    "passed": 90,
+    "failed": 10,
+    "total": 100,
+    "pass_rate": 0.9,
+    "collection_passed": true,
+    "valid": true,
+    "admissible": true,
+    "metadata_correction_rescore": "filter_iter=2; candidate solution and all 100 case outcomes remained frozen and identical; only dependency eligibility metadata changed",
+    "score_result": "candidate-runs/codex-gpt5-sisu-project-fullrepro-001-specv1-20260829-001/score_result.json",
+    "candidate_jar_sha256": "07235d49afee0b1c90e4330c8643038716923c0ba59159349901f67b8eabe7eb",
+    "resolved_jar_sha256": "07235d49afee0b1c90e4330c8643038716923c0ba59159349901f67b8eabe7eb",
+    "per_layer": {
+      "atomic": {
+        "passed": 41,
+        "failed": 1,
+        "total": 42,
+        "pass_rate": 0.9761904761904762
+      },
+      "integration": {
+        "passed": 49,
+        "failed": 9,
+        "total": 58,
+        "pass_rate": 0.8448275862068966
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "pass_rate": null
+      }
+    }
+  },
+  "candidate_score": 0.9,
+  "candidate_score_valid": true,
+  "reference_score": 1.0,
+  "integration_gap": {
+    "atomic_rate": 0.9761904761904762,
+    "integration_rate": 0.8448275862068966,
+    "system_e2e_rate": null,
+    "raw_gap": 0.1313628899835796,
+    "rate_gap": 0.1313628899835796,
+    "dependency_adjusted_integration_rate": 0.84,
+    "adjusted_gap": 0.1361904761904762,
+    "dependency_eligible_tests": 50,
+    "true_gap_event_count": 8,
+    "negative_gap": false
+  },
+  "true_gap_events": [
+    {
+      "failed_test": "integration::SisuCviOracleTest::discoveredBindingAppearsInGuiceAndLocator",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "urlClassSpaceFindsVisibleResource"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "SISU-CVI-001",
+        "SISU-DISC-004"
+      ]
+    },
+    {
+      "failed_test": "integration::SisuCviOracleTest::discoveredQualifierAgreesAcrossGuiceAndLocator",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "descriptionAnnotationRetainsText"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "SISU-CVI-001",
+        "SISU-DISC-005"
+      ]
+    },
+    {
+      "failed_test": "integration::SisuCviOracleTest::typedComponentIsVisibleThroughDeclaredContractOnly",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "typedAnnotationRetainsDeclaredClasses"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "SISU-CVI-006",
+        "SISU-DISC-006",
+        "SISU-ERR-007"
+      ]
+    },
+    {
+      "failed_test": "integration::SisuCviOracleTest::typedComponentLocatorVisibilityMatchesDeclaredContract",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "typedAnnotationRetainsDeclaredClasses"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "SISU-CVI-006",
+        "SISU-LOC-001"
+      ]
+    },
+    {
+      "failed_test": "integration::SisuCviOracleTest::indexedAndFullScanningExposeEquivalentQualifier",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "scanningSelectsIndexIgnoringCase"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "SISU-CVI-007",
+        "SISU-DISC-011",
+        "SISU-DISC-012"
+      ]
+    },
+    {
+      "failed_test": "integration::SisuCviOracleTest::indexedAndFullScanningExposeEquivalentMetadata",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "priorityAnnotationRetainsNumericValue"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "SISU-CVI-007",
+        "SISU-DISC-010"
+      ]
+    },
+    {
+      "failed_test": "integration::SisuCviOracleTest::childWireModulePublishesChildGraphToInheritedLocator",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "rankingConfiguredHasMaximumRange"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency",
+      "spec_clauses": [
+        "SISU-CVI-010",
+        "SISU-WIRE-024"
+      ]
+    },
+    {
+      "failed_test": "integration::SisuIntegrationOracleTest::locatedEntriesFollowPublisherRank",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "rankingPartitionsNamedBindingBelowDefault"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency",
+      "spec_clauses": [
+        "SISU-LOC-006",
+        "SISU-CVI-003"
+      ]
+    }
+  ],
+  "labels": [
+    "composition-signal",
+    "cascade-dominated",
+    "high-atomic-lower-integration",
+    "scanner-nested-type-gap",
+    "parameter-key-contract-gap",
+    "child-injector-composition-gap",
+    "rank-partition-gap",
+    "metadata-correction-stable"
+  ],
+  "weaknesses": [
+    {
+      "dimension": "workflow-completeness",
+      "description": "Full scanning excludes valid nested qualified component classes, breaking discovery, typed visibility, and indexed/full-scan equivalence.",
+      "affected_tests": 6,
+      "layer": "integration"
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "ParameterKeys.PROPERTIES exposes a parameterized Guice key instead of the specified raw Map key.",
+      "affected_tests": 1,
+      "layer": "atomic"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "Child wiring installs duplicate parameter defaults rather than respecting parent keys, preventing inherited locator publication.",
+      "affected_tests": 2,
+      "layer": "integration"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "Qualified rank partition collapses configured publisher primary ranks to a fixed value, so publication sequence overrides rank.",
+      "affected_tests": 1,
+      "layer": "integration"
+    }
+  ],
+  "judge": {
+    "pass": "E",
+    "verdict": "QUALIFIED",
+    "route": "QUALIFIED",
+    "instrument_valid": true,
+    "anti_cheat": "PASS",
+    "gate_a0": "PASS",
+    "gate_a": "PASS",
+    "gate_b": "PASS",
+    "gate_c": "PASS (generated_only spot-check)",
+    "gate_d": "FULL",
+    "gate_e": "PASS",
+    "packet_static_valid": true,
+    "packet_validate_ledger": "PASS (0 warnings)",
+    "packet_lint": "LINT_PASS; newer than all packet Java test sources",
+    "packet_reference": "100/100 valid Linux Docker; provenance passed; equal non-empty JAR SHA-256; errors/warnings 0",
+    "gate_f": "PASS",
+    "coverage_gap": [],
+    "coverage_treatment": "Behavior and Contract headings are the oracle authority; four exact State Model rows are covered. Context, Orientation, Reference, Meta and documentary headings are explicit N/A, not fabricated behavior tests.",
+    "diagnosis_report": "wip/sisu-project-fullrepro-001/judge/diagnosis_report.md",
+    "fairness_issue": null,
+    "filter_correction_request": "wip/sisu-project-fullrepro-001/judge/filter_correction_request.md",
+    "filter_correction_resolved": "filter_iter=2 folded two invalid integration Depends-On tokens onto their existing atomic prerequisites; corrected WIP retained reference 100/100, dummy 0/100, candidate 90/100, and all 100 case outcomes",
+    "resolved_dependency_corrections": [
+      {
+        "integration_test": "locatorTopRankAgreesWithWiredSingleValue",
+        "old_depends_on": "locatedEntriesFollowPublisherRank",
+        "new_atomic_prerequisite": "rankingPartitionsNamedBindingBelowDefault"
+      },
+      {
+        "integration_test": "childWireModulePublishesChildGraphToInheritedLocator",
+        "old_depends_on": "addingPublisherExposesIt",
+        "new_atomic_prerequisite": "rankingConfiguredHasMaximumRange"
+      }
+    ],
+    "packet_dependency_status": "58/58 integration Depends-On declarations resolve to atomic methods; unknown tokens 0"
+  },
+  "source_meta": {
+    "repo_commit": "902e3b9c4f5c32570ccb2471dc5869746bc14a19",
+    "repo_commit_source": "local exact HEAD of E:/E2EBench/repo/sisu-project",
+    "first_release": "2013-11-10",
+    "first_release_version": "0.1.0",
+    "first_release_source": "oldest stable repository tag releases/0.1.0 (local tag creator timestamp)",
+    "first_release_url": "https://github.com/eclipse-sisu/sisu-project/tree/releases%2F0.1.0",
+    "github_stars": 27,
+    "github_stars_checked": "2026-08-29",
+    "github_stars_source": "https://github.com/eclipse-sisu/sisu-project",
+    "github_url": "https://github.com/eclipse-sisu/sisu-project",
+    "loc": 15441,
+    "loc_checked": "2026-08-29",
+    "loc_definition": "nonblank noncomment production Java lines across the selected inject and Plexus primary runtime modules at repo_commit (286 Java files)",
+    "loc_source": "local pinned repository recount recorded in wip/sisu-project-fullrepro-001/filter_notes.md",
+    "test_files": 129,
+    "test_functions": 839,
+    "tests_checked": "2026-08-29",
+    "tests_definition": "Java test files and declared JUnit-style test entries across the selected runtime at repo_commit; 95 files directly import JUnit",
+    "tests_source": "local pinned repository recount recorded in wip/sisu-project-fullrepro-001/filter_notes.md",
+    "pypi_monthly_downloads": null,
+    "pypi_monthly_downloads_note": "not applicable; org.eclipse.sisu:org.eclipse.sisu.inject is published to Maven Central, not PyPI",
+    "package_registry": "Maven Central",
+    "package_registry_source": "https://repo1.maven.org/maven2/org/eclipse/sisu/org.eclipse.sisu.inject/",
+    "maven_coordinates": "org.eclipse.sisu:org.eclipse.sisu.inject"
+  },
+  "taxonomy": {
+    "atomic::SisuAtomicOracleTest::scanningDefaultsToOnWhenMissing": "atomic",
+    "atomic::SisuAtomicOracleTest::scanningDefaultsToOnWhenBlank": "atomic",
+    "atomic::SisuAtomicOracleTest::scanningSelectsOnIgnoringCase": "atomic",
+    "atomic::SisuAtomicOracleTest::scanningSelectsIndexIgnoringCase": "atomic",
+    "atomic::SisuAtomicOracleTest::scanningRejectsUnknownOption": "atomic",
+    "atomic::SisuAtomicOracleTest::rankingDefaultHasMaximumRange": "atomic",
+    "atomic::SisuAtomicOracleTest::rankingConfiguredHasMaximumRange": "atomic",
+    "atomic::SisuAtomicOracleTest::rankingRejectsNegativePrimaryRank": "atomic",
+    "atomic::SisuAtomicOracleTest::rankingUsesPrimaryRankForDefaultBinding": "atomic",
+    "atomic::SisuAtomicOracleTest::rankingPartitionsNamedBindingBelowDefault": "atomic",
+    "atomic::SisuAtomicOracleTest::rankingReadsPriorityAnnotation": "atomic",
+    "atomic::SisuAtomicOracleTest::parameterPropertiesKeyMatchesContract": "atomic",
+    "atomic::SisuAtomicOracleTest::parameterArgumentsKeyMatchesContract": "atomic",
+    "atomic::SisuAtomicOracleTest::parameterPropertiesKeyUsesParametersQualifier": "atomic",
+    "atomic::SisuAtomicOracleTest::parameterArgumentsKeyExposesArrayRawType": "atomic",
+    "atomic::SisuAtomicOracleTest::urlClassSpaceLoadsVisibleClass": "atomic",
+    "atomic::SisuAtomicOracleTest::urlClassSpaceRejectsMissingClass": "atomic",
+    "atomic::SisuAtomicOracleTest::urlClassSpaceFindsVisibleResource": "atomic",
+    "atomic::SisuAtomicOracleTest::urlClassSpaceReturnsNullForMissingResource": "atomic",
+    "atomic::SisuAtomicOracleTest::urlClassSpaceEnumeratesVisibleResource": "atomic",
+    "atomic::SisuAtomicOracleTest::urlClassSpaceReturnsEmptyEnumerationOnIoFailure": "atomic",
+    "atomic::SisuAtomicOracleTest::urlClassSpaceReturnsDefensiveUrlCopy": "atomic",
+    "atomic::SisuAtomicOracleTest::deferredClassExposesNameWithoutLoad": "atomic",
+    "atomic::SisuAtomicOracleTest::deferredClassLoadsVisibleClass": "atomic",
+    "atomic::SisuAtomicOracleTest::deferredClassPropagatesMissingType": "atomic",
+    "atomic::SisuAtomicOracleTest::deferredClassCreatesProviderForSameType": "atomic",
+    "atomic::SisuAtomicOracleTest::descriptionIsRuntimeAnnotation": "atomic",
+    "atomic::SisuAtomicOracleTest::priorityIsRuntimeAnnotation": "atomic",
+    "atomic::SisuAtomicOracleTest::typedIsRuntimeAnnotation": "atomic",
+    "atomic::SisuAtomicOracleTest::hiddenIsRuntimeAnnotation": "atomic",
+    "atomic::SisuAtomicOracleTest::eagerSingletonTargetsTypes": "atomic",
+    "atomic::SisuAtomicOracleTest::postConstructTargetsMethods": "atomic",
+    "atomic::SisuAtomicOracleTest::preDestroyTargetsMethods": "atomic",
+    "atomic::SisuAtomicOracleTest::dynamicTargetsFieldsAndParameters": "atomic",
+    "atomic::SisuAtomicOracleTest::parametersTargetsFieldsParametersAndMethods": "atomic",
+    "atomic::SisuAtomicOracleTest::typedAnnotationRetainsDeclaredClasses": "atomic",
+    "atomic::SisuAtomicOracleTest::priorityAnnotationRetainsNumericValue": "atomic",
+    "atomic::SisuAtomicOracleTest::descriptionAnnotationRetainsText": "atomic",
+    "atomic::SisuAtomicOracleTest::lifecycleRecognizesManagedClass": "atomic",
+    "atomic::SisuAtomicOracleTest::lifecycleRejectsPlainClassForReporting": "atomic",
+    "atomic::SisuAtomicOracleTest::lifecycleHasNoCustomPropertyBinding": "atomic",
+    "atomic::SisuAtomicOracleTest::lifecycleManagerReportsDirectBeanHandled": "atomic",
+    "integration::SisuCviOracleTest::discoveredBindingAppearsInGuiceAndLocator": "integration",
+    "integration::SisuCviOracleTest::discoveredQualifierAgreesAcrossGuiceAndLocator": "integration",
+    "integration::SisuCviOracleTest::locatorTopRankAgreesWithWiredSingleValue": "integration",
+    "integration::SisuCviOracleTest::hiddenComponentIsAbsentFromLocatorResults": "integration",
+    "integration::SisuCviOracleTest::hiddenComponentIsAbsentFromWatcherEvents": "integration",
+    "integration::SisuCviOracleTest::typedComponentIsVisibleThroughDeclaredContractOnly": "integration",
+    "integration::SisuCviOracleTest::typedComponentLocatorVisibilityMatchesDeclaredContract": "integration",
+    "integration::SisuCviOracleTest::indexedAndFullScanningExposeEquivalentQualifier": "integration",
+    "integration::SisuCviOracleTest::indexedAndFullScanningExposeEquivalentMetadata": "integration",
+    "integration::SisuCviOracleTest::strictScanningRejectsMalformedBytecode": "integration",
+    "integration::SisuCviOracleTest::lenientScanningSkipsMalformedBytecode": "integration",
+    "integration::SisuCviOracleTest::indexedEnumerationRejectsReadPastEnd": "integration",
+    "integration::SisuCviOracleTest::wiringRejectsInvalidIntegerProperty": "integration",
+    "integration::SisuCviOracleTest::lifecycleCallbackFailurePropagatesFromProvisioning": "integration",
+    "integration::SisuCviOracleTest::childWireModulePreservesParentBinding": "integration",
+    "integration::SisuCviOracleTest::childWireModulePublishesChildGraphToInheritedLocator": "integration",
+    "integration::SisuIntegrationOracleTest::addingPublisherExposesIt": "integration",
+    "integration::SisuIntegrationOracleTest::duplicatePublisherIsRejected": "integration",
+    "integration::SisuIntegrationOracleTest::removingPublisherWithdrawsIt": "integration",
+    "integration::SisuIntegrationOracleTest::removingUnknownPublisherIsFalse": "integration",
+    "integration::SisuIntegrationOracleTest::clearWithdrawsAllPublishers": "integration",
+    "integration::SisuIntegrationOracleTest::emptyLocatorHasNoMatches": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryCarriesQualifier": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryReturnsBoundValue": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryReusesValue": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryProviderSuppliesValue": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryExposesImplementationClass": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryExposesBindingSource": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryExposesPriorityRank": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryExposesDescription": "integration",
+    "integration::SisuIntegrationOracleTest::undescribedEntryHasNullDescription": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntryRejectsMutation": "integration",
+    "integration::SisuIntegrationOracleTest::liveIterableReflectsLaterAddition": "integration",
+    "integration::SisuIntegrationOracleTest::liveIterableReflectsLaterRemoval": "integration",
+    "integration::SisuIntegrationOracleTest::locatedEntriesFollowPublisherRank": "integration",
+    "integration::SisuIntegrationOracleTest::injectorPublisherAdaptsToInjector": "integration",
+    "integration::SisuIntegrationOracleTest::injectorPublisherRejectsUnrelatedAdaptation": "integration",
+    "integration::SisuIntegrationOracleTest::findBindingPublisherFallsBackToInjector": "integration",
+    "integration::SisuIntegrationOracleTest::findRankingFunctionFallsBackToDefault": "integration",
+    "integration::SisuIntegrationOracleTest::predicateSupplierFiltersLocatedEntries": "integration",
+    "integration::SisuIntegrationOracleTest::nullPredicateRestoresLocatedEntries": "integration",
+    "integration::SisuIntegrationOracleTest::watcherReceivesPublisherAddition": "integration",
+    "integration::SisuIntegrationOracleTest::watcherReceivesPublisherRemoval": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleProvidesEmptyProperties": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleProvidesEmptyArguments": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleInjectsParameterProperties": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleInjectsParameterArguments": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleResolvesNamedStringProperty": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleConvertsNamedIntegerProperty": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleConvertsNamedFileProperty": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleConvertsNamedPathProperty": "integration",
+    "integration::SisuIntegrationOracleTest::wireModuleConvertsNamedUrlProperty": "integration",
+    "integration::SisuIntegrationOracleTest::lifecycleModuleStartsInjectedBean": "integration",
+    "integration::SisuIntegrationOracleTest::lifecycleModuleExposesBeanManager": "integration",
+    "integration::SisuIntegrationOracleTest::lifecycleModuleBindsSuppliedManager": "integration",
+    "integration::SisuIntegrationOracleTest::lifecycleManagerStopsSpecificInjectedBean": "integration",
+    "integration::SisuIntegrationOracleTest::lifecycleManagerDoesNotStopBeanTwice": "integration",
+    "integration::SisuIntegrationOracleTest::lifecycleManagerStopsAllInReverseOrder": "integration"
+  },
+  "taxonomy_unit": "base_test_functions",
+  "stats": {
+    "atomic": 42,
+    "integration": 58,
+    "system_e2e": 0
+  }
+}

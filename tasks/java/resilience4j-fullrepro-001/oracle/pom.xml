@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.spec2repo.oracle</groupId>
+  <artifactId>resilience4j-fullrepro-001-oracle</artifactId>
+  <version>1.0.0</version>
+
+  <properties>
+    <candidate.version>0.0.0-candidate</candidate.version>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <resilience4j.version>2.4.0</resilience4j.version>
+    <spring.version>6.1.1</spring.version>
+    <reactor.version>3.4.24</reactor.version>
+    <rxjava2.version>2.2.8</rxjava2.version>
+    <rxjava3.version>3.0.0</rxjava3.version>
+    <aspectj.version>1.9.2</aspectj.version>
+    <micrometer.version>1.16.0</micrometer.version>
+    <junit.version>6.0.3</junit.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.resilience4j</groupId>
+      <artifactId>resilience4j-spring6</artifactId>
+      <version>${candidate.version}</version>
+    </dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-annotations</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-consumer</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-framework-common</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-bulkhead</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-circuitbreaker</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-micrometer</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-ratelimiter</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-retry</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-timelimiter</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-reactor</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-rxjava2</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>io.github.resilience4j</groupId><artifactId>resilience4j-rxjava3</artifactId><version>${resilience4j.version}</version></dependency>
+    <dependency><groupId>org.springframework</groupId><artifactId>spring-context</artifactId><version>${spring.version}</version></dependency>
+    <dependency><groupId>org.aspectj</groupId><artifactId>aspectjrt</artifactId><version>${aspectj.version}</version></dependency>
+    <dependency><groupId>io.projectreactor</groupId><artifactId>reactor-core</artifactId><version>${reactor.version}</version></dependency>
+    <dependency><groupId>io.reactivex.rxjava2</groupId><artifactId>rxjava</artifactId><version>${rxjava2.version}</version></dependency>
+    <dependency><groupId>io.reactivex.rxjava3</groupId><artifactId>rxjava</artifactId><version>${rxjava3.version}</version></dependency>
+    <dependency><groupId>io.micrometer</groupId><artifactId>micrometer-core</artifactId><version>${micrometer.version}</version></dependency>
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>${junit.version}</version><scope>test</scope></dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.13.0</version></plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.2</version>
+        <configuration>
+          <useModulePath>false</useModulePath>
+          <failIfNoTests>true</failIfNoTests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

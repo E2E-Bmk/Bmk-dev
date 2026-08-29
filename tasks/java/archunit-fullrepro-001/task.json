@@ -1,0 +1,364 @@
+{
+  "instance_id": "archunit-fullrepro-001",
+  "status": "QUALIFIED",
+  "judge_verdict": "QUALIFIED",
+  "repo": "TNG/ArchUnit",
+  "repo_url": "https://github.com/TNG/ArchUnit",
+  "repo_commit": "be16e6fd68c2155cfaac08cf87c1098025203a0f",
+  "source_path": "repo/ArchUnit",
+  "language": "java",
+  "package_name": "com.tngtech.archunit",
+  "primary_module": "archunit",
+  "maven_coordinates": "com.tngtech.archunit:archunit",
+  "program_file": "pom.xml",
+  "spec_version": "v3",
+  "oracle_version": "2026-08-28T16:00:00+08:00",
+  "oracle": {
+    "source": "generated_only",
+    "test_files": [
+      "oracle/src/test/java/atomic/AtomicArchitectureTest.java",
+      "oracle/src/test/java/atomic/AtomicFrozenTest.java",
+      "oracle/src/test/java/atomic/AtomicImportAndDomainTest.java",
+      "oracle/src/test/java/atomic/AtomicMetricsTest.java",
+      "oracle/src/test/java/atomic/AtomicPackageTest.java",
+      "oracle/src/test/java/atomic/AtomicRuleTest.java",
+      "oracle/src/test/java/integration/IntegrationCrossViewTest.java",
+      "oracle/src/test/java/integration/IntegrationWorkflowTest.java"
+    ],
+    "pom": "oracle/pom.xml",
+    "requirements_marker": "oracle/requirements.txt",
+    "candidate_version_property": "candidate.version",
+    "count": 67,
+    "count_unit": "base_test_functions",
+    "base_function_count": 67,
+    "upstream_rewritten_retained": 0,
+    "generated_retained": 67,
+    "positive_atomic": 29,
+    "failure_atomic": 9,
+    "no_check": 0,
+    "integration_dependency_coverage": "29/29",
+    "java_runner_discovery": {
+      "atomic": 38,
+      "integration": 29,
+      "system_e2e": 0,
+      "stable": true
+    },
+    "scorer_isolation": {
+      "type": "run_local_maven_coordinate",
+      "coordinate": "com.tngtech.archunit:archunit",
+      "target_dependency_version": "${candidate.version}"
+    },
+    "lint": {
+      "status": "LINT_PASS",
+      "result_mtime": "2026-08-28T22:42:22.1066204+08:00",
+      "latest_java_mtime": "2026-08-28T22:05:27.4367620+08:00",
+      "fresh": true
+    },
+    "dummy_gate": {
+      "valid": true,
+      "passed": 0,
+      "total": 67,
+      "provenance_status": "passed",
+      "candidate_sha256": "4d8069babe5fbf4d4c116725cc6f4ff38e331178ae48ff9cfadc7f18492a8be9",
+      "resolved_sha256": "4d8069babe5fbf4d4c116725cc6f4ff38e331178ae48ff9cfadc7f18492a8be9"
+    },
+    "reference_gate": {
+      "valid": true,
+      "passed": 67,
+      "total": 67,
+      "pass_rate": 1.0,
+      "platform": "Linux",
+      "provenance_status": "passed",
+      "candidate_sha256": "fd3cf8e5eef91c992a10550c3cfe83737bce79279fd30af137d99dbc805c0c12",
+      "resolved_sha256": "fd3cf8e5eef91c992a10550c3cfe83737bce79279fd30af137d99dbc805c0c12"
+    }
+  },
+  "taxonomy": {
+    "atomic::AtomicArchitectureTest::configuredLayerRuleEvaluatesDefinedPackages": "atomic",
+    "atomic::AtomicArchitectureTest::undefinedLayerNameRaisesArgumentError": "atomic",
+    "atomic::AtomicArchitectureTest::sliceIdentifierDistinguishesIncludedAndIgnoredClasses": "atomic",
+    "atomic::AtomicArchitectureTest::packageSlicesDetectDirectedCycle": "atomic",
+    "atomic::AtomicFrozenTest::frozenRulePreservesPriorityAndDescription": "atomic",
+    "atomic::AtomicFrozenTest::firstEvaluationPersistsBaselineAndSuppressesKnownViolations": "atomic",
+    "atomic::AtomicFrozenTest::repeatedEvaluationUsesStoredBaseline": "atomic",
+    "atomic::AtomicImportAndDomainTest::importsOneReflectedClass": "atomic",
+    "atomic::AtomicImportAndDomainTest::importsUnionOfReflectedClasses": "atomic",
+    "atomic::AtomicImportAndDomainTest::importOptionCanRejectEveryLocation": "atomic",
+    "atomic::AtomicImportAndDomainTest::importsSeveralClassSourcesTogether": "atomic",
+    "atomic::AtomicImportAndDomainTest::collectionFiltersWithDescribedPredicate": "atomic",
+    "atomic::AtomicImportAndDomainTest::containmentWorksByClassAndName": "atomic",
+    "atomic::AtomicImportAndDomainTest::missingClassLookupRaisesArgumentError": "atomic",
+    "atomic::AtomicImportAndDomainTest::classExposesStableNameViews": "atomic",
+    "atomic::AtomicImportAndDomainTest::packageContainsItsDirectClasses": "atomic",
+    "atomic::AtomicImportAndDomainTest::declaredFieldAndMethodLookupsResolve": "atomic",
+    "atomic::AtomicImportAndDomainTest::requiredMemberLookupRaisesOnAbsentMethod": "atomic",
+    "atomic::AtomicImportAndDomainTest::dependencyViewExposesServiceRelations": "atomic",
+    "atomic::AtomicMetricsTest::groupedComponentsSupportOptionalLookup": "atomic",
+    "atomic::AtomicMetricsTest::lakosMetricsExposeFiniteGraphRatios": "atomic",
+    "atomic::AtomicMetricsTest::metricComponentsAndLakosUseNamedClasses": "atomic",
+    "atomic::AtomicPackageTest::starMatchesExactlyOnePackageSegment": "atomic",
+    "atomic::AtomicPackageTest::doubleDotMatchesZeroOrManySegments": "atomic",
+    "atomic::AtomicPackageTest::textualCaptureGroupsUseOneBasedIndexes": "atomic",
+    "atomic::AtomicPackageTest::alternationAcceptsEitherNamedSegment": "atomic",
+    "atomic::AtomicPackageTest::nonMatchingPackageProducesEmptyOptional": "atomic",
+    "atomic::AtomicPackageTest::packageMatchersAcceptWhenAnyIdentifierMatches": "atomic",
+    "atomic::AtomicPackageTest::invalidPatternAndCaptureIndexRaiseArgumentErrors": "atomic",
+    "atomic::AtomicPackageTest::predicatesComposeAndShortCircuit": "atomic",
+    "atomic::AtomicPackageTest::chainableAndDescribedFunctionsComposeMappings": "atomic",
+    "atomic::AtomicRuleTest::defaultRuleUsesMediumPriority": "atomic",
+    "atomic::AtomicRuleTest::violatingRuleReportsViolationAndCheckFails": "atomic",
+    "atomic::AtomicRuleTest::asReplacesDescriptionWithoutChangingOutcome": "atomic",
+    "atomic::AtomicRuleTest::becauseChangesDescriptionWithoutChangingOutcome": "atomic",
+    "atomic::AtomicRuleTest::explicitlyAllowedEmptySelectionDoesNotViolate": "atomic",
+    "atomic::AtomicRuleTest::simpleConditionEventsInvertViolationClassification": "atomic",
+    "atomic::AtomicRuleTest::customConditionLifecycleAndCompositeEvaluationAreObservable": "atomic",
+    "integration::IntegrationCrossViewTest::methodCallsAreGeneralAccessesAndDependencies": "integration",
+    "integration::IntegrationCrossViewTest::constructorCallsAreGeneralAccessesAndDependencies": "integration",
+    "integration::IntegrationCrossViewTest::forwardDependencyHasMatchingReverseProjection": "integration",
+    "integration::IntegrationCrossViewTest::everyInternalOutgoingDependencyHasReverseEndpointView": "integration",
+    "integration::IntegrationCrossViewTest::packageMatcherAndJavaClassPredicateSelectSameClasses": "integration",
+    "integration::IntegrationCrossViewTest::packageMatcherAndFluentRuleShareSelectionLanguage": "integration",
+    "integration::IntegrationCrossViewTest::violatingEvaluationExactlyMatchesCheckFailure": "integration",
+    "integration::IntegrationCrossViewTest::successfulEvaluationExactlyMatchesSuccessfulCheck": "integration",
+    "integration::IntegrationCrossViewTest::becauseChangesDescriptionButNotViolationCount": "integration",
+    "integration::IntegrationCrossViewTest::layeredViolationCorrespondsToDirectGraphDependency": "integration",
+    "integration::IntegrationCrossViewTest::sliceCycleCorrespondsToBidirectionalClassDependencies": "integration",
+    "integration::IntegrationCrossViewTest::lakosMetricsReflectInternalDependencyTargets": "integration",
+    "integration::IntegrationCrossViewTest::lakosCumulativeDependencyReflectsReachableGraphEdges": "integration",
+    "integration::IntegrationCrossViewTest::frozenBaselinePersistsWrappedViolationSet": "integration",
+    "integration::IntegrationCrossViewTest::frozenRuleSuppressesExactlyTheStoredCurrentSet": "integration",
+    "integration::IntegrationWorkflowTest::importedWorkflowConnectsCollectionMetadataAndDependencies": "integration",
+    "integration::IntegrationWorkflowTest::serviceWorkflowConnectsMembersCallsAndTargets": "integration",
+    "integration::IntegrationWorkflowTest::fluentRuleWorkflowUsesPackageSelectionAndBothResultViews": "integration",
+    "integration::IntegrationWorkflowTest::layeredArchitectureUsesSamePackageBoundariesAsGraph": "integration",
+    "integration::IntegrationWorkflowTest::sliceWorkflowGroupsPackagesAndReportsCycle": "integration",
+    "integration::IntegrationWorkflowTest::metricsWorkflowProjectsSameImportedDependencyGraph": "integration",
+    "integration::IntegrationWorkflowTest::frozenAndMetricsWorkflowShareOneImportedGraph": "integration",
+    "integration::IntegrationWorkflowTest::compositeRuleAggregatesIndependentViolations": "integration",
+    "integration::IntegrationWorkflowTest::architectureDescriptionChangesWithoutChangingFindings": "integration",
+    "integration::IntegrationWorkflowTest::lakosRatiosAgreeWithCumulativeDependency": "integration",
+    "integration::IntegrationWorkflowTest::importerFilterAndGraphPredicateCompose": "integration",
+    "integration::IntegrationWorkflowTest::memberRuleAgreesWithImportedFieldMetadata": "integration",
+    "integration::IntegrationWorkflowTest::frozenWorkflowRemovesResolvedBaselineLines": "integration",
+    "integration::IntegrationWorkflowTest::graphAndMemberLookupsExposeConsistentErrors": "integration"
+  },
+  "taxonomy_unit": "base_test_functions",
+  "taxonomy_source": "filter/taxonomy.jsonl",
+  "stats": {
+    "atomic": 38,
+    "integration": 29,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_evaluation": {
+    "run_id": "codex-archunit-fullrepro-001-specv3-20260828-005",
+    "model_label": "codex-gpt5.6",
+    "platform": "Linux",
+    "java": "OpenJDK 17.0.18",
+    "maven": "3.9.12",
+    "cleanroom": true,
+    "public_packet_only": true,
+    "public_packet_spec_sha256": "69821150da45c42e921a16c382d395c55529fc2570ed1af19a775838670e0a24",
+    "score_result_sha256": "4bdf86e35b087845a72766600d996a932712003374539a4c3fefc87a5459ef43",
+    "trajectory_available": true,
+    "frozen_rescore": true,
+    "source_run_id": "codex-archunit-fullrepro-001-specv3-20260827-004",
+    "candidate_agent_invoked_for_rescore": false,
+    "frozen_manifest_files": 184,
+    "frozen_manifest_mismatches": 0
+  },
+  "candidate_score": {
+    "valid": true,
+    "passed": 55,
+    "failed": 12,
+    "total": 67,
+    "pass_rate": 0.8208955223880597,
+    "by_layer": {
+      "atomic": {
+        "passed": 33,
+        "failed": 5,
+        "total": 38,
+        "pass_rate": 0.868421052631579
+      },
+      "integration": {
+        "passed": 22,
+        "failed": 7,
+        "total": 29,
+        "pass_rate": 0.7586206896551724
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "pass_rate": null
+      }
+    },
+    "provenance": {
+      "coordinate": "com.tngtech.archunit:archunit",
+      "resolved_path": "/root/.m2/repository/com/tngtech/archunit/archunit/1.6.0-SNAPSHOT/archunit-1.6.0-SNAPSHOT.jar",
+      "candidate_sha256": "9618ed87b3160fc5d78340ecd97aeb2698befd0cb6c736dbd010a7c61037e1af",
+      "resolved_sha256": "9618ed87b3160fc5d78340ecd97aeb2698befd0cb6c736dbd010a7c61037e1af",
+      "status": "passed"
+    }
+  },
+  "integration_gap": {
+    "atomic_rate": 0.868421052631579,
+    "integration_e2e_rate": 0.7586206896551724,
+    "rate_gap": 0.1098003629764066,
+    "eligible_non_atomic_tests": 23,
+    "conditional_non_atomic_rate": 0.8695652173913043,
+    "adjusted_gap": -0.0011441647597253413,
+    "dependency_declared_tests": 29,
+    "true_gap_events": [
+      {
+        "failed_test": "integration::IntegrationCrossViewTest::constructorCallsAreGeneralAccessesAndDependencies",
+        "layer": "integration",
+        "depended_atomic_tests": [
+          "atomic::AtomicImportAndDomainTest::importsUnionOfReflectedClasses",
+          "atomic::AtomicImportAndDomainTest::dependencyViewExposesServiceRelations"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "cross-view-consistency"
+      },
+      {
+        "failed_test": "integration::IntegrationWorkflowTest::architectureDescriptionChangesWithoutChangingFindings",
+        "layer": "integration",
+        "depended_atomic_tests": [
+          "atomic::AtomicRuleTest::asReplacesDescriptionWithoutChangingOutcome",
+          "atomic::AtomicArchitectureTest::configuredLayerRuleEvaluatesDefinedPackages"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "state-management"
+      },
+      {
+        "failed_test": "integration::IntegrationWorkflowTest::frozenWorkflowRemovesResolvedBaselineLines",
+        "layer": "integration",
+        "depended_atomic_tests": [
+          "atomic::AtomicFrozenTest::repeatedEvaluationUsesStoredBaseline",
+          "atomic::AtomicFrozenTest::firstEvaluationPersistsBaselineAndSuppressesKnownViolations"
+        ],
+        "all_depended_pass": true,
+        "root_cause_dimension": "state-management"
+      }
+    ]
+  },
+  "weaknesses": [
+    {
+      "dimension": "cross-view-consistency",
+      "description": "The imported graph does not reconstruct typed method and constructor calls as general accesses and dependencies, and member lookup can select the wrong inherited owner.",
+      "affected_tests": 4,
+      "layer": "integration"
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "Slice grouping is present but directed cycle evaluation is not implemented, cascading into two integration workflows.",
+      "affected_tests": 3,
+      "layer": "atomic"
+    },
+    {
+      "dimension": "error-semantics",
+      "description": "Invalid package-pattern syntax and undefined architecture layer selection are accepted instead of raising IllegalArgumentException.",
+      "affected_tests": 2,
+      "layer": "atomic"
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "Custom ArchCondition init and finish lifecycle callbacks are lost during composite evaluation.",
+      "affected_tests": 1,
+      "layer": "atomic"
+    },
+    {
+      "dimension": "state-management",
+      "description": "Architecture rule description transforms mutate the receiver instead of returning an independent transformed rule.",
+      "affected_tests": 1,
+      "layer": "integration"
+    },
+    {
+      "dimension": "state-management",
+      "description": "Frozen-rule reevaluation does not remove resolved baseline lines or suppress the resolved result correctly.",
+      "affected_tests": 1,
+      "layer": "integration"
+    }
+  ],
+  "labels": [
+    "valid-instrument",
+    "reference-perfect",
+    "generated-only",
+    "fairness-corrected-frozen-rescore",
+    "composition-signal",
+    "mixed-cascade-and-composition",
+    "full-behavior-coverage"
+  ],
+  "specific_weaknesses": {
+    "root_clusters": 6,
+    "true_gap_events": 3,
+    "candidate_failed_tests": 12
+  },
+  "source_meta": {
+    "ecosystem": "Maven Central",
+    "pypi_monthly_downloads": null,
+    "pypi_note": "N/A: this is a Java/Maven artifact, not a PyPI package.",
+    "github_stars": null,
+    "github_stars_note": "No authoritative exact star count was obtained; no estimate was substituted.",
+    "github_stars_checked_at": "2026-08-28",
+    "maven_monthly_downloads_approx": 500000,
+    "maven_downloads_note": "The official TNG 1.0 release announcement reported more than half a million monthly Maven Central downloads in 2022; no current exact figure was substituted.",
+    "loc": 29810,
+    "loc_note": "Non-blank/non-comment Java LOC in archunit/src/main/java.",
+    "production_java_files": 325,
+    "first_release": "2017-04-23",
+    "first_release_evidence": {
+      "type": "oldest_local_release_tag",
+      "tag": "v0.4.0",
+      "tagger_date": "2017-04-23T14:05:16+02:00",
+      "commit": "1afe24b"
+    }
+  },
+  "implementation_size": {
+    "reference_production_java_files": 325,
+    "reference_nbnc_java_loc": 29810,
+    "candidate_production_java_files": 71,
+    "candidate_physical_java_lines": 224,
+    "candidate_file_share": 0.21846153846153846,
+    "candidate_file_reduction": 0.7815384615384615,
+    "note": "Candidate Java is densely formatted; physical line count is not directly comparable to upstream NBNC LOC."
+  },
+  "judge_gates": {
+    "anti_cheat": "PASS",
+    "solvability": "PASS",
+    "gate_a0_symbol_lint": "PASS",
+    "gate_a_derivability": "PASS",
+    "gate_b_fairness": "PASS",
+    "gate_c_generated_only": "PASS_67_OF_67_REVIEWED",
+    "gate_d_coverage": "FULL",
+    "gate_e_static_quality": "PASS",
+    "gate_f_spec_style": "PASS"
+  },
+  "gate_e_commands": {
+    "sync_task_metadata": "PASS: updated archunit-fullrepro-001; summary 1/1 tasks",
+    "sync_task_metadata_check": "PASS: summary 0/1 tasks stale",
+    "verify_task": "PASS: STATIC_VALID",
+    "validate_ledger": "PASS: archunit-fullrepro-001; 1/1 tasks statically valid, 0 warnings",
+    "oracle_import_lint": "PASS: LINT_PASS; result newer than every graduated oracle Java source",
+    "reference_gate": "PASS: fresh graduated-packet Linux run valid 67/67 with provenance passed and equal non-empty JAR hashes",
+    "dummy_gate": "PASS: valid 0/67 with provenance passed and equal non-empty JAR hashes"
+  },
+  "coverage": {
+    "normative_clauses": 120,
+    "mapped_scoreable_tests": 67,
+    "non_normative_primary_rows": 0
+  },
+  "caveats": [
+    "One integration assertion that required exact failure-detail wording was removed as unfair because the v3 spec deliberately does not define detail-line wording.",
+    "The correction used a byte-identical frozen candidate rescore; no candidate agent was invoked and no oracle exposure was found.",
+    "The process iteration cap was explicitly overridden by the user so the fairness defect could be corrected instead of being attributed to model weakness.",
+    "GitHub stars are null because an authoritative exact value was not obtained; no approximate value is reported."
+  ],
+  "routing": {
+    "pipeline_state": "QUALIFIED",
+    "next_required_action": null,
+    "terminal": true,
+    "spec_gap": null,
+    "fairness_blocker": null
+  }
+}

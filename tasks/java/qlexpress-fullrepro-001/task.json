@@ -1,0 +1,362 @@
+{
+  "instance_id": "qlexpress-fullrepro-001",
+  "status": "QUALIFIED",
+  "judge_verdict": "QUALIFIED",
+  "repo": "alibaba/QLExpress",
+  "repo_commit": "3f7812139ada42be5d8b0e820355e2179cc53643",
+  "source_path": "repo/QLExpress",
+  "language": "java",
+  "package_name": "com.alibaba.qlexpress4",
+  "maven_coordinates": "com.alibaba:qlexpress4",
+  "primary_module": ".",
+  "target_module": "root",
+  "program_file": "pom.xml",
+  "spec_version": "v1",
+  "oracle_version": "v4-user-override-2026-08-29",
+  "oracle": {
+    "source": "generated_only",
+    "generated_retained": 87,
+    "upstream_rewritten_retained": 0,
+    "count": 87,
+    "count_unit": "base_test_functions",
+    "base_function_count": 87,
+    "maven_pom": "oracle/pom.xml",
+    "requirements_note": "oracle/requirements.txt is the required Java packet marker; oracle/pom.xml is authoritative for Maven test dependencies.",
+    "scorer_isolation": "Docker score_java.py removes com.alibaba:qlexpress4 from the seeded Maven repository, installs only the candidate or exact fixed-HEAD reference artifact into the run-local repository, executes score-bearing Maven batches offline with network disabled, and requires equal non-empty built/resolved JAR SHA-256 values.",
+    "reference_score": {
+      "passed": 87,
+      "total": 87,
+      "pass_rate": 1.0,
+      "platform": "Linux Docker on WSL2 / OpenJDK 17 / Maven",
+      "repo_commit": "3f7812139ada42be5d8b0e820355e2179cc53643",
+      "provenance_status": "passed",
+      "artifact_sha256": "b53de10172d1685c0ffc61623dfafe8346c26e322b1570bdb52b6182cd6cc7fb",
+      "evidence": "wip/qlexpress-fullrepro-001/filter/reference_score_final.json"
+    },
+    "dummy_gate": "0/87 passed with valid Linux Docker provenance and equal non-empty JAR hashes; evidence wip/qlexpress-fullrepro-001/filter/dummy_score_judge_v4.json"
+  },
+  "candidate_evaluation": {
+    "run_id": "codex-qlexpress-fullrepro-001-specv1-20260829-004",
+    "model_label": "codex",
+    "run_dir": "candidate-runs/codex-qlexpress-fullrepro-001-specv1-20260829-004",
+    "score_result": "candidate-runs/codex-qlexpress-fullrepro-001-specv1-20260829-004/score_result.json",
+    "cleanroom": true,
+    "public_packet_only": true,
+    "frozen_candidate_rescored": true,
+    "fairness_filter_iter": 3,
+    "user_override": true,
+    "platform": "Linux Docker on WSL2 / OpenJDK 17 / Maven",
+    "runner": "harness/score_java.py with JavaRunner and Maven Surefire",
+    "passed": 81,
+    "failed": 6,
+    "total": 87,
+    "pass_rate": 0.9310344827586207,
+    "valid": true,
+    "admissible": true,
+    "provenance_status": "passed",
+    "candidate_jar_sha256": "ab07b8e0efe55a15ddcda97fe9e61a746caa1025b33a1fa7f200e78584e10274",
+    "resolved_jar_sha256": "ab07b8e0efe55a15ddcda97fe9e61a746caa1025b33a1fa7f200e78584e10274",
+    "per_layer": {
+      "atomic": {
+        "passed": 45,
+        "failed": 0,
+        "total": 45,
+        "pass_rate": 1.0
+      },
+      "integration": {
+        "passed": 36,
+        "failed": 6,
+        "total": 42,
+        "pass_rate": 0.8571428571428571
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "pass_rate": null
+      }
+    }
+  },
+  "candidate_score": 0.9310344827586207,
+  "candidate_score_valid": true,
+  "reference_score": 1.0,
+  "integration_gap": {
+    "atomic_rate": 1.0,
+    "integration_rate": 0.8571428571428571,
+    "system_e2e_rate": null,
+    "integration_e2e_rate": 0.8571428571428571,
+    "raw_gap": 0.1428571428571429,
+    "rate_gap": 0.1428571428571429,
+    "adjusted_gap": 0.1428571428571429,
+    "eligible_non_atomic_tests": 42,
+    "dependency_mapped_non_atomic_tests": 42,
+    "conditional_non_atomic_rate": 0.8571428571428571,
+    "true_gap_event_count": 6
+  },
+  "true_gap_events": [
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::customOperatorPrecedenceComposesWithBuiltInOperator",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "arithmeticHonorsMultiplicationPrecedence"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "QLX-EXT-008"
+      ]
+    },
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::shortCircuitedTraceContainsUnevaluatedNode",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "logicalAndShortCircuitsByDefault"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency",
+      "spec_clauses": [
+        "QLX-EXEC-014",
+        "QLX-CACHE-010"
+      ]
+    },
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::extensionFunctionDispatchesOnBoundReceiver",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "arithmeticHonorsMultiplicationPrecedence"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "QLX-EXT-011"
+      ]
+    },
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::aliasObjectExposesAnnotatedObjectName",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "lowercaseClassAliasIsRejected"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency",
+      "spec_clauses": [
+        "QLX-EXEC-004",
+        "QLX-SEC-001"
+      ]
+    },
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::openSecurityAgreesAcrossObjectAndAliasContexts",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "defaultClassSupplierLoadsKnownClassAndReturnsNullForMissingClass"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency",
+      "spec_clauses": [
+        "QLX-EXEC-003",
+        "QLX-EXEC-004",
+        "QLX-SEC-001",
+        "QLX-INV-009"
+      ]
+    },
+    {
+      "failed_test": "integration::GeneratedIntegrationOracleTest::attachmentsReachCustomFunctionWithoutBecomingVariables",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "executionOptionsBuilderRetainsAllChoices",
+        "scriptFunctionReturnsComputedValue"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "api-surface",
+      "spec_clauses": [
+        "QLX-OPT-010",
+        "QLX-EXT-001"
+      ]
+    }
+  ],
+  "labels": [
+    "generated-only-oracle",
+    "fairness-corrected",
+    "user-override",
+    "full-spec-behavior-coverage",
+    "composition-signal",
+    "true-integration-gap",
+    "non-saturated"
+  ],
+  "weaknesses": [
+    {
+      "dimension": "workflow-completeness",
+      "description": "The parser/dispatcher does not compose a registered custom operator at the declared precedence with built-in multiplication and does not route member-call syntax to a bound extension receiver.",
+      "affected_tests": 2,
+      "layer": "integration"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "Short-circuited execution returns the right value but its trace omits an unevaluated branch node, so result and trace projections disagree.",
+      "affected_tests": 1,
+      "layer": "integration"
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "description": "QLAlias object and field projections are not honored, causing alias-object execution and open-security agreement across object views to diverge.",
+      "affected_tests": 2,
+      "layer": "integration"
+    },
+    {
+      "dimension": "api-surface",
+      "description": "QContext omits the documented no-argument attachment() projection, so per-execution attachments cannot reach custom callbacks without becoming variables.",
+      "affected_tests": 1,
+      "layer": "integration"
+    }
+  ],
+  "judge": {
+    "status": "QUALIFIED",
+    "verdict": "QUALIFIED",
+    "route": "QUALIFIED",
+    "instrument_valid": true,
+    "gate_a0": "PASS",
+    "gate_a": "PASS (12/12 exact-heading mapping spot-checks derivable)",
+    "gate_b": "PASS (all six failures are spec-derived observable candidate gaps)",
+    "gate_c": "PASS (12/12 generated-only cross-layer samples are spec-driven and behavioral)",
+    "gate_d": "FULL",
+    "gate_e": "PASS (fresh lint, fixed-HEAD reference 87/87, STATIC_VALID, ledger PASS)",
+    "gate_f": "PASS",
+    "fairness_issue": null,
+    "diagnosis_report": "wip/qlexpress-fullrepro-001/judge/diagnosis_report_v4.md"
+  },
+  "source_meta": {
+    "first_release": "2018-01-04",
+    "first_release_source": "Maven Central official search API: earliest indexed com.alibaba:QLExpress artifact is 3.1.7, published 2018-01-04T07:30:43Z",
+    "project_open_source_year": 2012,
+    "project_open_source_year_source": "https://github.com/alibaba/QLExpress/blob/main/README-EN-source.adoc",
+    "qlexpress4_first_release": "2025-03-02",
+    "qlexpress4_first_release_source": "Maven Central official search API: earliest indexed com.alibaba:qlexpress4 artifact is 4.0.0-beta.5, published 2025-03-02T13:33:12Z",
+    "github_stars": 5615,
+    "github_stars_checked": "2026-08-29",
+    "github_stars_collected_at": "2026-08-29T17:00:00+08:00",
+    "github_url": "https://github.com/alibaba/QLExpress",
+    "github_stars_source": "https://api.github.com/repos/alibaba/QLExpress",
+    "loc": 18605,
+    "loc_definition": "nonblank noncomment Java source lines under src/main/java at repo_commit; 235 production Java files",
+    "pypi_monthly_downloads": null,
+    "pypi_monthly_downloads_note": "not applicable; QLExpress is published to Maven repositories, not PyPI",
+    "package_registry": "Maven Central",
+    "maven_coordinates": "com.alibaba:qlexpress4",
+    "test_files": 88,
+    "test_functions": 253
+  },
+  "validation": {
+    "status": "QUALIFIED",
+    "preflight": "passed",
+    "reference": "87/87",
+    "dummy": "0/87",
+    "gate_a0": "LINT_PASS",
+    "gate_a": "passed",
+    "gate_b": "passed",
+    "gate_c": "passed",
+    "gate_d": "FULL",
+    "gate_f": "passed",
+    "gate_e": "passed",
+    "metadata_sync_check": "0/1 tasks stale",
+    "verify_task": "STATIC_VALID",
+    "validate_ledger": "PASS",
+    "atomic_positive_share": 0.7777777777777778,
+    "no_check_count": 0,
+    "depends_on_coverage": 1.0
+  },
+  "taxonomy": {
+    "atomic::GeneratedAtomicOracleTest::arithmeticHonorsMultiplicationPrecedence": "atomic",
+    "atomic::GeneratedAtomicOracleTest::groupingOverridesArithmeticPrecedence": "atomic",
+    "atomic::GeneratedAtomicOracleTest::preciseModeUsesDecimalSemantics": "atomic",
+    "atomic::GeneratedAtomicOracleTest::stringConcatenationWorksWithMixedOperands": "atomic",
+    "atomic::GeneratedAtomicOracleTest::scriptInterpolationEvaluatesSelectorExpression": "atomic",
+    "atomic::GeneratedAtomicOracleTest::disabledInterpolationPreservesSelectorText": "atomic",
+    "atomic::GeneratedAtomicOracleTest::listLiteralPreservesOrder": "atomic",
+    "atomic::GeneratedAtomicOracleTest::indexingReadsListElement": "atomic",
+    "atomic::GeneratedAtomicOracleTest::slicingReturnsContiguousSubsequence": "atomic",
+    "atomic::GeneratedAtomicOracleTest::conditionalReturnsSelectedBranch": "atomic",
+    "atomic::GeneratedAtomicOracleTest::whileLoopAccumulatesState": "atomic",
+    "atomic::GeneratedAtomicOracleTest::classicForLoopAccumulatesState": "atomic",
+    "atomic::GeneratedAtomicOracleTest::forEachLoopConsumesListInOrder": "atomic",
+    "atomic::GeneratedAtomicOracleTest::breakStopsLoopAtMatchingValue": "atomic",
+    "atomic::GeneratedAtomicOracleTest::continueSkipsMatchingIteration": "atomic",
+    "atomic::GeneratedAtomicOracleTest::scriptFunctionReturnsComputedValue": "atomic",
+    "atomic::GeneratedAtomicOracleTest::logicalOrShortCircuitsByDefault": "atomic",
+    "atomic::GeneratedAtomicOracleTest::logicalAndShortCircuitsByDefault": "atomic",
+    "atomic::GeneratedAtomicOracleTest::falseLogicalAndSkipsRightOperandSideEffect": "atomic",
+    "atomic::GeneratedAtomicOracleTest::defaultExecutionDoesNotPolluteMap": "atomic",
+    "atomic::GeneratedAtomicOracleTest::pollutionOptionWritesGlobalAssignment": "atomic",
+    "atomic::GeneratedAtomicOracleTest::templateExecutionSubstitutesExpressions": "atomic",
+    "atomic::GeneratedAtomicOracleTest::defaultExecutionOptionsExposeDisabledPolicy": "atomic",
+    "atomic::GeneratedAtomicOracleTest::executionOptionsBuilderRetainsAllChoices": "atomic",
+    "atomic::GeneratedAtomicOracleTest::defaultInitializationOptionsExposeContractValues": "atomic",
+    "atomic::GeneratedAtomicOracleTest::initializationBuilderRetainsDelimiterAndMode": "atomic",
+    "atomic::GeneratedAtomicOracleTest::invalidSelectorStartIsRejected": "atomic",
+    "atomic::GeneratedAtomicOracleTest::emptySelectorEndIsRejected": "atomic",
+    "atomic::GeneratedAtomicOracleTest::malformedScriptRaisesStructuredSyntaxException": "atomic",
+    "atomic::GeneratedAtomicOracleTest::nonBooleanConditionRaisesRuntimeException": "atomic",
+    "atomic::GeneratedAtomicOracleTest::positiveTimeoutRaisesTimeoutException": "atomic",
+    "atomic::GeneratedAtomicOracleTest::malformedSerializableCacheIsRejected": "atomic",
+    "atomic::GeneratedAtomicOracleTest::missingServiceMethodRegistrationTargetIsRejected": "atomic",
+    "atomic::GeneratedAtomicOracleTest::convenienceCoordinatesAreOneBasedDiagnosticPositions": "atomic",
+    "atomic::GeneratedAtomicOracleTest::dependencyInspectionExcludesLocals": "atomic",
+    "atomic::GeneratedAtomicOracleTest::functionInspectionExcludesScriptDefinitions": "atomic",
+    "atomic::GeneratedAtomicOracleTest::allowAllStrategyAcceptsArithmeticOperator": "atomic",
+    "atomic::GeneratedAtomicOracleTest::whitelistStrategyRejectsUnlistedOperator": "atomic",
+    "atomic::GeneratedAtomicOracleTest::blacklistStrategyRejectsListedOperator": "atomic",
+    "atomic::GeneratedAtomicOracleTest::defaultClassSupplierLoadsKnownClassAndReturnsNullForMissingClass": "atomic",
+    "atomic::GeneratedAtomicOracleTest::defaultCheckOptionsAllowFunctionsAndOperators": "atomic",
+    "atomic::GeneratedAtomicOracleTest::checkOptionsBuilderRetainsRestrictions": "atomic",
+    "atomic::GeneratedAtomicOracleTest::lowercaseClassAliasIsRejected": "atomic",
+    "atomic::GeneratedAtomicOracleTest::nullAvoidanceProjectsMissingMemberAsNull": "atomic",
+    "atomic::GeneratedAtomicOracleTest::arrayLengthLimitRejectsOversizedAllocation": "atomic",
+    "integration::GeneratedIntegrationOracleTest::serializableCacheMatchesDirectExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::loadedCacheMatchesDirectExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::loadedCacheIsReusableAcrossContexts": "integration",
+    "integration::GeneratedIntegrationOracleTest::loadedCacheRetainsPortableMetadata": "integration",
+    "integration::GeneratedIntegrationOracleTest::clearingCompileCachePreservesResult": "integration",
+    "integration::GeneratedIntegrationOracleTest::clearingCompileCachePreservesDependenciesAndResult": "integration",
+    "integration::GeneratedIntegrationOracleTest::pollutedMapAgreesWithFinalResult": "integration",
+    "integration::GeneratedIntegrationOracleTest::pollutedMapAgreesWithCompoundAssignmentResult": "integration",
+    "integration::GeneratedIntegrationOracleTest::nonPollutedMapRemainsUnchangedWhileResultUsesLocalValue": "integration",
+    "integration::GeneratedIntegrationOracleTest::nonPollutedMapOmitsNewLocalAssignment": "integration",
+    "integration::GeneratedIntegrationOracleTest::registeredJavaFunctionDispatchesDuringExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::varargsFunctionReceivesAllArgumentsInOrder": "integration",
+    "integration::GeneratedIntegrationOracleTest::serviceMethodRegistrationDispatchesToTargetObject": "integration",
+    "integration::GeneratedIntegrationOracleTest::annotatedStaticFunctionRegistersEveryDeclaredName": "integration",
+    "integration::GeneratedIntegrationOracleTest::customBinaryOperatorFeedsExpressionEvaluation": "integration",
+    "integration::GeneratedIntegrationOracleTest::customOperatorPrecedenceComposesWithBuiltInOperator": "integration",
+    "integration::GeneratedIntegrationOracleTest::replacingDefaultOperatorChangesLaterDispatch": "integration",
+    "integration::GeneratedIntegrationOracleTest::macroReadsCallerContextDuringExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::replacedMacroAffectsOnlyLaterExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::aliasesComposeWithControlFlowAndFunctionNames": "integration",
+    "integration::GeneratedIntegrationOracleTest::registeredFunctionAgreesAcrossDirectCachedAndSerializableExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::registeredOperatorAgreesAcrossDirectCachedAndSerializableExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::templateAndDirectExecutionAgreeOnExpressionValue": "integration",
+    "integration::GeneratedIntegrationOracleTest::inspectedVariablesAreExactlyThoseRequiredForExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::inspectedFunctionsAreExactlyThoseRequiredForExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::validatedAllowedScriptExecutesWithSameOperators": "integration",
+    "integration::GeneratedIntegrationOracleTest::malformedScriptFailsBothValidationAndExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::malformedFunctionFailsBothValidationAndExecution": "integration",
+    "integration::GeneratedIntegrationOracleTest::tracePointAndExecutionTraceShareRootCoordinates": "integration",
+    "integration::GeneratedIntegrationOracleTest::multilineTraceTreesShareSourceLineCoordinates": "integration",
+    "integration::GeneratedIntegrationOracleTest::shortCircuitedTraceContainsUnevaluatedNode": "integration",
+    "integration::GeneratedIntegrationOracleTest::extensionFunctionDispatchesOnBoundReceiver": "integration",
+    "integration::GeneratedIntegrationOracleTest::aliasObjectExposesAnnotatedObjectName": "integration",
+    "integration::GeneratedIntegrationOracleTest::objectContextSupportsPublicFieldAndMethodUse": "integration",
+    "integration::GeneratedIntegrationOracleTest::openSecurityAgreesAcrossObjectAndAliasContexts": "integration",
+    "integration::GeneratedIntegrationOracleTest::blacklistSecurityRejectsMethodAcrossObjectAndAliasContexts": "integration",
+    "integration::GeneratedIntegrationOracleTest::attachmentsReachCustomFunctionWithoutBecomingVariables": "integration",
+    "integration::GeneratedIntegrationOracleTest::nullAvoidancePropagatesThroughComparison": "integration",
+    "integration::GeneratedIntegrationOracleTest::cachedExecutionUsesFreshContextEachTime": "integration",
+    "integration::GeneratedIntegrationOracleTest::rejectedJavaMemberAccessRaisesRuntimeException": "integration",
+    "integration::GeneratedIntegrationOracleTest::userDefinedCallbackProjectsNamedBusinessError": "integration",
+    "integration::GeneratedIntegrationOracleTest::wrappedCallbackFailureRetainsOriginatingThrowable": "integration"
+  },
+  "taxonomy_unit": "base_test_functions",
+  "stats": {
+    "atomic": 45,
+    "integration": 42,
+    "system_e2e": 0
+  }
+}

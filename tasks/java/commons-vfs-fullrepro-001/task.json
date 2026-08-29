@@ -1,0 +1,497 @@
+{
+  "instance_id": "commons-vfs-fullrepro-001",
+  "status": "QUALIFIED",
+  "judge_verdict": "QUALIFIED",
+  "repo": "apache/commons-vfs",
+  "repo_url": "https://github.com/apache/commons-vfs",
+  "repo_commit": "9cb38cea8cb72778d461e79d7483a38047865480",
+  "source_path": "repo/commons-vfs",
+  "language": "java",
+  "package_name": "org.apache.commons.vfs2",
+  "primary_module": "commons-vfs2",
+  "maven_coordinates": "org.apache.commons:commons-vfs2",
+  "program_file": "pom.xml",
+  "spec_version": "v4",
+  "oracle_version": "2026-08-27T22:40:39+08:00",
+  "oracle": {
+    "count": 100,
+    "count_unit": "base_test_functions",
+    "base_function_count": 100,
+    "source": "upstream_plus_generated",
+    "upstream_rewritten_retained": 75,
+    "generated_retained": 25,
+    "maven_pom": "oracle/pom.xml",
+    "requirements": "oracle/requirements.txt",
+    "scorer_isolation": "Maven resolves org.apache.commons:commons-vfs2 from a run-specific isolated local repository populated only by the candidate or exact pinned reference checkout; every score-bearing batch and provenance probe runs in Docker with network disabled, and the resolved JAR SHA-256 must equal the candidate artifact SHA-256 without oracle replacement.",
+    "reference_score": {
+      "passed": 100,
+      "failed": 0,
+      "total": 100,
+      "pass_rate": 1.0,
+      "atomic": {
+        "passed": 46,
+        "failed": 0,
+        "total": 46
+      },
+      "integration": {
+        "passed": 54,
+        "failed": 0,
+        "total": 54
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0
+      },
+      "valid": true,
+      "platform": "Linux Docker on WSL2",
+      "repo_commit": "9cb38cea8cb72778d461e79d7483a38047865480",
+      "errors": 0,
+      "warnings": 0,
+      "provenance": {
+        "coordinate": "org.apache.commons:commons-vfs2",
+        "candidate_sha256": "d54f090e6c0c367b648cf8b5d8a07db54e3f8c5085483c6971e9556dc2b925b0",
+        "resolved_sha256": "d54f090e6c0c367b648cf8b5d8a07db54e3f8c5085483c6971e9556dc2b925b0",
+        "status": "passed"
+      },
+      "evidence": "wip/commons-vfs-fullrepro-001/filter/reference_score.json",
+      "graduation_evidence": "wip/commons-vfs-fullrepro-001/filter/graduated_reference_score.json",
+      "graduation_gate_result": {
+        "accepted": true,
+        "valid": true,
+        "total": 100,
+        "pass_rate": 1.0,
+        "errors": 0,
+        "warnings": 0,
+        "provenance_status": "passed",
+        "candidate_sha256": "2b6421be7059ac606f38e42a9973adfc088a86c461ecb960f448933fde7cd3ba",
+        "resolved_sha256": "2b6421be7059ac606f38e42a9973adfc088a86c461ecb960f448933fde7cd3ba",
+        "failure_class": null,
+        "failure_detail": null,
+        "score_json_sha256": "41ba0438a7e841a8c601ca3782543f31a9de9d6ab9b3e4776e00cfa26055b997",
+        "attempts": [
+          {
+            "attempt": 0,
+            "result": "Maven Central TLS handshake failure during candidate install",
+            "score_json": "wip/commons-vfs-fullrepro-001/filter/graduated_reference_score_attempt0_tls.json",
+            "score_json_sha256": "d3d2c1e1db199d97f7b27397187a94f38e09a1b72328a73bd71799e775aa2b10",
+            "candidate_install_log": "wip/commons-vfs-fullrepro-001/filter/graduated_reference_candidate_install_attempt0_tls.log",
+            "candidate_install_log_sha256": "cbc4de36e6919961cb18fec2c9e9950f8599daae614f667a27815b15ddd24ffb"
+          },
+          {
+            "attempt": 1,
+            "result": "TLS recovered; candidate install timed out while downloading later Hadoop reactor dependencies",
+            "score_json": "wip/commons-vfs-fullrepro-001/filter/graduated_reference_score_attempt1_timeout.json",
+            "score_json_sha256": "9e429fc691e2417421ebf88108036d40bbcb82c5efc7ae5d904e4141b8dd0790",
+            "candidate_install_log": "wip/commons-vfs-fullrepro-001/filter/graduated_reference_candidate_install_attempt1_timeout.log",
+            "candidate_install_log_sha256": "1ca3dd0406b18082ef876ebf191cae009de531f6f50dedd2fcc1315309c3a17c"
+          }
+        ],
+        "retry_count": 1,
+        "focused_reference": {
+          "solution_dir": "wip/commons-vfs-fullrepro-001/reference-candidate",
+          "run_dir": "wip/commons-vfs-fullrepro-001/graduated-reference-run-focused",
+          "source_audit": "316/316 pinned commons-vfs2 src/main files match by relative path and SHA-256, including 311 production Java sources and five resources/scripts",
+          "pom_sha256": "d85e3893abee02545a397627145586420a8baaebf0a746efe92263a0ac6b69f9",
+          "coordinate": "org.apache.commons:commons-vfs2",
+          "version": "2.11.0-SNAPSHOT",
+          "module_compile_dependencies": 11,
+          "dependency_identity_optional_match": true,
+          "valid": true,
+          "platform": "Linux Docker on WSL2",
+          "passed": 100,
+          "failed": 0,
+          "total": 100,
+          "atomic": "46/46",
+          "integration": "54/54",
+          "errors": 0,
+          "warnings": 0,
+          "candidate_install_log_sha256": "9841632cfee5811b74c3b950cd470c444835ed6aa42116990224bab91b0d85d0"
+        }
+      }
+    },
+    "dummy_gate": {
+      "passed": 0,
+      "failed": 100,
+      "total": 100,
+      "valid": true,
+      "platform": "Linux Docker on WSL2",
+      "errors": 0,
+      "warnings": 0,
+      "provenance": {
+        "candidate_sha256": "19c1085fb8468d4d05adf9c0f246c48446203b3b1712947970807ac74854ea8b",
+        "resolved_sha256": "19c1085fb8468d4d05adf9c0f246c48446203b3b1712947970807ac74854ea8b",
+        "status": "passed"
+      },
+      "evidence": "wip/commons-vfs-fullrepro-001/filter/full100_dummy_score.json"
+    }
+  },
+  "candidate_evaluation": {
+    "model": "codex-gpt5.6",
+    "run_id": "codex-commons-vfs-fullrepro-001-specv4-20260827-003",
+    "run_dir": "candidate-runs/codex-commons-vfs-fullrepro-001-specv4-20260827-003",
+    "solution_dir": "candidate-runs/codex-commons-vfs-fullrepro-001-specv4-20260827-003/solution",
+    "score_result": "candidate-runs/codex-commons-vfs-fullrepro-001-specv4-20260827-003/score_result.json",
+    "cleanroom": true,
+    "public_packet_only": true,
+    "starter_present": false,
+    "source_repo_note_present": false,
+    "platform": "Linux Docker on WSL2",
+    "runner": "harness.runners.java.JavaRunner",
+    "passed": 97,
+    "failed": 3,
+    "total": 100,
+    "pass_rate": 0.97,
+    "collection_error": 0,
+    "skipped": 0,
+    "unknown_taxonomy_entries": 0,
+    "valid": true,
+    "provenance": {
+      "coordinate": "org.apache.commons:commons-vfs2",
+      "resolved_path": "/root/.m2/repository/org/apache/commons/commons-vfs2/2.11.0-SNAPSHOT/commons-vfs2-2.11.0-SNAPSHOT.jar",
+      "candidate_sha256": "cf5e16efa3bcadc249bac0318655866dc47ae50d364305895dfecb7cc703691b",
+      "resolved_sha256": "cf5e16efa3bcadc249bac0318655866dc47ae50d364305895dfecb7cc703691b",
+      "status": "passed"
+    },
+    "per_layer": {
+      "atomic": {
+        "passed": 46,
+        "failed": 0,
+        "total": 46,
+        "pass_rate": 1.0
+      },
+      "integration": {
+        "passed": 51,
+        "failed": 3,
+        "total": 54,
+        "pass_rate": 0.9444444444444444
+      },
+      "system_e2e": {
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "pass_rate": null
+      }
+    }
+  },
+  "candidate_score": 0.97,
+  "candidate_score_valid": true,
+  "reference_score": 1.0,
+  "weaknesses": [
+    {
+      "dimension": "workflow-completeness",
+      "description": "The required TBZ2 TAR-over-BZIP2 pipeline omits BZIP2 decompression, so a valid TBZ2 entry remains imaginary and cannot expose its bytes.",
+      "affected_tests": 1,
+      "layer": "integration",
+      "root_test": "integration::GeneratedCoverageIntegrationTest::tbz2EntryMatchesTarBzip2Composition"
+    },
+    {
+      "dimension": "state-management",
+      "description": "The configured ZIP charset is retained in FileSystemOptions but is not propagated into archive entry-name decoding; CP437 input is decoded as UTF-8 and fails.",
+      "affected_tests": 1,
+      "layer": "integration",
+      "root_test": "integration::GeneratedCoverageIntegrationTest::configuredZipCharsetDecodesEntryNameAndContent"
+    },
+    {
+      "dimension": "atomic-behavior",
+      "description": "FileContent.write reverses receiver/source and target roles, attempting to read the target instead of copying receiver bytes into it and returning the transferred count.",
+      "affected_tests": 1,
+      "layer": "integration",
+      "root_test": "integration::GeneratedCoverageIntegrationTest::fileContentWriteReturnsCountAndCopiesEveryByte"
+    }
+  ],
+  "specific_weaknesses": [
+    {
+      "behavior": "TBZ2 composition",
+      "spec_clauses": [
+        "CVFS-ARCH-002",
+        "CVFS-ARCH-006",
+        "CVFS-XVIEW-006"
+      ],
+      "candidate_root": "Raw BZIP2 bytes are passed directly to the TAR parser.",
+      "reference_pass": true,
+      "fair": true
+    },
+    {
+      "behavior": "Configured ZIP charset",
+      "spec_clauses": [
+        "CVFS-ARCH-009"
+      ],
+      "candidate_root": "The CP437 option is stored but ignored by ZipInputStream construction.",
+      "reference_pass": true,
+      "fair": true
+    },
+    {
+      "behavior": "FileContent.write direction and return count",
+      "spec_clauses": [
+        "CVFS-CONT-017",
+        "CVFS-XVIEW-001"
+      ],
+      "candidate_root": "source.write(target) reads target and writes source rather than the documented source-to-target direction.",
+      "reference_pass": true,
+      "fair": true
+    }
+  ],
+  "integration_gap": {
+    "atomic_rate": 1.0,
+    "integration_rate": 0.9444444444444444,
+    "system_e2e_rate": null,
+    "integration_e2e_rate": 0.9444444444444444,
+    "rate_gap": 0.05555555555555558,
+    "dependency_adjusted_integration_e2e_rate": 0.9285714285714286,
+    "adjusted_gap": 0.0714285714285714,
+    "dependency_eligible_tests": 42,
+    "dependency_declared_tests": 42,
+    "true_gap_event_count": 3,
+    "cascade_event_count": 0
+  },
+  "true_gap_events": [
+    {
+      "failed_test": "integration::GeneratedCoverageIntegrationTest::tbz2EntryMatchesTarBzip2Composition",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "atomic::ContentAtomicTest::stringViewUsesRequestedCharset"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness"
+    },
+    {
+      "failed_test": "integration::GeneratedCoverageIntegrationTest::configuredZipCharsetDecodesEntryNameAndContent",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "atomic::NameAndTypeAtomicTest::nonRootBaseNameIsDecoded",
+        "atomic::ContentAtomicTest::stringViewUsesRequestedCharset"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "state-management"
+    },
+    {
+      "failed_test": "integration::GeneratedCoverageIntegrationTest::fileContentWriteReturnsCountAndCopiesEveryByte",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "atomic::ContentAtomicTest::committedBytesDriveWholeContentViews"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "atomic-behavior"
+    }
+  ],
+  "labels": [
+    "mixed-source-oracle",
+    "full-spec-behavior-coverage",
+    "high-score-non-saturated",
+    "composition-signal",
+    "true-integration-gap",
+    "no-cascade"
+  ],
+  "coverage": {
+    "verdict": "FULL",
+    "uncovered_core_sections": [],
+    "map_rows": 100,
+    "physical_tests": 100,
+    "covered_rows": 100,
+    "mapped_section_counts": {
+      "Manager, Providers, and Resolution": 13,
+      "Canonical Names and Hierarchy": 22,
+      "Content, Mutation, and Random Access": 33,
+      "RAM and Local Provider Behavior": 13,
+      "Layered Archive Behavior": 15,
+      "Cache Identity and Lifecycle": 12,
+      "Error Semantics": 14,
+      "Cross-View Invariants": 34
+    },
+    "state_model": "FULL via cross-mapped coverage of all six public projections",
+    "cross_view_invariants": "CVFS-XVIEW-001 through CVFS-XVIEW-010 each have at least two integration links",
+    "n_a_sections": [
+      "Product Overview",
+      "Non-Goals",
+      "Representative Workflows and its three H3 examples",
+      "Public Interface and its three H3 subsections",
+      "Appendix A: Environment",
+      "Appendix B: Assessment Notes"
+    ]
+  },
+  "caveats": [
+    "Two retained root-reactor graduation attempts encountered Maven Central TLS failure and later unrelated Hadoop dependency timeout before provenance/tests; these are non-task environment caveats. The authoritative focused current-HEAD commons-vfs2 module snapshot matched 316/316 src/main files by relative path and SHA-256 and passed valid Linux 100/100 with zero errors/warnings and equal-hash provenance.",
+    "The candidate has 49 production Java files versus 311 upstream, but its score is not 100%; the saturation heuristic does not apply.",
+    "GitHub stars are a point-in-time value from the official repository page and may change after the recorded checked_at timestamp.",
+    "The State Model is a projection summary without a separate clause family; coverage is demonstrated through its mapped behavior and Cross-View projections."
+  ],
+  "judge_gates": {
+    "java_preflight": "PASS",
+    "anti_cheat": "CLEAN",
+    "reference": "PASS (valid Linux 100/100, equal non-empty provenance hashes)",
+    "gate_a0": "PASS (fresh on-disk LINT_PASS newer than all seven Java sources)",
+    "gate_a": "PASS (100/100 full review plus 15-row spot-check)",
+    "gate_b": "PASS (three genuine documented behavioral failures; no verifier/spec/fairness issue)",
+    "gate_c": "N/A (upstream_plus_generated); supplemental generated sample PASS 6/6",
+    "gate_d": "FULL",
+    "gate_e": "PASS (focused pinned reference; valid Linux 100/100, zero errors/warnings, equal non-empty provenance hashes)",
+    "gate_f": "PASS"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "route": "QUALIFIED",
+    "instrument_valid": true,
+    "anti_cheat": "CLEAN",
+    "gate_a0": "PASS",
+    "gate_a": "PASS",
+    "gate_b": "PASS",
+    "gate_c": "N/A (mixed source); supplemental sample PASS 6/6",
+    "gate_d": "FULL",
+    "gate_e": "PASS (focused current-HEAD module snapshot 316/316 equal; valid Linux 100/100, zero errors/warnings, equal non-empty provenance hashes; sync/check, STATIC_VALID, and zero-warning ledger PASS)",
+    "gate_f": "PASS",
+    "diagnosis_report": "wip/commons-vfs-fullrepro-001/judge/diagnosis_report_v4.md"
+  },
+  "routing": {
+    "current_state": "QUALIFIED",
+    "pipeline_state": "QUALIFIED",
+    "semantic_preliminary_verdict": "QUALIFIED",
+    "next_action": null,
+    "next_required_action": null,
+    "terminal": true
+  },
+  "source_meta": {
+    "repo": "apache/commons-vfs",
+    "github_url": "https://github.com/apache/commons-vfs",
+    "repo_commit": "9cb38cea8cb72778d461e79d7483a38047865480",
+    "primary_module": "commons-vfs2",
+    "maven_coordinates": "org.apache.commons:commons-vfs2",
+    "package_registry": "Maven Central",
+    "loc": 18685,
+    "loc_definition": "nonblank/noncomment Java source lines under commons-vfs2/src/main/java at repo_commit",
+    "production_files": 311,
+    "pypi_monthly_downloads": null,
+    "pypi_monthly_downloads_note": "N/A; Commons VFS is a Java/Maven project published through Maven Central, not PyPI.",
+    "first_release": "2006-12-09",
+    "first_release_version": "1.0",
+    "first_release_tag": "rel/commons-vfs-1.0",
+    "first_release_tag_commit": "ff7dd9697fac9856c8acae2ab06031f83f70e33c",
+    "first_release_source": "Local git tag rel/commons-vfs-1.0: RELEASE_NOTES.txt says '2006-12-09 commons-vfs 1.0' and 'this is the first release'; core/pom.xml declares org.apache.commons:commons-vfs:1.0.",
+    "github_stars": 251,
+    "github_stars_checked_at": "2026-08-28T00:07:36+08:00",
+    "github_stars_source": "https://github.com/apache/commons-vfs"
+  },
+  "implementation_size": {
+    "upstream": {
+      "production_java_files": 311,
+      "nonblank_noncomment_lines": 18685,
+      "source_root": "commons-vfs2/src/main/java",
+      "repo_commit": "9cb38cea8cb72778d461e79d7483a38047865480"
+    },
+    "candidate": {
+      "production_java_files": 49,
+      "physical_lines": 280,
+      "nonblank_noncomment_lines": 280,
+      "source_root": "candidate-runs/codex-commons-vfs-fullrepro-001-specv4-20260827-003/solution/src/main/java",
+      "measurement": "All 49 production .java files were read line-by-line. Physical lines are newline-delimited source lines; NBNC removes blank lines plus line/block-comment-only content. The candidate sources are highly compact and contain no blank or comment-only lines, so both counts are 280."
+    }
+  },
+  "stats": {
+    "atomic": 46,
+    "integration": 54,
+    "system_e2e": 0
+  },
+  "taxonomy": {
+    "atomic::ContentAtomicTest::createFileBuildsParentsAndZeroLengthFile": "atomic",
+    "atomic::ContentAtomicTest::createFolderBuildsParents": "atomic",
+    "atomic::ContentAtomicTest::createFileRejectsExistingFolder": "atomic",
+    "atomic::ContentAtomicTest::createFolderRejectsExistingFile": "atomic",
+    "atomic::ContentAtomicTest::deletingMissingObjectReturnsFalse": "atomic",
+    "atomic::ContentAtomicTest::deletingFileReturnsTrueAndRemovesIt": "atomic",
+    "atomic::ContentAtomicTest::deletingNonEmptyRamFolderReturnsFalseAndPreservesChildren": "atomic",
+    "atomic::ContentAtomicTest::replaceOutputOverwritesExistingBytes": "atomic",
+    "atomic::ContentAtomicTest::appendOutputAddsAfterExistingBytes": "atomic",
+    "atomic::ContentAtomicTest::appendMaterializesMissingFile": "atomic",
+    "atomic::ContentAtomicTest::committedBytesDriveWholeContentViews": "atomic",
+    "atomic::ContentAtomicTest::stringViewUsesRequestedCharset": "atomic",
+    "atomic::ContentAtomicTest::independentInputStreamsHaveIndependentCursors": "atomic",
+    "atomic::ContentAtomicTest::emptyInputReturnsRepeatedEndOfFile": "atomic",
+    "atomic::ContentAtomicTest::randomReadSeeksWithoutChangingBytes": "atomic",
+    "atomic::ContentAtomicTest::randomWritePastEndZeroFillsGap": "atomic",
+    "atomic::ContentAtomicTest::randomSetLengthTruncatesContent": "atomic",
+    "atomic::ContentAtomicTest::negativeRandomSeekIsRejected": "atomic",
+    "atomic::ContentAtomicTest::ramRandomAccessInputReadsUnsignedFf": "atomic",
+    "atomic::GeneratedAtomicTest::standardManagerRegistersEveryScopedScheme": "atomic",
+    "atomic::GeneratedAtomicTest::unknownSchemeResolutionIsRejected": "atomic",
+    "atomic::GeneratedAtomicTest::relativeResolutionWithoutBaseIsRejected": "atomic",
+    "atomic::GeneratedAtomicTest::regularFileRejectsChildListing": "atomic",
+    "atomic::GeneratedAtomicTest::folderRejectsByteContent": "atomic",
+    "atomic::NameAndTypeAtomicTest::fileTypeFileHasContentOnly": "atomic",
+    "atomic::NameAndTypeAtomicTest::fileTypeFolderHasChildrenOnly": "atomic",
+    "atomic::NameAndTypeAtomicTest::fileNameConstantsDescribeCanonicalRoot": "atomic",
+    "atomic::NameAndTypeAtomicTest::rootBaseNameIsEmpty": "atomic",
+    "atomic::NameAndTypeAtomicTest::nonRootBaseNameIsDecoded": "atomic",
+    "atomic::NameAndTypeAtomicTest::ramDepthIncludesFileSystemNameLevel": "atomic",
+    "atomic::NameAndTypeAtomicTest::rootNameHasNoParent": "atomic",
+    "atomic::NameAndTypeAtomicTest::childNameParentIsImmediateContainer": "atomic",
+    "atomic::NameAndTypeAtomicTest::dotAndRepeatedSeparatorsNormalize": "atomic",
+    "atomic::NameAndTypeAtomicTest::rootEscapeIsRejected": "atomic",
+    "atomic::NameAndTypeAtomicTest::ramPathDecodesWhileUriRetainsEscaping": "atomic",
+    "atomic::NameAndTypeAtomicTest::relativeNameRoundTrips": "atomic",
+    "atomic::NameAndTypeAtomicTest::fileSystemScopeResolvesAbsolutePath": "atomic",
+    "atomic::NameAndTypeAtomicTest::childScopeAcceptsDirectChild": "atomic",
+    "atomic::NameAndTypeAtomicTest::childScopeRejectsDeepDescendant": "atomic",
+    "atomic::NameAndTypeAtomicTest::descendentScopeRejectsSelf": "atomic",
+    "atomic::NameAndTypeAtomicTest::descendentOrSelfAcceptsSelf": "atomic",
+    "atomic::NameAndTypeAtomicTest::ancestryUsesCanonicalPaths": "atomic",
+    "atomic::NameAndTypeAtomicTest::resolutionDoesNotMaterializeState": "atomic",
+    "atomic::NameAndTypeAtomicTest::randomAccessReadModeRequestsReadOnly": "atomic",
+    "atomic::NameAndTypeAtomicTest::randomAccessReadWriteModeRequestsBoth": "atomic",
+    "atomic::NameAndTypeAtomicTest::randomAccessModeConvertsNioAccess": "atomic",
+    "integration::GeneratedCoverageIntegrationTest::randomAccessCommitAgreesAcrossEquivalentContentViews": "integration",
+    "integration::GeneratedCoverageIntegrationTest::managerObjectAndFileSystemResolutionAgree": "integration",
+    "integration::GeneratedCoverageIntegrationTest::jarAttributeNamesMapAndSelectedEntryAgree": "integration",
+    "integration::GeneratedCoverageIntegrationTest::softCachePreservesLiveIdentityUntilRemoval": "integration",
+    "integration::GeneratedCoverageIntegrationTest::weakCachePreservesLiveIdentityUntilFileSystemClear": "integration",
+    "integration::GeneratedCoverageIntegrationTest::manualStrategyKeepsExistenceUntilExplicitRefresh": "integration",
+    "integration::GeneratedCoverageIntegrationTest::onResolveStrategyRefreshesWhenManagerResolvesAgain": "integration",
+    "integration::GeneratedCoverageIntegrationTest::onCallStrategyRefreshesExistingObjectReads": "integration",
+    "integration::GeneratedCoverageIntegrationTest::closeFileSystemReleasesIdentityAndAllowsFreshResolution": "integration",
+    "integration::GeneratedCoverageIntegrationTest::closedManagerStateDoesNotLeakIntoFreshManager": "integration",
+    "integration::GeneratedCoverageIntegrationTest::tgzEntryMatchesTarGzipComposition": "integration",
+    "integration::GeneratedCoverageIntegrationTest::tbz2EntryMatchesTarBzip2Composition": "integration",
+    "integration::GeneratedCoverageIntegrationTest::nestedZipJarResolvesInnermostEntryAndImmediateBacking": "integration",
+    "integration::GeneratedCoverageIntegrationTest::nestedZipZipKeepsBothBackingLayersObservable": "integration",
+    "integration::GeneratedCoverageIntegrationTest::configuredZipCharsetDecodesEntryNameAndContent": "integration",
+    "integration::GeneratedCoverageIntegrationTest::defaultZipCharsetDecodesUtf8EntryNameAndContent": "integration",
+    "integration::GeneratedCoverageIntegrationTest::zipManagerAndProviderCapabilitiesAgree": "integration",
+    "integration::GeneratedCoverageIntegrationTest::optionSensitiveRelativeResolutionRetainsFileSystemOptions": "integration",
+    "integration::GeneratedCoverageIntegrationTest::fileContentWriteReturnsCountAndCopiesEveryByte": "integration",
+    "integration::GeneratedCoverageIntegrationTest::suppliedLocalBaseAndEquivalentUriResolveSameResource": "integration",
+    "integration::LocalArchiveIntegrationTest::localFileAndPathConversionsAgree": "integration",
+    "integration::LocalArchiveIntegrationTest::localVfsWriteMatchesPhysicalBytes": "integration",
+    "integration::LocalArchiveIntegrationTest::localRefreshObservesExternalChanges": "integration",
+    "integration::LocalArchiveIntegrationTest::localMoveMatchesPhysicalHierarchy": "integration",
+    "integration::LocalArchiveIntegrationTest::ramToLocalCopyMatchesPhysicalTree": "integration",
+    "integration::LocalArchiveIntegrationTest::localTimestampRoundTripsWithinProviderAccuracy": "integration",
+    "integration::LocalArchiveIntegrationTest::zipEntryExposesTypeSizeAndBytes": "integration",
+    "integration::LocalArchiveIntegrationTest::zipSynthesizesMissingParentFolders": "integration",
+    "integration::LocalArchiveIntegrationTest::zipStreamsRemainIndependent": "integration",
+    "integration::LocalArchiveIntegrationTest::zipEntryRejectsMutation": "integration",
+    "integration::LocalArchiveIntegrationTest::zipFileSystemReportsImmediateParentLayer": "integration",
+    "integration::LocalArchiveIntegrationTest::encodedBangResolvesLiteralArchiveEntryName": "integration",
+    "integration::LocalArchiveIntegrationTest::jarAttributesCombineMainAndEntryValues": "integration",
+    "integration::LocalArchiveIntegrationTest::malformedZipIsRejectedOnResolutionOrContent": "integration",
+    "integration::RamLifecycleIntegrationTest::committedWriteAgreesAcrossContentViews": "integration",
+    "integration::RamLifecycleIntegrationTest::createdTreeAgreesWithParentChildren": "integration",
+    "integration::RamLifecycleIntegrationTest::selectorsExposeFilesAcrossHierarchy": "integration",
+    "integration::RamLifecycleIntegrationTest::copyFromPreservesTreeAndBytes": "integration",
+    "integration::RamLifecycleIntegrationTest::moveTransfersStateAndInvalidatesSource": "integration",
+    "integration::RamLifecycleIntegrationTest::deleteAllRemovesDescendantsAndParent": "integration",
+    "integration::RamLifecycleIntegrationTest::ramRootIsPersistentFolder": "integration",
+    "integration::RamLifecycleIntegrationTest::equalRamOptionsShareFileSystem": "integration",
+    "integration::RamLifecycleIntegrationTest::distinctRamOptionsIsolateFileSystems": "integration",
+    "integration::RamLifecycleIntegrationTest::ramOptionsExposeConfiguredQuota": "integration",
+    "integration::RamLifecycleIntegrationTest::ramQuotaAcceptsLimitAndRejectsOverflow": "integration",
+    "integration::RamLifecycleIntegrationTest::strongCacheReturnsStoredObject": "integration",
+    "integration::RamLifecycleIntegrationTest::strongCachePutIfAbsentPreservesFirstObject": "integration",
+    "integration::RamLifecycleIntegrationTest::strongCacheRemoveAndClearDropMappings": "integration",
+    "integration::RamLifecycleIntegrationTest::nullCacheNeverRetainsMappings": "integration",
+    "integration::RamLifecycleIntegrationTest::providerRegistrationAndRemovalAreObservable": "integration",
+    "integration::RamLifecycleIntegrationTest::duplicateProviderRegistrationIsRejected": "integration",
+    "integration::RamLifecycleIntegrationTest::managerDefaultsAndPostInitReconfiguration": "integration",
+    "integration::RamLifecycleIntegrationTest::vfsSetAndResetReplaceSharedManager": "integration",
+    "integration::RamLifecycleIntegrationTest::closedFileObjectCanBeResolvedAndUsedAgain": "integration"
+  },
+  "taxonomy_unit": "base_test_functions"
+}

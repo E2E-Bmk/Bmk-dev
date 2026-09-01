@@ -1,0 +1,977 @@
+{
+  "schema": "spec2repo.go-root-map.v2",
+  "case": "pebble-go25-002",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A01PointWriteRead"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.Set",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.Set",
+        "pebble.DB.Get"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A02PointDelete"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.Delete",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.Delete",
+        "pebble.DB.Get"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A03BatchCountExcludesLogData"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.Batch.Count",
+        "pebble.Batch.LogData"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.Batch.Count",
+        "pebble.Batch.LogData"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A04SnapshotIsolation"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB",
+        "pebble.Snapshot"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB",
+        "pebble.Snapshot"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A05IteratorBounds"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.Iterator",
+        "pebble.IterOptions"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.Iterator",
+        "pebble.IterOptions"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A06RangeDeletion"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.DeleteRange",
+        "pebble.Iterator"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.DeleteRange",
+        "pebble.Iterator"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A07MergeOperand"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.Merge",
+        "pebble.Merger"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.Merge",
+        "pebble.Merger"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A08RejectsNonPositiveBuffer"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-ADMISSION",
+      "owners": [
+        "pebble.CommitFeedOptions",
+        "pebble.DB.SubscribeCommits"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-SUBSCRIPTION-AND-CLOSE"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A09RejectsInvertedBounds"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-ADMISSION",
+      "owners": [
+        "pebble.Comparer",
+        "pebble.CommitFeedOptions",
+        "pebble.DB.SubscribeCommits"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-SUBSCRIPTION-AND-CLOSE"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A10PreservesCancelledContext"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-ADMISSION",
+      "owners": [
+        "context.Context",
+        "pebble.DB.SubscribeCommits"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-SUBSCRIPTION-AND-CLOSE"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A11ExplicitCloseIsCleanAndIdempotent"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-ADMISSION",
+      "owners": [
+        "pebble.CommitFeed.Close",
+        "pebble.CommitFeed.Events",
+        "pebble.CommitFeed.Err"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-SUBSCRIPTION-AND-CLOSE"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A12ProjectsAndOwnsPointSet"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-OPERATION-PROJECTION",
+      "owners": [
+        "pebble.DB.Set",
+        "pebble.commitPipeline",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-OPERATION-PROJECTION"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A13DecodesSizedDeleteValue"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-OPERATION-PROJECTION",
+      "owners": [
+        "pebble.DB.DeleteSized",
+        "pebble.Batch",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-OPERATION-PROJECTION"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A14DecodesRangeKeySet"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-OPERATION-PROJECTION",
+      "owners": [
+        "pebble.DB.RangeKeySet",
+        "pebble.batchrepr.Reader",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-OPERATION-PROJECTION"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A15CopiesSubscriptionBounds"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-OWNERSHIP",
+      "owners": [
+        "pebble.CommitFeedOptions",
+        "pebble.Comparer",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RECEIVER-OWNERSHIP"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestPebbleV2A16FeedIsLiveNotHistorical"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-PUBLICATION-BOUNDARY",
+      "owners": [
+        "pebble.DB.Set",
+        "pebble.DB.SubscribeCommits",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-PUBLICATION-BOUNDARY"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I01BatchCommitIsAtomic"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.Batch",
+        "pebble.Batch.Commit",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.Batch",
+        "pebble.Batch.Commit",
+        "pebble.DB.Get"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I02IndexedBatchOverlaysDatabase"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB",
+        "pebble.IndexedBatch",
+        "pebble.Batch.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB",
+        "pebble.IndexedBatch",
+        "pebble.Batch.Get"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I03SnapshotAndLiveViewDiverge"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.Set",
+        "pebble.Snapshot",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.Set",
+        "pebble.Snapshot",
+        "pebble.DB.Get"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I04RangeDeleteShapesIteration"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.DeleteRange",
+        "pebble.RangeTombstone",
+        "pebble.Iterator"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.DeleteRange",
+        "pebble.RangeTombstone",
+        "pebble.Iterator"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I05FlushPreservesLogicalReads"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.Set",
+        "pebble.DB.Flush",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.Set",
+        "pebble.DB.Flush",
+        "pebble.DB.Get"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I06CheckpointFormsIndependentReadView"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.Checkpoint",
+        "pebble.vfs.FS",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.Checkpoint",
+        "pebble.vfs.FS",
+        "pebble.DB.Get"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I07ConcurrentWritesIterateInComparerOrder"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": "PBL-NATIVE-BASELINE",
+      "owners": [
+        "pebble.DB.Set",
+        "pebble.commitPipeline",
+        "pebble.Iterator"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-UPSTREAM-CONTROLS"
+      ],
+      "native_owners": [
+        "pebble.DB.Set",
+        "pebble.commitPipeline",
+        "pebble.Iterator"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I08PreservesBatchGroupingAndOperationOrder"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-BATCH-ATOMICITY",
+      "owners": [
+        "pebble.Batch",
+        "pebble.commitPipeline",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-COMMIT-BATCHES"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I09ReportsWholeBatchSequenceInterval"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-BATCH-ATOMICITY",
+      "owners": [
+        "pebble.Batch.Count",
+        "pebble.SeqNum",
+        "pebble.CommitBatch"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-COMMIT-BATCHES"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I10SeparatesIndividualMutationCommits"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-BATCH-ATOMICITY",
+      "owners": [
+        "pebble.DB.Set",
+        "pebble.commitPipeline",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-COMMIT-BATCHES"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I11FiltersOperationsWithoutShrinkingInterval"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-RANGE-FILTERING",
+      "owners": [
+        "pebble.Batch",
+        "pebble.CommitFeedOptions",
+        "pebble.CommitBatch"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RANGE-FILTERING"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I12RangeOverlapDeliversOriginalSpan"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-RANGE-FILTERING",
+      "owners": [
+        "pebble.DB.DeleteRange",
+        "pebble.Comparer",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RANGE-FILTERING"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I13NonOverlappingRangeLeavesSequenceGap"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-RANGE-FILTERING",
+      "owners": [
+        "pebble.RangeTombstone",
+        "pebble.CommitFeedOptions",
+        "pebble.SeqNum"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RANGE-FILTERING"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I14FeedsProjectDifferentSubsetsOfSameCommit"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-RANGE-FILTERING",
+      "owners": [
+        "pebble.Batch",
+        "pebble.CommitFeedOptions",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RANGE-FILTERING"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I15FeedsDoNotAliasEachOther"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-OWNERSHIP",
+      "owners": [
+        "pebble.commitPipeline",
+        "pebble.CommitFeed",
+        "pebble.CommitOperation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RECEIVER-OWNERSHIP"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I16SubmittedBatchMemoryDoesNotAliasEvent"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-OWNERSHIP",
+      "owners": [
+        "pebble.Batch",
+        "pebble.batchrepr.Reader",
+        "pebble.CommitOperation"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RECEIVER-OWNERSHIP"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I17ReturnedEventMutationCannotChangeDatabase"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-OWNERSHIP",
+      "owners": [
+        "pebble.CommitOperation",
+        "pebble.memTable",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RECEIVER-OWNERSHIP"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I18MergeEventCarriesOperandNotResolvedValue"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-OPERATION-PROJECTION",
+      "owners": [
+        "pebble.DB.Merge",
+        "pebble.Merger",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-OPERATION-PROJECTION"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I19DistinguishesDeleteKinds"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-OPERATION-PROJECTION",
+      "owners": [
+        "pebble.Batch",
+        "pebble.InternalKeyKind",
+        "pebble.CommitKind"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-OPERATION-PROJECTION"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I20DistinguishesPointAndRangeKeyDeletion"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-OPERATION-PROJECTION",
+      "owners": [
+        "pebble.RangeTombstone",
+        "pebble.RangeKeyDelete",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-OPERATION-PROJECTION"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I21ProjectsRangeKeyUnsetSuffix"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-OPERATION-PROJECTION",
+      "owners": [
+        "pebble.RangeKeySet",
+        "pebble.RangeKeyUnset",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-OPERATION-PROJECTION"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I22OmitsLogDataFromLogicalProjection"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-OPERATION-PROJECTION",
+      "owners": [
+        "pebble.Batch.LogData",
+        "pebble.Batch.Set",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-OPERATION-PROJECTION"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I23LaggingFeedDoesNotBlockSibling"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-LIFECYCLE",
+      "owners": [
+        "pebble.commitPipeline",
+        "pebble.CommitFeed",
+        "pebble.DB.Set"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-FEED-LIFECYCLE"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestPebbleV2I24CancellationDoesNotTerminateSibling"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-LIFECYCLE",
+      "owners": [
+        "context.Context",
+        "pebble.CommitFeed",
+        "pebble.DB.Set"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-FEED-LIFECYCLE"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestPebbleV2S01ConcurrentCommitsFollowVisibleSequenceOrder"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-PUBLICATION-BOUNDARY",
+      "owners": [
+        "pebble.commitPipeline",
+        "pebble.visibleSeqNum",
+        "pebble.CommitFeed",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-PUBLICATION-BOUNDARY"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestPebbleV2S02RejectedSyncWriteProducesNoEvent"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-PUBLICATION-BOUNDARY",
+      "owners": [
+        "pebble.WriteOptions",
+        "pebble.commitPipeline",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-PUBLICATION-BOUNDARY"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestPebbleV2S03ReceivedBatchIsAlreadyReadable"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-PUBLICATION-BOUNDARY",
+      "owners": [
+        "pebble.Batch",
+        "pebble.visibleSeqNum",
+        "pebble.CommitFeed",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-PUBLICATION-BOUNDARY"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestPebbleV2S04FilteredFeedRetainsGapFromGlobalOrder"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-RANGE-FILTERING",
+      "owners": [
+        "pebble.commitPipeline",
+        "pebble.CommitFeedOptions",
+        "pebble.CommitBatch"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RANGE-FILTERING"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestPebbleV2S05DatabaseCloseDrainsThenReportsErrClosed"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-LIFECYCLE",
+      "owners": [
+        "pebble.DB.Close",
+        "pebble.CommitFeed.Events",
+        "pebble.CommitFeed.Err"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-FEED-LIFECYCLE"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestPebbleV2S06MaintenanceDoesNotReplayMutations"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-PUBLICATION-BOUNDARY",
+      "owners": [
+        "pebble.DB.Flush",
+        "pebble.DB.Compact",
+        "pebble.DB.Checkpoint",
+        "pebble.CommitFeed"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-PUBLICATION-BOUNDARY"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestPebbleV2S07CancellationCommitRaceHasCompleteOutcome"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-FEED-LIFECYCLE",
+      "owners": [
+        "context.Context",
+        "pebble.commitPipeline",
+        "pebble.CommitFeed",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-FEED-LIFECYCLE"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestPebbleV2S08TwoViewsReconcileBatchRangeAndReads"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "PBL-RANGE-FILTERING",
+      "owners": [
+        "pebble.Batch",
+        "pebble.RangeTombstone",
+        "pebble.CommitFeedOptions",
+        "pebble.DB.Get"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "PBL-RANGE-FILTERING"
+      ]
+    }
+  ]
+}

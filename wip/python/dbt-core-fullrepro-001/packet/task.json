@@ -1,0 +1,170 @@
+{
+  "instance_id": "dbt-core-fullrepro-001",
+  "pipeline_note": "REVALIDATION-REQUIRED",
+  "repo": "dbt-labs/dbt-core",
+  "repo_url": "https://github.com/dbt-labs/dbt-core",
+  "repo_commit": "6b6b3bdf5410ff786d7d747de9144382fb6acf2d",
+  "spec_version": "v1",
+  "language": "python",
+  "oracle_version": "2026-07-17T00:00:00+08:00-rp-audit-batch2",
+  "oracle": {
+    "test_files": [
+      "oracle/test_atomic.py",
+      "oracle/test_integration.py"
+    ],
+    "count": 62,
+    "source": "generated_only",
+    "scorer_isolation": [
+      "--remove-path",
+      "dbt"
+    ],
+    "fixture_isolation": [
+      "parse",
+      "list",
+      "compile",
+      "inline",
+      "no-write-json",
+      "partial-parse",
+      "error"
+    ],
+    "oracle_version": "2026-07-17T00:00:00+08:00-rp-audit-batch2",
+    "count_unit": "base_test_functions",
+    "base_function_count": 62
+  },
+  "taxonomy": {
+    "test_atomic::test_runner_instantiation_returns_runner_object": "atomic",
+    "test_atomic::test_runner_accepts_manifest_keyword_argument": "atomic",
+    "test_atomic::test_runner_result_exposes_success_attribute": "atomic",
+    "test_atomic::test_runner_result_exposes_exception_attribute": "atomic",
+    "test_atomic::test_runner_result_exposes_result_attribute": "atomic",
+    "test_atomic::test_runner_result_preserves_attached_exception": "atomic",
+    "test_atomic::test_dbt_cli_is_same_object_as_cli": "atomic",
+    "test_atomic::test_runner_supports_repeated_invocations": "atomic",
+    "test_atomic::test_parse_valid_project_returns_success": "atomic",
+    "test_atomic::test_parse_result_contains_project_model": "atomic",
+    "test_atomic::test_parse_invalid_project_dir_fails": "atomic",
+    "test_atomic::test_parse_writes_manifest_json": "atomic",
+    "test_atomic::test_parse_writes_semantic_manifest_json": "atomic",
+    "test_atomic::test_parse_writes_perf_info_json": "atomic",
+    "test_atomic::test_parse_writes_partial_parse_msgpack": "atomic",
+    "test_atomic::test_parse_no_write_json_suppresses_manifest": "atomic",
+    "test_atomic::test_parse_no_partial_parse_still_succeeds": "atomic",
+    "test_atomic::test_parse_accepts_threads_option": "atomic",
+    "test_atomic::test_list_output_name_returns_model_name": "atomic",
+    "test_atomic::test_list_output_path_returns_file_path": "atomic",
+    "test_atomic::test_list_output_json_returns_parseable_json": "atomic",
+    "test_atomic::test_list_output_selector_returns_fqn_strings": "atomic",
+    "test_atomic::test_list_output_json_respects_output_keys": "atomic",
+    "test_atomic::test_list_models_and_select_conflict": "atomic",
+    "test_atomic::test_unknown_command_fails": "atomic",
+    "test_atomic::test_invalid_output_choice_fails": "atomic",
+    "test_atomic::test_empty_selection_returns_empty_result": "atomic",
+    "test_atomic::test_compile_selected_model_succeeds": "atomic",
+    "test_atomic::test_compile_writes_run_results_json": "atomic",
+    "test_atomic::test_compile_inline_query_succeeds": "atomic",
+    "test_atomic::test_version_flag_succeeds_without_project": "atomic",
+    "test_atomic::test_module_execution_returns_zero_exit": "atomic",
+    "test_atomic::test_list_resource_type_model_returns_success": "atomic",
+    "test_atomic::test_compile_writes_manifest_json": "atomic",
+    "test_atomic::test_list_resource_type_model_filters_to_models_only": "atomic",
+    "test_atomic::test_compile_output_text_returns_compiled_sql": "atomic",
+    "test_integration::test_cvi1_parse_result_node_count_matches_manifest_json": "integration",
+    "test_integration::test_cvi2_list_json_unique_ids_exist_in_manifest": "integration",
+    "test_integration::test_cvi3_list_path_matches_manifest_original_file_path": "integration",
+    "test_integration::test_cvi4_ls_alias_produces_identical_results_to_list": "integration",
+    "test_integration::test_cvi5_compile_run_results_ids_in_manifest": "integration",
+    "test_integration::test_cvi6_compiled_file_content_matches_manifest_compiled_code": "integration",
+    "test_integration::test_cvi7_run_results_only_contain_executed_nodes": "integration",
+    "test_integration::test_cvi7_manifest_contains_full_graph_after_run": "integration",
+    "test_integration::test_cvi8_custom_target_path_contains_all_artifacts": "integration",
+    "test_integration::test_cvi8_compiled_files_reside_under_custom_target": "integration",
+    "test_integration::test_cvi9_no_write_json_returns_valid_manifest_object": "integration",
+    "test_integration::test_cvi9_no_write_json_suppresses_all_json_files": "integration",
+    "test_integration::test_cvi10_no_partial_parse_same_nodes_as_normal_parse": "integration",
+    "test_integration::test_seam_cached_manifest_reuse_in_list": "integration",
+    "test_integration::test_seam_parse_then_compile_produces_sql_file": "integration",
+    "test_integration::test_seam_compile_run_results_cross_references_manifest": "integration",
+    "test_integration::test_seam_output_keys_filters_json_fields": "integration",
+    "test_integration::test_seam_multiple_models_all_appear_in_compile": "integration",
+    "test_integration::test_manifest_model_names_subset_of_list_names": "integration",
+    "test_integration::test_partial_parse_cache_survives_second_invocation": "integration",
+    "test_integration::test_run_then_parse_returns_full_manifest": "integration",
+    "test_integration::test_list_exclude_removes_model_from_output": "integration",
+    "test_integration::test_parse_target_contains_full_artifact_set": "integration",
+    "test_integration::test_inline_compile_not_persisted_in_manifest_nodes": "integration",
+    "test_integration::test_run_result_statuses_match_artifact_file": "integration",
+    "test_integration::test_list_resource_type_analysis_filters_correctly": "integration"
+  },
+  "stats": {
+    "atomic": 36,
+    "integration": 26,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "reference_score": {
+    "passed": 74,
+    "failed": 0,
+    "total": 74,
+    "platform": "Linux-5.15.153.1-microsoft-standard-WSL2-x86_64-with-glibc2",
+    "artifact": "dev/task-artifacts/dbt-core-fullrepro-001/reference_score.json"
+  },
+  "candidate_score": null,
+  "integration_gap": null,
+  "true_gap_events": [],
+  "weaknesses": [
+    {
+      "dimension": "cross-view-consistency",
+      "description": "Compile writes a selected model's SQL file and successful run result but omits compiled_code from the persisted manifest, breaking equality between manifest and compiled-file projections.",
+      "affected_tests": 2,
+      "layer": "system_e2e"
+    },
+    {
+      "dimension": "workflow-completeness",
+      "description": "Inline compilation rejects the documented Jinja expression {{ 1 + 1 }}, so it returns no inline_query result and emits no persistent manifest from which the temporary node can be confirmed absent.",
+      "affected_tests": 3,
+      "layer": "system_e2e"
+    }
+  ],
+  "labels": [
+    "discriminating",
+    "composition-signal",
+    "generated-only-oracle",
+    "fixture-isolated",
+    "full-linux-collection",
+    "gate-d-partial-acceptable"
+  ],
+  "coverage": {
+    "verdict": "PARTIAL_ACCEPTABLE",
+    "core_sections": {
+      "Compile, Run, And Compiled Files": "FULL",
+      "Partial Parsing Cache": "FULL",
+      "Error Semantics": "FULL",
+      "Cross-View Invariants": "FULL"
+    },
+    "uncovered_sections": [
+      {
+        "spec_section": "Product Overview; Scope; Installable Surface; Public API; Representative Workflows; Parse, Inspect, And Compile A Local Project; Use The Python Runner; Non-Goals; Invocation Protocol; Implementation Guidance",
+        "type": "narrative/container/example/protocol",
+        "impact": "No core lifecycle or invariant section is empty; executable substance is directly covered under specific behavioral headings."
+      }
+    ]
+  },
+  "source_meta": {
+    "github_stars": 13441,
+    "pypi_monthly_downloads": 219056432,
+    "loc": 37465,
+    "first_release": "2019-02-15",
+    "measured_at": "2026-07-14",
+    "pypi_version": "1.11.12"
+  },
+  "judge": {
+    "verdict": "QUALIFIED",
+    "report": "judge/diagnosis_report_fixture_v3_20260714.md",
+    "result": "judge/judge_result_fixture_v3_20260714.json",
+    "failure_clusters": 2,
+    "fixture_cascade_eliminated": true
+  },
+  "oracle_cleanup_date": "2026-07-17",
+  "oracle_cleanup_removed": 0,
+  "taxonomy_unit": "base_test_functions"
+}

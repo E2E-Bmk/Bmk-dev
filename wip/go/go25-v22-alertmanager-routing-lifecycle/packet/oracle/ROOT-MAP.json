@@ -1,0 +1,1255 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case": "go25-v22-alertmanager-routing-lifecycle",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerRouteMatcherSelection",
+        "TestAlertmanagerRouteMatcherSelectionBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ROUTE-MATCHING",
+      "owners": [
+        "receipt.RoutingPlan",
+        "receipt.RouteFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-ROUTE-001"
+      ],
+      "native_owners": [
+        "route"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerRouteContinueTraversal",
+        "TestAlertmanagerRouteContinueTraversalBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ROUTE-MATCHING",
+      "owners": [
+        "receipt.RoutingPlan",
+        "receipt.RouteFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-ROUTE-002"
+      ],
+      "native_owners": [
+        "route"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerGroupKeyIdentity",
+        "TestAlertmanagerGroupKeyIdentityBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GROUP-LIFECYCLE",
+      "owners": [
+        "receipt.GroupFact",
+        "receipt.LifecycleReceipt",
+        "receipt.Capture",
+        "receipt.LifecycleReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-GROUP-001"
+      ],
+      "native_owners": [
+        "dispatch-group"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerGroupTimingTransitions",
+        "TestAlertmanagerGroupTimingTransitionsBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GROUP-LIFECYCLE",
+      "owners": [
+        "receipt.GroupFact",
+        "receipt.LifecycleReceipt",
+        "receipt.Capture",
+        "receipt.LifecycleReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-GROUP-002"
+      ],
+      "native_owners": [
+        "dispatch-group",
+        "clock"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerSilenceMatcherState",
+        "TestAlertmanagerSilenceMatcherStateBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SILENCE-STATE",
+      "owners": [
+        "receipt.SuppressionFact",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-SILENCE-001"
+      ],
+      "native_owners": [
+        "silence"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerSilenceExpiryBoundary",
+        "TestAlertmanagerSilenceExpiryBoundaryBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SILENCE-STATE",
+      "owners": [
+        "receipt.SuppressionFact",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-SILENCE-002"
+      ],
+      "native_owners": [
+        "silence",
+        "clock"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerInhibitionSourceTargetJoin",
+        "TestAlertmanagerInhibitionSourceTargetJoinBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-INHIBITION-JOIN",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.GroupFact",
+        "receipt.SuppressionFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-INHIBIT-001"
+      ],
+      "native_owners": [
+        "inhibition"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerInhibitionEqualLabels",
+        "TestAlertmanagerInhibitionEqualLabelsBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-INHIBITION-JOIN",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.GroupFact",
+        "receipt.SuppressionFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-INHIBIT-002"
+      ],
+      "native_owners": [
+        "inhibition"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerNotificationRetryPolicy",
+        "TestAlertmanagerNotificationRetryPolicyBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NOTIFICATION-DELIVERY",
+      "owners": [
+        "receipt.DeliveryFact",
+        "receipt.DeliveryJournal",
+        "receipt.LifecycleReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-NOTIFY-001"
+      ],
+      "native_owners": [
+        "notify"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerNotificationLogDedupKey",
+        "TestAlertmanagerNotificationLogDedupKeyBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NFLOG-DEDUP",
+      "owners": [
+        "receipt.DeliveryFact",
+        "receipt.DeliveryJournal",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-NFLOG-001"
+      ],
+      "native_owners": [
+        "nflog"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerAPISilenceRepresentation",
+        "TestAlertmanagerAPISilenceRepresentationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-API-STATE",
+      "owners": [
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Digest",
+        "receipt.LifecycleReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-API-001"
+      ],
+      "native_owners": [
+        "api"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerConfigReloadGeneration",
+        "TestAlertmanagerConfigReloadGenerationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONFIG-RELOAD",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-CONFIG-001"
+      ],
+      "native_owners": [
+        "config"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerAlertFingerprintNative",
+        "TestAlertmanagerAlertFingerprintNativeBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "alert"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-NATIVE-001"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerMemoryProviderNativeState",
+        "TestAlertmanagerMemoryProviderNativeStateBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "provider"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-NATIVE-002"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerTimeIntervalNativeMatch",
+        "TestAlertmanagerTimeIntervalNativeMatchBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "time-interval"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-NATIVE-003"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestAlertmanagerTemplateDataNativeFields",
+        "TestAlertmanagerTemplateDataNativeFieldsBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "template"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "AM-NATIVE-004"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerConfigBuildsRouteTree"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONFIG-RELOAD",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A12"
+      ],
+      "seam": "configuration decode → runtime route tree",
+      "clauses": [
+        "AM-SEAM-001"
+      ],
+      "native_owners": [
+        "config",
+        "route"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerProviderAlertSelectsReceiver"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ROUTE-MATCHING",
+      "owners": [
+        "receipt.RoutingPlan",
+        "receipt.RouteFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A13",
+        "A14"
+      ],
+      "seam": "stored alert → route matching → receiver",
+      "clauses": [
+        "AM-SEAM-002"
+      ],
+      "native_owners": [
+        "provider",
+        "alert",
+        "route"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerRouteSelectionCreatesGroup"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GROUP-LIFECYCLE",
+      "owners": [
+        "receipt.GroupFact",
+        "receipt.LifecycleReceipt",
+        "receipt.Capture",
+        "receipt.LifecycleReceipt.Digest"
+      ],
+      "depends_on": [
+        "A01",
+        "A03",
+        "A04"
+      ],
+      "seam": "receiver route → group key → lifecycle timer",
+      "clauses": [
+        "AM-SEAM-003"
+      ],
+      "native_owners": [
+        "route",
+        "dispatch-group",
+        "clock"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerSilenceMarksBeforeDispatch"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SILENCE-STATE",
+      "owners": [
+        "receipt.SuppressionFact",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A05",
+        "A06"
+      ],
+      "seam": "silence state → marker → dispatch admission",
+      "clauses": [
+        "AM-SEAM-004"
+      ],
+      "native_owners": [
+        "silence",
+        "marker",
+        "dispatch-group"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerInhibitionMarksTargetGroup"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-INHIBITION-JOIN",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.GroupFact",
+        "receipt.SuppressionFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A07",
+        "A08"
+      ],
+      "seam": "source/target join → inhibited marker → group",
+      "clauses": [
+        "AM-SEAM-005"
+      ],
+      "native_owners": [
+        "inhibition",
+        "marker",
+        "dispatch-group"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerGroupSendsNotification"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NOTIFICATION-DELIVERY",
+      "owners": [
+        "receipt.DeliveryFact",
+        "receipt.DeliveryJournal",
+        "receipt.LifecycleReceipt",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A03",
+        "A04",
+        "A09"
+      ],
+      "seam": "group lifecycle → receiver stage → delivery",
+      "clauses": [
+        "AM-SEAM-006"
+      ],
+      "native_owners": [
+        "dispatch-group",
+        "notify",
+        "clock"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerDeliveryWritesNotificationLog"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NFLOG-DEDUP",
+      "owners": [
+        "receipt.DeliveryFact",
+        "receipt.DeliveryJournal",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "seam": "successful delivery → dedup receipt",
+      "clauses": [
+        "AM-SEAM-007"
+      ],
+      "native_owners": [
+        "notify",
+        "nflog"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerAPIWritesSilenceStore"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-API-STATE",
+      "owners": [
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Digest",
+        "receipt.LifecycleReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A05",
+        "A11"
+      ],
+      "seam": "HTTP silence resource → silence state",
+      "clauses": [
+        "AM-SEAM-008"
+      ],
+      "native_owners": [
+        "api",
+        "silence"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerReloadReplacesRouteGeneration"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONFIG-RELOAD",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A12"
+      ],
+      "seam": "config reload → new route owner → new groups",
+      "clauses": [
+        "AM-SEAM-009"
+      ],
+      "native_owners": [
+        "config",
+        "route",
+        "dispatch-group"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerContinueRouteOwnsMultipleReceivers"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ROUTE-MATCHING",
+      "owners": [
+        "receipt.RoutingPlan",
+        "receipt.RouteFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A02",
+        "A03"
+      ],
+      "seam": "continue traversal → multiple receiver groups",
+      "clauses": [
+        "AM-SEAM-010"
+      ],
+      "native_owners": [
+        "route",
+        "dispatch-group"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerGroupWaitAndRepeatIntervals"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GROUP-LIFECYCLE",
+      "owners": [
+        "receipt.GroupFact",
+        "receipt.LifecycleReceipt",
+        "receipt.Capture",
+        "receipt.LifecycleReceipt.Digest"
+      ],
+      "depends_on": [
+        "A03",
+        "A04"
+      ],
+      "seam": "fake clock transitions → notification eligibility",
+      "clauses": [
+        "AM-SEAM-011"
+      ],
+      "native_owners": [
+        "dispatch-group",
+        "clock",
+        "notify"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerSilenceAPIExpiryObservation"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SILENCE-STATE",
+      "owners": [
+        "receipt.SuppressionFact",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A06",
+        "A11"
+      ],
+      "seam": "silence API write → expiry → fresh API state",
+      "clauses": [
+        "AM-SEAM-012"
+      ],
+      "native_owners": [
+        "api",
+        "silence",
+        "clock"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerInhibitionMarkerReleases"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-INHIBITION-JOIN",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.GroupFact",
+        "receipt.SuppressionFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A07",
+        "A08"
+      ],
+      "seam": "source removal → marker release → target eligibility",
+      "clauses": [
+        "AM-SEAM-013"
+      ],
+      "native_owners": [
+        "inhibition",
+        "marker",
+        "provider"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerRetryThenDedupReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NFLOG-DEDUP",
+      "owners": [
+        "receipt.DeliveryFact",
+        "receipt.DeliveryJournal",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "seam": "transient delivery → retry success → one log entry",
+      "clauses": [
+        "AM-SEAM-014"
+      ],
+      "native_owners": [
+        "notify",
+        "nflog",
+        "clock"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerAPIAlertGroupsMirrorDispatcher"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-API-STATE",
+      "owners": [
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Digest",
+        "receipt.LifecycleReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A03",
+        "A11",
+        "A14"
+      ],
+      "seam": "dispatcher state → API group resources",
+      "clauses": [
+        "AM-SEAM-015"
+      ],
+      "native_owners": [
+        "api",
+        "dispatch-group",
+        "provider"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerReceiverConfigBuildsPipeline"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONFIG-RELOAD",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A09",
+        "A12"
+      ],
+      "seam": "receiver config → staged notifier pipeline",
+      "clauses": [
+        "AM-SEAM-016"
+      ],
+      "native_owners": [
+        "config",
+        "notify",
+        "template"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerNativeProviderFingerprintLookup"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "provider",
+        "alert"
+      ],
+      "depends_on": [
+        "A13",
+        "A14"
+      ],
+      "seam": "alert insert → fingerprint lookup",
+      "clauses": [
+        "AM-SEAM-017"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerNativeInvalidConfigDiagnostic"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "config",
+        "error"
+      ],
+      "depends_on": [
+        "A12"
+      ],
+      "seam": "invalid configuration → diagnostic with no publication",
+      "clauses": [
+        "AM-SEAM-018"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerNativeTimeIntervalRouteGate"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "time-interval",
+        "route"
+      ],
+      "depends_on": [
+        "A01",
+        "A15"
+      ],
+      "seam": "calendar match → route admission",
+      "clauses": [
+        "AM-SEAM-019"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerNativeTemplateNotificationData"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "template",
+        "notify"
+      ],
+      "depends_on": [
+        "A09",
+        "A16"
+      ],
+      "seam": "alert group → native template data",
+      "clauses": [
+        "AM-SEAM-020"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerNativeProviderFeedsAPI"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "provider",
+        "api"
+      ],
+      "depends_on": [
+        "A11",
+        "A14"
+      ],
+      "seam": "memory alert state → API alert view",
+      "clauses": [
+        "AM-SEAM-021"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerNativeEmptyGroupNoDelivery"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "dispatch-group",
+        "notify"
+      ],
+      "depends_on": [
+        "A03",
+        "A09"
+      ],
+      "seam": "empty group → no receiver call",
+      "clauses": [
+        "AM-SEAM-022"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerNativeExpiredSilenceRemoved"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "silence",
+        "clock"
+      ],
+      "depends_on": [
+        "A06"
+      ],
+      "seam": "expiry transition → silence removal",
+      "clauses": [
+        "AM-SEAM-023"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestAlertmanagerNativeReceiverWithoutAlertsIdle"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "route",
+        "notify"
+      ],
+      "depends_on": [
+        "A01",
+        "A09"
+      ],
+      "seam": "configured receiver with no group → no delivery",
+      "clauses": [
+        "AM-SEAM-024"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestAlertmanagerAlertRouteDeliveryReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ROUTE-MATCHING",
+      "owners": [
+        "receipt.RoutingPlan",
+        "receipt.RouteFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A03",
+        "A09",
+        "A10"
+      ],
+      "receipt": "After inserting an alert and advancing the fake clock, a fresh webhook record, notification-log query, and API group view identify one receiver generation.",
+      "clauses": [
+        "AM-SYSTEM-001"
+      ],
+      "native_owners": [
+        "provider",
+        "route",
+        "dispatch-group",
+        "notify",
+        "nflog",
+        "api"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestAlertmanagerSilencedGroupFreshAPIReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-SILENCE-STATE",
+      "owners": [
+        "receipt.SuppressionFact",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A03",
+        "A05",
+        "A11"
+      ],
+      "receipt": "After creating a silence, a fresh API read marks the group silenced and the local webhook records no delivery until expiry.",
+      "clauses": [
+        "AM-SYSTEM-002"
+      ],
+      "native_owners": [
+        "provider",
+        "silence",
+        "marker",
+        "dispatch-group",
+        "api"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestAlertmanagerInhibitionReleaseDeliveryReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-INHIBITION-JOIN",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.GroupFact",
+        "receipt.SuppressionFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A07",
+        "A08",
+        "A09"
+      ],
+      "receipt": "After removing the inhibiting source, a fresh marker query and later webhook receipt show the target group released exactly once.",
+      "clauses": [
+        "AM-SYSTEM-003"
+      ],
+      "native_owners": [
+        "provider",
+        "inhibition",
+        "marker",
+        "dispatch-group",
+        "notify"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestAlertmanagerRetryDedupLifecycleReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NFLOG-DEDUP",
+      "owners": [
+        "receipt.DeliveryFact",
+        "receipt.DeliveryJournal",
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A04",
+        "A09",
+        "A10"
+      ],
+      "receipt": "After one transient failure and retry, a fresh webhook log and notification-log query expose one successful delivery generation.",
+      "clauses": [
+        "AM-SYSTEM-004"
+      ],
+      "native_owners": [
+        "dispatch-group",
+        "notify",
+        "clock",
+        "nflog",
+        "webhook"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestAlertmanagerReloadedRouteGenerationReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONFIG-RELOAD",
+      "owners": [
+        "receipt.RouteFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff",
+        "receipt.LifecycleReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A12",
+        "A14"
+      ],
+      "receipt": "After a valid config reload, a newly inserted alert is visible only under the new receiver in fresh API and webhook observations.",
+      "clauses": [
+        "AM-SYSTEM-005"
+      ],
+      "native_owners": [
+        "config",
+        "route",
+        "provider",
+        "dispatch-group",
+        "api",
+        "notify"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestAlertmanagerAmtoolAPIStateReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-API-STATE",
+      "owners": [
+        "receipt.APIStateFact",
+        "receipt.LifecycleReceipt",
+        "receipt.LifecycleReceipt.Digest",
+        "receipt.LifecycleReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A05",
+        "A11"
+      ],
+      "receipt": "After amtool creates and queries state through the local API, a fresh programmatic read returns the same silence and route ownership.",
+      "clauses": [
+        "AM-SYSTEM-006"
+      ],
+      "native_owners": [
+        "amtool-cli",
+        "api",
+        "silence",
+        "route",
+        "provider"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestAlertmanagerNativeAlertToWebhookWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "provider",
+        "route",
+        "dispatch-group",
+        "template",
+        "notify",
+        "webhook"
+      ],
+      "depends_on": [
+        "A01",
+        "A03",
+        "A09",
+        "A16"
+      ],
+      "receipt": "A native alert sent through a local receiver produces a fresh rendered webhook receipt after the documented group delay.",
+      "clauses": [
+        "AM-SYSTEM-007"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestAlertmanagerNativeBadReloadKeepsLastGood"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "config",
+        "route",
+        "provider",
+        "api",
+        "error"
+      ],
+      "depends_on": [
+        "A01",
+        "A12",
+        "A14"
+      ],
+      "receipt": "After a malformed reload attempt, a fresh alert and API status observation use only the last good route generation.",
+      "clauses": [
+        "AM-SYSTEM-008"
+      ]
+    }
+  ]
+}

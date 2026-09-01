@@ -1,0 +1,1264 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case": "go25-v24-kustomize-local-build",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeResourceAccumulatorIdentity",
+        "TestKustomizeResourceAccumulatorIdentityBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RESOURCE-ACCUMULATION",
+      "owners": [
+        "receipt.BuildPlan.SelectTarget",
+        "receipt.FileFact",
+        "receipt.ResourceFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-ACC-001"
+      ],
+      "native_owners": [
+        "loader",
+        "resmap"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeBaseOverlayLoadOrder",
+        "TestKustomizeBaseOverlayLoadOrderBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RESOURCE-ACCUMULATION",
+      "owners": [
+        "receipt.BuildPlan.SelectTarget",
+        "receipt.FileFact",
+        "receipt.ResourceFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-ACC-002"
+      ],
+      "native_owners": [
+        "loader",
+        "target"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeConfigMapGeneratorContent",
+        "TestKustomizeConfigMapGeneratorContentBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATOR-CONTENT",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildFact",
+        "receipt.Capture",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-GEN-001"
+      ],
+      "native_owners": [
+        "generator"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeSecretGeneratorContent",
+        "TestKustomizeSecretGeneratorContentBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATOR-CONTENT",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildFact",
+        "receipt.Capture",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-GEN-002"
+      ],
+      "native_owners": [
+        "generator"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeContentHashSuffix",
+        "TestKustomizeContentHashSuffixBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-HASH-IDENTITY",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-HASH-001"
+      ],
+      "native_owners": [
+        "hasher"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeDisableNameSuffixHash",
+        "TestKustomizeDisableNameSuffixHashBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-HASH-IDENTITY",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-HASH-002"
+      ],
+      "native_owners": [
+        "hasher",
+        "generator"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeNameReferenceUpdate",
+        "TestKustomizeNameReferenceUpdateBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NAME-REFERENCE",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.TransformerFact",
+        "receipt.BuildReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-NAME-001"
+      ],
+      "native_owners": [
+        "name-reference"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizePrefixSuffixIdentity",
+        "TestKustomizePrefixSuffixIdentityBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NAME-REFERENCE",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.TransformerFact",
+        "receipt.BuildReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-NAME-002"
+      ],
+      "native_owners": [
+        "transformer",
+        "name-reference"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeBuiltinTransformerOrder",
+        "TestKustomizeBuiltinTransformerOrderBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-TRANSFORM-ORDER",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal.Record",
+        "receipt.BuildJournal.Entries",
+        "receipt.BuildReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-ORDER-001"
+      ],
+      "native_owners": [
+        "transformer-order"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeNamespaceNameOrder",
+        "TestKustomizeNamespaceNameOrderBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-TRANSFORM-ORDER",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal.Record",
+        "receipt.BuildJournal.Entries",
+        "receipt.BuildReceipt.Digest"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-ORDER-002"
+      ],
+      "native_owners": [
+        "namespace-transformer",
+        "name-transformer"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizePatchTargetSelection",
+        "TestKustomizePatchTargetSelectionBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATCH-REPLACEMENT",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-PATCH-001"
+      ],
+      "native_owners": [
+        "patch"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeReplacementSourceSelection",
+        "TestKustomizeReplacementSourceSelectionBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATCH-REPLACEMENT",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-PATCH-002"
+      ],
+      "native_owners": [
+        "replacement"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeNativeYAMLNodeMetadata",
+        "TestKustomizeNativeYAMLNodeMetadataBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "kyaml"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-NATIVE-001"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeNativeResourceID",
+        "TestKustomizeNativeResourceIDBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "resource"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-NATIVE-002"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeNativeResourceSortOrder",
+        "TestKustomizeNativeResourceSortOrderBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "resmap"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-NATIVE-003"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestKustomizeNativeInvalidPathError",
+        "TestKustomizeNativeInvalidPathErrorBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "loader",
+        "error"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "KUST-NATIVE-004"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeBaseOverlayAccumulatesResources"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RESOURCE-ACCUMULATION",
+      "owners": [
+        "receipt.BuildPlan.SelectTarget",
+        "receipt.FileFact",
+        "receipt.ResourceFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A01",
+        "A02"
+      ],
+      "seam": "base loader → overlay target → accumulated ResMap",
+      "clauses": [
+        "KUST-SEAM-001"
+      ],
+      "native_owners": [
+        "loader",
+        "target",
+        "resmap"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeGeneratorEntersResMap"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATOR-CONTENT",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildFact",
+        "receipt.Capture",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A03",
+        "A04"
+      ],
+      "seam": "generator output → resource identity → accumulator",
+      "clauses": [
+        "KUST-SEAM-002"
+      ],
+      "native_owners": [
+        "generator",
+        "resource",
+        "resmap"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeHashedNameUpdatesReferences"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-HASH-IDENTITY",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A03",
+        "A05",
+        "A07"
+      ],
+      "seam": "generated content → hash suffix → consumer reference",
+      "clauses": [
+        "KUST-SEAM-003"
+      ],
+      "native_owners": [
+        "generator",
+        "hasher",
+        "name-reference"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizePrefixUpdatesNameReferences"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NAME-REFERENCE",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.TransformerFact",
+        "receipt.BuildReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A07",
+        "A08"
+      ],
+      "seam": "name transform → referent and field reference",
+      "clauses": [
+        "KUST-SEAM-004"
+      ],
+      "native_owners": [
+        "transformer",
+        "resource",
+        "name-reference"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNamespaceRunsInBuiltinOrder"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-TRANSFORM-ORDER",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal.Record",
+        "receipt.BuildJournal.Entries",
+        "receipt.BuildReceipt.Digest"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "seam": "builtin ordering → namespace ownership → graph",
+      "clauses": [
+        "KUST-SEAM-005"
+      ],
+      "native_owners": [
+        "transformer-order",
+        "namespace-transformer",
+        "resmap"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizePatchThenReplacementSeesState"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATCH-REPLACEMENT",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [
+        "A11",
+        "A12"
+      ],
+      "seam": "patch mutation → replacement source/target resolution",
+      "clauses": [
+        "KUST-SEAM-006"
+      ],
+      "native_owners": [
+        "patch",
+        "replacement",
+        "resmap"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeYAMLReaderBuildsResMapWriter"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-YAML-ROUNDTRIP",
+      "owners": [
+        "receipt.BuildFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Equivalent",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A01",
+        "A13"
+      ],
+      "seam": "YAML nodes → resources → rendered stream",
+      "clauses": [
+        "KUST-SEAM-007"
+      ],
+      "native_owners": [
+        "kyaml-reader",
+        "resource",
+        "resmap",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeCLIAndKrustyBuildAgree"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.BuildPlan",
+        "receipt.BuildFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A15"
+      ],
+      "seam": "local target → API build and CLI build projections",
+      "clauses": [
+        "KUST-SEAM-008"
+      ],
+      "native_owners": [
+        "kustomize-cli",
+        "krusty-api",
+        "resmap",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeLocalizedTreeRebuildsGraph"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RESOURCE-ACCUMULATION",
+      "owners": [
+        "receipt.BuildPlan.SelectTarget",
+        "receipt.FileFact",
+        "receipt.ResourceFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A01",
+        "A02"
+      ],
+      "seam": "localization files → fresh local load → graph",
+      "clauses": [
+        "KUST-SEAM-009"
+      ],
+      "native_owners": [
+        "localizer",
+        "filesystem",
+        "loader",
+        "resmap"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeGeneratorOptionsReachArtifact"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-GENERATOR-CONTENT",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildFact",
+        "receipt.Capture",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [
+        "A03",
+        "A04"
+      ],
+      "seam": "generator options → object metadata → YAML",
+      "clauses": [
+        "KUST-SEAM-010"
+      ],
+      "native_owners": [
+        "generator",
+        "resource",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeHashRunsAfterContentTransform"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-HASH-IDENTITY",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A05",
+        "A09"
+      ],
+      "seam": "content mutation → final hash identity",
+      "clauses": [
+        "KUST-SEAM-011"
+      ],
+      "native_owners": [
+        "transformer-order",
+        "generator",
+        "hasher"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizePatchedNameUpdatesReferences"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NAME-REFERENCE",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.TransformerFact",
+        "receipt.BuildReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A07",
+        "A11"
+      ],
+      "seam": "patch rename → reference propagation",
+      "clauses": [
+        "KUST-SEAM-012"
+      ],
+      "native_owners": [
+        "patch",
+        "resource",
+        "name-reference"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeReplacementOrderBeforeFinalTransform"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-TRANSFORM-ORDER",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal.Record",
+        "receipt.BuildJournal.Entries",
+        "receipt.BuildReceipt.Digest"
+      ],
+      "depends_on": [
+        "A09",
+        "A12"
+      ],
+      "seam": "replacement mutation → later builtin transform",
+      "clauses": [
+        "KUST-SEAM-013"
+      ],
+      "native_owners": [
+        "replacement",
+        "transformer-order",
+        "resmap"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizePatchDiagnosticCarriesTarget"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATCH-REPLACEMENT",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [
+        "A11",
+        "A16"
+      ],
+      "seam": "failed target selection → public diagnostic",
+      "clauses": [
+        "KUST-SEAM-014"
+      ],
+      "native_owners": [
+        "patch",
+        "resource",
+        "error"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeYAMLRoundTripPreservesFacts"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-YAML-ROUNDTRIP",
+      "owners": [
+        "receipt.BuildFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Equivalent",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A13",
+        "A14"
+      ],
+      "seam": "node metadata → resource → reparsed YAML",
+      "clauses": [
+        "KUST-SEAM-015"
+      ],
+      "native_owners": [
+        "kyaml-reader",
+        "resource",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeCLIBuildPublishesRenderedStream"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.BuildPlan",
+        "receipt.BuildFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A15"
+      ],
+      "seam": "CLI target → accumulated graph → stdout stream",
+      "clauses": [
+        "KUST-SEAM-016"
+      ],
+      "native_owners": [
+        "kustomize-cli",
+        "loader",
+        "resmap",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNativeYAMLAnnotationRead"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "kyaml",
+        "resource"
+      ],
+      "depends_on": [
+        "A13",
+        "A14"
+      ],
+      "seam": "YAML metadata → native resource view",
+      "clauses": [
+        "KUST-SEAM-017"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNativeResourceIDInResMap"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "resource",
+        "resmap"
+      ],
+      "depends_on": [
+        "A01",
+        "A14"
+      ],
+      "seam": "resource ID → map lookup",
+      "clauses": [
+        "KUST-SEAM-018"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNativeSortBeforeWrite"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "resmap",
+        "kyaml-writer"
+      ],
+      "depends_on": [
+        "A15",
+        "A13"
+      ],
+      "seam": "native ordering → rendered sequence",
+      "clauses": [
+        "KUST-SEAM-019"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNativeInvalidPathNoGraph"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "loader",
+        "error",
+        "resmap"
+      ],
+      "depends_on": [
+        "A16",
+        "A01"
+      ],
+      "seam": "load failure → no accumulated publication",
+      "clauses": [
+        "KUST-SEAM-020"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNativeEmptyKustomization"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "loader",
+        "target"
+      ],
+      "depends_on": [
+        "A01"
+      ],
+      "seam": "empty target → empty resource result",
+      "clauses": [
+        "KUST-SEAM-021"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNativeDuplicateIDRejected"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "resource",
+        "resmap",
+        "error"
+      ],
+      "depends_on": [
+        "A14"
+      ],
+      "seam": "duplicate identity → accumulation failure",
+      "clauses": [
+        "KUST-SEAM-022"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNativeNamespaceTransform"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "namespace-transformer",
+        "resource"
+      ],
+      "depends_on": [
+        "A10",
+        "A14"
+      ],
+      "seam": "namespace config → resource field",
+      "clauses": [
+        "KUST-SEAM-023"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestKustomizeNativeLoadRestriction"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "loader",
+        "filesystem",
+        "error"
+      ],
+      "depends_on": [
+        "A16"
+      ],
+      "seam": "restricted path → public load error",
+      "clauses": [
+        "KUST-SEAM-024"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestKustomizeOverlayBuildFreshYAMLReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RESOURCE-ACCUMULATION",
+      "owners": [
+        "receipt.BuildPlan.SelectTarget",
+        "receipt.FileFact",
+        "receipt.ResourceFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A01",
+        "A02",
+        "A13"
+      ],
+      "receipt": "After a local base/overlay build, a fresh YAML parse and ResMap query expose the same resource identities and transformed fields.",
+      "clauses": [
+        "KUST-SYSTEM-001"
+      ],
+      "native_owners": [
+        "filesystem",
+        "loader",
+        "target",
+        "resmap",
+        "kyaml-writer",
+        "krusty-api"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestKustomizeGeneratedHashReferenceReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-HASH-IDENTITY",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A03",
+        "A05",
+        "A07"
+      ],
+      "receipt": "After generating content, a fresh rendered stream shows one hashed object and every consumer reference points to that identity.",
+      "clauses": [
+        "KUST-SYSTEM-002"
+      ],
+      "native_owners": [
+        "generator",
+        "hasher",
+        "name-reference",
+        "resmap",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestKustomizePatchReplacementOrderReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-PATCH-REPLACEMENT",
+      "owners": [
+        "receipt.TransformerFact",
+        "receipt.BuildJournal",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Validate"
+      ],
+      "depends_on": [
+        "A09",
+        "A11",
+        "A12"
+      ],
+      "receipt": "After patch and replacement execution, a fresh graph and YAML observation agree on the final value and documented owner order.",
+      "clauses": [
+        "KUST-SYSTEM-003"
+      ],
+      "native_owners": [
+        "loader",
+        "patch",
+        "replacement",
+        "transformer-order",
+        "resmap",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestKustomizeCLIAPIYAMLParityReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-API-EQUIVALENCE",
+      "owners": [
+        "receipt.BuildPlan",
+        "receipt.BuildFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A13",
+        "A15"
+      ],
+      "receipt": "After building from a fresh directory, CLI stdout and API resources reparse to equivalent fact graphs independent of formatting.",
+      "clauses": [
+        "KUST-SYSTEM-004"
+      ],
+      "native_owners": [
+        "kustomize-cli",
+        "krusty-api",
+        "loader",
+        "resmap",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestKustomizeLocalizeRebuildReferenceReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-NAME-REFERENCE",
+      "owners": [
+        "receipt.ResourceFact",
+        "receipt.TransformerFact",
+        "receipt.BuildReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A02",
+        "A07",
+        "A08"
+      ],
+      "receipt": "After localization, a fresh build of the emitted tree preserves base ownership and all transformed name references.",
+      "clauses": [
+        "KUST-SYSTEM-005"
+      ],
+      "native_owners": [
+        "localizer",
+        "filesystem",
+        "loader",
+        "name-reference",
+        "resmap",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestKustomizeYAMLMetadataStableReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-YAML-ROUNDTRIP",
+      "owners": [
+        "receipt.BuildFact",
+        "receipt.BuildReceipt",
+        "receipt.BuildReceipt.Equivalent",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A09",
+        "A13",
+        "A14"
+      ],
+      "receipt": "After transform and write, a fresh YAML read preserves semantic annotations, scalar facts, and resource identity without byte snapshots.",
+      "clauses": [
+        "KUST-SYSTEM-006"
+      ],
+      "native_owners": [
+        "kyaml-reader",
+        "resource",
+        "resmap",
+        "transformer",
+        "kyaml-writer"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestKustomizeNativeBaseOverlayWorkflow"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "filesystem",
+        "loader",
+        "target",
+        "resmap",
+        "kyaml-writer"
+      ],
+      "depends_on": [
+        "A01",
+        "A02",
+        "A15"
+      ],
+      "receipt": "A native local base and overlay produce a fresh deterministic resource stream with documented ordering.",
+      "clauses": [
+        "KUST-SYSTEM-007"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestKustomizeNativeLoadFailureNoOutput"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "filesystem",
+        "loader",
+        "target",
+        "resmap",
+        "error"
+      ],
+      "depends_on": [
+        "A01",
+        "A16"
+      ],
+      "receipt": "After an invalid local path build, a fresh output buffer and graph observation contain no partial resource publication.",
+      "clauses": [
+        "KUST-SYSTEM-008"
+      ]
+    }
+  ]
+}

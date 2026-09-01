@@ -48,6 +48,7 @@ reads as a candidate that implemented nothing:
 
 from __future__ import annotations
 
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
@@ -264,3 +265,54 @@ def nested_names(
         else:
             chains.append([enclosing for _, enclosing in stack] + [name])
     return chains
+
+
+#: `// DependsOn: a, b` on one line of a comment block. `;` is accepted as a
+#: separator alongside `,` because both read naturally in a sentence.
+_DEPENDS_ON = re.compile(r"^\s*//\s*DependsOn:\s*(.+)$")
+
+
+def depends_on_above(text: str, offset: int) -> list[str]:
+    """Names declared by `// DependsOn:` lines in the block just above ``offset``.
+
+    Go, TypeScript and Rust spell a line comment the same way and none of them
+    has anywhere to hang a marker the way a pytest decorator does, so all three
+    carry the relation in the comment block immediately above the declaration
+    and all three read it here. Names come back in source order, deduplicated,
+    so repeating one across two lines of the block is not an error.
+
+    ``offset`` is the start of the match a runner's own declaration pattern
+    produced, which may begin part-way into its line, so one trailing
+    whitespace-only line is dropped before the walk begins. That line is the
+    declaration's own indentation when it has any and a blank separator
+    otherwise, which is why a declaration at the left margin may keep one blank
+    line between itself and the block and an indented one may not.
+
+    The block has to sit above the *whole* declaration, not inside it: each of
+    these patterns spans several tokens -- `#[test]` through `fn name`, `it`
+    through its title -- and a comment landing in that span stops the pattern
+    matching, which removes the test from `discover` and from the denominator
+    with it. A `///` doc comment or a `//!` inner comment continues the block
+    without naming anything: the marker looks for `DependsOn:` right after the
+    two slashes, give or take whitespace, and a third slash or a `!` is
+    neither.
+    """
+    lines = text[:offset].splitlines()
+    if lines and not lines[-1].strip():
+        lines.pop()
+    block: list[str] = []
+    for line in reversed(lines):
+        if not line.strip().startswith("//"):
+            break
+        block.append(line)
+
+    names: list[str] = []
+    for line in reversed(block):
+        found = _DEPENDS_ON.match(line)
+        if not found:
+            continue
+        for name in found.group(1).replace(";", ",").split(","):
+            name = name.strip()
+            if name and name not in names:
+                names.append(name)
+    return names

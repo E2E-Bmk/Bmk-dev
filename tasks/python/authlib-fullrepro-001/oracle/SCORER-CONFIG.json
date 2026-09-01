@@ -1,0 +1,12 @@
+{
+  "schema":"spec2repo.scorer-config.v2",
+  "case":"authlib-v2-transactional-jose",
+  "inventory":{"atomic":{"prefix":"A","count":20},"composition":{"prefix":"C","count":16},"integration_subset":12,"system_e2e_subset":4,"all":36},
+  "execution_modes":["natural","reverse","permuted"],
+  "permutation_seed":"authlib-v2-prefreeze-20260814",
+  "root_timeout_seconds":20,
+  "validity":{"exact_inventory_required":true,"zero_argument_required":true,"fresh_process_per_root":true,"call_phase_only":true,"utf8_required":true,"candidate_containment_required":true,"unexpected_process_status_is_invalid":true,"timeout_is_invalid":true},
+  "scoring":{"atomic_weight":0.5,"composition_weight":0.5,"combined_formula":"(AtomicRate + CompositionRate) / 2","gap_formula":"AtomicRate - CompositionRate","conditional_composition":"composition roots whose depends_on atomic roots all pass"},
+  "calibration":{"reference_patched":"36/36 in natural, reverse, permuted, and repeated-natural modes","reference_unpatched_exact":"9/36 in natural, reverse, and permuted modes","dummy_call_phase":"0/36 in natural, reverse, and permuted modes","mutation_exact_fail":27,"mutation_exact_pass":9},
+  "forbidden_candidate_dependencies":["authlib from outside candidate tree","joserfc","network","subprocess implementation delegation"]
+}

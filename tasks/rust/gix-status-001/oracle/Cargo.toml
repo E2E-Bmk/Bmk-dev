@@ -1,0 +1,89 @@
+# Oracle workspace for `gix-status-001`.
+#
+# Three members, in the layout `harness/runners/rust.py` expects:
+#
+#   common/       shared helpers and fixtures, no `#[test]`, invisible to discovery
+#   atomic/       one documented behavior per test, single API call -> assert
+#   integration/  multi-step workflows: status -> apply -> re-status, and the
+#                 dirwalk/rename composition
+#
+# The package names `atomic` and `integration` are load-bearing.
+# `RustRunner._reported_to_id` takes the suite name from the leading crate
+# segment of nextest's reported name (`{crate}::{binary}$<path>`), so a member
+# named anything else produces ids the harness cannot match against `discover`.
+#
+# `[patch.crates-io]` is deliberately absent. `RustRunner.setup` appends
+#
+#     [patch.crates-io]
+#     gix-status = { path = "/eval/workspace" }
+#
+# to this file at run time, and cargo rejects a manifest carrying two sections
+# of the same name. The `gix-status` entry below already points at the
+# candidate, so the appended patch is a no-op that keeps `provenance()` honest.
+#
+# `resolver = "2"`, not `"3"`. Resolver 3 is MSRV-aware: it consults the
+# `rust-version` of every package in the graph when picking dependency
+# versions. The candidate writes its own `rust-version`, so under resolver 3 a
+# candidate could steer which releases of `gix-index`, `gix-dir` and friends the
+# *oracle* compiles against. The oracle's dependency resolution must not be
+# reachable from the artifact under test.
+
+[workspace]
+members = ["common", "atomic", "integration"]
+resolver = "2"
+
+[workspace.dependencies]
+# The crate under specification.
+#
+# No `features = [...]`, deliberately. Appendix A requires
+# `default = ["sha1", "worktree-rewrites"]`, so every item of the API Catalog is
+# reachable without naming a feature here. Naming `worktree-rewrites` explicitly
+# would turn a candidate that spelled the feature differently into a manifest
+# resolution error, which is a whole-workspace failure and would zero *both*
+# suites rather than only the tests that touch the renames surface.
+gix-status = { path = "/eval/workspace" }
+
+# Appendix A's own version floors for every dependency whose types cross the
+# public boundary, so the oracle and the candidate resolve to one instance of
+# each. A mismatch is not a test failure but a type-identity compile error at
+# every call site naming a `gix_index::Entry`, a `gix_hash::ObjectId` or a
+# `gix_dir::Entry` -- and in Rust a compile error is whole-binary, which zeroes
+# an entire suite.
+gix-index = "0.54.0"
+gix-worktree = { version = "0.55.0", features = ["attributes"], default-features = false }
+gix-filter = "0.33.0"
+gix-pathspec = "0.19.0"
+gix-object = "0.63.0"
+gix-fs = "0.22.0"
+gix-features = { version = "0.49.0", features = ["progress"] }
+gix-dir = "0.28.0"
+gix-diff = { version = "0.66.0", features = ["blob"], default-features = false }
+bstr = { version = "1.12.0", default-features = false, features = ["std"] }
+
+# `sha1` is enabled here and nowhere else that matters. `gix-hash 0.26` with
+# neither `sha1` nor `sha256` compiles to an empty `Kind` enum and fails to
+# build at all, so the oracle turns the feature on for the whole graph through
+# cargo's feature unification. That keeps the oracle buildable even if a
+# candidate got its own default feature set wrong, which is a spec violation
+# worth losing points for -- not worth losing the entire run for.
+gix-hash = { version = "0.26.0", features = ["sha1"] }
+
+# Test-only support. `filetime` sets deterministic mtimes on fixture files and
+# `tempfile` gives each test its own working tree.
+filetime = "0.2.29"
+tempfile = "3"
+
+# Deliberately absent, and worth recording:
+#
+#   gix-testtools -- upstream's own tests unpack tarball fixtures and shell out
+#     to `git`. Every oracle fixture here is built in memory from literals; no
+#     test reads a fixture archive and none invokes a `git` binary, so no test
+#     can fail for a reason that belongs to the harness rather than the
+#     candidate.
+#
+#   pretty_assertions -- a dev-dependency of the reference crate used only to
+#     prettify failure output. It changes no assertion's verdict.
+#
+#   gix-path -- named in Appendix A because the crate under specification needs
+#     it internally, but no type of it appears in a declared signature, so the
+#     oracle never spells one.

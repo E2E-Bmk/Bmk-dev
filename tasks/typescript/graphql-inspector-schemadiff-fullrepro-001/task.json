@@ -1,0 +1,323 @@
+{
+  "instance_id": "graphql-inspector-schemadiff-fullrepro-001",
+  "task_id": "graphql-inspector-schemadiff-fullrepro-001",
+  "pipeline_note": "QUALIFIED",
+  "repo": "graphql-hive/graphql-inspector",
+  "repo_commit": "7180fcae8260a734d526d66157c1a361c00f04d6",
+  "repo_subdir": "packages/core",
+  "language": "typescript",
+  "spec_version": "v1",
+  "package_import": "@graphql-inspector/core",
+  "target_imports": [
+    "@graphql-inspector/core"
+  ],
+  "oracle": {
+    "test_files": [
+      "oracle/atomic/comparison.test.ts",
+      "oracle/atomic/projections.test.ts",
+      "oracle/integration/integration.test.ts"
+    ],
+    "helpers": [
+      "oracle/helpers.ts",
+      "oracle/peer.ts",
+      "oracle/setup/peer.ts"
+    ],
+    "config": [
+      "oracle/vitest.config.ts",
+      "oracle/package.json"
+    ],
+    "count": 118,
+    "runner": "vitest",
+    "test_command": "npx vitest run",
+    "results_command": "npx vitest run --reporter=json --outputFile=results.json",
+    "scorer_isolation": [
+      "--remove-node-modules-package",
+      "@graphql-inspector/core"
+    ],
+    "requirements": "oracle/package.json",
+    "oracle_version": "2026-08-23-generated-v1"
+  },
+  "stats": {
+    "atomic": 92,
+    "integration": 26,
+    "system_e2e": 0
+  },
+  "environment": {
+    "image": "spec2repo-typescript:latest",
+    "agent_image": "spec2repo-agent-typescript:latest",
+    "node": "22.23.2",
+    "test_framework": "vitest 2.1.9",
+    "devDependencies": {
+      "graphql": "16.14.2",
+      "typescript": "5.7.2",
+      "vitest": "2.1.9"
+    },
+    "target_imports_file": "harness/lang/typescript/target_imports.json"
+  },
+  "reference_score": {
+    "atomic": {
+      "passed": 92,
+      "total": 92
+    },
+    "integration": {
+      "passed": 26,
+      "total": 26
+    },
+    "pass_rate": 1.0,
+    "platform": "Linux/Docker",
+    "source": "wip/graphql-inspector-schemadiff-fullrepro-001/eval/runs/reference/graphql-inspector-schemadiff-fullrepro-001/result.json"
+  },
+  "dummy_score": {
+    "atomic": {
+      "passed": 0,
+      "total": 92
+    },
+    "integration": {
+      "passed": 0,
+      "total": 26
+    },
+    "pass_rate": 0.0,
+    "implementation": "spec/surface_stub: every declared name present, every body throws",
+    "source": "wip/graphql-inspector-schemadiff-fullrepro-001/eval/runs/dummy/graphql-inspector-schemadiff-fullrepro-001/result.json"
+  },
+  "candidate_score": {
+    "model": "qwen3.8-max",
+    "atomic": {
+      "passed": 42,
+      "total": 92
+    },
+    "integration": {
+      "passed": 12,
+      "total": 26
+    },
+    "pass_rate": 0.4576,
+    "platform": "Linux/Docker",
+    "agent": "minisweagent 2.4.6, unlimited steps, submitted on its own after 84 calls",
+    "source": "wip/graphql-inspector-schemadiff-fullrepro-001/mutation/record.md, \"Paired measurement\" table (baseline packet row). wip/graphql-inspector-schemadiff-fullrepro-001/eval/runs/qwen3.8-max/ no longer holds this run: a later agent session on 2026-08-24 wrote over it, scored 25 of 87 atomic against a different oracle snapshot and reported an invalid adjusted denominator, so that artifact measures nothing about this packet. The reference and dummy artifacts below are untouched."
+  },
+  "integration_gap": {
+    "rate_gap": -0.005,
+    "adjusted_gap": 0.5,
+    "adjusted_integ_passed": 7,
+    "adjusted_integ_total": 14,
+    "gap_confidence": "high",
+    "depends_on_coverage": 1.0,
+    "note": "The raw gap is flat because the two layers happen to fail at the same rate. The adjusted gap is the reportable one: among the 14 integration tests whose atomic prerequisites all passed, 7 still failed, so half of the compositions the delivery had the primitives for did not hold.",
+    "source": "baseline packet, wip/graphql-inspector-schemadiff-fullrepro-001/mutation/record.md. The mutated packet of the same model scored 44/92 and 10/26 with a +41.7pp adjusted gap over 12 eligible tests; that pair is recorded under mutation.paired_measurement, not here."
+  },
+  "weaknesses": [
+    "criticality grading: a change is found but graded wrong, most often where the specification makes the grade depend on a second fact (a default value, whether the parent is itself new, whether the field was deprecated)",
+    "traversal order and completeness: the change list is right in kind and wrong in length, with the per-member changes of a newly added type the common omission",
+    "the meta payload: the declared field set is delivered partially, and the serialisable builders inherit whatever the payload got wrong",
+    "rule composition: the rules that must return a list of the same length in the same order are implemented as filters",
+    "directive usage: the coordinate grammar for a usage differs from the one the specification states, which moves every usage change off its coordinate"
+  ],
+  "source_meta": {
+    "github_stars": 1300,
+    "npm_weekly_downloads": 220000,
+    "loc": 6935,
+    "first_release": "2019-03",
+    "note": "star and download figures are order-of-magnitude, read from the public listing at selection time"
+  },
+  "labels": [
+    "typescript",
+    "schema-diff",
+    "equivalence-judgement",
+    "four-projections",
+    "rule-pipeline"
+  ],
+  "validation": {
+    "lint": "filter/lint_result.txt (LINT_PASS, typescript linter)",
+    "reference_gate": "100% of 118",
+    "dummy_gate": "0% of 118",
+    "floors": "atomic 92 >= 30, integration 26 >= 25, total 118 >= 60",
+    "depends_on": "26/26"
+  },
+  "coverage_gap": {
+    "verdict": "PARTIAL",
+    "uncovered_behaviour": [
+      "10.4 Apollo mode"
+    ],
+    "cited_nowhere_but_exercised": [
+      "4.1 Criticality",
+      "4.3 Change types",
+      "4.4 Type-change safety",
+      "4.5 Default-value comparison",
+      "5.2 Traversal and ordering"
+    ],
+    "note": "Apollo mode is the only behaviour section with no test: the upstream tests for it load fixtures through a second package of the monorepo, outside the single-package delivery boundary. The five cited-nowhere sections are exercised by every comparison test -- each asserts a CriticalityLevel member, a ChangeType string value and the change list as an ordered list -- but no test names their clauses in a Verifies line.",
+    "source": "judge/diagnosis_report.md section 6"
+  },
+  "spec_errors_open": [
+    {
+      "clause": "GQLI-CORE-007",
+      "spec_claim": "`ChangeType` is a frozen object of exactly 80 members.",
+      "reference_observed": "Object.isFrozen(ChangeType) === false; the member count is 80.",
+      "type": "spec_error",
+      "effect_on_scores": "none; no test asserts freezing"
+    }
+  ],
+  "mutation": {
+    "variant_of": "graphql-inspector-schemadiff-fullrepro-001",
+    "clauses": [
+      "GQLI-RULE-009"
+    ],
+    "tests": [
+      "integration::a breaking change outside the reachable graph is graded down and says so",
+      "integration::two rules compose, each seeing what the one before it produced"
+    ],
+    "upstream_expected_failures": 2,
+    "upstream_form": "Unreachable from root",
+    "mutated_form": "Detached from the schema roots",
+    "record": "wip/graphql-inspector-schemadiff-fullrepro-001/mutation/record.md",
+    "reference_patch": "wip/graphql-inspector-schemadiff-fullrepro-001/mutation/reference_patch.mjs",
+    "paired_measurement": {
+      "model": "qwen3.8-max",
+      "runs_per_side": 1,
+      "baseline_overall": "54/118",
+      "mutated_overall": "54/118",
+      "mutated_atomic": "44/92",
+      "mutated_integration": "10/26",
+      "mutated_raw_gap": 0.0936,
+      "mutated_adjusted_gap": 0.4167,
+      "recall_rate": "1/2",
+      "spec_rate": "1/2",
+      "per_test": [
+        {
+          "test": "integration::a breaking change outside the reachable graph is graded down and says so",
+          "baseline": "passed",
+          "mutated": "passed",
+          "reading": "spec-following"
+        },
+        {
+          "test": "integration::two rules compose, each seeing what the one before it produced",
+          "baseline": "failed",
+          "mutated": "failed",
+          "reading": "beyond capability"
+        }
+      ],
+      "reading": "one test reads spec-following (the delivery wrote the specified literal on both packets, so the passing baseline was not recall); one test fails on both sides for a reason unrelated to the mutated clause and therefore carries no recall signal",
+      "limitation": "one run per side. The skill asks for at least three per side before comparing across sides, so this supports a direction on two tests, not a rate."
+    }
+  },
+  "taxonomy": {
+    "atomic::field argument: added non-nullable with default value": "atomic",
+    "atomic::field argument: default value added": "atomic",
+    "atomic::field argument: default value changed": "atomic",
+    "atomic::directive definition: added": "atomic",
+    "atomic::directive definition: removed": "atomic",
+    "atomic::directive definition: description": "atomic",
+    "atomic::directive definition: location removed": "atomic",
+    "atomic::directive definition: arguments added": "atomic",
+    "atomic::directive definition: arguments removed": "atomic",
+    "atomic::directive definition: arguments changed": "atomic",
+    "atomic::directive definition: default value": "atomic",
+    "atomic::enum: added": "atomic",
+    "atomic::enum: value removed": "atomic",
+    "atomic::enum: description changed": "atomic",
+    "atomic::enum: deprecation reason changed": "atomic",
+    "atomic::enum: deprecation reason added": "atomic",
+    "atomic::enum: deprecation reason removed": "atomic",
+    "atomic::enum: value added": "atomic",
+    "atomic::enum: string escaping deprecation reason added with escaped single quotes": "atomic",
+    "atomic::input object: fields added": "atomic",
+    "atomic::input object: fields removed": "atomic",
+    "atomic::input object: fields type changed": "atomic",
+    "atomic::input object: fields description changed / added / removed": "atomic",
+    "atomic::input object: fields default value added": "atomic",
+    "atomic::input object: fields added with a default value": "atomic",
+    "atomic::input object: fields order changed": "atomic",
+    "atomic::input object: fields added to an added input": "atomic",
+    "atomic::interface: fields added": "atomic",
+    "atomic::interface: fields removed": "atomic",
+    "atomic::interface: fields type changed": "atomic",
+    "atomic::interface: fields description changed / added / removed": "atomic",
+    "atomic::interface: fields deprecation reason changed / added / removed": "atomic",
+    "atomic::interface: deprecation added w/reason": "atomic",
+    "atomic::object type: added": "atomic",
+    "atomic::object type: interfaces added": "atomic",
+    "atomic::object type: interfaces removed": "atomic",
+    "atomic::object type: arguments type changed": "atomic",
+    "atomic::object type: arguments removed": "atomic",
+    "atomic::object type: fields order changed": "atomic",
+    "atomic::object type: arguments added": "atomic",
+    "atomic::object type: fields added": "atomic",
+    "atomic::schema: renamed query": "atomic",
+    "atomic::schema: new field and field changed": "atomic",
+    "atomic::schema: array as default value in argument (same)": "atomic",
+    "atomic::schema: array as default value in argument (different)": "atomic",
+    "atomic::schema: same schema": "atomic",
+    "atomic::schema: array as default value in input (same)": "atomic",
+    "atomic::schema: array as default value in input (different)": "atomic",
+    "atomic::schema: Query fields becoming non-nullable is a non-breaking change": "atomic",
+    "atomic::union: member added": "atomic",
+    "atomic::union: member removed": "atomic",
+    "atomic::union: same members but different order": "atomic",
+    "atomic::directive usage: directive-usage union-level directives added directive": "atomic",
+    "atomic::directive usage: directive-usage union-level directives remove directive": "atomic",
+    "atomic::directive usage: directive-usage enum-level directives added directive": "atomic",
+    "atomic::directive usage: directive-usage enum-level directives removed directive": "atomic",
+    "atomic::directive usage: directive-usage input-object-level directives removed directive": "atomic",
+    "atomic::directive usage: directive-usage input-object-level directives added directive": "atomic",
+    "atomic::directive usage: directive-usage input-field-level directives added directive": "atomic",
+    "atomic::directive usage: directive-usage input-field-level directives removed directive": "atomic",
+    "atomic::directive usage: directive-usage scalar-level directives added directive": "atomic",
+    "atomic::directive usage: directive-usage scalar-level directives removed directive": "atomic",
+    "atomic::directive usage: directive-usage object-level directives added directive": "atomic",
+    "atomic::directive usage: directive-usage object-level directives removed directive": "atomic",
+    "atomic::coverage reports every object and interface type and nothing else": "atomic",
+    "atomic::coverage statistics count fields and arguments together": "atomic",
+    "atomic::coverage counts a selected field and the argument it was given": "atomic",
+    "atomic::coverage leaves an unselected field at zero hits with no locations": "atomic",
+    "atomic::coverage counts root selections rather than distinct root fields": "atomic",
+    "atomic::coverage records the newest location of a repeated selection first": "atomic",
+    "atomic::coverage ignores a typename selection": "atomic",
+    "atomic::coverage of no documents still reports every type at zero": "atomic",
+    "atomic::similarity pairs two types that print the same way": "atomic",
+    "atomic::similarity uses the stripped definition as the compared value": "atomic",
+    "atomic::similarity narrowed to one type reports that type only": "atomic",
+    "atomic::similarity above a raised threshold reports nothing coincidental": "atomic",
+    "atomic::similarity rejects a type name the schema does not offer": "atomic",
+    "atomic::validation omits a document it has nothing to report about": "atomic",
+    "atomic::validation reports a selection the schema does not define": "atomic",
+    "atomic::validation collects a deprecated selection apart from the errors": "atomic",
+    "atomic::validation reports one depth error and treats a zero limit as no limit": "atomic",
+    "atomic::validation reports one alias error when the alias budget is exceeded": "atomic",
+    "atomic::validation reports one directive error when the directive budget is exceeded": "atomic",
+    "atomic::validation applies the complexity budget when it is configured": "atomic",
+    "atomic::validation never reports a fragment-only document yet still resolves its fragments": "atomic",
+    "atomic::validation reports one error per repeated fragment name unless asked not to": "atomic",
+    "atomic::the alias count follows a fragment spread": "atomic",
+    "atomic::the directive count is the directives of the node and of everything it includes": "atomic",
+    "atomic::the depth of an operation includes the depth of the fragments it spreads": "atomic",
+    "atomic::the complexity of an operation is the configured cost of its shape": "atomic",
+    "atomic::the token count adds the tokens of every referenced fragment": "atomic",
+    "atomic::a change record can be rebuilt from its payload alone": "atomic",
+    "integration::a removed field survives the trip through its payload and back": "integration",
+    "integration::two unrelated change kinds both round trip through their own builders": "integration",
+    "integration::a field coordinate a comparison emits is addressable in a coverage report": "integration",
+    "integration::an argument coordinate a comparison emits is addressable in a coverage report": "integration",
+    "integration::when validation accepts every document, coverage counts every root selection": "integration",
+    "integration::a selection validation rejects never becomes a coverage hit": "integration",
+    "integration::a pair a comparison calls kind-changed is never a similarity match": "integration",
+    "integration::the built-in scalars are invisible to all three schema walks": "integration",
+    "integration::an introspection type is absent from every projection and cannot be asked for": "integration",
+    "integration::a newly deprecated field is announced by the comparison and by validation alike": "integration",
+    "integration::un-deprecating a field is announced by both projections in the other direction": "integration",
+    "integration::the description rule returns a subsequence of what the comparison produced": "integration",
+    "integration::the usage rule keeps the list length and every type and coordinate in place": "integration",
+    "integration::a breaking change outside the reachable graph is graded down and says so": "integration",
+    "integration::removing a deprecated field is graded down while removing a live one is not": "integration",
+    "integration::a change already implied by its parent is dropped by the simplifying rule": "integration",
+    "integration::the directive rule with nothing configured hands the list straight back": "integration",
+    "integration::marking a field safe also grades down the coordinates beneath it": "integration",
+    "integration::the usage rule refuses to run without the configuration it reads": "integration",
+    "integration::the escalating rule turns every dangerous verdict into a breaking one": "integration",
+    "integration::a release review reads the coordinate and the payload of every breaking change": "integration",
+    "integration::a usage-aware re-run of the same comparison changes only the grades": "integration",
+    "integration::a coverage report over two documents adds their hits and keeps both sources": "integration",
+    "integration::several budgets applied at once report one error each, in the stated order": "integration",
+    "integration::a type the comparison left alone is still the similarity match of its twin": "integration",
+    "integration::two rules compose, each seeing what the one before it produced": "integration"
+  }
+}

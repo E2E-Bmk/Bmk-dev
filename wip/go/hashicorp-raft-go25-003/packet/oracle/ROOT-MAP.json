@@ -1,0 +1,39 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case": "hashicorp-raft-go25-003",
+  "status": "preregistered-pre-freeze",
+  "allocation": {
+    "root_total": 23,
+    "atomic": 8,
+    "integration": 15,
+    "system": 0,
+    "mutation": 22,
+    "native": 2
+  },
+  "roots": [
+    {"id":"A01","layer":"atomic","name":"SingleVoterRead","mutation":true,"family":"READ-BOUNDARY","owners":["verification-quorum","commitment","fsm-runner"],"tests":["TestRaftV3A01SingleVoterRead"],"package":"."},
+    {"id":"A02","layer":"atomic","name":"ReadDoesNotAppend","mutation":true,"family":"APPEND-FREE","owners":["log-store","verification-quorum"],"tests":["TestRaftV3A02ReadDoesNotAppend"],"package":"."},
+    {"id":"A03","layer":"atomic","name":"IncludesCommittedCommand","mutation":true,"family":"READ-BOUNDARY","owners":["commitment","fsm-runner"],"tests":["TestRaftV3A03IncludesCommittedCommand"],"package":"."},
+    {"id":"A04","layer":"atomic","name":"FollowerRejected","mutation":true,"family":"ROLE-LIFECYCLE","owners":["raft-role","future"],"tests":["TestRaftV3A04FollowerRejected"],"package":"."},
+    {"id":"A05","layer":"atomic","name":"ShutdownRejected","mutation":true,"family":"ROLE-LIFECYCLE","owners":["shutdown","future"],"tests":["TestRaftV3A05ShutdownRejected"],"package":"."},
+    {"id":"A06","layer":"atomic","name":"RepeatedReadsStayReadOnly","mutation":true,"family":"APPEND-FREE","owners":["log-store","commitment","future"],"tests":["TestRaftV3A06RepeatedReadsStayReadOnly"],"package":"."},
+    {"id":"A07","layer":"atomic","name":"NativeVerifyLeader","mutation":true,"family":"COMPATIBILITY","owners":["verification-quorum","log-store"],"tests":["TestRaftV3A07NativeVerifyLeader"],"package":"."},
+    {"id":"A08","layer":"atomic","name":"ReadDoesNotTriggerSnapshot","mutation":true,"family":"APPEND-FREE","owners":["snapshot-store","fsm-runner","future"],"tests":["TestRaftV3A08ReadDoesNotTriggerSnapshot"],"package":"."},
+
+    {"id":"I01","layer":"integration","name":"WaitsForFSMConsumption","mutation":true,"family":"FSM-FENCE","owners":["commitment","fsm-runner","application-fsm"],"tests":["TestRaftV3I01WaitsForFSMConsumption"],"package":"."},
+    {"id":"I02","layer":"integration","name":"NoSyntheticFSMCommand","mutation":true,"family":"APPEND-FREE","owners":["log-store","fsm-runner","application-fsm"],"tests":["TestRaftV3I02ReadDoesNotApplySyntheticCommand"],"package":"."},
+    {"id":"I03","layer":"integration","name":"ReadAfterBarrierAddsNoEntry","mutation":true,"family":"APPEND-FREE","owners":["barrier-log","log-store","read-future"],"tests":["TestRaftV3I03ReadAfterBarrierAddsNoSecondEntry"],"package":"."},
+    {"id":"I04","layer":"integration","name":"SnapshotThenRead","mutation":true,"family":"READ-BOUNDARY","owners":["snapshot-store","commitment","fsm-runner"],"tests":["TestRaftV3I04SnapshotThenRead"],"package":"."},
+    {"id":"I05","layer":"integration","name":"ConcurrentReadsShareNoLogEntry","mutation":true,"family":"FSM-FENCE","owners":["commitment","fsm-runner","log-store","read-futures"],"tests":["TestRaftV3I05ConcurrentReadsShareNoLogEntry"],"package":"."},
+    {"id":"I06","layer":"integration","name":"FailedReadDoesNotAppend","mutation":true,"family":"ROLE-LIFECYCLE","owners":["raft-role","log-store","future"],"tests":["TestRaftV3I06FailedReadDoesNotAppend"],"package":"."},
+    {"id":"I07","layer":"integration","name":"WaitsForBatchConsumption","mutation":true,"family":"FSM-FENCE","owners":["commitment","fsm-batch-runner","application-fsm"],"tests":["TestRaftV3I07WaitsForBatchConsumption"],"package":"."},
+    {"id":"I08","layer":"integration","name":"WaitsForSnapshotCapture","mutation":true,"family":"FSM-PHASE-ORDER","owners":["snapshot-runner","fsm-runner","read-future"],"tests":["TestRaftV3I08WaitsForSnapshotCapture"],"package":"."},
+    {"id":"I09","layer":"integration","name":"WaitsForConfigurationConsumption","mutation":true,"family":"FSM-PHASE-ORDER","owners":["configuration-commit","configuration-store","fsm-runner"],"tests":["TestRaftV3I09WaitsForConfigurationConsumption"],"package":"."},
+    {"id":"I10","layer":"integration","name":"HealthyVotingQuorum","mutation":true,"family":"QUORUM-MEMBERSHIP","owners":["leader-replication","voter-quorum","log-store"],"tests":["TestRaftV3I10HealthyVotingQuorum"],"package":"."},
+    {"id":"I11","layer":"integration","name":"OneUnavailableVoterStillFormsQuorum","mutation":true,"family":"QUORUM-MEMBERSHIP","owners":["leader-replication","available-voter","unavailable-voter"],"tests":["TestRaftV3I11OneUnavailableVoterStillFormsQuorum"],"package":"."},
+    {"id":"I12","layer":"integration","name":"IsolatedLeaderCannotConfirm","mutation":true,"family":"QUORUM-MEMBERSHIP","owners":["leader-replication","raft-role","log-store"],"tests":["TestRaftV3I12IsolatedLeaderCannotConfirm"],"package":"."},
+    {"id":"I13","layer":"integration","name":"NonvoterDoesNotReplaceVoter","mutation":true,"family":"QUORUM-MEMBERSHIP","owners":["voter-configuration","nonvoter-replication","verification-quorum"],"tests":["TestRaftV3I13NonvoterDoesNotReplaceVoter"],"package":"."},
+    {"id":"I14","layer":"integration","name":"NativeBarrierOrdersFSM","mutation":false,"family":null,"owners":["barrier-log","commitment","fsm-runner"],"tests":["TestRaftV3I14NativeBarrierOrdersFSM"],"package":"."},
+    {"id":"I15","layer":"integration","name":"SnapshotCommandAndReadShareOrder","mutation":true,"family":"FSM-PHASE-ORDER","owners":["snapshot-runner","commitment","fsm-runner","log-store"],"tests":["TestRaftV3I15SnapshotCommandAndReadShareOrder"],"package":"."}
+  ]
+}

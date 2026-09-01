@@ -1,0 +1,1272 @@
+{
+  "case": "fx-lifecycle-fullrepro-002",
+  "roots": [
+    {
+      "clauses": [
+        "FX-LAZY-A01"
+      ],
+      "depends_on": [],
+      "family": "FX-PROVIDE-INVOKE-LAZINESS",
+      "id": "A01",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Option"
+      ],
+      "owners": [
+        "receipt.ConstructorFact",
+        "receipt.ResolutionFact",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicUnusedProviderNotConstructedPrimary",
+        "TestFxAtomicUnusedProviderNotConstructedEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-LAZY-A02"
+      ],
+      "depends_on": [],
+      "family": "FX-PROVIDE-INVOKE-LAZINESS",
+      "id": "A02",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Option"
+      ],
+      "owners": [
+        "receipt.ConstructorFact",
+        "receipt.ResolutionFact",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicInvokedProviderConstructedOncePrimary",
+        "TestFxAtomicInvokedProviderConstructedOnceEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-MODULE-A01"
+      ],
+      "depends_on": [],
+      "family": "FX-MODULE-SCOPE-DECORATION",
+      "id": "A03",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fx.Module",
+        "fx.Decorate"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicModulePrivateVisibilityPrimary",
+        "TestFxAtomicModulePrivateVisibilityEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-MODULE-A02"
+      ],
+      "depends_on": [],
+      "family": "FX-MODULE-SCOPE-DECORATION",
+      "id": "A04",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fx.Module",
+        "fx.Decorate"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicDecorationReplacesVisibleValuePrimary",
+        "TestFxAtomicDecorationReplacesVisibleValueEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ROLLBACK-A01"
+      ],
+      "depends_on": [],
+      "family": "FX-LIFECYCLE-START-ROLLBACK",
+      "id": "A05",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Record",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicHookStartRegistrationOrderPrimary",
+        "TestFxAtomicHookStartRegistrationOrderEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ROLLBACK-A02"
+      ],
+      "depends_on": [],
+      "family": "FX-LIFECYCLE-START-ROLLBACK",
+      "id": "A06",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Record",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicStartFailurePreservesCausePrimary",
+        "TestFxAtomicStartFailurePreservesCauseEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-STOP-A01"
+      ],
+      "depends_on": [],
+      "family": "FX-LIFECYCLE-REVERSE-STOP",
+      "id": "A07",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Entries",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicStopUsesReverseStartOrderPrimary",
+        "TestFxAtomicStopUsesReverseStartOrderEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-STOP-A02"
+      ],
+      "depends_on": [],
+      "family": "FX-LIFECYCLE-REVERSE-STOP",
+      "id": "A08",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Entries",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicStopAggregatesHookErrorsPrimary",
+        "TestFxAtomicStopAggregatesHookErrorsEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ERRGRAPH-A01"
+      ],
+      "depends_on": [],
+      "family": "FX-EVENTLOG-ERROR-GRAPH",
+      "id": "A09",
+      "layer": "atomic",
+      "mutation": true,
+      "native_owners": [
+        "fxevent.Logger",
+        "fx.App"
+      ],
+      "owners": [
+        "receipt.EventFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicEventLoggerReceivesConstructionErrorPrimary",
+        "TestFxAtomicEventLoggerReceivesConstructionErrorEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-START-TIMEOUT-001"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A10",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "fx.StartTimeout",
+        "fx.App.StartTimeout"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicStartTimeoutOptionPrimary",
+        "TestFxAtomicStartTimeoutOptionEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-STOP-TIMEOUT-001"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A11",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "fx.StopTimeout",
+        "fx.App.StopTimeout"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicStopTimeoutOptionPrimary",
+        "TestFxAtomicStopTimeoutOptionEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-ERROR-001"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A12",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "fx.Error",
+        "fx.App.Err"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicErrorOptionPrimary",
+        "TestFxAtomicErrorOptionEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-SUPPLY-001"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A13",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "fx.Supply"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicSupplyConcreteValuePrimary",
+        "TestFxAtomicSupplyConcreteValueEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-REPLACE-001"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A14",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "fx.Replace"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicReplaceConcreteValuePrimary",
+        "TestFxAtomicReplaceConcreteValueEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-POP-001"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A15",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "fx.Populate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicPopulatePointerTargetPrimary",
+        "TestFxAtomicPopulatePointerTargetEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-VALIDATE-001"
+      ],
+      "depends_on": [],
+      "family": null,
+      "id": "A16",
+      "layer": "atomic",
+      "mutation": false,
+      "owners": [
+        "fx.App"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxAtomicValidateAppSuccessPrimary",
+        "TestFxAtomicValidateAppSuccessEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-LAZY-I01"
+      ],
+      "depends_on": [
+        "A01",
+        "A02"
+      ],
+      "family": "FX-PROVIDE-INVOKE-LAZINESS",
+      "id": "I01",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Option",
+        "fx.Invoke",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.ConstructorFact",
+        "receipt.ResolutionFact",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamInvokeDemandToProviderConstructionPrimary",
+        "TestFxSeamInvokeDemandToProviderConstructionFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-LAZY-I02"
+      ],
+      "depends_on": [
+        "A01",
+        "A02"
+      ],
+      "family": "FX-PROVIDE-INVOKE-LAZINESS",
+      "id": "I02",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Option",
+        "fx.Invoke",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.ConstructorFact",
+        "receipt.ResolutionFact",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamConstructedValueToLifecycleHookPrimary",
+        "TestFxSeamConstructedValueToLifecycleHookFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-MODULE-I01"
+      ],
+      "depends_on": [
+        "A03",
+        "A04"
+      ],
+      "family": "FX-MODULE-SCOPE-DECORATION",
+      "id": "I03",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Module",
+        "fx.Decorate",
+        "fx.App",
+        "fx.Invoke"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamModuleScopeToInvokeResolutionPrimary",
+        "TestFxSeamModuleScopeToInvokeResolutionFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-MODULE-I02"
+      ],
+      "depends_on": [
+        "A03",
+        "A04"
+      ],
+      "family": "FX-MODULE-SCOPE-DECORATION",
+      "id": "I04",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Module",
+        "fx.Decorate",
+        "fx.App",
+        "fx.Invoke"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamDecorationToNestedModuleValuePrimary",
+        "TestFxSeamDecorationToNestedModuleValueFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ROLLBACK-I01"
+      ],
+      "depends_on": [
+        "A05",
+        "A06"
+      ],
+      "family": "FX-LIFECYCLE-START-ROLLBACK",
+      "id": "I05",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle",
+        "fx.Hook",
+        "fxevent.Logger"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Record",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamStartFailureToPriorHookRollbackPrimary",
+        "TestFxSeamStartFailureToPriorHookRollbackFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ROLLBACK-I02"
+      ],
+      "depends_on": [
+        "A05",
+        "A06"
+      ],
+      "family": "FX-LIFECYCLE-START-ROLLBACK",
+      "id": "I06",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle",
+        "fx.Hook",
+        "fxevent.Logger"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Record",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamRollbackToLifecycleEventsPrimary",
+        "TestFxSeamRollbackToLifecycleEventsFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-STOP-I01"
+      ],
+      "depends_on": [
+        "A07",
+        "A08"
+      ],
+      "family": "FX-LIFECYCLE-REVERSE-STOP",
+      "id": "I07",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle",
+        "fx.Hook",
+        "fxevent.Logger"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Entries",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamStartedHooksToReverseStopPrimary",
+        "TestFxSeamStartedHooksToReverseStopFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-STOP-I02"
+      ],
+      "depends_on": [
+        "A07",
+        "A08"
+      ],
+      "family": "FX-LIFECYCLE-REVERSE-STOP",
+      "id": "I08",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle",
+        "fx.Hook",
+        "fxevent.Logger"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Entries",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamStopErrorsToEventLogPrimary",
+        "TestFxSeamStopErrorsToEventLogFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ERRGRAPH-I01"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "family": "FX-EVENTLOG-ERROR-GRAPH",
+      "id": "I09",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fxevent.Logger",
+        "fx.App",
+        "fx.DotGraph",
+        "fx.ErrorHandler"
+      ],
+      "owners": [
+        "receipt.EventFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamGraphFailureToErrorHandlerPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ERRGRAPH-I02"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "family": "FX-EVENTLOG-ERROR-GRAPH",
+      "id": "I10",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fxevent.Logger",
+        "fx.App",
+        "fx.DotGraph",
+        "fx.ErrorHandler"
+      ],
+      "owners": [
+        "receipt.EventFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamErrorGraphToEventSequencePrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ERRGRAPH-I03"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "family": "FX-EVENTLOG-ERROR-GRAPH",
+      "id": "I11",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fxevent.Logger",
+        "fx.App",
+        "fx.DotGraph",
+        "fx.ErrorHandler"
+      ],
+      "owners": [
+        "receipt.EventFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamMissingDependencyToAnnotatedModulePrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-SHUTDOWN-I01"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "family": "FX-SHUTDOWNER-WAIT-SIGNAL",
+      "id": "I12",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Shutdowner",
+        "fx.App",
+        "fx.ShutdownSignal",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.ShutdownFact",
+        "receipt.EventFact",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamShutdownerToWaitChannelPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-SHUTDOWN-I02"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "family": "FX-SHUTDOWNER-WAIT-SIGNAL",
+      "id": "I13",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Shutdowner",
+        "fx.App",
+        "fx.ShutdownSignal",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.ShutdownFact",
+        "receipt.EventFact",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamShutdownToLifecycleStopPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-SHUTDOWN-I03"
+      ],
+      "depends_on": [
+        "A11",
+        "A13"
+      ],
+      "family": "FX-SHUTDOWNER-WAIT-SIGNAL",
+      "id": "I14",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Shutdowner",
+        "fx.App",
+        "fx.ShutdownSignal",
+        "fx.Lifecycle"
+      ],
+      "owners": [
+        "receipt.ShutdownFact",
+        "receipt.EventFact",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamRepeatedShutdownToSingleSignalPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-GROUP-I01"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "family": "FX-NAMED-GROUPED-RESOLUTION",
+      "id": "I15",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Annotated",
+        "fx.In",
+        "fx.Out",
+        "fx.Invoke"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.GraphPlan.IncludeResolution",
+        "receipt.AppReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamAnnotatedNameToParameterObjectPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-GROUP-I02"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "family": "FX-NAMED-GROUPED-RESOLUTION",
+      "id": "I16",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Annotated",
+        "fx.In",
+        "fx.Out",
+        "fx.Invoke"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.GraphPlan.IncludeResolution",
+        "receipt.AppReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamGroupedResultsToInputSlicePrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-GROUP-I03"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "family": "FX-NAMED-GROUPED-RESOLUTION",
+      "id": "I17",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Annotated",
+        "fx.In",
+        "fx.Out",
+        "fx.Invoke"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.GraphPlan.IncludeResolution",
+        "receipt.AppReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamSoftGroupToConstructionDemandPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ERRGRAPH-I04"
+      ],
+      "depends_on": [
+        "A09",
+        "A16"
+      ],
+      "family": "FX-EVENTLOG-ERROR-GRAPH",
+      "id": "I18",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fxevent.Logger",
+        "fx.App",
+        "fx.DotGraph"
+      ],
+      "owners": [
+        "receipt.EventFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamDotGraphToMissingDependencyPrimary",
+        "TestFxSeamDotGraphToMissingDependencyFailure"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-SHUTDOWN-I04"
+      ],
+      "depends_on": [
+        "A09",
+        "A16"
+      ],
+      "family": "FX-SHUTDOWNER-WAIT-SIGNAL",
+      "id": "I19",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Shutdowner",
+        "fx.App",
+        "fx.ShutdownSignal"
+      ],
+      "owners": [
+        "receipt.ShutdownFact",
+        "receipt.EventFact",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamShutdownSignalToWaitReceiptPrimary",
+        "TestFxSeamShutdownSignalToWaitReceiptEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-GROUP-I04"
+      ],
+      "depends_on": [
+        "A03",
+        "A04"
+      ],
+      "family": "FX-NAMED-GROUPED-RESOLUTION",
+      "id": "I20",
+      "layer": "integration",
+      "mutation": true,
+      "native_owners": [
+        "fx.Annotated",
+        "fx.In",
+        "fx.Module"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.GraphPlan.IncludeResolution",
+        "receipt.AppReceipt.Digest",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamNamedAndGroupedResolutionPrimary",
+        "TestFxSeamNamedAndGroupedResolutionEdge"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-SEAM-004"
+      ],
+      "depends_on": [
+        "A16",
+        "A13"
+      ],
+      "family": null,
+      "id": "I21",
+      "layer": "integration",
+      "mutation": false,
+      "owners": [
+        "fx.App",
+        "fx.ErrorHandler"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamValidateToErrorHookSeamPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-SEAM-005"
+      ],
+      "depends_on": [
+        "A13",
+        "A14"
+      ],
+      "family": null,
+      "id": "I22",
+      "layer": "integration",
+      "mutation": false,
+      "owners": [
+        "fx.Option",
+        "fx.App"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamOptionCompositionToAppSeamPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-SEAM-006"
+      ],
+      "depends_on": [
+        "A14",
+        "A16"
+      ],
+      "family": null,
+      "id": "I23",
+      "layer": "integration",
+      "mutation": false,
+      "owners": [
+        "fx.Printer",
+        "fx.Option"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamPrinterToOptionStringSeamPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-SEAM-007"
+      ],
+      "depends_on": [
+        "A15",
+        "A13"
+      ],
+      "family": null,
+      "id": "I24",
+      "layer": "integration",
+      "mutation": false,
+      "owners": [
+        "fx.Populate",
+        "fx.Lifecycle"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxSeamPopulateToLifecycleSeamPrimary"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-LAZY-S01"
+      ],
+      "depends_on": [
+        "A01",
+        "A02",
+        "A13",
+        "A14"
+      ],
+      "family": "FX-PROVIDE-INVOKE-LAZINESS",
+      "id": "S01",
+      "layer": "system",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Option",
+        "fx.Invoke",
+        "fx.Lifecycle",
+        "fx.Shutdowner",
+        "fxevent.Logger"
+      ],
+      "owners": [
+        "receipt.ConstructorFact",
+        "receipt.ResolutionFact",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxE2EFreshDemandConstructionReceiptFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-MODULE-S01"
+      ],
+      "depends_on": [
+        "A03",
+        "A04",
+        "A13",
+        "A14"
+      ],
+      "family": "FX-MODULE-SCOPE-DECORATION",
+      "id": "S02",
+      "layer": "system",
+      "mutation": true,
+      "native_owners": [
+        "fx.Module",
+        "fx.Decorate",
+        "fx.App",
+        "fx.Invoke",
+        "fx.Lifecycle",
+        "fx.Shutdowner"
+      ],
+      "owners": [
+        "receipt.ResolutionFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.AppReceipt.Equivalent"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxE2EFreshNestedModuleDecorationReceiptFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ROLLBACK-S01"
+      ],
+      "depends_on": [
+        "A05",
+        "A06",
+        "A13",
+        "A14"
+      ],
+      "family": "FX-LIFECYCLE-START-ROLLBACK",
+      "id": "S03",
+      "layer": "system",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle",
+        "fx.Hook",
+        "fxevent.Logger",
+        "fx.Shutdowner",
+        "fx.DotGraph"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Record",
+        "receipt.Capture",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxE2EFreshStartFailureRollbackReceiptFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-STOP-S01"
+      ],
+      "depends_on": [
+        "A07",
+        "A08",
+        "A13",
+        "A14"
+      ],
+      "family": "FX-LIFECYCLE-REVERSE-STOP",
+      "id": "S04",
+      "layer": "system",
+      "mutation": true,
+      "native_owners": [
+        "fx.App",
+        "fx.Lifecycle",
+        "fx.Hook",
+        "fxevent.Logger",
+        "fx.Shutdowner",
+        "fx.DotGraph"
+      ],
+      "owners": [
+        "receipt.HookFact",
+        "receipt.AppJournal.Entries",
+        "receipt.AppReceipt",
+        "receipt.AppReceipt.Validate"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxE2EFreshReverseStopReceiptFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-ERRGRAPH-S01"
+      ],
+      "depends_on": [
+        "A09",
+        "A10",
+        "A13",
+        "A14"
+      ],
+      "family": "FX-EVENTLOG-ERROR-GRAPH",
+      "id": "S05",
+      "layer": "system",
+      "mutation": true,
+      "native_owners": [
+        "fxevent.Logger",
+        "fx.App",
+        "fx.DotGraph",
+        "fx.ErrorHandler",
+        "fx.Lifecycle",
+        "fx.Shutdowner"
+      ],
+      "owners": [
+        "receipt.EventFact",
+        "receipt.ConstructorFact",
+        "receipt.AppReceipt.Validate",
+        "receipt.Diff"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxE2EFreshGraphFailureReceiptFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-SYS-001"
+      ],
+      "depends_on": [
+        "A13",
+        "A14",
+        "A15",
+        "A16"
+      ],
+      "family": null,
+      "id": "S06",
+      "layer": "system",
+      "mutation": false,
+      "owners": [
+        "fx.Supply",
+        "fx.App",
+        "fx.Invoke",
+        "fx.Lifecycle"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxE2ENativeSupplyInvokeLifecycleFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-SYS-002"
+      ],
+      "depends_on": [
+        "A13",
+        "A14",
+        "A15",
+        "A16"
+      ],
+      "family": null,
+      "id": "S07",
+      "layer": "system",
+      "mutation": false,
+      "owners": [
+        "fx.Replace",
+        "fx.Populate",
+        "fx.App",
+        "fx.Option"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxE2ENativeReplacePopulateAppFreshReceipt"
+      ]
+    },
+    {
+      "clauses": [
+        "FX-NATIVE-SYS-003"
+      ],
+      "depends_on": [
+        "A13",
+        "A14",
+        "A15",
+        "A16"
+      ],
+      "family": null,
+      "id": "S08",
+      "layer": "system",
+      "mutation": false,
+      "owners": [
+        "fx.App",
+        "fx.Provide",
+        "fx.Invoke",
+        "fx.ErrorHandler"
+      ],
+      "package": "./...",
+      "tests": [
+        "TestFxE2ENativeValidateProvideInvokeFreshReceipt"
+      ]
+    }
+  ],
+  "schema": "spec2repo.go-root-map.v2"
+}

@@ -1,0 +1,307 @@
+{
+  "instance_id": "depgraph-maven-plugin-fullrepro-001",
+  "pipeline_note": "QUALIFIED",
+  "repo": "ferstl/depgraph-maven-plugin",
+  "repo_commit": "79879cb08a11a89222e02cdfea4f3ab4331c5d07",
+  "source_path": "repo/depgraph-maven-plugin",
+  "language": "java",
+  "package_name": "com.github.ferstl.depgraph",
+  "maven_coordinates": "com.github.ferstl:depgraph-maven-plugin",
+  "primary_module": "depgraph-maven-plugin",
+  "program_file": "pom.xml",
+  "spec_version": "v3",
+  "oracle_version": "2026-08-15T22:36:00+08:00",
+  "oracle": {
+    "source": "generated_only",
+    "generated_retained": 85,
+    "upstream_rewritten_retained": 0,
+    "maven_pom": "oracle/pom.xml",
+    "scorer_isolation": "Maven resolves com.github.ferstl:depgraph-maven-plugin from a run-specific task-local repository populated only from the candidate or exact reference checkout. The Stage 5 Java class-resource preflight resolved DependencyGraphMojo.class inside the candidate solution JAR; candidate-built and candidate-resolved SHA-256 were identical and differed from the reference JAR.",
+    "reference_score": {
+      "passed": 85,
+      "total": 85,
+      "pass_rate": 1.0,
+      "platform": "Linux docker-desktop 6.6.87.2-microsoft-standard-WSL2 (OpenJDK 17, Maven 3.9)",
+      "repo_commit": "79879cb08a11a89222e02cdfea4f3ab4331c5d07",
+      "evidence": "wip/depgraph-maven-plugin/judge/stage5_reference_run_specv3_wsl.log"
+    },
+    "dummy_gate": "0/85 passed; evidence wip/depgraph-maven-plugin/filter/dummy_result.txt",
+    "count": 85,
+    "count_unit": "base_test_functions",
+    "base_function_count": 85
+  },
+  "candidate_evaluation": {
+    "model": "gpt-5.6-sol",
+    "run_dir": "candidate-runs/gpt-5.6-sol-depgraph-maven-plugin-specv3-20260815-003",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with",
+    "runner": "harness.runners.java.JavaRunner",
+    "passed": 72,
+    "failed": 13,
+    "total": 85,
+    "pass_rate": 0.8470588235294118,
+    "collection_passed": true,
+    "valid": true,
+    "admissible": true,
+    "score_result": "candidate-runs/gpt-5.6-sol-depgraph-maven-plugin-specv3-20260815-003/score_result.json",
+    "candidate_jar_sha256": "3d583aa431ff42723acae546b3f87dbef2a2bf9ac4c1babc47b6e89582b12a46",
+    "reference_jar_sha256": "3d713c745c745a5f19d46092dca15104d74b5c842a59df7bc2e2b35d4ba2cef5",
+    "per_layer": {
+      "atomic": {
+        "passed": 41,
+        "failed": 5,
+        "total": 46,
+        "pass_rate": 0.8913043478260869
+      },
+      "integration": {
+        "passed": 19,
+        "failed": 3,
+        "total": 22,
+        "pass_rate": 0.8636363636363636
+      },
+      "system_e2e": {
+        "passed": 12,
+        "failed": 5,
+        "total": 17,
+        "pass_rate": 0.7058823529411765
+      }
+    }
+  },
+  "candidate_score": 0.8470588235294118,
+  "candidate_score_valid": true,
+  "reference_score": 1.0,
+  "integration_gap": {
+    "atomic_rate": 0.8913043478260869,
+    "integration_rate": 0.8636363636363636,
+    "system_e2e_rate": 0.7058823529411765,
+    "integration_e2e_rate": 0.7948717948717948,
+    "raw_gap": 0.0964325529542921,
+    "rate_gap": 0.0964325529542921,
+    "dependency_adjusted_integration_e2e_rate": 0.8666666666666667,
+    "adjusted_gap": 0.02463768115942022,
+    "dependency_eligible_tests": 30,
+    "dependency_declared_tests": 34,
+    "true_gap_event_count": 4,
+    "cascade_event_count": 3
+  },
+  "true_gap_events": [
+    {
+      "failed_test": "integration::GoalCompositionIntegrationTest::test_target_filter_removes_unrelated_branch_across_formats",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "test_include_pattern_limits_declared_project_membership",
+        "test_json_projection_has_named_graph"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "workflow-completeness",
+      "spec_clauses": [
+        "DGM-FILT-011",
+        "DGM-INV-003"
+      ]
+    },
+    {
+      "failed_test": "integration::GoalCompositionIntegrationTest::test_group_aggregate_projects_cross_group_relationships",
+      "layer": "system_e2e",
+      "depended_atomic_tests": [
+        "test_group_id_display_flag_exposes_group_coordinates",
+        "test_text_projection_uses_tree_relationship_markers"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency",
+      "spec_clauses": [
+        "DGM-GOAL-007",
+        "DGM-GOAL-008"
+      ]
+    },
+    {
+      "failed_test": "integration::GoalCompositionIntegrationTest::test_by_groupid_text_collapses_declared_artifacts_to_groups",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "test_text_projection_is_rooted_at_fixture_project",
+        "test_group_id_display_flag_exposes_group_coordinates"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency",
+      "spec_clauses": [
+        "DGM-GOAL-002",
+        "DGM-FMT-007"
+      ]
+    },
+    {
+      "failed_test": "integration::GoalCompositionIntegrationTest::test_by_groupid_text_and_json_agree_on_declared_groups",
+      "layer": "integration",
+      "depended_atomic_tests": [
+        "test_group_id_display_flag_exposes_group_coordinates",
+        "test_json_projection_contains_declared_artifacts"
+      ],
+      "all_depended_pass": true,
+      "root_cause_dimension": "cross-view-consistency",
+      "spec_clauses": [
+        "DGM-GOAL-002",
+        "DGM-INV-002",
+        "DGM-FMT-008"
+      ]
+    }
+  ],
+  "labels": [
+    "generated-only-oracle",
+    "maven-plugin",
+    "non-saturated",
+    "composition-signal",
+    "true-integration-gap",
+    "cascade-present"
+  ],
+  "weaknesses": [
+    {
+      "dimension": "atomic-behavior",
+      "layer": "atomic",
+      "affected_tests": 2,
+      "description": "The showDuplicates and showConflicts flags are declared but do not add omitted duplicate/conflict edges or expose the selected-versus-omitted version distinction."
+    },
+    {
+      "dimension": "workflow-completeness",
+      "layer": "atomic/system_e2e",
+      "affected_tests": 6,
+      "description": "The no-project for-artifact flow does not complete for a valid published coordinate, invalidating three direct positive-control assertions and cascading into three composed external-artifact projections."
+    },
+    {
+      "dimension": "workflow-completeness",
+      "layer": "integration",
+      "affected_tests": 1,
+      "description": "targetIncludes is accepted as configuration but is never applied to prune branches outside paths leading to the selected targets."
+    },
+    {
+      "dimension": "state-management",
+      "layer": "system_e2e",
+      "affected_tests": 1,
+      "description": "Aggregate construction retains parent-project membership even when includeParentProjects is false."
+    },
+    {
+      "dimension": "cross-view-consistency",
+      "layer": "integration/system_e2e",
+      "affected_tests": 3,
+      "description": "Group-ID graph nodes use group IDs internally but serialize labels from the first artifact stored in each collapsed node, so text and aggregate projections do not expose the declared group relationships consistently."
+    }
+  ],
+  "judge": {
+    "verdict": "QUALIFIED",
+    "route": "QUALIFIED",
+    "instrument_valid": true,
+    "gate_a0": "PASS",
+    "gate_a": "PASS",
+    "gate_b": "PASS",
+    "gate_c": "PASS (generated_only; 9 tests manually spot-checked)",
+    "gate_d": "FULL",
+    "gate_e": "PASS",
+    "gate_f": "PASS",
+    "fairness_issue": null,
+    "filter_correction_request": null
+  },
+  "source_meta": {
+    "first_release": "2014-10-02",
+    "first_release_source": "oldest repository tag depgraph-maven-plugin-1.0.0 (tag creator timestamp)",
+    "github_stars": 605,
+    "github_stars_checked": "2026-08-15",
+    "github_url": "https://github.com/ferstl/depgraph-maven-plugin",
+    "loc": 3600,
+    "loc_definition": "nonblank noncomment Java source lines under src/main/java at repo_commit",
+    "pypi_monthly_downloads": null,
+    "pypi_monthly_downloads_note": "not applicable; depgraph-maven-plugin is published to Maven Central, not PyPI",
+    "package_registry": "Maven Central",
+    "maven_coordinates": "com.github.ferstl:depgraph-maven-plugin",
+    "test_files": 49,
+    "test_functions": 257
+  },
+  "taxonomy": {
+    "atomic::ExampleGoalAtomicTest::test_default_graph_goal_completes_with_output": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_default_graph_goal_writes_to_build_directory": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_default_format_is_directed_dot": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_dot_projection_contains_declared_dependency_nodes": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_json_projection_has_named_graph": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_json_projection_contains_declared_artifacts": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_json_projection_contains_declared_dependencies": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_json_artifact_has_stable_string_id": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_json_artifact_has_unique_numeric_ids": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_json_dependency_has_both_endpoint_schemes": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_json_minimal_mode_omits_disabled_group_field": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_text_projection_is_rooted_at_fixture_project": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_text_projection_uses_tree_relationship_markers": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_text_projection_is_reported_through_maven_output": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_json_projection_labels_dependency_resolution": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_gml_projection_is_directed": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_gml_projection_contains_numeric_nodes_and_edges": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_plantuml_projection_has_document_boundaries": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_plantuml_projection_contains_components_and_arrows": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_format_selection_is_case_insensitive": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_custom_output_name_gets_format_extension": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_existing_matching_extension_is_not_duplicated": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_artifact_id_can_replace_output_file_name": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_missing_custom_output_directory_is_created": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_skip_completes_without_writing_output": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_include_pattern_limits_declared_project_membership": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_exclude_pattern_removes_matching_artifact": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_unknown_scope_is_ignored_beside_known_scope": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_runtime_classpath_scope_includes_compile_and_runtime": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_group_id_display_flag_exposes_group_coordinates": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_version_display_flag_exposes_versions": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_type_display_flag_exposes_packaging": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_optional_field_is_absent_when_optional_display_disabled": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_duplicate_display_adds_duplicate_resolution": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_conflict_display_exposes_omitted_and_selected_versions": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_filesystem_custom_style_overrides_dot_attributes": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_print_style_configuration_reports_effective_override": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_invalid_format_fails_while_valid_reference_artifact_exists": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_missing_style_fails_while_valid_reference_artifact_exists": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_invalid_style_fails_while_valid_reference_artifact_exists": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_missing_graphviz_fails_while_retaining_valid_reference_control": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_unwritable_output_target_fails_while_valid_reference_artifact_exists": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_short_artifact_coordinate_fails_with_positive_control": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_mixed_artifact_coordinate_forms_fail_with_positive_control": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_incomplete_long_coordinate_form_fails_with_positive_control": "atomic",
+    "atomic::ExampleGoalAtomicTest::test_valid_external_artifact_goal_runs_without_project": "atomic",
+    "integration::GoalCompositionIntegrationTest::test_dot_and_json_share_selected_project_membership": "integration",
+    "integration::GoalCompositionIntegrationTest::test_text_and_json_agree_on_fixture_project_root": "integration",
+    "integration::GoalCompositionIntegrationTest::test_gml_and_json_agree_on_artifact_count": "integration",
+    "integration::GoalCompositionIntegrationTest::test_plantuml_and_json_agree_on_artifact_membership": "integration",
+    "integration::GoalCompositionIntegrationTest::test_every_json_edge_references_declared_artifacts": "integration",
+    "integration::GoalCompositionIntegrationTest::test_exclude_filter_removes_artifact_from_text_and_json": "integration",
+    "integration::GoalCompositionIntegrationTest::test_exclude_filter_preserves_unmatched_artifact_in_both_formats": "integration",
+    "integration::GoalCompositionIntegrationTest::test_include_filter_keeps_matching_artifacts_across_dot_and_json": "integration",
+    "integration::GoalCompositionIntegrationTest::test_include_filter_removes_nonmatching_group_across_dot_and_json": "integration",
+    "integration::GoalCompositionIntegrationTest::test_changing_output_path_preserves_serialized_text_content": "integration",
+    "integration::GoalCompositionIntegrationTest::test_each_custom_output_path_is_materialized_without_default_file": "integration",
+    "integration::GoalCompositionIntegrationTest::test_non_dot_projection_ignores_missing_style_and_image_controls": "integration",
+    "integration::GoalCompositionIntegrationTest::test_dot_only_controls_do_not_change_json_artifact_count": "integration",
+    "integration::GoalCompositionIntegrationTest::test_valid_style_changes_dot_attributes_without_losing_fixture_membership": "integration",
+    "integration::GoalCompositionIntegrationTest::test_valid_dot_style_does_not_change_json_membership": "integration",
+    "integration::GoalCompositionIntegrationTest::test_target_filter_keeps_target_path_across_text_and_json": "integration",
+    "integration::GoalCompositionIntegrationTest::test_target_filter_removes_unrelated_branch_across_formats": "integration",
+    "integration::GoalCompositionIntegrationTest::test_reactor_dot_view_contains_module_relationships": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_reactor_json_view_contains_project_edges": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_reactor_coordinate_flags_apply_to_selected_project_nodes": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_disabling_edge_reduction_retains_more_aggregate_edges": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_edge_reduction_preserves_aggregate_node_membership": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_parent_inclusion_changes_aggregate_parent_membership": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_group_aggregate_projects_cross_group_relationships": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_by_groupid_text_collapses_declared_artifacts_to_groups": "integration",
+    "integration::GoalCompositionIntegrationTest::test_by_groupid_text_and_json_agree_on_declared_groups": "integration",
+    "integration::GoalCompositionIntegrationTest::test_by_groupid_json_omits_collapsed_self_edges": "integration",
+    "integration::GoalCompositionIntegrationTest::test_scope_merging_reduces_duplicate_coordinate_nodes": "integration",
+    "integration::GoalCompositionIntegrationTest::test_scope_merging_exposes_both_effective_scopes": "integration",
+    "integration::GoalCompositionIntegrationTest::test_successful_image_rendering_retains_dot_and_image_outputs": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_rendered_image_execution_preserves_selected_dot_graph": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_external_artifact_root_is_consistent_across_text_and_json": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_external_artifact_filter_removes_matching_dependencies": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_external_artifact_formats_write_beside_no_project_invocation": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_unresolvable_external_artifact_fails_but_valid_external_flow_succeeds": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_graph_and_reactor_views_honor_json_projection_contract": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_graph_and_reactor_views_apply_requested_file_names": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_built_in_example_is_deterministic_across_independent_runs": "system_e2e",
+    "integration::GoalCompositionIntegrationTest::test_built_in_example_honors_json_format_and_output_names": "system_e2e"
+  },
+  "taxonomy_unit": "base_test_functions",
+  "stats": {
+    "atomic": 46,
+    "integration": 22,
+    "system_e2e": 17
+  }
+}

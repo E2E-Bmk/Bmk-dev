@@ -1,0 +1,43 @@
+ARG BASE_IMAGE=spec2repo-typescript:latest
+FROM ${BASE_IMAGE}
+
+# TypeScript AGENT image: the scoring toolchain plus the packages a TypeScript
+# spec promises the environment already holds.
+#
+# spec2repo-typescript carries vitest, typescript and tsx globally, and nothing
+# else. The scoring container survives that because the oracle's `npm install`
+# runs in setup, before the network is disconnected. The agent container has
+# --network=none from its first command, so without this layer a candidate whose
+# spec names a peer dependency cannot import it, cannot run a single test, and
+# writes the whole package blind.
+#
+# The peer dependency is reachable through /node_modules rather than through a
+# global install on purpose. NODE_PATH is honoured by CommonJS resolution only;
+# an ES module -- which is what every oracle here is -- ignores it. Node and Vite
+# both walk the parent directories of the importing file looking for
+# `node_modules`, so a copy at the filesystem root resolves from anywhere under
+# /workspace without the candidate declaring anything, while still losing to a
+# real dependency the candidate installs itself.
+#
+# The tree is installed under /opt and linked into place because `npm install
+# --prefix /` aborts with `Tracker "idealTree" already exists`, and installing
+# with the working directory at / would leave a stray /package.json that a
+# candidate's own module-type lookup could walk up into.
+#
+# The version below is the one named in `Appendix A: Environment` of the
+# TypeScript tasks. Keep the two in step: a package the spec offers but that is
+# missing here is a promise the container does not keep.
+RUN mkdir -p /opt/agent-node && cd /opt/agent-node && \
+    npm install --no-audit --no-fund graphql@16.14.2 && \
+    ln -s /opt/agent-node/node_modules /node_modules && \
+    cd /workspace && node -e "console.log(require.resolve('graphql'))"
+
+# The cache lets a candidate that declares its own dependencies install them
+# with the network already gone (`npm install --offline`). Without it, a
+# manifest the spec explicitly invites the candidate to write cannot be
+# installed and the delivery is unverifiable for a packaging reason.
+RUN npm cache add graphql@16.14.2 graphql@17.0.2 \
+        vitest@2.1.9 typescript@5.7.2 tslib@2.6.3 \
+        dependency-graph@1.0.0 object-inspect@1.13.2
+
+WORKDIR /workspace

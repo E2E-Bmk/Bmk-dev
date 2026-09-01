@@ -1,0 +1,17 @@
+# Marshmallow schemas and evolvable load transactions
+
+Implement ordinary Marshmallow schema declaration, loading, dumping, fields, nested containers, validators, unknown policies, directional options, processors, schema validation, indexed errors, `valid_data`, and partial loading. The top-level package exports `Schema`, `ValidationError`, `fields`, `validate`, `EXCLUDE`, `INCLUDE`, `RAISE`, `pre_load`, `post_load`, `pre_dump`, `post_dump`, and `validates_schema`; `fields.Str` and `fields.Int` are aliases of their long names.
+
+The optional `marshmallow.evolution` module adds a durable evolvable-load pipeline. It exports `EvolutionError`, `GraphError`, `MigrationConflictError`, `TransactionStateError`, `PublicationError`, `ProvenanceError`, immutable `VersionSpec`, `MigrationStep`, `MigrationPlan`, `TraceEvent`, `ErrorNode`, `LoadRecord`, `LoadTransaction`, `PublicationSnapshot`, and `EvolutionRun`, plus `SchemaEvolutionGraph`, `ProcessTrace`, `error_tree`, `PartialLoadJournal`, `PublicationJournal`, and `EvolutionLoadCoordinator`.
+
+Version graphs durably declare named versions and directed migration steps. Declarations use unique predecessors already present in the same schema graph. Operations are content-idempotent, cycles and conflicts fail closed, and public mappings are captured as sorted immutable tuples. Migration steps rename, default, and drop fields without mutating input. Planning chooses a unique shortest directed path; equal shortest alternatives are ambiguous.
+
+`ProcessTrace` records properly nested schema entries, marks, and last-in-first-out leaves with monotonic sequence numbers and stable schema, input, and field paths. `error_tree` retains nested string and integer message coordinates, originating messages, stage, source/target versions, and deterministic child order.
+
+`PartialLoadJournal` begins transactions with unique ordered expected indices. Staging migrates a document and then loads it through the supplied ordinary schema. Successful values and `ValidationError` provenance are durable records; other exceptions do not advance state. Exact replay converges, changed replay is rejected, and sealing requires every expected index. Strict sealing rejects any failed record; partial sealing preserves accepted and rejected views together.
+
+`PublicationJournal` prepares and atomically publishes one sealed transaction generation to a named stream. Preparation is invisible, a stream generation is independent, at least one accepted record is required, conflicting reuse fails, and reopening exposes identical record order and digests.
+
+`EvolutionLoadCoordinator` owns graph, load, publication, and run state. Planning fixes stream, schema, target version, expected indices, owner, and operation identity. Execution visits inputs in expected order, requests schemas from a factory, durably resumes staged work, optionally stops after a bounded number of new records, and seals only when complete. Publication fences wrong owners and exposes the exact accepted/error split. Recovery returns or resumes durable progress and is terminally idempotent. Verification binds the target version, transaction, publication, record lineage, and final run.
+
+All state changes are atomic and reopenable. Complete state directories are portable. Forged values, stale generations, corruption, incomplete work, invalid provenance, and owner mismatch cannot replace acknowledged state. Internal storage, formatting, locking, and exception wording are not part of the public contract.

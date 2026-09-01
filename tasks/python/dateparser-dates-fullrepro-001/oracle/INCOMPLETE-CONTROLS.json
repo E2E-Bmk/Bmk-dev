@@ -1,0 +1,32 @@
+{
+  "schema": "spec2repo.incomplete-controls.v4",
+  "case": "dateparser-v4-reliable-ingestion",
+  "controls": [
+    {
+      "id": "collapsed-ownership",
+      "mode": "collapsed-ownership",
+      "architecture": "one owner identity and one revision dictionary behind every reliable surface",
+      "expected_missing": ["independent receipt closure", "owner-specific reopen verification", "lease separation"]
+    },
+    {
+      "id": "recomputed-history",
+      "mode": "recomputed-history",
+      "architecture": "current source text is re-scanned instead of retaining acknowledgement and index history",
+      "expected_missing": ["ack-only projection", "historical dependency tokens", "exactly-once acknowledged event"]
+    },
+    {
+      "id": "eager-acknowledgement",
+      "mode": "eager-acknowledgement",
+      "architecture": "visibility and delivery are treated as final acknowledgement",
+      "expected_missing": ["delivered-but-unacknowledged recovery", "ack-gated replay", "post-crash resume"]
+    },
+    {
+      "id": "stale-generation-acceptance",
+      "mode": "stale-generation-acceptance",
+      "architecture": "old source generations, timezone generations, and replay leases remain usable",
+      "expected_missing": ["source fencing", "timezone retirement", "stale replay ownership rejection"]
+    }
+  ],
+  "admission_evidence": "evidence/CONTROL-ADMISSION-EVIDENCE.json",
+  "candidate_exposure": false
+}

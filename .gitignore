@@ -26,11 +26,28 @@ tmp/
 # === 评测无关 / 大体积 ===
 dev/repo-pool/
 dev/archive/
+dev/javabench/
 runs/
 results/
 
 # === Agent 运行时产出 ===
 workspaces/
 
-# === 构建过程工作区（毕业产物在 tasks/，wip 只在本地保留审计追踪）===
-wip/
+# === 构建过程工作区 ===
+# wip/ 是构建工作台。绝大部分内容是运行产物（实测 28G，rust 独占其中大部分），
+# 一律不进版本库。入库的只有工作台自己的记录：BENCH.md、生成的 verdict.json、
+# packet/（题目本体）、以及 runs/index.jsonl（运行索引，运行产物本身不入库）。
+wip/*
+!wip/*/
+wip/*/*
+!wip/*/*/
+wip/*/*/*
+!wip/*/*/BENCH.md
+!wip/*/*/verdict.json
+!wip/*/*/packet/
+!wip/*/*/runs/
+wip/*/*/runs/*
+!wip/*/*/runs/index.jsonl
+# === Session scratch (rust task line, 2026-08) ===
+_eval_stage_*/
+/.[a-z][a-z0-9]*.py

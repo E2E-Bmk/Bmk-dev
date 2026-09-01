@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "suite_id": "transitions-v4-acknowledged-publication",
+  "constitution": "SYNTHETIC-DESIGN-CONSTITUTION-2026-08-14-v1",
+  "predictiveness_addendum": "ANCHOR-PREDICTIVENESS-FINDINGS-2026-08-15",
+  "scoring_formula": "case-native-macro-v1",
+  "package": "transitions",
+  "reference": {
+    "repository": "https://github.com/pytransitions/transitions.git",
+    "commit": "bd42b38f3627e6bca7274fb4d9af2e105f75da7c",
+    "tree": "6c6ca86a938b6ee92345325d831437372528ac2d",
+    "version": "0.9.4",
+    "source_root_relative": "../../source"
+  },
+  "patch": "reference_patch/transitions_v4_patch.py",
+  "dummy_root": "dummy",
+  "root_map": "ROOT-MAP.json",
+  "timeouts": {"collection_seconds": 60, "root_seconds": 60},
+  "warnings": {"promote_to_error": true},
+  "expected": {
+    "m1": {"passed": 39, "failed": 0},
+    "m2": {"passed": 12, "failed": 27, "failed_ids": ["A09","A10","A11","A12","A13","C05","C06","C07","C08","C09","C10","C11","C12","C13","C14","C15","C16","C17","C18","C19","C20","E01","E02","E03","E04","E05","E06"]},
+    "dummy": {"passed": 0, "failed": 39, "all_failures_phase": "call"},
+    "control-no-outbox": {"passed": 16, "failed": 23, "failed_ids": ["A13","C05","C06","C07","C08","C09","C10","C11","C12","C13","C14","C15","C16","C17","C18","C19","C20","E01","E02","E03","E04","E05","E06"]},
+    "control-stale-reconcile": {"passed": 36, "failed": 3, "failed_ids": ["A10","C06","C09"]},
+    "control-no-owner-generation": {"passed": 34, "failed": 5, "failed_ids": ["A12","C13","C14","C16","E04"]},
+    "control-eager-publish": {"passed": 32, "failed": 7, "failed_ids": ["A13","C17","C19","C20","E01","E02","E05"]}
+  },
+  "scoring": {"atomic_ids":"A*","integration_ids":"C*","system_ids":"E*","composition_macro":["C*","E*"],"combined":"(AtomicRate + CompositionRate) / 2","gap":"AtomicRate - CompositionRate"}
+}

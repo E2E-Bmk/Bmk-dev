@@ -1,0 +1,35 @@
+# Integration suite.
+#
+# The package name is `integration` for the same reason `atomic` is `atomic`:
+# `RustRunner._reported_to_id` derives the suite from the leading crate segment
+# of nextest's reported name.
+#
+# This is the only member that names `gix_status::index_as_worktree_with_renames`,
+# and the only one that depends on `gix-dir` and `gix-diff`. Those two crates
+# appear in the renames entry point's declared signatures, so a candidate that
+# reproduces that surface incorrectly fails to compile here -- and only here.
+
+[package]
+name = "integration"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+doctest = false
+
+[dependencies]
+common = { path = "../common" }
+gix-status.workspace = true
+gix-index.workspace = true
+gix-worktree.workspace = true
+gix-filter.workspace = true
+gix-pathspec.workspace = true
+gix-object.workspace = true
+gix-hash.workspace = true
+gix-features.workspace = true
+gix-dir.workspace = true
+gix-diff.workspace = true
+bstr.workspace = true
+filetime.workspace = true
+tempfile.workspace = true

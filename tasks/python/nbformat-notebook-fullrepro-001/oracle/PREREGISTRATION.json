@@ -1,0 +1,19 @@
+{
+  "schema_version":1,
+  "status":"formally-frozen-pre-anchor",
+  "suite":"nbformat-v5-gate-draft-a",
+  "constitution":"SYNTHETIC-DESIGN-CONSTITUTION-2026-08-14-v1",
+  "design_addendum":"ANCHOR-PREDICTIVENESS-FINDINGS-2026-08-15",
+  "scoring_formula":"macro-two-layer-v1",
+  "allocation":{"atomic":20,"integration":32,"system":8,"composition":40,"total":60,"mutation_atomic":10,"mutation_integration":25,"mutation_system":7,"mutation_total":42},
+  "formula":{"atomic_rate":"passed Atomic roots / 20","composition_rate":"passed Integration and System roots / 40","combined":"(AtomicRate + CompositionRate) / 2","gap":"AtomicRate - CompositionRate"},
+  "expected_pass_roots":{
+    "m1":["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11","A12","A13","A14","A15","A16","A17","A18","A19","A20","C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12","C13","C14","C15","C16","C17","C18","C19","C20","C21","C22","C23","C24","C25","C26","C27","C28","C29","C30","C31","C32","E01","E02","E03","E04","E05","E06","E07","E08"],
+    "m2":["A11","A12","A13","A14","A15","A16","A17","A18","A19","A20","C26","C27","C28","C29","C30","C31","C32","E08"],
+    "dummy":[]
+  },
+  "m2_exact_rates":{"atomic":0.5,"integration":0.21875,"system":0.125,"composition":0.2,"combined":0.35,"gap":0.3,"native_all_root":0.3,"mutation_root_rate":0.0,"non_mutation_root_rate":1.0},
+  "phase_rules":{"all_roots_collect":true,"setup_and_teardown_must_pass":true,"behavioral_failure_phase":"call","dummy_call_failures":60,"subprocess_timeouts_bounded":true,"candidate_tree_immutable":true,"provenance_required":true,"broad_incomplete_controls":["incomplete_generic_owner_collapse","incomplete_lineage_no_ack","incomplete_publication_no_recovery"]},
+  "stability_protocol":{"order_modes":["natural","reverse","permuted"],"rounds_per_order_mode":3,"vectors":["m1","m2","dummy"],"broad_control_probe_and_full_rounds":1},
+  "anchor_policy":{"source_blank":true,"independent_anchors":2,"stable_rounds_each":3,"no_post_freeze_edits":true,"not_authorized_by_this_freeze":true}
+}

@@ -1,0 +1,26 @@
+# Integration suite: behaviors that chain declared operations -- parse, mutate,
+# serialize, re-parse -- and that only mean something end to end.
+#
+# The package name is the suite name; nextest reports
+# `integration::integration$<fn>` and `RustRunner._reported_to_id` folds that to
+# the id `integration::<fn>`.
+
+[package]
+name = "integration"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+doctest = false
+
+[dependencies]
+gix-config.workspace = true
+bstr.workspace = true
+
+# Needed by the rename-filter workflow, which marks two of three same-named
+# sections with a reduced trust level and then renames only those. See the
+# atomic manifest for why the version is pinned rather than left open.
+gix-sec.workspace = true
+
+common = { path = "../common" }

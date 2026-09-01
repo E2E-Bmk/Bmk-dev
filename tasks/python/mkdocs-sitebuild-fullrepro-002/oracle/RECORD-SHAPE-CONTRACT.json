@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "suite": "mkdocs-v14-formal-a",
+  "owners": ["config", "discovery", "lineage", "publication", "search", "outbox"],
+  "spec_markers": {
+    "public_artifact": "These files are a public JSON inspection and recovery surface",
+    "envelope": "Every record is a JSON object with four required members",
+    "common_generation": "Every owner body has a required positive-integer `generation`",
+    "config": "The `config` body requires `generation`, `fingerprint`, `input_fingerprint`, and `effective`",
+    "discovery": "The `discovery` body requires `generation`, `observed_sources`, `changes`, `pending_generation`, `pending_fingerprint`, `acknowledged_generation`, and `acknowledged_sources`",
+    "lineage": "The `lineage` body requires `generation`, `pages`, `retired`, and `changes`",
+    "publication": "The `publication` body requires `generation`, `prepared_generation`, `visible_generation`, `acknowledged_generation`, `prepared_files`, `visible_files`, and `stale_fence_count`",
+    "search": "The `search` body requires `generation`, `artifact_sha256`, `receipts`, and `acknowledged_generation`",
+    "outbox": "The `outbox` body requires `generation` and `events`",
+    "empty_arrays": "The arrays allowed to be empty remain present as arrays"
+  },
+  "definitions": {
+    "sha256": {"type": "string", "pattern": "sha256"},
+    "digest_map": {"type": "object", "values": {"ref": "sha256"}},
+    "string_array": {"type": "array", "items": {"type": "string"}},
+    "changes": {
+      "type": "object",
+      "required": {
+        "added": {"ref": "string_array"},
+        "modified": {"ref": "string_array"},
+        "removed": {"ref": "string_array"},
+        "renamed": {"ref": "string_array"}
+      }
+    },
+    "page": {
+      "type": "object",
+      "required": {
+        "id": {"type": "string", "nonempty": true},
+        "revision": {"type": "positive_integer"},
+        "source_digest": {"ref": "sha256"}
+      }
+    },
+    "search_receipt": {
+      "type": "object",
+      "required": {
+        "source_uri": {"type": "string"},
+        "page_id": {"type": "string", "nonempty": true},
+        "revision": {"type": "positive_integer"},
+        "title": {"type": ["string", "null"]},
+        "location": {"type": "string"}
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": {
+        "id": {"type": "string", "nonempty": true},
+        "generation": {"type": "positive_integer"},
+        "kind": {"type": "string", "enum": ["config-changed", "source-added", "source-modified", "source-removed", "source-renamed"]},
+        "subject": {"type": "string"},
+        "status": {"type": "string", "enum": ["pending", "delivered"]},
+        "attempts": {"type": "nonnegative_integer"}
+      }
+    }
+  },
+  "envelope": {
+    "type": "object",
+    "required": {
+      "schema_version": {"type": "integer", "const": 1},
+      "owner": {"type": "string"},
+      "body": {"type": "object"},
+      "checksum": {"ref": "sha256"}
+    }
+  },
+  "body_schemas": {
+    "config": {
+      "type": "object",
+      "required": {
+        "generation": {"type": "positive_integer"},
+        "fingerprint": {"ref": "sha256"},
+        "input_fingerprint": {"ref": "sha256"},
+        "effective": {
+          "type": "object",
+          "required": {
+            "site_name": {"type": "string"},
+            "site_url": {"type": ["string", "null"]},
+            "use_directory_urls": {"type": "boolean"},
+            "nav": {"type": ["array", "null"]},
+            "theme": {"type": ["string", "null"]},
+            "plugins": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "required": {
+        "generation": {"type": "positive_integer"},
+        "observed_sources": {"ref": "digest_map"},
+        "changes": {"ref": "changes"},
+        "pending_generation": {"type": "nonnegative_integer"},
+        "pending_fingerprint": {"type": ["string", "null"], "pattern": "sha256_or_null"},
+        "acknowledged_generation": {"type": "nonnegative_integer"},
+        "acknowledged_sources": {"ref": "digest_map"}
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "required": {
+        "generation": {"type": "positive_integer"},
+        "pages": {"type": "object", "values": {"ref": "page"}},
+        "retired": {"ref": "string_array"},
+        "changes": {"ref": "changes"}
+      }
+    },
+    "publication": {
+      "type": "object",
+      "required": {
+        "generation": {"type": "positive_integer"},
+        "prepared_generation": {"type": "nonnegative_integer"},
+        "visible_generation": {"type": "nonnegative_integer"},
+        "acknowledged_generation": {"type": "nonnegative_integer"},
+        "prepared_files": {"ref": "digest_map"},
+        "visible_files": {"ref": "digest_map"},
+        "stale_fence_count": {"type": "nonnegative_integer"}
+      }
+    },
+    "search": {
+      "type": "object",
+      "required": {
+        "generation": {"type": "positive_integer"},
+        "artifact_sha256": {"type": ["string", "null"], "pattern": "sha256_or_null"},
+        "receipts": {"type": "array", "items": {"ref": "search_receipt"}},
+        "acknowledged_generation": {"type": "nonnegative_integer"}
+      }
+    },
+    "outbox": {
+      "type": "object",
+      "required": {
+        "generation": {"type": "positive_integer"},
+        "events": {"type": "array", "items": {"ref": "event"}}
+      }
+    }
+  },
+  "direct_oracle_paths": [
+    "config.effective.plugins",
+    "config.effective.site_name",
+    "config.generation",
+    "discovery.acknowledged_generation",
+    "discovery.changes.added",
+    "discovery.changes.modified",
+    "discovery.changes.removed",
+    "discovery.changes.renamed",
+    "discovery.generation",
+    "discovery.pending_generation",
+    "lineage.generation",
+    "lineage.pages",
+    "lineage.pages.*.id",
+    "lineage.pages.*.revision",
+    "outbox.events",
+    "outbox.events[].attempts",
+    "outbox.events[].generation",
+    "outbox.events[].id",
+    "outbox.events[].kind",
+    "outbox.events[].status",
+    "outbox.generation",
+    "publication.acknowledged_generation",
+    "publication.generation",
+    "publication.prepared_generation",
+    "publication.stale_fence_count",
+    "publication.visible_files",
+    "publication.visible_generation",
+    "search.acknowledged_generation",
+    "search.artifact_sha256",
+    "search.generation",
+    "search.receipts",
+    "search.receipts[].location",
+    "search.receipts[].page_id",
+    "search.receipts[].revision",
+    "search.receipts[].source_uri",
+    "search.receipts[].title"
+  ],
+  "nonempty_observations": [
+    "navigation.pages",
+    "ordinary.search.docs",
+    "search.receipts",
+    "outbox.events"
+  ],
+  "safe_subscript_functions": ["mapping_item", "sequence_item", "sequence_replace"]
+}

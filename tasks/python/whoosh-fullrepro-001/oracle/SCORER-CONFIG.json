@@ -1,0 +1,29 @@
+{
+  "schema": "spec2repo.scorer-config.vnext",
+  "case": "whoosh-vnext-draft-a",
+  "constitution": "SPEC2REPO-GATE-CALIBRATION-2026-08-22",
+  "declared_dependency": "whoosh==2.7.4",
+  "declared_dependencies": [
+    "whoosh==2.7.4",
+    "cached-property==2.0.1"
+  ],
+  "reference_package_root": "C:/Users/林霰/Documents/Codex/2026-08-09/spec2repo-batch-calibration-recovery/work/batch-calibration/whoosh/vnext/.runtime-site-v3-clean",
+  "reference_kind": "ordinary-installed-runtime-not-upstream-source",
+  "candidate_provenance_policy": "candidate extensions plus exact declared runtime tree only",
+  "formal_candidates": {
+    "reference": "control-candidates/reference-shim",
+    "clean": "control-candidates/clean-shim",
+    "dummy": "dummy",
+    "broad-owner-collapse": "control-candidates/broad-owner-collapse",
+    "broad-eager-visibility": "control-candidates/broad-eager-visibility",
+    "shallow-workflow": "control-candidates/shallow-workflow"
+  },
+  "root_timeout_seconds": 30,
+  "permutation_seed": 220826,
+  "profiles": ["reference", "clean", "dummy", "broad-owner-collapse", "broad-eager-visibility", "shallow-workflow", "arbitrary"],
+  "execution_modes": ["natural", "reverse", "permuted"],
+  "score_formula": {
+    "combined": "(A_pass + I_pass + S_pass) / 48",
+    "gap": "A_pass / 16 - (I_pass + S_pass) / 32"
+  }
+}

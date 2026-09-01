@@ -1,0 +1,13 @@
+ARG BASE_IMAGE=spec2repo-base:latest
+FROM ${BASE_IMAGE}
+
+# Copy oracle test files
+COPY oracle/ /oracle/
+
+# Install task-specific test dependencies
+RUN if [ -f /oracle/requirements.txt ]; then \
+    pip install --no-cache-dir -r /oracle/requirements.txt; \
+    fi
+
+WORKDIR /workspace
+CMD ["tail", "-f", "/dev/null"]

@@ -1,0 +1,199 @@
+{
+  "instance_id": "dependency-cruiser-ruleset-fullrepro-001",
+  "task_id": "dependency-cruiser-ruleset-fullrepro-001",
+  "pipeline_note": "QUALIFIED",
+  "repo": "sverweij/dependency-cruiser",
+  "repo_commit": "1f28f44a49c054dc128226543188220818b1ab52",
+  "language": "typescript",
+  "spec_version": "v1",
+  "package_import": "dependency-cruiser",
+  "target_imports": [
+    "dependency-cruiser"
+  ],
+  "oracle": {
+    "test_files": [
+      "oracle/atomic/extraction.test.ts",
+      "oracle/atomic/reporters.test.ts",
+      "oracle/integration/integration.test.ts"
+    ],
+    "helpers": [
+      "oracle/helpers.ts",
+      "oracle/subject.ts"
+    ],
+    "config": [
+      "oracle/vitest.config.ts",
+      "oracle/package.json"
+    ],
+    "count": 60,
+    "runner": "vitest",
+    "test_command": "npx vitest run",
+    "results_command": "npx vitest run --reporter=json --outputFile=results.json",
+    "scorer_isolation": [
+      "--remove-node-modules-package",
+      "dependency-cruiser"
+    ],
+    "requirements": "oracle/package.json",
+    "oracle_version": "2026-08-23-generated-v1"
+  },
+  "stats": {
+    "atomic": 30,
+    "integration": 30,
+    "system_e2e": 0
+  },
+  "environment": {
+    "image": "spec2repo-typescript:latest",
+    "agent_image": "spec2repo-agent-typescript:latest",
+    "node": "22.23.2",
+    "test_framework": "vitest 2.1.9",
+    "devDependencies": {
+      "typescript": "5.7.2",
+      "vitest": "2.1.9"
+    },
+    "target_imports_file": "harness/lang/typescript/target_imports.json"
+  },
+  "reference_score": {
+    "atomic": {
+      "passed": 30,
+      "total": 30
+    },
+    "integration": {
+      "passed": 30,
+      "total": 30
+    },
+    "pass_rate": 1.0,
+    "platform": "Linux/Docker",
+    "source": "wip/dependency-cruiser-ruleset-fullrepro-001/eval/runs/reference/dependency-cruiser-ruleset-fullrepro-001/result.json"
+  },
+  "dummy_score": {
+    "atomic": {
+      "passed": 0,
+      "total": 30
+    },
+    "integration": {
+      "passed": 0,
+      "total": 30
+    },
+    "pass_rate": 0.0,
+    "implementation": "spec/surface_stub: every declared name present, every body throws",
+    "source": "wip/dependency-cruiser-ruleset-fullrepro-001/eval/runs/dummy/dependency-cruiser-ruleset-fullrepro-001/result.json"
+  },
+  "candidate_score": {
+    "model": "qwen3.8-max",
+    "atomic": {
+      "passed": 13,
+      "total": 30
+    },
+    "integration": {
+      "passed": 11,
+      "total": 30
+    },
+    "pass_rate": 0.4,
+    "platform": "Linux/Docker",
+    "source": "wip/dependency-cruiser-ruleset-fullrepro-001/eval/runs/qwen3.8-max/dependency-cruiser-ruleset-fullrepro-001/result.json"
+  },
+  "integration_gap": {
+    "rate_gap": 0.0667,
+    "adjusted_gap": 0.2,
+    "adjusted_integ_passed": 4,
+    "adjusted_integ_total": 5,
+    "gap_confidence": "high",
+    "depends_on_coverage": 1.0,
+    "note": "The raw gap is a modest +6.7pp: atomic 43.3% against integration 36.7%. The adjusted gap is small only because the eligible set is small -- of the 30 integration tests, just 5 had all of their declared atomic prerequisites passing, and 4 of those 5 held. The delivery fails most compositions because it already failed their primitives, so the composition layer is largely untested by this run rather than shown to be sound."
+  },
+  "weaknesses": [
+    "the violation record itself: nineteen of the twenty-six integration tests assert the exact violation object, and the delivery reproduces neither its member set nor its values, so every projection built on the record inherits the error",
+    "coordinate carriers: which extra member a violation carries -- `cycle` for a cycle, `metrics` for an instability, none for a plain dependency -- is not conditioned on the violation type, and the \"no other carrier\" half of each assertion fails as often as the positive half",
+    "rule-flag type classification: a rule carrying `to.circular` or `to.moreUnstable` must reclassify the record as a cycle or instability violation, and must not when the flag or the supporting metrics are absent; the delivery leaves the type at `dependency` in both directions",
+    "severity aggregation and ordering: the four severity counts do not tally the list, `ignore` is folded in with `error`, and the list is not ordered by ascending severity rank then rule name",
+    "de-duplication: two identical violation records are reported twice rather than collapsed to one",
+    "reporter contracts: the csv incidence matrix (header column count, empty-quoted first cell), the `err` exit code equal to `summary.error`, the `err-long` comment fallback, and rejection of an unknown reporter name or output type all diverge"
+  ],
+  "source_meta": {
+    "github_stars": 7100,
+    "npm_weekly_downloads": 3400000,
+    "loc": 12811,
+    "first_release": "2016-11",
+    "note": "loc is measured (non-blank non-comment across the 201 code files under src/, wip/.../filter_notes.md). star and download figures are order-of-magnitude, read from the public listings on 2026-08-25."
+  },
+  "labels": [
+    "typescript",
+    "rule-dsl-matching",
+    "equivalence-judgement",
+    "five-projections",
+    "reporter-contracts"
+  ],
+  "validation": {
+    "lint": "not run: harness/oracle_import_lint.py reads a Python or Java oracle out of wip/{id}/filter/ and has no TypeScript path. The standing substitute is the spec surface stub, which compiles clean: spec/surface_stub tsc --noEmit exits 0",
+    "reference_gate": "100% of 60",
+    "dummy_gate": "0% of 60",
+    "floors": "atomic 30 >= 30, integration 30 >= 25, total 60 >= 60",
+    "depends_on": "30/30"
+  },
+  "known_gaps": [
+    "no mutation family. AGENTS.md rule 8 asks every task for one; the packet carries none, so no clause here has been shown to be answered from the specification rather than from recall of the upstream package. The 40.0% is below the 50% line at which a mutation-rich architecture becomes mandatory, which is why the packet was allowed to graduate, not a reason the gap is closed.",
+    "wip/.../filter/ and wip/.../judge/ are empty: kept_nodeids.txt, taxonomy.jsonl, spec_test_map.md and diagnosis_report.md were never written. The filter audit trail the task-synthesizer skill asks for therefore does not exist for this task, and the weaknesses above are read off the qwen3.8-max per-test outcomes rather than off a diagnosis report.",
+    "no coverage_gap verdict, for the same reason: the spec-to-test map that would establish which behaviour sections go untested was not produced."
+  ],
+  "taxonomy": {
+    "atomic::a forbidden dependency on an invalid edge becomes one dependency violation": "atomic",
+    "atomic::an unresolved specifier surfaces as unresolvedTo distinct from the resolved path": "atomic",
+    "atomic::an invalid dependency with an empty rules array yields no violation": "atomic",
+    "atomic::a valid dependency yields no violation even when the rule set forbids its path": "atomic",
+    "atomic::two invalid dependencies on one module become two violations": "atomic",
+    "atomic::a dependency carrying two rules becomes two violations at one edge": "atomic",
+    "atomic::a rule name absent from the rule set keeps the default dependency type": "atomic",
+    "atomic::the reported severity is copied from the attached rule, not recomputed": "atomic",
+    "atomic::an invalid module becomes one module violation from and to itself": "atomic",
+    "atomic::an invalid module with two rules becomes two module violations": "atomic",
+    "atomic::a valid module yields no module violation": "atomic",
+    "atomic::an invalid circular dependency under a circular rule becomes a cycle violation": "atomic",
+    "atomic::a circular dependency whose rule lacks the circular flag stays a dependency violation": "atomic",
+    "atomic::an invalid edge under a moreUnstable rule with instability on both ends becomes an instability violation": "atomic",
+    "atomic::a moreUnstable rule without instability metrics on the nodes stays a dependency violation": "atomic",
+    "atomic::two identical violation records collapse to one": "atomic",
+    "atomic::violations are ordered by ascending severity rank": "atomic",
+    "atomic::violations of equal severity are ordered by rule name": "atomic",
+    "atomic::the four severity counts tally the violations and sum to the list length": "atomic",
+    "atomic::an ignore-severity violation counts under ignore and not under error": "atomic",
+    "atomic::a clean graph reports zero on every severity count": "atomic",
+    "atomic::the environment block is carried through unchanged": "atomic",
+    "atomic::the json reporter serialises the whole result with a two-space indent and exit code zero": "atomic",
+    "atomic::the err reporter announces a clean graph and returns exit code zero": "atomic",
+    "atomic::the err reporter lists a dependency violation and returns exit code equal to the error count": "atomic",
+    "atomic::the err-long reporter appends the matched rule comment under the violation": "atomic",
+    "atomic::the csv reporter returns an incidence matrix and exit code zero": "atomic",
+    "atomic::an unknown reporter name is rejected before any reporter runs": "atomic",
+    "atomic::a structurally invalid result is rejected before any reporter runs": "atomic",
+    "atomic::an unknown output type is rejected when it cannot be normalised": "atomic",
+    "integration::the json summary pins both the full violation list and the four counts": "integration",
+    "integration::the json violation list and the err exit code agree on error count and shape": "integration",
+    "integration::the csv header column count matches the module count and the json list is exact": "integration",
+    "integration::every reporter reads the same exact violation list from one result": "integration",
+    "integration::the err-long comment is the matched comment while the json record stays exact": "integration",
+    "integration::a cycle violation carries the exact cycle array and no other carrier": "integration",
+    "integration::an instability violation carries the exact metrics and no other carrier": "integration",
+    "integration::a plain dependency violation carries the exact record and no coordinate carrier": "integration",
+    "integration::the severity counts and full list agree across a mixed graph": "integration",
+    "integration::an ignore-severity violation keeps the err exit code at zero and the count under ignore": "integration",
+    "integration::de-duplication leaves one exact violation and one is what json reports": "integration",
+    "integration::the returned violation list is the same exact value across two independent calls": "integration",
+    "integration::severity rank orders error ahead of warning in the exact returned list": "integration",
+    "integration::the environment block survives the json reporter unchanged": "integration",
+    "integration::a clean graph reports an empty list and a zero exit code": "integration",
+    "integration::a module violation pins from and to the same source in the exact record": "integration",
+    "integration::a missing rule-set entry withholds the comment but not the exact violation record": "integration",
+    "integration::the json output round-trips through the json parser to the same exact violation list": "integration",
+    "integration::two distinct edges produce the exact two-violation list and matching err exit": "integration",
+    "integration::the unresolved specifier and the resolved path both appear in the exact record": "integration",
+    "integration::a resolved dependency reports the exact record whose unresolvedTo equals the path": "integration",
+    "integration::an invalid input is rejected identically whichever reporter was asked for": "integration",
+    "integration::the csv first cell is empty-quoted and the json list stays exact": "integration",
+    "integration::json exit code stays zero even when the exact list carries an error": "integration",
+    "integration::two rules on one edge produce the exact two-violation list at one edge": "integration",
+    "integration::err-long falls back to a dash and json reports the exact record": "integration",
+    "integration::the totals are carried through from the input and the list is exact": "integration",
+    "integration::the err listing covers every non-ignored violation and omits the ignored one": "integration",
+    "integration::the csv matrix over a five-module graph agrees with the json module count": "integration",
+    "integration::err-long resolves one comment and one dash over the same two-violation edge": "integration"
+  }
+}

@@ -1,0 +1,1259 @@
+{
+  "schema": "spec2repo.root-map.v1",
+  "case": "go25-v20-templ-compiler-runtime",
+  "roots": [
+    {
+      "id": "A01",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplComponentSyntaxTree",
+        "TestTemplComponentSyntaxTreeBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-TEMPLATE-PARSE",
+      "owners": [
+        "receipt.RenderPlan",
+        "receipt.RenderPlan.SelectSource",
+        "receipt.SourceFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-PARSE-001"
+      ],
+      "native_owners": [
+        "parser"
+      ]
+    },
+    {
+      "id": "A02",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplGoExpressionBoundary",
+        "TestTemplGoExpressionBoundaryBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-TEMPLATE-PARSE",
+      "owners": [
+        "receipt.RenderPlan",
+        "receipt.RenderPlan.SelectSource",
+        "receipt.SourceFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-PARSE-002"
+      ],
+      "native_owners": [
+        "parser",
+        "go-expression"
+      ]
+    },
+    {
+      "id": "A03",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplURLContextEscaping",
+        "TestTemplURLContextEscapingBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONTEXT-ESCAPE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.HTTPFact",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-ESCAPE-001"
+      ],
+      "native_owners": [
+        "safehtml",
+        "escaping"
+      ]
+    },
+    {
+      "id": "A04",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplScriptAndStyleSafety",
+        "TestTemplScriptAndStyleSafetyBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONTEXT-ESCAPE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.HTTPFact",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-ESCAPE-002"
+      ],
+      "native_owners": [
+        "safehtml",
+        "escaping"
+      ]
+    },
+    {
+      "id": "A05",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplGeneratedComponentSignature",
+        "TestTemplGeneratedComponentSignatureBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-COMPONENT-CODEGEN",
+      "owners": [
+        "receipt.GeneratedFact",
+        "receipt.RenderReceipt",
+        "receipt.Capture",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-GEN-001"
+      ],
+      "native_owners": [
+        "generator"
+      ]
+    },
+    {
+      "id": "A06",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplGeneratedImportOwnership",
+        "TestTemplGeneratedImportOwnershipBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-COMPONENT-CODEGEN",
+      "owners": [
+        "receipt.GeneratedFact",
+        "receipt.RenderReceipt",
+        "receipt.Capture",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-GEN-002"
+      ],
+      "native_owners": [
+        "generator",
+        "imports"
+      ]
+    },
+    {
+      "id": "A07",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplBooleanAttributeSemantics",
+        "TestTemplBooleanAttributeSemanticsBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ATTRIBUTE-SEMANTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.RenderReceipt",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-ATTR-001"
+      ],
+      "native_owners": [
+        "attribute"
+      ]
+    },
+    {
+      "id": "A08",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplSpreadAttributeOrdering",
+        "TestTemplSpreadAttributeOrderingBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ATTRIBUTE-SEMANTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.RenderReceipt",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-ATTR-002"
+      ],
+      "native_owners": [
+        "attribute"
+      ]
+    },
+    {
+      "id": "A09",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplComponentRenderContract",
+        "TestTemplComponentRenderContractBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNTIME-RENDER",
+      "owners": [
+        "receipt.WriterFact",
+        "receipt.WriterJournal",
+        "receipt.RenderFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-RUNTIME-001"
+      ],
+      "native_owners": [
+        "runtime"
+      ]
+    },
+    {
+      "id": "A10",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplCancelledContextStopsRender",
+        "TestTemplCancelledContextStopsRenderBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNTIME-RENDER",
+      "owners": [
+        "receipt.WriterFact",
+        "receipt.WriterJournal",
+        "receipt.RenderFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-RUNTIME-002"
+      ],
+      "native_owners": [
+        "runtime",
+        "context"
+      ]
+    },
+    {
+      "id": "A11",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplFormatterWhitespacePolicy",
+        "TestTemplFormatterWhitespacePolicyBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FORMAT-IDEMPOTENCE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderReceipt",
+        "receipt.RenderReceipt.Digest",
+        "receipt.RenderReceipt.Equivalent"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-FMT-001"
+      ],
+      "native_owners": [
+        "formatter"
+      ]
+    },
+    {
+      "id": "A12",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplGenerateDiagnosticLocation",
+        "TestTemplGenerateDiagnosticLocationBoundary"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-DIAGNOSTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.GeneratedFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-CLI-001"
+      ],
+      "native_owners": [
+        "cli",
+        "diagnostic"
+      ]
+    },
+    {
+      "id": "A13",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplMalformedSyntaxError",
+        "TestTemplMalformedSyntaxErrorBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "parser",
+        "error"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-NATIVE-001"
+      ]
+    },
+    {
+      "id": "A14",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplWriterErrorPropagation",
+        "TestTemplWriterErrorPropagationBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runtime",
+        "writer"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-NATIVE-002"
+      ]
+    },
+    {
+      "id": "A15",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplNativeFormatIdempotence",
+        "TestTemplNativeFormatIdempotenceBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "formatter"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-NATIVE-003"
+      ]
+    },
+    {
+      "id": "A16",
+      "layer": "atomic",
+      "tests": [
+        "TestTemplDeterministicGeneratedFileSet",
+        "TestTemplDeterministicGeneratedFileSetBoundary"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "generator"
+      ],
+      "depends_on": [],
+      "clauses": [
+        "TEMPL-NATIVE-004"
+      ]
+    },
+    {
+      "id": "I01",
+      "layer": "integration",
+      "tests": [
+        "TestTemplParseTreeToGeneratedSource"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-COMPONENT-CODEGEN",
+      "owners": [
+        "receipt.GeneratedFact",
+        "receipt.RenderReceipt",
+        "receipt.Capture",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A05"
+      ],
+      "seam": "templ AST → Go component generator",
+      "clauses": [
+        "TEMPL-SEAM-001"
+      ],
+      "native_owners": [
+        "parser",
+        "generator"
+      ]
+    },
+    {
+      "id": "I02",
+      "layer": "integration",
+      "tests": [
+        "TestTemplDynamicAttributeEscaping"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONTEXT-ESCAPE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.HTTPFact",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A03",
+        "A07"
+      ],
+      "seam": "attribute context → escaping owner → emitted code",
+      "clauses": [
+        "TEMPL-SEAM-002"
+      ],
+      "native_owners": [
+        "attribute",
+        "safehtml",
+        "generator"
+      ]
+    },
+    {
+      "id": "I03",
+      "layer": "integration",
+      "tests": [
+        "TestTemplGeneratedComponentRenders"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNTIME-RENDER",
+      "owners": [
+        "receipt.WriterFact",
+        "receipt.WriterJournal",
+        "receipt.RenderFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A05",
+        "A09"
+      ],
+      "seam": "generated source → compiled component → writer",
+      "clauses": [
+        "TEMPL-SEAM-003"
+      ],
+      "native_owners": [
+        "generator",
+        "go-compiler",
+        "runtime"
+      ]
+    },
+    {
+      "id": "I04",
+      "layer": "integration",
+      "tests": [
+        "TestTemplParseFormatParseIdentity"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FORMAT-IDEMPOTENCE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderReceipt",
+        "receipt.RenderReceipt.Digest",
+        "receipt.RenderReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A11"
+      ],
+      "seam": "syntax tree → formatter → reparsed semantic tree",
+      "clauses": [
+        "TEMPL-SEAM-004"
+      ],
+      "native_owners": [
+        "parser",
+        "formatter"
+      ]
+    },
+    {
+      "id": "I05",
+      "layer": "integration",
+      "tests": [
+        "TestTemplSafeScriptGeneration"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONTEXT-ESCAPE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.HTTPFact",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A04",
+        "A05"
+      ],
+      "seam": "script safety policy → generated expression → render",
+      "clauses": [
+        "TEMPL-SEAM-005"
+      ],
+      "native_owners": [
+        "safehtml",
+        "generator",
+        "runtime"
+      ]
+    },
+    {
+      "id": "I06",
+      "layer": "integration",
+      "tests": [
+        "TestTemplSpreadAttributesRenderOrder"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ATTRIBUTE-SEMANTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.RenderReceipt",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A08",
+        "A09"
+      ],
+      "seam": "spread map → generated attribute loop → HTML",
+      "clauses": [
+        "TEMPL-SEAM-006"
+      ],
+      "native_owners": [
+        "attribute",
+        "generator",
+        "runtime"
+      ]
+    },
+    {
+      "id": "I07",
+      "layer": "integration",
+      "tests": [
+        "TestTemplNestedComponentCallFlow"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNTIME-RENDER",
+      "owners": [
+        "receipt.WriterFact",
+        "receipt.WriterJournal",
+        "receipt.RenderFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A01",
+        "A09"
+      ],
+      "seam": "component call node → generated invocation → nested render",
+      "clauses": [
+        "TEMPL-SEAM-007"
+      ],
+      "native_owners": [
+        "parser",
+        "generator",
+        "runtime"
+      ]
+    },
+    {
+      "id": "I08",
+      "layer": "integration",
+      "tests": [
+        "TestTemplCancellationAcrossGeneratedCall"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNTIME-RENDER",
+      "owners": [
+        "receipt.WriterFact",
+        "receipt.WriterJournal",
+        "receipt.RenderFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A09",
+        "A10"
+      ],
+      "seam": "generated call chain → context cancellation boundary",
+      "clauses": [
+        "TEMPL-SEAM-008"
+      ],
+      "native_owners": [
+        "generator",
+        "runtime",
+        "context"
+      ]
+    },
+    {
+      "id": "I09",
+      "layer": "integration",
+      "tests": [
+        "TestTemplImportAliasToCompiledArtifact"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-COMPONENT-CODEGEN",
+      "owners": [
+        "receipt.GeneratedFact",
+        "receipt.RenderReceipt",
+        "receipt.Capture",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A02",
+        "A06"
+      ],
+      "seam": "Go expression imports → alias planner → compile",
+      "clauses": [
+        "TEMPL-SEAM-009"
+      ],
+      "native_owners": [
+        "parser",
+        "imports",
+        "generator",
+        "go-compiler"
+      ]
+    },
+    {
+      "id": "I10",
+      "layer": "integration",
+      "tests": [
+        "TestTemplFormatPreservesGoExpressions"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FORMAT-IDEMPOTENCE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderReceipt",
+        "receipt.RenderReceipt.Digest",
+        "receipt.RenderReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A02",
+        "A11"
+      ],
+      "seam": "embedded Go node → formatter → semantic reparse",
+      "clauses": [
+        "TEMPL-SEAM-010"
+      ],
+      "native_owners": [
+        "parser",
+        "formatter",
+        "go-expression"
+      ]
+    },
+    {
+      "id": "I11",
+      "layer": "integration",
+      "tests": [
+        "TestTemplGenerateCLIProducesArtifact"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-DIAGNOSTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.GeneratedFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A01",
+        "A05",
+        "A12"
+      ],
+      "seam": "generate command → compiler pipeline → generated file",
+      "clauses": [
+        "TEMPL-SEAM-011"
+      ],
+      "native_owners": [
+        "cli",
+        "parser",
+        "generator",
+        "filesystem"
+      ]
+    },
+    {
+      "id": "I12",
+      "layer": "integration",
+      "tests": [
+        "TestTemplFmtCLIReportsChangedFiles"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-DIAGNOSTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.GeneratedFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A11",
+        "A12"
+      ],
+      "seam": "fmt command → formatter → file observation",
+      "clauses": [
+        "TEMPL-SEAM-012"
+      ],
+      "native_owners": [
+        "cli",
+        "formatter",
+        "filesystem"
+      ]
+    },
+    {
+      "id": "I13",
+      "layer": "integration",
+      "tests": [
+        "TestTemplCSSExpressionEscaping"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONTEXT-ESCAPE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.HTTPFact",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A04",
+        "A05"
+      ],
+      "seam": "CSS context node → safety conversion → render",
+      "clauses": [
+        "TEMPL-SEAM-013"
+      ],
+      "native_owners": [
+        "parser",
+        "safehtml",
+        "generator",
+        "runtime"
+      ]
+    },
+    {
+      "id": "I14",
+      "layer": "integration",
+      "tests": [
+        "TestTemplURLAttributeOmissionAndRender"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-ATTRIBUTE-SEMANTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.RenderReceipt",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A03",
+        "A07"
+      ],
+      "seam": "URL attribute value → safety/omission → HTML",
+      "clauses": [
+        "TEMPL-SEAM-014"
+      ],
+      "native_owners": [
+        "attribute",
+        "safehtml",
+        "runtime"
+      ]
+    },
+    {
+      "id": "I15",
+      "layer": "integration",
+      "tests": [
+        "TestTemplParserErrorBecomesCLIDiagnostic"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-DIAGNOSTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.GeneratedFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A12",
+        "A13"
+      ],
+      "seam": "parse failure → source location → command result",
+      "clauses": [
+        "TEMPL-SEAM-015"
+      ],
+      "native_owners": [
+        "parser",
+        "error",
+        "cli"
+      ]
+    },
+    {
+      "id": "I16",
+      "layer": "integration",
+      "tests": [
+        "TestTemplGeneratedSourceCompilesAndRenders"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-COMPONENT-CODEGEN",
+      "owners": [
+        "receipt.GeneratedFact",
+        "receipt.RenderReceipt",
+        "receipt.Capture",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A05",
+        "A16"
+      ],
+      "seam": "artifact set → compile → component receipt",
+      "clauses": [
+        "TEMPL-SEAM-016"
+      ],
+      "native_owners": [
+        "generator",
+        "go-compiler",
+        "runtime"
+      ]
+    },
+    {
+      "id": "I17",
+      "layer": "integration",
+      "tests": [
+        "TestTemplNativeMalformedInputNoArtifact"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "parser",
+        "filesystem",
+        "error"
+      ],
+      "depends_on": [
+        "A13",
+        "A16"
+      ],
+      "seam": "native parse error → no generated publication",
+      "clauses": [
+        "TEMPL-SEAM-017"
+      ]
+    },
+    {
+      "id": "I18",
+      "layer": "integration",
+      "tests": [
+        "TestTemplNativeWriterFailureStopsTree"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "runtime",
+        "writer"
+      ],
+      "depends_on": [
+        "A09",
+        "A14"
+      ],
+      "seam": "writer failure → render termination",
+      "clauses": [
+        "TEMPL-SEAM-018"
+      ]
+    },
+    {
+      "id": "I19",
+      "layer": "integration",
+      "tests": [
+        "TestTemplNativeFormatterIdempotence"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "formatter",
+        "filesystem"
+      ],
+      "depends_on": [
+        "A11",
+        "A15"
+      ],
+      "seam": "formatted source → second formatting no-op",
+      "clauses": [
+        "TEMPL-SEAM-019"
+      ]
+    },
+    {
+      "id": "I20",
+      "layer": "integration",
+      "tests": [
+        "TestTemplNativeDeterministicGeneration"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "generator",
+        "filesystem"
+      ],
+      "depends_on": [
+        "A16",
+        "A05"
+      ],
+      "seam": "same component tree → stable artifact catalog",
+      "clauses": [
+        "TEMPL-SEAM-020"
+      ]
+    },
+    {
+      "id": "I21",
+      "layer": "integration",
+      "tests": [
+        "TestTemplPlainTextComponentRender"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "parser",
+        "runtime"
+      ],
+      "depends_on": [
+        "A01",
+        "A09"
+      ],
+      "seam": "plain text node → runtime writer",
+      "clauses": [
+        "TEMPL-SEAM-021"
+      ]
+    },
+    {
+      "id": "I22",
+      "layer": "integration",
+      "tests": [
+        "TestTemplEscapedTextRoundTrip"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "safehtml",
+        "runtime"
+      ],
+      "depends_on": [
+        "A03",
+        "A09"
+      ],
+      "seam": "native text escaping → rendered observation",
+      "clauses": [
+        "TEMPL-SEAM-022"
+      ]
+    },
+    {
+      "id": "I23",
+      "layer": "integration",
+      "tests": [
+        "TestTemplCLIHelpAndVersionRemainNative"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "cli",
+        "diagnostic"
+      ],
+      "depends_on": [
+        "A12"
+      ],
+      "seam": "command invocation → native metadata output",
+      "clauses": [
+        "TEMPL-SEAM-023"
+      ]
+    },
+    {
+      "id": "I24",
+      "layer": "integration",
+      "tests": [
+        "TestTemplGeneratedPackageCompilesTwice"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "generator",
+        "go-compiler"
+      ],
+      "depends_on": [
+        "A16"
+      ],
+      "seam": "stable artifact → repeated compile receipt",
+      "clauses": [
+        "TEMPL-SEAM-024"
+      ]
+    },
+    {
+      "id": "S01",
+      "layer": "system",
+      "tests": [
+        "TestTemplTemplateToFreshHTMLReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-COMPONENT-CODEGEN",
+      "owners": [
+        "receipt.GeneratedFact",
+        "receipt.RenderReceipt",
+        "receipt.Capture",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A01",
+        "A05",
+        "A09"
+      ],
+      "receipt": "After generation and compilation, a newly constructed component renders HTML whose structure reflects the source tree.",
+      "clauses": [
+        "TEMPL-SYSTEM-001"
+      ],
+      "native_owners": [
+        "parser",
+        "generator",
+        "go-compiler",
+        "runtime",
+        "writer"
+      ]
+    },
+    {
+      "id": "S02",
+      "layer": "system",
+      "tests": [
+        "TestTemplContextSafetyEndToEndReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONTEXT-ESCAPE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.HTTPFact",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A03",
+        "A04",
+        "A07"
+      ],
+      "receipt": "After rendering hostile URL, script, style, and text inputs, a fresh HTML parse observes only context-safe values.",
+      "clauses": [
+        "TEMPL-SYSTEM-002"
+      ],
+      "native_owners": [
+        "parser",
+        "attribute",
+        "safehtml",
+        "generator",
+        "runtime"
+      ]
+    },
+    {
+      "id": "S03",
+      "layer": "system",
+      "tests": [
+        "TestTemplGenerateCLICompileReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CLI-DIAGNOSTICS",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.GeneratedFact",
+        "receipt.ChangeReceipt",
+        "receipt.Diff"
+      ],
+      "depends_on": [
+        "A05",
+        "A12",
+        "A16"
+      ],
+      "receipt": "After generate CLI completion, a fresh directory scan and compile observe exactly the current component artifact generation.",
+      "clauses": [
+        "TEMPL-SYSTEM-003"
+      ],
+      "native_owners": [
+        "cli",
+        "filesystem",
+        "parser",
+        "generator",
+        "go-compiler"
+      ]
+    },
+    {
+      "id": "S04",
+      "layer": "system",
+      "tests": [
+        "TestTemplFormatRegenerateSemanticReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-FORMAT-IDEMPOTENCE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderReceipt",
+        "receipt.RenderReceipt.Digest",
+        "receipt.RenderReceipt.Equivalent"
+      ],
+      "depends_on": [
+        "A01",
+        "A11",
+        "A15"
+      ],
+      "receipt": "After fmt then regenerate, a fresh component render is semantically equivalent and a second format reports no change.",
+      "clauses": [
+        "TEMPL-SYSTEM-004"
+      ],
+      "native_owners": [
+        "cli",
+        "formatter",
+        "parser",
+        "generator",
+        "runtime"
+      ]
+    },
+    {
+      "id": "S05",
+      "layer": "system",
+      "tests": [
+        "TestTemplNestedComponentsCancellationReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-RUNTIME-RENDER",
+      "owners": [
+        "receipt.WriterFact",
+        "receipt.WriterJournal",
+        "receipt.RenderFact",
+        "receipt.Capture"
+      ],
+      "depends_on": [
+        "A09",
+        "A10",
+        "A14"
+      ],
+      "receipt": "After cancellation during a nested render, a fresh writer receipt contains no suffix from components that never acquired ownership.",
+      "clauses": [
+        "TEMPL-SYSTEM-005"
+      ],
+      "native_owners": [
+        "parser",
+        "generator",
+        "runtime",
+        "context",
+        "writer"
+      ]
+    },
+    {
+      "id": "S06",
+      "layer": "system",
+      "tests": [
+        "TestTemplUnsafeAttributeFailureReceipt"
+      ],
+      "package": "./...",
+      "mutation": true,
+      "family": "M-CONTEXT-ESCAPE",
+      "owners": [
+        "receipt.SourceFact",
+        "receipt.RenderFact",
+        "receipt.HTTPFact",
+        "receipt.RenderReceipt.Validate"
+      ],
+      "depends_on": [
+        "A03",
+        "A07",
+        "A12"
+      ],
+      "receipt": "After an unsafe contextual value is rejected or sanitized, a fresh render and diagnostic observation agree without partial unsafe publication.",
+      "clauses": [
+        "TEMPL-SYSTEM-006"
+      ],
+      "native_owners": [
+        "attribute",
+        "safehtml",
+        "generator",
+        "runtime",
+        "diagnostic"
+      ]
+    },
+    {
+      "id": "S07",
+      "layer": "system",
+      "tests": [
+        "TestTemplNativeSourceGenerateRender"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "parser",
+        "formatter",
+        "generator",
+        "go-compiler",
+        "runtime"
+      ],
+      "depends_on": [
+        "A05",
+        "A15",
+        "A16"
+      ],
+      "receipt": "A native component formatted and generated from scratch compiles and produces a fresh deterministic HTML receipt.",
+      "clauses": [
+        "TEMPL-SYSTEM-007"
+      ]
+    },
+    {
+      "id": "S08",
+      "layer": "system",
+      "tests": [
+        "TestTemplNativeFailureLeavesNoStaleArtifact"
+      ],
+      "package": "./...",
+      "mutation": false,
+      "family": null,
+      "owners": [
+        "parser",
+        "cli",
+        "filesystem",
+        "generator",
+        "error"
+      ],
+      "depends_on": [
+        "A12",
+        "A13",
+        "A16"
+      ],
+      "receipt": "After a malformed source generation attempt, a fresh filesystem scan exposes no newly published stale or partial artifact.",
+      "clauses": [
+        "TEMPL-SYSTEM-008"
+      ]
+    }
+  ]
+}

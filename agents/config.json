@@ -1,0 +1,73 @@
+{
+    "default_agent": "minisweagent",
+    "models": {
+        "deepseek-chat": {
+            "model": "deepseek/deepseek-chat",
+            "base_url": "https://api.deepseek.com",
+            "api_key_env": "DEEPSEEK_API_KEY"
+        },
+        "deepseek-coder": {
+            "model": "deepseek/deepseek-coder",
+            "base_url": "https://api.deepseek.com",
+            "api_key_env": "DEEPSEEK_API_KEY"
+        },
+        "deepseek-v4-pro": {
+            "model": "openai/deepseek-v4-pro",
+            "base_url": "https://llm-sn32yenb08wvkx41.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+            "api_key_env": "DASHSCOPE_API_KEY"
+        },
+        "deepseek-v4-flash": {
+            "model": "openai/deepseek-v4-flash",
+            "base_url": "https://llm-sn32yenb08wvkx41.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+            "api_key_env": "DASHSCOPE_API_KEY"
+        },
+        "claude-sonnet-4": {
+            "model": "anthropic/claude-sonnet-4-20250514",
+            "base_url": null,
+            "api_key_env": "ANTHROPIC_API_KEY"
+        },
+        "claude-opus-4": {
+            "model": "anthropic/claude-opus-4-20250514",
+            "base_url": null,
+            "api_key_env": "ANTHROPIC_API_KEY"
+        },
+        "gpt-4o": {
+            "model": "openai/gpt-4o",
+            "base_url": null,
+            "api_key_env": "OPENAI_API_KEY"
+        },
+        "gpt-4.1": {
+            "model": "openai/gpt-4.1",
+            "base_url": null,
+            "api_key_env": "OPENAI_API_KEY"
+        },
+        "qwen3.8-max": {
+            "model": "openai/qwen3.8-max",
+            "base_url": "https://llm-sn32yenb08wvkx41.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+            "api_key_env": "DASHSCOPE_API_KEY",
+            "extra_params": {
+                "enable_thinking": false
+            }
+        },
+        "claude-fable-5": {
+            "model": "anthropic/claude-fable-5",
+            "base_url": "https://routify-pub.alibaba-inc.com/protocol/anthropic",
+            "api_key_env": "ANTHROPIC_AUTH_TOKEN"
+        }
+    },
+    "evaluation": {
+        "max_iterations": 0,
+        "timeout_seconds": 0,
+        "cost_limit": 0,
+        "max_concurrent": 3
+    },
+    "docker": {
+        "agent_image": "spec2repo-base:latest",
+        "score_image": "spec2repo-base:latest",
+        "agent_network": "none",
+        "agent_memory": "1g",
+        "agent_cpus": 2,
+        "score_memory": "512m",
+        "score_cpus": 2
+    }
+}

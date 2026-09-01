@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "source": "ROOT-MAP.json",
+  "conditional_composition_rule": "A Composition root is eligible only when every declared Atomic prerequisite passes.",
+  "cascade_rule": "Ineligible Composition roots are excluded from adjusted Gap and reported separately; they never become passing roots.",
+  "owners": {
+    "C":"configuration generation",
+    "D":"discovery acknowledgement",
+    "L":"page lineage",
+    "P":"artifact publication",
+    "S":"search receipts",
+    "O":"event outbox"
+  },
+  "anchor_admission": {
+    "mode": "sealed-arbitrary-candidate-v1",
+    "scoreable_phase": "semantic-call",
+    "expected_vector": null,
+    "structural_failure": "invalid-run-not-product-score"
+  }
+}

@@ -1,0 +1,1107 @@
+ARG BASE_IMAGE=spec2repo-rust:latest
+FROM ${BASE_IMAGE}
+
+# Rust AGENT image: the scoring toolchain plus the crates a Rust spec promises.
+#
+# spec2repo-rust has no `$CARGO_HOME/registry` at all -- not an empty cache, an
+# absent one. The scoring container survives that because `cargo fetch` runs in
+# setup, before the network is disconnected. The agent container has
+# --network=none from its first command, so without this layer a Rust candidate
+# cannot resolve a single dependency, cannot `cargo build`, and cannot
+# `cargo test`. It writes the whole crate blind and submits it unverified.
+#
+# The crate set below is the one named in the `Appendix A: Environment` of the
+# Rust tasks, at the versions the reference declares, so that a candidate
+# following the spec resolves offline. Keep the two in step: a crate the spec
+# offers but that is missing here is a promise the container does not keep.
+
+RUN mkdir -p /tmp/warm/src && cd /tmp/warm && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm"' \
+      'version = "0.0.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'anyhow = "1.0"' \
+      'byteorder = "1.5"' \
+      'chrono = { version = "^0.4.38", features = ["serde"] }' \
+      'flate2 = "1"' \
+      'log = "^0.4.17"' \
+      'rusqlite = { version = "0.32", features = ["bundled"] }' \
+      'serde = { version = "^1.0.147", features = ["derive"] }' \
+      'serde_json = "^1.0"' \
+      'strum = "0.27"' \
+      'strum_macros = "0.27"' \
+      'thiserror = "2.0"' \
+      'uuid = { version = "^1.14.0", features = ["serde", "v4"] }' \
+      '' \
+      '[dev-dependencies]' \
+      'pretty_assertions = "1"' \
+      'proptest = "^1.6.0"' \
+      'rstest = "0.24"' \
+      'tempfile = "3"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm
+
+# `guppy` Appendix A. Two of these are interface types the candidate re-exports
+# rather than implementation conveniences (`camino` paths, `target-spec`
+# platforms), so a missing copy is not a slow build, it is an uncompilable one.
+RUN mkdir -p /tmp/warm-guppy/src && cd /tmp/warm-guppy && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-guppy"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'ahash = "0.8"' \
+      'camino = { version = "1.2", features = ["serde1"] }' \
+      'cargo_metadata = "0.23"' \
+      'cfg-if = "1"' \
+      'debug-ignore = "1"' \
+      'fixedbitset = "0.5"' \
+      'indexmap = "2"' \
+      'itertools = "0.14"' \
+      'nested = "0.1"' \
+      'once_cell = "1"' \
+      'pathdiff = "0.2"' \
+      'petgraph = "0.8"' \
+      'semver = { version = "1.0", features = ["serde"] }' \
+      'serde = { version = "1.0", features = ["derive"] }' \
+      'serde_json = "1.0"' \
+      'smallvec = "1"' \
+      'static_assertions = "1"' \
+      'target-spec = { version = "3.6", features = ["custom", "summaries"] }' \
+      '' \
+      '[dev-dependencies]' \
+      'pretty_assertions = "1"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm-guppy
+
+# `gix-ref` Appendix A. The candidate delivers one crate of a ten-crate family
+# and consumes the other nine from the registry, so the whole family has to be
+# here even though only one of them is ever written.
+RUN mkdir -p /tmp/warm-gix/src && cd /tmp/warm-gix && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-gix"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'gix-actor = "0.41"' \
+      'gix-date = "0.11"' \
+      'gix-features = { version = "0.49", features = ["walkdir"] }' \
+      'gix-fs = "0.22"' \
+      'gix-hash = { version = "0.26", features = ["sha1"] }' \
+      'gix-lock = "24.0"' \
+      'gix-object = "0.63"' \
+      'gix-path = "0.12"' \
+      'gix-tempfile = { version = "24.0", default-features = false }' \
+      'gix-utils = "0.3"' \
+      'gix-validate = "0.11"' \
+      'bstr = "1"' \
+      'memmap2 = "0.9"' \
+      'thiserror = "2.0"' \
+      'winnow = "0.7"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm-gix
+
+# Prove the cache resolves with the network off. `cargo fetch` succeeding says
+# nothing about whether a *fresh* crate can resolve offline: that needs the
+# registry index, not just the .crate files, and the two are cached separately.
+RUN mkdir -p /tmp/verify/src && cd /tmp/verify && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify"' \
+      'version = "0.0.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'chrono = { version = "0.4", features = ["serde"] }' \
+      'rusqlite = { version = "0.32", features = ["bundled"] }' \
+      'serde = { version = "1", features = ["derive"] }' \
+      'uuid = { version = "1", features = ["serde", "v4"] }' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub fn id() -> String { uuid::Uuid::new_v4().to_string() }' \
+      > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build && \
+    cd / && rm -rf /tmp/verify
+
+# The same proof for the two crate families added above, and for edition 2024,
+# which both of those specifications require of the delivered manifest.
+RUN mkdir -p /tmp/verify2/src && cd /tmp/verify2 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify2"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'camino = "1.2"' \
+      'petgraph = "0.8"' \
+      'target-spec = "3.6"' \
+      'gix-hash = { version = "0.26", features = ["sha1"] }' \
+      'gix-object = "0.63"' \
+      'gix-validate = "0.11"' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub fn root() -> camino::Utf8PathBuf { camino::Utf8PathBuf::from("/") }' \
+      'pub fn host() -> Option<target_spec::Platform> { target_spec::Platform::build_target().ok() }' \
+      'pub fn null() -> gix_hash::ObjectId { gix_hash::Kind::Sha1.null() }' \
+      'pub fn ok(name: &str) -> bool {' \
+      '    gix_validate::reference::name(name.into()).is_ok()' \
+      '}' \
+      > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build && \
+    cd / && rm -rf /tmp/verify2
+
+# `gix-odb` and `gix-pack` Appendix A. Both crates sit below gix-ref in the
+# dependency tree and bring in the pack/zlib/quote layer. gix-pack is used by
+# gix-odb as a published dependency (not path-only).
+RUN mkdir -p /tmp/warm-gixodb/src && cd /tmp/warm-gixodb && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-gixodb"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'gix-hash = { version = "0.26", features = ["sha1"] }' \
+      'gix-pack = { version = "0.73", default-features = false }' \
+      'gix-zlib = "0.1"' \
+      'gix-quote = "0.7"' \
+      'gix-chunk = "0.7"' \
+      'arc-swap = "1.9"' \
+      'parking_lot = "0.12"' \
+      'gix-traverse = "0.60"' \
+      'gix-diff = { version = "0.66", default-features = false }' \
+      'uluru = "3"' \
+      'clru = "0.6"' \
+      'crossbeam-deque = "0.8"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm-gixodb
+
+# `gix-config` Appendix A. The parse and file carves both need gix-config-value
+# (the value-type crate the parser returns). The file carve additionally needs
+# gix-sec (trust levels) and gix-glob (include pattern matching).
+RUN mkdir -p /tmp/warm-gixcfg/src && cd /tmp/warm-gixcfg && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-gixcfg"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'gix-config-value = "0.19"' \
+      'gix-sec = "0.14"' \
+      'gix-glob = "0.27"' \
+      'unicode-bom = "2.0"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm-gixcfg
+
+# Offline proof for the gix-config family.
+RUN mkdir -p /tmp/verify3/src && cd /tmp/verify3 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify3"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'gix-config-value = "0.19"' \
+      'gix-sec = "0.14"' \
+      'gix-glob = "0.27"' \
+      'unicode-bom = "2.0"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build && \
+    cd / && rm -rf /tmp/verify3
+
+# Offline proof for the gix-odb/gix-pack family.
+RUN mkdir -p /tmp/verify4/src && cd /tmp/verify4 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify4"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'gix-hash = { version = "0.26", features = ["sha1"] }' \
+      'gix-pack = { version = "0.73", default-features = false }' \
+      'gix-chunk = "0.7"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build && \
+    cd / && rm -rf /tmp/verify4
+
+# `crop` Appendix A. A B-tree rope crate; needs str_indices (always) and
+# unicode-segmentation (graphemes feature). Dev-deps include rand, ropey, serde,
+# bincode for the test suite.
+RUN mkdir -p /tmp/warm-crop/src && cd /tmp/warm-crop && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-crop"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'str_indices = { version = "0.4", default-features = false }' \
+      'unicode-segmentation = "1.10"' \
+      'serde = { version = "1", features = ["derive"] }' \
+      '' \
+      '[dev-dependencies]' \
+      'bincode = { version = "2", features = ["serde"] }' \
+      'rand = "0.9"' \
+      'rand_chacha = "0.9"' \
+      'ropey = "1.6"' \
+      'serde_json = "1"' \
+      'serde_test = "1.0"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm-crop
+
+# Offline proof for the crop family.
+RUN mkdir -p /tmp/verify5/src && cd /tmp/verify5 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify5"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'str_indices = { version = "0.4", default-features = false }' \
+      'unicode-segmentation = "1.10"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build && \
+    cd / && rm -rf /tmp/verify5
+
+# `pest_meta` Appendix A. The crate depends only on pest (the PEG parser
+# runtime). pest itself pulls in ucd-trie and a few small crates.
+RUN mkdir -p /tmp/warm-pest/src && cd /tmp/warm-pest && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-pest"' \
+      'version = "0.0.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'pest = "2.9"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm-pest
+
+# `gix-diff` Appendix A (full feature set). The tree module uses only the base
+# deps (already preheated); the blob and index features pull in filter, worktree,
+# attributes, pathspec, imara-diff, and command.
+RUN mkdir -p /tmp/warm-gixdiff/src && cd /tmp/warm-gixdiff && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-gixdiff"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'gix-hash = { version = "0.26", features = ["sha1"] }' \
+      'gix-imara-diff = "0.2"' \
+      'gix-command = "0.9"' \
+      'gix-filter = "0.33"' \
+      'gix-worktree = "0.55"' \
+      'gix-attributes = "0.34"' \
+      'gix-index = "0.54"' \
+      'gix-pathspec = "0.19"' \
+      'gix-bitmap = "0.3"' \
+      'filetime = "0.2"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm-gixdiff
+
+# Offline proof for pest.
+RUN mkdir -p /tmp/verify-pest/src && cd /tmp/verify-pest && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify-pest"' \
+      'version = "0.0.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'pest = "2.9"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build && \
+    cd / && rm -rf /tmp/verify-pest
+
+# Offline proof for gix-diff optional deps.
+RUN mkdir -p /tmp/verify-gixdiff/src && cd /tmp/verify-gixdiff && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify-gixdiff"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[dependencies]' \
+      'gix-hash = { version = "0.26", features = ["sha1"] }' \
+      'gix-imara-diff = "0.2"' \
+      'gix-index = "0.54"' \
+      'gix-pathspec = "0.19"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build && \
+    cd / && rm -rf /tmp/verify-gixdiff
+
+# `x509-parser` Appendix A. ASN.1/DER/X.509 parsing family. Ring and aws-lc-rs
+# are optional and excluded to keep the build pure-Rust.
+RUN mkdir -p /tmp/warm-x509/src && cd /tmp/warm-x509 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-x509"' \
+      'version = "0.0.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'asn1-rs = "0.7"' \
+      'der-parser = "10"' \
+      'nom = "7"' \
+      'oid-registry = "0.8"' \
+      'rusticata-macros = "4"' \
+      'data-encoding = "2.2"' \
+      'lazy_static = "1.4"' \
+      'time = "0.3"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm-x509
+
+# `gix-index` Appendix A (gix-index-state-001, carved from gix-index 0.54.0 at
+# upstream 227619ad). Versions are the ones that revision's manifest declares.
+#
+# Most of this family arrived transitively with the gix-ref and gix-odb blocks
+# above; the two that did not are `gix-bitmap` (the tree-extension bitmap
+# decoder, which pulls `gix-error` with it) and `filetime`, which is not a
+# convenience at all -- `FileTime` is in the signature of
+# `State::from_bytes`, so a missing copy is an uncompilable candidate.
+#
+# `document-features` is the non-obvious one. It is an *optional* dependency
+# that nothing here enables, and cargo still has to resolve it before it builds
+# anything: an unactivated optional dep needs its index entry offline exactly
+# like an activated one does. Upstream declares it in gix-index, gix-protocol,
+# gix-hash, gix-ref and most of the family, so a candidate that carries the
+# upstream manifest forward fails at *resolution* without this line, with an
+# error that names a crate its code never mentions.
+#
+# `rustix` and `libc` are the `cfg(unix)` half of the manifest, which is the
+# live half on this image. Feature sets here are upstream's or a superset of
+# it, never less: a feature trimmed here resurfaces as an unresolvable symbol
+# inside the offline agent container.
+#
+# Both this block and its proof carry upstream's `[features]` table rather than
+# a flat dependency list, and build with `--all-features`. That is not
+# decoration. Cargo prunes an optional dependency of a *dependency* when no
+# reachable feature can turn it on, so a warm crate that omits
+# `parallel = ["gix-features/parallel"]` never resolves `crossbeam-channel`,
+# never caches its index entry, and a candidate that copies the upstream
+# feature table then fails offline at resolution -- naming a crate that appears
+# nowhere in the specification. The `gix-features` line below turns on every
+# arm of that crate's own table for the same reason.
+RUN mkdir -p /tmp/warm-gixindex/src && cd /tmp/warm-gixindex && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-gixindex"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[features]' \
+      'sha1 = ["gix-hash/sha1"]' \
+      'sha256 = ["gix-hash/sha256"]' \
+      'serde = ["dep:serde", "smallvec/serde", "gix-hash/serde"]' \
+      'parallel = ["gix-features/parallel"]' \
+      '' \
+      '[dependencies]' \
+      'gix-features = { version = "0.49", features = ["progress", "progress-unit-human-numbers", "progress-unit-bytes", "fs-read-dir", "parallel", "once_cell", "walkdir", "io-pipe", "crc32", "tracing", "cache-efficiency-debug"] }' \
+      'gix-hash = "0.26"' \
+      'gix-bitmap = "0.3.3"' \
+      'gix-object = "0.63"' \
+      'gix-validate = "0.11"' \
+      'gix-traverse = "0.60"' \
+      'gix-lock = "24.0"' \
+      'gix-fs = "0.22"' \
+      'gix-utils = "0.3.5"' \
+      'gix-hashtable = "0.16"' \
+      'hashbrown = "0.17.1"' \
+      'fnv = "1.0.7"' \
+      'thiserror = "2.0.18"' \
+      'memmap2 = "0.9.11"' \
+      'filetime = "0.2.29"' \
+      'bstr = "1.12"' \
+      'serde = { version = "1.0.114", optional = true, features = ["derive"] }' \
+      'smallvec = "1.15.1"' \
+      'itoa = "1.0.17"' \
+      'bitflags = "2"' \
+      'document-features = { version = "0.2.0", optional = true }' \
+      '' \
+      '[target."cfg(unix)".dependencies]' \
+      'rustix = { version = "1.1.2", features = ["fs"] }' \
+      'libc = "0.2.186"' \
+      '' \
+      '[dev-dependencies]' \
+      'insta = { version = "1.46.3", features = ["filters"] }' \
+      'tempfile = "3"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/warm-gixindex
+
+# Offline proof for the gix-index family. This is upstream's manifest with the
+# path dependencies swapped for registry versions and the package renamed --
+# i.e. the shape a candidate actually submits -- built with `--all-features` so
+# that every arm of the feature table is resolved, not just the default one.
+# `filetime` and `gix-bitmap` are named in code as well as in the manifest, so
+# a cached .crate that resolves but cannot link still fails here.
+RUN mkdir -p /tmp/verify6/src && cd /tmp/verify6 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify6"' \
+      'version = "0.54.0"' \
+      'edition = "2024"' \
+      'rust-version = "1.85"' \
+      '' \
+      '[features]' \
+      'sha1 = ["gix-hash/sha1"]' \
+      'sha256 = ["gix-hash/sha256"]' \
+      'serde = ["dep:serde", "smallvec/serde", "gix-hash/serde"]' \
+      'parallel = ["gix-features/parallel"]' \
+      '' \
+      '[dependencies]' \
+      'gix-features = { version = "^0.49.0", features = ["progress"] }' \
+      'gix-hash = { version = "^0.26.0" }' \
+      'gix-bitmap = { version = "^0.3.3" }' \
+      'gix-object = { version = "^0.63.0" }' \
+      'gix-validate = { version = "^0.11.3" }' \
+      'gix-traverse = { version = "^0.60.0" }' \
+      'gix-lock = { version = "^24.0.0" }' \
+      'gix-fs = { version = "^0.22.0" }' \
+      'gix-utils = { version = "^0.3.5" }' \
+      'hashbrown = "0.17.1"' \
+      'fnv = "1.0.7"' \
+      'thiserror = "2.0.18"' \
+      'memmap2 = "0.9.11"' \
+      'filetime = "0.2.29"' \
+      'bstr = { version = "1.12.0", default-features = false }' \
+      'serde = { version = "1.0.114", optional = true, default-features = false, features = ["derive"] }' \
+      'smallvec = "1.15.1"' \
+      'itoa = "1.0.17"' \
+      'bitflags = "2"' \
+      'document-features = { version = "0.2.0", optional = true }' \
+      '' \
+      '[target."cfg(unix)".dependencies]' \
+      'rustix = { version = "1.1.2", default-features = false, features = ["std", "fs"] }' \
+      'libc = { version = "0.2.186" }' \
+      '' \
+      '[dev-dependencies]' \
+      'gix-hashtable = "0.16.0"' \
+      'insta = { version = "1.46.3", features = ["filters"] }' \
+      'tempfile = "3"' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub use gix_bitmap;' \
+      'pub use gix_fs;' \
+      'pub use gix_lock;' \
+      'pub use gix_object;' \
+      'pub use gix_traverse;' \
+      'pub use gix_utils;' \
+      'pub use gix_validate;' \
+      'pub fn mtime() -> filetime::FileTime { filetime::FileTime::now() }' \
+      'pub fn null() -> gix_hash::ObjectId { gix_hash::Kind::Sha1.null() }' \
+      'pub fn ewah(b: &[u8]) -> bool { gix_bitmap::ewah::decode(b).is_ok() }' \
+      'pub fn table() -> hashbrown::HashMap<u32, u32, fnv::FnvBuildHasher> { Default::default() }' \
+      > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/verify6
+
+# `gix-protocol` Appendix A (gix-protocol-handshake-001, carved from
+# gix-protocol 0.64.0 at upstream 227619ad). Much larger than the block above,
+# because the whole transport stack is new: `gix-transport` and below it
+# `gix-packetline`, `gix-url`, `gix-command`, `gix-prompt`, plus `gix-shallow`,
+# `gix-ref`, `gix-credentials`, `gix-negotiate` and `gix-refspec`.
+#
+# Both client features are selected at once. Upstream states they compose --
+# `blocking-client` and `async-client` each gate their own methods and the
+# shared API picks the blocking implementation -- and the crate's two test
+# targets are gated on one each, so warming only one of them leaves half the
+# oracle's test layer unbuildable. `bisync` is the macro both halves are
+# written through and is a hard (non-optional) dependency.
+#
+# The `http-client*` features are deliberately not selected: nothing in the
+# handshake carve reaches them, so `curl` and `reqwest` stay out of both the
+# build and the cache. As above, the block carries upstream's `[features]`
+# table and builds `--all-features`, so that resolution walks the same optional
+# dependencies a candidate's own manifest will make reachable.
+RUN mkdir -p /tmp/warm-gixproto/src && cd /tmp/warm-gixproto && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-gixproto"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      '' \
+      '[features]' \
+      'blocking-client = ["gix-transport/blocking-client", "handshake", "fetch"]' \
+      'async-client = ["gix-transport/async-client", "dep:async-trait", "dep:futures-io", "futures-lite", "handshake", "fetch"]' \
+      'handshake = ["dep:gix-credentials"]' \
+      'fetch = ["dep:gix-negotiate", "dep:gix-object", "dep:gix-revwalk", "dep:gix-lock", "dep:gix-refspec", "dep:gix-trace"]' \
+      'sha1 = ["gix-hash/sha1"]' \
+      'sha256 = ["gix-hash/sha256"]' \
+      'serde = ["dep:serde", "bstr/serde", "gix-transport/serde", "gix-hash/serde", "gix-shallow/serde"]' \
+      '' \
+      '[dependencies]' \
+      'gix-features = { version = "0.49", features = ["progress", "parallel", "io-pipe", "crc32", "walkdir", "once_cell"] }' \
+      'gix-transport = "0.58.1"' \
+      'gix-hash = "0.26"' \
+      'gix-shallow = "0.13"' \
+      'gix-date = "0.15.6"' \
+      'gix-utils = "0.3.5"' \
+      'gix-ref = "0.66"' \
+      'gix-trace = { version = "0.1.21", optional = true }' \
+      'gix-negotiate = { version = "0.34", optional = true }' \
+      'gix-object = { version = "0.63", optional = true }' \
+      'gix-revwalk = { version = "0.34", optional = true }' \
+      'gix-credentials = { version = "0.39.1", optional = true }' \
+      'gix-refspec = { version = "0.44", optional = true }' \
+      'gix-lock = { version = "24.0", optional = true }' \
+      'thiserror = "2.0.18"' \
+      'nonempty = "0.12.0"' \
+      'serde = { version = "1.0.114", optional = true, features = ["derive"] }' \
+      'bstr = { version = "1.12.0", features = ["std", "unicode"] }' \
+      'async-trait = { version = "0.1.51", optional = true }' \
+      'futures-io = { version = "0.3.32", optional = true }' \
+      'futures-lite = { version = "2.1.0", optional = true }' \
+      'bisync = "0.3.0"' \
+      'document-features = { version = "0.2.0", optional = true }' \
+      '' \
+      '# Not gix-protocol dependencies, but the layer under it that the oracle' \
+      '# and the transport stack reach for directly.' \
+      'gix-packetline = { version = "0.22", features = ["blocking-io", "async-io"] }' \
+      'gix-url = "0.37.1"' \
+      'gix-command = "0.9.2"' \
+      'gix-prompt = "0.16"' \
+      'gix-sec = "0.14.2"' \
+      'gix-quote = "0.7.2"' \
+      'gix-config-value = "0.19.1"' \
+      'pin-project-lite = "0.2.6"' \
+      '' \
+      '[dev-dependencies]' \
+      'async-std = { version = "1.9.0", features = ["attributes"] }' \
+      'blocking = "1.6.2"' \
+      'tempfile = "3"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/warm-gixproto
+
+# Offline proof for the gix-protocol family: upstream's manifest with registry
+# versions in place of the path dependencies, built `--all-features` so both
+# client arms and both hash arms are resolved and compiled. `async-std` and
+# `gix-packetline` sit in dev-dependencies exactly as upstream has them,
+# because `cargo build` alone would never touch either and the crate's two test
+# targets -- one per client arm -- both do.
+RUN mkdir -p /tmp/verify7/src && cd /tmp/verify7 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify7"' \
+      'version = "0.64.0"' \
+      'edition = "2024"' \
+      'rust-version = "1.85"' \
+      '' \
+      '[features]' \
+      'blocking-client = ["gix-transport/blocking-client", "handshake", "fetch"]' \
+      'async-client = ["gix-transport/async-client", "dep:async-trait", "dep:futures-io", "futures-lite", "handshake", "fetch"]' \
+      'handshake = ["dep:gix-credentials"]' \
+      'fetch = ["dep:gix-negotiate", "dep:gix-object", "dep:gix-revwalk", "dep:gix-lock", "dep:gix-refspec", "dep:gix-trace"]' \
+      'sha1 = ["gix-hash/sha1"]' \
+      'sha256 = ["gix-hash/sha256"]' \
+      'serde = ["dep:serde", "bstr/serde", "gix-transport/serde", "gix-hash/serde", "gix-shallow/serde"]' \
+      '' \
+      '[dependencies]' \
+      'gix-features = { version = "^0.49.0", features = ["progress"] }' \
+      'gix-transport = { version = "^0.58.1" }' \
+      'gix-hash = { version = "^0.26.0" }' \
+      'gix-shallow = { version = "^0.13.0" }' \
+      'gix-date = { version = "^0.15.6" }' \
+      'gix-utils = { version = "^0.3.5" }' \
+      'gix-ref = { version = "^0.66.0" }' \
+      'gix-trace = { version = "^0.1.21", optional = true }' \
+      'gix-negotiate = { version = "^0.34.0", optional = true }' \
+      'gix-object = { version = "^0.63.0", optional = true }' \
+      'gix-revwalk = { version = "^0.34.0", optional = true }' \
+      'gix-credentials = { version = "^0.39.1", optional = true }' \
+      'gix-refspec = { version = "^0.44.0", optional = true }' \
+      'gix-lock = { version = "^24.0.0", optional = true }' \
+      'thiserror = "2.0.18"' \
+      'nonempty = "0.12.0"' \
+      'serde = { version = "1.0.114", optional = true, default-features = false, features = ["derive"] }' \
+      'bstr = { version = "1.12.0", default-features = false, features = ["std", "unicode"] }' \
+      'async-trait = { version = "0.1.51", optional = true }' \
+      'futures-io = { version = "0.3.32", optional = true }' \
+      'futures-lite = { version = "2.1.0", optional = true }' \
+      'bisync = "0.3.0"' \
+      'document-features = { version = "0.2.0", optional = true }' \
+      '' \
+      '[dev-dependencies]' \
+      'async-std = { version = "1.9.0", features = ["attributes"] }' \
+      'gix-packetline = { version = "^0.22.0", features = ["blocking-io"] }' \
+      'tempfile = "3"' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub use bisync;' \
+      'pub use gix_shallow;' \
+      'pub use gix_utils;' \
+      'pub fn protocol() -> gix_transport::Protocol { gix_transport::Protocol::V2 }' \
+      'pub fn caps(v: &[u8]) -> bool { gix_transport::client::Capabilities::from_bytes(v).is_ok() }' \
+      'pub fn null() -> gix_hash::ObjectId { gix_hash::Kind::Sha1.null() }' \
+      'pub fn now() -> gix_date::Time { gix_date::Time::now_utc() }' \
+      'pub fn refname(n: &str) -> bool { gix_ref::FullName::try_from(bstr::BString::from(n)).is_ok() }' \
+      'pub fn one<T>(t: T) -> nonempty::NonEmpty<T> { nonempty::NonEmpty::new(t) }' \
+      > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/verify7
+
+# turmoil (tokio-rs/turmoil 0.7.2 @ 684acc1a). The two optional path siblings
+# `turmoil-fs` / `turmoil-io-uring` are stripped from the delivery, so the
+# features that gate them (`unstable-fs`, `unstable-io_uring`) are stripped
+# here too -- `--all-features` would otherwise try to resolve a path that does
+# not exist. `regex` and `unstable-barriers` are kept, which is what pulls
+# `uuid` in. The linux-gated dev-deps are written as plain dev-deps: this image
+# is linux, so `cfg(target_os = "linux")` is unconditionally active and the two
+# forms cache identically.
+RUN mkdir -p /tmp/warm-turmoil/src && cd /tmp/warm-turmoil && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-turmoil"' \
+      'version = "0.0.0"' \
+      'edition = "2021"' \
+      '' \
+      '[features]' \
+      'default = []' \
+      'regex = ["dep:regex"]' \
+      'unstable-barriers = ["dep:uuid"]' \
+      '' \
+      '[dependencies]' \
+      'bytes = "1.4"' \
+      'indexmap = "2"' \
+      'rand = "0.9"' \
+      'rand_distr = "0.5"' \
+      'regex = { version = "1", optional = true }' \
+      'scoped-tls = "1.0.1"' \
+      'tokio = { version = "1.25.0", features = ["fs", "io-util", "io-std", "macros", "net", "process", "rt", "rt-multi-thread", "signal", "sync", "time", "test-util"] }' \
+      'tracing = "0.1"' \
+      'uuid = { version = "1", features = ["v4"], optional = true }' \
+      '' \
+      '[dev-dependencies]' \
+      'regex = "1"' \
+      'test-case = "3"' \
+      'tokio-test = "0.4.2"' \
+      'tracing-subscriber = { version = "0.3", features = ["env-filter"] }' \
+      'io-uring = "0.7"' \
+      'tempfile = "3"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/warm-turmoil
+
+# config (rust-cli/config-rs 0.15.25 @ 73703f1a). Every format parser is an
+# optional dependency behind its own feature, so `--all-features` is the only
+# build that resolves all of them -- a default-only warm would leave `corn`,
+# `indexmap` and `serde-untagged` uncached and a candidate copying upstream's
+# manifest would fail offline at resolution, naming crates the spec never
+# mentions. `warp` and `reqwest` serve only `examples/` upstream and are not in
+# the delivery, but are cached anyway so that a verbatim manifest copy resolves.
+RUN mkdir -p /tmp/warm-config/src && cd /tmp/warm-config && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-config"' \
+      'version = "0.0.0"' \
+      'edition = "2024"' \
+      'rust-version = "1.85.0"' \
+      '' \
+      '[features]' \
+      'default = ["toml", "json", "yaml", "ini", "ron", "json5", "convert-case", "async"]' \
+      'json = ["serde_json"]' \
+      'yaml = ["yaml-rust2"]' \
+      'ini = ["rust-ini"]' \
+      'json5 = ["dep:json5", "dep:serde-untagged"]' \
+      'corn = ["dep:corn"]' \
+      'convert-case = ["convert_case"]' \
+      'preserve_order = ["indexmap", "toml?/preserve_order", "serde_json?/preserve_order", "ron?/indexmap"]' \
+      'async = ["async-trait"]' \
+      'toml = ["dep:toml"]' \
+      '' \
+      '[dependencies]' \
+      'serde_core = "1.0.228"' \
+      'async-trait = { version = "0.1.89", optional = true }' \
+      'toml = { version = "1.0.6", optional = true, default-features = false, features = ["parse", "serde"] }' \
+      'serde_json = { version = "1.0.149", optional = true }' \
+      'yaml-rust2 = { version = "0.11.0", optional = true }' \
+      'rust-ini = { version = "0.21.3", optional = true }' \
+      'ron = { version = "0.12.0", optional = true }' \
+      'json5 = { version = "0.4.1", optional = true }' \
+      'corn = { version = "0.10.1", optional = true, package = "libcorn" }' \
+      'indexmap = { version = "2.13.0", features = ["serde"], optional = true }' \
+      'convert_case = { version = "0.6.0", optional = true }' \
+      'pathdiff = "0.2.3"' \
+      'winnow = "1.0.0"' \
+      'serde-untagged = { version = "0.1.9", optional = true }' \
+      '' \
+      '[dev-dependencies]' \
+      'serde = { version = "1.0.228", features = ["derive"] }' \
+      'float-cmp = "0.10.0"' \
+      'chrono = { version = "0.4.44", features = ["serde"] }' \
+      'tokio = { version = "1.50.0", features = ["rt-multi-thread", "macros", "fs", "io-util", "time"] }' \
+      'warp = { version = "0.4.2", features = ["server"] }' \
+      'futures = "0.3.32"' \
+      'reqwest = { version = "0.13.2", default-features = false }' \
+      'glob = "0.3.3"' \
+      'notify = "8.2.0"' \
+      'temp-env = "0.3.6"' \
+      'log = { version = "0.4.29", features = ["serde"] }' \
+      'snapbox = "1.1.0"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/warm-config
+
+# lsm-tree (fjall-rs/lsm-tree 3.1.9). `bytes` and `lz4_flex` are optional
+# dependencies of optional features, which cargo prunes unless a reachable
+# feature turns them on -- hence `--all-features`. `criterion` is a bench-only
+# dev-dep; it is cached so that a manifest carrying upstream's `[[bench]]`
+# entries still resolves offline.
+RUN mkdir -p /tmp/warm-lsmtree/src && cd /tmp/warm-lsmtree && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm-lsmtree"' \
+      'version = "0.0.0"' \
+      'edition = "2021"' \
+      'rust-version = "1.90"' \
+      '' \
+      '[features]' \
+      'default = []' \
+      'lz4 = ["dep:lz4_flex"]' \
+      'bytes_1 = ["dep:bytes"]' \
+      'metrics = []' \
+      '' \
+      '[dependencies]' \
+      'bytes = { version = "1", optional = true }' \
+      'byteorder = { package = "byteorder-lite", version = "0.1.0" }' \
+      'byteview = "~0.10.1"' \
+      'crossbeam-skiplist = "0.1.3"' \
+      'enum_dispatch = "0.3.13"' \
+      'interval-heap = "0.0.5"' \
+      'log = "0.4.27"' \
+      'lz4_flex = { version = "0.13.0", optional = true, default-features = false }' \
+      'quick_cache = { version = "0.6.16", default-features = false, features = [] }' \
+      'rustc-hash = "2.1.1"' \
+      'self_cell = "1.2.0"' \
+      'sfa = "~1.0.0"' \
+      'tempfile = "3.20.0"' \
+      'varint-rs = "2.2.0"' \
+      'xxhash-rust = { version = "0.8.15", features = ["xxh3"] }' \
+      '' \
+      '[dev-dependencies]' \
+      'criterion = { version = "0.8.0", features = ["html_reports"] }' \
+      'fs_extra = "1.3.0"' \
+      'nanoid = "0.4.0"' \
+      'rand = "0.9.2"' \
+      'strum = { version = "0.28.0", features = ["derive"] }' \
+      'test-log = "0.2.18"' \
+      > Cargo.toml && \
+    : > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/warm-lsmtree
+
+# Offline proof for the three new families. Each is upstream's manifest under a
+# different package name, built with CARGO_NET_OFFLINE=true and `--all-features`
+# so that every arm of the feature table resolves from cache rather than only
+# the default one. Each `src/lib.rs` names a symbol from the dependencies that
+# a candidate is most likely to link against, so a cached `.crate` that resolves
+# but cannot compile still fails here.
+RUN mkdir -p /tmp/verify8/src && cd /tmp/verify8 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify8"' \
+      'version = "0.7.2"' \
+      'edition = "2021"' \
+      '' \
+      '[features]' \
+      'default = []' \
+      'regex = ["dep:regex"]' \
+      'unstable-barriers = ["dep:uuid"]' \
+      '' \
+      '[dependencies]' \
+      'bytes = "1.4"' \
+      'indexmap = "2"' \
+      'rand = "0.9"' \
+      'rand_distr = "0.5"' \
+      'regex = { version = "1", optional = true }' \
+      'scoped-tls = "1.0.1"' \
+      'tokio = { version = "1.25.0", features = ["fs", "io-util", "io-std", "macros", "net", "process", "rt", "rt-multi-thread", "signal", "sync", "time", "test-util"] }' \
+      'tracing = "0.1"' \
+      'uuid = { version = "1", features = ["v4"], optional = true }' \
+      '' \
+      '[dev-dependencies]' \
+      'test-case = "3"' \
+      'tokio-test = "0.4.2"' \
+      'tracing-subscriber = { version = "0.3", features = ["env-filter"] }' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'use rand::SeedableRng;' \
+      'pub fn buf() -> bytes::BytesMut { bytes::BytesMut::new() }' \
+      'pub fn map() -> indexmap::IndexMap<u16, u8> { indexmap::IndexMap::new() }' \
+      'pub fn rng() -> rand::rngs::SmallRng { rand::rngs::SmallRng::seed_from_u64(42) }' \
+      'pub fn dist() -> rand_distr::Exp<f64> { rand_distr::Exp::new(5.0).unwrap() }' \
+      'pub fn rt() -> tokio::runtime::Runtime { tokio::runtime::Builder::new_current_thread().enable_time().start_paused(true).build().unwrap() }' \
+      'pub fn span() { tracing::info!("warm"); }' \
+      > src/lib.rs && \
+    RUSTFLAGS="--cfg tokio_unstable" CARGO_NET_OFFLINE=true cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/verify8
+
+RUN mkdir -p /tmp/verify9/src && cd /tmp/verify9 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify9"' \
+      'version = "0.15.25"' \
+      'edition = "2024"' \
+      'rust-version = "1.85.0"' \
+      '' \
+      '[features]' \
+      'default = ["toml", "json", "yaml", "ini", "ron", "json5", "convert-case", "async"]' \
+      'json = ["serde_json"]' \
+      'yaml = ["yaml-rust2"]' \
+      'ini = ["rust-ini"]' \
+      'json5 = ["dep:json5", "dep:serde-untagged"]' \
+      'corn = ["dep:corn"]' \
+      'convert-case = ["convert_case"]' \
+      'preserve_order = ["indexmap", "toml?/preserve_order", "serde_json?/preserve_order", "ron?/indexmap"]' \
+      'async = ["async-trait"]' \
+      'toml = ["dep:toml"]' \
+      '' \
+      '[dependencies]' \
+      'serde_core = "1.0.228"' \
+      'async-trait = { version = "0.1.89", optional = true }' \
+      'toml = { version = "1.0.6", optional = true, default-features = false, features = ["parse", "serde"] }' \
+      'serde_json = { version = "1.0.149", optional = true }' \
+      'yaml-rust2 = { version = "0.11.0", optional = true }' \
+      'rust-ini = { version = "0.21.3", optional = true }' \
+      'ron = { version = "0.12.0", optional = true }' \
+      'json5 = { version = "0.4.1", optional = true }' \
+      'corn = { version = "0.10.1", optional = true, package = "libcorn" }' \
+      'indexmap = { version = "2.13.0", features = ["serde"], optional = true }' \
+      'convert_case = { version = "0.6.0", optional = true }' \
+      'pathdiff = "0.2.3"' \
+      'winnow = "1.0.0"' \
+      'serde-untagged = { version = "0.1.9", optional = true }' \
+      '' \
+      '[dev-dependencies]' \
+      'serde = { version = "1.0.228", features = ["derive"] }' \
+      'float-cmp = "0.10.0"' \
+      'chrono = { version = "0.4.44", features = ["serde"] }' \
+      'tokio = { version = "1.50.0", features = ["rt-multi-thread", "macros", "fs", "io-util", "time"] }' \
+      'futures = "0.3.32"' \
+      'glob = "0.3.3"' \
+      'temp-env = "0.3.6"' \
+      'log = { version = "0.4.29", features = ["serde"] }' \
+      'snapbox = "1.1.0"' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub fn diff() -> Option<std::path::PathBuf> { pathdiff::diff_paths("/a/b", "/a") }' \
+      'pub fn parse(s: &str) -> Result<toml::Value, toml::de::Error> { s.parse() }' \
+      'pub fn js(s: &str) -> serde_json::Result<serde_json::Value> { serde_json::from_str(s) }' \
+      'pub fn ini(s: &str) -> bool { ini::Ini::load_from_str(s).is_ok() }' \
+      'pub fn ron(s: &str) -> bool { ron::from_str::<ron::Value>(s).is_ok() }' \
+      'pub fn j5(s: &str) -> bool { json5::from_str::<serde_json::Value>(s).is_ok() }' \
+      'pub fn yaml(s: &str) -> bool { yaml_rust2::YamlLoader::load_from_str(s).is_ok() }' \
+      'pub fn case(s: &str) -> String { use convert_case::Casing; s.to_case(convert_case::Case::Snake) }' \
+      'pub fn corn(s: &str) -> bool { corn::parse(s).is_ok() }' \
+      'pub fn im() -> indexmap::IndexMap<String, u8> { indexmap::IndexMap::new() }' \
+      > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/verify9
+
+RUN mkdir -p /tmp/verify10/src && cd /tmp/verify10 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify10"' \
+      'version = "3.1.9"' \
+      'edition = "2021"' \
+      'rust-version = "1.90"' \
+      '' \
+      '[features]' \
+      'default = []' \
+      'lz4 = ["dep:lz4_flex"]' \
+      'bytes_1 = ["dep:bytes"]' \
+      'metrics = []' \
+      '' \
+      '[dependencies]' \
+      'bytes = { version = "1", optional = true }' \
+      'byteorder = { package = "byteorder-lite", version = "0.1.0" }' \
+      'byteview = "~0.10.1"' \
+      'crossbeam-skiplist = "0.1.3"' \
+      'enum_dispatch = "0.3.13"' \
+      'interval-heap = "0.0.5"' \
+      'log = "0.4.27"' \
+      'lz4_flex = { version = "0.13.0", optional = true, default-features = false }' \
+      'quick_cache = { version = "0.6.16", default-features = false, features = [] }' \
+      'rustc-hash = "2.1.1"' \
+      'self_cell = "1.2.0"' \
+      'sfa = "~1.0.0"' \
+      'tempfile = "3.20.0"' \
+      'varint-rs = "2.2.0"' \
+      'xxhash-rust = { version = "0.8.15", features = ["xxh3"] }' \
+      '' \
+      '[dev-dependencies]' \
+      'fs_extra = "1.3.0"' \
+      'nanoid = "0.4.0"' \
+      'rand = "0.9.2"' \
+      'strum = { version = "0.28.0", features = ["derive"] }' \
+      'test-log = "0.2.18"' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'use varint_rs::VarintWriter;' \
+      'pub fn view() -> byteview::ByteView { byteview::ByteView::new(b"warm") }' \
+      'pub fn skip() -> crossbeam_skiplist::SkipMap<u64, u8> { crossbeam_skiplist::SkipMap::new() }' \
+      'pub fn heap() -> interval_heap::IntervalHeap<u32> { interval_heap::IntervalHeap::new() }' \
+      'pub fn cache() -> quick_cache::sync::Cache<u64, u8> { quick_cache::sync::Cache::new(4) }' \
+      'pub fn hash(b: &[u8]) -> u64 { xxhash_rust::xxh3::xxh3_64(b) }' \
+      'pub fn fx() -> rustc_hash::FxHashMap<u64, u8> { rustc_hash::FxHashMap::default() }' \
+      'pub fn varint(v: &mut Vec<u8>) -> std::io::Result<()> { v.write_u64_varint(42) }' \
+      'pub fn tmp() -> std::io::Result<tempfile::TempDir> { tempfile::tempdir() }' \
+      'pub fn be(b: &[u8]) -> u32 { <byteorder::BigEndian as byteorder::ByteOrder>::read_u32(b) }' \
+      'pub fn lz4(b: &[u8]) -> Vec<u8> { lz4_flex::compress_prepend_size(b) }' \
+      > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build --all-targets --all-features && \
+    cd / && rm -rf /tmp/verify10
+
+# ── Warm block 11: native_db family ──────────────────────────────────────
+# native-db-001 needs redb, native_model, native_db_macro, and native_db.
+RUN mkdir -p /tmp/warm11/src && cd /tmp/warm11 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm11"' \
+      'version = "0.1.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'redb = "3.0.2"' \
+      'native_model = "0.6.2"' \
+      'native_db_macro = "0.8.1"' \
+      'serde = { version = "1.0", features = ["derive"] }' \
+      'semver = "1"' \
+      'tokio = { version = "1", features = ["sync"] }' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub fn db() -> redb::Database { redb::Database::create("/tmp/w11.redb").unwrap() }' \
+      'pub fn ver() -> semver::Version { semver::Version::new(0,8,1) }' \
+      > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm11
+
+RUN mkdir -p /tmp/verify11/src && cd /tmp/verify11 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify11"' \
+      'version = "0.1.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'redb = "3.0.2"' \
+      'native_model = "0.6.2"' \
+      'native_db_macro = "0.8.1"' \
+      'serde = { version = "1.0", features = ["derive"] }' \
+      'semver = "1"' \
+      'tokio = { version = "1", features = ["sync"] }' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub fn db() -> redb::Database { redb::Database::create("/tmp/v11.redb").unwrap() }' \
+      'pub fn ver() -> semver::Version { semver::Version::new(0,8,1) }' \
+      > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build --all-targets && \
+    cd / && rm -rf /tmp/verify11
+
+# ── Warm block 12: extra gix-* for blame/dir/status + sanakirja ────────
+RUN mkdir -p /tmp/warm12/src && cd /tmp/warm12 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "warm12"' \
+      'version = "0.1.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'gix-discover = "0.54"' \
+      'gix-ignore = "0.22"' \
+      'gix-blame = { version = "0.16", features = ["sha1"] }' \
+      'gix-dir = { version = "0.28", features = ["sha1"] }' \
+      'gix-status = { version = "0.33", features = ["sha1", "worktree-rewrites"] }' \
+      'sanakirja = "1.4.3"' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub fn disc() -> bool { true }' \
+      > src/lib.rs && \
+    cargo fetch && \
+    cargo build --all-targets && \
+    cd / && rm -rf /tmp/warm12
+
+RUN mkdir -p /tmp/verify12/src && cd /tmp/verify12 && \
+    printf '%s\n' \
+      '[package]' \
+      'name = "verify12"' \
+      'version = "0.1.0"' \
+      'edition = "2021"' \
+      '' \
+      '[dependencies]' \
+      'gix-discover = "0.54"' \
+      'gix-ignore = "0.22"' \
+      'gix-blame = { version = "0.16", features = ["sha1"] }' \
+      'gix-dir = { version = "0.28", features = ["sha1"] }' \
+      'gix-status = { version = "0.33", features = ["sha1", "worktree-rewrites"] }' \
+      'sanakirja = "1.4.3"' \
+      > Cargo.toml && \
+    printf '%s\n' \
+      'pub fn disc() -> bool { true }' \
+      > src/lib.rs && \
+    CARGO_NET_OFFLINE=true cargo build --all-targets && \
+    cd / && rm -rf /tmp/verify12
+
+# Make offline the default rather than something each command has to remember.
+# Without it cargo tries to refresh the index first and fails on the network,
+# even when every crate it needs is already cached.
+ENV CARGO_NET_OFFLINE=true
+
+WORKDIR /workspace

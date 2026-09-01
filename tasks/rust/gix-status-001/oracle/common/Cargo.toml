@@ -1,0 +1,38 @@
+# Shared support crate for both suites.
+#
+# It declares no test attribute, so `RustRunner.discover` never sees it and
+# nextest never runs it. Carried as one path dependency rather than duplicated
+# per suite because the helpers hand out `gix_index::State` and `Odb` values
+# that both suites consume: a single crate instance keeps those types identical.
+#
+# It deliberately references nothing from `gix_status::index_as_worktree_with_renames`.
+# That module's declared signatures name six `gix-dir` and `gix-diff` types, and
+# a candidate that gets one of them wrong produces a compile error. Keeping the
+# renames surface out of the shared crate confines that failure to the
+# `integration` suite instead of taking `atomic` down with it.
+
+[package]
+name = "common"
+version = "0.1.0"
+# Edition 2021, not the 2024 the crate under specification uses. An oracle is
+# not obliged to share the candidate's edition -- editions are per-crate -- and
+# 2021 keeps the oracle compiling on any toolchain from 1.56 onward instead of
+# inheriting Appendix A's 1.85 floor. Nothing here needs a 2024 feature.
+edition = "2021"
+publish = false
+
+[lib]
+doctest = false
+
+[dependencies]
+gix-status.workspace = true
+gix-index.workspace = true
+gix-worktree.workspace = true
+gix-filter.workspace = true
+gix-pathspec.workspace = true
+gix-object.workspace = true
+gix-hash.workspace = true
+gix-features.workspace = true
+bstr.workspace = true
+filetime.workspace = true
+tempfile.workspace = true

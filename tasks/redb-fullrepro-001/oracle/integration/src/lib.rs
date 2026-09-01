@@ -77,11 +77,11 @@ fn delete_removes_table_after_commit() -> Result<(), Error> {
 #[test]
 fn persistent_savepoint_restores_table_state() -> Result<(), Error> {
     let (_file, db) = file_db()?;
-    let mut tx = db.begin_write()?;
-    let savepoint = tx.ephemeral_savepoint()?;
+    let tx = db.begin_write()?;
+    let id = tx.persistent_savepoint()?;
     tx.open_table(U64)?.insert(1, &1)?;
+    let savepoint = tx.get_persistent_savepoint(id)?;
     tx.restore_savepoint(&savepoint)?;
-    tx.commit()?;
     assert!(db.begin_read()?.open_table(U64).is_err());
     Ok(())
 }

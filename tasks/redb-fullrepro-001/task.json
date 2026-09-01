@@ -1,0 +1,116 @@
+{
+  "instance_id": "redb-fullrepro-001",
+  "task_id": "redb-fullrepro-001",
+  "status": "S4_SETUP",
+  "repo": "redb-fullrepro-001",
+  "repo_commit": "4e6bb90b0df32f3d38d13ac75e53176258c9fb77",
+  "language": "rust",
+  "target_crates": [
+    "redb"
+  ],
+  "spec_version": "v5",
+  "labels": [
+    "rust",
+    "embedded-database",
+    "transactional-state",
+    "mixed-upstream-oracle",
+    "api-shape-heavy"
+  ],
+  "source_meta": {
+    "loc": 24931,
+    "version": "4.2.0"
+  },
+  "stats": {
+    "atomic": 31,
+    "integration": 29,
+    "system_e2e": 0
+  },
+  "oracle": {
+    "count": 60,
+    "source": "upstream_plus_generated",
+    "version": "2026-09-01-specv5-trackb-v1",
+    "target_crates": [
+      "redb"
+    ],
+    "scorer_isolation": "Rust scorer appends [patch.crates-io] redb = { path = <solution-dir> } to the oracle workspace and validates cargo metadata provenance.",
+    "count_unit": "base_test_functions",
+    "base_function_count": 60
+  },
+  "taxonomy": {
+    "atomic::table_insert_returns_old_value_for_existing_key": "atomic",
+    "atomic::table_remove_returns_removed_value_once": "atomic",
+    "atomic::table_first_last_follow_key_order": "atomic",
+    "atomic::table_range_respects_exclusive_upper_bound": "atomic",
+    "atomic::table_iter_is_double_ended": "atomic",
+    "atomic::retain_keeps_true_entries": "atomic",
+    "atomic::extract_if_removes_yielded_entries": "atomic",
+    "atomic::entry_or_insert_uses_vacant_then_occupied_path": "atomic",
+    "atomic::entry_and_modify_changes_existing_value": "atomic",
+    "atomic::missing_read_table_is_table_does_not_exist": "atomic",
+    "atomic::opening_multimap_as_regular_errors": "atomic",
+    "atomic::value_too_large_is_rejected": "atomic",
+    "atomic::multimap_insert_returns_false_then_true_for_duplicate": "atomic",
+    "atomic::multimap_get_values_are_ordered": "atomic",
+    "atomic::multimap_remove_returns_presence": "atomic",
+    "atomic::multimap_remove_all_returns_ordered_values": "atomic",
+    "atomic::table_len_and_is_empty_track_insert_remove": "atomic",
+    "atomic::table_range_inclusive_bounds_include_endpoints": "atomic",
+    "atomic::table_range_unbounded_prefix_is_ordered": "atomic",
+    "atomic::table_pop_first_and_last_remove_extremes": "atomic",
+    "atomic::occupied_entry_insert_returns_previous_value": "atomic",
+    "atomic::occupied_entry_remove_entry_returns_key_and_value": "atomic",
+    "atomic::vacant_entry_exposes_key_before_insert": "atomic",
+    "atomic::entry_or_insert_with_key_uses_requested_key": "atomic",
+    "atomic::opening_regular_as_multimap_errors": "atomic",
+    "atomic::opening_existing_table_with_different_value_type_errors": "atomic",
+    "atomic::multimap_len_counts_pairs_not_keys": "atomic",
+    "atomic::multimap_iter_orders_keys_and_values": "atomic",
+    "atomic::multimap_range_is_double_ended": "atomic",
+    "atomic::multimap_remove_all_missing_key_is_empty": "atomic",
+    "atomic::u64_value_round_trips_through_public_encoding": "atomic",
+    "integration::committed_value_survives_reopen": "integration",
+    "integration::abort_discards_created_table": "integration",
+    "integration::read_snapshot_ignores_later_commit": "integration",
+    "integration::rename_changes_listing_and_open_name": "integration",
+    "integration::delete_removes_table_after_commit": "integration",
+    "integration::persistent_savepoint_restores_table_state": "integration",
+    "integration::persistent_savepoint_ids_are_listed_and_deleted": "integration",
+    "integration::durability_none_commit_is_visible_before_reopen": "integration",
+    "integration::predicate_panic_poisons_transaction": "integration",
+    "integration::owned_guard_keeps_read_snapshot_alive": "integration",
+    "integration::owned_range_keeps_read_snapshot_alive": "integration",
+    "integration::multimap_reopen_preserves_all_pairs": "integration",
+    "integration::table_and_multimap_lists_are_separate": "integration",
+    "integration::stats_and_iteration_agree_on_len": "integration",
+    "integration::create_existing_database_preserves_committed_table": "integration",
+    "integration::dropped_write_transaction_discards_changes_across_reopen": "integration",
+    "integration::old_snapshot_keeps_removed_value_after_later_commit": "integration",
+    "integration::savepoint_restore_after_update_reverts_to_original_value": "integration",
+    "integration::savepoint_after_table_mutation_is_invalid": "integration",
+    "integration::rename_to_same_name_preserves_table_and_data": "integration",
+    "integration::rename_multimap_preserves_pairs_and_listing": "integration",
+    "integration::rename_table_to_existing_name_errors_and_preserves_both_tables": "integration",
+    "integration::delete_table_reports_false_for_missing_then_true_for_existing": "integration",
+    "integration::multimap_remove_all_then_reopen_keeps_other_keys": "integration",
+    "integration::owned_guard_keeps_old_value_after_later_update": "integration",
+    "integration::owned_range_is_double_ended_after_transaction_drop": "integration",
+    "integration::type_mismatch_is_enforced_after_commit": "integration",
+    "integration::committed_range_matches_reopened_range": "integration",
+    "integration::owned_multimap_range_survives_read_handle_drop": "integration"
+  },
+  "integration_gap": {
+    "atomic_rate": 0.0,
+    "integration_e2e_rate": 0.0,
+    "rate_gap": 0.0,
+    "true_gap_events": []
+  },
+  "weaknesses": [
+    {
+      "dimension": "api-surface",
+      "description": "The gpt5.5 spec v5 candidate failed to reconstruct Rust public API shape for borrowed SelfType key/value arguments, entry helpers, and stable iterator/result return forms, causing oracle compilation setup errors before semantic execution.",
+      "affected_tests": 60,
+      "layer": "atomic+integration"
+    }
+  ],
+  "taxonomy_unit": "base_test_functions"
+}

@@ -22,8 +22,43 @@ from typing import Iterator, Optional
 
 from harness.runners.base import Batch, Env, Runner, Step, TestId, depends_on_above, nested_names
 
-_TEST_FN = re.compile(r"#\[(?:test|tokio::test)[^\]]*\]\s*(?:async\s+)?fn\s+(\w+)")
+_TEST_FN = re.compile(
+    r"#\[(?:test|tokio::test)[^\]]*\](?:\s*#\[[^\]]*\])*\s*(?:async\s+)?fn\s+(\w+)"
+)
 _MOD_DECL = re.compile(r"\bmod\s+(\w+)\s*\{")
+
+
+def _workspace_packages(root: Path) -> list[dict[str, str]]:
+    """`{name, rel}` for every package reachable from a workspace root.
+
+    Covers the shapes the runner sees: a package manifest at the root, a
+    virtual root with ``members`` (globs included, e.g. ``crates/*``), and
+    members that are themselves workspaces. ``rel`` is the manifest directory
+    relative to ``root``, ready to join onto the container workspace path.
+    """
+    import tomllib
+
+    found: list[dict[str, str]] = []
+
+    def walk(manifest_dir: Path) -> None:
+        data = tomllib.loads(
+            (manifest_dir / "Cargo.toml").read_text(encoding="utf-8", errors="replace")
+        )
+        name = data.get("package", {}).get("name")
+        if name:
+            found.append({"name": name, "rel": str(manifest_dir.relative_to(root))})
+        for member in data.get("workspace", {}).get("members", []):
+            if any(ch in member for ch in "*?["):
+                for child in sorted(manifest_dir.glob(member)):
+                    if child.is_dir() and (child / "Cargo.toml").is_file():
+                        walk(child)
+            else:
+                child = manifest_dir / member
+                if child.is_dir() and (child / "Cargo.toml").is_file():
+                    walk(child)
+
+    walk(root)
+    return found
 
 
 class RustRunner(Runner):
@@ -75,14 +110,19 @@ class RustRunner(Runner):
         """
         yield Step("cargo --version && cargo nextest --version", timeout=120, required=True)
 
-        for crate in env.target_modules:
+        if env.target_modules:
             # `[patch.crates-io]` is appended rather than edited in place:
             # cargo has no `cargo add --patch`, and a duplicate section is a
             # manifest error, so the oracle ships without one.
+            patch_paths = self._patch_paths(env)
+            lines = ["", "[patch.crates-io]"]
+            lines.extend(
+                f'{crate} = {{ path = "{patch_paths[crate]}" }}'
+                for crate in env.target_modules
+            )
+            patch = "\n".join(lines) + "\n"
             yield Step(
-                f"cd {env.oracle} && "
-                f"printf '\\n[patch.crates-io]\\n%s = {{ path = \"%s\" }}\\n' "
-                f"{shlex.quote(crate)} {shlex.quote(env.workspace)} >> Cargo.toml",
+                f"cd {env.oracle} && printf %s {shlex.quote(patch)} >> Cargo.toml",
                 timeout=60,
                 required=True,
             )
@@ -93,7 +133,36 @@ class RustRunner(Runner):
             f"cd {env.oracle} && cargo nextest run --no-run 2>&1",
             timeout=900,
             capture=True,
+            # required: a candidate the oracle cannot compile against is a
+            # setup failure (setup_error outcomes), not silent no_report
+            # evidence. The reference/behavior-empty controls compile, so a
+            # failure here is candidate-side, and must be surfaced.
+            required=True,
         )
+
+    def _patch_paths(self, env: Env) -> dict[str, str]:
+        """Container path per target crate inside the solution workspace.
+
+        Single-crate solutions carry the package manifest at the workspace
+        root, so patching the root works (the historic behavior). Virtual
+        workspaces (e.g. ``crates/toml`` members) need one path per member: a
+        `[patch.crates-io]` entry must point at a package manifest, and cargo
+        rejects a virtual root. Resolution runs host-side from
+        ``workspace_host``; anything unreadable falls back to the root.
+        """
+        fallback = {crate: env.workspace for crate in env.target_modules}
+        host = env.workspace_host
+        if host is None or not (host / "Cargo.toml").is_file():
+            return fallback
+        try:
+            packages = _workspace_packages(host)
+        except Exception:
+            return fallback
+        by_name = {pkg["name"]: pkg["rel"] for pkg in packages}
+        return {
+            crate: f"{env.workspace}/{by_name[crate]}" if crate in by_name else env.workspace
+            for crate in env.target_modules
+        }
 
     # ── execution ─────────────────────────────────────────────────────────
 

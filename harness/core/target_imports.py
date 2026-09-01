@@ -29,6 +29,7 @@ TARGET_IMPORTS: dict[str, list[str]] = {
     "beancount-ledger-fullrepro-002": ["beancount"],
     "boltons-coreutils-fullrepro-001": ["boltons"],
     "cattrs-converters-fullrepro-001": ["cattrs"],
+    "cargo-generate-fullrepro-001": ["cargo_generate"],
     "cookiecutter-fullrepro-001": ["cookiecutter"],
     "copier-template-fullrepro-001": ["copier"],
     "coveragepy-fullrepro-001": ["coverage"],

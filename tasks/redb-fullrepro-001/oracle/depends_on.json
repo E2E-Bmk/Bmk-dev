@@ -1,0 +1,92 @@
+{
+  "integration::abort_discards_created_table": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::committed_range_matches_reopened_range": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::committed_value_survives_reopen": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::create_existing_database_preserves_committed_table": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::delete_removes_table_after_commit": [
+    "atomic::table_remove_returns_removed_value_once"
+  ],
+  "integration::delete_table_reports_false_for_missing_then_true_for_existing": [
+    "atomic::table_remove_returns_removed_value_once"
+  ],
+  "integration::dropped_write_transaction_discards_changes_across_reopen": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::durability_none_commit_is_visible_before_reopen": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::multimap_remove_all_then_reopen_keeps_other_keys": [
+    "atomic::multimap_get_values_are_ordered"
+  ],
+  "integration::multimap_reopen_preserves_all_pairs": [
+    "atomic::multimap_get_values_are_ordered"
+  ],
+  "integration::old_snapshot_keeps_removed_value_after_later_commit": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::owned_guard_keeps_old_value_after_later_update": [
+    "atomic::table_range_respects_exclusive_upper_bound"
+  ],
+  "integration::owned_guard_keeps_read_snapshot_alive": [
+    "atomic::table_range_respects_exclusive_upper_bound"
+  ],
+  "integration::owned_multimap_range_survives_read_handle_drop": [
+    "atomic::multimap_get_values_are_ordered",
+    "atomic::table_range_respects_exclusive_upper_bound"
+  ],
+  "integration::owned_range_is_double_ended_after_transaction_drop": [
+    "atomic::table_range_respects_exclusive_upper_bound"
+  ],
+  "integration::owned_range_keeps_read_snapshot_alive": [
+    "atomic::table_range_respects_exclusive_upper_bound"
+  ],
+  "integration::persistent_savepoint_ids_are_listed_and_deleted": [
+    "atomic::table_remove_returns_removed_value_once",
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::persistent_savepoint_restores_table_state": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::predicate_panic_poisons_transaction": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::read_snapshot_ignores_later_commit": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::rename_changes_listing_and_open_name": [
+    "atomic::table_remove_returns_removed_value_once"
+  ],
+  "integration::rename_multimap_preserves_pairs_and_listing": [
+    "atomic::multimap_get_values_are_ordered",
+    "atomic::table_remove_returns_removed_value_once"
+  ],
+  "integration::rename_table_to_existing_name_errors_and_preserves_both_tables": [
+    "atomic::table_remove_returns_removed_value_once"
+  ],
+  "integration::rename_to_same_name_preserves_table_and_data": [
+    "atomic::table_remove_returns_removed_value_once"
+  ],
+  "integration::savepoint_after_table_mutation_is_invalid": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::savepoint_restore_after_update_reverts_to_original_value": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::stats_and_iteration_agree_on_len": [
+    "atomic::table_insert_returns_old_value_for_existing_key"
+  ],
+  "integration::table_and_multimap_lists_are_separate": [
+    "atomic::multimap_get_values_are_ordered"
+  ],
+  "integration::type_mismatch_is_enforced_after_commit": [
+    "atomic::opening_existing_table_with_different_value_type_errors"
+  ]
+}

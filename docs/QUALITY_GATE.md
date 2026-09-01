@@ -1,7 +1,7 @@
 # Spec2Repo Task Quality Gate
 
 All tasks in the benchmark MUST pass every gate below before merge.
-`harness/core/validate_ledger.py` enforces the machine-checkable subset;
+`harness/validate_ledger.py` enforces the machine-checkable subset;
 human-review items are marked *(review)*.
 
 ---
@@ -15,11 +15,11 @@ commands elsewhere in this document.
 **Required oracle files:**
 
 ```text
-tasks/{language}/{id}/oracle/pom.xml
-tasks/{language}/{id}/oracle/requirements.txt
-tasks/{language}/{id}/oracle/src/test/java/atomic/*.java
-tasks/{language}/{id}/oracle/src/test/java/integration/*.java
-tasks/{language}/{id}/oracle/src/test/java/support/*.java    # optional
+tasks/{id}/oracle/pom.xml
+tasks/{id}/oracle/requirements.txt
+tasks/{id}/oracle/src/test/java/atomic/*.java
+tasks/{id}/oracle/src/test/java/integration/*.java
+tasks/{id}/oracle/src/test/java/support/*.java    # optional
 ```
 
 Java dependencies and plugins are declared in `oracle/pom.xml`;
@@ -40,22 +40,22 @@ apply.
 **Reference validation:** first produce a fresh lint result on disk:
 
 ```bash
-python harness/core/oracle_import_lint.py <task_id> tasks/<language>/<task_id>/spec.md \
-  > wip/<language>/<task>/filter/lint_result.txt 2>&1
+python harness/oracle_import_lint.py <task_id> tasks/<task_id>/spec.md \
+  > wip/<task>/filter/lint_result.txt 2>&1
 ```
 
 Its first line must be `LINT_PASS` and it must be newer than every selected
 oracle `.java` source. Then run the pinned reference through the Java scorer:
 
 ```bash
-python harness/lang/java/score_java.py \
-  --task-dir wip/<language>/<task_id>/ \
+python harness/score_java.py \
+  --task-dir wip/<task_id>/ \
   --oracle-dir <assembled-oracle-dir>/ \
-  --taxonomy wip/<language>/<task_id>/filter/taxonomy.jsonl \
+  --taxonomy wip/<task_id>/filter/taxonomy.jsonl \
   --maven-coordinate <groupId>:<artifactId> \
   --solution-dir repo/<reference-checkout>/ \
-  --run-dir wip/<language>/<task_id>/filter/reference-run/ \
-  --json-out wip/<language>/<task_id>/filter/reference_score.json \
+  --run-dir wip/<task_id>/filter/reference-run/ \
+  --json-out wip/<task_id>/filter/reference_score.json \
   --reference
 ```
 
@@ -69,16 +69,22 @@ provenance probes run in Docker with no network.
 
 ## Gate 0 — File Completeness
 
+The required oracle files depend on `task.json.language`; the stage architecture
+and atomic/integration split do not change.
+
 | Required file | Purpose |
 |---------------|---------|
-| `tasks/{language}/{id}/spec.md` | Behavioral specification given to the model |
-| `tasks/{language}/{id}/task.json` | Machine-readable metadata |
-| `tasks/{language}/{id}/oracle/test_atomic.py` | Atomic-layer oracle tests |
-| `tasks/{language}/{id}/oracle/test_integration.py` | Integration-layer oracle tests |
-| `tasks/{language}/{id}/oracle/requirements.txt` | Third-party dependencies for scoring |
+| `tasks/{id}/spec.md` | Behavioral specification given to the model |
+| `tasks/{id}/task.json` | Machine-readable metadata, including `language` |
+| Python: `tasks/{id}/oracle/test_atomic.py` | Atomic-layer oracle tests |
+| Python: `tasks/{id}/oracle/test_integration.py` | Integration-layer oracle tests |
+| Python: `tasks/{id}/oracle/requirements.txt` | Third-party dependencies for scoring |
+| Rust: `tasks/{id}/oracle/Cargo.toml` | Oracle workspace root |
+| Rust: `tasks/{id}/oracle/atomic/Cargo.toml` + `src/**/*.rs` | Atomic-layer oracle crate; package name must be `atomic` |
+| Rust: `tasks/{id}/oracle/integration/Cargo.toml` + `src/**/*.rs` | Integration/system_e2e oracle crate; package name must be `integration` |
 
 All fixture files referenced by tests (e.g. TOML data files, sample configs)
-MUST also be present under `tasks/{language}/{id}/oracle/`.
+MUST also be present under `tasks/{id}/oracle/`.
 
 The oracle lives inside the task packet so that each task is self-contained and
 there is one copy of every test. The release repo uses a separate top-level
@@ -92,8 +98,8 @@ does not need that, and a second copy on this side drifted from the first
 ## Gate 1 — Spec Structure
 
 `spec.md` MUST contain these `##`-level sections. The authority for the section
-set is the six-layer structure in `docs/SPEC_STANDARD.md`; the aliases
-column lists the pre-restructure names that `harness/core/verify_task.py` still
+set is the six-layer structure in `Spec2Repo/docs/SPEC_STANDARD.md`; the aliases
+column lists the pre-restructure names that `harness/verify_task.py` still
 accepts, so a spec written before the SDD rewrite is not reported as broken.
 New specs use the current name.
 
@@ -149,9 +155,12 @@ Write:
 
 ### 2d. Environment section follows template *(automated)*
 
-The `## Environment` section MUST follow the standardized template listing
-all pre-installed packages from `oracle/{id}/requirements.txt`, and MUST
-state that the target package is not pre-installed and no network is available.
+The `## Environment` section MUST follow the standardized template for the
+task language. Python lists all pre-installed packages from
+`oracle/{id}/requirements.txt`; Rust lists the Rust toolchain, required cargo
+tools such as `cargo-nextest`, and all non-target crates resolved by the oracle
+manifests/lockfile. Every language MUST state that the target package/crate is
+not pre-installed and no network is available during candidate execution.
 
 ### 2e. EARS clause discipline *(review)*
 
@@ -173,9 +182,13 @@ New behavioral clauses SHOULD use one of the five EARS templates:
 
 | Layer | Minimum test functions |
 |-------|-----------------------|
-| `test_atomic.py` | ≥ 15 |
-| `test_integration.py` | ≥ 15 |
-| Total (atomic + integration + system_e2e) | ≥ 50 |
+| atomic suite | ≥ 30 |
+| integration suite (`integration` + `system_e2e`) | ≥ 25 |
+| Total (atomic + integration + system_e2e) | ≥ 60 |
+
+Python suites are `oracle/test_atomic.py` and `oracle/test_integration.py`.
+Rust suites are the `oracle/atomic` and `oracle/integration` crates; test ids
+are discovered as `{suite}::{module path}::{test_name}`.
 
 ### 3b. Assertion composition *(automated)*
 
@@ -188,7 +201,10 @@ Atomic layer `positive` assertion share ≥ 60%.
 
 ### 3c. No private imports *(review)*
 
-Oracle tests MUST NOT import modules starting with `_` from the target package.
+Oracle tests MUST NOT import private implementation modules from the target
+package/crate. Python private modules usually start with `_`; Rust private
+modules are any non-`pub` modules/items or crate-internal paths not exposed by
+rustdoc and the spec's Public Interface.
 
 ### 3d. No message-text assertions *(review)*
 
@@ -214,15 +230,19 @@ the name as API contract) or fix the test (assert behavior instead of name).
 
 ### 3f. Test collection safety *(automated — to be added)*
 
-Each test file MUST be parseable by `ast.parse()` without errors.
+Each test file MUST be parseable by the language-native parser or collector.
+Python files must pass `ast.parse()`; Rust oracle crates must compile far enough
+for `cargo nextest run --no-run`.
 
-Each test file SHOULD NOT have duplicate top-level imports that shadow each
-other. *(Detectable by comparing import sets before and after deduplication.)*
+Each test file SHOULD NOT have duplicate top-level imports/uses that shadow each
+other.
 
 ### 3g. Fixture completeness *(automated — to be added)*
 
-Every `Path(__file__).parent / ...` or `open(...)` call in oracle tests that
-references a relative file MUST have that file present in `oracle/{id}/`.
+Every relative fixture reference in oracle tests MUST have that file present in
+`oracle/{id}/`. Python examples include `Path(__file__).parent / ...` or
+`open(...)`; Rust examples include `include_str!`, `include_bytes!`, and
+relative paths passed to fixture builders.
 
 ### 3h. Integration test depth *(review)*
 
@@ -248,13 +268,11 @@ in the wrong file.
 The reference implementation (installed from `repo_commit`) MUST pass ALL
 oracle tests with 0 failures and 0 errors:
 
-```bash
-docker run --rm \
-  -v "$ORACLE_DIR:/oracle:ro" \
-  spec2repo-base:latest bash -c \
-  "pip install -q pytest pytest-timeout <requirements> <reference> && \
-   python -m pytest /oracle/ -q --timeout=120"
-```
+Python reference validation uses pytest with `oracle/requirements.txt`. Rust
+reference validation uses the Rust runner contract: point the oracle workspace
+at the reference crate with `[patch.crates-io]`, run `cargo nextest run --no-run`,
+then run the full `atomic` and `integration` suites with
+`cargo nextest run --message-format libtest-json`.
 
 Result: 0 failed, 0 error.
 
@@ -272,7 +290,7 @@ behavior).
 
 | Gate | Enforced by | When |
 |------|-------------|------|
-| 0–4 | `harness/core/validate_ledger.py` | Every PR, CI |
+| 0–4 | `harness/validate_ledger.py` | Every PR, CI |
 | 2b,2c,2e,3c,3d,3e,3h | Human review | Every PR touching spec/oracle |
 | 5 | Docker CI job | Every PR touching oracle |
 | 6 | Manual spot-check | New tasks, major oracle changes |

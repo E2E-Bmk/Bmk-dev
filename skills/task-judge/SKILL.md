@@ -76,26 +76,42 @@ The judge reads artifacts and produces verdicts. The judge does not modify oracl
 
 ### 1. Anti-Cheat
 
-Before reading any score, run an import provenance preflight:
+Before reading any score, run the language-native provenance preflight:
 
 ```bash
+# Python
 python -c "import <pkg>; print(<pkg>.__file__)"
+
+# Rust
+cd <oracle-workspace> && cargo metadata --format-version 1
 ```
 
-**Write the literal output of this command into your diagnosis report as a `Preflight output` block before opening any score file or quoting any score value.** If this block is absent from your report, the report is structurally invalid — do not proceed.
+For Rust, reshape the `cargo metadata` package row for the target crate and
+record its `manifest_path`; it must point inside the candidate/reference
+workspace selected for the run, not a registry source. **Write the literal output
+of this command into your diagnosis report as a `Preflight output` block before
+opening any score file or quoting any score value.** If this block is absent
+from your report, the report is structurally invalid — do not proceed.
 
-This must point into the candidate solution directory, not the oracle worktree or any installed package. If running pytest from a copied source worktree, `sys.path[0]` may shadow `PYTHONPATH` — use `--remove-path <package>` when invoking pytest, or confirm via the preflight above before accepting any score. If provenance check fails, fix the environment and re-run.
+This must point into the candidate solution directory/workspace, not the oracle
+worktree, site-packages, cargo registry, or any installed upstream package. If
+running pytest from a copied source worktree, `sys.path[0]` may shadow
+`PYTHONPATH` — use `--remove-path <package>` when invoking pytest. Rust scoring
+must use `[patch.crates-io]` to bind the target crate name to the candidate
+workspace and must verify that binding with cargo metadata. If provenance check
+fails, fix the environment and re-run.
 
-**High-score mandatory probe:** for any run where candidate pass rate ≥ 95%, the preflight probe is not optional — it is a prerequisite for reading any score value. If the probe output shows `__file__` pointing outside the candidate solution directory, the run is invalid regardless of score. Record the probe output verbatim in the diagnosis report before citing any number.
+**High-score mandatory probe:** for any run where candidate pass rate ≥ 95%, the preflight probe is not optional — it is a prerequisite for reading any score value. If the probe output shows Python `__file__` or Rust `manifest_path` pointing outside the candidate solution directory/workspace, the run is invalid regardless of score. Record the probe output verbatim in the diagnosis report before citing any number.
 
 Then scan the agent's full trajectory/log for any access to information the model should not have. Any match -> mark run `CHEAT_DETECTED`, discard score.
 
 Forbidden access patterns:
 - Reading any file under the source repo path (`repo-pool/`, oracle worktrees, reference environments)
-- `pip install <target-library>` or any install that pulls the target package
+- Installing the target package/crate from a public registry or source repository (`pip install <target-library>`, `cargo add <target-crate>`, or any equivalent install that pulls the real target)
 - Reading test files or fixture files containing expected values
 - Reading score reports, prior attempt outputs, or any evaluation artifact from earlier runs
 - Importing the target library from a non-candidate path (confirmed by the preflight above)
+- Resolving the target Rust crate from crates.io/git registry or the reference checkout instead of the candidate workspace
 - Reading the spec_test_map.md or kept_nodeids.txt during the implementation phase
 
 A high-scoring run with any of the above is invalid regardless of score.
@@ -104,10 +120,10 @@ A high-scoring run with any of the above is invalid regardless of score.
 
 ### 2. Solvability
 
-Run the reference implementation against the scoring set in a **library-specific dependency environment** — not a generic shared environment. Missing dependencies (e.g. sqlite_fts4, optional pytest plugins) will produce collection errors or 0% pass rates that are environment failures, not task failures.
+Run the reference implementation against the scoring set in a **library-specific dependency environment** — not a generic shared environment. Missing dependencies (e.g. sqlite_fts4, optional pytest plugins, Rust test crates, cargo-nextest) will produce collection/compile errors or 0% pass rates that are environment failures, not task failures.
 
 If reference pass rate is significantly below the scoring set size:
-1. Diagnose first: check for missing dependencies, pytest plugins, or environment misconfiguration — fix environment
+1. Diagnose first: check for missing dependencies, test plugins/tools, or environment misconfiguration — fix environment
 2. Re-run; if still low, the scoring set has broken tests -> return to test-filter for remediation
 3. Do not label a task QUALIFIED until reference passes at a high rate (>= 95%)
 
@@ -204,7 +220,7 @@ Before issuing QUALIFIED, run `python harness/core/validate_ledger.py {task_id}`
 - Metadata consistency (`task.json` taxonomy keys match the physical test functions; `stats` sums to `oracle.count`)
 - `depends_on` coverage ≥50%, and every referenced atomic test actually exists
 - Symbol declaration: no atomic import of the target package that the spec's public surface does not promise
-- Fixture completeness (all `Path(__file__).parent / ...` references resolve)
+- Fixture completeness (Python `Path(__file__).parent / ...` references and Rust `include_str!` / `include_bytes!` / relative fixture paths resolve)
 
 A task that fails `validate_ledger.py` cannot be QUALIFIED regardless of score.
 
@@ -231,7 +247,7 @@ Before issuing QUALIFIED, verify the spec passes all phrasing hard checks (spec-
 2. Product Overview: first sentence is descriptive (`` `{Name}` is a {category} that... ``), not imperative ("Build a Python package...").
 3. CLI Entry Points: pure libraries (no console script) use prose format ("There is no console script..."), not a bullet list with `Console script name: \`none\``.
 4. Behavior sections: each has an opening narrative sentence and bold subsection headers. A bare bullet list without narrative structure is rejected.
-5. API Catalog: `Name | Kind | Role` table only. No Python signatures, type annotations, or parameter lists.
+5. API Catalog: `Name | Kind | Role` table only. No complete implementation signatures, type annotations, or parameter lists.
 6. Behavioral language: required behaviors use `must`/`returns`/`raises`. No `can`/`may`/`might`/`should` for anything that is a mandatory contract.
 
 Compare against the gold standard exemplar `Spec2Repo/tasks/requests-cache-fullrepro-001/spec.md` when in doubt. A task that fails Gate F cannot be QUALIFIED — return to spec-writer for phrasing correction.

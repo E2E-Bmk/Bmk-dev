@@ -7,9 +7,9 @@ description: "Orchestrate the full SWE-E2E benchmark task synthesis pipeline: ca
 
 ## State Machine
 
-每个任务在 `wip/{language}/{task}/PIPELINE_STATE.md` 维护一个运行中的状态机实例。
+每个任务在 `wip/{task}/PIPELINE_STATE.md` 维护一个运行中的状态机实例。
 
-**Stage 1 开始前（新任务）：** 从 `Bmk-dev/skills/PIPELINE_STATE.template.md` 复制到 `wip/{language}/{task}/PIPELINE_STATE.md`，替换 `{TASK_ID}` 和 `{DATE}`。
+**Stage 1 开始前（新任务）：** 从 `Bmk-dev/skills/PIPELINE_STATE.template.md` 复制到 `wip/{task}/PIPELINE_STATE.md`，替换 `{TASK_ID}` 和 `{DATE}`。
 
 **每次分派子 agent 前：** 读 `PIPELINE_STATE.md`，确认 `state` 与即将运行的 stage 匹配。不匹配 → 不分派，先解决状态不一致。
 
@@ -29,7 +29,7 @@ These three principles are the main thread's judgment criteria. Every subagent o
 
 **3. Behavioral** — Tests check observable outcomes that any correct reimplementation would produce. Failures must reflect genuine capability gaps, not protocol artifacts (exact strings, internal names, fixture shapes). If failures cluster around undocumented internal shapes, the instrument is broken.
 
-**Quality standard:** All tasks must satisfy the gates defined in `docs/QUALITY_GATE.md`. The spec structure authority is `docs/SPEC_STANDARD.md` which defines the 6-layer structure (Context → Orientation → Behavior → Contract → Reference → Meta), information depth rules, and spec-oracle alignment protocol.
+**Quality standard:** All tasks must satisfy the gates defined in `Spec2Repo/docs/QUALITY_GATE.md`. The spec structure authority is `Spec2Repo/docs/SPEC_STANDARD.md` which defines the 6-layer structure (Context → Orientation → Behavior → Contract → Reference → Meta), information depth rules, and spec-oracle alignment protocol.
 
 ## Orchestrator Role
 
@@ -49,7 +49,7 @@ Before starting any pipeline stage, read the specialist skill named for that sta
 - Stage 2 must read `Bmk-dev/skills/spec-writer/SKILL.md`.
 - Stage 3 must read `Bmk-dev/skills/test-filter/SKILL.md`.
 - Stage 4 must give the candidate agent only the public packet/run prompt; do not give it workflow skills, source repositories, tests, score reports, or previous attempts. Run Stage 4 evaluation on Linux or WSL — not native Windows.
-- the mutation controls must read `Bmk-dev/skills/task-judge/SKILL.md`.
+- Stage 5 must read `Bmk-dev/skills/task-judge/SKILL.md`.
 
 When delegating a stage or stage audit to a subagent, instruct the subagent to read the same stage skill before inspecting task artifacts. The delegation prompt must name the exact `Bmk-dev/skills/{skill-name}/SKILL.md` path to read first.
 
@@ -59,7 +59,7 @@ Do not use deprecated root-level SWE-E2E skills, archived v1 workflow skills, or
 
 ```
 Bmk-dev/
-|-- wip/{language}/{task-id}/               <- active synthesis work
+|-- wip/{task-id}/               <- active synthesis work
 |   |-- filter_notes.md          <- candidate-selector output
 |   |-- spec/
 |   |   |-- spec_v{N}.md
@@ -71,13 +71,16 @@ Bmk-dev/
 |   |   `-- filter_correction_request.md
 |   `-- judge/
 |       `-- diagnosis_report.md
-|-- tasks/{language}/{task-id}/             <- QUALIFIED tasks (graduated from wip/)
+|-- tasks/{task-id}/             <- QUALIFIED tasks (graduated from wip/)
 |   |-- spec.md
 |   |-- oracle/                  <- the oracle lives inside the packet; there is no top-level oracle/ tree
-|   |   |-- test_atomic.py       <- atomic layer tests
-|   |   |-- test_integration.py  <- integration + system_e2e tests
-|   |   |-- conftest.py          <- shared fixtures (optional)
-|   |   `-- requirements.txt     <- test dependencies
+|   |   |-- test_atomic.py       <- Python atomic layer tests
+|   |   |-- test_integration.py  <- Python integration + system_e2e tests
+|   |   |-- conftest.py          <- Python shared fixtures (optional)
+|   |   |-- requirements.txt     <- Python test dependencies
+|   |   |-- Cargo.toml           <- Rust oracle workspace root
+|   |   |-- atomic/              <- Rust atomic oracle crate
+|   |   `-- integration/         <- Rust integration/system_e2e oracle crate
 |   `-- task.json                <- sole metadata authority (language, taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap)
 |-- candidate-runs/              <- evaluation runs
 |   `-- {model}-{task}-{spec}-{date}-{run}/
@@ -93,15 +96,15 @@ Bmk-dev/
 |-- skills/                      <- active stage SKILL.md files only
 |-- archive/deprecated-skills/   <- old workflow skills and packaged snapshots
 |-- CANDIDATES.md                <- selection + retirement log
-`-- docs/weakness_table.md            <- DEPRECATED; weaknesses now in task.json per task
+`-- weakness_table.md            <- DEPRECATED; weaknesses now in task.json per task
 ```
 
 `kept_nodeids.txt`, `taxonomy.jsonl` and `spec_test_map.md` stay in
-`wip/{language}/{task-id}/filter/` and are not copied into the graduated packet: the layer
+`wip/{task-id}/filter/` and are not copied into the graduated packet: the layer
 split is carried by which oracle file a test lives in, and `task.json.taxonomy`
 is generated from those files.
 
-All stages write to `wip/{language}/{task-id}/` under their designated subdirectory. Do not write to `tasks/` directly - only the orchestrator moves a task there upon QUALIFIED.
+All stages write to `wip/{task-id}/` under their designated subdirectory. Do not write to `tasks/` directly - only the orchestrator moves a task there upon QUALIFIED.
 
 ### Java branch (authoritative override)
 
@@ -128,7 +131,7 @@ unchanged.
   plugin dependencies live in `oracle/pom.xml`. The oracle must depend on the
   target `groupId:artifactId` through `${candidate.version}`.
 - Stage 3 writes Java test IDs as `atomic::Class::method` and
-  `integration::Class::method`. `harness/core/sync_task_metadata.py` derives the
+  `integration::Class::method`. `harness/sync_task_metadata.py` derives the
   graduated taxonomy and counts with `JavaRunner`; do not create Python test
   files for a Java task.
 - Stage 4 uses the Java scorer documented below. Do not run
@@ -178,13 +181,13 @@ candidate-selector -> spec-writer -> test-filter -> [evaluation] -> task-judge
 Review against principles 1 and 2 before proceeding:
 - **Principle 1 check**: Read the spec body. Does it read like developer documentation, or like a benchmark artifact? Any sentence that sounds like it was written for an evaluator → return to spec-writer.
 - **Principle 2 check**: Is every item in the spec traceable to public API surface? Is source_boundary in the internal header non-empty (proof that sources were actually read)?
-- **Structure check**: Does the spec follow the 6-layer structure from `docs/SPEC_STANDARD.md`? Specification Authority disclaimer present? ≥2 behavior sections? ≥5 Cross-View Invariants? Product Overview desensitized?
+- **Structure check**: Does the spec follow the 6-layer structure from `Spec2Repo/docs/SPEC_STANDARD.md`? Specification Authority disclaimer present? ≥2 behavior sections? ≥5 Cross-View Invariants? Product Overview desensitized?
 - **Phrasing check (mandatory, from spec-writer Phrasing Rules)**:
   - Non-Goals: every bullet starts with "This specification does not require/define..."; zero instances of "outside this design"
   - Product Overview: first sentence is descriptive (`` `{Name}` is a ... ``), not imperative ("Build a Python package...")
   - CLI Entry Points: pure libraries use prose ("There is no console script..."), not bullet list
   - Behavior sections: each has an opening sentence and bold subsection headers; no bare bullet lists
-  - API Catalog: `Name | Kind | Role` table only; no Python signatures
+  - API Catalog: `Name | Kind | Role` table only; no complete implementation signatures
   - Behavioral language: `must`/`returns`/`raises` only; no `can`/`may`/`might`/`should` for required behavior
 - All 25 validation checks pass (per spec-writer SKILL): proceed to test-filter
 - Any check fails: patch spec, re-validate before proceeding
@@ -199,7 +202,7 @@ Review against principles 2 and 3 before proceeding:
 
 **Active count verification (mandatory):**
 1. Read `PIPELINE_STATE.md`. Confirm `functions_kept + functions_excluded = functions_in_scope`. If not equal → return to test-filter; functions were not fully processed.
-2. Confirm `oracle_count ≥ 50`. If below 50 → return to test-filter for Track B expansion, filter_iter += 1.
+2. Confirm `oracle_count ≥ 60`. If below 60 → return to test-filter for Track B expansion, filter_iter += 1.
 3. For each H2/H3 section in the spec, count `covered` rows in spec_test_map.md. Any section below its minimum (≥5 for `Cross-View Invariants`/`Error Semantics`, ≥3 for all others) → return to test-filter for targeted generation.
 
 - spec_gap rows present: issue `spec_patch_request.md` → route to spec-writer → after patch, rerun Stage 3
@@ -211,27 +214,42 @@ Check that the actual kept oracle set matches `target_subdomain` and does not ex
 
 ### After evaluation
 
-**Stage 4 Runbook — exact commands:**
+**Stage 4 Runbook — language-specific commands:**
 
 ```bash
 # 1. Create cleanroom workspace
-python harness/core/run.py \
-  --task-dir wip/{language}/{task-id}/ \
+# Python task: --program-file {package_name}/__init__.py
+# Rust task: --program-file Cargo.toml
+python harness/run.py \
+  --task-dir wip/{task-id}/ \
   --output-root candidate-runs/ \
   --run-id {model}-{task-id}-specv{N}-{date}-{run} \
-  --program-file {package_name}/__init__.py \
+  --program-file {required_entry_file} \
   --model-label {model-name}
 
 # 2. Run candidate agent against the cleanroom
 #    (agent sees only candidate-runs/{run-id}/public_packet/ and writes to solution/)
 
-# 3. Score the candidate output (MUST run on Linux/WSL)
-python harness/lang/python/score_pytest_original.py \
+# 3a. Score Python candidate output (MUST run on Linux/WSL)
+python harness/score_pytest_original.py \
+  --source-repo {reference_repo_path} \
   --solution-dir candidate-runs/{run-id}/solution/ \
-  --nodeids wip/{language}/{task-id}/filter/kept_nodeids.txt \
-  --taxonomy wip/{language}/{task-id}/filter/taxonomy.jsonl \
+  --nodeids wip/{task-id}/filter/kept_nodeids.txt \
+  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
+  --run-dir candidate-runs/{run-id}/scorer_run \
   --remove-path {package_name} \
-  --output candidate-runs/{run-id}/score_result.json
+  --json-out candidate-runs/{run-id}/score_result.json
+
+# 3b. Score Rust candidate output through the language-dispatch scorer
+python harness/score_language.py \
+  --task-dir tasks/{task-id}/ \
+  --solution-dir candidate-runs/{run-id}/solution/ \
+  --run-dir candidate-runs/{run-id}/scorer_run \
+  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
+  --json-out candidate-runs/{run-id}/score_result.json
+# The Rust scorer uses harness/runners/rust.py: cargo-nextest,
+# [patch.crates-io], and cargo metadata provenance. Do not use
+# score_pytest_original.py for Rust tasks.
 ```
 
 **Java Stage 4 scoring:** Java tasks use the Docker-only Java scorer instead of
@@ -241,10 +259,10 @@ candidate packet:
 ```bash
 docker build -t spec2repo-java:latest -f docker/Dockerfile.java docker/
 
-python harness/lang/java/score_java.py \
-  --task-dir wip/{language}/{task-id}/ \
+python harness/score_java.py \
+  --task-dir wip/{task-id}/ \
   --oracle-dir {assembled-oracle-dir}/ \
-  --taxonomy wip/{language}/{task-id}/filter/taxonomy.jsonl \
+  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
   --maven-coordinate {groupId}:{artifactId} \
   --solution-dir candidate-runs/{run-id}/solution/ \
   --run-dir candidate-runs/{run-id}/
@@ -258,14 +276,14 @@ probe runs in Docker with `--network none`.
 Run the same entrypoint against the pinned reference before Stage 4:
 
 ```bash
-python harness/lang/java/score_java.py \
-  --task-dir wip/{language}/{task-id}/ \
+python harness/score_java.py \
+  --task-dir wip/{task-id}/ \
   --oracle-dir {assembled-oracle-dir}/ \
-  --taxonomy wip/{language}/{task-id}/filter/taxonomy.jsonl \
+  --taxonomy wip/{task-id}/filter/taxonomy.jsonl \
   --maven-coordinate {groupId}:{artifactId} \
   --solution-dir repo/{repo-dir}/ \
-  --run-dir wip/{language}/{task-id}/filter/reference-run/ \
-  --json-out wip/{language}/{task-id}/filter/reference_score.json \
+  --run-dir wip/{task-id}/filter/reference-run/ \
+  --json-out wip/{task-id}/filter/reference_score.json \
   --reference
 ```
 
@@ -276,9 +294,8 @@ only at 100% and writes the Python-compatible core JSON fields (`summary`,
 artifact provenance.
 
 **Environment setup for scoring:**
-- Install test dependencies: `pip install -r wip/{language}/{task-id}/filter/oracle_requirements.txt`
-- Install candidate-declared dependencies: if `solution/requirements.txt` exists, `pip install -r solution/requirements.txt`
-- Do NOT install the target package from PyPI
+- Python: install test dependencies from `oracle/requirements.txt`; if `solution/requirements.txt` exists, install it; do NOT install the target package from PyPI.
+- Rust: the oracle is a separate Cargo workspace. The runner appends `[patch.crates-io] {crate} = { path = candidate workspace }`, runs `cargo fetch`, then `cargo nextest run --no-run` before scoring. The oracle must ship `Cargo.lock`; scoring images must prefetch dependencies by vendoring or baking the task's Cargo cache into the image before the candidate run is made offline. Do NOT add the target crate as a fixed crates.io dependency in the oracle workspace.
 
 **Platform verification:**
 - Before proceeding to task-judge, verify the score JSON contains a `platform` field and its value does not contain `Windows` (case-insensitive). If it does, the run is invalid — re-run on Linux or WSL.
@@ -289,7 +306,7 @@ artifact provenance.
 ### After task-judge
 
 Before accepting any verdict, verify diagnosis report structural validity:
-- Does the report contain a **Preflight output** block with the literal `__file__` path? If absent → report is invalid, return to task-judge.
+- Does the report contain a **Preflight output** block with language-native provenance (`__file__` path for Python; target crate `manifest_path` from `cargo metadata` for Rust)? If absent → report is invalid, return to task-judge.
 - Does the report contain a **Gate D — Coverage Gap Audit** section with a coverage verdict (FULL / PARTIAL / GAP)? If absent → return to task-judge.
 - If verdict is GAP: does `task.json` contain a `coverage_gap` entry listing the uncovered sections? If not → task-judge output is incomplete, return to task-judge.
 
@@ -305,69 +322,51 @@ Before accepting any verdict, verify diagnosis report structural validity:
 **QUALIFIED exit checklist (all must pass before writing QUALIFIED to PIPELINE_STATE.md):**
 
 1. CANDIDATES.md has a SELECTED row for this repo
-2. `tasks/{language}/{task_id}/` directory exists and contains:
+2. `tasks/{task_id}/` directory exists and contains:
    - `spec.md` (candidate-visible body only, internal header stripped)
-   - `oracle/test_atomic.py` (all atomic-layer tests)
-   - `oracle/test_integration.py` (all integration + system_e2e tests)
-   - `oracle/requirements.txt` (test runtime dependencies, excluding target package)
-   - `oracle/conftest.py` (optional, only if shared fixtures needed)
+   - Python oracle: `oracle/test_atomic.py`, `oracle/test_integration.py`, `oracle/requirements.txt`, and optional `oracle/conftest.py`
+   - Rust oracle: `oracle/Cargo.toml`, `oracle/Cargo.lock`, `oracle/depends_on.json`, `oracle/atomic/Cargo.toml`, `oracle/atomic/src/**/*.rs`, `oracle/integration/Cargo.toml`, and `oracle/integration/src/**/*.rs`
    - `task.json` (metadata: language, taxonomy, stats, scorer_isolation, weaknesses, source_meta, integration_gap)
 
    The graduated packet no longer carries `kept_nodeids.txt`, `taxonomy.jsonl`
    or `spec_test_map.md`. Those were a second copy of what the oracle files
    already state, and they drifted: the layer split now comes from which file a
    test lives in, and `task.json.taxonomy` is generated from the files by
-   `harness/core/sync_task_metadata.py`. All three remain required in
-   `wip/{language}/{task_id}/filter/` as the filtering audit trail — the map is still how
+   `harness/sync_task_metadata.py`. All three remain required in
+   `wip/{task_id}/filter/` as the filtering audit trail — the map is still how
    filtering is done and how spec coverage is proved.
 3. `task.json.taxonomy` keys match the physical test functions, and `stats` sums
-   to `oracle.count` — run `python harness/core/sync_task_metadata.py {task_id} --check`,
+   to `oracle.count` — run `python harness/sync_task_metadata.py {task_id} --check`,
    which must report no drift
 4. `spec.md` contains none of: `task_id`, `delta:`, `source_boundary:`, `benchmark`, `oracle`, `judge`, `<!-- INTERNAL`
-4b. `spec.md` follows the 6-layer structure from `docs/SPEC_STANDARD.md`: has Specification Authority disclaimer, ≥2 behavior sections, ≥5 Cross-View Invariants, desensitized Product Overview, no stale section names
+4b. `spec.md` follows the 6-layer structure from `Spec2Repo/docs/SPEC_STANDARD.md`: has Specification Authority disclaimer, ≥2 behavior sections, ≥5 Cross-View Invariants, desensitized Product Overview, no stale section names
 4c. `spec.md` passes phrasing hard checks (spec-writer validation #21-#25): Non-Goals use "This specification does not require/define..." (no "outside this design"); Product Overview is descriptive not imperative; pure library CLI uses prose not bullet list; behavior sections have opening sentences + bold subsection headers; behavioral language uses `must`/`returns`/`raises` not `can`/`may`; API Catalog is Name|Kind|Role only
 5. Score JSON `platform` field confirms Linux/WSL evaluation
-6. Diagnosis report contains a `Preflight output` block with `__file__` path inside candidate solution directory
+6. Diagnosis report contains a `Preflight output` block whose provenance points inside the candidate solution directory/workspace (`__file__` for Python; target crate `manifest_path` for Rust)
 7. `task.json` contains valid `integration_gap` object (at minimum `rate_gap`; `true_gap_events` if applicable)
-8. `task.json.source_meta` is populated (github_stars, pypi_monthly_downloads, loc, first_release)
+8. `task.json.source_meta` is populated for the task language: Python uses `github_stars`, `pypi_monthly_downloads`, `loc`, and `first_release`; Rust uses `github_stars`, `crates_io_monthly_downloads` (or `registry_monthly_downloads` for non-crates.io registries), `loc`, and `first_release`.
 9. If `filter_notes.md` has `scope_plan != N/A`: verify actual oracle size ≤ `expected_oracle_max` and tests cover stated `target_subdomain`
-10. Run `python harness/core/validate_ledger.py {task_id}` — task must appear as PASS (warnings acceptable, failures block graduation). This runs all static gates defined in `docs/QUALITY_GATE.md` via `harness/core/verify_task.py`.
-11. **All four required controls qualified in one step**, per
-    `spec2repo-gate-calibration/references/qualification-and-freeze.md`:
-    - **M1 patched reference** — the reference implementation is the patched upstream, so
-      the ordinary reference gate at 100% satisfies this;
-    - **M2 clean upstream** — pristine upstream mounted, exactly the preregistered mutation
-      set fails and the native set passes;
-    - **behaviour-empty control** — signature-preserving stub, every root reaches call
-      phase, zero passes;
-    - **broad incomplete controls** — at least two signature-preserving profiles that
-      collapse different architectural ideas, with distinct preregistered blast radii.
-    `task.json` carries the `mutation` block (`clauses`, `families`, `tests`) and each
-    mutated oracle test carries a `// MUTATED: <clause-ref>` marker. There is no separate
-    the mutation controls — see AGENTS.md Rule 6a.
+10. Run `python harness/validate_ledger.py {task_id}` — task must appear as PASS (warnings acceptable, failures block graduation). This runs all static gates defined in `docs/QUALITY_GATE.md` via `harness/verify_task.py`.
 
-**Graduation procedure** (how to produce `tasks/{language}/{task_id}/` from `wip/{language}/{task_id}/`):
-1. Copy `spec_vN.md` → `tasks/{language}/{id}/spec.md`, stripping the `<!-- INTERNAL ... -->` header block
-2. Split filtered tests by taxonomy into `oracle/test_atomic.py` and `oracle/test_integration.py`
-3. Extract test dependencies from upstream repo → `oracle/requirements.txt`
+**Graduation procedure** (how to produce `tasks/{task_id}/` from `wip/{task_id}/`):
+1. Copy `spec_vN.md` → `tasks/{id}/spec.md`, stripping the `<!-- INTERNAL ... -->` header block
+2. Materialize the oracle in the task's language layout:
+   - Python: split filtered tests by taxonomy into `oracle/test_atomic.py` and `oracle/test_integration.py`
+   - Rust: split filtered tests by taxonomy into `oracle/atomic/src/**/*.rs` and `oracle/integration/src/**/*.rs`; the per-suite crate names must be `atomic` and `integration`
+3. Extract test dependencies into the language-native manifest:
+   - Python: `oracle/requirements.txt`, excluding the target package
+   - Rust: `oracle/Cargo.toml`, `oracle/Cargo.lock`, and per-suite `Cargo.toml` files, excluding a fixed crates.io dependency on the target crate; generate `Cargo.lock` with the target crate patched to the reference checkout, then keep that lockfile with the oracle. The runner injects `[patch.crates-io]` during scoring
+3b. Rust: copy `wip/{task-id}/filter/depends_on.json` to `tasks/{id}/oracle/depends_on.json` (or merge the same mapping into `task.json.depends_on`). Keys and values must be Rust runner ids such as `integration::path::test_name` and `atomic::path::test_name`.
 4. Write the judgement-bearing fields of `task.json` by hand: `repo`, `repo_commit`,
-   `language`, `spec_version`, `oracle.scorer_isolation`, `weaknesses`,
+   `language`, `target_crates`, `spec_version`, `oracle.scorer_isolation`, `weaknesses`,
    `source_meta`, `integration_gap`, `labels`
-5. Run `python harness/core/sync_task_metadata.py {task_id}` to derive `taxonomy`,
+5. Run `python harness/sync_task_metadata.py {task_id}` to derive `taxonomy`,
    `stats` and `oracle.count` from the oracle files. Review the `system_e2e`
    labels it guessed for new tests from their names — that split is a filtering
    judgement, and only labels already present are carried over
-6. Run `python harness/core/verify_task.py {task_id}` — must output `STATIC_VALID`
-7. **`ROOT-MAP.json` exists and passes the design audit** — preregistered before the spec
-   was written, one row per root with `id / layer / mutation / family / depends_on`, and
-   `spec2repo-gate-calibration/scripts/audit_gate_design.py ROOT-MAP.json` reports no
-   violation (mutation union 60-75%, no family above ~25% of mutation votes).
-8. **The spec describes the mutated system, not the upstream one.** Mutation is applied once,
-   here, as product design — there is no later mutation stage. The INTERNAL header records
-   which families diverge and why the upstream form is the intuitive guess. See AGENTS.md
-   Rule 6a.
+6. Run `python harness/verify_task.py {task_id}` — must output `STATIC_VALID`
 
-Leave `wip/{language}/{task_id}/` in place: `kept_nodeids.txt`, `taxonomy.jsonl` and
+Leave `wip/{task_id}/` in place: `kept_nodeids.txt`, `taxonomy.jsonl` and
 `spec_test_map.md` stay there as the audit trail and are not copied into the
 graduated packet.
 

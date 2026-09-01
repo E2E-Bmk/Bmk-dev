@@ -1,13 +1,13 @@
 ---
 name: spec-writer
-description: "Write a behavioral specification (public packet) for a SWE-E2E reconstruction benchmark task. Use when drafting, iterating, or judging a spec for a candidate Python library before candidate evaluation. The spec describes the public API behavioral contract — what the library promises to callers. Source code may be read freely; the constraint is public intent (exported surface, user-facing docstrings, examples), not documentation coverage."
+description: "Write a behavioral specification (public packet) for a SWE-E2E reconstruction benchmark task. Use when drafting, iterating, or judging a spec for a candidate library before candidate evaluation. The spec describes the public API behavioral contract — what the library promises to callers. Source code may be read freely; the constraint is public intent (exported surface, user-facing docstrings, examples), not documentation coverage."
 ---
 
 # Spec Writer
 
 ## State Machine Interface
 
-**Entry:** Read `wip/{language}/{task}/PIPELINE_STATE.md`. Verify `state` is `S2_SPEC_DRAFT` or `S2_SPEC_CHECK`. If `spec_iter > 3`, stop and escalate to orchestrator — do not proceed.
+**Entry:** Read `wip/{task}/PIPELINE_STATE.md`. Verify `state` is `S2_SPEC_DRAFT` or `S2_SPEC_CHECK`. If `spec_iter > 3`, stop and escalate to orchestrator — do not proceed.
 
 **Exit (all 25 validation checks + style gate pass):** Set `state → S2_SPEC_DONE`, then `→ S3A_IMPORT_AUDIT`, append History row.
 
@@ -59,7 +59,7 @@ Behavioral statements follow requirements-engineering discipline. This section i
 
 These templates force trigger + observable response. They make it structurally impossible to write a test instance ("given fixture X the output is 12") as a spec clause — there is no EARS shape for it.
 
-**Clause IDs.** Each atomic behavioral clause gets a stable ID `<TASK-ABBREV>-<SECTION-ABBREV>-<NNN>` (e.g. `KEDRO-SCAF-003`). IDs live in a sidecar file `tasks/<language>/<task-id>/clauses.md` (clause ID → verbatim quoted sentence + section anchor), NOT inline in the candidate-visible body — the candidate never needs them; auditors and test-filter do.
+**Clause IDs.** Each atomic behavioral clause gets a stable ID `<TASK-ABBREV>-<SECTION-ABBREV>-<NNN>` (e.g. `KEDRO-SCAF-003`). IDs live in a sidecar file `tasks/<task-id>/clauses.md` (clause ID → verbatim quoted sentence + section anchor), NOT inline in the candidate-visible body — the candidate never needs them; auditors and test-filter do.
 
 **Traceability.** Every oracle test added or modified after this rule ships must name the clause IDs it verifies in its docstring (`Verifies: KEDRO-SCAF-003, KEDRO-SCAF-004`). Two audits become mechanical:
 - test with no supporting clause → leaked implementation detail → fix or delete the test;
@@ -83,8 +83,8 @@ These two purposes are structurally separate: the spec body is natural library d
 
 Read source code and public documentation together to map the public API surface:
 
-1. Source code: `__init__.py`, `__all__`, public class/function signatures, docstrings
-2. PyPI page or GitHub README — product overview and install
+1. Source code: language-native public surface (`__init__.py`/`__all__` for Python, `lib.rs` public re-exports and `pub` items for Rust), public class/function/type signatures, docstrings or rustdoc
+2. Package registry page or GitHub README — product overview and install (`PyPI`, `crates.io`, npm, etc.)
 3. Official docs site — getting started, API reference, CLI reference, examples/cookbook
 4. `--help` output for each CLI subcommand
 
@@ -92,7 +92,7 @@ Record the exact sources consulted in the internal header (`source_boundary`) �
 
 **Reading workflow — do not begin writing the spec until these steps are complete:**
 
-1. Read `__init__.py` and `__all__`. Produce a **public API surface list**: every exported name, with file path. This list is your working set. If this list is empty, you have not done the reading — stop.
+1. Read the language-native public entry point (`__init__.py` and `__all__` for Python; crate root `lib.rs`, public re-exports, and rustdoc-visible `pub` items for Rust). Produce a **public API surface list**: every exported name, with file path. This list is your working set. If this list is empty, you have not done the reading — stop.
 2. Read docs body (not just headings): scan for `from pkg.module import Name` patterns, NamedTuple class names in return value examples, exception classes users catch or compare.
 3. For each item on the surface list, answer Q1 then Q2 **individually**, one item at a time, before moving to the next. Do not batch-decide multiple items.
 4. Write spec sections only after the full surface list has been processed.
@@ -105,7 +105,7 @@ Items in these categories belong in the spec **only when they pass Q2** — i.e.
 
 - All public import paths and names: functions, classes, exceptions, namedtuples — including re-exports that appear in the public API surface even when they look like module-level aliases
 - Scan docs body (not just headings): `from pkg.module import Name` patterns in code examples, NamedTuple class names in return value reprs, exception classes users are expected to catch or compare
-- Function parameter contracts: parameter names, general types, and defaults — expressed in natural language prose rather than Python signature syntax. Parameter names are public API vocabulary and must be stated; type annotations (`str | None`, `Literal[...]`) and exact Python defaults should be converted to behavioral descriptions ("an optional string", "defaults to `True`"). **`python` only — for every other language see Signature Discipline.**
+- Function parameter contracts: parameter names, general types, and defaults — expressed in natural language prose rather than language syntax. Parameter names are public API vocabulary and must be stated; type annotations (`str | None`, `Literal[...]`) and exact defaults should be converted to behavioral descriptions ("an optional string", "defaults to `True`"). For Rust, public argument and return types may be named as API vocabulary, but do not paste full `pub fn ...` declarations into the catalog.
 - Documented namespaces, engines, and data models a first-day engineer must know (e.g. Jinja2 syntax and `{{ cookiecutter.name }}` namespace)
 - Special user-visible context keys (e.g. `_copy_without_render`, `_extensions`, `__prompts__`) when they appear in official docs
 - Error semantics: which trigger condition -> which exception class — when the exception type is library-specific or non-obvious
@@ -130,51 +130,11 @@ Items in these categories belong in the spec **only when they pass Q2** — i.e.
 - Private names (`_name`, `__name`) and names absent from the public export surface
 - Internal implementation details of public classes (field names, internal maps, singleton structure) that are not part of the API contract
 - Escape-hatch language: `Most`, `generally`, `typically`, `in most cases`, `usually` when describing API support scope — these allow a candidate to skip a behavior and still satisfy the spec wording. State the exact scope of support explicitly.
-- Complete Python-syntax function/constructor signatures with type annotations and default values in inline backticks (e.g., `Class(param: Type, param2: Type = default)`). Instead, express parameter names, types, and defaults in natural language prose: "A `Class` accepts a `param` (Type) and an optional `param2` (Type, defaults to `default`)." Public API names (class names, method names, parameter names) ARE contractual and must be preserved — the prohibition is on Python syntax, not on the information. **This bullet is scoped to `python` — see Signature Discipline below before applying it to any other language.**
-
-## Signature Discipline Is Language-Conditional
-
-The prose-not-syntax rule above exists because Python is duck-typed: a candidate
-whose parameter is named right and behaves right passes, whatever it annotated.
-No such slack exists in a statically-typed language. There the public API shape
-*is* part of the contract — the benchmark asks for a **drop-in replacement**, so
-the oracle compiles against the candidate's declarations. One wrong signature is
-not one wrong test; it is a build failure that zeroes **every** test in both
-suites at once, with no diagnostic pointing at the cause.
-
-| language | signature rule |
-|---|---|
-| `python` | prose only, as the bullet above. Never emit annotated signatures. |
-| `typescript` | state parameter **order, arity and types**, and whether each is optional. Mismatches surface at runtime, not build time, so they read as ordinary wrong answers — which makes them harder to diagnose, not less severe. |
-| `go`, `rust`, `java` | **state the exact declared signature.** Prose alone is a fairness defect. |
-
-For `go` / `rust` / `java`, the spec must additionally pin everything below,
-because each is compile-visible and each has been observed missing in practice:
-
-- **Concrete return types behind interfaces.** Declaring `NewFoo(...) Fs` and
-  separately declaring a method on `*BasePathFs` does not tell the candidate the
-  constructor returns that type. If the oracle type-asserts it, say so.
-- **Collection shape** — array vs slice vs `List` vs `Set`. An array where every
-  neighbouring member is a collection is the *unlikely* guess.
-- **Enum/variant shape** — tuple variant vs struct variant, and each field's type.
-- **Reference and ownership** — `Arc` vs `Rc`, `&mut` vs by-value, pointer vs value
-  receiver. "A reference-counted handle" does not distinguish `Arc` from `Rc`.
-- **Generic bounds, type parameters and associated types.** A non-generic return
-  type where the oracle chains on the result does not compile.
-- **Annotation/attribute metadata** — retention, targets, member names, defaults.
-- **Checked exceptions** in `java`, both directions: undeclared ones break the
-  oracle, over-declared ones break a conforming candidate.
-- **Visibility and re-export path** — the path the caller actually imports from,
-  not merely that the item exists somewhere.
-
-None of this leaks difficulty. API shape is not the hard part of any well-chosen
-task; the behaviour is. Withholding shape does not make a task harder, it makes
-it unscoreable — and an unscoreable task reports as a very low pass rate, which
-is indistinguishable from success when the goal is to drive pass rates down.
+- Complete language-syntax function/constructor signatures with type annotations and default values in inline backticks (e.g., `Class(param: Type, param2: Type = default)` or `pub fn parse(input: &str) -> Result<T, E>`). Instead, express parameter names, types, and defaults in natural language prose: "A `Class` accepts a `param` (Type) and an optional `param2` (Type, defaults to `default`)." Public API names (class names, method names, parameter names, Rust type names and variants) ARE contractual and must be preserved — the prohibition is on syntax blocks, not on the information.
 
 ## Required Structure
 
-The authoritative structure definition is in `docs/SPEC_STANDARD.md`. This section is a summary.
+The authoritative structure definition is in `Spec2Repo/docs/SPEC_STANDARD.md`. This section is a summary.
 
 Every spec file has two parts. Only the body is sent to the candidate.
 
@@ -220,7 +180,7 @@ source_boundary: {list of sources consulted: docs pages, source files}
 ═══ Reference Layer ═══
 ## Public Interface             <- speed-lookup index, NOT a first-read section
   ### Import Surface            <- publicly reachable names (see language note)
-  ### API Catalog               <- Name | Kind | Role table (signatures: see Signature Discipline)
+  ### API Catalog               <- Name | Kind | Role table (NO signatures)
   ### CLI Entry Points          <- only if package has CLI
 
 ═══ Meta Layer ═══
@@ -256,19 +216,19 @@ lookup index: behaviour belongs in the behaviour sections, not here.
 - Start with functionality, not identity
 
 **Environment appendix (required in all specs):**
-Lists the exact third-party packages preinstalled in the working environment (from `oracle/requirements.txt`, minus the target package), plus the dependency-declaration policy:
+Lists the exact language/runtime and third-party dependencies preinstalled or vendored in the working environment, plus the dependency-declaration policy. For Python, the source is `oracle/requirements.txt` minus the target package. For Rust, the source is the oracle Cargo workspace manifests and lockfile; list the Rust toolchain, required cargo subcommands such as `cargo-nextest`, and every non-target crate the oracle depends on.
 
 ```
 ## Appendix A: Environment
 
-The working environment runs Python 3.11 on Linux without network access.
-The following third-party packages are preinstalled and importable:
-{explicit package list}. The assessment environment provides the same
-interpreter and package set.
+The working environment runs {language/runtime version} on Linux without network access.
+The following third-party dependencies are preinstalled or available from the
+oracle manifest lockfile: {explicit dependency list}. The assessment environment
+provides the same runtime and dependency set.
 
-The project must declare its packaging metadata in a standard
-`pyproject.toml` (or `setup.py`) at the project root so the package
-can be installed with pip.
+The project must declare its packaging metadata in the language-standard
+manifest at the project root so the package can be installed by the scorer
+(`pyproject.toml` or `setup.py` for Python; `Cargo.toml` for Rust).
 ```
 
 Never write "may use any third-party packages available on PyPI" — an open-ended promise the working environment cannot honor turns dependency choice into a gamble.
@@ -329,14 +289,14 @@ A behavior section that is a bare bullet list with no opening sentence and no bo
 
 - Use `must`, `returns`, `raises` — never `can`, `may`, `might`, `should`.
 - Use `WHEN ... THEN ... must ...` for conditional behaviors.
-- Parameters appear inline in behavioral prose: "The `backend` parameter accepts `\"sqlite\"`, `\"memory\"`, or a `BaseCache` instance." Never as Python signatures.
+- Parameters appear inline in behavioral prose: "The `backend` parameter accepts `\"sqlite\"`, `\"memory\"`, or a `BaseCache` instance." Never as full language signatures.
 
 ### API Catalog Format
 
 API Catalog **must** be a `Name | Kind | Role` table. Each row is one public symbol.
 
 **Forbidden in API Catalog:**
-- Python function signatures with type annotations
+- Complete function signatures with type annotations
 - Parameter lists, default values, or return types
 - Anything other than Name, Kind (class/function/constant/exception), and a one-sentence Role
 
@@ -374,7 +334,7 @@ Spec and test-filter are linked: spec describes what must be implemented; test-f
 
 ## Validation
 
- (run after each draft, before candidate evaluation — except check 27, which requires a built oracle and therefore runs at Stage 3)
+ (run after each draft, before candidate evaluation)
 
 **Structural checks (new standard):**
 1. Does the spec begin with `# {Title} Specification` followed by the Specification Authority disclaimer blockquote?<-
@@ -400,7 +360,7 @@ Spec and test-filter are linked: spec describes what must be implemented; test-f
 17. Does every NEW or MODIFIED behavioral clause fit one of the five EARS templates, carry a clause ID in the sidecar, and pass Q3 (upstream-doc ceiling, 1:N support, rule-not-instance)?<-
 18. **Oracle-consistency check:** for every CLI flag, keyword argument, file-layout convention, or output format that oracle tests exercise through a shared helper/fixture, does the spec state it (or is it Q2-derivable)?<-
 19. **Blind-review gate:** reading only the spec diff, would a reviewer accept it as a normal open-source documentation PR (organized by concept, no test-shaped sentences)?<-
-20. For `python`: does Public Interface > API Catalog contain NO Python signatures (no type annotations, no defaults)? Only Name | Kind | Role table entries? For `go` / `rust` / `java`: does it carry the **exact declared signature** of every listed member, per Signature Discipline?<-
+20. Does Public Interface > API Catalog contain NO complete implementation signatures (no parameter lists, type annotations, or defaults)? Only Name | Kind | Role table entries?<-
 
 **Phrasing hard checks (from Phrasing Rules section):**
 21. Does every Non-Goals bullet begin with "This specification does not require" or "This specification does not define"? Zero tolerance for "outside this design" anywhere in the spec.<-
@@ -409,26 +369,19 @@ Spec and test-filter are linked: spec describes what must be implemented; test-f
 24. Does every behavior section have (a) an opening sentence and (b) bold subsection headers? A bare bullet list is rejected.<-
 25. Does the spec contain any `can`, `may`, `might`, or `should` when describing required behavior? These must be `must`, `returns`, or `raises`.<-
 
-**Mechanical surface checks (compiled languages only — `go`, `rust`, `java`):**
-
-These two check different things and run at different stages. 26 needs only the spec and a stub, so it runs with the rest of Validation. 27 additionally needs a built oracle to link against, which does not exist until Stage 3 — it **cannot** be run during spec drafting, and a task that reports it green before the oracle exists has not run it.
-
-26. **Spec↔stub declaration diff (Stage 2 — no oracle required).** Run `python3 harness/spec_stub_diff.py <spec_v1.md> <stub_root>`; it exits non-zero and prints one line per divergence. It compares the declaration surface in **both directions**: every spec-declared type and method must be present in the stub with matching derives, field types, return types and arity (`TYPE_MISSING`, `DERIVE_MISSING`, `FIELD_TYPE`, `METHOD_MISSING`, `METHOD_RETURN`, `METHOD_ARITY`), and every public stub declaration must trace back to the spec (`TYPE_UNDECLARED`, `METHOD_UNDECLARED`) — an over-declaring stub hides a spec gap just as well as a missing declaration does. Requires the API Catalog to be in one of three recognised layouts — `#### Types` / `#### Method Signatures` pseudo-syntax, fenced Rust blocks scoped by `// <crate>::<module>` comments, or a signature table with a `Declared signature` column — and exits `DIFF_ERROR` rather than guessing if it recognises none of them. A `COVERAGE` line is **not** a divergence and does not fail the run; it names a dimension the spec left unmeasurable, and the only one emitted today is derives: a type declared with no `#[derive(...)]` cannot be checked for over-derivation, so a catalog that states its derive contract in prose gets that dimension reported as uncovered rather than silently passed. Treat a `COVERAGE` line as a spec defect to fix at the catalog, not as a differ limitation — a missing derive is invisible to a standalone stub build and fatal at oracle-link time. **Only `DIFF_PASS` with exit 0 is a pass** — `DIFF_ERROR` and `DIFF_NOT_IMPLEMENTED` (non-Rust stub) both mean the check did not run, and neither may be recorded as one. The differ's own detection is verified by `harness/spec_stub_diff_selftest.py`, which plants one divergence of each class **in each of the three layouts** and asserts it is caught; run that after changing the differ, because a differ that never fires is indistinguishable from a clean surface.<-
-27. **Spec-surface stub compile gate (Stage 3 — requires the oracle).** `harness/core/oracle_import_lint.py` is Python-only, so compiled-language tasks get no automatic check that the oracle stays inside the declared surface. Build one per task: generate a module/crate/source tree containing **verbatim only what the spec declares** — types, methods with declared signatures, variants in their declared shape, constructors, fields, re-export paths — with every body `panic!` / `throw new UnsupportedOperationException()` / equivalent. Point the oracle's dependency at it (`go mod edit -replace`, `[patch.crates-io]`, or the Maven coordinate) and compile **both** suites. Every unresolved symbol, arity error, type mismatch or impossible type assertion is a spec gap. Classify each as **compile-stopper** (a conforming implementation fails to build — turns the task into an unscoreable 0) or **runtime-only**. Compile-stoppers must be repaired before the task is scored. Store the stub and its sha256 in `task.json` as evidence the check ran, **and record which build that sha256 came from**: a stub that compiles standalone proves nothing, because the divergences this gate exists to catch (missing methods, wrong derives, owned-vs-reference return types) are invisible until the oracle is linked against it. Evidence from a standalone build is not evidence this check passed.<-
-
-All twenty-seven must pass (26 and 27 apply only to `go` / `rust` / `java`). 27 is a Stage 3 check and is expected to be outstanding while the spec is still being drafted; every other check must pass before candidate evaluation. Any failure -> patch and re-judge.
+All twenty-five must pass. Any failure -> patch and re-judge.
 
 ## Style Gate
 
 **Style gate (mandatory before proceeding to Stage 3):**
-- Spec must follow the 6-layer structure defined in `docs/SPEC_STANDARD.md`
+- Spec must follow the 6-layer structure defined in `Spec2Repo/docs/SPEC_STANDARD.md`
 - Behavior sections must be organized by concept/workflow, NOT by module/class hierarchy
 - Behavior sections must have narrative flow: concept → normal path → parameters → boundaries
 - No continuous signature code blocks exceeding 10 lines
 - Public Interface > Import Surface contains only import statement code blocks (no prose signatures)
-- Public Interface > API Catalog contains only Name | Kind | Role table entries (no Python signatures)
+- Public Interface > API Catalog contains only Name | Kind | Role table entries (no complete implementation signatures)
 - No leakage words: benchmark, oracle, judge, task_id, candidate-visible, scorer
-- No inline backtick signatures with Python type annotations (`: Type`, `= default`, `|` unions). Express API parameter contracts in natural language prose within behavior sections. Usage examples in fenced code blocks are exempt.
+- No inline backtick signatures with language type syntax (`: Type`, `= default`, `|` unions, `pub fn ... -> ...`). Express API parameter contracts in natural language prose within behavior sections. Usage examples in fenced code blocks are exempt.
 - Specification Authority disclaimer must be present after the title
 - Product Overview must be desensitized (no brand/author/GitHub names)
 - Failure: return to spec-writer for revision
@@ -474,22 +427,3 @@ A concept warrants its own section when it has its own initialization/use/teardo
 
 **3. Write behavior language, not patch language.**
 Each inserted sentence states what the system promises to callers, not that something was added. Avoid connective words like "also supports", "additionally", "in addition to". State the behavior directly as if it was always there.
-
-## Mutation target (INTERNAL header, mandatory)
-
-The spec is written to describe the **mutated** system. Mutation is product design applied
-once, here — not an edit made to a finished task. `ROOT-MAP.json`, preregistered before this
-stage, says which families diverge; write those clauses as the contract, in their mutated
-form, reading as ordinary library documentation. Never write the upstream form and plan to
-edit it later.
-
-The INTERNAL header must carry a `mutation_families:` field listing each diverging family,
-the clause it governs, and one sentence on why the upstream form is what a competent
-engineer would guess.
-
-This is not optional bookkeeping. Choosing the target after the oracle is built has failed
-on every task where it was attempted, because the oracle shapes that resist a contained,
-assertion-only mutation — parametrised classification arrays, round-trip identity
-properties, computed metrics — are already fixed by then. Declaring the target here lets
-`test-filter` build at least two individual tests that each pin one specific value of the
-clause, which is the precondition for a clean mutation. See AGENTS.md Rule 6a.

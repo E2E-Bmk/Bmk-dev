@@ -15,7 +15,9 @@
     "rust",
     "table-rendering",
     "terminal-ui",
-    "valid-candidate-setup-failure"
+    "valid-candidate-setup-failure",
+    "qualified-release-with-audit",
+    "composition-signal"
   ],
   "source_meta": {
     "loc": 4154
@@ -141,16 +143,16 @@
   },
   "weaknesses": [
     {
-      "dimension": "api-surface",
-      "description": "Candidate crate does not compile against public API shapes for column padding, public column index state, named boundary constraints, column content width helper, and iterator/content return types.",
-      "affected_tests": 101,
-      "layer": "atomic/integration"
+      "dimension": "cross-view-consistency",
+      "description": "The assisted candidate passes the atomic public surface but fails composed table-rendering behavior across width constraints, dynamic/full-width arrangement, presets/modifiers, hidden-column visibility, custom delimiter wrapping, ANSI styling, and truncation.",
+      "affected_tests": 38,
+      "layer": "integration"
     }
   ],
   "integration_gap": {
-    "atomic_rate": 0.0,
-    "integration_e2e_rate": 0.0,
-    "rate_gap": 0.0,
+    "atomic_rate": 1.0,
+    "integration_e2e_rate": 0.4492753623188406,
+    "rate_gap": 0.5507246376811594,
     "true_gap_events": []
   }
 }

@@ -1,0 +1,1 @@
+Implement the dependency-aware workflow extension described in `SPEC.md` in the provided `github.com/go-co-op/gocron/v2` starter module. Preserve the retained scheduler behavior and add the complete public workflow surface. Run `gofmt`, `go build ./...`, and relevant tests before finishing.

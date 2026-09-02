@@ -1,0 +1,19 @@
+on:
+  push:
+    branches:
+      - v2
+  pull_request:
+    branches:
+      - v2
+
+name: formatting
+jobs:
+  check-sorted:
+    name: check sorted
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v7
+      - name: verify example_test.go
+        run: |
+          grep "^func [a-z-A-Z]" example_test.go | sort -c

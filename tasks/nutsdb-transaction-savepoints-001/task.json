@@ -1,0 +1,111 @@
+{
+  "instance_id": "nutsdb-transaction-savepoints-001",
+  "status": "WIP",
+  "repo": "nutsdb/nutsdb",
+  "repo_commit": "be731aa972d8c8e832cea45f5a6a7a6cd744dd39",
+  "spec_version": "v1",
+  "language": "go",
+  "target_modules": [
+    "github.com/nutsdb/nutsdb"
+  ],
+  "oracle": {
+    "test_files": [
+      "oracle/atomic/savepoint_atomic_test.go",
+      "oracle/integration/savepoint_integration_test.go"
+    ],
+    "count": 64,
+    "count_unit": "base_test_functions",
+    "base_function_count": 64,
+    "scorer_isolation": "GoRunner replaces github.com/nutsdb/nutsdb with the assigned solution and verifies its resolved module directory."
+  },
+  "taxonomy": {
+    "atomic::TestInitialDepth": "atomic",
+    "atomic::TestFirstIDNonZero": "atomic",
+    "atomic::TestIDsIncrease": "atomic",
+    "atomic::TestDepthIncrements": "atomic",
+    "atomic::TestReleaseDecrementsDepth": "atomic",
+    "atomic::TestReleasePreservesWrites": "atomic",
+    "atomic::TestRollbackConsumesTarget": "atomic",
+    "atomic::TestRolledBackIDInvalid": "atomic",
+    "atomic::TestRollbackInvalidatesYounger": "atomic",
+    "atomic::TestReleaseRejectsNonTopmost": "atomic",
+    "atomic::TestRollbackUnknownID": "atomic",
+    "atomic::TestReleaseUnknownID": "atomic",
+    "atomic::TestReadOnlySavepointRejected": "atomic",
+    "atomic::TestReadOnlyRollbackToRejected": "atomic",
+    "atomic::TestReadOnlyReleaseRejected": "atomic",
+    "atomic::TestReadOnlyDepthZero": "atomic",
+    "atomic::TestSavepointAfterCommitClosed": "atomic",
+    "atomic::TestRollbackToAfterCommitClosed": "atomic",
+    "atomic::TestReleaseAfterRollbackClosed": "atomic",
+    "atomic::TestWriteAfterRollbackTo": "atomic",
+    "atomic::TestRollbackRestoresKVOverwrite": "atomic",
+    "atomic::TestRollbackRestoresDeletedKV": "atomic",
+    "atomic::TestReleaseKeepsKV": "atomic",
+    "atomic::TestRollbackRestoresTTL": "atomic",
+    "atomic::TestRollbackDropsBucketCreate": "atomic",
+    "atomic::TestRollbackDropsBucketDelete": "atomic",
+    "atomic::TestRollbackRestoresList": "atomic",
+    "atomic::TestRollbackRestoresSet": "atomic",
+    "atomic::TestRollbackRestoresSortedSet": "atomic",
+    "atomic::TestInnerRollbackLeavesOuter": "atomic",
+    "atomic::TestConsumedIDNotReused": "atomic",
+    "atomic::TestReleasedIDInvalid": "atomic",
+    "integration::TestWorkflow01": "integration",
+    "integration::TestWorkflow02": "integration",
+    "integration::TestWorkflow03": "integration",
+    "integration::TestWorkflow04": "integration",
+    "integration::TestWorkflow05": "integration",
+    "integration::TestWorkflow06": "integration",
+    "integration::TestWorkflow07": "integration",
+    "integration::TestWorkflow08": "integration",
+    "integration::TestWorkflow09": "integration",
+    "integration::TestWorkflow10": "integration",
+    "integration::TestWorkflow11": "integration",
+    "integration::TestWorkflow12": "integration",
+    "integration::TestWorkflow13": "integration",
+    "integration::TestWorkflow14": "integration",
+    "integration::TestWorkflow15": "integration",
+    "integration::TestWorkflow16": "integration",
+    "integration::TestWorkflow17": "integration",
+    "integration::TestWorkflow18": "integration",
+    "integration::TestWorkflow19": "integration",
+    "integration::TestWorkflow20": "integration",
+    "integration::TestWorkflow21": "integration",
+    "integration::TestWorkflow22": "integration",
+    "integration::TestWorkflow23": "integration",
+    "integration::TestWorkflow24": "integration",
+    "integration::TestWorkflow25": "integration",
+    "integration::TestWorkflow26": "integration",
+    "integration::TestWorkflow27": "integration",
+    "integration::TestWorkflow28": "integration",
+    "integration::TestWorkflow29": "integration",
+    "integration::TestWorkflow30": "integration",
+    "integration::TestWatchReceivesRetainedValue": "integration",
+    "integration::TestWatchOmitsDiscardedValue": "integration"
+  },
+  "stats": {
+    "atomic": 32,
+    "integration": 32,
+    "system_e2e": 0
+  },
+  "reference_pass_rate": 1.0,
+  "candidate_score": null,
+  "taxonomy_unit": "base_test_functions",
+  "calibration": {
+    "neutral": {
+      "passed": 9,
+      "total": 64,
+      "pass_rate": 0.1406
+    },
+    "naive": {
+      "passed": 38,
+      "total": 64,
+      "pass_rate": 0.5938
+    }
+  },
+  "source_meta": {
+    "loc": 11041,
+    "source_tree_sha256": "89113bc9da31d39abd60b679437e27c20d9d7647d39519fb701ce72324fb4057"
+  }
+}

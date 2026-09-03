@@ -463,3 +463,72 @@ Repo HEADs used: `lsm-tree aba7320 (2026-08-09)`, `automerge 47908d6 (2026-08-17
 4. `egglog`: confirm `tests/files.rs` really is the only consumer of the 7.5 MB `.egg` corpus, and check `serial_test` under a parallel nextest profile.
 5. `polar-core`: **build it first** — `lalrpop 0.19.9` (2022-era) on rustc 1.95 is unverified, and if it fails the crate is dead on arrival.
 6. `salsa`: decide three-crate delivery vs a plumbing-API contract before any further work.
+
+---
+
+## 17. `kdl` (kdl-rs) — document-oriented KDL parser and formatter (Stage-1 **RETIRED**, 2026-09-03)
+
+| field | content |
+|---|---|
+| name / crate | `kdl` — single package with `tools/*` workspace members outside the task scope |
+| repo | https://github.com/kdl-org/kdl-rs |
+| version / release | `Cargo.toml` version **6.7.1**, changelog release **2026-05-31**; local HEAD `8b01f4ef83eea6ab399118117a7c02d7d597c4f2` |
+| src LOC | **8 569** NBNC Rust LOC in compiled public crate modules by local line count; 10 434 NBNC under `src/` before removing inactive/query and test-heavy regions |
+| test functions | **2 active external** integration tests: `tests/compliance.rs::spec_compliance` and `tests/formatting.rs::build_and_format`; **27** tests under `tests/disabled_tests/` are not active integration targets; **111 inline** tests under `src/` |
+| test files / corpus | 2 active external Rust test files, 4 disabled Rust files, and 554 KDL corpus files (`321` input `.kdl`, `233` expected `.kdl`) |
+| private reach | **clean for active external tests**. Module-level imports use public `kdl::{KdlDocument, KdlError, KdlIdentifier, KdlValue}` or `kdl::{KdlDocument, KdlNode}`. Disabled tests also import public `kdl::...`, but they are not compiled as active integration targets |
+| assertion style | Active external surface is one corpus-driver conformance assertion loop plus one exact formatting string assertion. No `insta`/`expect-test`/snapbox snapshot dependency appears, but the compliance target is effectively golden normalization through checked-in files |
+| fixtures / offline | Small checked-in corpus under `tests/test_cases/`; no network, daemon, C toolchain, or `Command::new` observed in active tests |
+| external deps | `winnow 1.0.4`, `miette 7.6.0`, `num-traits 0.2.19`, optional `serde`, optional `kdlv1` via package `kdl 4.7.0`; dev dependencies include `thiserror`, `pretty_assertions`, serde derive |
+| memorizable standard | **Yes.** Primary parse/serialization behavior is KDL v2.0.0, a public language specification linked by the README/changelog. The crate-owned document-preserving API and serde layers are real, but upstream coverage for them is mostly inline under `src/` and unavailable to a clean rewritten crate |
+| objects per scenario | Around 4: `KdlDocument` -> `KdlNode` -> `KdlEntry` -> `KdlValue`/`KdlIdentifier` plus formatting metadata and serde projection |
+| difficulty | **unsuitable, not just easy.** The external oracle cannot produce per-behavior score granularity because hundreds of corpus cases are hidden behind one nodeid, while the richer behavior has no active external test surface |
+| decision | **reject / RETIRED at Stage 1** |
+| reason | Fails hard suitability gates: active external Rust integration surface has only two scoreable test functions, and the main retained behavior is conformance to a closed public format standard rather than a multi-owner reconstruction task |
+| risks | A spec would mostly restate the KDL v2 standard; the formatting target is exact-output/golden-normalization heavy; disabled query tests are not active; using inline parser/serde/API tests would violate the clean rewritten-source oracle model |
+
+---
+
+## 18. `rust_xlsxwriter` — write-only Excel XLSX generator (Stage-1 **RETIRED**, 2026-09-03)
+
+| field | content |
+|---|---|
+| name / crate | `rust_xlsxwriter` — single package |
+| repo | https://github.com/jmcnamara/rust_xlsxwriter |
+| version / release | `Cargo.toml` version **0.99.0**, changelog release **2026-08-23**; local HEAD `9e84ea38eaefe2f5d0fe3e220d6392da04299dc7` |
+| src LOC | **33 413** NBNC Rust LOC under `src/` excluding `*/tests.rs`; 49 314 NBNC including in-source test modules |
+| test functions | **1 423 active external** integration tests under `tests/integration/*.rs`; **292 inline** tests in `src/**/tests.rs` |
+| test files / fixtures | 1 107 active integration Rust files plus shared `tests/integration/common/mod.rs`; 1 091 checked-in files under `tests/input`, mostly Excel-created `.xlsx` fixtures |
+| private reach | Target-crate import surface is mostly clean: integration tests import public `rust_xlsxwriter::{...}` plus test-owned `crate::common`. The fairness risk is that 1 106/1 107 integration files depend on the shared fixture comparator |
+| assertion style | **Rejecting metric.** The active integration suite is effectively 100% exact-output comparison: each test builds a workbook, saves it, unzips the result, normalizes selected volatile XML fields, and compares the remaining file list/XML parts to an Excel-created reference workbook |
+| fixtures / offline | Offline fixture corpus under `tests/input`; no network observed. `zlib` feature would add a C dependency and must be excluded if ever revisited |
+| external deps | Required `zip 8.3`; optional `serde`, `chrono`, `jiff`, `constant_memory`/`tempfile`, `ssfmt`, `polars`, `wasm`, `rust_decimal`, `zmij`, `ryu`, `rust_xlsxwriter_derive`; dev `regex`, `pretty_assertions`, `criterion` |
+| memorizable standard | **High risk.** The observable target is Excel OOXML/XLSX package fidelity, and the author maintains sister libraries in Python, C, and Perl with overlapping behavior. Even if the Rust release is post-cutoff, cross-language recall is substantial |
+| objects per scenario | 6+: `Workbook` -> `Worksheet` -> cell/value/formula/format tables -> shared strings/styles/theme -> relationships/content types -> charts/drawings/images/VML -> ZIP package |
+| difficulty | Not a valid benchmark shape despite high implementation complexity: the oracle mostly measures exact package/XML reproduction, not independently stated public behavior |
+| decision | **reject / RETIRED at Stage 1** |
+| reason | Fails hard gates because >70% of the test suite is exact-output fixture comparison and the public docs do not specify the OOXML internals that the oracle pins |
+| risks | A candidate-visible spec would become an OOXML/Excel clone manual; scoring would be dominated by XML ordering/relationship/content-type minutiae; the crate is 33k+ production LOC and needs a major carve; inline tests are unavailable in the clean rewrite model |
+
+---
+
+## 19. `miette` — Rust diagnostic reports and derive protocol (Stage-1 **SELECTED**, 2026-09-03)
+
+| field | content |
+|---|---|
+| name / crate | `miette` with workspace member `miette-derive` |
+| repo | https://github.com/zkat/miette |
+| version / release | `Cargo.toml` version **7.6.0**, changelog release **2026-05-30**; local HEAD `e853bbf9bc78bbe0b225995de54a3108d77dcaf8` |
+| src LOC | **7 772** NBNC Rust LOC across `src/` and `miette-derive/src/` |
+| test functions | **194 active external** tests across 22 executable Rust test files plus 2 support modules; **292 inline** tests under `src/` |
+| private reach | **clean.** Integration tests import public `miette::{...}` and test-owned `self::common` / `self::drop` helpers; no active integration target imports private target modules |
+| assertion style | Mixed. About **107/194** tests live in exact-rendering/JSON/Debug/trybuild-heavy files (`graphical`, `narrated`, `test_json`, `test_fmt`, `color_format`, `test_diagnostic_source_macro`, `compiletest`), below the 70% hard-reject line but a major Stage 3 filter risk |
+| fixtures / offline | No large fixture corpus. The trybuild driver references compile-fail inputs that are absent in this checkout, so it should be excluded unless repaired from an authoritative source. No network, daemon, or C toolchain observed |
+| external deps | Required `unicode-width`, `cfg-if`; optional `miette-derive`, fancy renderer stack, backtrace, serde, syntect. Dev dependencies include `thiserror`, `trybuild`, `syn`, `regex`, `serde_json`, `strip-ansi-escapes` |
+| memorizable standard | **No closed standard.** The core contract is this crate's diagnostic protocol and report-wrapper behavior. Some conceptual overlap with `anyhow`/`eyre` and diagnostic renderers is expected, but the derive attributes, label/source-code behavior, chain/downcast behavior, and handler projections are crate-specific |
+| objects per scenario | 5+: user error type -> `Diagnostic` trait metadata -> `Report` wrapper/context/source chain -> `SourceCode`/`NamedSource`/`SourceSpan` labels -> `ReportHandler` projection (`Graphical`, `Narratable`, `JSON`) |
+| difficulty | **medium-hard candidate.** The reconstruction work is multi-surface and stateful enough to avoid a one-file utility solution, but renderer exact-output tests must not dominate the oracle |
+| decision | **keep / SELECTED** |
+| reason | Clean Rust public-surface suite with enough external tests and a shared diagnostic fact source projected through derive output, public trait APIs, report chains/downcasting, hooks, and multiple handlers |
+| risks | Stage 3 must filter exact string-art tests, order-sensitive global hook tests, trybuild artifacts, and undocumented layout details; include both `miette` and `miette-derive` as target crates; generate and pin a Cargo.lock for the oracle |
+| scope_plan | N/A |

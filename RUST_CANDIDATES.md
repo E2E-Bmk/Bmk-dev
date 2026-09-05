@@ -532,3 +532,44 @@ Repo HEADs used: `lsm-tree aba7320 (2026-08-09)`, `automerge 47908d6 (2026-08-17
 | reason | Clean Rust public-surface suite with enough external tests and a shared diagnostic fact source projected through derive output, public trait APIs, report chains/downcasting, hooks, and multiple handlers |
 | risks | Stage 3 must filter exact string-art tests, order-sensitive global hook tests, trybuild artifacts, and undocumented layout details; include both `miette` and `miette-derive` as target crates; generate and pin a Cargo.lock for the oracle |
 | scope_plan | N/A |
+
+## grass-fullrepro-001: grass (Stage 1 RETIRED, 2026-09-05)
+
+| field | content |
+|---|---|
+| task / language | `grass-fullrepro-001` / `rust` |
+| repo / source | connorskees/grass; `repo-pool/grass-fullrepro-001` |
+| commit / version | `a58f10afc59f7881779c609b256e9bda2db4cb5d` / 0.13.4; local release-tag commit dated 2024-08-04, registry release date unverified |
+| src size | 90 source files; 29,028 physical Rust lines excluding inline test modules. NBNC-style line estimate before inline-test exclusion: 23,667. Physical count is not the ledger's NBNC metric. |
+| test functions | Static count: 3,610 integration declarations across 86 case files plus shared macros.rs; 2 inline source tests. Includes ignored/feature-gated declarations; no runtime collection claimed. |
+| assertion style | 2,773 direct CSS test macros + 82 unit-addition macro expansions + 653 exact error-message macros = 3,508/3,610 (97.17%) exact-output declarations, even treating every explicit test as non-exact. |
+| public projections | API CSS strings, CLI stdout/file output, Logger debug/warning events, public error results over stylesheet/module evaluation state |
+| private reach | No private library paths found in integration tests. Shared helper publicly imports grass_compiler::codemap::SpanLoc and is included by 85/86 case files; HIGH_RISK for a grass-only facade packet until that public signature dependency is declared. Source-unit tests use private helpers. |
+| docs / tests | Aligned at Sass-to-CSS projection level; README disclaims dart-sass error-message/span parity. |
+| dependencies / isolation | Rust-only compiler stack plus optional clap/rand/wasm/proc-macro features; ordinary tests use local fixtures, tempfile and paste; optional sass-spec tooling separate. |
+| difficulty | Substantial parser/evaluator/module/selector/serializer pipeline; no candidate score measured. |
+| decision / reason | reject / RETIRED: exceeds candidate-selector hard gate of 70% snapshot/exact-output checks. Compiler complexity does not waive this gate. |
+| scope_plan | target_subdomain=not admitted, expected_oracle_max=0; no Stage 2 handoff |
+| evidence | `wip/rust/grass-fullrepro-001/filter_notes.md`, `PIPELINE_STATE.md`, and versioned `BENCH.md` |
+| preservation | Existing source differences left intact; git diff ignoring line endings is empty. No packet or gate verdict created. |
+
+## hifitime-fullrepro-001: hifitime (Stage 1 SELECTED, 2026-09-05)
+
+| field | content |
+|---|---|
+| task / language | `hifitime-fullrepro-001` / `rust` |
+| repo / source | nyx-space/hifitime; `repo-pool/hifitime-fullrepro-001` |
+| commit / version | `67ff2fcda2c81f9011f151901c08e6d6b8dd804d`, tag 4.3.1, commit date 2026-08-06; registry publication and candidate cutoff relation unknown |
+| src LOC | 6,190 AST-filtered NBNC-style Rust lines excluding test bodies and dedicated Kani/Python sources; some cfg attributes and optional production code remain; reproducible audit retained |
+| test functions | 116 external declarations across 8 case files; default std runs 114 external plus 26 inline tests. All 140 passed offline after dependency preparation in a pinned temporary reference |
+| private reach | clean: 0/8 integration case files import private target paths; AST inventory includes local imports; public root/prelude/efmt/leap_seconds reexports resolve; sofars is external dev reference |
+| assertion style | Numeric, arithmetic, ordering, conversion equivalence, parsing and formatting mix. 34/116 declarations trigger a formatting/stringification/serde review flag (32/114 active); not a measured exact-assertion fraction or a snapshot-dominated suite |
+| shared facts / projections | Exact Duration and scale-tagged Epoch plus leap-provider data; projected as scale durations, Gregorian fields, Julian/MJD/GNSS values, formatted/serialized epochs and finite forward TimeSeries |
+| docs alignment | README and public rustdoc cover the same scientific value/conversion/format/series projections as external tests |
+| standard / difficulty | Not a Gregorian/RFC-only task: package-specific bounded arithmetic, saturation, scale retention, pre-1972 leap policy, provider semantics and correction composition remain necessary. Limited durable state and scientific-standard recall are risks; difficulty unmeasured |
+| dependencies / offline | num-traits/libm, lexical-core, snafu; std/serde/web-time; dev serde_json/sofars. Original lockfile absent, generated lock retained. UT1/LTS downloads, Python/WASM/Kani and live-clock tests excluded |
+| scope | Public default-std value/epoch/calendar/format/leap-file/polynomial surface and finite forward positive-step series. Exclude inconsistent TimeSeries len/size_hint and reverse/mixed-ended behavior; observed len=3 versus count=4 for inclusive [0s,6s]/2s |
+| scope_plan | N/A (size and upstream test count below mandatory-carve thresholds); explicit boundary recorded in filter_notes.md |
+| preregistration | 64 roots: 24 Atomic, 32 Integration, 8 System; one semantic ROUND-TIE-LOWER family with 6 planned flips and 36 native Composition controls. Rule 8 one-family audit passed with explicit policy arguments; full M1/M2 not yet run |
+| decision / reason | keep / S1_SELECTED: public, enumerable, locally tested multi-component scientific-time reconstruction with substantial cross-view behavior |
+| evidence / next | `wip/rust/hifitime-fullrepro-001/BENCH.md`, filter_notes, state, source audit, upstream logs, ROOT-MAP and mutation_design; Stage 2 not started; no oracle qualification or candidate score |

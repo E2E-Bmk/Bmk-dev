@@ -1,0 +1,58 @@
+{
+  "instance_id": "miette-fullrepro-001",
+  "task_id": "miette-fullrepro-001",
+  "pipeline_note": "REOPENED_S2_SPEC_GAP",
+  "repo": "zkat/miette",
+  "repo_commit": "e853bbf9bc78bbe0b225995de54a3108d77dcaf8",
+  "language": "rust",
+  "target_crates": [
+    "miette"
+  ],
+  "spec_version": "v2",
+  "labels": [
+    "rust",
+    "diagnostics",
+    "derive-macro",
+    "report-rendering",
+    "mutation-ready"
+  ],
+  "source_meta": {
+    "github_stars": null,
+    "crates_io_monthly_downloads": null,
+    "loc": null,
+    "first_release": null
+  },
+  "weaknesses": [],
+  "integration_gap": null,
+  "oracle": {
+    "target_crates": [
+      "miette"
+    ],
+    "source": "upstream_rewrite_plus_generated",
+    "scorer_isolation": "Rust scorer appends [patch.crates-io] miette = { path = <solution-dir> } to the oracle workspace and validates cargo metadata provenance.",
+    "count": 0,
+    "count_unit": "base_test_functions",
+    "base_function_count": 0
+  },
+  "mutation": {
+    "clauses": [
+      "MIETTE-DIAG-003"
+    ],
+    "families": [
+      "MUT-SEVERITY-DEFAULT"
+    ],
+    "tests": [
+      "atomic::severity_default_is_advice",
+      "integration::json_absent_severity_renders_advice",
+      "integration::narrated_absent_severity_renders_advice"
+    ],
+    "direction": "The specified default severity is Advice when Diagnostic::severity is absent; upstream miette renders and serializes an absent severity as Error."
+  },
+  "taxonomy": {},
+  "taxonomy_unit": "base_test_functions",
+  "stats": {
+    "atomic": 0,
+    "integration": 0,
+    "system_e2e": 0
+  }
+}

@@ -46,7 +46,11 @@ def _workspace_packages(root: Path) -> list[dict[str, str]]:
         )
         name = data.get("package", {}).get("name")
         if name:
-            found.append({"name": name, "rel": str(manifest_dir.relative_to(root))})
+            found.append({
+                "name": name,
+                "rel": str(manifest_dir.relative_to(root)),
+                "version": str(data.get("package", {}).get("version") or ""),
+            })
         for member in data.get("workspace", {}).get("members", []):
             if any(ch in member for ch in "*?["):
                 for child in sorted(manifest_dir.glob(member)):
@@ -126,6 +130,17 @@ class RustRunner(Runner):
                 timeout=60,
                 required=True,
             )
+            versions = self._patch_versions(env)
+            packages = " && ".join(
+                (
+                    f"cargo update -p {shlex.quote(crate)} --precise "
+                    f"{shlex.quote(versions[crate])} 2>&1"
+                )
+                if versions.get(crate)
+                else f"cargo update -p {shlex.quote(crate)} 2>&1"
+                for crate in env.target_modules
+            )
+            yield Step(f"cd {env.oracle} && {packages}", timeout=600, capture=True)
 
         yield Step(f"cd {env.workspace} && cargo fetch 2>&1", timeout=600, capture=True)
         yield Step(f"cd {env.oracle} && cargo fetch 2>&1", timeout=600, capture=True)
@@ -162,6 +177,21 @@ class RustRunner(Runner):
         return {
             crate: f"{env.workspace}/{by_name[crate]}" if crate in by_name else env.workspace
             for crate in env.target_modules
+        }
+
+    def _patch_versions(self, env: Env) -> dict[str, str]:
+        """Candidate package version per target crate, when host metadata is readable."""
+        host = env.workspace_host
+        if host is None or not (host / "Cargo.toml").is_file():
+            return {}
+        try:
+            packages = _workspace_packages(host)
+        except Exception:
+            return {}
+        return {
+            pkg["name"]: pkg.get("version", "")
+            for pkg in packages
+            if pkg["name"] in env.target_modules and pkg.get("version")
         }
 
     # ── execution ─────────────────────────────────────────────────────────

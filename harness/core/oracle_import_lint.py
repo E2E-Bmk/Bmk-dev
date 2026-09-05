@@ -53,8 +53,8 @@ def public_surface(text: str) -> str:
     reported.
     """
     match = re.search(
-        r"(?ims)^##\s+(?:Installable Surface|Public Import Surface|Public Interface|Public API)\s*$"
-        r"([\s\S]*?)(?=^##\s+|\Z)",
+        r"(?ims)^#{2,3}\s+(?:Installable Surface|Public Import Surface|Public Interface|Public API)\s*$"
+        r"([\s\S]*?)(?=^#{2,3}\s+|\Z)",
         text,
     )
     return match.group(1) if match else ""
@@ -105,7 +105,7 @@ def oracle_dir(task_id: str) -> Path:
     for candidate in candidates:
         if (candidate / "test_atomic.py").is_file() or (
             candidate / "src" / "test" / "java" / "atomic"
-        ).is_dir():
+        ).is_dir() or (candidate / "atomic").is_dir():
             return candidate
     for candidate in candidates:
         if candidate.is_dir():
@@ -390,6 +390,55 @@ def java_builder_member_declared(symbol: str, spec_text: str) -> bool:
     return bool(components) and all(declared(component) for component in components)
 
 
+def rust_target_symbols(path: Path, target_roots: set[str]) -> list[tuple[str, int]]:
+    """Collect public Rust crate-root symbols read by oracle source files.
+
+    This mirrors the Python lint's symbol-level intent for Rust packets: a
+    test may import or qualify `miette::Report`, but that crate-root symbol must
+    be declared in the spec. Method calls on returned values are deliberately
+    not collected here; Rust's compile-visible method sets are checked by the
+    language surface/diff gates rather than by this import lint.
+    """
+    text = path.read_text(encoding="utf-8-sig", errors="replace")
+    # Drop ordinary string/char literals before scanning `crate::Name` so
+    # expected diagnostic codes such as "miette::span_out_of_bounds" do not look
+    # like public item reads.
+    scrubbed = re.sub(r'"(?:\\.|[^"\\])*"', '""', text)
+    scrubbed = re.sub(r"'(?:\\.|[^'\\])+'", "''", scrubbed)
+    found: list[tuple[str, int]] = []
+    root_alt = "|".join(re.escape(root) for root in sorted(target_roots, key=len, reverse=True))
+    if not root_alt:
+        return found
+
+    # `use miette::{Report, SourceSpan, miette};`
+    grouped = re.compile(rf"\buse\s+({root_alt})\s*::\s*\{{(?P<body>.*?)\}}\s*;", re.S)
+    for match in grouped.finditer(scrubbed):
+        lineno = scrubbed.count("\n", 0, match.start()) + 1
+        body = re.sub(r"\bas\s+[A-Za-z_][\w]*", "", match.group("body"))
+        for part in body.split(","):
+            part = part.strip()
+            if not part or part == "self" or part.startswith("{"):
+                continue
+            symbol = part.rsplit("::", 1)[-1].strip()
+            if symbol and not symbol.startswith("_") and symbol != "*":
+                found.append((symbol, lineno))
+
+    # `use miette::Report;`
+    direct_use = re.compile(rf"\buse\s+({root_alt})\s*::\s*([A-Za-z_][\w]*)")
+    for match in direct_use.finditer(scrubbed):
+        symbol = match.group(2)
+        if symbol != "self" and not symbol.startswith("_"):
+            found.append((symbol, scrubbed.count("\n", 0, match.start()) + 1))
+
+    # `miette::Report` or `miette::miette!`.
+    qualified = re.compile(rf"\b(?:{root_alt})\s*::\s*([A-Za-z_][\w]*)\s*!?")
+    for match in qualified.finditer(scrubbed):
+        symbol = match.group(1)
+        if symbol != "self" and not symbol.startswith("_"):
+            found.append((symbol, scrubbed.count("\n", 0, match.start()) + 1))
+    return found
+
+
 def main(argv: list[str]) -> int:
     if len(argv) != 3:
         print("usage: python oracle_import_lint.py <task_id> <spec_md_path>", file=sys.stderr)
@@ -416,18 +465,34 @@ def main(argv: list[str]) -> int:
     atomic_path = selected_oracle / "test_atomic.py"
     java_atomic_dir = selected_oracle / "src" / "test" / "java" / "atomic"
     java_source_root = selected_oracle / "src" / "test" / "java"
+    rust_atomic_dir = selected_oracle / "atomic"
     target_roots = set(TARGET_IMPORTS[task_id])
     violations: list[tuple[str, Path, int]] = []
     if atomic_path.exists():
         atomic_sources = [atomic_path]
     elif java_atomic_dir.is_dir():
         atomic_sources = sorted(java_source_root.rglob("*.java"))
+    elif rust_atomic_dir.is_dir():
+        atomic_sources = sorted(
+            source
+            for suite in ("atomic", "integration")
+            for source in (selected_oracle / suite).rglob("*.rs")
+        )
     else:
         print("LINT_FAIL")
         print(f"[oracle] missing [{atomic_path}] or [{java_atomic_dir}]::0")
         return 1
     for source_path in atomic_sources:
-        for module, lineno in imports_from_ast(source_path):
+        if source_path.suffix == ".rs":
+            modules = [
+                (root, lineno)
+                for lineno, line in enumerate(source_path.read_text(encoding="utf-8-sig", errors="replace").splitlines(), 1)
+                for root in target_roots
+                if re.search(rf"\buse\s+{re.escape(root)}\b", line)
+            ]
+        else:
+            modules = imports_from_ast(source_path)
+        for module, lineno in modules:
             if not any(
                 module == target or module.startswith(target + ".")
                 for target in target_roots
@@ -446,7 +511,7 @@ def main(argv: list[str]) -> int:
             if symbol in spec_words:
                 continue
             violations.append((symbol, atomic_path, lineno))
-    else:
+    elif java_atomic_dir.is_dir():
         for source_path in atomic_sources:
             for symbol, lineno in java_target_symbols(source_path, target_roots):
                 if (
@@ -455,6 +520,12 @@ def main(argv: list[str]) -> int:
                     or java_accessor_declared(symbol, spec_text, section)
                     or java_builder_member_declared(symbol, spec_text)
                 ):
+                    continue
+                violations.append((symbol, source_path, lineno))
+    else:
+        for source_path in atomic_sources:
+            for symbol, lineno in rust_target_symbols(source_path, target_roots):
+                if symbol in spec_words:
                     continue
                 violations.append((symbol, source_path, lineno))
 

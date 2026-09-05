@@ -1,0 +1,1049 @@
+{
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python_version": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "language": "rust",
+  "timeout_seconds": 120,
+  "batch_size": 20,
+  "task_dir": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/packet",
+  "oracle_dir": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/packet/oracle",
+  "solution_dir": "/mnt/g/AAAI2026/Bmk-dev/repo-pool/miette-fullrepro-001",
+  "run_dir": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run",
+  "target_modules": [
+    "miette"
+  ],
+  "setup_ok": true,
+  "setup_steps": [
+    {
+      "command": "cargo --version && cargo nextest --version",
+      "returncode": 0,
+      "stdout": "cargo 1.97.1 (c980f4866 2026-06-30)\ncargo-nextest 0.9.143 (60fa45f63 2026-08-04)\nrelease: 0.9.143\ncommit-hash: 60fa45f638ffc3f35e74afa65737f45fcd32db2a\ncommit-date: 2026-08-04\nhost: x86_64-unknown-linux-gnu\n",
+      "stderr": "",
+      "timeout": false,
+      "required": true,
+      "capture": false
+    },
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle && printf %s '\n[patch.crates-io]\nmiette = { path = \"/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace/.\" }\n' >> Cargo.toml",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false,
+      "required": true,
+      "capture": false
+    },
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle && cargo update -p miette --precise 7.6.0 2>&1",
+      "returncode": 0,
+      "stdout": "    Updating crates.io index\n      Adding miette v7.6.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace)\n    Removing miette v7.6.0\n      Adding miette-derive v7.6.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace/miette-derive)\n    Removing miette-derive v7.6.0\n    Removing unicode-width v0.1.14\n",
+      "stderr": "",
+      "timeout": false,
+      "required": false,
+      "capture": true
+    },
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace && cargo fetch 2>&1",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false,
+      "required": false,
+      "capture": true
+    },
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle && cargo fetch 2>&1",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false,
+      "required": false,
+      "capture": true
+    },
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle && cargo nextest run --no-run 2>&1",
+      "returncode": 0,
+      "stdout": "   Compiling proc-macro2 v1.0.107\n   Compiling quote v1.0.47\n   Compiling unicode-ident v1.0.24\n   Compiling serde_core v1.0.229\n   Compiling memchr v2.8.3\n   Compiling libc v0.2.189\n   Compiling object v0.37.3\n   Compiling adler2 v2.0.1\n   Compiling rustix v1.1.4\n   Compiling gimli v0.32.3\n   Compiling linux-raw-sys v0.12.1\n   Compiling bitflags v2.13.1\n   Compiling serde v1.0.229\n   Compiling rustc-demangle v0.1.28\n   Compiling zmij v1.0.23\n   Compiling cfg-if v1.0.4\n   Compiling serde_json v1.0.151\n   Compiling is_ci v1.2.0\n   Compiling unicode-width v0.2.2\n   Compiling unicode-linebreak v0.1.5\n   Compiling thiserror v2.0.20\n   Compiling supports-hyperlinks v3.2.0\n   Compiling supports-unicode v3.0.0\n   Compiling itoa v1.0.18\n   Compiling owo-colors v4.4.0\n   Compiling supports-color v3.0.2\n   Compiling textwrap v0.16.2\n   Compiling miniz_oxide v0.8.9\n   Compiling addr2line v0.25.1\n   Compiling terminal_size v0.4.4\n   Compiling syn v3.0.4\n   Compiling syn v2.0.119\n   Compiling backtrace v0.3.76\n   Compiling backtrace-ext v0.2.1\n   Compiling miette-derive v7.6.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace/miette-derive)\n   Compiling serde_derive v1.0.229\n   Compiling thiserror-impl v2.0.20\n   Compiling miette v7.6.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace)\n   Compiling atomic v0.1.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/atomic)\n   Compiling integration v0.1.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/integration)\nwarning: unused imports: `MietteDiagnostic`, `Report`, and `WrapErr`\n   --> integration/src/lib.rs:841:65\n    |\n841 |         diagnostic, Diagnostic, JSONReportHandler, LabeledSpan, MietteDiagnostic, MietteError,\n    |                                                                 ^^^^^^^^^^^^^^^^\n842 |         NamedSource, Report, Severity, SourceCode, SourceOffset, SourceSpan, WrapErr,\n    |                      ^^^^^^                                                  ^^^^^^^\n    |\n    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused import: `std::sync::Arc`\n --> atomic/src/lib.rs:5:5\n  |\n5 | use std::sync::Arc;\n  |     ^^^^^^^^^^^^^^\n  |\n  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused imports: `MietteError`, `MietteHandlerOpts`, `ReportHandler`, and `diagnostic`\n  --> atomic/src/lib.rs:8:11\n   |\n 8 |     bail, diagnostic, ensure, Diagnostic, IntoDiagnostic, JSONReportHandler, LabeledSpan,\n   |           ^^^^^^^^^^\n 9 |     MietteDiagnostic, MietteError, MietteHandlerOpts, NamedSource, NarratableReportHandler, Report,\n   |                       ^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^\n10 |     ReportHandler, Result, Severity, SourceCode, SourceOffset, SourceSpan, SpanContents, WrapErr,\n   |     ^^^^^^^^^^^^^\n\nwarning: unused imports: `MietteError`, `SourceOffset`, `SourceSpan`, and `diagnostic`\n   --> atomic/src/lib.rs:818:9\n    |\n818 |         diagnostic, Diagnostic, JSONReportHandler, LabeledSpan, MietteDiagnostic, MietteError,\n    |         ^^^^^^^^^^                                                                ^^^^^^^^^^^\n819 |         NamedSource, Report, Severity, SourceCode, SourceOffset, SourceSpan, WrapErr,\n    |                                                    ^^^^^^^^^^^^  ^^^^^^^^^^\n\nwarning: method `with_source` is never used\n  --> integration/src/lib.rs:43:8\n   |\n28 | impl BasicDiag {\n   | -------------- method in this implementation\n...\n43 |     fn with_source(mut self) -> Self {\n   |        ^^^^^^^^^^^\n   |\n   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: function `render_json` is never used\n   --> integration/src/lib.rs:116:4\n    |\n116 | fn render_json(diag: &dyn Diagnostic) -> Value {\n    |    ^^^^^^^^^^^\n\nwarning: function `render_narrated` is never used\n   --> integration/src/lib.rs:124:4\n    |\n124 | fn render_narrated(diag: &dyn Diagnostic) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: struct `CodedDiag` is never constructed\n   --> integration/src/lib.rs:417:8\n    |\n417 | struct CodedDiag;\n    |        ^^^^^^^^^\n\nwarning: enum `EnumDiag` is never used\n   --> integration/src/lib.rs:431:6\n    |\n431 | enum EnumDiag {\n    |      ^^^^^^^^\n\nwarning: struct `SourceCarrier` is never constructed\n   --> integration/src/lib.rs:452:8\n    |\n452 | struct SourceCarrier {\n    |        ^^^^^^^^^^^^^\n\nwarning: struct `TransparentDiag` is never constructed\n   --> integration/src/lib.rs:476:8\n    |\n476 | struct TransparentDiag(#[from] CodedDiag);\n    |        ^^^^^^^^^^^^^^^\n\nwarning: struct `ForwardDiag` is never constructed\n   --> integration/src/lib.rs:490:8\n    |\n490 | struct ForwardDiag {\n    |        ^^^^^^^^^^^\n\nwarning: struct `MetaDiag` is never constructed\n   --> integration/src/lib.rs:848:12\n    |\n848 |     struct MetaDiag {\n    |            ^^^^^^^^\n\nwarning: associated function `rich` is never used\n   --> integration/src/lib.rs:859:12\n    |\n858 |     impl MetaDiag {\n    |     ------------- associated function in this implementation\n859 |         fn rich() -> Self {\n    |            ^^^^\n\nwarning: struct `Leaf` is never constructed\n   --> integration/src/lib.rs:904:12\n    |\n904 |     struct Leaf;\n    |            ^^^^\n\nwarning: function `render_json` is never used\n   --> integration/src/lib.rs:906:8\n    |\n906 |     fn render_json(diag: &dyn Diagnostic) -> Value {\n    |        ^^^^^^^^^^^\n\nwarning: struct `DynamicHelp` is never constructed\n    --> integration/src/lib.rs:1059:12\n     |\n1059 |     struct DynamicHelp<'a> {\n     |            ^^^^^^^^^^^\n\nwarning: struct `HasRelated` is never constructed\n    --> integration/src/lib.rs:1074:12\n     |\n1074 |     struct HasRelated {\n     |            ^^^^^^^^^^\n\nwarning: struct `HasDiagnosticSource` is never constructed\n    --> integration/src/lib.rs:1090:12\n     |\n1090 |     struct HasDiagnosticSource {\n     |            ^^^^^^^^^^^^^^^^^^^\n\nwarning: `atomic` (lib) generated 3 warnings (run `cargo fix --lib -p atomic` to apply 3 suggestions)\nwarning: `integration` (lib) generated 16 warnings (run `cargo fix --lib -p integration` to apply 1 suggestion)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.32s\n",
+      "stderr": "",
+      "timeout": false,
+      "required": true,
+      "capture": true
+    }
+  ],
+  "provenance": {
+    "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle && cargo metadata --format-version 1 2>/dev/null | python3 -c 'import json, sys\nnames = ['\"'\"'miette'\"'\"']\npackages = {p['\"'\"'name'\"'\"']: p for p in json.load(sys.stdin).get('\"'\"'packages'\"'\"', [])}\nrows = [{'\"'\"'name'\"'\"': n,\n         '\"'\"'paths'\"'\"': [packages[n]['\"'\"'manifest_path'\"'\"']] if n in packages else [],\n         '\"'\"'direct_urls'\"'\"': [],\n         '\"'\"'error'\"'\"': None if n in packages else '\"'\"'absent from cargo metadata'\"'\"'}\n        for n in names]\nprint('\"'\"'__PROVENANCE__'\"'\"' + json.dumps(rows, sort_keys=True))\n'",
+    "returncode": 0,
+    "stdout": "__PROVENANCE__[{\"direct_urls\": [], \"error\": null, \"name\": \"miette\", \"paths\": [\"/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace/Cargo.toml\"]}]\n",
+    "stderr": "",
+    "timeout": false,
+    "rows": [
+      {
+        "direct_urls": [],
+        "error": null,
+        "name": "miette",
+        "paths": [
+          "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace/Cargo.toml"
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "batches": [
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/atomic && NEXTEST_EXPERIMENTAL_LIBTEST_JSON=1 timeout 120 cargo nextest run --message-format libtest-json -E 'test(=arc_source_code_delegates_to_inner_source) + test(=byte_source_out_of_bounds_returns_miette_error) + test(=consuming_downcast_returns_original_value) + test(=diagnostic_macro_sets_dynamic_metadata) + test(=generated_track_b::generated_source_offset_counts_utf8_bytes) + test(=generated_track_b::generated_source_read_middle_of_line_reports_column) + test(=generated_track_b::generated_source_span_inclusive_singleton_has_length_one) + test(=handler_opts_build_returns_miette_handler) + test(=miette_error_io_preserves_source) + test(=miette_error_out_of_bounds_has_code_and_help) + test(=named_source_adds_language_to_span_contents) + test(=named_source_adds_name_to_span_contents) + test(=report_handler_trait_object_downcasts_to_concrete_handler) + test(=report_msg_downcasts_to_message_type) + test(=severity_default_is_advice) + test(=source_offset_from_location_clamps_to_end) + test(=source_offset_from_location_uses_one_based_line_column) + test(=source_span_from_inclusive_range_includes_endpoint) + test(=string_source_reads_context_lines) + test(=string_source_reads_selected_span)' > /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_atomic_000.json 2>/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_atomic_000.stderr",
+      "returncode": 100,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false,
+      "suite": "atomic",
+      "offset": 0,
+      "tests": [
+        "atomic::severity_default_is_advice",
+        "atomic::source_offset_from_location_uses_one_based_line_column",
+        "atomic::source_offset_from_location_clamps_to_end",
+        "atomic::source_span_from_inclusive_range_includes_endpoint",
+        "atomic::string_source_reads_selected_span",
+        "atomic::string_source_reads_context_lines",
+        "atomic::byte_source_out_of_bounds_returns_miette_error",
+        "atomic::named_source_adds_name_to_span_contents",
+        "atomic::named_source_adds_language_to_span_contents",
+        "atomic::miette_error_out_of_bounds_has_code_and_help",
+        "atomic::miette_error_io_preserves_source",
+        "atomic::handler_opts_build_returns_miette_handler",
+        "atomic::report_msg_downcasts_to_message_type",
+        "atomic::consuming_downcast_returns_original_value",
+        "atomic::diagnostic_macro_sets_dynamic_metadata",
+        "atomic::report_handler_trait_object_downcasts_to_concrete_handler",
+        "atomic::arc_source_code_delegates_to_inner_source",
+        "atomic::generated_track_b::generated_source_offset_counts_utf8_bytes",
+        "atomic::generated_track_b::generated_source_span_inclusive_singleton_has_length_one",
+        "atomic::generated_track_b::generated_source_read_middle_of_line_reports_column"
+      ],
+      "report": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_atomic_000.json",
+      "stderr_file": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_atomic_000.stderr",
+      "report_text": "{\"type\":\"suite\",\"event\":\"started\",\"test_count\":20}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$diagnostic_macro_sets_dynamic_metadata\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$arc_source_code_delegates_to_inner_source\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$byte_source_out_of_bounds_returns_miette_error\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$consuming_downcast_returns_original_value\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_source_read_middle_of_line_reports_column\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_source_offset_counts_utf8_bytes\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$handler_opts_build_returns_miette_handler\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_source_span_inclusive_singleton_has_length_one\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$miette_error_out_of_bounds_has_code_and_help\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$named_source_adds_name_to_span_contents\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$named_source_adds_language_to_span_contents\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$report_msg_downcasts_to_message_type\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$report_handler_trait_object_downcasts_to_concrete_handler\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$source_offset_from_location_clamps_to_end\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$severity_default_is_advice\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$miette_error_io_preserves_source\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$source_span_from_inclusive_range_includes_endpoint\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$source_offset_from_location_uses_one_based_line_column\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$string_source_reads_selected_span\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$string_source_reads_context_lines\"}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_source_offset_counts_utf8_bytes\",\"exec_time\":0.105441371}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$source_offset_from_location_uses_one_based_line_column\",\"exec_time\":0.105732204}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$source_span_from_inclusive_range_includes_endpoint\",\"exec_time\":0.10759209}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_source_span_inclusive_singleton_has_length_one\",\"exec_time\":0.107778744}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$report_handler_trait_object_downcasts_to_concrete_handler\",\"exec_time\":0.108124458}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$handler_opts_build_returns_miette_handler\",\"exec_time\":0.114064655}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$source_offset_from_location_clamps_to_end\",\"exec_time\":0.114550434}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$string_source_reads_selected_span\",\"exec_time\":0.113770213}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$arc_source_code_delegates_to_inner_source\",\"exec_time\":0.114907185}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_source_read_middle_of_line_reports_column\",\"exec_time\":0.114211481}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$named_source_adds_name_to_span_contents\",\"exec_time\":0.114174046}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$byte_source_out_of_bounds_returns_miette_error\",\"exec_time\":0.115353932}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$miette_error_io_preserves_source\",\"exec_time\":0.11501953}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$diagnostic_macro_sets_dynamic_metadata\",\"exec_time\":0.115593926}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$named_source_adds_language_to_span_contents\",\"exec_time\":0.1147658}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$string_source_reads_context_lines\",\"exec_time\":0.11679716}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$report_msg_downcasts_to_message_type\",\"exec_time\":0.117234601}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$consuming_downcast_returns_original_value\",\"exec_time\":0.117633196}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$miette_error_out_of_bounds_has_code_and_help\",\"exec_time\":0.119945551}\n{\"type\":\"test\",\"event\":\"failed\",\"name\":\"atomic::atomic$severity_default_is_advice\",\"exec_time\":0.12162743,\"stdout\":\"\\nthread 'severity_default_is_advice' (132125) panicked at atomic/src/lib.rs:136:5:\\nassertion `left == right` failed\\n  left: Error\\n right: Advice\\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\\n\"}\n{\"type\":\"suite\",\"event\":\"failed\",\"passed\":19,\"failed\":1,\"ignored\":0,\"measured\":0,\"filtered_out\":10,\"exec_time\":2.2743180069999998}\n",
+      "stderr_text": "   Compiling quote v1.0.47\n   Compiling object v0.37.3\n   Compiling serde_core v1.0.229\n   Compiling libc v0.2.189\n   Compiling rustix v1.1.4\n   Compiling serde v1.0.229\n   Compiling zmij v1.0.23\n   Compiling thiserror v2.0.20\n   Compiling syn v3.0.4\n   Compiling syn v2.0.119\n   Compiling serde_json v1.0.151\n   Compiling terminal_size v0.4.4\n   Compiling backtrace v0.3.76\n   Compiling miette-derive v7.6.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace/miette-derive)\n   Compiling serde_derive v1.0.229\n   Compiling thiserror-impl v2.0.20\n   Compiling backtrace-ext v0.2.1\n   Compiling miette v7.6.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace)\n   Compiling atomic v0.1.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/atomic)\nwarning: unused import: `std::sync::Arc`\n --> atomic/src/lib.rs:5:5\n  |\n5 | use std::sync::Arc;\n  |     ^^^^^^^^^^^^^^\n  |\n  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused imports: `MietteError`, `MietteHandlerOpts`, `ReportHandler`, and `diagnostic`\n  --> atomic/src/lib.rs:8:11\n   |\n 8 |     bail, diagnostic, ensure, Diagnostic, IntoDiagnostic, JSONReportHandler, LabeledSpan,\n   |           ^^^^^^^^^^\n 9 |     MietteDiagnostic, MietteError, MietteHandlerOpts, NamedSource, NarratableReportHandler, Report,\n   |                       ^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^\n10 |     ReportHandler, Result, Severity, SourceCode, SourceOffset, SourceSpan, SpanContents, WrapErr,\n   |     ^^^^^^^^^^^^^\n\nwarning: unused imports: `MietteError`, `SourceOffset`, `SourceSpan`, and `diagnostic`\n   --> atomic/src/lib.rs:818:9\n    |\n818 |         diagnostic, Diagnostic, JSONReportHandler, LabeledSpan, MietteDiagnostic, MietteError,\n    |         ^^^^^^^^^^                                                                ^^^^^^^^^^^\n819 |         NamedSource, Report, Severity, SourceCode, SourceOffset, SourceSpan, WrapErr,\n    |                                                    ^^^^^^^^^^^^  ^^^^^^^^^^\n\nwarning: `atomic` (lib) generated 3 warnings (run `cargo fix --lib -p atomic` to apply 3 suggestions)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 23.93s\n────────────\n Nextest run ID e9108771-c30f-4090-a48e-81dce9884188 with nextest profile: default\n    Starting 20 tests across 1 binary (10 tests skipped)\n        PASS [   0.105s] ( 1/20) atomic generated_track_b::generated_source_offset_counts_utf8_bytes\n        PASS [   0.106s] ( 2/20) atomic source_offset_from_location_uses_one_based_line_column\n        PASS [   0.108s] ( 3/20) atomic source_span_from_inclusive_range_includes_endpoint\n        PASS [   0.108s] ( 4/20) atomic generated_track_b::generated_source_span_inclusive_singleton_has_length_one\n        PASS [   0.108s] ( 5/20) atomic report_handler_trait_object_downcasts_to_concrete_handler\n        PASS [   0.114s] ( 6/20) atomic handler_opts_build_returns_miette_handler\n        PASS [   0.115s] ( 7/20) atomic source_offset_from_location_clamps_to_end\n        PASS [   0.114s] ( 8/20) atomic string_source_reads_selected_span\n        PASS [   0.115s] ( 9/20) atomic arc_source_code_delegates_to_inner_source\n        PASS [   0.114s] (10/20) atomic generated_track_b::generated_source_read_middle_of_line_reports_column\n        PASS [   0.114s] (11/20) atomic named_source_adds_name_to_span_contents\n        PASS [   0.115s] (12/20) atomic byte_source_out_of_bounds_returns_miette_error\n        PASS [   0.115s] (13/20) atomic miette_error_io_preserves_source\n        PASS [   0.116s] (14/20) atomic diagnostic_macro_sets_dynamic_metadata\n        PASS [   0.115s] (15/20) atomic named_source_adds_language_to_span_contents\n        PASS [   0.117s] (16/20) atomic string_source_reads_context_lines\n        PASS [   0.117s] (17/20) atomic report_msg_downcasts_to_message_type\n        PASS [   0.118s] (18/20) atomic consuming_downcast_returns_original_value\n        PASS [   0.120s] (19/20) atomic miette_error_out_of_bounds_has_code_and_help\n        FAIL [   0.122s] (20/20) atomic severity_default_is_advice\n  output ───\n\n    running 1 test\n\n    thread 'severity_default_is_advice' (132125) panicked at atomic/src/lib.rs:136:5:\n    assertion `left == right` failed\n      left: Error\n     right: Advice\n    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n    test severity_default_is_advice ... FAILED\n\n    failures:\n\n    failures:\n        severity_default_is_advice\n\n    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.02s\n\n\n  Cancelling due to test failure: \n────────────\n     Summary [   0.125s] 20 tests run: 19 passed, 1 failed, 10 skipped\n        FAIL [   0.122s] (20/20) atomic severity_default_is_advice\nerror: test run failed\n",
+      "outcomes": {
+        "atomic::generated_track_b::generated_source_offset_counts_utf8_bytes": "passed",
+        "atomic::source_offset_from_location_uses_one_based_line_column": "passed",
+        "atomic::source_span_from_inclusive_range_includes_endpoint": "passed",
+        "atomic::generated_track_b::generated_source_span_inclusive_singleton_has_length_one": "passed",
+        "atomic::report_handler_trait_object_downcasts_to_concrete_handler": "passed",
+        "atomic::handler_opts_build_returns_miette_handler": "passed",
+        "atomic::source_offset_from_location_clamps_to_end": "passed",
+        "atomic::string_source_reads_selected_span": "passed",
+        "atomic::arc_source_code_delegates_to_inner_source": "passed",
+        "atomic::generated_track_b::generated_source_read_middle_of_line_reports_column": "passed",
+        "atomic::named_source_adds_name_to_span_contents": "passed",
+        "atomic::byte_source_out_of_bounds_returns_miette_error": "passed",
+        "atomic::miette_error_io_preserves_source": "passed",
+        "atomic::diagnostic_macro_sets_dynamic_metadata": "passed",
+        "atomic::named_source_adds_language_to_span_contents": "passed",
+        "atomic::string_source_reads_context_lines": "passed",
+        "atomic::report_msg_downcasts_to_message_type": "passed",
+        "atomic::consuming_downcast_returns_original_value": "passed",
+        "atomic::miette_error_out_of_bounds_has_code_and_help": "passed",
+        "atomic::severity_default_is_advice": "failed"
+      }
+    },
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/atomic && NEXTEST_EXPERIMENTAL_LIBTEST_JSON=1 timeout 120 cargo nextest run --message-format libtest-json -E 'test(=generated_track_b::generated_diagnostic_macro_sets_labels) + test(=generated_track_b::generated_diagnostic_macro_sets_url) + test(=generated_track_b::generated_io_error_url_names_variant) + test(=generated_track_b::generated_out_of_bounds_display_is_protocol_message) + test(=generated_track_b::generated_out_of_bounds_url_names_variant) + test(=generated_track_b::generated_source_context_updates_returned_span_offset) + test(=generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment) + test(=generated_track_b::generated_source_read_crlf_counts_one_line_break) + test(=generated_track_b::generated_source_read_zero_length_span_returns_empty_slice) + test(=generated_track_b::generated_vec_source_out_of_bounds_returns_error)' > /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_atomic_020.json 2>/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_atomic_020.stderr",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false,
+      "suite": "atomic",
+      "offset": 20,
+      "tests": [
+        "atomic::generated_track_b::generated_source_read_crlf_counts_one_line_break",
+        "atomic::generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment",
+        "atomic::generated_track_b::generated_source_read_zero_length_span_returns_empty_slice",
+        "atomic::generated_track_b::generated_source_context_updates_returned_span_offset",
+        "atomic::generated_track_b::generated_vec_source_out_of_bounds_returns_error",
+        "atomic::generated_track_b::generated_out_of_bounds_display_is_protocol_message",
+        "atomic::generated_track_b::generated_out_of_bounds_url_names_variant",
+        "atomic::generated_track_b::generated_io_error_url_names_variant",
+        "atomic::generated_track_b::generated_diagnostic_macro_sets_url",
+        "atomic::generated_track_b::generated_diagnostic_macro_sets_labels"
+      ],
+      "report": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_atomic_020.json",
+      "stderr_file": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_atomic_020.stderr",
+      "report_text": "{\"type\":\"suite\",\"event\":\"started\",\"test_count\":10}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_out_of_bounds_display_is_protocol_message\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_diagnostic_macro_sets_url\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_io_error_url_names_variant\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_source_context_updates_returned_span_offset\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_out_of_bounds_url_names_variant\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_source_read_crlf_counts_one_line_break\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_diagnostic_macro_sets_labels\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_vec_source_out_of_bounds_returns_error\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"atomic::atomic$generated_track_b::generated_source_read_zero_length_span_returns_empty_slice\"}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_vec_source_out_of_bounds_returns_error\",\"exec_time\":0.034904973}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_source_read_zero_length_span_returns_empty_slice\",\"exec_time\":0.035440797}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_source_read_crlf_counts_one_line_break\",\"exec_time\":0.035584277}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_source_context_updates_returned_span_offset\",\"exec_time\":0.035525441}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_out_of_bounds_url_names_variant\",\"exec_time\":0.035503419}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_out_of_bounds_display_is_protocol_message\",\"exec_time\":0.035827508}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_io_error_url_names_variant\",\"exec_time\":0.035559778}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_diagnostic_macro_sets_labels\",\"exec_time\":0.036795073}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_diagnostic_macro_sets_url\",\"exec_time\":0.03767611}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"atomic::atomic$generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment\",\"exec_time\":0.037938534}\n{\"type\":\"suite\",\"event\":\"ok\",\"passed\":10,\"failed\":0,\"ignored\":0,\"measured\":0,\"filtered_out\":20,\"exec_time\":0.36075591}\n",
+      "stderr_text": "   Compiling serde_core v1.0.229\n   Compiling serde v1.0.229\n   Compiling serde_json v1.0.151\n   Compiling miette v7.6.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/workspace)\n   Compiling atomic v0.1.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/atomic)\nwarning: unused import: `std::sync::Arc`\n --> atomic/src/lib.rs:5:5\n  |\n5 | use std::sync::Arc;\n  |     ^^^^^^^^^^^^^^\n  |\n  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\nwarning: unused imports: `MietteError`, `MietteHandlerOpts`, `ReportHandler`, and `diagnostic`\n  --> atomic/src/lib.rs:8:11\n   |\n 8 |     bail, diagnostic, ensure, Diagnostic, IntoDiagnostic, JSONReportHandler, LabeledSpan,\n   |           ^^^^^^^^^^\n 9 |     MietteDiagnostic, MietteError, MietteHandlerOpts, NamedSource, NarratableReportHandler, Report,\n   |                       ^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^\n10 |     ReportHandler, Result, Severity, SourceCode, SourceOffset, SourceSpan, SpanContents, WrapErr,\n   |     ^^^^^^^^^^^^^\n\nwarning: unused imports: `MietteError`, `SourceOffset`, `SourceSpan`, and `diagnostic`\n   --> atomic/src/lib.rs:818:9\n    |\n818 |         diagnostic, Diagnostic, JSONReportHandler, LabeledSpan, MietteDiagnostic, MietteError,\n    |         ^^^^^^^^^^                                                                ^^^^^^^^^^^\n819 |         NamedSource, Report, Severity, SourceCode, SourceOffset, SourceSpan, WrapErr,\n    |                                                    ^^^^^^^^^^^^  ^^^^^^^^^^\n\nwarning: `atomic` (lib) generated 3 warnings (run `cargo fix --lib -p atomic` to apply 3 suggestions)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.71s\n────────────\n Nextest run ID 9999e76a-34f1-47fd-b2f4-3bc17f5af1a3 with nextest profile: default\n    Starting 10 tests across 1 binary (20 tests skipped)\n        PASS [   0.035s] ( 1/10) atomic generated_track_b::generated_vec_source_out_of_bounds_returns_error\n        PASS [   0.035s] ( 2/10) atomic generated_track_b::generated_source_read_zero_length_span_returns_empty_slice\n        PASS [   0.036s] ( 3/10) atomic generated_track_b::generated_source_read_crlf_counts_one_line_break\n        PASS [   0.036s] ( 4/10) atomic generated_track_b::generated_source_context_updates_returned_span_offset\n        PASS [   0.036s] ( 5/10) atomic generated_track_b::generated_out_of_bounds_url_names_variant\n        PASS [   0.036s] ( 6/10) atomic generated_track_b::generated_out_of_bounds_display_is_protocol_message\n        PASS [   0.036s] ( 7/10) atomic generated_track_b::generated_io_error_url_names_variant\n        PASS [   0.037s] ( 8/10) atomic generated_track_b::generated_diagnostic_macro_sets_labels\n        PASS [   0.038s] ( 9/10) atomic generated_track_b::generated_diagnostic_macro_sets_url\n        PASS [   0.038s] (10/10) atomic generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment\n────────────\n     Summary [   0.039s] 10 tests run: 10 passed, 20 skipped\n",
+      "outcomes": {
+        "atomic::generated_track_b::generated_vec_source_out_of_bounds_returns_error": "passed",
+        "atomic::generated_track_b::generated_source_read_zero_length_span_returns_empty_slice": "passed",
+        "atomic::generated_track_b::generated_source_read_crlf_counts_one_line_break": "passed",
+        "atomic::generated_track_b::generated_source_context_updates_returned_span_offset": "passed",
+        "atomic::generated_track_b::generated_out_of_bounds_url_names_variant": "passed",
+        "atomic::generated_track_b::generated_out_of_bounds_display_is_protocol_message": "passed",
+        "atomic::generated_track_b::generated_io_error_url_names_variant": "passed",
+        "atomic::generated_track_b::generated_diagnostic_macro_sets_labels": "passed",
+        "atomic::generated_track_b::generated_diagnostic_macro_sets_url": "passed",
+        "atomic::generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment": "passed"
+      }
+    },
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/integration && NEXTEST_EXPERIMENTAL_LIBTEST_JSON=1 timeout 120 cargo nextest run --message-format libtest-json -E 'test(=derive_enum_variant_metadata) + test(=derive_forward_uses_inner_and_allows_override) + test(=derive_source_code_and_label_fields) + test(=derive_struct_static_metadata) + test(=derive_transparent_delegates_metadata) + test(=json_absent_severity_renders_advice) + test(=json_causes_use_diagnostic_source_first) + test(=json_escapes_strings) + test(=json_explicit_severity_renders_lowercase) + test(=json_filename_comes_from_first_label_source) + test(=json_includes_code_help_and_url) + test(=json_label_contains_span_without_primary_flag) + test(=json_related_inherits_parent_source_for_filename) + test(=json_related_renders_recursively) + test(=narrated_absent_severity_renders_advice) + test(=narrated_includes_help_code_and_url) + test(=narrated_includes_source_label_text) + test(=narrated_related_diagnostic_is_rendered) + test(=report_new_derefs_to_diagnostic_metadata) + test(=wrapping_preserves_original_downcast)' > /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_integration_000.json 2>/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_integration_000.stderr",
+      "returncode": 100,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false,
+      "suite": "integration",
+      "offset": 0,
+      "tests": [
+        "integration::derive_struct_static_metadata",
+        "integration::derive_enum_variant_metadata",
+        "integration::derive_source_code_and_label_fields",
+        "integration::derive_transparent_delegates_metadata",
+        "integration::derive_forward_uses_inner_and_allows_override",
+        "integration::json_absent_severity_renders_advice",
+        "integration::json_explicit_severity_renders_lowercase",
+        "integration::json_includes_code_help_and_url",
+        "integration::json_escapes_strings",
+        "integration::json_label_contains_span_without_primary_flag",
+        "integration::json_filename_comes_from_first_label_source",
+        "integration::json_causes_use_diagnostic_source_first",
+        "integration::json_related_renders_recursively",
+        "integration::json_related_inherits_parent_source_for_filename",
+        "integration::narrated_absent_severity_renders_advice",
+        "integration::narrated_includes_help_code_and_url",
+        "integration::narrated_includes_source_label_text",
+        "integration::narrated_related_diagnostic_is_rendered",
+        "integration::report_new_derefs_to_diagnostic_metadata",
+        "integration::wrapping_preserves_original_downcast"
+      ],
+      "report": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_integration_000.json",
+      "stderr_file": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_integration_000.stderr",
+      "report_text": "{\"type\":\"suite\",\"event\":\"started\",\"test_count\":20}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$derive_struct_static_metadata\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$derive_forward_uses_inner_and_allows_override\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$derive_source_code_and_label_fields\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$derive_transparent_delegates_metadata\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_absent_severity_renders_advice\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_causes_use_diagnostic_source_first\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_escapes_strings\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$derive_enum_variant_metadata\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_filename_comes_from_first_label_source\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_explicit_severity_renders_lowercase\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_label_contains_span_without_primary_flag\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_includes_code_help_and_url\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_related_renders_recursively\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$json_related_inherits_parent_source_for_filename\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$narrated_includes_help_code_and_url\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$narrated_absent_severity_renders_advice\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$narrated_related_diagnostic_is_rendered\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$narrated_includes_source_label_text\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$wrapping_preserves_original_downcast\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$report_new_derefs_to_diagnostic_metadata\"}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$derive_transparent_delegates_metadata\",\"exec_time\":0.089543686}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$derive_struct_static_metadata\",\"exec_time\":0.090179937}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$derive_forward_uses_inner_and_allows_override\",\"exec_time\":0.090152931}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$derive_enum_variant_metadata\",\"exec_time\":0.090478642}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$narrated_includes_help_code_and_url\",\"exec_time\":0.089074528}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$json_related_inherits_parent_source_for_filename\",\"exec_time\":0.091421044}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$json_explicit_severity_renders_lowercase\",\"exec_time\":0.092764219}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$json_includes_code_help_and_url\",\"exec_time\":0.092366689}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$json_escapes_strings\",\"exec_time\":0.092831939}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$narrated_includes_source_label_text\",\"exec_time\":0.091979559}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$json_label_contains_span_without_primary_flag\",\"exec_time\":0.093102706}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$json_filename_comes_from_first_label_source\",\"exec_time\":0.093568709}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$json_related_renders_recursively\",\"exec_time\":0.09305706}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$derive_source_code_and_label_fields\",\"exec_time\":0.094493618}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$json_causes_use_diagnostic_source_first\",\"exec_time\":0.094507333}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$report_new_derefs_to_diagnostic_metadata\",\"exec_time\":0.093386072}\n{\"type\":\"test\",\"event\":\"failed\",\"name\":\"integration::integration$narrated_absent_severity_renders_advice\",\"exec_time\":0.092797295,\"stdout\":\"\\nthread 'narrated_absent_severity_renders_advice' (132963) panicked at integration/src/lib.rs:606:5:\\nassertion failed: text.contains(\\\"Diagnostic severity: advice\\\")\\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\\n\"}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$wrapping_preserves_original_downcast\",\"exec_time\":0.091758402}\n{\"type\":\"test\",\"event\":\"failed\",\"name\":\"integration::integration$json_absent_severity_renders_advice\",\"exec_time\":0.099652362,\"stdout\":\"\\nthread 'json_absent_severity_renders_advice' (132951) panicked at integration/src/lib.rs:509:5:\\nassertion `left == right` failed\\n  left: String(\\\"error\\\")\\n right: \\\"advice\\\"\\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\\n\"}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$narrated_related_diagnostic_is_rendered\",\"exec_time\":0.099439863}\n{\"type\":\"suite\",\"event\":\"failed\",\"passed\":18,\"failed\":2,\"ignored\":0,\"measured\":0,\"filtered_out\":12,\"exec_time\":1.856556594}\n",
+      "stderr_text": "   Compiling integration v0.1.0 (/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/integration)\nwarning: unused imports: `MietteDiagnostic`, `Report`, and `WrapErr`\n   --> integration/src/lib.rs:841:65\n    |\n841 |         diagnostic, Diagnostic, JSONReportHandler, LabeledSpan, MietteDiagnostic, MietteError,\n    |                                                                 ^^^^^^^^^^^^^^^^\n842 |         NamedSource, Report, Severity, SourceCode, SourceOffset, SourceSpan, WrapErr,\n    |                      ^^^^^^                                                  ^^^^^^^\n    |\n    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\nwarning: method `with_source` is never used\n  --> integration/src/lib.rs:43:8\n   |\n28 | impl BasicDiag {\n   | -------------- method in this implementation\n...\n43 |     fn with_source(mut self) -> Self {\n   |        ^^^^^^^^^^^\n   |\n   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: function `render_json` is never used\n   --> integration/src/lib.rs:116:4\n    |\n116 | fn render_json(diag: &dyn Diagnostic) -> Value {\n    |    ^^^^^^^^^^^\n\nwarning: function `render_narrated` is never used\n   --> integration/src/lib.rs:124:4\n    |\n124 | fn render_narrated(diag: &dyn Diagnostic) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: struct `CodedDiag` is never constructed\n   --> integration/src/lib.rs:417:8\n    |\n417 | struct CodedDiag;\n    |        ^^^^^^^^^\n\nwarning: enum `EnumDiag` is never used\n   --> integration/src/lib.rs:431:6\n    |\n431 | enum EnumDiag {\n    |      ^^^^^^^^\n\nwarning: struct `SourceCarrier` is never constructed\n   --> integration/src/lib.rs:452:8\n    |\n452 | struct SourceCarrier {\n    |        ^^^^^^^^^^^^^\n\nwarning: struct `TransparentDiag` is never constructed\n   --> integration/src/lib.rs:476:8\n    |\n476 | struct TransparentDiag(#[from] CodedDiag);\n    |        ^^^^^^^^^^^^^^^\n\nwarning: struct `ForwardDiag` is never constructed\n   --> integration/src/lib.rs:490:8\n    |\n490 | struct ForwardDiag {\n    |        ^^^^^^^^^^^\n\nwarning: struct `MetaDiag` is never constructed\n   --> integration/src/lib.rs:848:12\n    |\n848 |     struct MetaDiag {\n    |            ^^^^^^^^\n\nwarning: associated function `rich` is never used\n   --> integration/src/lib.rs:859:12\n    |\n858 |     impl MetaDiag {\n    |     ------------- associated function in this implementation\n859 |         fn rich() -> Self {\n    |            ^^^^\n\nwarning: struct `Leaf` is never constructed\n   --> integration/src/lib.rs:904:12\n    |\n904 |     struct Leaf;\n    |            ^^^^\n\nwarning: function `render_json` is never used\n   --> integration/src/lib.rs:906:8\n    |\n906 |     fn render_json(diag: &dyn Diagnostic) -> Value {\n    |        ^^^^^^^^^^^\n\nwarning: struct `DynamicHelp` is never constructed\n    --> integration/src/lib.rs:1059:12\n     |\n1059 |     struct DynamicHelp<'a> {\n     |            ^^^^^^^^^^^\n\nwarning: struct `HasRelated` is never constructed\n    --> integration/src/lib.rs:1074:12\n     |\n1074 |     struct HasRelated {\n     |            ^^^^^^^^^^\n\nwarning: struct `HasDiagnosticSource` is never constructed\n    --> integration/src/lib.rs:1090:12\n     |\n1090 |     struct HasDiagnosticSource {\n     |            ^^^^^^^^^^^^^^^^^^^\n\nwarning: `integration` (lib) generated 16 warnings (run `cargo fix --lib -p integration` to apply 1 suggestion)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.78s\n────────────\n Nextest run ID dc9e3966-149f-4b67-bf65-bbbb09410297 with nextest profile: default\n    Starting 20 tests across 1 binary (12 tests skipped)\n        PASS [   0.090s] ( 1/20) integration derive_transparent_delegates_metadata\n        PASS [   0.090s] ( 2/20) integration derive_struct_static_metadata\n        PASS [   0.090s] ( 3/20) integration derive_forward_uses_inner_and_allows_override\n        PASS [   0.090s] ( 4/20) integration derive_enum_variant_metadata\n        PASS [   0.089s] ( 5/20) integration narrated_includes_help_code_and_url\n        PASS [   0.091s] ( 6/20) integration json_related_inherits_parent_source_for_filename\n        PASS [   0.093s] ( 7/20) integration json_explicit_severity_renders_lowercase\n        PASS [   0.092s] ( 8/20) integration json_includes_code_help_and_url\n        PASS [   0.093s] ( 9/20) integration json_escapes_strings\n        PASS [   0.092s] (10/20) integration narrated_includes_source_label_text\n        PASS [   0.093s] (11/20) integration json_label_contains_span_without_primary_flag\n        PASS [   0.094s] (12/20) integration json_filename_comes_from_first_label_source\n        PASS [   0.093s] (13/20) integration json_related_renders_recursively\n        PASS [   0.094s] (14/20) integration derive_source_code_and_label_fields\n        PASS [   0.095s] (15/20) integration json_causes_use_diagnostic_source_first\n        PASS [   0.093s] (16/20) integration report_new_derefs_to_diagnostic_metadata\n        FAIL [   0.093s] (17/20) integration narrated_absent_severity_renders_advice\n  output ───\n\n    running 1 test\n\n    thread 'narrated_absent_severity_renders_advice' (132963) panicked at integration/src/lib.rs:606:5:\n    assertion failed: text.contains(\"Diagnostic severity: advice\")\n    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n    test narrated_absent_severity_renders_advice ... FAILED\n\n    failures:\n\n    failures:\n        narrated_absent_severity_renders_advice\n\n    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.01s\n\n\n  Cancelling due to test failure: 3 tests still running\n        PASS [   0.092s] (18/20) integration wrapping_preserves_original_downcast\n        FAIL [   0.100s] (19/20) integration json_absent_severity_renders_advice\n  output ───\n\n    running 1 test\n\n    thread 'json_absent_severity_renders_advice' (132951) panicked at integration/src/lib.rs:509:5:\n    assertion `left == right` failed\n      left: String(\"error\")\n     right: \"advice\"\n    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n    test json_absent_severity_renders_advice ... FAILED\n\n    failures:\n\n    failures:\n        json_absent_severity_renders_advice\n\n    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.02s\n\n\n        PASS [   0.099s] (20/20) integration narrated_related_diagnostic_is_rendered\n────────────\n     Summary [   0.104s] 20 tests run: 18 passed, 2 failed, 12 skipped\n        FAIL [   0.093s] (17/20) integration narrated_absent_severity_renders_advice\n        FAIL [   0.100s] (19/20) integration json_absent_severity_renders_advice\nerror: test run failed\n",
+      "outcomes": {
+        "integration::derive_transparent_delegates_metadata": "passed",
+        "integration::derive_struct_static_metadata": "passed",
+        "integration::derive_forward_uses_inner_and_allows_override": "passed",
+        "integration::derive_enum_variant_metadata": "passed",
+        "integration::narrated_includes_help_code_and_url": "passed",
+        "integration::json_related_inherits_parent_source_for_filename": "passed",
+        "integration::json_explicit_severity_renders_lowercase": "passed",
+        "integration::json_includes_code_help_and_url": "passed",
+        "integration::json_escapes_strings": "passed",
+        "integration::narrated_includes_source_label_text": "passed",
+        "integration::json_label_contains_span_without_primary_flag": "passed",
+        "integration::json_filename_comes_from_first_label_source": "passed",
+        "integration::json_related_renders_recursively": "passed",
+        "integration::derive_source_code_and_label_fields": "passed",
+        "integration::json_causes_use_diagnostic_source_first": "passed",
+        "integration::report_new_derefs_to_diagnostic_metadata": "passed",
+        "integration::narrated_absent_severity_renders_advice": "failed",
+        "integration::wrapping_preserves_original_downcast": "passed",
+        "integration::json_absent_severity_renders_advice": "failed",
+        "integration::narrated_related_diagnostic_is_rendered": "passed"
+      }
+    },
+    {
+      "command": "cd /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/oracle/integration && NEXTEST_EXPERIMENTAL_LIBTEST_JSON=1 timeout 120 cargo nextest run --message-format libtest-json -E 'test(=chain_iterates_outer_to_root) + test(=generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts) + test(=generated_track_b::generated_derive_diagnostic_source_is_json_cause) + test(=generated_track_b::generated_derive_help_field_is_dynamic) + test(=generated_track_b::generated_derive_related_field_returns_children) + test(=generated_track_b::generated_json_report_projects_source_label_and_metadata_together) + test(=generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source) + test(=generated_track_b::generated_report_new_boxed_preserves_diagnostic_help) + test(=generated_track_b::generated_report_new_preserves_diagnostic_code) + test(=generated_track_b::generated_report_wrap_err_forwards_inner_code) + test(=root_cause_returns_last_chain_error) + test(=with_source_code_supplies_source_for_report_labels)' > /mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_integration_020.json 2>/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_integration_020.stderr",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "timeout": false,
+      "suite": "integration",
+      "offset": 20,
+      "tests": [
+        "integration::chain_iterates_outer_to_root",
+        "integration::root_cause_returns_last_chain_error",
+        "integration::with_source_code_supplies_source_for_report_labels",
+        "integration::generated_track_b::generated_report_new_preserves_diagnostic_code",
+        "integration::generated_track_b::generated_report_new_boxed_preserves_diagnostic_help",
+        "integration::generated_track_b::generated_report_wrap_err_forwards_inner_code",
+        "integration::generated_track_b::generated_derive_help_field_is_dynamic",
+        "integration::generated_track_b::generated_derive_related_field_returns_children",
+        "integration::generated_track_b::generated_derive_diagnostic_source_is_json_cause",
+        "integration::generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source",
+        "integration::generated_track_b::generated_json_report_projects_source_label_and_metadata_together",
+        "integration::generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts"
+      ],
+      "report": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_integration_020.json",
+      "stderr_file": "/mnt/g/AAAI2026/Bmk-dev/wip/rust/miette-fullrepro-001/filter/clean_upstream_run/rb_integration_020.stderr",
+      "report_text": "{\"type\":\"suite\",\"event\":\"started\",\"test_count\":12}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_derive_help_field_is_dynamic\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_derive_diagnostic_source_is_json_cause\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_json_report_projects_source_label_and_metadata_together\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_derive_related_field_returns_children\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$chain_iterates_outer_to_root\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_report_new_boxed_preserves_diagnostic_help\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_report_wrap_err_forwards_inner_code\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$generated_track_b::generated_report_new_preserves_diagnostic_code\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$with_source_code_supplies_source_for_report_labels\"}\n{\"type\":\"test\",\"event\":\"started\",\"name\":\"integration::integration$root_cause_returns_last_chain_error\"}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_report_new_boxed_preserves_diagnostic_help\",\"exec_time\":0.0665623}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts\",\"exec_time\":0.06679412}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_report_new_preserves_diagnostic_code\",\"exec_time\":0.06583447}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_report_wrap_err_forwards_inner_code\",\"exec_time\":0.066091903}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_derive_related_field_returns_children\",\"exec_time\":0.066979387}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_derive_help_field_is_dynamic\",\"exec_time\":0.067189541}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$chain_iterates_outer_to_root\",\"exec_time\":0.068066868}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_derive_diagnostic_source_is_json_cause\",\"exec_time\":0.068135764}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source\",\"exec_time\":0.067875296}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$generated_track_b::generated_json_report_projects_source_label_and_metadata_together\",\"exec_time\":0.068116963}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$with_source_code_supplies_source_for_report_labels\",\"exec_time\":0.067796482}\n{\"type\":\"test\",\"event\":\"ok\",\"name\":\"integration::integration$root_cause_returns_last_chain_error\",\"exec_time\":0.072516699}\n{\"type\":\"suite\",\"event\":\"ok\",\"passed\":12,\"failed\":0,\"ignored\":0,\"measured\":0,\"filtered_out\":20,\"exec_time\":0.811959793}\n",
+      "stderr_text": "warning: unused imports: `MietteDiagnostic`, `Report`, and `WrapErr`\n   --> integration/src/lib.rs:841:65\n    |\n841 |         diagnostic, Diagnostic, JSONReportHandler, LabeledSpan, MietteDiagnostic, MietteError,\n    |                                                                 ^^^^^^^^^^^^^^^^\n842 |         NamedSource, Report, Severity, SourceCode, SourceOffset, SourceSpan, WrapErr,\n    |                      ^^^^^^                                                  ^^^^^^^\n    |\n    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\nwarning: method `with_source` is never used\n  --> integration/src/lib.rs:43:8\n   |\n28 | impl BasicDiag {\n   | -------------- method in this implementation\n...\n43 |     fn with_source(mut self) -> Self {\n   |        ^^^^^^^^^^^\n   |\n   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\nwarning: function `render_json` is never used\n   --> integration/src/lib.rs:116:4\n    |\n116 | fn render_json(diag: &dyn Diagnostic) -> Value {\n    |    ^^^^^^^^^^^\n\nwarning: function `render_narrated` is never used\n   --> integration/src/lib.rs:124:4\n    |\n124 | fn render_narrated(diag: &dyn Diagnostic) -> String {\n    |    ^^^^^^^^^^^^^^^\n\nwarning: struct `CodedDiag` is never constructed\n   --> integration/src/lib.rs:417:8\n    |\n417 | struct CodedDiag;\n    |        ^^^^^^^^^\n\nwarning: enum `EnumDiag` is never used\n   --> integration/src/lib.rs:431:6\n    |\n431 | enum EnumDiag {\n    |      ^^^^^^^^\n\nwarning: struct `SourceCarrier` is never constructed\n   --> integration/src/lib.rs:452:8\n    |\n452 | struct SourceCarrier {\n    |        ^^^^^^^^^^^^^\n\nwarning: struct `TransparentDiag` is never constructed\n   --> integration/src/lib.rs:476:8\n    |\n476 | struct TransparentDiag(#[from] CodedDiag);\n    |        ^^^^^^^^^^^^^^^\n\nwarning: struct `ForwardDiag` is never constructed\n   --> integration/src/lib.rs:490:8\n    |\n490 | struct ForwardDiag {\n    |        ^^^^^^^^^^^\n\nwarning: struct `MetaDiag` is never constructed\n   --> integration/src/lib.rs:848:12\n    |\n848 |     struct MetaDiag {\n    |            ^^^^^^^^\n\nwarning: associated function `rich` is never used\n   --> integration/src/lib.rs:859:12\n    |\n858 |     impl MetaDiag {\n    |     ------------- associated function in this implementation\n859 |         fn rich() -> Self {\n    |            ^^^^\n\nwarning: struct `Leaf` is never constructed\n   --> integration/src/lib.rs:904:12\n    |\n904 |     struct Leaf;\n    |            ^^^^\n\nwarning: function `render_json` is never used\n   --> integration/src/lib.rs:906:8\n    |\n906 |     fn render_json(diag: &dyn Diagnostic) -> Value {\n    |        ^^^^^^^^^^^\n\nwarning: struct `DynamicHelp` is never constructed\n    --> integration/src/lib.rs:1059:12\n     |\n1059 |     struct DynamicHelp<'a> {\n     |            ^^^^^^^^^^^\n\nwarning: struct `HasRelated` is never constructed\n    --> integration/src/lib.rs:1074:12\n     |\n1074 |     struct HasRelated {\n     |            ^^^^^^^^^^\n\nwarning: struct `HasDiagnosticSource` is never constructed\n    --> integration/src/lib.rs:1090:12\n     |\n1090 |     struct HasDiagnosticSource {\n     |            ^^^^^^^^^^^^^^^^^^^\n\nwarning: `integration` (lib) generated 16 warnings (run `cargo fix --lib -p integration` to apply 1 suggestion)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.14s\n────────────\n Nextest run ID ea8823cc-adc2-4fa9-8d2d-bb0282de1d0f with nextest profile: default\n    Starting 12 tests across 1 binary (20 tests skipped)\n        PASS [   0.067s] ( 1/12) integration generated_track_b::generated_report_new_boxed_preserves_diagnostic_help\n        PASS [   0.067s] ( 2/12) integration generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts\n        PASS [   0.066s] ( 3/12) integration generated_track_b::generated_report_new_preserves_diagnostic_code\n        PASS [   0.066s] ( 4/12) integration generated_track_b::generated_report_wrap_err_forwards_inner_code\n        PASS [   0.067s] ( 5/12) integration generated_track_b::generated_derive_related_field_returns_children\n        PASS [   0.067s] ( 6/12) integration generated_track_b::generated_derive_help_field_is_dynamic\n        PASS [   0.068s] ( 7/12) integration chain_iterates_outer_to_root\n        PASS [   0.068s] ( 8/12) integration generated_track_b::generated_derive_diagnostic_source_is_json_cause\n        PASS [   0.068s] ( 9/12) integration generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source\n        PASS [   0.068s] (10/12) integration generated_track_b::generated_json_report_projects_source_label_and_metadata_together\n        PASS [   0.068s] (11/12) integration with_source_code_supplies_source_for_report_labels\n        PASS [   0.073s] (12/12) integration root_cause_returns_last_chain_error\n────────────\n     Summary [   0.074s] 12 tests run: 12 passed, 20 skipped\n",
+      "outcomes": {
+        "integration::generated_track_b::generated_report_new_boxed_preserves_diagnostic_help": "passed",
+        "integration::generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts": "passed",
+        "integration::generated_track_b::generated_report_new_preserves_diagnostic_code": "passed",
+        "integration::generated_track_b::generated_report_wrap_err_forwards_inner_code": "passed",
+        "integration::generated_track_b::generated_derive_related_field_returns_children": "passed",
+        "integration::generated_track_b::generated_derive_help_field_is_dynamic": "passed",
+        "integration::chain_iterates_outer_to_root": "passed",
+        "integration::generated_track_b::generated_derive_diagnostic_source_is_json_cause": "passed",
+        "integration::generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source": "passed",
+        "integration::generated_track_b::generated_json_report_projects_source_label_and_metadata_together": "passed",
+        "integration::with_source_code_supplies_source_for_report_labels": "passed",
+        "integration::root_cause_returns_last_chain_error": "passed"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "nodeid": "atomic::severity_default_is_advice",
+      "base_nodeid": "atomic::severity_default_is_advice",
+      "layer": "atomic",
+      "outcome": "failed"
+    },
+    {
+      "nodeid": "atomic::source_offset_from_location_uses_one_based_line_column",
+      "base_nodeid": "atomic::source_offset_from_location_uses_one_based_line_column",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::source_offset_from_location_clamps_to_end",
+      "base_nodeid": "atomic::source_offset_from_location_clamps_to_end",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::source_span_from_inclusive_range_includes_endpoint",
+      "base_nodeid": "atomic::source_span_from_inclusive_range_includes_endpoint",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::string_source_reads_selected_span",
+      "base_nodeid": "atomic::string_source_reads_selected_span",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::string_source_reads_context_lines",
+      "base_nodeid": "atomic::string_source_reads_context_lines",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::byte_source_out_of_bounds_returns_miette_error",
+      "base_nodeid": "atomic::byte_source_out_of_bounds_returns_miette_error",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::named_source_adds_name_to_span_contents",
+      "base_nodeid": "atomic::named_source_adds_name_to_span_contents",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::named_source_adds_language_to_span_contents",
+      "base_nodeid": "atomic::named_source_adds_language_to_span_contents",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::miette_error_out_of_bounds_has_code_and_help",
+      "base_nodeid": "atomic::miette_error_out_of_bounds_has_code_and_help",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::miette_error_io_preserves_source",
+      "base_nodeid": "atomic::miette_error_io_preserves_source",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::handler_opts_build_returns_miette_handler",
+      "base_nodeid": "atomic::handler_opts_build_returns_miette_handler",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::report_msg_downcasts_to_message_type",
+      "base_nodeid": "atomic::report_msg_downcasts_to_message_type",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::consuming_downcast_returns_original_value",
+      "base_nodeid": "atomic::consuming_downcast_returns_original_value",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::diagnostic_macro_sets_dynamic_metadata",
+      "base_nodeid": "atomic::diagnostic_macro_sets_dynamic_metadata",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::report_handler_trait_object_downcasts_to_concrete_handler",
+      "base_nodeid": "atomic::report_handler_trait_object_downcasts_to_concrete_handler",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::arc_source_code_delegates_to_inner_source",
+      "base_nodeid": "atomic::arc_source_code_delegates_to_inner_source",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_source_offset_counts_utf8_bytes",
+      "base_nodeid": "atomic::generated_track_b::generated_source_offset_counts_utf8_bytes",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_source_span_inclusive_singleton_has_length_one",
+      "base_nodeid": "atomic::generated_track_b::generated_source_span_inclusive_singleton_has_length_one",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_source_read_middle_of_line_reports_column",
+      "base_nodeid": "atomic::generated_track_b::generated_source_read_middle_of_line_reports_column",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_source_read_crlf_counts_one_line_break",
+      "base_nodeid": "atomic::generated_track_b::generated_source_read_crlf_counts_one_line_break",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment",
+      "base_nodeid": "atomic::generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_source_read_zero_length_span_returns_empty_slice",
+      "base_nodeid": "atomic::generated_track_b::generated_source_read_zero_length_span_returns_empty_slice",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_source_context_updates_returned_span_offset",
+      "base_nodeid": "atomic::generated_track_b::generated_source_context_updates_returned_span_offset",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_vec_source_out_of_bounds_returns_error",
+      "base_nodeid": "atomic::generated_track_b::generated_vec_source_out_of_bounds_returns_error",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_out_of_bounds_display_is_protocol_message",
+      "base_nodeid": "atomic::generated_track_b::generated_out_of_bounds_display_is_protocol_message",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_out_of_bounds_url_names_variant",
+      "base_nodeid": "atomic::generated_track_b::generated_out_of_bounds_url_names_variant",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_io_error_url_names_variant",
+      "base_nodeid": "atomic::generated_track_b::generated_io_error_url_names_variant",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_diagnostic_macro_sets_url",
+      "base_nodeid": "atomic::generated_track_b::generated_diagnostic_macro_sets_url",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "atomic::generated_track_b::generated_diagnostic_macro_sets_labels",
+      "base_nodeid": "atomic::generated_track_b::generated_diagnostic_macro_sets_labels",
+      "layer": "atomic",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::derive_struct_static_metadata",
+      "base_nodeid": "integration::derive_struct_static_metadata",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::derive_enum_variant_metadata",
+      "base_nodeid": "integration::derive_enum_variant_metadata",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::derive_source_code_and_label_fields",
+      "base_nodeid": "integration::derive_source_code_and_label_fields",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::derive_transparent_delegates_metadata",
+      "base_nodeid": "integration::derive_transparent_delegates_metadata",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::derive_forward_uses_inner_and_allows_override",
+      "base_nodeid": "integration::derive_forward_uses_inner_and_allows_override",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::json_absent_severity_renders_advice",
+      "base_nodeid": "integration::json_absent_severity_renders_advice",
+      "layer": "integration",
+      "outcome": "failed"
+    },
+    {
+      "nodeid": "integration::json_explicit_severity_renders_lowercase",
+      "base_nodeid": "integration::json_explicit_severity_renders_lowercase",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::json_includes_code_help_and_url",
+      "base_nodeid": "integration::json_includes_code_help_and_url",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::json_escapes_strings",
+      "base_nodeid": "integration::json_escapes_strings",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::json_label_contains_span_without_primary_flag",
+      "base_nodeid": "integration::json_label_contains_span_without_primary_flag",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::json_filename_comes_from_first_label_source",
+      "base_nodeid": "integration::json_filename_comes_from_first_label_source",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::json_causes_use_diagnostic_source_first",
+      "base_nodeid": "integration::json_causes_use_diagnostic_source_first",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::json_related_renders_recursively",
+      "base_nodeid": "integration::json_related_renders_recursively",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::json_related_inherits_parent_source_for_filename",
+      "base_nodeid": "integration::json_related_inherits_parent_source_for_filename",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::narrated_absent_severity_renders_advice",
+      "base_nodeid": "integration::narrated_absent_severity_renders_advice",
+      "layer": "integration",
+      "outcome": "failed"
+    },
+    {
+      "nodeid": "integration::narrated_includes_help_code_and_url",
+      "base_nodeid": "integration::narrated_includes_help_code_and_url",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::narrated_includes_source_label_text",
+      "base_nodeid": "integration::narrated_includes_source_label_text",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::narrated_related_diagnostic_is_rendered",
+      "base_nodeid": "integration::narrated_related_diagnostic_is_rendered",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::report_new_derefs_to_diagnostic_metadata",
+      "base_nodeid": "integration::report_new_derefs_to_diagnostic_metadata",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::wrapping_preserves_original_downcast",
+      "base_nodeid": "integration::wrapping_preserves_original_downcast",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::chain_iterates_outer_to_root",
+      "base_nodeid": "integration::chain_iterates_outer_to_root",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::root_cause_returns_last_chain_error",
+      "base_nodeid": "integration::root_cause_returns_last_chain_error",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::with_source_code_supplies_source_for_report_labels",
+      "base_nodeid": "integration::with_source_code_supplies_source_for_report_labels",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_report_new_preserves_diagnostic_code",
+      "base_nodeid": "integration::generated_track_b::generated_report_new_preserves_diagnostic_code",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_report_new_boxed_preserves_diagnostic_help",
+      "base_nodeid": "integration::generated_track_b::generated_report_new_boxed_preserves_diagnostic_help",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_report_wrap_err_forwards_inner_code",
+      "base_nodeid": "integration::generated_track_b::generated_report_wrap_err_forwards_inner_code",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_derive_help_field_is_dynamic",
+      "base_nodeid": "integration::generated_track_b::generated_derive_help_field_is_dynamic",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_derive_related_field_returns_children",
+      "base_nodeid": "integration::generated_track_b::generated_derive_related_field_returns_children",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_derive_diagnostic_source_is_json_cause",
+      "base_nodeid": "integration::generated_track_b::generated_derive_diagnostic_source_is_json_cause",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source",
+      "base_nodeid": "integration::generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_json_report_projects_source_label_and_metadata_together",
+      "base_nodeid": "integration::generated_track_b::generated_json_report_projects_source_label_and_metadata_together",
+      "layer": "integration",
+      "outcome": "passed"
+    },
+    {
+      "nodeid": "integration::generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts",
+      "base_nodeid": "integration::generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts",
+      "layer": "integration",
+      "outcome": "passed"
+    }
+  ],
+  "summary": {
+    "failed": 3,
+    "passed": 59,
+    "total": 62
+  },
+  "pass_rate_excluding_skips": 0.9516129032258065,
+  "by_layer": {
+    "atomic": {
+      "failed": 1,
+      "passed": 29,
+      "total": 30
+    },
+    "integration": {
+      "failed": 2,
+      "passed": 30,
+      "total": 32
+    }
+  },
+  "function_cases": [
+    {
+      "base_nodeid": "atomic::arc_source_code_delegates_to_inner_source",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::byte_source_out_of_bounds_returns_miette_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::consuming_downcast_returns_original_value",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::diagnostic_macro_sets_dynamic_metadata",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_diagnostic_macro_sets_labels",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_diagnostic_macro_sets_url",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_io_error_url_names_variant",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_out_of_bounds_display_is_protocol_message",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_out_of_bounds_url_names_variant",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_source_context_updates_returned_span_offset",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_source_offset_after_crlf_uses_single_line_increment",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_source_offset_counts_utf8_bytes",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_source_read_crlf_counts_one_line_break",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_source_read_middle_of_line_reports_column",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_source_read_zero_length_span_returns_empty_slice",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_source_span_inclusive_singleton_has_length_one",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::generated_track_b::generated_vec_source_out_of_bounds_returns_error",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::handler_opts_build_returns_miette_handler",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::miette_error_io_preserves_source",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::miette_error_out_of_bounds_has_code_and_help",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::named_source_adds_language_to_span_contents",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::named_source_adds_name_to_span_contents",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::report_handler_trait_object_downcasts_to_concrete_handler",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::report_msg_downcasts_to_message_type",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::severity_default_is_advice",
+      "layer": "atomic",
+      "outcome": "failed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::source_offset_from_location_clamps_to_end",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::source_offset_from_location_uses_one_based_line_column",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::source_span_from_inclusive_range_includes_endpoint",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::string_source_reads_context_lines",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "atomic::string_source_reads_selected_span",
+      "layer": "atomic",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::chain_iterates_outer_to_root",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::derive_enum_variant_metadata",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::derive_forward_uses_inner_and_allows_override",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::derive_source_code_and_label_fields",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::derive_struct_static_metadata",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::derive_transparent_delegates_metadata",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_context_chain_preserves_middle_and_leaf_downcasts",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_derive_diagnostic_source_is_json_cause",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_derive_help_field_is_dynamic",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_derive_related_field_returns_children",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_json_report_projects_source_label_and_metadata_together",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_json_report_uses_diagnostic_source_before_std_source",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_report_new_boxed_preserves_diagnostic_help",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_report_new_preserves_diagnostic_code",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::generated_track_b::generated_report_wrap_err_forwards_inner_code",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_absent_severity_renders_advice",
+      "layer": "integration",
+      "outcome": "failed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_causes_use_diagnostic_source_first",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_escapes_strings",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_explicit_severity_renders_lowercase",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_filename_comes_from_first_label_source",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_includes_code_help_and_url",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_label_contains_span_without_primary_flag",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_related_inherits_parent_source_for_filename",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::json_related_renders_recursively",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::narrated_absent_severity_renders_advice",
+      "layer": "integration",
+      "outcome": "failed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::narrated_includes_help_code_and_url",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::narrated_includes_source_label_text",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::narrated_related_diagnostic_is_rendered",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::report_new_derefs_to_diagnostic_metadata",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::root_cause_returns_last_chain_error",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::with_source_code_supplies_source_for_report_labels",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    },
+    {
+      "base_nodeid": "integration::wrapping_preserves_original_downcast",
+      "layer": "integration",
+      "outcome": "passed",
+      "case_count": 1
+    }
+  ]
+}

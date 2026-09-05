@@ -1,0 +1,97 @@
+{
+  "schema": "spec2repo.root-map.v3",
+  "task_id": "miette-fullrepro-001",
+  "spec_version": "v1",
+  "roots": [
+    {
+      "id": "MIETTE-DIAG-DEFAULT-SEVERITY",
+      "layer": "atomic",
+      "mutation": true,
+      "family": "MUT-SEVERITY-DEFAULT",
+      "owners": ["diagnostic-protocol"],
+      "depends_on": [],
+      "clauses": ["MIETTE-DIAG-002", "MIETTE-DIAG-004", "MIETTE-CONTRACT-007"]
+    },
+    {
+      "id": "MIETTE-JSON-SEVERITY-PROJECTION",
+      "layer": "integration",
+      "mutation": true,
+      "family": "MUT-SEVERITY-DEFAULT",
+      "owners": ["diagnostic-protocol", "json-renderer"],
+      "depends_on": ["MIETTE-DIAG-DEFAULT-SEVERITY"],
+      "clauses": ["MIETTE-JSON-003", "MIETTE-CONTRACT-007"]
+    },
+    {
+      "id": "MIETTE-GRAPH-NARRATED-SEVERITY-PROJECTION",
+      "layer": "integration",
+      "mutation": true,
+      "family": "MUT-SEVERITY-DEFAULT",
+      "owners": ["diagnostic-protocol", "text-renderers"],
+      "depends_on": ["MIETTE-DIAG-DEFAULT-SEVERITY"],
+      "clauses": ["MIETTE-GRAPH-002", "MIETTE-CONTRACT-007"]
+    },
+    {
+      "id": "MIETTE-SOURCE-SPAN-OFFSETS",
+      "layer": "atomic",
+      "mutation": false,
+      "family": "native-source",
+      "owners": ["source-coordinates"],
+      "depends_on": [],
+      "clauses": ["MIETTE-SRC-002", "MIETTE-SRC-004", "MIETTE-SRC-005"]
+    },
+    {
+      "id": "MIETTE-SOURCE-READING-CONTEXT",
+      "layer": "integration",
+      "mutation": false,
+      "family": "native-source",
+      "owners": ["source-coordinates", "source-reader"],
+      "depends_on": ["MIETTE-SOURCE-SPAN-OFFSETS"],
+      "clauses": ["MIETTE-SRC-007", "MIETTE-CONTRACT-003", "MIETTE-CONTRACT-004"]
+    },
+    {
+      "id": "MIETTE-DYNAMIC-DIAGNOSTIC-BUILDERS",
+      "layer": "atomic",
+      "mutation": false,
+      "family": "native-dynamic",
+      "owners": ["dynamic-diagnostic"],
+      "depends_on": [],
+      "clauses": ["MIETTE-DYN-001", "MIETTE-DYN-002", "MIETTE-DYN-003", "MIETTE-DYN-004"]
+    },
+    {
+      "id": "MIETTE-DERIVE-METADATA",
+      "layer": "integration",
+      "mutation": false,
+      "family": "native-derive",
+      "owners": ["derive-macro", "diagnostic-protocol"],
+      "depends_on": [],
+      "clauses": ["MIETTE-DERIVE-001", "MIETTE-DERIVE-002", "MIETTE-DERIVE-003", "MIETTE-DERIVE-004", "MIETTE-DERIVE-005", "MIETTE-DERIVE-006"]
+    },
+    {
+      "id": "MIETTE-REPORT-HOOK-CAPTURE",
+      "layer": "integration",
+      "mutation": false,
+      "family": "native-report",
+      "owners": ["report", "handler-hook"],
+      "depends_on": [],
+      "clauses": ["MIETTE-REPORT-002", "MIETTE-REPORT-003", "MIETTE-REPORT-004", "MIETTE-REPORT-005", "MIETTE-CONTRACT-012"]
+    },
+    {
+      "id": "MIETTE-WRAP-DOWNCAST",
+      "layer": "integration",
+      "mutation": false,
+      "family": "native-report",
+      "owners": ["report", "context-wrapper"],
+      "depends_on": [],
+      "clauses": ["MIETTE-WRAP-001", "MIETTE-WRAP-004", "MIETTE-WRAP-005", "MIETTE-CONTRACT-011"]
+    },
+    {
+      "id": "MIETTE-HANDLER-OPTIONS",
+      "layer": "atomic",
+      "mutation": false,
+      "family": "native-render",
+      "owners": ["handler-options"],
+      "depends_on": [],
+      "clauses": ["MIETTE-OPTS-001", "MIETTE-OPTS-002", "MIETTE-OPTS-003", "MIETTE-OPTS-004"]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+[package]
+name = "miette"
+version = "0.1.0"
+edition = "2018"
+
+[features]
+default = ["derive"]
+derive = ["miette-derive"]
+fancy-base = []
+fancy = ["fancy-base"]
+serde = []
+syntect-highlighter = ["fancy-base"]
+
+[dependencies]
+miette-derive = { path = "miette-derive", optional = true }
